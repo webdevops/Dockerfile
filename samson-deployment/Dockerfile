@@ -1,4 +1,5 @@
 FROM zendesk/samson
+MAINTAINER info@webdevops.io
 
 ENV PATH             /opt/ansible/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin/:/app/bin/:/opt/deployment
 ENV PYTHONPATH       /opt/ansible/lib
