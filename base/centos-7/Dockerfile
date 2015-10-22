@@ -36,4 +36,5 @@ RUN yum -y install \
         git \
         pygpgme \
         cronie \
+        supervisor \
     && yum clean all
