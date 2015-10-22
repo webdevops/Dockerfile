@@ -49,5 +49,6 @@ RUN set -x \
         cron \
         anacron \
         supervisor \
+        openssh-server \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y

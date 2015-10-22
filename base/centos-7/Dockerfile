@@ -37,4 +37,5 @@ RUN yum -y install \
         pygpgme \
         cronie \
         supervisor \
+        openssh-server \
     && yum clean all
