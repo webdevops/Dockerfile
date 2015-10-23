@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 14.04 PHP Docker container
+# Ubuntu 14.04 VSFTP Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:latest
