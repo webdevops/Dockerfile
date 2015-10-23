@@ -5,6 +5,10 @@
 FROM webdevops/base:centos-7
 MAINTAINER info@webdevops.io
 
+# System update
+RUN yum upgrade -y \
+    && yum clean all
+
 # Install tools
 RUN yum -y install \
         ImageMagick \
