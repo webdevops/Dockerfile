@@ -8,7 +8,7 @@ MAINTAINER info@webdevops.io
 # Install tools
 RUN yum -y install \
         ImageMagick \
-        mysql \
+        GraphicsMagick \
     && yum clean all
     
 # Install php (cli/fpm)

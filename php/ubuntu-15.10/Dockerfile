@@ -16,7 +16,6 @@ RUN set -x \
     && apt-get install -y \
         imagemagick \
         graphicsmagick \
-        mysql-client \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 
