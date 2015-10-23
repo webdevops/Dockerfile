@@ -9,13 +9,13 @@ function createNamedPipe() {
 
 function initBootstrap() {
     for FILE in /opt/docker/bin/bootstrap.d/*.sh; do
-        bash "$FILE"
+        . "$FILE"
     done
 }
 
 function initEntrypoint() {
     for FILE in /opt/docker/bin/entrypoint.d/*.sh; do
-        bash "$FILE"
+        . "$FILE"
     done
 }
 
