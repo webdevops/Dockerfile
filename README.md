@@ -3,9 +3,8 @@
 Dockerfiles for various prebuilt docker containers
 
 
-Dockerfile                  | Description                                            | URL
---------------------------- | ------------------------------------------------------ | --------------
-`base`                      | Base containers for WebDevOps service containers       | 
-`php`                       | PHP (cli and fpm) service containers (based on `base`  | 
-`samson-deployment`         | Samson based deployment service                        | [Project site](https://github.com/webdevops/samson-deployment)
-
+Dockerfile                  | Description                                                                        | Depends on                                                        |
+--------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+`base`                      | Base containers for WebDevOps service containers                                   | official docker files                                             |
+`php`                       | PHP (cli and fpm) service containers                                               | [`webdevops/base`](https://hub.docker.com/r/webdevops/base/)      |
+`samson-deployment`         | [Samson](https://github.com/webdevops/samson-deployment) based deployment service  | [`zendesk/samson`](https://hub.docker.com/r/zendesk/samson/)      |
