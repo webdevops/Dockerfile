@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 14.04 VSFTP Docker container
+# VSFTP Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:latest
