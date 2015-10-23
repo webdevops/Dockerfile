@@ -36,6 +36,7 @@ RUN set -x \
         supervisor \
         openssh-server \
         mysql-client \
+        cron \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 
@@ -56,7 +57,8 @@ RUN set -x \
         openssh-client \
         rsync \
         git \
-        cron \
+        nano \
+        vim \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 

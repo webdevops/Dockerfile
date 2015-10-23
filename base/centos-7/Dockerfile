@@ -43,6 +43,8 @@ RUN yum -y install \
         rsync \
         git \
         pygpgme \
+        nano \
+        vim \
     && yum clean all
 
 # Deploy scripts/configurations
