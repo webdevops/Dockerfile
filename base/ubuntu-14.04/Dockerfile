@@ -52,3 +52,14 @@ RUN set -x \
         openssh-server \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
+
+# Deploy scripts/configurations
+RUN mkdir -p /opt/docker/
+COPY bin     /opt/docker/bin/
+COPY etc     /opt/docker/etc/
+
+# Make executable
+RUN chmod +x /opt/docker/bin/*
+
+ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
+CMD ["noop"]
