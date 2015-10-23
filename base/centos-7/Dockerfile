@@ -20,6 +20,14 @@ RUN yum -y install \
     && pip install ansible \
     && yum clean all
 
+# Install services
+RUN yum -y install \
+        cronie \
+        supervisor \
+        openssh-server \
+        mysql \
+    && yum clean all
+
 # Install tools
 RUN yum -y install \
         sudo \
@@ -35,9 +43,6 @@ RUN yum -y install \
         rsync \
         git \
         pygpgme \
-        cronie \
-        supervisor \
-        openssh-server \
     && yum clean all
 
 # Deploy scripts/configurations

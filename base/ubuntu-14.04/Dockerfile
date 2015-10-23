@@ -29,6 +29,16 @@ RUN set -x \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 
+# Install services
+RUN set -x \
+    && apt-get update \
+    && apt-get install -y \
+        supervisor \
+        openssh-server \
+        mysql-client \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean -y
+
 # Install common tools
 RUN set -x \
     && apt-get update \
@@ -47,9 +57,6 @@ RUN set -x \
         rsync \
         git \
         cron \
-        anacron \
-        supervisor \
-        openssh-server \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 
