@@ -47,6 +47,7 @@ RUN yum -y install \
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
+RUN bash /opt/docker/bin/bootstrap.sh
 
 # Configure volume/workdir
 RUN mkdir -p /docker/code/
