@@ -10,6 +10,10 @@ ENV APPLICATION_GROUP application
 ENV APPLICATION_UID   1000
 ENV APPLICATION_GID   1000
 
+# System update
+RUN yum upgrade -y \
+    && yum clean all
+
 # Install ansible
 RUN yum clean all
 RUN yum -y install \

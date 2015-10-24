@@ -10,6 +10,13 @@ RUN locale-gen en_US.UTF-8
 ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
+# System update
+RUN set -x \
+    && apt-get update \
+    && apt-get dist-upgrade -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean -y
+
 # Install apt-add-repository
 RUN set -x \
     && apt-get update \
