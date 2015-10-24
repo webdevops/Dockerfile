@@ -16,6 +16,7 @@ RUN set -x \
     && apt-get update \
     && apt-get install -y \
         vsftpd \
+    && ln -sf /opt/docker/etc/vsftpd.conf /etc/vsftpd.conf \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 
@@ -24,10 +25,8 @@ RUN mkdir -p \
     /var/log/supervisor \
     /data/ftp/
 
-COPY bin /opt/docker/bin/
-COPY etc /opt/docker/etc/
-
-COPY conf/vsftpd.conf      /etc/vsftpd.conf
+# Deploy scripts/configurations
+COPY . /opt/docker/
 
 VOLUME "/data/ftp/"
 
