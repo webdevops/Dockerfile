@@ -13,6 +13,8 @@
 Variable            | Description
 ------------------- | ------------------------------------------------------------------------------
 `CLI_SCRIPT`        | Predefined CLI script for service
+`APPLICATION_UID`   | Application UID (Effective user ID)
+`APPLICATION_GID`   | Application GID (Effective group ID)
 
 ## Filesystem layout
 
