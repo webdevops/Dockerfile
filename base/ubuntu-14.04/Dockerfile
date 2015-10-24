@@ -5,6 +5,11 @@
 FROM ubuntu:14.04
 MAINTAINER info@webdevops.io
 
+ENV APPLICATION_USER  application
+ENV APPLICATION_GROUP application
+ENV APPLICATION_UID   1000
+ENV APPLICATION_GID   1000
+
 # Ensure UTF-8
 RUN locale-gen en_US.UTF-8
 ENV LANG       en_US.UTF-8
