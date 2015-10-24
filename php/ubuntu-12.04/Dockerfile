@@ -62,8 +62,8 @@ RUN set -x \
     && apt-get clean -y
 
 # Deploy scripts/configurations
-COPY bin /opt/docker/bin/
-COPY etc /opt/docker/etc/
+COPY . /opt/docker/
+RUN bash /opt/docker/bin/bootstrap.sh
 
 # Configure volume/workdir
 RUN mkdir -p /docker/code/

@@ -10,6 +10,13 @@ RUN locale-gen en_US.UTF-8
 ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
+# System update
+RUN set -x \
+    && apt-get update \
+    && apt-get dist-upgrade -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean -y
+
 # Install apt-add-repository
 RUN set -x \
     && apt-get update \
@@ -63,12 +70,8 @@ RUN set -x \
     && apt-get clean -y
 
 # Deploy scripts/configurations
-RUN mkdir -p /opt/docker/
-COPY bin     /opt/docker/bin/
-COPY etc     /opt/docker/etc/
-
-# Make executable
-RUN chmod +x /opt/docker/bin/*
+COPY . /opt/docker/
+RUN bash /opt/docker/bin/bootstrap.sh
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 CMD ["noop"]

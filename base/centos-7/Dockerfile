@@ -5,6 +5,15 @@
 FROM centos:7
 MAINTAINER info@webdevops.io
 
+ENV APPLICATION_USER  application
+ENV APPLICATION_GROUP application
+ENV APPLICATION_UID   1000
+ENV APPLICATION_GID   1000
+
+# System update
+RUN yum upgrade -y \
+    && yum clean all
+
 # Install ansible
 RUN yum clean all
 RUN yum -y install \
@@ -48,12 +57,8 @@ RUN yum -y install \
     && yum clean all
 
 # Deploy scripts/configurations
-RUN mkdir -p /opt/docker/
-COPY bin     /opt/docker/bin/
-COPY etc     /opt/docker/etc/
-
-# Make executable
-RUN chmod +x /opt/docker/bin/*
+COPY . /opt/docker/
+RUN bash /opt/docker/bin/bootstrap.sh
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 CMD ["noop"]
