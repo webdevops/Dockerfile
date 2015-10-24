@@ -5,6 +5,11 @@
 FROM centos:7
 MAINTAINER info@webdevops.io
 
+ENV APPLICATION_USER  application
+ENV APPLICATION_GROUP application
+ENV APPLICATION_UID   1000
+ENV APPLICATION_GID   1000
+
 # Install ansible
 RUN yum clean all
 RUN yum -y install \
@@ -49,9 +54,7 @@ RUN yum -y install \
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
-
-# Make executable
-RUN chmod +x /opt/docker/bin/*
+RUN bash /opt/docker/bin/bootstrap.sh
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 CMD ["noop"]

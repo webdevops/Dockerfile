@@ -24,6 +24,7 @@ The whole docker directroy is deployed into `/opt/docker/`.
 Directory                       | Description
 ------------------------------- | ------------------------------------------------------------------------------
 `/opt/docker/bin`               | Script directory for various script eg. `entrypoint.sh`
+`/opt/docker/bin/bootstrap.d`   | Directory for bash `*.sh` scripts which will automatcally run by `bootstrrap.sh` (will be removed after run, for usage in `Dockerfile`)
 `/opt/docker/bin/entrypoint.d`  | Directory for bash `*.sh` scripts which will automatcally run by `entrypoint.sh`
 `/opt/docker/bin/service.d`     | Service (wrapper) scripts for supervisord
 <br>                            |

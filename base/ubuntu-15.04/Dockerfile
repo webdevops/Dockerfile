@@ -64,9 +64,7 @@ RUN set -x \
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
-
-# Make executable
-RUN chmod +x /opt/docker/bin/*
+RUN bash /opt/docker/bin/bootstrap.sh
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 CMD ["noop"]

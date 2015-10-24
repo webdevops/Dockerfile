@@ -19,8 +19,5 @@ ANSIBLE_TAG="$1"
 shift
 ANSIBLE_OPTS="$@"
 
-# workaround if windows
-chmod -x "$ANSIBLE_DIR/inventory"
-
 # run ansible
 ansible-playbook "${ANSIBLE_PLAYBOOK}" --connection=local --tags="${ANSIBLE_TAG}" $ANSIBLE_OPTS

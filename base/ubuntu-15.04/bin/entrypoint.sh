@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-set -e
+set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
 trap 'echo sigterm ; exit' SIGTERM
 trap 'echo sigkill ; exit' SIGKILL
 
@@ -54,10 +58,10 @@ case "$TASK" in
     ## Defined cli script
     cli)
         if [ -n "${CLI_SCRIPT}" ]; then
-            if [ -n "$EFFECTIVE_USER" ]; then
+            if [ -n "APPLICATION_USER" ]; then
                 # Run as EFFECTIVE_USER
                 shift
-                exec sudo -H -E -u "${EFFECTIVE_USER}" ${CLI_SCRIPT} "$@"
+                exec sudo -H -E -u "${APPLICATION_USER}" ${CLI_SCRIPT} "$@"
             else
                 # Run as root
                 exec ${CLI_SCRIPT} "$@"
@@ -71,9 +75,9 @@ case "$TASK" in
     #############################################
     ## All other commands
     *)
-        if [ -n "$EFFECTIVE_USER" ]; then
-            # Run as EFFECTIVE_USER
-            exec sudo -H -E -u "${EFFECTIVE_USER}" "$@"
+        if [ -n "${APPLICATION_USER}" ]; then
+            # Run as APPLICATION_USER
+            exec sudo -H -E -u "${APPLICATION_USER}" "$@"
         else
             # Run as root
             exec "$@"

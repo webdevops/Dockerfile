@@ -10,6 +10,7 @@ function createNamedPipe() {
 function initBootstrap() {
     for FILE in /opt/docker/bin/bootstrap.d/*.sh; do
         . "$FILE"
+        rm -f -- "$FILE"
     done
 }
 
