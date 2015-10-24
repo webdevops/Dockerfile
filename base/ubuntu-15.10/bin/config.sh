@@ -7,6 +7,18 @@ function createNamedPipe() {
     mknod "$1" p
 }
 
+function sedEscape() {
+    echo "$(echo $* |sed -e 's/[]\/$*.^|[]/\\&/g')"
+}
+
+function replaceTextInFile() {
+    SOURCE="$(sedEscape $1)"
+    REPLACE="$(sedEscape $2)"
+    TARGET="$3"
+
+    sed -i "s/${SOURCE}/${REPLACE}/" "${TARGET}"
+}
+
 function initBootstrap() {
     for FILE in /opt/docker/bin/bootstrap.d/*.sh; do
         . "$FILE"

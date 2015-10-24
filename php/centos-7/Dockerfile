@@ -41,7 +41,7 @@ RUN yum -y install \
         gcc \
     && pecl install imagick \
     && sed -i '/listen =/c\listen = 0.0.0.0:9000' /etc/php-fpm.d/www.conf \
-    && sed -i '/listen.allowed_clients = /c\listen.allowed_clients = 0.0.0.0' /etc/php-fpm.d/www.conf \
+    && sed -i '/listen.allowed_clients = /c\;listen.allowed_clients = 0.0.0.0' /etc/php-fpm.d/www.conf \
     && echo 'catch_workers_output = yes'                          >> /etc/php-fpm.d/www.conf \
     && echo 'access.log = /var/log/php.access.log'                >> /etc/php-fpm.d/www.conf \
     && echo 'slowlog = /var/log/php.slow.log'                     >> /etc/php-fpm.d/www.conf \

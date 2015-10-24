@@ -51,7 +51,7 @@ RUN set -x \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && sed -i '/listen = /c\listen = 0.0.0.0:9000' /etc/php5/fpm/pool.d/www.conf \
-    && sed -i '/listen.allowed_clients = /c\listen.allowed_clients = 0.0.0.0' /etc/php5/fpm/pool.d/www.conf \
+    && sed -i '/listen.allowed_clients = /c\;listen.allowed_clients = 0.0.0.0' /etc/php5/fpm/pool.d/www.conf \
     && echo 'catch_workers_output = yes'                          >> /etc/php5/fpm/pool.d/www.conf \
     && echo 'access.log = /var/log/php.access.log'                >> /etc/php5/fpm/pool.d/www.conf \
     && echo 'slowlog = /var/log/php.slow.log'                     >> /etc/php5/fpm/pool.d/www.conf \
