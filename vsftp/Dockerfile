@@ -27,6 +27,7 @@ RUN mkdir -p \
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
+RUN bash /opt/docker/bin/bootstrap.sh
 
 VOLUME "/data/ftp/"
 
