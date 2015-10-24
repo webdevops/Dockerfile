@@ -27,7 +27,7 @@ RUN set -x \
     && apt-get update \
     && apt-get install -y \
         software-properties-common \
-    && apt-add-repository multiverse
+    && apt-add-repository multiverse \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 
