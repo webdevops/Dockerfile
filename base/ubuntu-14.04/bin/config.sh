@@ -21,5 +21,5 @@ function initEntrypoint() {
 
 function startSupervisord() {
     cd /
-    exec supervisord -c /opt/docker/etc/supervisord.conf --logfile /dev/null --pidfile /dev/null --user root
+    exec supervisord -c /opt/docker/etc/supervisor.conf --logfile /dev/null --pidfile /dev/null --user root
 }

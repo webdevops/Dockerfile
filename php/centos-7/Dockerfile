@@ -50,8 +50,7 @@ RUN yum -y install \
     && yum clean all
 
 # Deploy scripts/configurations
-COPY bin /opt/docker/bin/
-COPY etc /opt/docker/etc/
+COPY . /opt/docker/
 
 # Configure volume/workdir
 RUN mkdir -p /docker/code/

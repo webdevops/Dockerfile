@@ -48,9 +48,7 @@ RUN yum -y install \
     && yum clean all
 
 # Deploy scripts/configurations
-RUN mkdir -p /opt/docker/
-COPY bin     /opt/docker/bin/
-COPY etc     /opt/docker/etc/
+COPY . /opt/docker/
 
 # Make executable
 RUN chmod +x /opt/docker/bin/*
