@@ -22,12 +22,11 @@ RUN set -x \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 
-# Install apt-add-repository and enable multiverse
+# Install apt-add-repository
 RUN set -x \
     && apt-get update \
     && apt-get install -y \
         python-software-properties \
-    && apt-add-repository multiverse
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 
