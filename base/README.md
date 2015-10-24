@@ -10,11 +10,9 @@
 
 ## Environment variables
 
-Variable         | Description
----------------- | ------------------------------------------------------------------------------
-`CLI_SCRIPT`     | Predefined CLI script for service
-`EFFECTIVE_USER` | Run comamnds (eg. `CLI_SCRIPT`) as user and not as root
-
+Variable            | Description
+------------------- | ------------------------------------------------------------------------------
+`CLI_SCRIPT`        | Predefined CLI script for service
 
 ## Filesystem layout
 
