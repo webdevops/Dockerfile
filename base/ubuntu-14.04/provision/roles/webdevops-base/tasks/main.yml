@@ -1,0 +1,9 @@
+---
+
+- include: bootstrap/application-user.yml
+  tags:
+    - bootstrap
+
+- include: entrypoint/application-user.yml
+  tags:
+    - entrypoint

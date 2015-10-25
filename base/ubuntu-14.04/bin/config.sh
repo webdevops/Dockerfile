@@ -24,12 +24,27 @@ function initBootstrap() {
         . "$FILE"
         rm -f -- "$FILE"
     done
+
+    runDockerProvision bootstrap
+
+    for TASKFILE in /opt/docker/provision/roles/*/tasks/bootstrap/*.yml; do
+        echo "--- " > "$TASKFILE"
+    done
 }
 
 function initEntrypoint() {
     for FILE in /opt/docker/bin/entrypoint.d/*.sh; do
         . "$FILE"
     done
+
+    runDockerProvision entrypoint
+}
+
+function runDockerProvision() {
+    ANSIBLE_PLAYBOOK="/opt/docker/provision/playbook.yml"
+    ANSIBLE_TAG="$1"
+
+    bash /opt/docker/bin/provision.sh "${ANSIBLE_PLAYBOOK}" "${ANSIBLE_TAG}"
 }
 
 function startSupervisord() {
