@@ -1,5 +1,0 @@
-- hosts: all
-  vars_files:
-    - "./variables.yml"
-  roles:
-    - { role: webdevops-base }
