@@ -27,14 +27,13 @@ RUN set -x \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& ln -sf /opt/docker/etc/httpd/vhost.conf /etc/apache2/sites-enabled/10-docker.conf \
 	&& a2enmod actions fastcgi ssl \
-    && sed -i '/listen = /c\listen = /var/run/php5-fpm.sock' /etc/php5/fpm/pool.d/www.conf \
-    && sed -i '/listen.allowed_clients = /c\;listen.allowed_clients = 0.0.0.0' /etc/php5/fpm/pool.d/www.conf \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
-RUN bash /opt/docker/bin/bootstrap.sh
+RUN bash /opt/docker/bin/control.sh provision.role webdevops-php-apache \
+    && bash /opt/docker/bin/bootstrap.sh
 
 RUN chmod +x /opt/docker/bin/service.d/httpd.sh
 
