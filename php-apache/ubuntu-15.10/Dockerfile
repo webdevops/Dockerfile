@@ -1,8 +1,8 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 14.04 PHP-Apache Docker container
+# Ubuntu 15.10 PHP-Apache Docker container
 #++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/php:ubuntu-14.04
+FROM webdevops/php:ubuntu-15.10
 MAINTAINER info@webdevops.io
 
 ENV HTTPD_DOCUMENT_ROOT  /docker/code/
@@ -17,7 +17,6 @@ RUN set -x \
     && apt-get update \
     && apt-get install -y \
         apache2 \
-        apache2-mpm-worker \
         libapache2-mod-fastcgi \
 	&& sed -ri ' \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \

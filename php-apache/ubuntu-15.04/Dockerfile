@@ -1,8 +1,8 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 14.04 PHP-Apache Docker container
+# Ubuntu 15.04 PHP-Apache Docker container
 #++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/php:ubuntu-14.04
+FROM webdevops/php:ubuntu-15.04
 MAINTAINER info@webdevops.io
 
 ENV HTTPD_DOCUMENT_ROOT  /docker/code/
