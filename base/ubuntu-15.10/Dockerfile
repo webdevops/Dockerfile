@@ -33,7 +33,6 @@ RUN set -x \
 
 # Install ansible
 RUN set -x \
-    && apt-add-repository ppa:ansible/ansible \
     && apt-get update \
     && apt-get install -y \
         ansible \
@@ -77,7 +76,8 @@ RUN set -x \
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
-RUN bash /opt/docker/bin/bootstrap.sh
+RUN bash /opt/docker/bin/control.sh provision.role webdevops-base \
+    && bash /opt/docker/bin/bootstrap.sh
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 CMD ["noop"]

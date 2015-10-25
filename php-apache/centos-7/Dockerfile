@@ -22,7 +22,8 @@ RUN yum -y install \
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
-RUN bash /opt/docker/bin/bootstrap.sh
+RUN bash /opt/docker/bin/control.sh provision.role webdevops-php-apache \
+    && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 80
 EXPOSE 443

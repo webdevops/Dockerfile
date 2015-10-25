@@ -20,4 +20,4 @@ shift
 ANSIBLE_OPTS="$@"
 
 # run ansible
-ansible-playbook "${ANSIBLE_PLAYBOOK}" --connection=local --tags="${ANSIBLE_TAG}" $ANSIBLE_OPTS
+ansible-playbook "${ANSIBLE_PLAYBOOK}" -i 'localhost,' --connection=local --tags="${ANSIBLE_TAG}" $ANSIBLE_OPTS
