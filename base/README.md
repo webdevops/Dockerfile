@@ -32,6 +32,7 @@ Directory                       | Description
 `/opt/docker/etc/supervisor.d`  | Supervisor service configuration `*.conf` directory
 <br>                            |
 `/opt/docker/provision`         | Ansible provisioning configuration directory
+`/opt/docker/provision/roles`   | Ansible roles configuration directory
 
  
 
@@ -59,6 +60,22 @@ Available tags:
 If there is no `playbook.yml` it will be created dynamically based on registred roles by `control.sh`.
 `bootstrap` roles will only run once (at docker build) and not again on inherited containers.
 `entrypoint` roles will run at each startup also on inherited containers.
+
+To use the modular ansible provisioning you have to deploy your own role into `/opt/docker/provision/roles`, eg.:
+
+Directory: `/opt/docker/provision/roles/yourrolename/`
+Main task file: `/opt/docker/provision/roles/yourrolename/tasks/main.yml`
+
+To register your role execute following script in your `Dockerfile`:
+
+For `bootstrap` and `entrypoint` tag:
+`RUN bash /opt/docker/bin/control.sh provision.role yourrolename`
+
+For only `bootstrap` tag:
+`RUN bash /opt/docker/bin/control.sh provision.role.bootstrap yourrolename`
+
+For only `entrypoint` tag:
+`RUN bash /opt/docker/bin/control.sh provision.role.entrypoint yourrolename`
 
 ## `entrypoint.sh`
 
