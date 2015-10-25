@@ -11,3 +11,9 @@ Dockerfile                  | Description                                       
 [`storage`](storage/README.md) | Storage (noop) container                                                           | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
 [`ssh`](ssh/README.md)      | SSH service container                                                              | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
 [`samson-deployment`](samson-deployment/README.md) | [Samson](https://github.com/webdevops/samson-deployment) based deployment service  | [`zendesk/samson`](https://hub.docker.com/r/zendesk/samson/)         |
+
+
+# Provisioning
+
+All `base` inherited containers provides an modular provisioning available as simple shell scripts and ansible roles.
+See [base/README.md](base/README.md) for more informations.

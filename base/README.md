@@ -30,6 +30,9 @@ Directory                       | Description
 <br>                            |
 `/opt/docker/etc`               | Configuration directory
 `/opt/docker/etc/supervisor.d`  | Supervisor service configuration `*.conf` directory
+<br>                            |
+`/opt/docker/provision`         | Ansible provisioning configuration directory
+
  
 
 File                                         | Description
@@ -38,11 +41,24 @@ File                                         | Description
 `/opt/docker/bin/entrypoint.sh`              | Main entrypoint for docker container
 `/opt/docker/bin/logwatch.sh`                | Log reader for childen processes (can be used with named pipes)
 `/opt/docker/bin/provision.sh`               | Ansible provision wrapper script
+`/opt/docker/bin/control.sh`                 | Control script for container and provisioning registration handling
 <br>                                         |
 `/opt/docker/etc/supervisor.conf`            | Main supervisor configuration (will include other scripts in `/opt/docker/etc/supervisor.d/*.conf`)
 `/opt/docker/etc/supervisor.d/cron.conf`     | Cron service script _(disabled by default)_
 `/opt/docker/etc/supervisor.d/ssh.conf`      | SSH server service script _(disabled by default)_
 
+
+## Ansible provisioning
+
+Whole configuration will deployed in `/opt/docker/provision`.
+
+Available tags:
+- bootstrap (only run once)
+- entrypoint (run at startup)
+
+If there is no `playbook.yml` it will be created dynamically based on registred roles by `control.sh`.
+`bootstrap` roles will only run once (at docker build) and not again on inherited containers.
+`entrypoint` roles will run at each startup also on inherited containers.
 
 ## `entrypoint.sh`
 
