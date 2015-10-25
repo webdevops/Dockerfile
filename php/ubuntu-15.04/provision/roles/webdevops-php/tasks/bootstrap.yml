@@ -1,0 +1,24 @@
+---
+
+- name: Configure php-fpm pool user (www.conf)
+  lineinfile:
+    dest:   /etc/php5/fpm/pool.d/www.conf
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: 'listen',                      value: "0.0.0.0:9000" }
+   - { key: 'catch_workers_output',        value: "yes" }
+   - { key: 'access.log',                  value: "/var/log/php.access.log" }
+   - { key: 'slowlog',                     value: "/var/log/php.slow.log" }
+   - { key: 'php_admin_value[error_log]',  value: "/var/log/php.error.log" }
+   - { key: 'php_admin_value[log_errors]', value: "on" }
+   - { key: 'user',                        value: "{{ DOCKER.APPLICATION_USER }}" }
+   - { key: 'group',                       value: "{{ DOCKER.APPLICATION_GROUP }}" }
+
+- name: Enable php-fpm connection limit
+  lineinfile:
+    dest:   /etc/php5/fpm/pool.d/www.conf
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   ';{{ item.key }}'
+  with_items:
+   - { key: 'listen.allowed_clients' }

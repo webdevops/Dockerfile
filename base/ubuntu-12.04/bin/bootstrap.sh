@@ -7,6 +7,6 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 
 source /opt/docker/bin/config.sh
 
-chmod +x /opt/docker/bin/*
+find /opt/docker/bin/ -type f -iname '*.sh' -print0 | xargs --no-run-if-empty -0 chmod +x
 
 initBootstrap

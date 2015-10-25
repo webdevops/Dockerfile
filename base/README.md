@@ -30,6 +30,10 @@ Directory                       | Description
 <br>                            |
 `/opt/docker/etc`               | Configuration directory
 `/opt/docker/etc/supervisor.d`  | Supervisor service configuration `*.conf` directory
+<br>                            |
+`/opt/docker/provision`         | Ansible provisioning configuration directory
+`/opt/docker/provision/roles`   | Ansible roles configuration directory
+
  
 
 File                                         | Description
@@ -38,11 +42,40 @@ File                                         | Description
 `/opt/docker/bin/entrypoint.sh`              | Main entrypoint for docker container
 `/opt/docker/bin/logwatch.sh`                | Log reader for childen processes (can be used with named pipes)
 `/opt/docker/bin/provision.sh`               | Ansible provision wrapper script
+`/opt/docker/bin/control.sh`                 | Control script for container and provisioning registration handling
 <br>                                         |
 `/opt/docker/etc/supervisor.conf`            | Main supervisor configuration (will include other scripts in `/opt/docker/etc/supervisor.d/*.conf`)
 `/opt/docker/etc/supervisor.d/cron.conf`     | Cron service script _(disabled by default)_
 `/opt/docker/etc/supervisor.d/ssh.conf`      | SSH server service script _(disabled by default)_
 
+
+## Ansible provisioning
+
+Whole configuration will deployed in `/opt/docker/provision`.
+
+Available tags:
+- bootstrap (only run once)
+- entrypoint (run at startup)
+
+If there is no `playbook.yml` it will be created dynamically based on registred roles by `control.sh`.
+`bootstrap` roles will only run once (at docker build) and not again on inherited containers.
+`entrypoint` roles will run at each startup also on inherited containers.
+
+To use the modular ansible provisioning you have to deploy your own role into `/opt/docker/provision/roles`, eg.:
+
+Directory: `/opt/docker/provision/roles/yourrolename/`
+Main task file: `/opt/docker/provision/roles/yourrolename/tasks/main.yml`
+
+To register your role execute following script in your `Dockerfile`:
+
+For `bootstrap` and `entrypoint` tag:
+`RUN bash /opt/docker/bin/control.sh provision.role yourrolename`
+
+For only `bootstrap` tag:
+`RUN bash /opt/docker/bin/control.sh provision.role.bootstrap yourrolename`
+
+For only `entrypoint` tag:
+`RUN bash /opt/docker/bin/control.sh provision.role.entrypoint yourrolename`
 
 ## `entrypoint.sh`
 

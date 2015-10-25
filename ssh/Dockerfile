@@ -2,11 +2,11 @@
 # SSH Docker container
 #++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base:latest
+FROM webdevops/base:ubuntu-14.04
 MAINTAINER info@webdevops.io
 
 RUN mkdir -p /var/run/sshd \
-    && sed -i '/autostart = /c\autostart = true' /opt/docker/etc/supervisor.d/ssh.conf
+    &&  bash /opt/docker/bin/control.sh service.enable ssh
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
