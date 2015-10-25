@@ -9,6 +9,7 @@ ENV FTP_USER     dev
 ENV FTP_PASSWORD dev
 ENV FTP_UID      1000
 ENV FTP_GID      1000
+ENV FTP_PASSWORD dev
 ENV FTP_PATH     /data/ftp/
 
 # Install vsftp
