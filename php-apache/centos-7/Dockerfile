@@ -6,7 +6,7 @@ FROM webdevops/php:centos-7
 MAINTAINER info@webdevops.io
 
 ENV HTTPD_DOCUMENT_ROOT  /docker/code/
-ENV HTTPD_DOCUMENT_INDEX index.phpa
+ENV HTTPD_DOCUMENT_INDEX index.php
 ENV HTTPD_ALIAS_DOMAIN   *.vm
 
 # Install tools
