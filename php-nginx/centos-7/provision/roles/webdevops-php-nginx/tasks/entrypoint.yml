@@ -6,8 +6,8 @@
     regexp:  '<{{ item.key }}>'
     replace: '{{ item.value }}'
   with_items:
-   - { key: 'DOCUMENT_INDEX', value: "{{ lookup('env','NGINX_DOCUMENT_INDEX') }}" }
-   - { key: 'DOCUMENT_ROOT',  value: "{{ lookup('env','NGINX_DOCUMENT_ROOT') }}" }
-   - { key: 'ALIAS_DOMAIN',   value: "{{ lookup('env','NGINX_ALIAS_DOMAIN') }}" }
+   - { key: 'DOCUMENT_INDEX', value: "{{ lookup('env','WEB_DOCUMENT_INDEX') }}" }
+   - { key: 'DOCUMENT_ROOT',  value: "{{ lookup('env','WEB_DOCUMENT_ROOT') }}" }
+   - { key: 'ALIAS_DOMAIN',   value: "{{ lookup('env','WEB_ALIAS_DOMAIN') }}" }
    - { key: 'SERVERNAME',     value: "{{ ansible_nodename }}" }
 

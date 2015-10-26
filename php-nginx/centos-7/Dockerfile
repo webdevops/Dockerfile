@@ -5,9 +5,9 @@
 FROM webdevops/php:centos-7
 MAINTAINER info@webdevops.io
 
-ENV NGINX_DOCUMENT_ROOT  /docker/code/
-ENV NGINX_DOCUMENT_INDEX index.phpa
-ENV NGINX_ALIAS_DOMAIN   *.vm
+ENV WEB_DOCUMENT_ROOT  /docker/code/
+ENV WEB_DOCUMENT_INDEX index.phpa
+ENV WEB_ALIAS_DOMAIN   *.vm
 
 # Install tools
 RUN yum -y install \

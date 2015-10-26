@@ -5,9 +5,9 @@
 FROM webdevops/php:ubuntu-15.10
 MAINTAINER info@webdevops.io
 
-ENV NGINX_DOCUMENT_ROOT  /docker/code/
-ENV NGINX_DOCUMENT_INDEX index.php
-ENV NGINX_ALIAS_DOMAIN   *.vm
+ENV WEB_DOCUMENT_ROOT  /docker/code/
+ENV WEB_DOCUMENT_INDEX index.php
+ENV WEB_ALIAS_DOMAIN   *.vm
 
 # Install nginx
 RUN set -x \
