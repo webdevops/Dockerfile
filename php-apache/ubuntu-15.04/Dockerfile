@@ -5,14 +5,11 @@
 FROM webdevops/php:ubuntu-15.04
 MAINTAINER info@webdevops.io
 
-ENV HTTPD_DOCUMENT_ROOT  /docker/code/
-ENV HTTPD_DOCUMENT_INDEX index.phpa
-ENV HTTPD_ALIAS_DOMAIN   *.vm
+ENV WEB_DOCUMENT_ROOT  /docker/code/
+ENV WEB_DOCUMENT_INDEX index.php
+ENV WEB_ALIAS_DOMAIN   *.vm
 
-# Install tools
-RUN apt-add-repository multiverse
-
-# Install php
+# Install apache
 RUN set -x \
     && apt-get update \
     && apt-get install -y \

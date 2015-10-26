@@ -15,6 +15,9 @@ webdevops/php:
 webdevops/php-apache:
 	bash .bin/build.sh php-apache webdevops/php-apache
 
+webdevops/php-nginx:
+	bash .bin/build.sh php-nginx webdevops/php-nginx
+
 webdevops/samson-deployment:
 	bash .bin/build.sh samson-deployment webdevops/samson-deployment
 
