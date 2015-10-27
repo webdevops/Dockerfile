@@ -12,7 +12,6 @@ ENV WEB_ALIAS_DOMAIN   *.vm
 # Install tools
 RUN yum -y install \
         nginx \
-    && ln -sf /opt/docker/etc/nginx/vhost.conf /etc/nginx/conf.d/10-docker.conf \
     && yum clean all
 
 # Deploy scripts/configurations
