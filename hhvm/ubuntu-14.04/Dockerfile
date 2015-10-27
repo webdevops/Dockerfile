@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 14.04 PHP Docker container
+# Ubuntu 14.04 HHVM Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:ubuntu-14.04
@@ -21,35 +21,18 @@ RUN set -x \
 
 # Install php
 RUN set -x \
+    && apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0x5a16e7281be7a449 \
+    && add-apt-repository "deb http://dl.hhvm.com/ubuntu $(lsb_release -sc) main" \
     && apt-get update \
     && apt-get install -y \
-        php5-cli \
-        php5-fpm \
-        php5-json \
-        php5-intl \
-        php5-curl \
-        php5-mysqlnd \
-        php5-xdebug \
-        php5-memcached \
-        php5-mcrypt \
-        php5-gd \
-        php5-sqlite \
-        php5-xmlrpc \
-        php5-xsl \
-        php5-geoip \
-        php5-ldap \
-        php5-memcache \
-        php5-memcached \
-        php5-imagick \
-    && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
-    && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
+        hhvm \
+    && /usr/bin/update-alternatives --install /usr/bin/php php /usr/bin/hhvm 60 \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php \
-    && bash /opt/docker/bin/bootstrap.sh
+RUN bash /opt/docker/bin/bootstrap.sh
 
 # Configure volume/workdir
 RUN mkdir -p /docker/code/

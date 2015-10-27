@@ -16,26 +16,26 @@ case "$CONTROL_COMMAND" in
     ## PROVISION
     ## ------------------------------------------
     "provision.role")
-        mkdir -p "${PROVISION_REGISTRY_PATH}"
-        touch "${PROVISION_REGISTRY_PATH}/provision.bootstrap"
-        touch "${PROVISION_REGISTRY_PATH}/provision.entrypoint"
+        mkdir -p -- "${PROVISION_REGISTRY_PATH}"
+        touch -- "${PROVISION_REGISTRY_PATH}/provision.bootstrap"
+        touch -- "${PROVISION_REGISTRY_PATH}/provision.entrypoint"
 
-        echo $1 >> "${PROVISION_REGISTRY_PATH}/provision.bootstrap"
-        echo $1 >> "${PROVISION_REGISTRY_PATH}/provision.entrypoint"
+        echo "$1" >> "${PROVISION_REGISTRY_PATH}/provision.bootstrap"
+        echo "$1" >> "${PROVISION_REGISTRY_PATH}/provision.entrypoint"
         ;;
 
     "provision.role.bootstrap")
-        mkdir -p "${PROVISION_REGISTRY_PATH}"
-        touch "${PROVISION_REGISTRY_PATH}/provision.bootstrap"
+        mkdir -p -- "${PROVISION_REGISTRY_PATH}"
+        touch -- "${PROVISION_REGISTRY_PATH}/provision.bootstrap"
 
-        echo $1 >> "${PROVISION_REGISTRY_PATH}/provision.bootstrap"
+        echo "$1" >> "${PROVISION_REGISTRY_PATH}/provision.bootstrap"
         ;;
 
     "provision.role.entrypoint")
-        mkdir -p "${PROVISION_REGISTRY_PATH}"
-        touch "${PROVISION_REGISTRY_PATH}/provision.entrypoint"
+        mkdir -p -- "${PROVISION_REGISTRY_PATH}"
+        touch -- "${PROVISION_REGISTRY_PATH}/provision.entrypoint"
 
-        echo $1 >> "${PROVISION_REGISTRY_PATH}/provision.entrypoint"
+        echo "$1" >> "${PROVISION_REGISTRY_PATH}/provision.entrypoint"
         ;;
 
     ## ------------------------------------------

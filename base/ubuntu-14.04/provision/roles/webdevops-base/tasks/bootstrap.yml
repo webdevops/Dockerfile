@@ -19,3 +19,5 @@
     owner: "{{ DOCKER.APPLICATION_USER }}"
     group: "{{ DOCKER.APPLICATION_GROUP }}"
     recurse: yes
+
+- action: setup
