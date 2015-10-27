@@ -17,3 +17,10 @@
   with_items:
    - { file: "server.ini", key: 'hhvm.server.ip', value: "127.0.0.1" }
    - { file: "php.ini", key: 'hhvm.server.fix_path_info', value: "true" }
+
+- name: Enable apache main config
+  file:
+    src:  '/opt/docker/etc/httpd/main.conf'
+    dest: '/etc/apache2/sites-enabled/10-docker.conf'
+    state: link
+    force: yes
