@@ -1,12 +1,15 @@
 ---
 
+- name: Get list of apache configuration files
+  shell: ls -1 /opt/docker/etc/httpd/*.conf
+  register: http_conf_list
+  ignore_errors: true
+
 - name: Set apache variables
   replace:
-    dest:    '/opt/docker/etc/httpd/vhost.conf'
-    regexp:  '<{{ item.key }}>'
-    replace: '{{ item.value }}'
-  with_items:
-   - { key: 'DOCUMENT_INDEX', value: "{{ lookup('env','WEB_DOCUMENT_INDEX') }}" }
-   - { key: 'DOCUMENT_ROOT',  value: "{{ lookup('env','WEB_DOCUMENT_ROOT') }}" }
-   - { key: 'ALIAS_DOMAIN',   value: "{{ lookup('env','WEB_ALIAS_DOMAIN') }}" }
-   - { key: 'SERVERNAME',     value: "{{ ansible_nodename }}" }
+    dest:    '{{ item[1] }}'
+    regexp:  '<{{ item[0].variable }}>'
+    replace: '{{ item[0].value }}'
+  with_nested:
+   - HTTPD_VARS
+   - http_conf_list.stdout_lines

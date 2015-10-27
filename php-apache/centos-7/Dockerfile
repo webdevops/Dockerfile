@@ -17,7 +17,6 @@ RUN yum -y install \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf \
-    && ln -sf /opt/docker/etc/httpd/vhost.conf /etc/httpd/conf.d/docker.conf \
     && yum clean all
 
 # Deploy scripts/configurations
