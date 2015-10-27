@@ -11,6 +11,9 @@ service: webdevops/ssh webdevops/vsftp
 php:     webdevops/php webdevops/php-apache webdevops/php-nginx
 hhvm:    webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
+apache:  webdevops/php-apache webdevops/hhvm-apache
+nginx:   webdevops/php-nginx webdevops/hhvm-nginx
+
 webdevops/base:
 	bash .bin/build.sh base webdevops/base
 
