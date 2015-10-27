@@ -36,7 +36,7 @@ else
         if [ -f "$DOCKERFILE/Dockerfile" ]; then
             TAGNAME=$(basename "$DOCKERFILE")
             buildDockerfile "${DOCKERFILE}" "${BASENAME}" "${TAGNAME}"
-            sleep 3
+            sleep 1
         fi
     done
 fi
