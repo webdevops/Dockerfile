@@ -4,7 +4,12 @@ MAKEFLAGS += --silent
 list:
 	sh -c "echo; $(MAKE) -p no_targets__ | awk -F':' '/^[a-zA-Z0-9][^\$$#\/\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);for(i in A)print A[i]}' | grep -v '__\$$' | grep -v 'Makefile'| sort"
 
-webdevops: webdevops/base  webdevops/php webdevops/php-apache webdevops/samson-deployment webdevops/ssh webdevops/storage webdevops/vsftp
+all: base php hhvm service
+
+base:    webdevops/base webdevops/storage
+service: webdevops/ssh webdevops/vsftp
+php:     webdevops/php webdevops/php-apache webdevops/php-nginx
+hhvm:    webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
 webdevops/base:
 	bash .bin/build.sh base webdevops/base
@@ -20,6 +25,15 @@ webdevops/php-nginx:
 
 webdevops/samson-deployment:
 	bash .bin/build.sh samson-deployment webdevops/samson-deployment
+
+webdevops/hhvm:
+	bash .bin/build.sh hhvm webdevops/hhvm
+
+webdevops/hhvm-apache:
+	bash .bin/build.sh hhvm-apache webdevops/hhvm-apache
+
+webdevops/hhvm-nginx:
+	bash .bin/build.sh hhvm-nginx webdevops/hhvm-nginx
 
 webdevops/ssh:
 	bash .bin/build.sh ssh webdevops/ssh
