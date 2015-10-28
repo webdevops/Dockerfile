@@ -14,7 +14,6 @@ RUN set -x \
     && apt-get update \
     && apt-get install -y \
         nginx \
-	&& ln -sf /opt/docker/etc/nginx/vhost.conf /etc/nginx/conf.d/10-docker.conf \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 

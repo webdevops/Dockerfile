@@ -7,3 +7,10 @@
     line:   '{{ item.key }} = {{ item.value }}'
   with_items:
    - { key: 'listen', value: "127.0.0.1:9000" }
+
+- name: Enable apache main config
+  file:
+    src:  '/opt/docker/etc/httpd/main.conf'
+    dest: '/etc/httpd/conf.d/docker.conf'
+    state: link
+    force: yes

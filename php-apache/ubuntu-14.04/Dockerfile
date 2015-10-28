@@ -21,7 +21,6 @@ RUN set -x \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
-	&& ln -sf /opt/docker/etc/httpd/vhost.conf /etc/apache2/sites-enabled/10-docker.conf \
 	&& a2enmod actions fastcgi ssl \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y

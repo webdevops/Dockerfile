@@ -7,3 +7,10 @@
     line:   '{{ item.key }} {{ item.value }};'
   with_items:
    - { key: 'daemon', value: "off" }
+
+- name: Enable nginx main config
+  file:
+    src:  '/opt/docker/etc/nginx/main.conf'
+    dest: '/etc/nginx/conf.d/10-docker.conf'
+    state: link
+    force: yes

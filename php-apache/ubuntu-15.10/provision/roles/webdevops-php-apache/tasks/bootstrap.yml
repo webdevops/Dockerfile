@@ -7,3 +7,10 @@
     line:   '{{ item.key }} = {{ item.value }}'
   with_items:
    - { key: 'listen', value: "/var/run/php5-fpm.sock" }
+
+- name: Enable apache main config
+  file:
+    src:  '/opt/docker/etc/httpd/main.conf'
+    dest: '/etc/apache2/sites-enabled/10-docker.conf'
+    state: link
+    force: yes
