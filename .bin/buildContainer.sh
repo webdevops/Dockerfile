@@ -25,6 +25,7 @@ fi
 if [ "$DOCKER_BUILD_RET" -ne 0 ]; then
     if [ "$DEBUG" -eq 0 ]; then
         cat "$LOGFILE"
+        rm -f -- "$LOGFILE"
     fi
 
     exit "$DOCKER_BUILD_RET"
