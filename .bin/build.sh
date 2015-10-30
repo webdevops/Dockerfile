@@ -7,6 +7,7 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 
 TARGET="$1"
 BASENAME="$2"
+LATEST="$3"
 
 WORKDIR=$(pwd)
 
@@ -39,4 +40,9 @@ else
             sleep 1
         fi
     done
+
+    if [ -f "${TARGET}/${LATEST}/Dockerfile" ]; then
+            DOCKERFILE="${TARGET}/${LATEST}"
+            buildDockerfile "${DOCKERFILE}" "${BASENAME}" "latest"
+    fi
 fi
