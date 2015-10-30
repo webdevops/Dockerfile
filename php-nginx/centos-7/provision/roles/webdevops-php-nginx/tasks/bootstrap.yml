@@ -14,7 +14,7 @@
     regexp: '^[\s;]*{{ item.key }}[\s]*='
     line:   '{{ item.key }} = {{ item.value }}'
   with_items:
-   - { key: 'listen', value: "/var/run/php5-fpm.sock" }
+   - { key: 'listen', value: "127.0.0.1:9000" }
 
 - name: Enable nginx main config
   file:
