@@ -7,21 +7,27 @@ DOCKER_LATEST="ubuntu-14.04"
 list:
 	sh -c "echo; $(MAKE) -p no_targets__ | awk -F':' '/^[a-zA-Z0-9][^\$$#\/\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);for(i in A)print A[i]}' | grep -v '__\$$' | grep -v 'Makefile'| sort"
 
-all: base php hhvm service
+all: base php hhvm service apache nginx
 
 base:    webdevops/base webdevops/storage
 service: webdevops/ssh webdevops/vsftp
 php:     webdevops/php webdevops/php-apache webdevops/php-nginx
 hhvm:    webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
-apache:  webdevops/php-apache webdevops/hhvm-apache
-nginx:   webdevops/php-nginx webdevops/hhvm-nginx
+apache:  webdevops/apache webdevops/php-apache webdevops/hhvm-apache
+nginx:   webdevops/nginx webdevops/php-nginx webdevops/hhvm-nginx
 
 webdevops/base:
 	bash .bin/build.sh base "${DOCKER_PREFIX}/base" "${DOCKER_LATEST}"
 
 webdevops/php:
 	bash .bin/build.sh php "${DOCKER_PREFIX}/php" "${DOCKER_LATEST}"
+
+webdevops/apache:
+	bash .bin/build.sh apache "${DOCKER_PREFIX}/apache" "${DOCKER_LATEST}"
+
+webdevops/nginx:
+	bash .bin/build.sh nginx "${DOCKER_PREFIX}/nginx" "${DOCKER_LATEST}"
 
 webdevops/php-apache:
 	bash .bin/build.sh php-apache "${DOCKER_PREFIX}/php-apache" "${DOCKER_LATEST}"
