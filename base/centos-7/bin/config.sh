@@ -72,6 +72,9 @@ function runDockerProvision() {
 
     ## Create dynamic ansible playbook file
     if [ ! -f "$ANSIBLE_PLAYBOOK" ]; then
+        TMP_PLAYBOOK=$(mktemp /tmp/docker.build.XXXXXXXXXX)
+        TMP_PLAYBOOK_ROLES=$(mktemp /tmp/docker.build.XXXXXXXXXX)
+
         ## Create dynamic playbook file
         echo "---
 
@@ -79,17 +82,25 @@ function runDockerProvision() {
   vars_files:
     - "./variables.yml"
   roles:
-" > "$ANSIBLE_PLAYBOOK"
+" > "$TMP_PLAYBOOK"
 
-        buildProvisionRoleList "provision.startup.${ANSIBLE_TAG}" >> "$ANSIBLE_PLAYBOOK"
-        buildProvisionRoleList "provision.main.${ANSIBLE_TAG}"    >> "$ANSIBLE_PLAYBOOK"
-        buildProvisionRoleList "provision.finish.${ANSIBLE_TAG}"  >> "$ANSIBLE_PLAYBOOK"
+        ROLES_FILE=$(mktemp /tmp/docker.build.XXXXXXXXXX)
 
-        ANSIBLE_DYNAMIC_PLAYBOOK=1
+        buildProvisionRoleList "provision.startup.${ANSIBLE_TAG}" >> "$TMP_PLAYBOOK_ROLES"
+        buildProvisionRoleList "provision.main.${ANSIBLE_TAG}"    >> "$TMP_PLAYBOOK_ROLES"
+        buildProvisionRoleList "provision.finish.${ANSIBLE_TAG}"  >> "$TMP_PLAYBOOK_ROLES"
+
+        # check if there is at last one role
+        if [ -s "$TMP_PLAYBOOK_ROLES" ]; then
+            cat "$TMP_PLAYBOOK" "$TMP_PLAYBOOK_ROLES" > $ANSIBLE_PLAYBOOK
+            ANSIBLE_DYNAMIC_PLAYBOOK=1
+        fi
+
+        rm -f -- "$TMP_PLAYBOOK" "$TMP_PLAYBOOK_ROLES"
     fi
 
     # Only run playbook if there is one
-    if [ -f "${ANSIBLE_PLAYBOOK}" ]; then
+    if [ -s "${ANSIBLE_PLAYBOOK}" ]; then
         bash /opt/docker/bin/provision.sh "${ANSIBLE_PLAYBOOK}" "${ANSIBLE_TAG}"
 
         # Remove dynamic playbook file
