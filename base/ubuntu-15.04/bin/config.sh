@@ -32,8 +32,8 @@ function initBootstrap() {
 
     runDockerProvision bootstrap
 
-    ## Reset bootstrap provision list (prevent re-run)b
-    rm -f "${PROVISION_REGISTRY_PATH}/provision.*.bootstrap"
+    ## Reset bootstrap provision list (prevent re-run)
+    rm -f ${PROVISION_REGISTRY_PATH}/provision.*.bootstrap
 }
 
 function initEntrypoint() {
