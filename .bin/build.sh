@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -z "$FAST" ]; then
-    FAST=0
+    FAST=1
 fi
 
 if [ -z "$DEBUG" ]; then

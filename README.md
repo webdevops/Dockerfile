@@ -18,8 +18,8 @@ Lokal building of containers can be done with `make` and `Makefile`:
 
 Command                     | Description                                                                       
 --------------------------- | ----------------------------------------------------------------------------------
-`make all`                  | Build all containers *slow mode*
-`FAST=1 make all`           | Build all containers *fast mode* (parallel building)
+`make all`                  | Build all containers *fast mode* (parallel building, `FAST=1`)
+`FAST=0 make all`           | Build all containers *slow mode* (serial building)
 `DEBUG=1 make all`          | Show log of build process even if process is successfull
 <br>                        |
 `make base`                 | Build all base containers
