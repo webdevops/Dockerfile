@@ -35,6 +35,7 @@ RUN yum -y install \
         supervisor \
         openssh-server \
         mysql \
+        dnsmasq \
     && yum clean all
 
 # Install tools
