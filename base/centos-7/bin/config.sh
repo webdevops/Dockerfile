@@ -33,7 +33,7 @@ function initBootstrap() {
     runDockerProvision bootstrap
 
     ## Reset bootstrap provision list (prevent re-run)b
-    rm -f "${PROVISION_REGISTRY_PATH}/provision.bootstrap"
+    rm -f "${PROVISION_REGISTRY_PATH}/provision.*.bootstrap"
 }
 
 function initEntrypoint() {
@@ -44,15 +44,34 @@ function initEntrypoint() {
     runDockerProvision entrypoint
 }
 
+function provisionRoleAdd() {
+    PROVISION_FILE="${PROVISION_REGISTRY_PATH}/$1"
+    PROVISION_ROLE="$2"
+
+    mkdir -p -- "${PROVISION_REGISTRY_PATH}"
+    touch -- "${PROVISION_FILE}"
+
+    echo "${PROVISION_ROLE}" >> "${PROVISION_FILE}"
+}
+
+function buildProvisionRoleList() {
+    PROVISION_FILE="${PROVISION_REGISTRY_PATH}/$1"
+
+    if [ -s "${PROVISION_FILE}" ]; then
+        # Add registered roles
+        for ROLE in $(cat "$PROVISION_FILE"); do
+            echo "    - { role: \"$ROLE\" }"
+        done
+    fi
+}
+
 function runDockerProvision() {
     ANSIBLE_PLAYBOOK="/opt/docker/provision/playbook.yml"
     ANSIBLE_TAG="$1"
-
-    ANSIBLE_PROVISION_REGISTRY="${PROVISION_REGISTRY_PATH}/provision.${ANSIBLE_TAG}"
     ANSIBLE_DYNAMIC_PLAYBOOK=0
 
     ## Create dynamic ansible playbook file
-    if [ ! -f "$ANSIBLE_PLAYBOOK" -a -s "$ANSIBLE_PROVISION_REGISTRY" ]; then
+    if [ ! -f "$ANSIBLE_PLAYBOOK" ]; then
         ## Create dynamic playbook file
         echo "---
 
@@ -62,10 +81,9 @@ function runDockerProvision() {
   roles:
 " > "$ANSIBLE_PLAYBOOK"
 
-        # Add registered roles
-        for ROLE in $(cat $ANSIBLE_PROVISION_REGISTRY); do
-            echo "    - { role: \"$ROLE\" }" >> "$ANSIBLE_PLAYBOOK"
-        done
+        buildProvisionRoleList "provision.startup.${ANSIBLE_TAG}" >> "$ANSIBLE_PLAYBOOK"
+        buildProvisionRoleList "provision.main.${ANSIBLE_TAG}"    >> "$ANSIBLE_PLAYBOOK"
+        buildProvisionRoleList "provision.finish.${ANSIBLE_TAG}"  >> "$ANSIBLE_PLAYBOOK"
 
         ANSIBLE_DYNAMIC_PLAYBOOK=1
     fi

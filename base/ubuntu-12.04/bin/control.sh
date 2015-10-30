@@ -10,32 +10,55 @@ source /opt/docker/bin/config.sh
 CONTROL_COMMAND="$1"
 shift
 
+
+
+
 case "$CONTROL_COMMAND" in
 
     ## ------------------------------------------
     ## PROVISION
     ## ------------------------------------------
-    "provision.role")
-        mkdir -p -- "${PROVISION_REGISTRY_PATH}"
-        touch -- "${PROVISION_REGISTRY_PATH}/provision.bootstrap"
-        touch -- "${PROVISION_REGISTRY_PATH}/provision.entrypoint"
 
-        echo "$1" >> "${PROVISION_REGISTRY_PATH}/provision.bootstrap"
-        echo "$1" >> "${PROVISION_REGISTRY_PATH}/provision.entrypoint"
+    ## main roles
+    "provision.role")
+        provisionRoleAdd "provision.main.bootstrap" "$1"
+        provisionRoleAdd "provision.main.entrypoint" "$1"
         ;;
 
     "provision.role.bootstrap")
-        mkdir -p -- "${PROVISION_REGISTRY_PATH}"
-        touch -- "${PROVISION_REGISTRY_PATH}/provision.bootstrap"
-
-        echo "$1" >> "${PROVISION_REGISTRY_PATH}/provision.bootstrap"
+        provisionRoleAdd "provision.main.bootstrap" "$1"
         ;;
 
     "provision.role.entrypoint")
-        mkdir -p -- "${PROVISION_REGISTRY_PATH}"
-        touch -- "${PROVISION_REGISTRY_PATH}/provision.entrypoint"
+        provisionRoleAdd "provision.main.entrypoint" "$1"
+        ;;
 
-        echo "$1" >> "${PROVISION_REGISTRY_PATH}/provision.entrypoint"
+    ## startup roles
+    "provision.role.startup")
+        provisionRoleAdd "provision.startup.bootstrap" "$1"
+        provisionRoleAdd "provision.startup.entrypoint" "$1"
+        ;;
+
+    "provision.role.startup.bootstrap")
+        provisionRoleAdd "provision.startup.bootstrap" "$1"
+        ;;
+
+    "provision.role.startup.entrypoint")
+        provisionRoleAdd "provision.startup.entrypoint" "$1"
+        ;;
+
+    ## startup roles
+    "provision.role.finish")
+        provisionRoleAdd "provision.finish.bootstrap" "$1"
+        provisionRoleAdd "provision.finish.entrypoint" "$1"
+        ;;
+
+    "provision.role.finish.bootstrap")
+        provisionRoleAdd "provision.finish.bootstrap" "$1"
+        ;;
+
+    "provision.role.finish.entrypoint")
+        provisionRoleAdd "provision.finish.entrypoint" "$1"
         ;;
 
     ## ------------------------------------------
@@ -62,7 +85,7 @@ case "$CONTROL_COMMAND" in
         ;;
 
     *)
-        echo "[ERROR] Invalid command"
+        echo "[ERROR] Invalid controll command: \"${CONTROL_COMMAND}\""
         exit 1
         ;;
 esac
