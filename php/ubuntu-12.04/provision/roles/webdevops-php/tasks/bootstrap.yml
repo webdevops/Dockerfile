@@ -12,8 +12,8 @@
    - { key: 'slowlog',                     value: "/var/log/php.slow.log" }
    - { key: 'php_admin_value[error_log]',  value: "/var/log/php.error.log" }
    - { key: 'php_admin_value[log_errors]', value: "on" }
-   - { key: 'user',                        value: "{{ DOCKER.APPLICATION_USER }}" }
-   - { key: 'group',                       value: "{{ DOCKER.APPLICATION_GROUP }}" }
+   - { key: 'user',                        value: "{{ APPLICATION_USER }}" }
+   - { key: 'group',                       value: "{{ APPLICATION_GROUP }}" }
 
 - name: Enable php-fpm connection limit
   lineinfile:

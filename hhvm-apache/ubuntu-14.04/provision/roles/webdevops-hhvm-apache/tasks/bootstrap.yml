@@ -7,7 +7,7 @@
     path:  /var/run/hhvm/
     state: directory
     mode:  0700
-    owner: "{{ DOCKER.APPLICATION_USER }}"
+    owner: "{{ APPLICATION_USER }}"
 
 - name: Setup hhvm
   lineinfile:
