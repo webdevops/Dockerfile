@@ -1,21 +1,21 @@
 ---
 
 - group:
-    name:  "{{ DOCKER.APPLICATION_GROUP }}"
-    gid:   "{{ DOCKER.APPLICATION_GID }}"
+    name:  "{{ APPLICATION_GROUP }}"
+    gid:   "{{ APPLICATION_GID }}"
 
 - user:
-    name:  "{{ DOCKER.APPLICATION_USER }}"
-    uid:   "{{ DOCKER.APPLICATION_UID }}"
-    group: "{{ DOCKER.APPLICATION_GROUP }}"
+    name:  "{{ APPLICATION_USER }}"
+    uid:   "{{ APPLICATION_UID }}"
+    group: "{{ APPLICATION_GROUP }}"
     shell: "/bin/bash"
-    home:  "/home/{{ DOCKER.APPLICATION_USER }}"
+    home:  "/home/{{ APPLICATION_USER }}"
 
 # create a directory if it doesn't exist
 - file:
-    path: "/home/{{ DOCKER.APPLICATION_USER }}"
+    path: "/home/{{ APPLICATION_USER }}"
     state: directory
     mode:  0755
-    owner: "{{ DOCKER.APPLICATION_USER }}"
-    group: "{{ DOCKER.APPLICATION_GROUP }}"
+    owner: "{{ APPLICATION_USER }}"
+    group: "{{ APPLICATION_GROUP }}"
     recurse: yes

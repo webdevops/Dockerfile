@@ -12,6 +12,23 @@ Dockerfile                  | Description                                       
 [`ssh`](ssh/README.md)      | SSH service container                                                              | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
 [`samson-deployment`](samson-deployment/README.md) | [Samson](https://github.com/webdevops/samson-deployment) based deployment service  | [`zendesk/samson`](https://hub.docker.com/r/zendesk/samson/)         |
 
+# Building
+
+Lokal building of containers can be done with `make` and `Makefile`:
+
+Command                     | Description                                                                       
+--------------------------- | ----------------------------------------------------------------------------------
+`make all`                  | Build all containers *fast mode* (parallel building, `FAST=1`)
+`FAST=0 make all`           | Build all containers *slow mode* (serial building)
+`DEBUG=1 make all`          | Show log of build process even if process is successfull
+<br>                        |
+`make base`                 | Build all base containers
+`make service`              | Build all service containers
+`make php`                  | Build all php containers
+`make hhvm`                 | Build all hhvm containers
+`make nginx`                | Build all nginx containers
+`make apache`               | Build all apache containers
+`make webdevops/php-nginx`  | Build specific containers (as example)
 
 # Provisioning
 

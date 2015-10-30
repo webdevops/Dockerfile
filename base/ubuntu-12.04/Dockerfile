@@ -49,6 +49,7 @@ RUN set -x \
         openssh-server \
         mysql-client \
         cron \
+        dnsmasq \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 

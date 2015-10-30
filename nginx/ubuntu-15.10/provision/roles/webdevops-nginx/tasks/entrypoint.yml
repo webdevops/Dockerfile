@@ -1,0 +1,15 @@
+---
+
+- name: Get list of nginx configuration files
+  shell: ls -1 /opt/docker/etc/nginx/*.conf
+  register: nginx_conf_list
+  ignore_errors: true
+
+- name: Set nginx variables
+  replace:
+    dest:    '{{ item[1] }}'
+    regexp:  '<{{ item[0].variable }}>'
+    replace: '{{ item[0].value }}'
+  with_nested:
+   - NGINX_VARS
+   - nginx_conf_list.stdout_lines
