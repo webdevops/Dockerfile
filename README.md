@@ -22,6 +22,7 @@ Command                     | Description
 `make all`                  | Build all containers *fast mode* (parallel building, `FAST=1`)
 `FAST=0 make all`           | Build all containers *slow mode* (serial building)
 `DEBUG=1 make all`          | Show log of build process even if process is successfull
+`FORCE=1 make all`          | Force container build (`docker build --no-cache ...`)
 <br>                        |
 `make base`                 | Build all base containers
 `make service`              | Build all service containers
