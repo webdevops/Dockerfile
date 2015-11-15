@@ -7,3 +7,4 @@
     line:   '{{ item.key }}={{ item.value }}'
   with_items:
    - { key: 'myhostname',     value: '{{ ansible_hostname }}' }
+   - { key: 'mydestination',  value: '{{ ansible_hostname }}' }
