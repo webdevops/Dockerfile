@@ -16,14 +16,14 @@ ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
 # System update
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-get update \
     && apt-get dist-upgrade -y \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 
 # Install apt-add-repository
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-get update \
     && apt-get install -y \
         python-software-properties \
@@ -31,7 +31,7 @@ RUN set -x \
     && apt-get clean -y
 
 # Install ansible
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-add-repository ppa:ansible/ansible \
     && apt-get update \
     && apt-get install -y \
@@ -42,7 +42,7 @@ RUN set -x \
     && apt-get clean -y
 
 # Install services
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-get update \
     && apt-get install -y \
         supervisor \
@@ -55,7 +55,7 @@ RUN set -x \
     && apt-get clean -y
 
 # Install common tools
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-get update \
     && apt-get install -y \
         lsb-release \

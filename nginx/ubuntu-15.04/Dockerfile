@@ -10,7 +10,7 @@ ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
 # Install nginx
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-get update \
     && apt-get install -y \
         nginx \
