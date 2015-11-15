@@ -6,7 +6,7 @@ ENV PYTHONPATH       /opt/ansible/lib
 ENV ANSIBLE_LIBRARY  /opt/ansible/library
 
 # Ansible
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-get update \
     && apt-get install -y \
         python-crypto \
@@ -31,7 +31,7 @@ RUN ansible-galaxy install --force \
     carlosbuenosvinos.ansistrano-rollback
 
 # Docker (client)
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && echo deb https://apt.dockerproject.org/repo debian-jessie main > /etc/apt/sources.list.d/docker.list \
     && apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D \
     && apt-get update \
@@ -44,13 +44,13 @@ RUN set -x \
 RUN pip install docker-compose
 
 # NPM stack
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && npm install -g gulp \
     && npm install -g grunt-cli \
     && npm install -g bower
 
 # PHP stack
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-get update \
     && apt-get install -y \
         php5-cli \
@@ -64,7 +64,7 @@ RUN set -x \
     && apt-get clean -y
 
 # Update
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-get update \
     && apt-get dist-upgrade -y \
     && rm -rf /var/lib/apt/lists/* \

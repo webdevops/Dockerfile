@@ -1,32 +1,5 @@
 ---
 
-- group:
-    name:  "{{ APPLICATION_GROUP }}"
-    gid:   "{{ APPLICATION_GID }}"
-
-- user:
-    name:  "{{ APPLICATION_USER }}"
-    uid:   "{{ APPLICATION_UID }}"
-    group: "{{ APPLICATION_GROUP }}"
-    shell: "/bin/bash"
-    home:  "/home/{{ APPLICATION_USER }}"
-
-# create a directory if it doesn't exist
-- file:
-    path: "/home/{{ APPLICATION_USER }}"
-    state: directory
-    mode:  0755
-    owner: "{{ APPLICATION_USER }}"
-    group: "{{ APPLICATION_GROUP }}"
-    recurse: yes
-
-- name: Configure dnsmasq
-  lineinfile:
-    dest:   /etc/dnsmasq.conf
-    regexp: '^[\s]*{{ item.key }}[\s]*='
-    line:   '{{ item.key }}={{ item.value }}'
-  with_items:
-   - { key: 'user',     value: 'root' }
-   - { key: 'conf-dir', value: '/etc/dnsmasq.d' }
-
-- action: setup
+- include: bootstrap/user.yml
+- include: bootstrap/dnsmasq.yml
+- include: bootstrap/postfix.yml

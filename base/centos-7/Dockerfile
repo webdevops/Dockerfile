@@ -36,6 +36,7 @@ RUN yum -y install \
         openssh-server \
         mysql \
         dnsmasq \
+        postfix \
     && yum clean all
 
 # Install tools
@@ -60,6 +61,7 @@ RUN yum -y install \
 # Deploy scripts/configurations
 COPY . /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role webdevops-base \
+    && bash /opt/docker/bin/control.sh provision.role.finish webdevops-cleanup \
     && bash /opt/docker/bin/bootstrap.sh
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]

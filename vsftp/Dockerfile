@@ -13,7 +13,7 @@ ENV FTP_PASSWORD dev
 ENV FTP_PATH     /data/ftp/
 
 # Install vsftp
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-get update \
     && apt-get install -y \
         vsftpd \

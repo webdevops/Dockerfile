@@ -11,7 +11,7 @@ ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
 # Install tools
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-get update \
     && apt-get install -y \
         imagemagick \
@@ -20,7 +20,7 @@ RUN set -x \
     && apt-get clean -y
 
 # Install php
-RUN set -x \
+RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-get update \
     && apt-get install -y \
         php5-cli \
