@@ -51,6 +51,7 @@ RUN set -x \
         mysql-client \
         cron \
         dnsmasq \
+        postfix \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y
 

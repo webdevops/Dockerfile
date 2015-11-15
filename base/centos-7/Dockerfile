@@ -36,6 +36,7 @@ RUN yum -y install \
         openssh-server \
         mysql \
         dnsmasq \
+        postfix \
     && yum clean all
 
 # Install tools
