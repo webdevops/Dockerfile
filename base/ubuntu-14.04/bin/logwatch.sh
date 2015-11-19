@@ -10,5 +10,5 @@ sleep 5
 if [ -p "$2" ]; then
     sed --unbuffered -e "s/^/\[$1\] /" -- "$2"
 else
-    tail -F -n 0 --quiet "$2" | sed --unbuffered -e "s/^/\[$1\] /"
+    tail --lines=0 --follow=name --quiet "$2" | sed --unbuffered -e "s/^/\[$1\] /"
 fi
