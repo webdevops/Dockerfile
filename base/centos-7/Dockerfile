@@ -33,6 +33,7 @@ RUN yum -y install \
 RUN yum -y install \
         cronie \
         supervisor \
+        syslog-ng \
         openssh-server \
         mysql \
         dnsmasq \

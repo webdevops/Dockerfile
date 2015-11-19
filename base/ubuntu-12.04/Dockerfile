@@ -44,8 +44,10 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
 # Install services
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-get update \
-    && apt-get install -y \
+    && apt-get install -f -y \
         supervisor \
+        syslog-ng \
+        syslog-ng-core \
         openssh-server \
         mysql-client \
         cron \
