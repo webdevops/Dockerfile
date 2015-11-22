@@ -48,6 +48,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
         supervisor \
         syslog-ng \
         syslog-ng-core \
+        logrotate \
         openssh-server \
         mysql-client \
         cron \
