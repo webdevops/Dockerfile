@@ -27,8 +27,7 @@ RUN /usr/local/bin/yum-install \
         python-setuptools \
         python-setuptools-devel \
     && easy_install pip \
-    && pip install ansible \
-    && yum clean all
+    && pip install ansible
 
 # Install services
 RUN /usr/local/bin/yum-install \

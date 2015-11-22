@@ -11,18 +11,12 @@ ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
 # Install tools
-RUN export DEBIAN_FRONTEND=noninteractive && set -x \
-    && apt-get update \
-    && apt-get install -y \
+RUN /usr/local/bin/apt-install \
         imagemagick \
-        graphicsmagick \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean -y
+        graphicsmagick
 
 # Install php
-RUN export DEBIAN_FRONTEND=noninteractive && set -x \
-    && apt-get update \
-    && apt-get install -y \
+RUN /usr/local/bin/apt-install \
         php5-cli \
         php5-fpm \
         php5-json \
@@ -43,9 +37,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
         php5-imagick \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
-    && sed -i 's/;daemonize = yes/daemonize = no/' /etc/php5/fpm/php-fpm.conf \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean -y
+    && sed -i 's/;daemonize = yes/daemonize = no/' /etc/php5/fpm/php-fpm.conf
 
 # Deploy scripts/configurations
 COPY . /opt/docker/

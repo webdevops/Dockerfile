@@ -13,13 +13,9 @@ ENV FTP_PASSWORD dev
 ENV FTP_PATH     /data/ftp/
 
 # Install vsftp
-RUN export DEBIAN_FRONTEND=noninteractive && set -x \
-    && apt-get update \
-    && apt-get install -y \
+RUN /usr/local/bin/apt-install \
         vsftpd \
-    && ln -sf /opt/docker/etc/vsftpd.conf /etc/vsftpd.conf \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean -y
+    && ln -sf /opt/docker/etc/vsftpd.conf /etc/vsftpd.conf
 
 RUN mkdir -p \
     /var/run/vsftpd/empty \
