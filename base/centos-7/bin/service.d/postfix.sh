@@ -27,10 +27,6 @@ cp -f /etc/hosts       /var/spool/postfix/etc/hosts
 cp -f /etc/resolv.conf /var/spool/postfix/etc/resolv.conf
 cp -f /etc/services    /var/spool/postfix/etc/services
 
-# Create logfile
-rm --force -- /var/log/mail.log
-mknod /var/log/mail.log p
-
 # start postfix
 postfix start
 
