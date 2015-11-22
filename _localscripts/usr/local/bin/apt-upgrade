@@ -11,7 +11,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 
 # Install packages
-apt-get dist-upgrade
+apt-get dist-upgrade -y -f
 
 # Clear files (reduce snapshot size)
 rm -rf /var/lib/apt/lists/*
