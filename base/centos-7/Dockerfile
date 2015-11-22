@@ -10,13 +10,14 @@ ENV APPLICATION_GROUP application
 ENV APPLICATION_UID   1000
 ENV APPLICATION_GID   1000
 
+# Add common scripts (from _localscripts)
+ADD scripts.tar ./
+
 # System update
-RUN yum upgrade -y \
-    && yum clean all
+RUN /usr/local/bin/yum-upgrade
 
 # Install ansible
-RUN yum clean all
-RUN yum -y install \
+RUN /usr/local/bin/yum-install \
         epel-release \
         PyYAML \
         python-jinja2 \
@@ -30,7 +31,7 @@ RUN yum -y install \
     && yum clean all
 
 # Install services
-RUN yum -y install \
+RUN /usr/local/bin/yum-install \
         cronie \
         supervisor \
         syslog-ng \
@@ -38,11 +39,10 @@ RUN yum -y install \
         openssh-server \
         mysql \
         dnsmasq \
-        postfix \
-    && yum clean all
+        postfix
 
 # Install tools
-RUN yum -y install \
+RUN /usr/local/bin/yum-install \
         sudo \
         zip \
         unzip \
@@ -57,8 +57,7 @@ RUN yum -y install \
         git \
         pygpgme \
         nano \
-        vim \
-    && yum clean all
+        vim
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
