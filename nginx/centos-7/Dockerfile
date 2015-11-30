@@ -5,7 +5,7 @@
 FROM webdevops/base:centos-7
 MAINTAINER info@webdevops.io
 
-ENV WEB_DOCUMENT_ROOT  /docker/code/
+ENV WEB_DOCUMENT_ROOT  /application/code/
 ENV WEB_DOCUMENT_INDEX index.phpa
 ENV WEB_ALIAS_DOMAIN   *.vm
 
