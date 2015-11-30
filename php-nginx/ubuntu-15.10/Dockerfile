@@ -5,18 +5,14 @@
 FROM webdevops/php:ubuntu-15.10
 MAINTAINER info@webdevops.io
 
-ENV WEB_DOCUMENT_ROOT  /docker/code/
+ENV WEB_DOCUMENT_ROOT  /application/code/
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
 # Install nginx
-RUN export DEBIAN_FRONTEND=noninteractive && set -x \
-    && apt-get update \
-    && apt-get install -y \
+RUN /usr/local/bin/apt-install \
         nginx \
-	&& ln -sf /opt/docker/etc/nginx/vhost.conf /etc/nginx/conf.d/10-docker.conf \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean -y
+	&& ln -sf /opt/docker/etc/nginx/vhost.conf /etc/nginx/conf.d/10-docker.conf
 
 # Deploy scripts/configurations
 COPY . /opt/docker/

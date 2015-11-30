@@ -3,3 +3,5 @@
 - include: bootstrap/user.yml
 - include: bootstrap/dnsmasq.yml
 - include: bootstrap/postfix.yml
+- include: bootstrap/syslog-ng.yml
+- include: bootstrap/logrotate.yml

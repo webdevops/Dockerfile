@@ -5,14 +5,12 @@
 FROM webdevops/php:ubuntu-15.10
 MAINTAINER info@webdevops.io
 
-ENV WEB_DOCUMENT_ROOT  /docker/code/
+ENV WEB_DOCUMENT_ROOT  /application/code/
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
 # Install apache
-RUN export DEBIAN_FRONTEND=noninteractive && set -x \
-    && apt-get update \
-    && apt-get install -y \
+RUN /usr/local/bin/apt-install \
         apache2 \
         libapache2-mod-fastcgi \
 	&& sed -ri ' \
@@ -21,9 +19,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
-	&& a2enmod actions fastcgi ssl \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean -y
+	&& a2enmod actions fastcgi ssl rewrite
 
 # Deploy scripts/configurations
 COPY . /opt/docker/

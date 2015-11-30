@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+LOGFILE=""
+
 if [ -z "$DEBUG" ]; then
     DEBUG=0
 fi
@@ -36,12 +38,13 @@ fi
 
 
 if [ "$DOCKER_BUILD_RET" -ne 0 ]; then
-    if [ "$DEBUG" -eq 0 ]; then
+    if [ -n "$LOGFILE" ]; then
         cat "$LOGFILE"
-        rm -f -- "$LOGFILE"
     fi
-
-    exit "$DOCKER_BUILD_RET"
 fi
 
-exit 0
+if [ -n "$LOGFILE" ]; then
+    rm -f -- "$LOGFILE"
+fi
+
+exit "$DOCKER_BUILD_RET"

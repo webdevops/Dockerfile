@@ -11,35 +11,22 @@ ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
 # Install tools
-RUN export DEBIAN_FRONTEND=noninteractive && set -x \
-    && apt-get update \
-    && apt-get install -y \
+RUN /usr/local/bin/apt-install \
         imagemagick \
-        graphicsmagick \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean -y
+        graphicsmagick
 
 # Install php
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0x5a16e7281be7a449 \
     && add-apt-repository "deb http://dl.hhvm.com/ubuntu $(lsb_release -sc) main" \
-    && apt-get update \
-    && apt-get install -y \
+    && /usr/local/bin/apt-install \
         hhvm \
-    && /usr/bin/update-alternatives --install /usr/bin/php php /usr/bin/hhvm 60 \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean -y
+    && /usr/bin/update-alternatives --install /usr/bin/php php /usr/bin/hhvm 60
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-hhvm \
     && bash /opt/docker/bin/bootstrap.sh
-
-
-# Configure volume/workdir
-RUN mkdir -p /docker/code/
-VOLUME /docker/
-WORKDIR /docker/code/
 
 EXPOSE 9000
 

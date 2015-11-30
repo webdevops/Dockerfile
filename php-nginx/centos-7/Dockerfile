@@ -5,14 +5,13 @@
 FROM webdevops/php:centos-7
 MAINTAINER info@webdevops.io
 
-ENV WEB_DOCUMENT_ROOT  /docker/code/
+ENV WEB_DOCUMENT_ROOT  /application/code/
 ENV WEB_DOCUMENT_INDEX index.phpa
 ENV WEB_ALIAS_DOMAIN   *.vm
 
 # Install tools
-RUN yum -y install \
-        nginx \
-    && yum clean all
+RUN /usr/local/bin/yum-install \
+        nginx
 
 # Deploy scripts/configurations
 COPY . /opt/docker/

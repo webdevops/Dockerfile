@@ -10,7 +10,7 @@ list:
 all: base php hhvm service apache nginx
 
 base:    webdevops/base webdevops/storage
-service: webdevops/ssh webdevops/vsftp
+service: webdevops/ssh webdevops/vsftp webdevops/postfix
 php:     webdevops/php webdevops/php-apache webdevops/php-nginx
 hhvm:    webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
@@ -56,3 +56,5 @@ webdevops/storage:
 webdevops/vsftp:
 	bash .bin/build.sh vsftp "${DOCKER_PREFIX}/vsftp" "${DOCKER_LATEST}"
 
+webdevops/postfix:
+	bash .bin/build.sh postfix "${DOCKER_PREFIX}/postfix" "${DOCKER_LATEST}"

@@ -6,13 +6,12 @@ FROM webdevops/base:centos-7
 MAINTAINER info@webdevops.io
 
 # Install tools
-RUN yum -y install \
+RUN /usr/local/bin/yum-install \
         ImageMagick \
-        GraphicsMagick \
-    && yum clean all
+        GraphicsMagick
     
 # Install php (cli/fpm)
-RUN yum -y install \
+RUN /usr/local/bin/yum-install \
         php-cli \
         php-fpm \
         php-json \
@@ -35,18 +34,14 @@ RUN yum -y install \
         php-pear \
         php-devel \
         gcc \
-    && pecl install imagick \
-    && yum clean all
+    && pecl install imagick
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php \
     && bash /opt/docker/bin/bootstrap.sh
 
-# Configure volume/workdir
-RUN mkdir -p /docker/code/
-VOLUME /docker/
-WORKDIR /docker/code/
+
 
 EXPOSE 9000
 

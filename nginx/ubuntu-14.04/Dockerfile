@@ -5,17 +5,13 @@
 FROM webdevops/base:ubuntu-14.04
 MAINTAINER info@webdevops.io
 
-ENV WEB_DOCUMENT_ROOT  /docker/code/
+ENV WEB_DOCUMENT_ROOT  /application/code/
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
 # Install nginx
-RUN export DEBIAN_FRONTEND=noninteractive && set -x \
-    && apt-get update \
-    && apt-get install -y \
-        nginx \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean -y
+RUN /usr/local/bin/apt-install \\
+        nginx
 
 # Deploy scripts/configurations
 COPY . /opt/docker/

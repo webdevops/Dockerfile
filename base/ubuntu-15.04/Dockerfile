@@ -15,50 +15,39 @@ RUN locale-gen en_US.UTF-8
 ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
+# Add common scripts (from _localscripts)
+ADD scripts.tar ./
+
 # System update
-RUN export DEBIAN_FRONTEND=noninteractive && set -x \
-    && apt-get update \
-    && apt-get dist-upgrade -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean -y
+RUN /usr/local/bin/apt-upgrade
 
 # Install apt-add-repository and enable multiverse
-RUN export DEBIAN_FRONTEND=noninteractive && set -x \
-    && apt-get update \
-    && apt-get install -y \
+RUN /usr/local/bin/apt-install \
         software-properties-common \
-    && apt-add-repository multiverse \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean -y
+    && apt-add-repository multiverse
 
 # Install ansible
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-add-repository ppa:ansible/ansible \
-    && apt-get update \
-    && apt-get install -y \
+    && /usr/local/bin/apt-install \
         ansible \
         python-apt \
-        aptitude \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean -y
+        aptitude
 
 # Install services
-RUN export DEBIAN_FRONTEND=noninteractive && set -x \
-    && apt-get update \
-    && apt-get install -y \
+RUN /usr/local/bin/apt-install \
         supervisor \
+        syslog-ng \
+        syslog-ng-core \
+        logrotate \
         openssh-server \
         mysql-client \
         cron \
         dnsmasq \
-        postfix \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean -y
+        postfix
 
 # Install common tools
-RUN export DEBIAN_FRONTEND=noninteractive && set -x \
-    && apt-get update \
-    && apt-get install -y \
+RUN /usr/local/bin/apt-install \
         lsb-release \
         sudo \
         zip \
@@ -73,9 +62,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
         rsync \
         git \
         nano \
-        vim \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean -y
+        vim
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
