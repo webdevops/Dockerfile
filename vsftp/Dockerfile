@@ -26,8 +26,6 @@ RUN mkdir -p \
 COPY . /opt/docker/
 RUN bash /opt/docker/bin/bootstrap.sh
 
-VOLUME "/data/ftp/"
-
 EXPOSE 20
 EXPOSE 21
 EXPOSE 12020

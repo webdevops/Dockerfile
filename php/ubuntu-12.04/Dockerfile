@@ -44,11 +44,6 @@ COPY . /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php \
     && bash /opt/docker/bin/bootstrap.sh
 
-# Configure volume/workdir
-RUN mkdir -p /docker/code/
-VOLUME /docker/
-WORKDIR /docker/code/
-
 EXPOSE 9000
 
 CMD ["supervisord"]
