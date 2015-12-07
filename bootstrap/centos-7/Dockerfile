@@ -10,8 +10,11 @@ ADD scripts.tar ./
 
 # Init bootstrap (and install ansible)
 RUN set -x \
+    # Fix root terminal
     && echo "export TERM=xterm >> /root/.bashrc" \
+    # System update
     && /usr/local/bin/yum-upgrade \
+    # Install ansible
     && /usr/local/bin/yum-install \
         epel-release \
         PyYAML \

@@ -16,10 +16,14 @@ ADD scripts.tar ./
 # Init bootstrap (and install ansible)
 RUN export DEBIAN_FRONTEND=noninteractive \
     && set -x \
+    # Fix root terminal
     && echo "export TERM=xterm >> /root/.bashrc" \
-    && /usr/local/bin/apt-upgrade
+    # System update
+    && /usr/local/bin/apt-upgrade \
+    # Install apt-add-repository
     && /usr/local/bin/apt-install \
-        python-software-properties
+        python-software-properties \
+    # Install ansible
     && apt-add-repository ppa:ansible/ansible \
     && /usr/local/bin/apt-install \
         ansible \
