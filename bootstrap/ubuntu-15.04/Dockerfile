@@ -13,16 +13,14 @@ ENV LC_ALL     en_US.UTF-8
 # Add common scripts (from _localscripts)
 ADD scripts.tar ./
 
-# System update
-RUN /usr/local/bin/apt-upgrade
-
-# Install apt-add-repository and enable multiverse
-RUN /usr/local/bin/apt-install \
+# Init bootstrap (and install ansible)
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && set -x \
+    && echo "export TERM=xterm >> /root/.bashrc" \
+    && /usr/local/bin/apt-upgrade \
+    && /usr/local/bin/apt-install \
         software-properties-common \
-    && apt-add-repository multiverse
-
-# Install ansible
-RUN export DEBIAN_FRONTEND=noninteractive && set -x \
+    && apt-add-repository multiverse \
     && apt-add-repository ppa:ansible/ansible \
     && /usr/local/bin/apt-install \
         ansible \
