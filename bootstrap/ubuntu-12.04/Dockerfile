@@ -17,7 +17,7 @@ ADD scripts.tar ./
 RUN export DEBIAN_FRONTEND=noninteractive \
     && set -x \
     # Fix root terminal
-    && echo "export TERM=xterm >> /root/.bashrc" \
+    && echo "export TERM=xterm" >> /root/.bashrc \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Install apt-add-repository
