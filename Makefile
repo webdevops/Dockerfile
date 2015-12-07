@@ -9,13 +9,16 @@ list:
 
 all: base php hhvm service apache nginx
 
-base:    webdevops/base webdevops/storage
+base:    webdevops/bootstrap webdevops/base webdevops/storage
 service: webdevops/ssh webdevops/vsftp webdevops/postfix
 php:     webdevops/php webdevops/php-apache webdevops/php-nginx
 hhvm:    webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
 apache:  webdevops/apache webdevops/php-apache webdevops/hhvm-apache
 nginx:   webdevops/nginx webdevops/php-nginx webdevops/hhvm-nginx
+
+webdevops/bootstrap:
+	bash .bin/build.sh bootstrap "${DOCKER_PREFIX}/bootstrap" "${DOCKER_LATEST}"
 
 webdevops/base:
 	bash .bin/build.sh base "${DOCKER_PREFIX}/base" "${DOCKER_LATEST}"

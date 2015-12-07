@@ -5,7 +5,8 @@ Dockerfiles for various prebuilt docker containers
 
 Dockerfile                  | Description                                                                        | Depends on                                                           |
 --------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-[`base`](base/README.md)    | Base containers for WebDevOps service containers                                   | official docker files                                                |
+[`bootstrap`](base/README.md) | Distribution with ansible and some scripts                                       | official docker files                                                |
+[`base`](base/README.md)    | Base containers for WebDevOps service containers                                   | [`webdevops/bootstrap`](https://hub.docker.com/r/webdevops/bootstrap/) |
 [`php`](php/README.md)      | PHP (cli and fpm) service containers                                               | [`webdevops/base`](https://hub.docker.com/r/webdevops/base/)         |
 [`vsftp`](vsftp/README.md)  | VSFTP (ftp service) service container                                              | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
 [`storage`](storage/README.md) | Storage (noop) container                                                           | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
@@ -41,6 +42,14 @@ See [base/README.md](base/README.md) for more informations.
 
 Image                               | Info                                                                       
 ----------------------------------- | ----------------------------------------------------------------------------------
+<strong>Bootstrap container<strong> |
+webdevops/bootstrap:latest          | [![](https://badge.imagelayers.io/webdevops/bootstrap:latest.svg)](https://imagelayers.io/?images=webdevops/bootstrap:latest 'Get your own badge on imagelayers.io')
+webdevops/bootstrap:ubuntu-12.04    | [![](https://badge.imagelayers.io/webdevops/bootstrap:ubuntu-12.04.svg)](https://imagelayers.io/?images=webdevops/bootstrap:ubuntu-12.04 'Get your own badge on imagelayers.io')
+webdevops/bootstrap:ubuntu-14.04    | [![](https://badge.imagelayers.io/webdevops/bootstrap:ubuntu-14.04.svg)](https://imagelayers.io/?images=webdevops/bootstrap:ubuntu-14.04 'Get your own badge on imagelayers.io')
+webdevops/bootstrap:ubuntu-15.04    | [![](https://badge.imagelayers.io/webdevops/bootstrap:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/bootstrap:ubuntu-15.04 'Get your own badge on imagelayers.io')
+webdevops/bootstrap:ubuntu-15.10    | [![](https://badge.imagelayers.io/webdevops/bootstrap:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/bootstrap:ubuntu-15.14 'Get your own badge on imagelayers.io')
+webdevops/bootstrap:centos-7        | [![](https://badge.imagelayers.io/webdevops/bootstrap:centos-7.svg)](https://imagelayers.io/?images=webdevops/bootstrap:centos-7 'Get your own badge on imagelayers.io')
+<br>                                |
 <strong>Base container<strong>      |
 webdevops/base:latest               | [![](https://badge.imagelayers.io/webdevops/base:latest.svg)](https://imagelayers.io/?images=webdevops/base:latest 'Get your own badge on imagelayers.io')
 webdevops/base:ubuntu-12.04         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-12.04.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-12.04 'Get your own badge on imagelayers.io')
