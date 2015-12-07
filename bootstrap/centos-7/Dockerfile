@@ -8,11 +8,14 @@ MAINTAINER info@webdevops.io
 # Add common scripts (from _localscripts)
 ADD scripts.tar ./
 
-# System update
-RUN /usr/local/bin/yum-upgrade
-
-# Install ansible
-RUN /usr/local/bin/yum-install \
+# Init bootstrap (and install ansible)
+RUN set -x \
+    # Fix root terminal
+    && echo "export TERM=xterm" >> /root/.bashrc \
+    # System update
+    && /usr/local/bin/yum-upgrade \
+    # Install ansible
+    && /usr/local/bin/yum-install \
         epel-release \
         PyYAML \
         python-jinja2 \

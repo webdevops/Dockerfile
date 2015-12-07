@@ -40,6 +40,12 @@ fi
 if [ "$DOCKER_BUILD_RET" -ne 0 ]; then
     if [ -n "$LOGFILE" ]; then
         cat "$LOGFILE"
+
+        echo ""
+        echo ""
+        echo "-----------------------------------------------------------"
+        echo " --- BUILD FAILURE  -> ${CONTAINER_NAME}:${CONTAINER_TAG}"
+        echo "-----------------------------------------------------------"
     fi
 fi
 

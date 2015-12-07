@@ -20,4 +20,14 @@
     group: "{{ APPLICATION_GROUP }}"
     recurse: yes
 
+- name: Init bashrc
+  lineinfile:
+    dest: "/home/{{ APPLICATION_USER }}/.bashrc"
+    mode:  0770
+    owner: "{{ APPLICATION_USER }}"
+    group: "{{ APPLICATION_GROUP }}"
+    create: yes
+    regexp: "export TERM=xterm"
+    line: "export TERM=xterm"
+
 - action: setup
