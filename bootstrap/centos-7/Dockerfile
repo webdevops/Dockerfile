@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# CentOS 7 PHP Docker container
+# CentOS 7 Bootstrap Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM centos:7

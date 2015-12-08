@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# CentOS 7 PHP Docker container
+# CentOS 7 Base Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/bootstrap:centos-7

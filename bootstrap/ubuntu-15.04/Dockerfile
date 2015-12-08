@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 15.04 PHP Docker container
+# Ubuntu 15.04 Bootstrap Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM ubuntu:15.04
