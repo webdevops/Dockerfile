@@ -5,6 +5,7 @@
     dest:   /etc/default/syslog-ng
     regexp: '^[\s]*{{ item.key }}[\s]*='
     line:   '{{ item.key }}="{{ item.value }}"'
+    create: yes
   with_items:
    - { key: 'SYSLOGNG_OPTS',  value: '--no-caps' }
 
