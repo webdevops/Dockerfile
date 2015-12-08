@@ -1,0 +1,4 @@
+---
+
+- name: Yum cleanup
+  command: yum clean all
