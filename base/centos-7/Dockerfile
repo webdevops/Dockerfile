@@ -40,7 +40,7 @@ RUN /usr/local/bin/yum-install \
         vim
 
 # Deploy scripts/configurations
-COPY . /opt/docker/
+COPY conf/ /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role webdevops-base \
     && bash /opt/docker/bin/control.sh provision.role.finish webdevops-cleanup \
     && bash /opt/docker/bin/bootstrap.sh
