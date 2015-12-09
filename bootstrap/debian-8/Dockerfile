@@ -19,6 +19,9 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && echo "export TERM=xterm" >> /root/.bashrc \
     # System update
     && /usr/local/bin/apt-upgrade \
+    # Generate locales
+    && /usr/local/bin/apt-install \
+        locales-all \
     # Install ansible
     && /usr/local/bin/apt-install \
         ansible \
