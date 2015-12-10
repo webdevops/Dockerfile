@@ -88,12 +88,17 @@ echo "Building provision for webdevops/bootstrap..."
     #buildLocalscripts
 
 echo "Building provision for webdevops/base..."
-    clearProvision base '*'
+    clearProvision  base '*'
     deployProvision base/general base '*'
     deployProvision base/centos  base 'centos-*'
 
 echo "Building provision for webdevops/php..."
-    clearProvision php '*'
+    clearProvision  php '*'
     deployProvision php/general       php '*'
     deployProvision php/ubuntu-12.04  php 'ubuntu-12.04'
     deployProvision php/centos        php 'centos-*'
+
+echo "Building provision for webdevops/apache..."
+    clearProvision  apache '*'
+    deployProvision apache/general       apache '*'
+    deployProvision apache/centos        apache 'centos-*'
