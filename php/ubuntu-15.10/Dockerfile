@@ -5,11 +5,6 @@
 FROM webdevops/base:ubuntu-15.10
 MAINTAINER info@webdevops.io
 
-# Ensure UTF-8
-RUN locale-gen en_US.UTF-8
-ENV LANG       en_US.UTF-8
-ENV LC_ALL     en_US.UTF-8
-
 # Install tools
 RUN /usr/local/bin/apt-install \
         imagemagick \
