@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# CentOS 7 APACHE HTTPD Docker container
+# CentOS 7 Apache Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:centos-7

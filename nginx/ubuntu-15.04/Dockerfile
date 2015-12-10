@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 15.04 PHP-Apache Docker container
+# Ubuntu 15.04 Nginx Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:ubuntu-15.04

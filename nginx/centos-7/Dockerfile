@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# CentOS 7 NGINX Docker container
+# CentOS 7 Nginx Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:centos-7
