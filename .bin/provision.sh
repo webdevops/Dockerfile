@@ -92,16 +92,14 @@ echo "Building provision for webdevops/base..."
     deployProvision base/general  base  '*'
     deployProvision base/centos   base  'centos-*'
 
-echo "Building provision for webdevops/php..."
-    clearProvision  php  '*'
-    deployProvision php/general       php  '*'
-    deployProvision php/ubuntu-12.04  php  'ubuntu-12.04'
-    deployProvision php/centos        php  'centos-*'
-
 echo "Building provision for webdevops/apache..."
     clearProvision  apache '*'
     deployProvision apache/general  apache  '*'
     deployProvision apache/centos   apache  'centos-*'
+
+echo "Building provision for webdevops/nginx..."
+    clearProvision  nginx '*'
+    deployProvision nginx/general  nginx  '*'
 
 echo "Building provision for webdevops/hhvm..."
     clearProvision  hhvm  '*'
@@ -117,6 +115,14 @@ echo "Building provision for webdevops/hhvm-nginx..."
     deployProvision nginx/general       hhvm-nginx  '*'
     deployProvision hhvm-nginx/general  hhvm-nginx  '*'
 
-echo "Building provision for webdevops/nginx..."
-    clearProvision  nginx '*'
-    deployProvision nginx/general  nginx  '*'
+echo "Building provision for webdevops/php..."
+    clearProvision  php  '*'
+    deployProvision php/general       php  '*'
+    deployProvision php/ubuntu-12.04  php  'ubuntu-12.04'
+    deployProvision php/centos        php  'centos-*'
+
+echo "Building provision for webdevops/php-apache..."
+    clearProvision  php-apache  '*'
+    deployProvision apache/general      php-apache  '*'
+    deployProvision apache/centos       php-apache  'centos-*'
+    deployProvision php-apache/general  php-apache  '*'
