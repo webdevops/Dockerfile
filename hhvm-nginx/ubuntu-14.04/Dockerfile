@@ -14,7 +14,7 @@ RUN /usr/local/bin/apt-install \
         nginx
 
 # Deploy scripts/configurations
-COPY . /opt/docker/
+COPY conf/ /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role webdevops-hhvm-nginx \
     && bash /opt/docker/bin/bootstrap.sh
 
