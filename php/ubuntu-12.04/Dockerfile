@@ -40,7 +40,7 @@ RUN /usr/local/bin/apt-install \
     && sed -i 's/;daemonize = yes/daemonize = no/' /etc/php5/fpm/php-fpm.conf
 
 # Deploy scripts/configurations
-COPY . /opt/docker/
+COPY conf/ /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php \
     && bash /opt/docker/bin/bootstrap.sh
 

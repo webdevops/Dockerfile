@@ -39,7 +39,7 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini
 
 # Deploy scripts/configurations
-COPY . /opt/docker/
+COPY conf/ /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php \
     && bash /opt/docker/bin/bootstrap.sh
 
