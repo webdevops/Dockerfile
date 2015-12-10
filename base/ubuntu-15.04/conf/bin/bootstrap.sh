@@ -7,6 +7,11 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 
 source /opt/docker/bin/config.sh
 
+# Save the buildtime
+date +%s > /opt/docker/BUILDTIME
+
+# Make all scripts executable
 find /opt/docker/bin/ -type f -iname '*.sh' -print0 | xargs --no-run-if-empty -0 chmod +x
 
+# Init and run bootstrap system
 initBootstrap
