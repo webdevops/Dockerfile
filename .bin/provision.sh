@@ -112,6 +112,11 @@ echo "Building provision for webdevops/hhvm-apache..."
     deployProvision apache/general       hhvm-apache  '*'
     deployProvision hhvm-apache/general  hhvm-apache  '*'
 
+echo "Building provision for webdevops/hhvm-nginx..."
+    clearProvision  hhvm-nginx  '*'
+    deployProvision nginx/general       hhvm-nginx  '*'
+    deployProvision hhvm-nginx/general  hhvm-nginx  '*'
+
 echo "Building provision for webdevops/nginx..."
     clearProvision  nginx '*'
     deployProvision nginx/general  nginx  '*'

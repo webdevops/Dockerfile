@@ -15,7 +15,8 @@ RUN /usr/local/bin/apt-install \
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role webdevops-hhvm-nginx \
+RUN bash /opt/docker/bin/control.sh provision.role webdevops-nginx \
+    && bash /opt/docker/bin/control.sh provision.role webdevops-hhvm-nginx \
     && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 80
