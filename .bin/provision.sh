@@ -88,25 +88,30 @@ echo "Building provision for webdevops/bootstrap..."
     #buildLocalscripts
 
 echo "Building provision for webdevops/base..."
-    clearProvision  base '*'
-    deployProvision base/general      base '*'
-    deployProvision base/centos       base 'centos-*'
+    clearProvision  base  '*'
+    deployProvision base/general  base  '*'
+    deployProvision base/centos   base  'centos-*'
 
 echo "Building provision for webdevops/php..."
-    clearProvision  php '*'
-    deployProvision php/general       php '*'
-    deployProvision php/ubuntu-12.04  php 'ubuntu-12.04'
-    deployProvision php/centos        php 'centos-*'
+    clearProvision  php  '*'
+    deployProvision php/general       php  '*'
+    deployProvision php/ubuntu-12.04  php  'ubuntu-12.04'
+    deployProvision php/centos        php  'centos-*'
 
 echo "Building provision for webdevops/apache..."
     clearProvision  apache '*'
-    deployProvision apache/general    apache '*'
-    deployProvision apache/centos     apache 'centos-*'
+    deployProvision apache/general  apache  '*'
+    deployProvision apache/centos   apache  'centos-*'
 
 echo "Building provision for webdevops/hhvm..."
-    clearProvision  hhvm '*'
-    deployProvision hhvm/general      hhvm '*'
+    clearProvision  hhvm  '*'
+    deployProvision hhvm/general  hhvm  '*'
+
+echo "Building provision for webdevops/hhvm-apache..."
+    clearProvision  hhvm-apache  '*'
+    deployProvision apache/general       hhvm-apache  '*'
+    deployProvision hhvm-apache/general  hhvm-apache  '*'
 
 echo "Building provision for webdevops/nginx..."
     clearProvision  nginx '*'
-    deployProvision nginx/general     nginx '*'
+    deployProvision nginx/general  nginx  '*'
