@@ -9,6 +9,7 @@ ENV APPLICATION_USER  application
 ENV APPLICATION_GROUP application
 ENV APPLICATION_UID   1000
 ENV APPLICATION_GID   1000
+ENV DOCKER_CONF_HOME  /opt/docker/
 
 # Install services
 RUN /usr/local/bin/yum-install \
