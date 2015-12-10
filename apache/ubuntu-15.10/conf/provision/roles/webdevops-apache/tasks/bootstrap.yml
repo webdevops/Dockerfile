@@ -8,7 +8,7 @@
 - name: Set apache vhost file
   set_fact:
      apache_docker_vhost: /etc/apache2/sites-enabled/10-docker.conf
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
 
 - name: Enable apache main config
   file:
