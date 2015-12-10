@@ -5,13 +5,19 @@ set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
 
-READLINK_CMD='readlink'
+READLINK='readlink'
 
-if [ -n "$(which greadlink)" ]; then
-    READLINK_CMD='greadlink'
-fi
+[[ `uname` == 'Darwin' ]] && {
+	which greadlink gsed gzcat > /dev/null && {
+		alias readlink=greadlink sed=gsed zcat=gzcat
+		READLINK='greadlink'
+	} || {
+		echo 'ERROR: GNU utils required for Mac. You may use homebrew to install them: brew install coreutils gnu-sed'
+		exit 1
+	}
+}
 
-SCRIPT_DIR=$(dirname $($READLINK_CMD -f "$0"))
+SCRIPT_DIR=$(dirname $($READLINK -f "$0"))
 BASE_DIR=$(dirname "$SCRIPT_DIR")
 
 LOCALSCRIPT_DIR="${BASE_DIR}/_localscripts"
