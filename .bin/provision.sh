@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+if [ -n "$1" ]; then
+    BUILD_TARGET="$1"
+else
+    BUILD_TARGET="all"
+fi
+
+
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
@@ -25,6 +32,12 @@ PROVISION_DIR="${BASE_DIR}/_provisioning"
 
 function relativeDir() {
     echo ${1#${BASE_DIR}/}
+}
+
+function checkBuildTarget() {
+    if [ "$BUILD_TARGET" == "all" -o "$BUILD_TARGET" == "$1" ]; then
+        echo 1
+    fi
 }
 
 #######################################
@@ -82,53 +95,72 @@ function deployProvision() {
     done
 }
 
-
-
-echo "Building provision for webdevops/bootstrap..."
+[[ $(checkBuildTarget bootstrap) ]] && {
+    echo "Building provision for webdevops/bootstrap..."
     #buildLocalscripts
+}
 
-echo "Building provision for webdevops/base..."
+[[ $(checkBuildTarget base) ]] && {
+    echo "Building provision for webdevops/base..."
     clearProvision  base  '*'
     deployProvision base/general  base  '*'
     deployProvision base/centos   base  'centos-*'
+}
 
-echo "Building provision for webdevops/apache..."
+[[ $(checkBuildTarget apache) ]] && {
+    echo "Building provision for webdevops/apache..."
     clearProvision  apache '*'
     deployProvision apache/general  apache  '*'
     deployProvision apache/centos   apache  'centos-*'
+}
 
-echo "Building provision for webdevops/nginx..."
+[[ $(checkBuildTarget nginx) ]] && {
+    echo "Building provision for webdevops/nginx..."
     clearProvision  nginx '*'
     deployProvision nginx/general  nginx  '*'
+}
 
-echo "Building provision for webdevops/hhvm..."
+[[ $(checkBuildTarget hhvm) ]] && {
+    echo "Building provision for webdevops/hhvm..."
     clearProvision  hhvm  '*'
     deployProvision hhvm/general  hhvm  '*'
+}
 
-echo "Building provision for webdevops/hhvm-apache..."
+[[ $(checkBuildTarget hhvm-apache) ]] && {
+    echo "Building provision for webdevops/hhvm-apache..."
     clearProvision  hhvm-apache  '*'
     deployProvision apache/general       hhvm-apache  '*'
     deployProvision hhvm-apache/general  hhvm-apache  '*'
+}
 
-echo "Building provision for webdevops/hhvm-nginx..."
+[[ $(checkBuildTarget hhvm-nginx) ]] && {
+    echo "Building provision for webdevops/hhvm-nginx..."
     clearProvision  hhvm-nginx  '*'
     deployProvision nginx/general       hhvm-nginx  '*'
     deployProvision hhvm-nginx/general  hhvm-nginx  '*'
+}
 
-echo "Building provision for webdevops/php..."
+[[ $(checkBuildTarget php) ]] && {
+    echo "Building provision for webdevops/php..."
     clearProvision  php  '*'
     deployProvision php/general       php  '*'
     deployProvision php/ubuntu-12.04  php  'ubuntu-12.04'
     deployProvision php/centos        php  'centos-*'
+}
 
-echo "Building provision for webdevops/php-apache..."
+[[ $(checkBuildTarget php-apache) ]] && {
+    echo "Building provision for webdevops/php-apache..."
     clearProvision  php-apache  '*'
     deployProvision apache/general      php-apache  '*'
     deployProvision apache/centos       php-apache  'centos-*'
     deployProvision php-apache/general  php-apache  '*'
+}
 
-
-echo "Building provision for webdevops/php-nginx..."
+[[ $(checkBuildTarget php-nginx) ]] && {
+    echo "Building provision for webdevops/php-nginx..."
     clearProvision  php-nginx  '*'
     deployProvision nginx/general      php-nginx  '*'
     deployProvision php-nginx/general  php-nginx  '*'
+}
+
+exit 0
