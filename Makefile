@@ -7,7 +7,7 @@ DOCKER_LATEST="ubuntu-14.04"
 list:
 	sh -c "echo; $(MAKE) -p no_targets__ | awk -F':' '/^[a-zA-Z0-9][^\$$#\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);for(i in A)print A[i]}' | grep -v '__\$$' | grep -v 'Makefile'| sort"
 
-all: base php hhvm service apache nginx
+all:     base php hhvm service apache nginx
 
 base:    webdevops/bootstrap webdevops/base webdevops/storage
 service: webdevops/ssh webdevops/vsftp webdevops/postfix
