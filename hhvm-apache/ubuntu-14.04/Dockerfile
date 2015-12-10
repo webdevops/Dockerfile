@@ -24,7 +24,7 @@ RUN /usr/local/bin/apt-install \
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role webdevops-apache \
-    bash /opt/docker/bin/control.sh provision.role webdevops-hhvm-apache \
+    && bash /opt/docker/bin/control.sh provision.role webdevops-hhvm-apache \
     && bash /opt/docker/bin/bootstrap.sh
 
 RUN chmod +x /opt/docker/bin/service.d/httpd.sh
