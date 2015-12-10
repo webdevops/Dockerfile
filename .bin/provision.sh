@@ -126,3 +126,9 @@ echo "Building provision for webdevops/php-apache..."
     deployProvision apache/general      php-apache  '*'
     deployProvision apache/centos       php-apache  'centos-*'
     deployProvision php-apache/general  php-apache  '*'
+
+
+echo "Building provision for webdevops/php-nginx..."
+    clearProvision  php-nginx  '*'
+    deployProvision nginx/general      php-nginx  '*'
+    deployProvision php-nginx/general  php-nginx  '*'
