@@ -17,6 +17,9 @@ hhvm:    webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 apache:  webdevops/apache webdevops/php-apache webdevops/hhvm-apache
 nginx:   webdevops/nginx webdevops/php-nginx webdevops/hhvm-nginx
 
+provision:
+	bash .bin/provision.sh
+
 webdevops/bootstrap:
 	bash .bin/build.sh bootstrap "${DOCKER_PREFIX}/bootstrap" "${DOCKER_LATEST}"
 
