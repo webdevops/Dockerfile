@@ -89,8 +89,8 @@ echo "Building provision for webdevops/bootstrap..."
 
 echo "Building provision for webdevops/base..."
     clearProvision  base '*'
-    deployProvision base/general base '*'
-    deployProvision base/centos  base 'centos-*'
+    deployProvision base/general      base '*'
+    deployProvision base/centos       base 'centos-*'
 
 echo "Building provision for webdevops/php..."
     clearProvision  php '*'
@@ -100,9 +100,13 @@ echo "Building provision for webdevops/php..."
 
 echo "Building provision for webdevops/apache..."
     clearProvision  apache '*'
-    deployProvision apache/general       apache '*'
-    deployProvision apache/centos        apache 'centos-*'
+    deployProvision apache/general    apache '*'
+    deployProvision apache/centos     apache 'centos-*'
 
 echo "Building provision for webdevops/hhvm..."
     clearProvision  hhvm '*'
-    deployProvision hhvm/general       hhvm '*'
+    deployProvision hhvm/general      hhvm '*'
+
+echo "Building provision for webdevops/nginx..."
+    clearProvision  nginx '*'
+    deployProvision nginx/general     nginx '*'
