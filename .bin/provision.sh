@@ -102,3 +102,7 @@ echo "Building provision for webdevops/apache..."
     clearProvision  apache '*'
     deployProvision apache/general       apache '*'
     deployProvision apache/centos        apache 'centos-*'
+
+echo "Building provision for webdevops/hhvm..."
+    clearProvision  hhvm '*'
+    deployProvision hhvm/general       hhvm '*'

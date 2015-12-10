@@ -24,7 +24,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && /usr/bin/update-alternatives --install /usr/bin/php php /usr/bin/hhvm 60
 
 # Deploy scripts/configurations
-COPY . /opt/docker/
+COPY conf/ /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-hhvm \
     && bash /opt/docker/bin/bootstrap.sh
 
