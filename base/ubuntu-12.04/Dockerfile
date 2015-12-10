@@ -21,7 +21,8 @@ RUN /usr/local/bin/apt-install \
         mysql-client \
         cron \
         dnsmasq \
-        postfix
+        postfix \
+    && mkdir -p /var/lib/syslog-ng/
 
 # Install common tools
 RUN /usr/local/bin/apt-install \

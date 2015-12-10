@@ -103,8 +103,9 @@ function deployProvision() {
 [[ $(checkBuildTarget base) ]] && {
     echo "Building provision for webdevops/base..."
     clearProvision  base  '*'
-    deployProvision base/general  base  '*'
-    deployProvision base/centos   base  'centos-*'
+    deployProvision base/general        base  '*'
+    deployProvision base/centos         base  'centos-*'
+    deployProvision base/ubuntu-12.04   base  'ubuntu-12.04'
 }
 
 [[ $(checkBuildTarget apache) ]] && {
