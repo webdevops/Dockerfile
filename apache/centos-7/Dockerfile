@@ -19,7 +19,7 @@ RUN /usr/local/bin/yum-install \
 		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf
 
 # Deploy scripts/configurations
-COPY . /opt/docker/
+COPY conf/ /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role webdevops-apache \
     && bash /opt/docker/bin/bootstrap.sh
 

@@ -22,8 +22,9 @@ RUN /usr/local/bin/apt-install \
 	&& a2enmod actions fastcgi ssl rewrite headers rewrite
 
 # Deploy scripts/configurations
-COPY . /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role webdevops-hhvm-apache \
+COPY conf/ /opt/docker/
+RUN bash /opt/docker/bin/control.sh provision.role webdevops-apache \
+    && bash /opt/docker/bin/control.sh provision.role webdevops-hhvm-apache \
     && bash /opt/docker/bin/bootstrap.sh
 
 RUN chmod +x /opt/docker/bin/service.d/httpd.sh

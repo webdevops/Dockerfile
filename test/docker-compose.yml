@@ -1,0 +1,10 @@
+main:
+  build: .
+#  environment:
+#    - APPLICATION_UID=2001
+#    - APPLICATION_GID=2002
+  ports:
+    - "8000:80"
+    - "8443:443"
+  volumes:
+    - "./code:/application/code/"
