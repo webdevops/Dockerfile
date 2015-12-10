@@ -1,0 +1,7 @@
+---
+
+- name: Configure logrotate running user
+  lineinfile:
+    dest:   /etc/logrotate.conf
+    regexp: '^su [-_a-zA-Z0-9]+ [-_a-zA-Z0-9]+'
+    line:   'su root adm'

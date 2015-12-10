@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 15.10 PHP Docker container
+# Ubuntu 15.10 Base Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/bootstrap:ubuntu-15.10
@@ -9,11 +9,7 @@ ENV APPLICATION_USER  application
 ENV APPLICATION_GROUP application
 ENV APPLICATION_UID   1000
 ENV APPLICATION_GID   1000
-
-# Ensure UTF-8
-RUN locale-gen en_US.UTF-8
-ENV LANG       en_US.UTF-8
-ENV LC_ALL     en_US.UTF-8
+ENV DOCKER_CONF_HOME  /opt/docker/
 
 # Install services
 RUN /usr/local/bin/apt-install \
@@ -46,7 +42,7 @@ RUN /usr/local/bin/apt-install \
         vim
 
 # Deploy scripts/configurations
-COPY . /opt/docker/
+COPY conf/ /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role webdevops-base \
     && bash /opt/docker/bin/control.sh provision.role.finish webdevops-cleanup \
     && bash /opt/docker/bin/bootstrap.sh

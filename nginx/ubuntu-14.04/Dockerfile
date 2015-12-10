@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 14.04 PHP-Apache Docker container
+# Ubuntu 14.04 Nginx Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:ubuntu-14.04
@@ -14,7 +14,7 @@ RUN /usr/local/bin/apt-install \\
         nginx
 
 # Deploy scripts/configurations
-COPY . /opt/docker/
+COPY conf/ /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role webdevops-nginx \
     && bash /opt/docker/bin/bootstrap.sh
 

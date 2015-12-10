@@ -1,8 +1,0 @@
----
-
-- name: Enable apache main config
-  file:
-    src:  '/opt/docker/etc/httpd/main.conf'
-    dest: '/etc/httpd/conf.d/docker.conf'
-    state: link
-    force: yes

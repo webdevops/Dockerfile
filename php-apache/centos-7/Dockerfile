@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# CentOS 7 PHP Docker container
+# CentOS 7 PHP-Apache Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/php:centos-7
@@ -19,8 +19,9 @@ RUN /usr/local/bin/yum-install \
 		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf
 
 # Deploy scripts/configurations
-COPY . /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role webdevops-php-apache \
+COPY conf/ /opt/docker/
+RUN bash /opt/docker/bin/control.sh provision.role webdevops-apache \
+    && bash /opt/docker/bin/control.sh provision.role webdevops-php-apache \
     && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 80

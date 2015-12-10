@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 15.04 PHP Docker container
+# Ubuntu 15.04 Bootstrap Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM ubuntu:15.04
@@ -20,6 +20,9 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && echo "export TERM=xterm" >> /root/.bashrc \
     # System update
     && /usr/local/bin/apt-upgrade \
+    # Generate locales
+    && ln -s /usr/share/i18n/SUPPORTED /var/lib/locales/supported.d/all \
+    && locale-gen \
     # Install apt-add-repository
     && /usr/local/bin/apt-install \
         software-properties-common \

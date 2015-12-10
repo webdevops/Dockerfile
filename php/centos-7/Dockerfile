@@ -37,7 +37,7 @@ RUN /usr/local/bin/yum-install \
     && pecl install imagick
 
 # Deploy scripts/configurations
-COPY . /opt/docker/
+COPY conf/ /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php \
     && bash /opt/docker/bin/bootstrap.sh
 
