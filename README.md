@@ -49,6 +49,7 @@ webdevops/bootstrap:ubuntu-14.04    | [![](https://badge.imagelayers.io/webdevop
 webdevops/bootstrap:ubuntu-15.04    | [![](https://badge.imagelayers.io/webdevops/bootstrap:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/bootstrap:ubuntu-15.04 'Get your own badge on imagelayers.io')
 webdevops/bootstrap:ubuntu-15.10    | [![](https://badge.imagelayers.io/webdevops/bootstrap:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/bootstrap:ubuntu-15.14 'Get your own badge on imagelayers.io')
 webdevops/bootstrap:centos-7        | [![](https://badge.imagelayers.io/webdevops/bootstrap:centos-7.svg)](https://imagelayers.io/?images=webdevops/bootstrap:centos-7 'Get your own badge on imagelayers.io')
+webdevops/bootstrap:debian-8        | [![](https://badge.imagelayers.io/webdevops/bootstrap:debian-8.svg)](https://imagelayers.io/?images=webdevops/bootstrap:debian-8 'Get your own badge on imagelayers.io')
 <br>                                |
 <strong>Base container<strong>      |
 webdevops/base:latest               | [![](https://badge.imagelayers.io/webdevops/base:latest.svg)](https://imagelayers.io/?images=webdevops/base:latest 'Get your own badge on imagelayers.io')
@@ -57,6 +58,7 @@ webdevops/base:ubuntu-14.04         | [![](https://badge.imagelayers.io/webdevop
 webdevops/base:ubuntu-15.04         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-15.04 'Get your own badge on imagelayers.io')
 webdevops/base:ubuntu-15.10         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-15.14 'Get your own badge on imagelayers.io')
 webdevops/base:centos-7             | [![](https://badge.imagelayers.io/webdevops/base:centos-7.svg)](https://imagelayers.io/?images=webdevops/base:centos-7 'Get your own badge on imagelayers.io')
+webdevops/base:debian-8             | [![](https://badge.imagelayers.io/webdevops/base:debian-8.svg)](https://imagelayers.io/?images=webdevops/base:debian-8 'Get your own badge on imagelayers.io')
 <br>                                |
 <strong>PHP container<strong>       |
 webdevops/php:latest                | [![](https://badge.imagelayers.io/webdevops/php:latest.svg)](https://imagelayers.io/?images=webdevops/php:latest 'Get your own badge on imagelayers.io')
@@ -65,14 +67,15 @@ webdevops/php:ubuntu-14.04          | [![](https://badge.imagelayers.io/webdevop
 webdevops/php:ubuntu-15.04          | [![](https://badge.imagelayers.io/webdevops/php:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/php:ubuntu-15.04 'Get your own badge on imagelayers.io')
 webdevops/php:ubuntu-15.10          | [![](https://badge.imagelayers.io/webdevops/php:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/php:ubuntu-15.14 'Get your own badge on imagelayers.io')
 webdevops/php:centos-7              | [![](https://badge.imagelayers.io/webdevops/php:centos-7.svg)](https://imagelayers.io/?images=webdevops/php:centos-7 'Get your own badge on imagelayers.io')
+webdevops/php:debian-8              | [![](https://badge.imagelayers.io/webdevops/php:debian-8.svg)](https://imagelayers.io/?images=webdevops/php:debian-8 'Get your own badge on imagelayers.io')
 <br>                                |
 <strong>Apache HTTPD with PHP container<strong>|
 webdevops/php-apache:latest         | [![](https://badge.imagelayers.io/webdevops/php-apache:latest.svg)](https://imagelayers.io/?images=webdevops/php-apache:latest 'Get your own badge on imagelayers.io')
-webdevops/php-apache:ubuntu-12.04   | [![](https://badge.imagelayers.io/webdevops/php-apache:ubuntu-12.04.svg)](https://imagelayers.io/?images=webdevops/php-apache:ubuntu-12.04 'Get your own badge on imagelayers.io')
 webdevops/php-apache:ubuntu-14.04   | [![](https://badge.imagelayers.io/webdevops/php-apache:ubuntu-14.04.svg)](https://imagelayers.io/?images=webdevops/php-apache:ubuntu-14.04 'Get your own badge on imagelayers.io')
 webdevops/php-apache:ubuntu-15.04   | [![](https://badge.imagelayers.io/webdevops/php-apache:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/php-apache:ubuntu-15.04 'Get your own badge on imagelayers.io')
 webdevops/php-apache:ubuntu-15.10   | [![](https://badge.imagelayers.io/webdevops/php-apache:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/php-apache:ubuntu-15.14 'Get your own badge on imagelayers.io')
 webdevops/php-apache:centos-7       | [![](https://badge.imagelayers.io/webdevops/php-apache:centos-7.svg)](https://imagelayers.io/?images=webdevops/php-apache:centos-7 'Get your own badge on imagelayers.io')
+webdevops/php-apache:debian-8       | [![](https://badge.imagelayers.io/webdevops/php-apache:debian-8.svg)](https://imagelayers.io/?images=webdevops/php-apache:debian-8 'Get your own badge on imagelayers.io')
 <br>                                |
 <strong>NGINX with PHP container<strong>|
 webdevops/php-nginx:latest          | [![](https://badge.imagelayers.io/webdevops/php-nginx:latest.svg)](https://imagelayers.io/?images=webdevops/php-nginx:latest 'Get your own badge on imagelayers.io')
@@ -81,6 +84,7 @@ webdevops/php-nginx:ubuntu-14.04    | [![](https://badge.imagelayers.io/webdevop
 webdevops/php-nginx:ubuntu-15.04    | [![](https://badge.imagelayers.io/webdevops/php-nginx:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/php-nginx:ubuntu-15.04 'Get your own badge on imagelayers.io')
 webdevops/php-nginx:ubuntu-15.10    | [![](https://badge.imagelayers.io/webdevops/php-nginx:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/php-nginx:ubuntu-15.14 'Get your own badge on imagelayers.io')
 webdevops/php-nginx:centos-7        | [![](https://badge.imagelayers.io/webdevops/php-nginx:centos-7.svg)](https://imagelayers.io/?images=webdevops/php-nginx:centos-7 'Get your own badge on imagelayers.io')
+webdevops/php-nginx:debian-8        | [![](https://badge.imagelayers.io/webdevops/php-nginx:debian-8.svg)](https://imagelayers.io/?images=webdevops/php-nginx:debian-8 'Get your own badge on imagelayers.io')
 <br>                                |
 <strong>Apache HTTPD container<strong>|
 webdevops/apache:latest             | [![](https://badge.imagelayers.io/webdevops/apache:latest.svg)](https://imagelayers.io/?images=webdevops/apache:latest 'Get your own badge on imagelayers.io')
@@ -89,6 +93,7 @@ webdevops/apache:ubuntu-14.04       | [![](https://badge.imagelayers.io/webdevop
 webdevops/apache:ubuntu-15.04       | [![](https://badge.imagelayers.io/webdevops/apache:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/apache:ubuntu-15.04 'Get your own badge on imagelayers.io')
 webdevops/apache:ubuntu-15.10       | [![](https://badge.imagelayers.io/webdevops/apache:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/apache:ubuntu-15.14 'Get your own badge on imagelayers.io')
 webdevops/apache:centos-7           | [![](https://badge.imagelayers.io/webdevops/apache:centos-7.svg)](https://imagelayers.io/?images=webdevops/apache:centos-7 'Get your own badge on imagelayers.io')
+webdevops/apache:debian-8           | [![](https://badge.imagelayers.io/webdevops/apache:debian-8.svg)](https://imagelayers.io/?images=webdevops/apache:debian-8 'Get your own badge on imagelayers.io')
 <br>                                |
 <strong>Nginx container<strong>     |
 webdevops/nginx:latest              | [![](https://badge.imagelayers.io/webdevops/nginx:latest.svg)](https://imagelayers.io/?images=webdevops/nginx:latest 'Get your own badge on imagelayers.io')
@@ -97,6 +102,7 @@ webdevops/nginx:ubuntu-14.04        | [![](https://badge.imagelayers.io/webdevop
 webdevops/nginx:ubuntu-15.04        | [![](https://badge.imagelayers.io/webdevops/nginx:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/nginx:ubuntu-15.04 'Get your own badge on imagelayers.io')
 webdevops/nginx:ubuntu-15.10        | [![](https://badge.imagelayers.io/webdevops/nginx:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/nginx:ubuntu-15.14 'Get your own badge on imagelayers.io')
 webdevops/nginx:centos-7            | [![](https://badge.imagelayers.io/webdevops/nginx:centos-7.svg)](https://imagelayers.io/?images=webdevops/nginx:centos-7 'Get your own badge on imagelayers.io')
+webdevops/nginx:debian-8            | [![](https://badge.imagelayers.io/webdevops/nginx:debian-8.svg)](https://imagelayers.io/?images=webdevops/nginx:debian-8 'Get your own badge on imagelayers.io')
 <br>                                |
 <strong>HHVM container<strong>      |
 webdevops/hhvm:latest               | [![](https://badge.imagelayers.io/webdevops/hhvm:latest.svg)](https://imagelayers.io/?images=webdevops/hhvm:latest 'Get your own badge on imagelayers.io')
