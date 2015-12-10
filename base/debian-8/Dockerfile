@@ -12,7 +12,8 @@ ENV APPLICATION_GID   1000
 ENV DOCKER_CONF_HOME  /opt/docker/
 
 # Install services
-RUN /usr/local/bin/apt-install \
+RUN sed -ri 's/(deb.*\/debian jessie main)/\1 contrib non-free /' -- /etc/apt/sources.list \
+    && /usr/local/bin/apt-install \
         supervisor \
         syslog-ng \
         syslog-ng-core \
