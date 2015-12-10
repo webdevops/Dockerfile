@@ -15,8 +15,7 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 READLINK='readlink'
 
 [[ `uname` == 'Darwin' ]] && {
-	which greadlink gsed gzcat > /dev/null && {
-		alias readlink=greadlink sed=gsed zcat=gzcat
+	which greadlink > /dev/null && {
 		READLINK='greadlink'
 	} || {
 		echo 'ERROR: GNU utils required for Mac. You may use homebrew to install them: brew install coreutils gnu-sed'
