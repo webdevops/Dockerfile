@@ -22,7 +22,7 @@
 
 # create a directory if it doesn't exist
 - file:
-    path: "/var/log/php-fpm"
+    path: "/var/log/php5-fpm"
     state: directory
     mode:  0755
     owner: "root"
@@ -35,7 +35,7 @@
     regexp: '^[\s;]*{{ item.key }}[\s]*='
     line:   '{{ item.key }} = {{ item.value }}'
   with_items:
-   - { key: 'error_log',                   value: "/var/log/php-fpm/fpm.log" }
+   - { key: 'error_log',                   value: "/var/log/php5-fpm/fpm.log" }
    - { key: 'pid',                         value: "/var/run/php5-fpm.pid" }
 
 - name: Configure php-fpm pool user (www.conf)
@@ -46,9 +46,9 @@
   with_items:
    - { key: 'listen',                      value: "0.0.0.0:9000" }
    - { key: 'catch_workers_output',        value: "yes" }
-   - { key: 'access.log',                  value: "/var/log/php-fpm/access.log" }
-   - { key: 'slowlog',                     value: "/var/log/php-fpm/slow.log" }
-   - { key: 'php_admin_value[error_log]',  value: "/var/log/php-fpm/error.log" }
+   - { key: 'access.log',                  value: "/var/log/php5-fpm/access.log" }
+   - { key: 'slowlog',                     value: "/var/log/php5-fpm/slow.log" }
+   - { key: 'php_admin_value[error_log]',  value: "/var/log/php5-fpm/error.log" }
    - { key: 'php_admin_value[log_errors]', value: "on" }
    - { key: 'user',                        value: "{{ APPLICATION_USER }}" }
    - { key: 'group',                       value: "{{ APPLICATION_GROUP }}" }

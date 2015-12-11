@@ -1,7 +1,7 @@
-/var/log/php-fpm/fpm.log
-/var/log/php-fpm/access.log
-/var/log/php-fpm/slow.log
-/var/log/php-fpm/error.log {
+/var/log/php5-fpm/fpm.log
+/var/log/php5-fpm/access.log
+/var/log/php5-fpm/slow.log
+/var/log/php5-fpm/error.log {
     missingok
     notifempty
     sharedscripts
