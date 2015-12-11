@@ -29,6 +29,12 @@
     group: "root"
   when: ansible_distribution == 'CentOS'
 
+- name: Remove default php-fpm logrotate
+  file:
+    path: "/etc/logrotate.d/php-fpm"
+    state: absent
+  when: ansible_distribution == 'CentOS'
+
 - name: Configure php-fpm main
   lineinfile:
     dest:   '{{ php_main_conf }}'

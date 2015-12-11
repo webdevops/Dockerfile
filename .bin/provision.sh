@@ -145,7 +145,6 @@ function deployProvision() {
     clearProvision  php  '*'
     deployProvision php/general       php  '*'
     deployProvision php/ubuntu-12.04  php  'ubuntu-12.04'
-    deployProvision php/centos        php  'centos-*'
 }
 
 [[ $(checkBuildTarget php-apache) ]] && {
