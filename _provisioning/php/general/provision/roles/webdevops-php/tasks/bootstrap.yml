@@ -20,14 +20,14 @@
      php_pool_conf: /etc/php5/fpm/pool.d/www.conf
   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
 
-# create a directory if it doesn't exist
-- file:
-    path: "/var/log/php5-fpm"
-    state: directory
-    mode:  0755
+- name: Create php-fpm log directory
+  file:
+    path: "/usr/sbin/php5-fpm"
+    src:  "/sbin/php-fpm"
+    state: link
     owner: "root"
     group: "root"
-    recurse: yes
+  when: ansible_distribution == 'CentOS'
 
 - name: Configure php-fpm main
   lineinfile:
