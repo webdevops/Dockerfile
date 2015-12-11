@@ -84,6 +84,49 @@ case "$CONTROL_COMMAND" in
         fi
         ;;
 
+    ## ------------------------------------------
+    ## Version
+    ## ------------------------------------------
+
+    "version.get")
+        cat /opt/docker/VERSION
+        ;;
+
+    "version.require.min")
+        EXPECTED_VERSION="$1"
+        CURRENT_VERSION="$(cat /opt/docker/VERSION)"
+        if [ "$CURRENT_VERSION" -lt "$EXPECTED_VERSION" ]; then
+            echo "-----------------------------------------------------------"
+            echo "--- This docker image is not up2date!"
+            echo "--- "
+            echo "--- Version expected min: $EXPECTED_VERSION"
+            echo "--- Version current: $CURRENT_VERSION"
+            echo "--- "
+            echo "--- Run 'docker pull <imagename>' to update image"
+            echo "-----------------------------------------------------------"
+            exit 1
+        fi
+        ;;
+
+    "version.require.max")
+        EXPECTED_VERSION="$1"
+        CURRENT_VERSION="$(cat /opt/docker/VERSION)"
+        if [ "$CURRENT_VERSION"  -gt "$EXPECTED_VERSION" ]; then
+            echo "-----------------------------------------------------------"
+            echo "--- This docker image is too new!"
+            echo "--- "
+            echo "--- Version expected max: $EXPECTED_VERSION"
+            echo "--- Version current: $CURRENT_VERSION"
+            echo "-----------------------------------------------------------"
+            exit 1
+        fi
+        ;;
+
+
+    "buildtime.get")
+        cat /opt/docker/BUILDTIME
+        ;;
+
     *)
         echo "[ERROR] Invalid controll command: \"${CONTROL_COMMAND}\""
         exit 1
