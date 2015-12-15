@@ -2,7 +2,7 @@
 # Debian 8 PHP-Apache Docker container
 #++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/php:debian-8
+FROM webdevops/php:debian-8-php7
 MAINTAINER info@webdevops.io
 
 ENV WEB_DOCUMENT_ROOT  /application/code/
