@@ -7,7 +7,7 @@
 
 - name: Set php pool file
   set_fact:
-     php_pool_conf: /etc/php5/fpm/pool.d/www.conf
+     php_pool_conf: /etc/php/7.0/fpm/pool.d/www.conf
   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
 
 - name: Restrict php-fpm to local connection
