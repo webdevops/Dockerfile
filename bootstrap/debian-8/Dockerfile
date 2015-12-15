@@ -24,6 +24,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         locales-all \
     # Install ansible
     && /usr/local/bin/apt-install \
-        ansible \
-        python-apt \
-        aptitude
+        python-dev \
+        python-pip \
+    && pip install ansible

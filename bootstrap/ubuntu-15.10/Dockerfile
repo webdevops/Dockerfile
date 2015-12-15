@@ -28,8 +28,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         software-properties-common \
     && apt-add-repository multiverse \
     # Install ansible
-    && apt-add-repository ppa:ansible/ansible \
     && /usr/local/bin/apt-install \
-        ansible \
-        python-apt \
-        aptitude
+        python-dev \
+        python-pip \
+    && pip install ansible
