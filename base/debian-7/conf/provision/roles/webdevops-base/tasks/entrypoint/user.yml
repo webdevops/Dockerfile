@@ -1,0 +1,23 @@
+---
+
+- group:
+    name:  "{{ APPLICATION_GROUP }}"
+    gid:   "{{ APPLICATION_GID }}"
+
+- user:
+    name:  "{{ APPLICATION_USER }}"
+    uid:   "{{ APPLICATION_UID }}"
+    group: "{{ APPLICATION_GROUP }}"
+    shell: "/bin/bash"
+    home:  "/home/{{ APPLICATION_USER }}"
+
+# create a directory if it doesn't exist
+- file:
+    path: "/home/{{ APPLICATION_USER }}"
+    state: directory
+    mode:  0755
+    owner: "{{ APPLICATION_USER }}"
+    group: "{{ APPLICATION_GROUP }}"
+    recurse: yes
+
+- action: setup

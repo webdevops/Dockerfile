@@ -145,7 +145,9 @@ function deployProvision() {
     clearProvision  php  '*'
     deployProvision php/general       php  '*'
     deployProvision php/ubuntu-12.04  php  'ubuntu-12.04'
-    deployProvision php/centos        php  'centos-*'
+
+    clearProvision  php  'debian-*-php7'
+    deployProvision php/debian-php7  php  'debian-*-php7'
 }
 
 [[ $(checkBuildTarget php-apache) ]] && {
@@ -154,6 +156,7 @@ function deployProvision() {
     deployProvision apache/general      php-apache  '*'
     deployProvision apache/centos       php-apache  'centos-*'
     deployProvision php-apache/general  php-apache  '*'
+    deployProvision php-apache/debian-php7  php-apache  'debian-*-php7'
 }
 
 [[ $(checkBuildTarget php-nginx) ]] && {
@@ -161,6 +164,7 @@ function deployProvision() {
     clearProvision  php-nginx  '*'
     deployProvision nginx/general      php-nginx  '*'
     deployProvision php-nginx/general  php-nginx  '*'
+    deployProvision php-nginx/debian-php7  php-nginx  'debian-*-php7'
 }
 
 exit 0

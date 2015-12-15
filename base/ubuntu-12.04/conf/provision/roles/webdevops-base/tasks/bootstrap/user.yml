@@ -1,18 +1,20 @@
 ---
 
-- group:
+- name: Create application group
+  group:
     name:  "{{ APPLICATION_GROUP }}"
     gid:   "{{ APPLICATION_GID }}"
 
-- user:
+- name: Create application user
+  user:
     name:  "{{ APPLICATION_USER }}"
     uid:   "{{ APPLICATION_UID }}"
     group: "{{ APPLICATION_GROUP }}"
     shell: "/bin/bash"
     home:  "/home/{{ APPLICATION_USER }}"
 
-# create a directory if it doesn't exist
-- file:
+- name: Init home directory
+  file:
     path: "/home/{{ APPLICATION_USER }}"
     state: directory
     mode:  0755
