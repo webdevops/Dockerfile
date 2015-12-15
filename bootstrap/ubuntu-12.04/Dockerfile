@@ -27,8 +27,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && /usr/local/bin/apt-install \
         python-software-properties \
     # Install ansible
-    && apt-add-repository ppa:ansible/ansible \
     && /usr/local/bin/apt-install \
-        ansible \
-        python-apt \
-        aptitude
+        python-dev \
+        python-pip \
+    && pip install ansible

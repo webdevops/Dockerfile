@@ -1,8 +1,8 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 14.04 Nginx Docker container
+# Debian 7 Nginx Docker container
 #++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base:ubuntu-14.04
+FROM webdevops/base:debian-7
 MAINTAINER info@webdevops.io
 
 ENV WEB_DOCUMENT_ROOT  /application/code/
