@@ -3,22 +3,22 @@
 - name: Set php main file
   set_fact:
      php_main_conf: /etc/php-fpm.conf
-  when: ansible_distribution == 'CentOS'
+  when: ansible_os_family == 'RedHat'
 
 - name: Set php main file
   set_fact:
      php_main_conf: /etc/php/7.0/fpm/php-fpm.conf
-  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+  when: ansible_os_family == 'Debian'
 
 - name: Set php pool file
   set_fact:
      php_pool_conf: /etc/php-fpm.d/www.conf
-  when: ansible_distribution == 'CentOS'
+  when: ansible_os_family == 'RedHat'
 
 - name: Set php pool file
   set_fact:
      php_pool_conf: /etc/php/7.0/fpm/pool.d/www.conf
-  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+  when: ansible_os_family == 'Debian'
 
 - name: Symlink php-fpm binary
   file:
@@ -27,13 +27,13 @@
     state: link
     owner: "root"
     group: "root"
-  when: ansible_distribution == 'CentOS'
+  when: ansible_os_family == 'RedHat'
 
 - name: Remove default php-fpm logrotate
   file:
     path: "/etc/logrotate.d/php-fpm"
     state: absent
-  when: ansible_distribution == 'CentOS'
+  when: ansible_os_family == 'RedHat'
 
 - name: Create php-fpm log directory
   file:

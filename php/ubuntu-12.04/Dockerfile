@@ -30,6 +30,10 @@ RUN /usr/local/bin/apt-install \
         php5-memcache \
         php5-memcached \
         php5-imagick \
+        php-pear \
+    && pear channel-update pear.php.net \
+    && pear upgrade-all \
+    && pear config-set auto_discover 1 \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && sed -i 's/;daemonize = yes/daemonize = no/' /etc/php5/fpm/php-fpm.conf

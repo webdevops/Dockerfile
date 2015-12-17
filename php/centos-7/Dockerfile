@@ -34,6 +34,10 @@ RUN /usr/local/bin/yum-install \
         php-pear \
         php-devel \
         gcc \
+        php-pear \
+    && pear channel-update pear.php.net \
+    && pear upgrade-all \
+    && pear config-set auto_discover 1 \
     && pecl install imagick
 
 # Deploy scripts/configurations

@@ -3,12 +3,12 @@
 - name: Set apache vhost file
   set_fact:
      apache_docker_vhost: /etc/httpd/conf.d/docker.conf
-  when: ansible_distribution == 'CentOS'
+  when: ansible_os_family == 'RedHat'
 
 - name: Set apache vhost file
   set_fact:
      apache_docker_vhost: /etc/apache2/sites-enabled/10-docker.conf
-  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+  when: ansible_os_family == 'Debian'
 
 - name: Enable apache main config
   file:
