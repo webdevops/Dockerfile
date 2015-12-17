@@ -25,6 +25,8 @@ Command                     | Description
 `DEBUG=1 make all`          | Show log of build process even if process is successfull
 `FORCE=1 make all`          | Force container build (`docker build --no-cache ...`)
 <br>                        |
+`make provision`            | Deploy all configuration files from [_provisioning/](_provisioning/README.md)
+<br>                        |
 `make base`                 | Build all base containers
 `make service`              | Build all service containers
 `make php`                  | Build all php containers
@@ -37,6 +39,10 @@ Command                     | Description
 
 All `base` inherited containers provides an modular provisioning available as simple shell scripts and ansible roles.
 See [base/README.md](base/README.md) for more informations.
+
+The configuration and provisioning files are build from [_provisioning/](_provisioning/README.md) to get a consistent
+configuraiton for all containers. This also should reduce copy&paste errors because the configuration will be deployed
+automatically into containers on build process.
 
 # Images
 
