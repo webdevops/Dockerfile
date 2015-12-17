@@ -19,6 +19,16 @@ BASENAME="$2"
 LATEST="$3"
 WORKDIR=$(pwd)
 
+###
+ # Build dockerfile
+ #
+ # will build one docker container, background mode if FAST mode is active
+ #
+ # $1 -> dockerfile path       (php/)
+ # $2 -> docker container name (eg. webdevops/php)
+ # $3 -> docker container tag  (eg. ubuntu-14.04)
+ #
+ ##
 function buildDockerfile() {
     DOCKERFILE_PATH="$1"
     CONTAINER_NAME="$2"
@@ -35,6 +45,12 @@ function buildDockerfile() {
     cd "$WORKDIR"
 }
 
+###
+ # Wait for build
+ #
+ # will wait for parallel build processes (only FAST mode)
+ #
+ ##
 function waitForBuild() {
     if [ "${FAST}" -eq 1 ]; then
         waitForBuildStep
@@ -42,12 +58,23 @@ function waitForBuild() {
     fi
 }
 
+###
+ # Wait for build
+ #
+ # will wait for parallel build processes (only FAST mode)
+ #
+ ##
 function waitForBuildStep() {
     if [ "${FAST}" -eq 1 ]; then
         echo "waiting for build..."
         wait
     fi
 }
+
+
+###############################################################################
+# MAIN
+###############################################################################
 
 if [ "${FAST}" -eq 1 ]; then
     echo "Building $BASENAME (FAST MODE)"
@@ -59,30 +86,39 @@ if [ "${DEBUG}" -eq 1 ]; then
     echo "    +++++++ DEBUG MODE +++++++    "
 fi
 
-sleep 1
-
+sleep 0.5
 
 if [ -f "${TARGET}/Dockerfile" ]; then
+    # If target is only a simple container without sub folders
+    # just build it as single container -> latest tag
+
     TAGNAME="latest"
     buildDockerfile "${TARGET}" "${BASENAME}" "${TAGNAME}"
 
     waitForBuild
 else
+    # Target is a multiple tag container, each sub directory name is
+    # the name of the docker image tag
+
+    # build each subfolder as tag
     for DOCKERFILE in $TARGET/*; do
         if [ -f "$DOCKERFILE/Dockerfile" ]; then
             TAGNAME=$(basename "$DOCKERFILE")
             buildDockerfile "${DOCKERFILE}" "${BASENAME}" "${TAGNAME}"
-            sleep 0.2
+            sleep 0.05
         fi
     done
 
+    # wait for build process
     waitForBuildStep
 
+    # build latest tag
     if [ -f "${TARGET}/${LATEST}/Dockerfile" ]; then
             DOCKERFILE="${TARGET}/${LATEST}"
             buildDockerfile "${DOCKERFILE}" "${BASENAME}" "latest"
     fi
 
+    # wait for final build
     waitForBuild
 fi
 

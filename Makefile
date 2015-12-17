@@ -9,13 +9,15 @@ list:
 
 all:     base php hhvm service apache nginx
 
-base:    webdevops/bootstrap webdevops/base webdevops/storage
-service: webdevops/ssh webdevops/vsftp webdevops/postfix
-php:     webdevops/php webdevops/php-apache webdevops/php-nginx
-hhvm:    webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
+bootstrap: webdevops/bootstrap
+base:      webdevops/bootstrap webdevops/base webdevops/storage
+service:   webdevops/ssh webdevops/vsftp webdevops/postfix
 
-apache:  webdevops/apache webdevops/php-apache webdevops/hhvm-apache
-nginx:   webdevops/nginx webdevops/php-nginx webdevops/hhvm-nginx
+php:       webdevops/php webdevops/php-apache webdevops/php-nginx
+hhvm:      webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
+
+apache:    webdevops/apache webdevops/php-apache webdevops/hhvm-apache
+nginx:     webdevops/nginx webdevops/php-nginx webdevops/hhvm-nginx
 
 provision:
 	bash .bin/provision.sh
