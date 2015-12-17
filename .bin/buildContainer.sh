@@ -20,6 +20,10 @@ DOCKERFILE_PATH="$1"
 CONTAINER_NAME="$2"
 CONTAINER_TAG="$3"
 
+###############################################################################
+# MAIN
+###############################################################################
+
 if [ "$FORCE" -eq 1 ]; then
     DOCKER_OPTS="$DOCKER_OPTS --no-cache"
 fi
@@ -28,29 +32,39 @@ fi
 cd "$DOCKERFILE_PATH"
 
 if [ "$DEBUG" -eq 0 ]; then
+    # Background mode, write all logs into tmpfile
     LOGFILE=$(mktemp /tmp/docker.build.XXXXXXXXXX)
     docker build $DOCKER_OPTS -t "${CONTAINER_NAME}:${CONTAINER_TAG}" . &> "$LOGFILE"
     DOCKER_BUILD_RET="$?"
 else
+    # Foreground mode, write all logs to STDOUT
     docker build $DOCKER_OPTS -t "${CONTAINER_NAME}:${CONTAINER_TAG}" .
     DOCKER_BUILD_RET="$?"
 fi
 
 
 if [ "$DOCKER_BUILD_RET" -ne 0 ]; then
+    # docker build failed
+    # output the logfile
     if [ -n "$LOGFILE" ]; then
-        cat "$LOGFILE"
+        # LOGFILE is set so the build was done in background mode
+        # -> output logfile content
 
-        echo ""
-        echo ""
-        echo "-----------------------------------------------------------"
-        echo " --- BUILD FAILURE  -> ${CONTAINER_NAME}:${CONTAINER_TAG}"
-        echo "-----------------------------------------------------------"
+        cat "$LOGFILE"
     fi
+
+    # output error message
+    echo ""
+    echo ""
+    echo "-----------------------------------------------------------"
+    echo " --- BUILD FAILURE  -> ${CONTAINER_NAME}:${CONTAINER_TAG}"
+    echo "-----------------------------------------------------------"
 fi
 
 if [ -n "$LOGFILE" ]; then
+    # remove tmpfile (logfile)
     rm -f -- "$LOGFILE"
 fi
 
+# exit with docker build return code
 exit "$DOCKER_BUILD_RET"

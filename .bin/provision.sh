@@ -12,6 +12,8 @@ set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
 
+# Fix readlink issue on macos
+
 READLINK='readlink'
 
 [[ `uname` == 'Darwin' ]] && {
@@ -29,10 +31,25 @@ BASE_DIR=$(dirname "$SCRIPT_DIR")
 LOCALSCRIPT_DIR="${BASE_DIR}/_localscripts"
 PROVISION_DIR="${BASE_DIR}/_provisioning"
 
+
+###
+ # Relative dir
+ #
+ # $1     -> absolute path
+ # stdout -> relative path (to current base dir)
+ #
+ ##
 function relativeDir() {
     echo ${1#${BASE_DIR}/}
 }
 
+###
+ # Relative dir
+ #
+ # $1     -> build target (eg. "bootstrap", "base", "php" ...)
+ # stdout -> "1" if target is matched
+ #
+ ##
 function checkBuildTarget() {
     if [ "$BUILD_TARGET" == "all" -o "$BUILD_TARGET" == "$1" ]; then
         echo 1
@@ -43,6 +60,12 @@ function checkBuildTarget() {
 # Localscripts
 #######################################
 
+###
+ # Build localscripts
+ #
+ # Build tar file from _localscripts for bootstrap containers
+ #
+ ##
 function buildLocalscripts() {
     echo " * Building localscripts"
 
@@ -62,6 +85,15 @@ function buildLocalscripts() {
 # Provision
 #######################################
 
+###
+ # Clear provisioning
+ #
+ # Clear conf/ directory of each docker container
+ #
+ # $1 -> container name (eg. php)
+ # $2 -> sub directory filter (eg. "*" for all or "ubuntu-*" for only ubuntu containers)
+ #
+ ##
 function clearProvision() {
     DOCKER_CONTAINER="$1"
     DOCKER_FILTER="$2"
@@ -75,6 +107,16 @@ function clearProvision() {
     done
 }
 
+###
+ # Deploy provisioning
+ #
+ # Deploy conf/ directory into each docker container
+ #
+ # $1 -> configuration directory from _provisioning (eg. php/general)
+ # $2 -> container name (eg. php)
+ # $3 -> sub directory filter (eg. "*" for all or "ubuntu-*" for only ubuntu containers)
+ #
+ ##
 function deployProvision() {
     PROVISION_SUB_DIR="$1"
     DOCKER_CONTAINER="$2"
@@ -94,11 +136,18 @@ function deployProvision() {
     done
 }
 
+###############################################################################
+# MAIN
+###############################################################################
+
+
+## Build bootstrap
 [[ $(checkBuildTarget bootstrap) ]] && {
     echo "Building provision for webdevops/bootstrap..."
     #buildLocalscripts
 }
 
+## Build base
 [[ $(checkBuildTarget base) ]] && {
     echo "Building provision for webdevops/base..."
     clearProvision  base  '*'
@@ -107,6 +156,7 @@ function deployProvision() {
     deployProvision base/ubuntu-12.04   base  'ubuntu-12.04'
 }
 
+## Build apache
 [[ $(checkBuildTarget apache) ]] && {
     echo "Building provision for webdevops/apache..."
     clearProvision  apache '*'
@@ -114,18 +164,21 @@ function deployProvision() {
     deployProvision apache/centos   apache  'centos-*'
 }
 
+## Build nginx
 [[ $(checkBuildTarget nginx) ]] && {
     echo "Building provision for webdevops/nginx..."
     clearProvision  nginx '*'
     deployProvision nginx/general  nginx  '*'
 }
 
+## Build hhvm
 [[ $(checkBuildTarget hhvm) ]] && {
     echo "Building provision for webdevops/hhvm..."
     clearProvision  hhvm  '*'
     deployProvision hhvm/general  hhvm  '*'
 }
 
+## Build hhvm-apache
 [[ $(checkBuildTarget hhvm-apache) ]] && {
     echo "Building provision for webdevops/hhvm-apache..."
     clearProvision  hhvm-apache  '*'
@@ -133,6 +186,7 @@ function deployProvision() {
     deployProvision hhvm-apache/general  hhvm-apache  '*'
 }
 
+## Build hhvm-nginx
 [[ $(checkBuildTarget hhvm-nginx) ]] && {
     echo "Building provision for webdevops/hhvm-nginx..."
     clearProvision  hhvm-nginx  '*'
@@ -140,6 +194,7 @@ function deployProvision() {
     deployProvision hhvm-nginx/general  hhvm-nginx  '*'
 }
 
+## Build php
 [[ $(checkBuildTarget php) ]] && {
     echo "Building provision for webdevops/php..."
     clearProvision  php  '*'
@@ -150,6 +205,7 @@ function deployProvision() {
     deployProvision php/debian-php7  php  'debian-*-php7'
 }
 
+## Build php-apache
 [[ $(checkBuildTarget php-apache) ]] && {
     echo "Building provision for webdevops/php-apache..."
     clearProvision  php-apache  '*'
@@ -159,6 +215,7 @@ function deployProvision() {
     deployProvision php-apache/debian-php7  php-apache  'debian-*-php7'
 }
 
+## Build php-nginx
 [[ $(checkBuildTarget php-nginx) ]] && {
     echo "Building provision for webdevops/php-nginx..."
     clearProvision  php-nginx  '*'
