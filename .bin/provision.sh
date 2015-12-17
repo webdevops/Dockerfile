@@ -71,7 +71,7 @@ function buildLocalscripts() {
 
     cd "${LOCALSCRIPT_DIR}"
     rm -f scripts.tar
-    tar jcvf scripts.tar *
+    tar -jmcf scripts.tar *
 
     find "$BASE_DIR/bootstrap" -type d -depth 1 | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
@@ -79,6 +79,8 @@ function buildLocalscripts() {
             cp scripts.tar "${DOCKER_DIR}/scripts.tar"
         fi
     done
+
+    rm -f scripts.tar
 }
 
 #######################################
@@ -144,7 +146,7 @@ function deployProvision() {
 ## Build bootstrap
 [[ $(checkBuildTarget bootstrap) ]] && {
     echo "Building provision for webdevops/bootstrap..."
-    #buildLocalscripts
+    buildLocalscripts
 }
 
 ## Build base
