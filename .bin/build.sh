@@ -86,7 +86,7 @@ if [ "${DEBUG}" -eq 1 ]; then
     echo "    +++++++ DEBUG MODE +++++++    "
 fi
 
-sleep 1
+sleep 0.5
 
 if [ -f "${TARGET}/Dockerfile" ]; then
     # If target is only a simple container without sub folders
@@ -105,7 +105,7 @@ else
         if [ -f "$DOCKERFILE/Dockerfile" ]; then
             TAGNAME=$(basename "$DOCKERFILE")
             buildDockerfile "${DOCKERFILE}" "${BASENAME}" "${TAGNAME}"
-            sleep 0.2
+            sleep 0.05
         fi
     done
 
