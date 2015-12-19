@@ -1,6 +1,6 @@
 ---
 
-- name: Filesystem cleanup
+- name: Filesystem cleanup [Debian family]
   file:
     path: "{{ item }}"
     state: absent
@@ -9,3 +9,8 @@
     - /var/cache/apt/archives/partial/*
     - /var/cache/debconf/*-old
     - /var/lib/apt/lists/*
+  when: ansible_os_family == "Debian"
+
+- name: Yum cleanup [RedHat family]
+  command: yum clean all
+  when: ansible_os_family == "RedHat"

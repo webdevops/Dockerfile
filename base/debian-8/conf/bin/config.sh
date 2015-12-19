@@ -2,7 +2,7 @@
 
 shopt -s nullglob
 
-PROVISION_REGISTRY_PATH="/opt/docker/bin/.registry"
+PROVISION_REGISTRY_PATH="/opt/docker/etc/.registry"
 
 
 function createNamedPipe() {
@@ -22,10 +22,11 @@ function replaceTextInFile() {
     sed -i "s/${SOURCE}/${REPLACE}/" "${TARGET}"
 }
 
-function initBootstrap() {
+function runProvisionBootstrap() {
     mkdir -p /opt/docker/bin/registry/
 
     for FILE in /opt/docker/bin/bootstrap.d/*.sh; do
+        # run custom scripts, only once
         . "$FILE"
         rm -f -- "$FILE"
     done
@@ -36,8 +37,20 @@ function initBootstrap() {
     rm -f ${PROVISION_REGISTRY_PATH}/provision.*.bootstrap
 }
 
-function initEntrypoint() {
+function runProvisionOnBuild() {
+    mkdir -p /opt/docker/bin/registry/
+
+    for FILE in /opt/docker/bin/onbuild.d/*.sh; do
+        # run custom scripts
+        . "$FILE"
+    done
+
+    runDockerProvision onbuild
+}
+
+function runProvisionEntrypoint() {
     for FILE in /opt/docker/bin/entrypoint.d/*.sh; do
+        # run custom scripts
         . "$FILE"
     done
 

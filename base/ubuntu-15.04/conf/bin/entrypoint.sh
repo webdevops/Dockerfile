@@ -14,10 +14,10 @@ source /opt/docker/bin/config.sh
 
 if [ "$TASK" == "supervisord" -o "$TASK" == "noop" ]; then
     # Visible provisioning
-    initEntrypoint
+    runProvisionEntrypoint
 else
     # Hidden provisioning
-    initEntrypoint  > /dev/null
+    runProvisionEntrypoint  > /dev/null
 fi
 
 #############################
