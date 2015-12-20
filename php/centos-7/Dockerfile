@@ -38,7 +38,8 @@ RUN /usr/local/bin/yum-install \
     && pear channel-update pear.php.net \
     && pear upgrade-all \
     && pear config-set auto_discover 1 \
-    && pecl install imagick
+    && pecl install imagick \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
