@@ -1,0 +1,36 @@
+---
+
+- name: Set php pool file
+  set_fact:
+     php_pool_conf: /etc/php-fpm.d/www.conf
+  when: ansible_os_family == 'RedHat'
+
+- name: Set php pool file
+  set_fact:
+     php_pool_conf: /etc/php/7.0/fpm/pool.d/www.conf
+  when: ansible_os_family == 'Debian'
+
+
+- name: Configure php-fpm pool user (www.conf)
+  lineinfile:
+    dest:   '{{ php_pool_conf }}'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: 'listen',                      value: "0.0.0.0:9000" }
+   - { key: 'catch_workers_output',        value: "yes" }
+   - { key: 'access.log',                  value: "/var/log/php7-fpm/access.log" }
+   - { key: 'slowlog',                     value: "/var/log/php7-fpm/slow.log" }
+   - { key: 'php_admin_value[error_log]',  value: "/var/log/php7-fpm/error.log" }
+   - { key: 'php_admin_value[log_errors]', value: "on" }
+   - { key: 'user',                        value: "{{ APPLICATION_USER }}" }
+   - { key: 'group',                       value: "{{ APPLICATION_GROUP }}" }
+
+- name: Disable php-fpm connection limit
+  lineinfile:
+    dest:   '{{ php_pool_conf }}'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   ';{{ item.key }}'
+  with_items:
+   - { key: 'listen.allowed_clients' }
+

@@ -1,0 +1,36 @@
+---
+
+- name: Symlink php-fpm binary
+  file:
+    path: "/usr/sbin/php5-fpm"
+    src:  "/sbin/php-fpm"
+    state: link
+    owner: "root"
+    group: "root"
+  when: ansible_os_family == 'RedHat'
+
+- name: Remove default php-fpm logrotate
+  file:
+    path: "/etc/logrotate.d/php-fpm"
+    state: absent
+  when: ansible_os_family == 'RedHat'
+
+- name: Create php-fpm log directory
+  file:
+    path: "/var/log/php5-fpm/"
+    state: directory
+    owner: "root"
+    group: "root"
+
+- name: Create php-fpm log files
+  file:
+    path: "/var/log/php5-fpm/{{ item }}"
+    state: touch
+    owner: "root"
+    group: "root"
+    mode:  0600
+  with_items:
+    - slow.log
+    - access.log
+    - error.log
+    - fpm.log

@@ -80,6 +80,10 @@ webdevops/vsftp:
 	bash .bin/provision.sh vsftp
 	bash .bin/build.sh vsftp "${DOCKER_PREFIX}/vsftp" "${DOCKER_LATEST}"
 
+webdevops/postfix:
+	bash .bin/provision.sh postfix
+	bash .bin/build.sh postfix "${DOCKER_PREFIX}/postfix" "${DOCKER_LATEST}"
+
 webdevops/typo3:
 	bash .bin/provision.sh typo3
 	bash .bin/build.sh typo3 "${DOCKER_PREFIX}/typo3" "${DOCKER_LATEST}"
