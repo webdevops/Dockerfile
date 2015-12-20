@@ -66,4 +66,5 @@
 #FROM webdevops/ssh
 #FROM webdevops/storage
 #FROM webdevops/vsftp
-#FROM webdevops/typo3
+
+FROM webdevops/typo3
