@@ -1,9 +1,7 @@
 ---
 
-- include: bootstrap.yml
+- include: cleanup.yml
   tags:
     - bootstrap
-
-- include: entrypoint.yml
-  tags:
+    - onbuild
     - entrypoint

@@ -27,7 +27,8 @@ RUN /usr/local/bin/apt-install \
         php7.0-gd \
         php7.0-sqlite3 \
         php7.0-ldap \
-        php7.0-opcache
+        php7.0-opcache \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/

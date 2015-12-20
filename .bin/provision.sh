@@ -226,4 +226,11 @@ function deployProvision() {
     deployProvision php-nginx/debian-php7  php-nginx  'debian-*-php7'
 }
 
+## Build typo3
+[[ $(checkBuildTarget typo3) ]] && {
+    echo "Building provision for webdevops/typo3..."
+    clearProvision  typo3  '*'
+    deployProvision typo3/general  typo3  '*'
+}
+
 exit 0

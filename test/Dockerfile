@@ -23,6 +23,24 @@
 #FROM webdevops/php:ubuntu-15.04
 #FROM webdevops/php:ubuntu-15.10
 
+#FROM webdevops/apache:centos-7
+#FROM webdevops/apache:debian-7
+#FROM webdevops/apache:debian-8
+#FROM webdevops/apache:debian-8-php7
+#FROM webdevops/apache:ubuntu-12.04
+#FROM webdevops/apache:ubuntu-14.04
+#FROM webdevops/apache:ubuntu-15.04
+#FROM webdevops/apache:ubuntu-15.10
+
+#FROM webdevops/nginx:centos-7
+#FROM webdevops/nginx:debian-7
+#FROM webdevops/nginx:debian-8
+#FROM webdevops/nginx:debian-8-php7
+#FROM webdevops/nginx:ubuntu-12.04
+#FROM webdevops/nginx:ubuntu-14.04
+#FROM webdevops/nginx:ubuntu-15.04
+#FROM webdevops/nginx:ubuntu-15.10
+
 #FROM webdevops/php-apache:centos-7
 #FROM webdevops/php-apache:debian-7
 #FROM webdevops/php-apache:debian-8
@@ -48,3 +66,5 @@
 #FROM webdevops/ssh
 #FROM webdevops/storage
 #FROM webdevops/vsftp
+
+FROM webdevops/typo3

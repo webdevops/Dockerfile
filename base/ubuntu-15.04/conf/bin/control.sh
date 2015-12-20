@@ -21,12 +21,17 @@ case "$CONTROL_COMMAND" in
 
     ## main roles
     "provision.role")
-        provisionRoleAdd "provision.main.bootstrap" "$1"
+        provisionRoleAdd "provision.main.bootstrap"  "$1"
+        provisionRoleAdd "provision.main.onbuild"    "$1"
         provisionRoleAdd "provision.main.entrypoint" "$1"
         ;;
 
     "provision.role.bootstrap")
         provisionRoleAdd "provision.main.bootstrap" "$1"
+        ;;
+
+    "provision.role.onbuild")
+        provisionRoleAdd "provision.main.onbuild" "$1"
         ;;
 
     "provision.role.entrypoint")
@@ -35,12 +40,17 @@ case "$CONTROL_COMMAND" in
 
     ## startup roles
     "provision.role.startup")
-        provisionRoleAdd "provision.startup.bootstrap" "$1"
+        provisionRoleAdd "provision.startup.bootstrap"  "$1"
+        provisionRoleAdd "provision.startup.onbuild"    "$1"
         provisionRoleAdd "provision.startup.entrypoint" "$1"
         ;;
 
     "provision.role.startup.bootstrap")
         provisionRoleAdd "provision.startup.bootstrap" "$1"
+        ;;
+
+    "provision.role.startup.onbuild")
+        provisionRoleAdd "provision.startup.onbuild" "$1"
         ;;
 
     "provision.role.startup.entrypoint")
@@ -49,12 +59,17 @@ case "$CONTROL_COMMAND" in
 
     ## startup roles
     "provision.role.finish")
-        provisionRoleAdd "provision.finish.bootstrap" "$1"
+        provisionRoleAdd "provision.finish.bootstrap"  "$1"
+        provisionRoleAdd "provision.finish.onbuild"   "$1"
         provisionRoleAdd "provision.finish.entrypoint" "$1"
         ;;
 
     "provision.role.finish.bootstrap")
         provisionRoleAdd "provision.finish.bootstrap" "$1"
+        ;;
+
+    "provision.role.finish.onbuild")
+        provisionRoleAdd "provision.finish.onbuild" "$1"
         ;;
 
     "provision.role.finish.entrypoint")
@@ -64,6 +79,7 @@ case "$CONTROL_COMMAND" in
     ## ------------------------------------------
     ## Service
     ## ------------------------------------------
+
     "service.enable")
         SERVICE_FILE="/opt/docker/etc/supervisor.d/$1.conf"
         if [ -f "$SERVICE_FILE" ]; then
