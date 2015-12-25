@@ -11,7 +11,7 @@ all:       base php hhvm service apache nginx misc
 
 bootstrap: webdevops/bootstrap
 base:      webdevops/bootstrap webdevops/base webdevops/storage
-service:   webdevops/ssh webdevops/vsftp webdevops/postfix
+service:   webdevops/ssh webdevops/vsftp webdevops/postfix webdevops/mail-sandbox
 
 php:       webdevops/php webdevops/php-apache webdevops/php-nginx
 hhvm:      webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
@@ -83,6 +83,10 @@ webdevops/vsftp:
 webdevops/postfix:
 	bash .bin/provision.sh postfix
 	bash .bin/build.sh postfix "${DOCKER_PREFIX}/postfix" "${DOCKER_LATEST}"
+
+webdevops/mail-sandbox:
+	bash .bin/provision.sh mail-sandbox
+	bash .bin/build.sh mail-sandbox "${DOCKER_PREFIX}/mail-sandbox" "${DOCKER_LATEST}"
 
 webdevops/typo3:
 	bash .bin/provision.sh typo3
