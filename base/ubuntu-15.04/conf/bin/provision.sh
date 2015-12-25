@@ -13,6 +13,12 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 
 export PYTHONUNBUFFERED=1
 
+
+if [ "$#" -lt 2 ]; then
+    echo "[ERROR] $0: Playbook or tag is missing"
+    exit 1
+fi
+
 ANSIBLE_PLAYBOOK="$1"
 shift
 ANSIBLE_TAG="$1"
@@ -20,4 +26,4 @@ shift
 ANSIBLE_OPTS="$@"
 
 # run ansible
-ansible-playbook "${ANSIBLE_PLAYBOOK}" -i 'localhost,' --connection=local --tags="${ANSIBLE_TAG}" $ANSIBLE_OPTS
+exec ansible-playbook "${ANSIBLE_PLAYBOOK}" -i 'localhost,' --connection=local --tags="${ANSIBLE_TAG}" $ANSIBLE_OPTS
