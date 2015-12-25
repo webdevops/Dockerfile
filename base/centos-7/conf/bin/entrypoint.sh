@@ -28,6 +28,7 @@ case "$TASK" in
 
     #############################################
     ## Supervisord (start daemons)
+    #############################################
     supervisord)
         ## Start services
         startSupervisord
@@ -35,6 +36,7 @@ case "$TASK" in
 
     #############################################
     # Endless noop loop
+    #############################################
     noop)
         while true; do
             sleep 1
@@ -43,6 +45,7 @@ case "$TASK" in
 
     #############################################
     ## Root shell
+    #############################################
     root)
         if [ "$#" -eq 1 ]; then
             ## No command, fall back to interactive shell
@@ -56,6 +59,7 @@ case "$TASK" in
 
     #############################################
     ## Defined cli script
+    #############################################
     cli)
         if [ -n "${CLI_SCRIPT}" ]; then
             if [ -n "APPLICATION_USER" ]; then
@@ -74,6 +78,7 @@ case "$TASK" in
 
     #############################################
     ## All other commands
+    #############################################
     *)
         if [ -n "${APPLICATION_USER}" ]; then
             # Run as APPLICATION_USER

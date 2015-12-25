@@ -4,16 +4,36 @@ shopt -s nullglob
 
 PROVISION_REGISTRY_PATH="/opt/docker/etc/.registry"
 
-
+###
+ # Create named pipe
+ #
+ # $1 -> name of file
+ #
+ ##
 function createNamedPipe() {
     rm --force -- "$1"
     mknod "$1" p
 }
 
+###
+ # Escape value for sed usage
+ #
+ # $1     -> value
+ # STDOUT -> escaped value
+ #
+ ##
 function sedEscape() {
     echo "$(echo $* |sed -e 's/[]\/$*.^|[]/\\&/g')"
 }
 
+###
+ # Replace text inside a file
+ #
+ # $1 -> source value
+ # $2 -> target value
+ # $3 -> path to file
+ #
+ ##
 function replaceTextInFile() {
     SOURCE="$(sedEscape $1)"
     REPLACE="$(sedEscape $2)"
@@ -22,6 +42,9 @@ function replaceTextInFile() {
     sed -i "s/${SOURCE}/${REPLACE}/" "${TARGET}"
 }
 
+###
+ # Run "bootstrap" provisioning
+ ##
 function runProvisionBootstrap() {
     mkdir -p /opt/docker/bin/registry/
 
@@ -37,6 +60,9 @@ function runProvisionBootstrap() {
     rm -f ${PROVISION_REGISTRY_PATH}/provision.*.bootstrap
 }
 
+###
+ # Run "onbuild" provisioning
+ ##
 function runProvisionOnBuild() {
     mkdir -p /opt/docker/bin/registry/
 
@@ -48,6 +74,9 @@ function runProvisionOnBuild() {
     runDockerProvision onbuild
 }
 
+###
+ # Run "entrypoint" provisioning
+ ##
 function runProvisionEntrypoint() {
     for FILE in /opt/docker/bin/entrypoint.d/*.sh; do
         # run custom scripts
@@ -57,6 +86,13 @@ function runProvisionEntrypoint() {
     runDockerProvision entrypoint
 }
 
+###
+ # Add role to provision registry
+ #
+ # $1 -> registry type (bootstrap, onbuild, entrypoint...)
+ # $2 -> role
+ #
+ ##
 function provisionRoleAdd() {
     PROVISION_FILE="${PROVISION_REGISTRY_PATH}/$1"
     PROVISION_ROLE="$2"
@@ -67,6 +103,12 @@ function provisionRoleAdd() {
     echo "${PROVISION_ROLE}" >> "${PROVISION_FILE}"
 }
 
+###
+ # Build list of roles for this registry provision type (playbook building)
+ #
+ # $1 -> registry type (bootstrap, onbuild, entrypoint...)
+ #
+ ##
 function buildProvisionRoleList() {
     PROVISION_FILE="${PROVISION_REGISTRY_PATH}/$1"
 
@@ -78,10 +120,17 @@ function buildProvisionRoleList() {
     fi
 }
 
+###
+ # Run docker provisioning with dyniamic playbook generation
+ #
+ # $1 -> playbook tag (bootstrap, onbuild, entrypoint)
+ #
+ ##
 function runDockerProvision() {
     ANSIBLE_PLAYBOOK="/opt/docker/provision/playbook.yml"
     ANSIBLE_TAG="$1"
     ANSIBLE_DYNAMIC_PLAYBOOK=0
+
 
     ## Create dynamic ansible playbook file
     if [ ! -f "$ANSIBLE_PLAYBOOK" ]; then
@@ -123,6 +172,10 @@ function runDockerProvision() {
     fi
 }
 
+###
+ # Startup supervisord
+ #
+ ##
 function startSupervisord() {
     cd /
     exec supervisord -c /opt/docker/etc/supervisor.conf --logfile /dev/null --pidfile /dev/null --user root

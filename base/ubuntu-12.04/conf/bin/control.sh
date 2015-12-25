@@ -60,7 +60,7 @@ case "$CONTROL_COMMAND" in
     ## startup roles
     "provision.role.finish")
         provisionRoleAdd "provision.finish.bootstrap"  "$1"
-        provisionRoleAdd "provision.finish.onbuild"   "$1"
+        provisionRoleAdd "provision.finish.onbuild"    "$1"
         provisionRoleAdd "provision.finish.entrypoint" "$1"
         ;;
 
@@ -85,7 +85,7 @@ case "$CONTROL_COMMAND" in
         if [ -f "$SERVICE_FILE" ]; then
             sed -i '/autostart = /c\autostart = true' -- "$SERVICE_FILE"
         else
-            echo "[ERROR] Service not found"
+            echo "[ERROR] Service '${1}' not found (tried ${SERVICE_FILE})"
             exit 1
         fi
         ;;
@@ -95,7 +95,7 @@ case "$CONTROL_COMMAND" in
         if [ -f "$SERVICE_FILE" ]; then
             sed -i '/autostart = /c\autostart = false' -- "$SERVICE_FILE"
         else
-            echo "[ERROR] Service not found"
+            echo "[ERROR] Service '${1}' not found (tried ${SERVICE_FILE})"
             exit 1
         fi
         ;;

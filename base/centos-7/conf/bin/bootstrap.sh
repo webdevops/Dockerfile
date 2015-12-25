@@ -21,12 +21,17 @@ find /opt/docker/bin/ -type f -iname '*.sh' -print0 | xargs --no-run-if-empty -0
 
 
 case "$BOOTSTRAP_MODE" in
-
+    ###################################
+    # When container will be build next time
+    ###################################
     "onbuild")
         # Init and run bootstrap system
         runProvisionOnBuild
         ;;
 
+    ###################################
+    # When container is build this time
+    ###################################
     "bootstrap")
         # Init and run bootstrap system
         runProvisionBootstrap
