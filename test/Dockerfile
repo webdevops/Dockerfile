@@ -66,5 +66,6 @@
 #FROM webdevops/ssh
 #FROM webdevops/storage
 #FROM webdevops/vsftp
+#FROM webdevops/mail-sandbox
 
 #FROM webdevops/typo3

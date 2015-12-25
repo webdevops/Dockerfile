@@ -1,0 +1,20 @@
+---
+
+- name: Postfix configuration
+  lineinfile:
+    dest:   /etc/postfix/main.cf
+    regexp: '^[\s#]*{{ item.variable }}[\s]*='
+    line:   '{{ item.variable }}={{ item.value }}'
+  with_items:
+    - { variable: 'smtpd_banner',             value: '$myhostname ESMTP' }
+    - { variable: 'inet_interfaces',          value: 'all' }
+    - { variable: 'inet_protocols',           value: 'ipv4' }
+    - { variable: 'home_mailbox',             value: '.mail/' }
+    - { variable: 'mynetworks',               value: '127.0.0.0/8 [::1]/128 0.0.0.0/0 [::1]/0' }
+    - { variable: 'mydestination',            value: 'localhost' }
+    - { variable: 'message_size_limit',       value: '102400000' }
+
+- name: Create /etc/mailname
+  raw: 'hostname > /etc/mailname'
+  args:
+    creates: '/etc/mailname'
