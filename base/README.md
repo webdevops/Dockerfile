@@ -86,3 +86,16 @@ noop            | Endless noop loop (endless sleep)
 root            | Root shell (external usage)
 cli             | Run predefined `CLI_SCRIPT` (env variable) as `EFFECTIVE_USER` if defined
 all other       | Run defined command as `EFFECTIVE_USER` if defined
+
+## Container info
+
+Image                               | Info                                                                       
+----------------------------------- | ----------------------------------------------------------------------------------
+webdevops/base:latest               | [![](https://badge.imagelayers.io/webdevops/base:latest.svg)](https://imagelayers.io/?images=webdevops/base:latest 'Get your own badge on imagelayers.io')
+webdevops/base:ubuntu-12.04         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-12.04.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-12.04 'Get your own badge on imagelayers.io')
+webdevops/base:ubuntu-14.04         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-14.04.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-14.04 'Get your own badge on imagelayers.io')
+webdevops/base:ubuntu-15.04         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-15.04 'Get your own badge on imagelayers.io')
+webdevops/base:ubuntu-15.10         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-15.14 'Get your own badge on imagelayers.io')
+webdevops/base:centos-7             | [![](https://badge.imagelayers.io/webdevops/base:centos-7.svg)](https://imagelayers.io/?images=webdevops/base:centos-7 'Get your own badge on imagelayers.io')
+webdevops/base:debian-7             | [![](https://badge.imagelayers.io/webdevops/base:debian-7.svg)](https://imagelayers.io/?images=webdevops/base:debian-7 'Get your own badge on imagelayers.io')
+webdevops/base:debian-8             | [![](https://badge.imagelayers.io/webdevops/base:debian-8.svg)](https://imagelayers.io/?images=webdevops/base:debian-8 'Get your own badge on imagelayers.io')
