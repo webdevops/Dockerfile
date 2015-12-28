@@ -2,6 +2,7 @@
 
 Dockerfiles for various prebuilt docker containers
 
+[![Docker layout](https://static.webdevops.io/docker-layout.small.png)](https://static.webdevops.io/docker-layout.png)
 
 Dockerfile                  | Description                                                                        | Depends on                                                           |
 --------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
@@ -12,8 +13,6 @@ Dockerfile                  | Description                                       
 [`storage`](storage/README.md) | Storage (noop) container                                                           | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
 [`ssh`](ssh/README.md)      | SSH service container                                                              | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
 [`samson-deployment`](samson-deployment/README.md) | [Samson](https://github.com/webdevops/samson-deployment) based deployment service  | [`zendesk/samson`](https://hub.docker.com/r/zendesk/samson/)         |
-
-[![Docker layout](https://static.webdevops.io/docker-layout.small.png)](https://static.webdevops.io/docker-layout.png)
 
 # Building
 
