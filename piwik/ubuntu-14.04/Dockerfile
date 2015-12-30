@@ -2,7 +2,7 @@
 # TYPO3 Docker container
 #++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/php-apache:ubuntu-14.04
+FROM webdevops/php-nginx:ubuntu-14.04
 MAINTAINER info@webdevops.io
 
 ENV WEB_DOCUMENT_ROOT  /application/code/piwik/
