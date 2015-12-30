@@ -2,6 +2,8 @@
 
 Based on `webdevops/php-apache:ubuntu-14.04` with automatic TYPO3 installer
 
+Install location is `/application/code/`.
+
 ## Container info
 
 Image                               | Info                                                                       
