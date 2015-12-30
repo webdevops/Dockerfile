@@ -91,3 +91,7 @@ webdevops/mail-sandbox:
 webdevops/typo3:
 	bash .bin/provision.sh typo3
 	bash .bin/build.sh typo3 "${DOCKER_PREFIX}/typo3" "${DOCKER_LATEST}"
+
+webdevops/piwik:
+	bash .bin/provision.sh piwik
+	bash .bin/build.sh piwik "${DOCKER_PREFIX}/piwik" "${DOCKER_LATEST}"
