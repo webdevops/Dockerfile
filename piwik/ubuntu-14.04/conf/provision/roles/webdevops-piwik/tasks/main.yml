@@ -1,5 +1,14 @@
 ---
 
+- include: bootstrap.yml
+  tags:
+    - bootstrap
+
+
+- include: entrypoint.yml
+  tags:
+    - entrypoint
+
 - include: onbuild.yml
   tags:
     - onbuild
