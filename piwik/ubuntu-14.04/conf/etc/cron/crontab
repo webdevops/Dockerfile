@@ -1,1 +1,1 @@
-5 * * * * application /usr/bin/php /application/code/piwik/console core:archive --url="$PIWIK_URL" > /dev/null
+5 * * * * application bash /opt/docker/bin/piwik-cron.sh &> /dev/null

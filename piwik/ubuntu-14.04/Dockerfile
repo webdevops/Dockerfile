@@ -10,8 +10,7 @@ ENV PIWIK_URL          http://example.com/
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
-RUN /opt/docker/bin/control.sh provision.role.bootstrap webdevops-piwik \
-    && /opt/docker/bin/control.sh provision.role.onbuild webdevops-piwik \
+RUN /opt/docker/bin/control.sh provision.role webdevops-piwik \
     && /opt/docker/bin/control.sh service.enable cron \
     && /opt/docker/bin/bootstrap.sh
 
