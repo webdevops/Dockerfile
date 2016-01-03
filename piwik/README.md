@@ -1,6 +1,6 @@
 # Piwik container
 
-Based on `webdevops/php-apache:ubuntu-14.04` with automatic Piwik installer
+Based on `webdevops/php-nginx:ubuntu-14.04` with automatic Piwik installer
 
 Install location is `/application/code/piwik`, crontask is automatically configured.
 
