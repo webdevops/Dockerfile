@@ -108,7 +108,7 @@ initEnvironment
 ## Build base
 [[ $(checkTestTarget php-apache) ]] && {
     echo "Testing webdevops/php-apache..."
-    runTest     "webdevops/php-apache:ubuntu-12.04"    "spec/php-apache/ubuntu_spec.rb"
+    #runTest     "webdevops/php-apache:ubuntu-12.04"    "spec/php-apache/ubuntu_spec.rb"
     runTest     "webdevops/php-apache:ubuntu-14.04"    "spec/php-apache/ubuntu_spec.rb"
     runTest     "webdevops/php-apache:ubuntu-15.04"    "spec/php-apache/ubuntu_spec.rb"
     runTest     "webdevops/php-apache:ubuntu-15.10"    "spec/php-apache/ubuntu_spec.rb"
