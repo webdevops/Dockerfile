@@ -16,3 +16,11 @@
     dest: '{{ apache_docker_vhost }}'
     state: link
     force: yes
+
+- name: Ensure document root is available
+  file:
+    path:    "{{ DOCUMENT_ROOT }}"
+    state:   directory
+    owner:   "{{ APPLICATION_USER }}"
+    group:   "{{ APPLICATION_GROUP }}"
+    recurse: yes
