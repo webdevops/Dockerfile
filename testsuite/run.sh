@@ -173,7 +173,7 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm) ]] && {
     echo "Testing webdevops/hhvm..."
-    runTest     "webdevops/hhvm:ubuntu-14.04"    "spec/hhvm/ubuntu_spec.rb"
+    runTest     "webdevops/hhvm"    "spec/hhvm/ubuntu_spec.rb"
 }
 
 #######################################
@@ -182,7 +182,7 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm-apache) ]] && {
     echo "Testing webdevops/hhvm-apache..."
-    runTest     "webdevops/hhvm-apache:ubuntu-14.04"    "spec/hhvm-apache/ubuntu_spec.rb"
+    runTest     "webdevops/hhvm-apache"    "spec/hhvm-apache/ubuntu_spec.rb"
 }
 
 
@@ -192,5 +192,23 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm-nginx) ]] && {
     echo "Testing webdevops/hhvm-nginx..."
-    runTest     "webdevops/hhvm-nginx:ubuntu-14.04"    "spec/hhvm-nginx/ubuntu_spec.rb"
+    runTest     "webdevops/hhvm-nginx"    "spec/hhvm-nginx/ubuntu_spec.rb"
+}
+
+#######################################
+# webdevops/postfix
+#######################################
+
+[[ $(checkTestTarget postfix) ]] && {
+    echo "Testing webdevops/postfix..."
+    runTest     "webdevops/postfix"    "spec/postfix/ubuntu_spec.rb"
+}
+
+#######################################
+# webdevops/mail-sandbox
+#######################################
+
+[[ $(checkTestTarget mail-sandbox) ]] && {
+    echo "Testing webdevops/mail-sandbox..."
+    runTest     "webdevops/mail-sandbox"    "spec/mail-sandbox/ubuntu_spec.rb"
 }
