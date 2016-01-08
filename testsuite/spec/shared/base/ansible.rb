@@ -1,21 +1,11 @@
-shared_examples 'base::ansible::debian' do
-    describe file('/usr/local/bin/ansible') do
-      it { should be_executable }
+shared_examples 'base::ansible' do
+    it "should be ansible installed" do
+        if os[:family] == 'redhat'
+            expect(file("/usr/bin/ansible")).to be_executable
+            expect(file("/usr/bin/ansible-playbook")).to be_executable
+        elsif ['debian', 'ubuntu'].include?(os[:family])
+            expect(file("/usr/local/bin/ansible")).to be_executable
+            expect(file("/usr/local/bin/ansible-playbook")).to be_executable
+        end
     end
-
-    describe file('/usr/local/bin/ansible-playbook') do
-      it { should be_executable }
-    end
-
-end
-
-shared_examples 'base::ansible::redhat' do
-    describe file('/usr/bin/ansible') do
-      it { should be_executable }
-    end
-
-    describe file('/usr/bin/ansible-playbook') do
-      it { should be_executable }
-    end
-
 end
