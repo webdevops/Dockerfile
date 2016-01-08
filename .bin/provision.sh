@@ -155,7 +155,6 @@ function deployProvision() {
     clearProvision  base  '*'
     deployProvision base/general        base  '*'
     deployProvision base/centos         base  'centos-*'
-    deployProvision base/ubuntu-12.04   base  'ubuntu-12.04'
 }
 
 ## Build apache

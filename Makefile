@@ -21,6 +21,9 @@ nginx:     webdevops/nginx webdevops/php-nginx webdevops/hhvm-nginx
 
 misc:      webdevops/typo3
 
+tests:
+	cd "testsuite/" && bash run.sh
+
 provision:
 	bash .bin/provision.sh
 

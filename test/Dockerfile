@@ -59,6 +59,7 @@
 #FROM webdevops/php-nginx:ubuntu-15.04
 #FROM webdevops/php-nginx:ubuntu-15.10
 
+#FROM webdevops/hhvm
 #FROM webdevops/hhvm-apache
 #FROM webdevops/hhvm-nginx
 
