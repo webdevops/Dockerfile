@@ -11,6 +11,7 @@ describe "Dockerfile" do
         set :docker_image, image.id
     end
 
+    # services
     include_examples 'hhvm::listening::public'
     include_examples 'apache::listening::public'
 

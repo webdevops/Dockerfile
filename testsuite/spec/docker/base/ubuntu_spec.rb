@@ -16,5 +16,6 @@ describe "Dockerfile" do
     include_examples 'base::syslog-ng'
     include_examples 'base::ansible'
     include_examples 'base::application-user'
+    include_examples 'base::localscripts'
 
 end

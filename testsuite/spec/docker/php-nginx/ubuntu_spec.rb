@@ -13,6 +13,7 @@ describe "Dockerfile" do
 
     include_examples 'php::module::xdebug::absent'
 
+    # services
     include_examples 'php-fpm::listening::local-only'
     include_examples 'nginx::listening::public'
 

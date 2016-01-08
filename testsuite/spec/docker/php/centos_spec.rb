@@ -12,7 +12,9 @@ describe "Dockerfile" do
     end
 
     include_examples 'php::module::xdebug::absent'
+    include_examples 'php::composer'
 
+    # services
     include_examples 'php-fpm::listening::public'
 
 end

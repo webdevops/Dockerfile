@@ -11,6 +11,7 @@ describe "Dockerfile" do
         set :docker_image, image.id
     end
 
-    include_examples 'base::ansible::debian'
+    # services
+    include_examples 'base::ansible'
 
 end
