@@ -15,16 +15,15 @@ ENV FTP_PATH     /data/ftp/
 # Install vsftp
 RUN /usr/local/bin/apt-install \
         vsftpd \
-    && ln -sf /opt/docker/etc/vsftpd.conf /etc/vsftpd.conf
-
-RUN mkdir -p \
-    /var/run/vsftpd/empty \
-    /var/log/supervisor \
-    /data/ftp/
+    && ln -sf /opt/docker/etc/vsftpd.conf /etc/vsftpd.conf \
+    && mkdir -p \
+            /var/run/vsftpd/empty \
+            /var/log/supervisor
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
-RUN bash /opt/docker/bin/bootstrap.sh
+RUN /opt/docker/bin/control.sh provision.role.entrypoint webdevops-vsftp \
+    && /opt/docker/bin/bootstrap.sh
 
 EXPOSE 20
 EXPOSE 21
