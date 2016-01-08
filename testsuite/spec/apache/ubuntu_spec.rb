@@ -11,6 +11,6 @@ describe "Dockerfile" do
         set :docker_image, image.id
     end
 
-    include_examples 'apache::listening'
+    include_examples 'apache::listening::public'
 
 end

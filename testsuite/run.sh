@@ -122,7 +122,7 @@ initEnvironment
 
 [[ $(checkTestTarget nginx) ]] && {
     echo "Testing webdevops/nginx..."
-    runTest     "webdevops/nginx:ubuntu-12.04"    "spec/nginx/ubuntu_spec.rb"
+    #runTest    "webdevops/nginx:ubuntu-12.04"    "spec/nginx/ubuntu_spec.rb"
     runTest     "webdevops/nginx:ubuntu-14.04"    "spec/nginx/ubuntu_spec.rb"
     runTest     "webdevops/nginx:ubuntu-15.04"    "spec/nginx/ubuntu_spec.rb"
     runTest     "webdevops/nginx:ubuntu-15.10"    "spec/nginx/ubuntu_spec.rb"
@@ -165,4 +165,32 @@ initEnvironment
 
     runTest     "webdevops/php-nginx:debian-7"        "spec/php-nginx/debian_spec.rb"
     runTest     "webdevops/php-nginx:debian-8"        "spec/php-nginx/debian_spec.rb"
+}
+
+#######################################
+# webdevops/hhvm
+#######################################
+
+[[ $(checkTestTarget hhvm) ]] && {
+    echo "Testing webdevops/hhvm..."
+    runTest     "webdevops/hhvm:ubuntu-14.04"    "spec/hhvm/ubuntu_spec.rb"
+}
+
+#######################################
+# webdevops/hhvm-apache
+#######################################
+
+[[ $(checkTestTarget hhvm-apache) ]] && {
+    echo "Testing webdevops/hhvm-apache..."
+    runTest     "webdevops/hhvm-apache:ubuntu-14.04"    "spec/hhvm-apache/ubuntu_spec.rb"
+}
+
+
+#######################################
+# webdevops/hhvm-nginx
+#######################################
+
+[[ $(checkTestTarget php-hhvm) ]] && {
+    echo "Testing webdevops/hhvm-nginx..."
+    runTest     "webdevops/hhvm-nginx:ubuntu-14.04"    "spec/hhvm-nginx/ubuntu_spec.rb"
 }

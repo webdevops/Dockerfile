@@ -11,7 +11,7 @@ describe "Dockerfile" do
         set :docker_image, image.id
     end
 
-    include_examples 'php::fpm::private'
-    include_examples 'nginx::listening'
+    include_examples 'php-fpm::listening::local-only'
+    include_examples 'nginx::listening::public'
 
 end
