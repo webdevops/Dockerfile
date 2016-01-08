@@ -212,3 +212,12 @@ initEnvironment
     echo "Testing webdevops/mail-sandbox..."
     runTest     "webdevops/mail-sandbox"    "spec/mail-sandbox/ubuntu_spec.rb"
 }
+
+#######################################
+# webdevops/ssh
+#######################################
+
+[[ $(checkTestTarget ssh) ]] && {
+    echo "Testing webdevops/ssh..."
+    runTest     "webdevops/ssh"    "spec/ssh/ubuntu_spec.rb"
+}
