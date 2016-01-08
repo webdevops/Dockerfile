@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+if [ -n "$1" ]; then
+    TEST_TARGET="$1"
+else
+    TEST_TARGET="all"
+fi
+
+
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
@@ -18,6 +25,19 @@ READLINK='readlink'
 
 SCRIPT_DIR=$(dirname $($READLINK -f "$0"))
 BASE_DIR=$(dirname "$SCRIPT_DIR")
+
+###
+ # Relative dir
+ #
+ # $1     -> build target (eg. "bootstrap", "base", "php" ...)
+ # stdout -> "1" if target is matched
+ #
+ ##
+function checkTestTarget() {
+    if [ "$TEST_TARGET" == "all" -o "$TEST_TARGET" == "$1" ]; then
+        echo 1
+    fi
+}
 
 
 function initEnvironment() {
@@ -49,26 +69,52 @@ initEnvironment
 # webdevops/base
 #######################################
 
-runTest     "webdevops/base:ubuntu-12.04"    "spec/base/ubuntu_spec.rb"
-runTest     "webdevops/base:ubuntu-14.04"    "spec/base/ubuntu_spec.rb"
-runTest     "webdevops/base:ubuntu-15.04"    "spec/base/ubuntu_spec.rb"
-runTest     "webdevops/base:ubuntu-15.10"    "spec/base/ubuntu_spec.rb"
+## Build base
+[[ $(checkTestTarget base) ]] && {
+    echo "Testing webdevops/base..."
+    runTest     "webdevops/base:ubuntu-12.04"    "spec/base/ubuntu_spec.rb"
+    runTest     "webdevops/base:ubuntu-14.04"    "spec/base/ubuntu_spec.rb"
+    runTest     "webdevops/base:ubuntu-15.04"    "spec/base/ubuntu_spec.rb"
+    runTest     "webdevops/base:ubuntu-15.10"    "spec/base/ubuntu_spec.rb"
 
-runTest     "webdevops/base:centos-7"        "spec/base/centos_spec.rb"
+    runTest     "webdevops/base:centos-7"        "spec/base/centos_spec.rb"
 
-runTest     "webdevops/base:debian-7"        "spec/base/debian_spec.rb"
-runTest     "webdevops/base:debian-8"        "spec/base/debian_spec.rb"
+    runTest     "webdevops/base:debian-7"        "spec/base/debian_spec.rb"
+    runTest     "webdevops/base:debian-8"        "spec/base/debian_spec.rb"
+}
 
 #######################################
 # webdevops/php
 #######################################
 
-runTest     "webdevops/php:ubuntu-12.04"    "spec/php/ubuntu_spec.rb"
-runTest     "webdevops/php:ubuntu-14.04"    "spec/php/ubuntu_spec.rb"
-runTest     "webdevops/php:ubuntu-15.04"    "spec/php/ubuntu_spec.rb"
-runTest     "webdevops/php:ubuntu-15.10"    "spec/php/ubuntu_spec.rb"
+## Build base
+[[ $(checkTestTarget php) ]] && {
+    echo "Testing webdevops/php..."
+    runTest     "webdevops/php:ubuntu-12.04"    "spec/php/ubuntu_spec.rb"
+    runTest     "webdevops/php:ubuntu-14.04"    "spec/php/ubuntu_spec.rb"
+    runTest     "webdevops/php:ubuntu-15.04"    "spec/php/ubuntu_spec.rb"
+    runTest     "webdevops/php:ubuntu-15.10"    "spec/php/ubuntu_spec.rb"
 
-runTest     "webdevops/php:centos-7"        "spec/php/centos_spec.rb"
+    runTest     "webdevops/php:centos-7"        "spec/php/centos_spec.rb"
 
-runTest     "webdevops/php:debian-7"        "spec/php/debian_spec.rb"
-runTest     "webdevops/php:debian-8"        "spec/php/debian_spec.rb"
+    runTest     "webdevops/php:debian-7"        "spec/php/debian_spec.rb"
+    runTest     "webdevops/php:debian-8"        "spec/php/debian_spec.rb"
+}
+
+#######################################
+# webdevops/php-apache
+#######################################
+
+## Build base
+[[ $(checkTestTarget php-apache) ]] && {
+    echo "Testing webdevops/php-apache..."
+    runTest     "webdevops/php-apache:ubuntu-12.04"    "spec/php-apache/ubuntu_spec.rb"
+    runTest     "webdevops/php-apache:ubuntu-14.04"    "spec/php-apache/ubuntu_spec.rb"
+    runTest     "webdevops/php-apache:ubuntu-15.04"    "spec/php-apache/ubuntu_spec.rb"
+    runTest     "webdevops/php-apache:ubuntu-15.10"    "spec/php-apache/ubuntu_spec.rb"
+
+    runTest     "webdevops/php-apache:centos-7"        "spec/php-apache/centos_spec.rb"
+
+    runTest     "webdevops/php-apache:debian-7"        "spec/php-apache/debian_spec.rb"
+    runTest     "webdevops/php-apache:debian-8"        "spec/php-apache/debian_spec.rb"
+}
