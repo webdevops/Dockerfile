@@ -6,14 +6,11 @@ describe "Dockerfile" do
     before(:all) do
         image = Docker::Image.build_from_dir('.')
 
-        set :os, family: :ubuntu
+        set :os, family: :debian
         set :backend, :docker
         set :docker_image, image.id
     end
 
-    include_examples 'base::layout'
-    include_examples 'base::supervisor'
-    include_examples 'base::syslog-ng'
     include_examples 'base::ansible::debian'
 
 end

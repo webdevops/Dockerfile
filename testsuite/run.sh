@@ -66,6 +66,15 @@ function runTest() {
 initEnvironment
 
 #######################################
+# webdevops/ansible
+#######################################
+
+[[ $(checkTestTarget ansible) ]] && {
+    echo "Testing webdevops/ansible..."
+    runTest     "webdevops/ansible"    "spec/ansible/ubuntu_spec.rb"
+}
+
+#######################################
 # webdevops/base
 #######################################
 
