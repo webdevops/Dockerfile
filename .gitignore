@@ -1,1 +1,4 @@
 .idea
+testsuite/Dockerfile
+testsuite/vendor/
+testsuite/.bundle/

@@ -15,3 +15,9 @@
     dest: '/etc/syslog-ng/syslog-ng.conf'
     state: link
     force: yes
+
+- name: Ensure /var/lib/syslog-ng exists
+  file:
+    path:    '/var/lib/syslog-ng'
+    state:   directory
+    recurse: yes

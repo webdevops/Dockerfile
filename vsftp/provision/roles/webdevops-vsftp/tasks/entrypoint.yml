@@ -1,0 +1,40 @@
+---
+
+- name: Remove application user
+  user:
+    name:  "{{ APPLICATION_USER }}"
+    state: absent
+    force: yes
+
+- name: Remove application group
+  group:
+    name:  "{{ APPLICATION_GROUP }}"
+    state: absent
+
+- name: Ensure FTP_PATH exists
+  file:
+    path:    "{{ FTP_PATH }}"
+    state:   directory
+    recurse: yes
+
+- name: Create ftp group
+  group:
+    name:  "{{ FTP_USER }}"
+    gid:   "{{ FTP_GID }}"
+
+- name: Create ftp user
+  user:
+    name:     "{{ FTP_USER }}"
+    uid:      "{{ FTP_UID }}"
+    group:    "{{ FTP_USER }}"
+    shell:    "/bin/false"
+    home:     "{{ FTP_PATH }}"
+    password: "{{ FTP_PASSWORD |password_hash('sha512') }}"
+
+- name: Ensure FTP_PATH exists
+  file:
+    path:    "{{ FTP_PATH }}"
+    state:   directory
+    recurse: yes
+    owner:   "{{ FTP_UID }}"
+    group:   "{{ FTP_GID }}"
