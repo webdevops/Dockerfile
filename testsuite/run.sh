@@ -69,7 +69,6 @@ initEnvironment
 # webdevops/base
 #######################################
 
-## Build base
 [[ $(checkTestTarget base) ]] && {
     echo "Testing webdevops/base..."
     runTest     "webdevops/base:ubuntu-12.04"    "spec/base/ubuntu_spec.rb"
@@ -87,7 +86,6 @@ initEnvironment
 # webdevops/php
 #######################################
 
-## Build base
 [[ $(checkTestTarget php) ]] && {
     echo "Testing webdevops/php..."
     runTest     "webdevops/php:ubuntu-12.04"    "spec/php/ubuntu_spec.rb"
@@ -105,7 +103,6 @@ initEnvironment
 # webdevops/apache
 #######################################
 
-## Build base
 [[ $(checkTestTarget apache) ]] && {
     echo "Testing webdevops/apache..."
     #runTest    "webdevops/apache:ubuntu-12.04"    "spec/apache/ubuntu_spec.rb"
@@ -123,7 +120,6 @@ initEnvironment
 # webdevops/nginx
 #######################################
 
-## Build base
 [[ $(checkTestTarget nginx) ]] && {
     echo "Testing webdevops/nginx..."
     runTest     "webdevops/nginx:ubuntu-12.04"    "spec/nginx/ubuntu_spec.rb"
@@ -141,7 +137,6 @@ initEnvironment
 # webdevops/php-apache
 #######################################
 
-## Build base
 [[ $(checkTestTarget php-apache) ]] && {
     echo "Testing webdevops/php-apache..."
     #runTest    "webdevops/php-apache:ubuntu-12.04"    "spec/php-apache/ubuntu_spec.rb"
@@ -159,7 +154,6 @@ initEnvironment
 # webdevops/php-nginx
 #######################################
 
-## Build base
 [[ $(checkTestTarget php-nginx) ]] && {
     echo "Testing webdevops/php-nginx..."
     runTest     "webdevops/php-nginx:ubuntu-12.04"    "spec/php-nginx/ubuntu_spec.rb"
