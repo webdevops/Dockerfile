@@ -214,6 +214,15 @@ initEnvironment
 }
 
 #######################################
+# webdevops/vsftp
+#######################################
+
+[[ $(checkTestTarget vsftp) ]] && {
+    echo "Testing webdevops/vsftp..."
+    runTest     "webdevops/vsftp"    "spec/vsftp/ubuntu_spec.rb"
+}
+
+#######################################
 # webdevops/mail-sandbox
 #######################################
 
