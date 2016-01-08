@@ -7,12 +7,12 @@ shared_examples 'base::layout' do
         expect(file("/opt/docker/bin/onbuild.d")).to be_directory
         expect(file("/opt/docker/bin/service.d")).to be_directory
 
-        expect(file("/opt/docker/bin/bootstrap.sh")).to be_file
-        expect(file("/opt/docker/bin/config.sh")).to be_file
-        expect(file("/opt/docker/bin/control.sh")).to be_file
-        expect(file("/opt/docker/bin/entrypoint.sh")).to be_file
-        expect(file("/opt/docker/bin/logwatch.sh")).to be_file
-        expect(file("/opt/docker/bin/provision.sh")).to be_file
+        expect(file("/opt/docker/bin/bootstrap.sh")).to be_executable
+        expect(file("/opt/docker/bin/config.sh")).to be_executable
+        expect(file("/opt/docker/bin/control.sh")).to be_executable
+        expect(file("/opt/docker/bin/entrypoint.sh")).to be_executable
+        expect(file("/opt/docker/bin/logwatch.sh")).to be_executable
+        expect(file("/opt/docker/bin/provision.sh")).to be_executable
     end
 
     it "includes the /opt/docker/etc files" do
