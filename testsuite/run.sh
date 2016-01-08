@@ -71,7 +71,7 @@ initEnvironment
 
 [[ $(checkTestTarget ansible) ]] && {
     echo "Testing webdevops/ansible..."
-    runTest     "webdevops/ansible"    "spec/ansible/ubuntu_spec.rb"
+    runTest     "webdevops/ansible"    "spec/docker/ansible/ubuntu_spec.rb"
 }
 
 #######################################
@@ -80,15 +80,15 @@ initEnvironment
 
 [[ $(checkTestTarget base) ]] && {
     echo "Testing webdevops/base..."
-    runTest     "webdevops/base:ubuntu-12.04"    "spec/base/ubuntu_spec.rb"
-    runTest     "webdevops/base:ubuntu-14.04"    "spec/base/ubuntu_spec.rb"
-    runTest     "webdevops/base:ubuntu-15.04"    "spec/base/ubuntu_spec.rb"
-    runTest     "webdevops/base:ubuntu-15.10"    "spec/base/ubuntu_spec.rb"
+    runTest     "webdevops/base:ubuntu-12.04"    "spec/docker/base/ubuntu_spec.rb"
+    runTest     "webdevops/base:ubuntu-14.04"    "spec/docker/base/ubuntu_spec.rb"
+    runTest     "webdevops/base:ubuntu-15.04"    "spec/docker/base/ubuntu_spec.rb"
+    runTest     "webdevops/base:ubuntu-15.10"    "spec/docker/base/ubuntu_spec.rb"
 
-    runTest     "webdevops/base:centos-7"        "spec/base/centos_spec.rb"
+    runTest     "webdevops/base:centos-7"        "spec/docker/base/centos_spec.rb"
 
-    runTest     "webdevops/base:debian-7"        "spec/base/debian_spec.rb"
-    runTest     "webdevops/base:debian-8"        "spec/base/debian_spec.rb"
+    runTest     "webdevops/base:debian-7"        "spec/docker/base/debian_spec.rb"
+    runTest     "webdevops/base:debian-8"        "spec/docker/base/debian_spec.rb"
 }
 
 #######################################
@@ -97,15 +97,15 @@ initEnvironment
 
 [[ $(checkTestTarget php) ]] && {
     echo "Testing webdevops/php..."
-    runTest     "webdevops/php:ubuntu-12.04"    "spec/php/ubuntu_spec.rb"
-    runTest     "webdevops/php:ubuntu-14.04"    "spec/php/ubuntu_spec.rb"
-    runTest     "webdevops/php:ubuntu-15.04"    "spec/php/ubuntu_spec.rb"
-    runTest     "webdevops/php:ubuntu-15.10"    "spec/php/ubuntu_spec.rb"
+    runTest     "webdevops/php:ubuntu-12.04"    "spec/docker/php/ubuntu_spec.rb"
+    runTest     "webdevops/php:ubuntu-14.04"    "spec/docker/php/ubuntu_spec.rb"
+    runTest     "webdevops/php:ubuntu-15.04"    "spec/docker/php/ubuntu_spec.rb"
+    runTest     "webdevops/php:ubuntu-15.10"    "spec/docker/php/ubuntu_spec.rb"
 
-    runTest     "webdevops/php:centos-7"        "spec/php/centos_spec.rb"
+    runTest     "webdevops/php:centos-7"        "spec/docker/php/centos_spec.rb"
 
-    runTest     "webdevops/php:debian-7"        "spec/php/debian_spec.rb"
-    runTest     "webdevops/php:debian-8"        "spec/php/debian_spec.rb"
+    runTest     "webdevops/php:debian-7"        "spec/docker/php/debian_spec.rb"
+    runTest     "webdevops/php:debian-8"        "spec/docker/php/debian_spec.rb"
 }
 
 #######################################
@@ -114,15 +114,15 @@ initEnvironment
 
 [[ $(checkTestTarget apache) ]] && {
     echo "Testing webdevops/apache..."
-    #runTest    "webdevops/apache:ubuntu-12.04"    "spec/apache/ubuntu_spec.rb"
-    runTest     "webdevops/apache:ubuntu-14.04"    "spec/apache/ubuntu_spec.rb"
-    runTest     "webdevops/apache:ubuntu-15.04"    "spec/apache/ubuntu_spec.rb"
-    runTest     "webdevops/apache:ubuntu-15.10"    "spec/apache/ubuntu_spec.rb"
+    #runTest    "webdevops/apache:ubuntu-12.04"    "spec/docker/apache/ubuntu_spec.rb"
+    runTest     "webdevops/apache:ubuntu-14.04"    "spec/docker/apache/ubuntu_spec.rb"
+    runTest     "webdevops/apache:ubuntu-15.04"    "spec/docker/apache/ubuntu_spec.rb"
+    runTest     "webdevops/apache:ubuntu-15.10"    "spec/docker/apache/ubuntu_spec.rb"
 
-    runTest     "webdevops/apache:centos-7"        "spec/apache/centos_spec.rb"
+    runTest     "webdevops/apache:centos-7"        "spec/docker/apache/centos_spec.rb"
 
-    runTest     "webdevops/apache:debian-7"        "spec/apache/debian_spec.rb"
-    runTest     "webdevops/apache:debian-8"        "spec/apache/debian_spec.rb"
+    runTest     "webdevops/apache:debian-7"        "spec/docker/apache/debian_spec.rb"
+    runTest     "webdevops/apache:debian-8"        "spec/docker/apache/debian_spec.rb"
 }
 
 #######################################
@@ -131,15 +131,15 @@ initEnvironment
 
 [[ $(checkTestTarget nginx) ]] && {
     echo "Testing webdevops/nginx..."
-    #runTest    "webdevops/nginx:ubuntu-12.04"    "spec/nginx/ubuntu_spec.rb"
-    runTest     "webdevops/nginx:ubuntu-14.04"    "spec/nginx/ubuntu_spec.rb"
-    runTest     "webdevops/nginx:ubuntu-15.04"    "spec/nginx/ubuntu_spec.rb"
-    runTest     "webdevops/nginx:ubuntu-15.10"    "spec/nginx/ubuntu_spec.rb"
+    #runTest    "webdevops/nginx:ubuntu-12.04"    "spec/docker/nginx/ubuntu_spec.rb"
+    runTest     "webdevops/nginx:ubuntu-14.04"    "spec/docker/nginx/ubuntu_spec.rb"
+    runTest     "webdevops/nginx:ubuntu-15.04"    "spec/docker/nginx/ubuntu_spec.rb"
+    runTest     "webdevops/nginx:ubuntu-15.10"    "spec/docker/nginx/ubuntu_spec.rb"
 
-    runTest     "webdevops/nginx:centos-7"        "spec/nginx/centos_spec.rb"
+    runTest     "webdevops/nginx:centos-7"        "spec/docker/nginx/centos_spec.rb"
 
-    runTest     "webdevops/nginx:debian-7"        "spec/nginx/debian_spec.rb"
-    runTest     "webdevops/nginx:debian-8"        "spec/nginx/debian_spec.rb"
+    runTest     "webdevops/nginx:debian-7"        "spec/docker/nginx/debian_spec.rb"
+    runTest     "webdevops/nginx:debian-8"        "spec/docker/nginx/debian_spec.rb"
 }
 
 #######################################
@@ -148,15 +148,15 @@ initEnvironment
 
 [[ $(checkTestTarget php-apache) ]] && {
     echo "Testing webdevops/php-apache..."
-    #runTest    "webdevops/php-apache:ubuntu-12.04"    "spec/php-apache/ubuntu_spec.rb"
-    runTest     "webdevops/php-apache:ubuntu-14.04"    "spec/php-apache/ubuntu_spec.rb"
-    runTest     "webdevops/php-apache:ubuntu-15.04"    "spec/php-apache/ubuntu_spec.rb"
-    runTest     "webdevops/php-apache:ubuntu-15.10"    "spec/php-apache/ubuntu_spec.rb"
+    #runTest    "webdevops/php-apache:ubuntu-12.04"    "spec/docker/php-apache/ubuntu_spec.rb"
+    runTest     "webdevops/php-apache:ubuntu-14.04"    "spec/docker/php-apache/ubuntu_spec.rb"
+    runTest     "webdevops/php-apache:ubuntu-15.04"    "spec/docker/php-apache/ubuntu_spec.rb"
+    runTest     "webdevops/php-apache:ubuntu-15.10"    "spec/docker/php-apache/ubuntu_spec.rb"
 
-    runTest     "webdevops/php-apache:centos-7"        "spec/php-apache/centos_spec.rb"
+    runTest     "webdevops/php-apache:centos-7"        "spec/docker/php-apache/centos_spec.rb"
 
-    runTest     "webdevops/php-apache:debian-7"        "spec/php-apache/debian_spec.rb"
-    runTest     "webdevops/php-apache:debian-8"        "spec/php-apache/debian_spec.rb"
+    runTest     "webdevops/php-apache:debian-7"        "spec/docker/php-apache/debian_spec.rb"
+    runTest     "webdevops/php-apache:debian-8"        "spec/docker/php-apache/debian_spec.rb"
 }
 
 #######################################
@@ -165,15 +165,15 @@ initEnvironment
 
 [[ $(checkTestTarget php-nginx) ]] && {
     echo "Testing webdevops/php-nginx..."
-    runTest     "webdevops/php-nginx:ubuntu-12.04"    "spec/php-nginx/ubuntu_spec.rb"
-    runTest     "webdevops/php-nginx:ubuntu-14.04"    "spec/php-nginx/ubuntu_spec.rb"
-    runTest     "webdevops/php-nginx:ubuntu-15.04"    "spec/php-nginx/ubuntu_spec.rb"
-    runTest     "webdevops/php-nginx:ubuntu-15.10"    "spec/php-nginx/ubuntu_spec.rb"
+    runTest     "webdevops/php-nginx:ubuntu-12.04"    "spec/docker/php-nginx/ubuntu_spec.rb"
+    runTest     "webdevops/php-nginx:ubuntu-14.04"    "spec/docker/php-nginx/ubuntu_spec.rb"
+    runTest     "webdevops/php-nginx:ubuntu-15.04"    "spec/docker/php-nginx/ubuntu_spec.rb"
+    runTest     "webdevops/php-nginx:ubuntu-15.10"    "spec/docker/php-nginx/ubuntu_spec.rb"
 
-    runTest     "webdevops/php-nginx:centos-7"        "spec/php-nginx/centos_spec.rb"
+    runTest     "webdevops/php-nginx:centos-7"        "spec/docker/php-nginx/centos_spec.rb"
 
-    runTest     "webdevops/php-nginx:debian-7"        "spec/php-nginx/debian_spec.rb"
-    runTest     "webdevops/php-nginx:debian-8"        "spec/php-nginx/debian_spec.rb"
+    runTest     "webdevops/php-nginx:debian-7"        "spec/docker/php-nginx/debian_spec.rb"
+    runTest     "webdevops/php-nginx:debian-8"        "spec/docker/php-nginx/debian_spec.rb"
 }
 
 #######################################
@@ -182,7 +182,7 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm) ]] && {
     echo "Testing webdevops/hhvm..."
-    runTest     "webdevops/hhvm"    "spec/hhvm/ubuntu_spec.rb"
+    runTest     "webdevops/hhvm"    "spec/docker/hhvm/ubuntu_spec.rb"
 }
 
 #######################################
@@ -191,7 +191,7 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm-apache) ]] && {
     echo "Testing webdevops/hhvm-apache..."
-    runTest     "webdevops/hhvm-apache"    "spec/hhvm-apache/ubuntu_spec.rb"
+    runTest     "webdevops/hhvm-apache"    "spec/docker/hhvm-apache/ubuntu_spec.rb"
 }
 
 
@@ -201,7 +201,7 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm-nginx) ]] && {
     echo "Testing webdevops/hhvm-nginx..."
-    runTest     "webdevops/hhvm-nginx"    "spec/hhvm-nginx/ubuntu_spec.rb"
+    runTest     "webdevops/hhvm-nginx"    "spec/docker/hhvm-nginx/ubuntu_spec.rb"
 }
 
 #######################################
@@ -210,7 +210,7 @@ initEnvironment
 
 [[ $(checkTestTarget postfix) ]] && {
     echo "Testing webdevops/postfix..."
-    runTest     "webdevops/postfix"    "spec/postfix/ubuntu_spec.rb"
+    runTest     "webdevops/postfix"    "spec/docker/postfix/ubuntu_spec.rb"
 }
 
 #######################################
@@ -219,7 +219,7 @@ initEnvironment
 
 [[ $(checkTestTarget vsftp) ]] && {
     echo "Testing webdevops/vsftp..."
-    runTest     "webdevops/vsftp"    "spec/vsftp/ubuntu_spec.rb"
+    runTest     "webdevops/vsftp"    "spec/docker/vsftp/ubuntu_spec.rb"
 }
 
 #######################################
@@ -228,7 +228,7 @@ initEnvironment
 
 [[ $(checkTestTarget mail-sandbox) ]] && {
     echo "Testing webdevops/mail-sandbox..."
-    runTest     "webdevops/mail-sandbox"    "spec/mail-sandbox/ubuntu_spec.rb"
+    runTest     "webdevops/mail-sandbox"    "spec/docker/mail-sandbox/ubuntu_spec.rb"
 }
 
 #######################################
@@ -237,5 +237,5 @@ initEnvironment
 
 [[ $(checkTestTarget ssh) ]] && {
     echo "Testing webdevops/ssh..."
-    runTest     "webdevops/ssh"    "spec/ssh/ubuntu_spec.rb"
+    runTest     "webdevops/ssh"    "spec/docker/ssh/ubuntu_spec.rb"
 }
