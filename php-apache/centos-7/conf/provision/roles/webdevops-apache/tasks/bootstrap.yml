@@ -24,3 +24,9 @@
     owner:   "{{ APPLICATION_USER }}"
     group:   "{{ APPLICATION_GROUP }}"
     recurse: yes
+
+- name: Ensure /var/run/apache2 exists
+  file:
+    path:    '/var/run/apache2'
+    state:   directory
+    recurse: yes
