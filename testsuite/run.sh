@@ -190,7 +190,7 @@ initEnvironment
 # webdevops/hhvm-nginx
 #######################################
 
-[[ $(checkTestTarget php-hhvm) ]] && {
+[[ $(checkTestTarget hhvm-nginx) ]] && {
     echo "Testing webdevops/hhvm-nginx..."
     runTest     "webdevops/hhvm-nginx:ubuntu-14.04"    "spec/hhvm-nginx/ubuntu_spec.rb"
 }
