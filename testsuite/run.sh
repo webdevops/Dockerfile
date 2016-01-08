@@ -118,3 +118,21 @@ initEnvironment
     runTest     "webdevops/php-apache:debian-7"        "spec/php-apache/debian_spec.rb"
     runTest     "webdevops/php-apache:debian-8"        "spec/php-apache/debian_spec.rb"
 }
+
+#######################################
+# webdevops/php-nginx
+#######################################
+
+## Build base
+[[ $(checkTestTarget php-nginx) ]] && {
+    echo "Testing webdevops/php-nginx..."
+    runTest     "webdevops/php-nginx:ubuntu-12.04"    "spec/php-nginx/ubuntu_spec.rb"
+    runTest     "webdevops/php-nginx:ubuntu-14.04"    "spec/php-nginx/ubuntu_spec.rb"
+    runTest     "webdevops/php-nginx:ubuntu-15.04"    "spec/php-nginx/ubuntu_spec.rb"
+    runTest     "webdevops/php-nginx:ubuntu-15.10"    "spec/php-nginx/ubuntu_spec.rb"
+
+    runTest     "webdevops/php-nginx:centos-7"        "spec/php-nginx/centos_spec.rb"
+
+    runTest     "webdevops/php-nginx:debian-7"        "spec/php-nginx/debian_spec.rb"
+    runTest     "webdevops/php-nginx:debian-8"        "spec/php-nginx/debian_spec.rb"
+}
