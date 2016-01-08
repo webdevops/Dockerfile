@@ -16,3 +16,11 @@
     line:   '{{ item.key }} = {{ item.value }}'
   with_items:
    - { file: "php.ini", key: 'hhvm.server.fix_path_info', value: "true" }
+
+- name: Ensure /var/run/hhvm exists
+  file:
+    path:    '/var/run/hhvm'
+    state:   directory
+    recurse: yes
+    owner:   "{{ APPLICATION_USER }}"
+    group:   "{{ APPLICATION_GROUP }}"
