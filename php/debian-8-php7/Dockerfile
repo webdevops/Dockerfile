@@ -28,6 +28,9 @@ RUN /usr/local/bin/apt-install \
         php7.0-sqlite3 \
         php7.0-ldap \
         php7.0-opcache \
+        php7.0-xmlrpc \
+        php7.0-xsl \
+        php7.0-bz2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
 # Deploy scripts/configurations
