@@ -125,7 +125,7 @@ initEnvironment
 
     runTest     "webdevops/php:debian-7"        "spec/docker/php/debian_spec.rb"
     runTest     "webdevops/php:debian-8"        "spec/docker/php/debian_spec.rb"
-    runTest     "webdevops/php:debian-8-php7"   "spec/docker/php/debian_spec.rb"
+    runTest     "webdevops/php:debian-8-php7"   "spec/docker/php/debian-php7_spec.rb"
 }
 
 #######################################

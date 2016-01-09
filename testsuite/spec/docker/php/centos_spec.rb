@@ -11,7 +11,9 @@ describe "Dockerfile" do
         set :docker_image, image.id
     end
 
-    include_examples 'php::module::xdebug::absent'
+    include_examples 'php::cli'
+    include_examples 'php::modules'
+    include_examples 'php5::modules'
     include_examples 'php::composer'
 
     # services
