@@ -22,6 +22,9 @@ RUN /usr/local/bin/yum-install \
         php-memcached \
         php-mcrypt \
         php-gd \
+        php-mbstring \
+        php-bcmath \
+        php-soap \
         sqlite \
         php-xmlrpc \
         php-xsl \
