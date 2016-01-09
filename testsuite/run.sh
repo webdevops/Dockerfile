@@ -177,7 +177,7 @@ initEnvironment
 
     runTest     "webdevops/php-apache:debian-7"        "spec/docker/php-apache/debian_spec.rb"
     runTest     "webdevops/php-apache:debian-8"        "spec/docker/php-apache/debian_spec.rb"
-    runTest     "webdevops/php-apache:debian-8-php7"   "spec/docker/php-apache/debian_spec.rb"
+    runTest     "webdevops/php-apache:debian-8-php7"   "spec/docker/php-apache/debian-php7_spec.rb"
 }
 
 #######################################
@@ -195,7 +195,7 @@ initEnvironment
 
     runTest     "webdevops/php-nginx:debian-7"        "spec/docker/php-nginx/debian_spec.rb"
     runTest     "webdevops/php-nginx:debian-8"        "spec/docker/php-nginx/debian_spec.rb"
-    runTest     "webdevops/php-nginx:debian-8-php7"   "spec/docker/php-nginx/debian_spec.rb"
+    runTest     "webdevops/php-nginx:debian-8-php7"   "spec/docker/php-nginx/debian-php7_spec.rb"
 }
 
 #######################################
