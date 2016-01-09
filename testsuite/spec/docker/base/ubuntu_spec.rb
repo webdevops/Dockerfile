@@ -12,10 +12,12 @@ describe "Dockerfile" do
     end
 
     include_examples 'base::layout'
+    include_examples 'base::packages'
     include_examples 'base::supervisor'
     include_examples 'base::syslog-ng'
     include_examples 'base::ansible'
     include_examples 'base::application-user'
     include_examples 'base::localscripts'
+    include_examples 'base::locales'
 
 end

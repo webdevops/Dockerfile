@@ -40,10 +40,21 @@ function checkTestTarget() {
 }
 
 
+###
+ # Init Environment
+ #
+ ##
 function initEnvironment() {
     bundle install --path=vendor
 }
 
+###
+ # Run test
+ #
+ # $1     -> Docker image name (with tag)
+ # $2     -> Spec file path
+ #
+ ##
 function runTest() {
     DOCKER_IMAGE="$1"
     SPEC_PATH="$2"
@@ -71,7 +82,15 @@ initEnvironment
 
 [[ $(checkTestTarget ansible) ]] && {
     echo "Testing webdevops/ansible..."
-    runTest     "webdevops/ansible"    "spec/docker/ansible/ubuntu_spec.rb"
+    runTest     "webdevops/ansible:ubuntu-12.04"    "spec/docker/ansible/ubuntu_spec.rb"
+    runTest     "webdevops/ansible:ubuntu-14.04"    "spec/docker/ansible/ubuntu_spec.rb"
+    runTest     "webdevops/ansible:ubuntu-15.04"    "spec/docker/ansible/ubuntu_spec.rb"
+    runTest     "webdevops/ansible:ubuntu-15.10"    "spec/docker/ansible/ubuntu_spec.rb"
+
+    runTest     "webdevops/ansible:centos-7"        "spec/docker/ansible/centos_spec.rb"
+
+    runTest     "webdevops/ansible:debian-7"        "spec/docker/ansible/debian_spec.rb"
+    runTest     "webdevops/ansible:debian-8"        "spec/docker/ansible/debian_spec.rb"
 }
 
 #######################################

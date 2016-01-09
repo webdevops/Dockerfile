@@ -11,7 +11,7 @@ describe "Dockerfile" do
         set :docker_image, image.id
     end
 
-    # services
     include_examples 'base::ansible'
+    include_examples 'base::locales'
 
 end
