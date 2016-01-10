@@ -13,6 +13,8 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 
 source /opt/docker/bin/config.sh
 
+rootCheck
+
 # Save the buildtime
 date +%s > /opt/docker/BUILDTIME
 
