@@ -4,5 +4,6 @@ shared_examples 'base::localscripts' do
         expect(file("/usr/local/bin/apt-upgrade")).to be_executable
         expect(file("/usr/local/bin/yum-install")).to be_executable
         expect(file("/usr/local/bin/yum-upgrade")).to be_executable
+        expect(file("/usr/local/bin/service")).to be_executable
     end
 end
