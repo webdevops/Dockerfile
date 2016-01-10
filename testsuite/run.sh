@@ -64,7 +64,10 @@ function runTestForTag() {
 
     echo ">>> Testing $DOCKER_IMAGE_WITH_TAG with $SPEC_PATH (family: $OS_FAMILY, version: $OS_VERSION)"
 
-    echo "FROM $DOCKER_IMAGE_WITH_TAG" > "${SCRIPT_DIR}/Dockerfile"
+    echo "# Temporary dockerfile for test run
+FROM $DOCKER_IMAGE_WITH_TAG
+COPY conf/ /
+    " > "${SCRIPT_DIR}/Dockerfile"
 
     #docker-compose stop
     #docker-compose rm --force
