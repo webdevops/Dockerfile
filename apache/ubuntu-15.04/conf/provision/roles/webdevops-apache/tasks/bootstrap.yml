@@ -1,11 +1,11 @@
 ---
 
-- name: Set apache vhost file
+- name: Set apache vhost file [RedHat family]
   set_fact:
      apache_docker_vhost: /etc/httpd/conf.d/docker.conf
   when: ansible_os_family == 'RedHat'
 
-- name: Set apache vhost file
+- name: Set apache vhost file [Debian family]
   set_fact:
      apache_docker_vhost: /etc/apache2/sites-enabled/10-docker.conf
   when: ansible_os_family == 'Debian'
@@ -30,3 +30,20 @@
     path:    '/var/run/apache2'
     state:   directory
     recurse: yes
+
+- name: Switch MPM to worker [RedHat family]
+  lineinfile:
+    dest:   '/etc/httpd/conf.modules.d/00-mpm.conf'
+    regexp: '^[\s#]*{{ item.line }}'
+    line:   '{{ item.prefix }}{{ item.line }}'
+  with_items:
+   - { line: 'LoadModule mpm_prefork_module modules/mod_mpm_prefork.so', prefix: "#" }
+   - { line: 'LoadModule mpm_worker_module modules/mod_mpm_worker.so',   prefix: "" }
+  when: ansible_os_family == 'RedHat'
+
+- name: Switch MPM to worker [Ubuntu family]
+  command: "{{ item }}"
+  with_items:
+   - 'a2dismod mpm_event'
+   - 'a2enmod mpm_worker'
+  when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_lsb.major_release|int >= 8)
