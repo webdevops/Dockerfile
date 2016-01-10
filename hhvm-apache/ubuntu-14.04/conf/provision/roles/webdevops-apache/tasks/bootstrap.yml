@@ -38,12 +38,12 @@
     line:   '{{ item.prefix }}{{ item.line }}'
   with_items:
    - { line: 'LoadModule mpm_prefork_module modules/mod_mpm_prefork.so', prefix: "#" }
-   - { line: 'LoadModule mpm_worker_module modules/mod_mpm_worker.so',   prefix: "" }
+   - { line: 'LoadModule mpm_event_module modules/mod_mpm_event.so',   prefix: "" }
   when: ansible_os_family == 'RedHat'
 
-- name: Switch MPM to worker [Ubuntu family]
+- name: Switch MPM to event for Apache 2.4 and higher [Ubuntu family]
   command: "{{ item }}"
   with_items:
    - 'a2dismod mpm_event'
-   - 'a2enmod mpm_worker'
+   - 'a2enmod mpm_event'
   when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_lsb.major_release|int >= 8)
