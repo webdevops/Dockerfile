@@ -20,8 +20,10 @@ describe "Dockerfile" do
     include_examples 'apache::listening::public'
 
     # test after services are up
+    include_examples 'apache::service::running'
+    include_examples 'php-fpm::service::running'
     include_examples 'apache::modules'
+    include_examples 'apache::service::running'
     include_examples 'php::fpm::test::sha1'
-
 
 end

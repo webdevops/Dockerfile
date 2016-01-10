@@ -18,4 +18,7 @@ describe "Dockerfile" do
     # services
     include_examples 'php-fpm::listening::public'
 
+    # test after services are up
+    include_examples 'php-fpm::service::running'
+
 end

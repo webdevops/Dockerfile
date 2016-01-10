@@ -19,5 +19,7 @@ describe "Dockerfile" do
 
     # test after services are up
     include_examples 'php::fpm::test::sha1'
+    include_examples 'nginx::service::running'
+    include_examples 'hhvm::service::running'
 
 end
