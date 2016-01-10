@@ -26,6 +26,9 @@ SCRIPT_DIR=$(dirname $($READLINK -f "$0"))
 BASE_DIR=$(dirname "$SCRIPT_DIR")
 COLUMNS=$(tput cols)
 
+OS_VERSION=""
+OS_VERSION_LATEST="14.04"
+
 ###
  # Relative dir
  #
@@ -59,7 +62,7 @@ function runTestForTag() {
     DOCKER_TAG="$1"
     DOCKER_IMAGE_WITH_TAG="${DOCKER_IMAGE}:${DOCKER_TAG}"
 
-    echo ">>> Testing $DOCKER_IMAGE_WITH_TAG with $SPEC_PATH (family: $OS_FAMILY)"
+    echo ">>> Testing $DOCKER_IMAGE_WITH_TAG with $SPEC_PATH (family: $OS_FAMILY, version: $OS_VERSION)"
 
     echo "FROM $DOCKER_IMAGE_WITH_TAG" > "${SCRIPT_DIR}/Dockerfile"
 
@@ -68,7 +71,7 @@ function runTestForTag() {
     #docker-compose build --no-cache
     #docker-compose up -d
 
-    OS_FAMILY="$OS_FAMILY" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH"
+    OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH"
 
     rm -f "${SCRIPT_DIR}/Dockerfile"
 }
@@ -133,17 +136,17 @@ initEnvironment
 [[ $(checkTestTarget ansible) ]] && {
     setupTestEnvironment "ansible"
 
-    runTestForTag "ubuntu-12.04"
-    runTestForTag "ubuntu-14.04"
-    runTestForTag "ubuntu-15.04"
-    runTestForTag "ubuntu-15.10"
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
 
     setEnvironmentOsFamily "redhat"
-    runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7"
 
     setEnvironmentOsFamily "debian"
-    runTestForTag "debian-7"
-    runTestForTag "debian-8"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
 }
 
 #######################################
@@ -153,17 +156,17 @@ initEnvironment
 [[ $(checkTestTarget base) ]] && {
     setupTestEnvironment "base"
 
-    runTestForTag "ubuntu-12.04"
-    runTestForTag "ubuntu-14.04"
-    runTestForTag "ubuntu-15.04"
-    runTestForTag "ubuntu-15.10"
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
 
     setEnvironmentOsFamily "redhat"
-    runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7"
 
     setEnvironmentOsFamily "debian"
-    runTestForTag "debian-7"
-    runTestForTag "debian-8"
+    OS_VERSION="7" OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
 }
 
 #######################################
@@ -174,21 +177,21 @@ initEnvironment
     setupTestEnvironment "php"
     setSpecTest "php5"
 
-    runTestForTag "ubuntu-12.04"
-    runTestForTag "ubuntu-14.04"
-    runTestForTag "ubuntu-15.04"
-    runTestForTag "ubuntu-15.10"
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
 
     setEnvironmentOsFamily "redhat"
-    runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7"
 
     setEnvironmentOsFamily "debian"
-    runTestForTag "debian-7"
-    runTestForTag "debian-8"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
 
     setEnvironmentOsFamily "debian"
     setSpecTest "php7"
-    runTestForTag "debian-8-php7"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
 }
 
 #######################################
@@ -198,17 +201,17 @@ initEnvironment
 [[ $(checkTestTarget apache) ]] && {
     setupTestEnvironment "apache"
 
-    #runTestForTag "ubuntu-12.04"
-    runTestForTag "ubuntu-14.04"
-    runTestForTag "ubuntu-15.04"
-    runTestForTag "ubuntu-15.10"
+    #OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
 
     setEnvironmentOsFamily "redhat"
-    runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7"
 
     setEnvironmentOsFamily "debian"
-    runTestForTag "debian-7"
-    runTestForTag "debian-8"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
 }
 
 #######################################
@@ -218,17 +221,17 @@ initEnvironment
 [[ $(checkTestTarget nginx) ]] && {
     setupTestEnvironment "nginx"
 
-    #runTestForTag "ubuntu-12.04"
-    runTestForTag "ubuntu-14.04"
-    runTestForTag "ubuntu-15.04"
-    runTestForTag "ubuntu-15.10"
+    #OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
 
     setEnvironmentOsFamily "redhat"
-    runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7"
 
     setEnvironmentOsFamily "debian"
-    runTestForTag "debian-7"
-    runTestForTag "debian-8"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
 }
 
 #######################################
@@ -239,21 +242,21 @@ initEnvironment
     setupTestEnvironment "php-apache"
     setSpecTest "php5-apache"
 
-    #runTestForTag "ubuntu-12.04"
-    runTestForTag "ubuntu-14.04"
-    runTestForTag "ubuntu-15.04"
-    runTestForTag "ubuntu-15.10"
+    #OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
 
     setEnvironmentOsFamily "redhat"
-    runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7"
 
     setEnvironmentOsFamily "debian"
-    runTestForTag "debian-7"
-    runTestForTag "debian-8"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
 
     setEnvironmentOsFamily "debian"
     setSpecTest "php7-apache"
-    runTestForTag "debian-8-php7"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
 }
 
 #######################################
@@ -264,21 +267,21 @@ initEnvironment
     setupTestEnvironment "php-nginx"
     setSpecTest "php5-nginx"
 
-    runTestForTag "ubuntu-12.04"
-    runTestForTag "ubuntu-14.04"
-    runTestForTag "ubuntu-15.04"
-    runTestForTag "ubuntu-15.10"
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
 
     setEnvironmentOsFamily "redhat"
-    runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7"
 
     setEnvironmentOsFamily "debian"
-    runTestForTag "debian-7"
-    runTestForTag "debian-8"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
 
     setEnvironmentOsFamily "debian"
     setSpecTest "php7-nginx"
-    runTestForTag "debian-8-php7"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
 }
 
 #######################################
@@ -287,7 +290,7 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm) ]] && {
     setupTestEnvironment "hhvm"
-    runTestForTag "latest"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
 }
 
 #######################################
@@ -296,7 +299,7 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm-apache) ]] && {
     setupTestEnvironment "hhvm-apache"
-    runTestForTag "latest"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
 }
 
 
@@ -306,7 +309,7 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm-nginx) ]] && {
     setupTestEnvironment "hhvm-nginx"
-    runTestForTag "latest"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
 }
 
 #######################################
@@ -315,7 +318,7 @@ initEnvironment
 
 [[ $(checkTestTarget postfix) ]] && {
     setupTestEnvironment "postfix"
-    runTestForTag "latest"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
 }
 
 #######################################
@@ -324,7 +327,7 @@ initEnvironment
 
 [[ $(checkTestTarget vsftp) ]] && {
     setupTestEnvironment "vsftp"
-    runTestForTag "latest"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
 
 }
 
@@ -334,7 +337,7 @@ initEnvironment
 
 [[ $(checkTestTarget mail-sandbox) ]] && {
     setupTestEnvironment "mail-sandbox"
-    runTestForTag "latest"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
 
 }
 
@@ -344,6 +347,6 @@ initEnvironment
 
 [[ $(checkTestTarget ssh) ]] && {
     setupTestEnvironment "ssh"
-    runTestForTag "latest"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
 
 }

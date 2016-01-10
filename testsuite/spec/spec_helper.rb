@@ -7,7 +7,7 @@ Dir[base_spec_dir.join('shared/**/*.rb')].sort.each{ |f| require f }
 
 set :backend, :docker
 set :docker_container, ENV['DOCKER_IMAGE']
-set :os, :family => ENV['OS_FAMILY'], :arch => 'x86_64'
+set :os, :family => ENV['OS_FAMILY'], :version => ENV['OS_VERSION'], :arch => 'x86_64'
 
 def wait_retry(time, increment = 1, elapsed_time = 0, &block)
   begin
