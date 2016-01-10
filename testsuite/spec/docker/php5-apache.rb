@@ -15,5 +15,6 @@ describe "Dockerfile" do
     # services
     include_examples 'php-fpm::listening::local-only'
     include_examples 'apache::listening::public'
+    include_examples 'apache::modules'
 
 end
