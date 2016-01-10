@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
+if [ "$#" -lt 2 ]; then
+    echo "[ERROR] Usage: ${basename "$0"} <servicename> <stop|start|restart|pid>"
+    exit 1
+fi
+
+SERVICENAME="$1"
+ACTION="$2"
+
+case "$ACTION" in
+    "stop")
+    "start")
+    "restart")
+        exec supervisorctl "$ACTION" "${SERVICENAME}:*"
+        ;;
+
+    "pid")
+        exec supervisorctl "pid" "${SERVICENAME}:${SERVICENAME}d"
+        ;;
+
+esac
