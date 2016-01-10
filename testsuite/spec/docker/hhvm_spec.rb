@@ -16,4 +16,7 @@ describe "Dockerfile" do
     # services
     include_examples 'hhvm::listening::public'
 
+    # test after services are up
+    include_examples 'hhvm::service::running'
+
 end

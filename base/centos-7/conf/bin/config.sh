@@ -5,6 +5,18 @@ shopt -s nullglob
 PROVISION_REGISTRY_PATH="/opt/docker/etc/.registry"
 
 ###
+ # Check if current user is root
+ #
+ ##
+function rootCheck() {
+    # Root check
+    if [ "$(/usr/bin/whoami)" != "root" ]; then
+        echo "[ERROR] Must be run as root"
+        exit 1
+    fi
+}
+
+###
  # Create named pipe
  #
  # $1 -> name of file

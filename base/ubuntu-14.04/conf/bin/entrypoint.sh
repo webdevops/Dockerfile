@@ -12,6 +12,8 @@ TASK="$1"
 
 source /opt/docker/bin/config.sh
 
+rootCheck
+
 if [ "$TASK" == "supervisord" -o "$TASK" == "noop" ]; then
     # Visible provisioning
     runProvisionEntrypoint
