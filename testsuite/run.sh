@@ -62,17 +62,13 @@ function runTestForTag() {
     DOCKER_TAG="$1"
     DOCKER_IMAGE_WITH_TAG="${DOCKER_IMAGE}:${DOCKER_TAG}"
 
-    echo ">>> Testing $DOCKER_IMAGE_WITH_TAG with $SPEC_PATH (family: $OS_FAMILY, version: $OS_VERSION)"
+    echo ">>> Testing '$DOCKER_IMAGE_WITH_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]"
 
+    ## Build Dockerfile
     echo "# Temporary dockerfile for test run
 FROM $DOCKER_IMAGE_WITH_TAG
 COPY conf/ /
     " > "${SCRIPT_DIR}/Dockerfile"
-
-    #docker-compose stop
-    #docker-compose rm --force
-    #docker-compose build --no-cache
-    #docker-compose up -d
 
     OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH"
 
@@ -353,3 +349,7 @@ initEnvironment
     OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
 
 }
+
+echo ""
+echo " >>> finished, all tests PASSED <<<"
+echo ""
