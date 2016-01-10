@@ -15,6 +15,19 @@
     state: link
     force: yes
 
+- name: Remove default vhost
+  file:
+    path:  "/etc/nginx/sites-enabled/default"
+    state: absent
+
+- name: Replace default nginx.conf [RedHat family]
+  file:
+    src:  '/opt/docker/etc/nginx/nginx.conf'
+    dest: '/etc/nginx/nginx.conf'
+    state: link
+    force: yes
+  when: ansible_os_family == 'RedHat'
+
 - name: Ensure document root is available
   file:
     path:    "{{ DOCUMENT_ROOT }}"

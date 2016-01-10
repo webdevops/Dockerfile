@@ -6,7 +6,6 @@ else
     TEST_TARGET="all"
 fi
 
-
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
@@ -25,6 +24,10 @@ READLINK='readlink'
 
 SCRIPT_DIR=$(dirname $($READLINK -f "$0"))
 BASE_DIR=$(dirname "$SCRIPT_DIR")
+COLUMNS=$(tput cols)
+
+OS_VERSION=""
+OS_VERSION_LATEST="14.04"
 
 ###
  # Relative dir
@@ -40,28 +43,88 @@ function checkTestTarget() {
 }
 
 
+###
+ # Init Environment
+ #
+ ##
 function initEnvironment() {
     bundle install --path=vendor
 }
 
-function runTest() {
-    DOCKER_IMAGE="$1"
-    SPEC_PATH="$2"
+###
+ # Run test for docker image tag
+ #
+ # $1     -> Docker tag
+ # $2     -> Spec file path
+ #
+ ##
+function runTestForTag() {
+    DOCKER_TAG="$1"
+    DOCKER_IMAGE_WITH_TAG="${DOCKER_IMAGE}:${DOCKER_TAG}"
 
-    echo ">>> Testing $DOCKER_IMAGE with $SPEC_PATH"
+    echo ">>> Testing '$DOCKER_IMAGE_WITH_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]"
 
-    echo "FROM $DOCKER_IMAGE" > "${SCRIPT_DIR}/Dockerfile"
+    ## Build Dockerfile
+    echo "# Temporary dockerfile for test run
+FROM $DOCKER_IMAGE_WITH_TAG
+COPY conf/ /
+    " > "${SCRIPT_DIR}/Dockerfile"
 
-    #docker-compose stop
-    #docker-compose rm --force
-    #docker-compose build --no-cache
-    #docker-compose up -d
-
-    TARGET="$DOCKER_IMAGE" bundle exec rspec --pattern "$SPEC_PATH"
+    OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH"
 
     rm -f "${SCRIPT_DIR}/Dockerfile"
 }
 
+###
+ # Set environment OS_FAMILY
+ #
+ # $1     -> Distribution name for testing
+ #
+ ##
+function setEnvironmentOsFamily() {
+    export OS_FAMILY="$1"
+}
+
+###
+ # Set test spec test file
+ #
+ # $1     -> Target filename for spec
+ #
+ ##
+function setSpecTest() {
+    ## Set test spec path
+    SPEC_PATH="spec/docker/${1}_spec.rb"
+}
+
+###
+ # Setup test environment
+ #
+ # Sets DOCKER_IMAGE, SPEC_PATH and OS_FAMILY
+ #
+ # $1     -> Docker image name (without namespace)
+ #
+ ##
+function setupTestEnvironment() {
+    echo ""
+    printRepeatedChar "="
+    echo "=== webdevops/$1"
+    printRepeatedChar "="
+    echo ""
+
+    ## Set docker image
+    DOCKER_IMAGE="webdevops/$1"
+
+    ## Set test spec path
+    setSpecTest "$1"
+
+    ## Set default environment
+    setEnvironmentOsFamily "ubuntu"
+}
+
+function printRepeatedChar() {
+    printf "${1}%.0s" $(seq 1 ${COLUMNS})
+    echo
+}
 
 initEnvironment
 
@@ -70,8 +133,19 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget ansible) ]] && {
-    echo "Testing webdevops/ansible..."
-    runTest     "webdevops/ansible"    "spec/docker/ansible/ubuntu_spec.rb"
+    setupTestEnvironment "ansible"
+
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
 }
 
 #######################################
@@ -79,16 +153,19 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget base) ]] && {
-    echo "Testing webdevops/base..."
-    runTest     "webdevops/base:ubuntu-12.04"    "spec/docker/base/ubuntu_spec.rb"
-    runTest     "webdevops/base:ubuntu-14.04"    "spec/docker/base/ubuntu_spec.rb"
-    runTest     "webdevops/base:ubuntu-15.04"    "spec/docker/base/ubuntu_spec.rb"
-    runTest     "webdevops/base:ubuntu-15.10"    "spec/docker/base/ubuntu_spec.rb"
+    setupTestEnvironment "base"
 
-    runTest     "webdevops/base:centos-7"        "spec/docker/base/centos_spec.rb"
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
 
-    runTest     "webdevops/base:debian-7"        "spec/docker/base/debian_spec.rb"
-    runTest     "webdevops/base:debian-8"        "spec/docker/base/debian_spec.rb"
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
 }
 
 #######################################
@@ -96,17 +173,24 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget php) ]] && {
-    echo "Testing webdevops/php..."
-    runTest     "webdevops/php:ubuntu-12.04"    "spec/docker/php/ubuntu_spec.rb"
-    runTest     "webdevops/php:ubuntu-14.04"    "spec/docker/php/ubuntu_spec.rb"
-    runTest     "webdevops/php:ubuntu-15.04"    "spec/docker/php/ubuntu_spec.rb"
-    runTest     "webdevops/php:ubuntu-15.10"    "spec/docker/php/ubuntu_spec.rb"
+    setupTestEnvironment "php"
+    setSpecTest "php5"
 
-    runTest     "webdevops/php:centos-7"        "spec/docker/php/centos_spec.rb"
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
 
-    runTest     "webdevops/php:debian-7"        "spec/docker/php/debian_spec.rb"
-    runTest     "webdevops/php:debian-8"        "spec/docker/php/debian_spec.rb"
-    runTest     "webdevops/php:debian-8-php7"   "spec/docker/php/debian_spec.rb"
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
+
+    setEnvironmentOsFamily "debian"
+    setSpecTest "php7"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
 }
 
 #######################################
@@ -114,16 +198,19 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget apache) ]] && {
-    echo "Testing webdevops/apache..."
-    #runTest    "webdevops/apache:ubuntu-12.04"    "spec/docker/apache/ubuntu_spec.rb"
-    runTest     "webdevops/apache:ubuntu-14.04"    "spec/docker/apache/ubuntu_spec.rb"
-    runTest     "webdevops/apache:ubuntu-15.04"    "spec/docker/apache/ubuntu_spec.rb"
-    runTest     "webdevops/apache:ubuntu-15.10"    "spec/docker/apache/ubuntu_spec.rb"
+    setupTestEnvironment "apache"
 
-    runTest     "webdevops/apache:centos-7"        "spec/docker/apache/centos_spec.rb"
+    #OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
 
-    runTest     "webdevops/apache:debian-7"        "spec/docker/apache/debian_spec.rb"
-    runTest     "webdevops/apache:debian-8"        "spec/docker/apache/debian_spec.rb"
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
 }
 
 #######################################
@@ -131,16 +218,19 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget nginx) ]] && {
-    echo "Testing webdevops/nginx..."
-    #runTest    "webdevops/nginx:ubuntu-12.04"    "spec/docker/nginx/ubuntu_spec.rb"
-    runTest     "webdevops/nginx:ubuntu-14.04"    "spec/docker/nginx/ubuntu_spec.rb"
-    runTest     "webdevops/nginx:ubuntu-15.04"    "spec/docker/nginx/ubuntu_spec.rb"
-    runTest     "webdevops/nginx:ubuntu-15.10"    "spec/docker/nginx/ubuntu_spec.rb"
+    setupTestEnvironment "nginx"
 
-    runTest     "webdevops/nginx:centos-7"        "spec/docker/nginx/centos_spec.rb"
+    #OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
 
-    runTest     "webdevops/nginx:debian-7"        "spec/docker/nginx/debian_spec.rb"
-    runTest     "webdevops/nginx:debian-8"        "spec/docker/nginx/debian_spec.rb"
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
 }
 
 #######################################
@@ -148,17 +238,24 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget php-apache) ]] && {
-    echo "Testing webdevops/php-apache..."
-    #runTest    "webdevops/php-apache:ubuntu-12.04"    "spec/docker/php-apache/ubuntu_spec.rb"
-    runTest     "webdevops/php-apache:ubuntu-14.04"    "spec/docker/php-apache/ubuntu_spec.rb"
-    runTest     "webdevops/php-apache:ubuntu-15.04"    "spec/docker/php-apache/ubuntu_spec.rb"
-    runTest     "webdevops/php-apache:ubuntu-15.10"    "spec/docker/php-apache/ubuntu_spec.rb"
+    setupTestEnvironment "php-apache"
+    setSpecTest "php5-apache"
 
-    runTest     "webdevops/php-apache:centos-7"        "spec/docker/php-apache/centos_spec.rb"
+    #OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
 
-    runTest     "webdevops/php-apache:debian-7"        "spec/docker/php-apache/debian_spec.rb"
-    runTest     "webdevops/php-apache:debian-8"        "spec/docker/php-apache/debian_spec.rb"
-    runTest     "webdevops/php-apache:debian-8-php7"   "spec/docker/php-apache/debian_spec.rb"
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
+
+    setEnvironmentOsFamily "debian"
+    setSpecTest "php7-apache"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
 }
 
 #######################################
@@ -166,17 +263,24 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget php-nginx) ]] && {
-    echo "Testing webdevops/php-nginx..."
-    runTest     "webdevops/php-nginx:ubuntu-12.04"    "spec/docker/php-nginx/ubuntu_spec.rb"
-    runTest     "webdevops/php-nginx:ubuntu-14.04"    "spec/docker/php-nginx/ubuntu_spec.rb"
-    runTest     "webdevops/php-nginx:ubuntu-15.04"    "spec/docker/php-nginx/ubuntu_spec.rb"
-    runTest     "webdevops/php-nginx:ubuntu-15.10"    "spec/docker/php-nginx/ubuntu_spec.rb"
+    setupTestEnvironment "php-nginx"
+    setSpecTest "php5-nginx"
 
-    runTest     "webdevops/php-nginx:centos-7"        "spec/docker/php-nginx/centos_spec.rb"
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
 
-    runTest     "webdevops/php-nginx:debian-7"        "spec/docker/php-nginx/debian_spec.rb"
-    runTest     "webdevops/php-nginx:debian-8"        "spec/docker/php-nginx/debian_spec.rb"
-    runTest     "webdevops/php-nginx:debian-8-php7"   "spec/docker/php-nginx/debian_spec.rb"
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
+
+    setEnvironmentOsFamily "debian"
+    setSpecTest "php7-nginx"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
 }
 
 #######################################
@@ -184,8 +288,8 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget hhvm) ]] && {
-    echo "Testing webdevops/hhvm..."
-    runTest     "webdevops/hhvm"    "spec/docker/hhvm/ubuntu_spec.rb"
+    setupTestEnvironment "hhvm"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
 }
 
 #######################################
@@ -193,8 +297,8 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget hhvm-apache) ]] && {
-    echo "Testing webdevops/hhvm-apache..."
-    runTest     "webdevops/hhvm-apache"    "spec/docker/hhvm-apache/ubuntu_spec.rb"
+    setupTestEnvironment "hhvm-apache"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
 }
 
 
@@ -203,8 +307,8 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget hhvm-nginx) ]] && {
-    echo "Testing webdevops/hhvm-nginx..."
-    runTest     "webdevops/hhvm-nginx"    "spec/docker/hhvm-nginx/ubuntu_spec.rb"
+    setupTestEnvironment "hhvm-nginx"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
 }
 
 #######################################
@@ -212,8 +316,8 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget postfix) ]] && {
-    echo "Testing webdevops/postfix..."
-    runTest     "webdevops/postfix"    "spec/docker/postfix/ubuntu_spec.rb"
+    setupTestEnvironment "postfix"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
 }
 
 #######################################
@@ -221,8 +325,9 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget vsftp) ]] && {
-    echo "Testing webdevops/vsftp..."
-    runTest     "webdevops/vsftp"    "spec/docker/vsftp/ubuntu_spec.rb"
+    setupTestEnvironment "vsftp"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
+
 }
 
 #######################################
@@ -230,8 +335,9 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget mail-sandbox) ]] && {
-    echo "Testing webdevops/mail-sandbox..."
-    runTest     "webdevops/mail-sandbox"    "spec/docker/mail-sandbox/ubuntu_spec.rb"
+    setupTestEnvironment "mail-sandbox"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
+
 }
 
 #######################################
@@ -239,6 +345,11 @@ initEnvironment
 #######################################
 
 [[ $(checkTestTarget ssh) ]] && {
-    echo "Testing webdevops/ssh..."
-    runTest     "webdevops/ssh"    "spec/docker/ssh/ubuntu_spec.rb"
+    setupTestEnvironment "ssh"
+    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
+
 }
+
+echo ""
+echo " >>> finished, all tests PASSED <<<"
+echo ""

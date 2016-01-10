@@ -6,11 +6,10 @@ base_spec_dir = Pathname.new(File.join(File.dirname(__FILE__)))
 Dir[base_spec_dir.join('shared/**/*.rb')].sort.each{ |f| require f }
 
 set :backend, :docker
+set :docker_container, ENV['DOCKER_IMAGE']
+set :os, :family => ENV['OS_FAMILY'], :version => ENV['OS_VERSION'], :arch => 'x86_64'
 
-set :docker_container, ENV['TARGET']
-
-
-def wait_retry(time, increment = 5, elapsed_time = 0, &block)
+def wait_retry(time, increment = 1, elapsed_time = 0, &block)
   begin
     yield
   rescue Exception => e

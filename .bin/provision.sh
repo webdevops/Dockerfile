@@ -170,6 +170,7 @@ function deployProvision() {
     echo "Building provision for webdevops/nginx..."
     clearProvision  nginx '*'
     deployProvision nginx/general  nginx  '*'
+    deployProvision nginx/centos   nginx  'centos-*'
 }
 
 ## Build hhvm
@@ -192,6 +193,7 @@ function deployProvision() {
     echo "Building provision for webdevops/hhvm-nginx..."
     clearProvision  hhvm-nginx  '*'
     deployProvision nginx/general       hhvm-nginx  '*'
+    deployProvision nginx/centos        hhvm-nginx  'centos-*'
     deployProvision hhvm-nginx/general  hhvm-nginx  '*'
 }
 
@@ -221,6 +223,7 @@ function deployProvision() {
     echo "Building provision for webdevops/php-nginx..."
     clearProvision  php-nginx  '*'
     deployProvision nginx/general      php-nginx  '*'
+    deployProvision nginx/centos       php-nginx  'centos-*'
     deployProvision php-nginx/general  php-nginx  '*'
     deployProvision php-nginx/debian-php7  php-nginx  'debian-*-php7'
 }
