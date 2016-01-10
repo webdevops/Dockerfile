@@ -2,7 +2,6 @@ shared_examples 'apache::modules' do
     describe command('apachectl -t -D DUMP_MODULES') do
         its(:stdout) { should contain('core_module') }
         its(:stdout) { should contain('http_module') }
-        its(:stdout) { should contain('mpm_worker_module') }
 
         its(:stdout) { should contain('so_module') }
         its(:stdout) { should contain('log_config_module') }
@@ -25,6 +24,14 @@ shared_examples 'apache::modules' do
         its(:stdout) { should contain('ssl_module') }
         its(:stdout) { should contain('status_module') }
 
+        ## mpm module
+        if os[:family] == 'debian' and os[:version] == '7'
+            its(:stdout) { should contain('mpm_worker_module') }
+        else
+            its(:stdout) { should contain('mpm_event_module') }
+        end
+
+        ## fastcgi module
         if ['debian', 'ubuntu'].include?(os[:family])
             its(:stdout) { should contain('fastcgi_module') }
         end
