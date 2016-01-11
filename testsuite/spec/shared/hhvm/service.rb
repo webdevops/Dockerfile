@@ -4,5 +4,7 @@ shared_examples 'hhvm::service::running' do
         its(:stdout) { should_not match %r!^0$! }
         # numeric match
         its(:stdout) { should     match %r!^[0-9]+$! }
+
+        its(:exit_status) { should eq 0 }
     end
 end

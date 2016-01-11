@@ -8,6 +8,8 @@ shared_examples 'php::cli::test::sha1' do
         its(:stderr) { should_not contain('PHP Warning') }
 
         its(:stdout) { should     contain('2ae62521966cf6d4188acefc943c903e5fc0a25c') }
+
+        its(:exit_status) { should eq 0 }
     end
 end
 

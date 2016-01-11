@@ -27,7 +27,7 @@
     name:     "{{ FTP_USER }}"
     uid:      "{{ FTP_UID }}"
     group:    "{{ FTP_USER }}"
-    shell:    "/bin/false"
+    shell:    "/bin/bash"
     home:     "{{ FTP_PATH }}"
     password: "{{ FTP_PASSWORD |password_hash('sha512') }}"
 
@@ -38,3 +38,4 @@
     recurse: yes
     owner:   "{{ FTP_UID }}"
     group:   "{{ FTP_GID }}"
+  ignore_errors: true
