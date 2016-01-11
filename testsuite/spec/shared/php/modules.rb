@@ -50,6 +50,8 @@ shared_examples 'php::modules' do
         its(:stdout) { should     contain('xsl') }
         its(:stdout) { should     contain('zip') }
         its(:stdout) { should     contain('zlib') }
+
+        its(:exit_status) { should eq 0 }
     end
 end
 
@@ -58,11 +60,15 @@ shared_examples 'php5::modules' do
         its(:stdout) { should     contain('shmop') }
         its(:stdout) { should     contain('mhash') }
         its(:stdout) { should     contain('wddx') }
+
+        its(:exit_status) { should eq 0 }
     end
 end
 
 shared_examples 'php7::modules' do
     describe command('php -m') do
         its(:stdout) { should     contain('Zend OPcache') }
+
+        its(:exit_status) { should eq 0 }
     end
 end

@@ -36,5 +36,6 @@ shared_examples 'apache::modules' do
             its(:stdout) { should contain('fastcgi_module') }
         end
 
+        its(:exit_status) { should eq 0 }
     end
 end

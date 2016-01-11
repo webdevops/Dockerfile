@@ -11,5 +11,7 @@ shared_examples 'base::locales' do
         its(:stdout) { should contain('en_DK') }
         its(:stdout) { should contain('ca_ES') }
         its(:stdout) { should contain('fr_FR') }
+
+        its(:exit_status) { should eq 0 }
     end
 end
