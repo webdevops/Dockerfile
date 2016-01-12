@@ -8,18 +8,10 @@ describe "Dockerfile" do
         set :docker_image, image.id
     end
 
-    include_examples 'php::cli'
-    include_examples 'hhvm::cli::version'
-    include_examples 'php::cli::test::sha1'
-    include_examples 'php::composer'
-
-    # services
-    include_examples 'hhvm::listening::public'
-    include_examples 'nginx::listening::public'
-
-    # test after services are up
-    include_examples 'php::fpm::test::sha1'
-    include_examples 'nginx::service::running'
-    include_examples 'hhvm::service::running'
+    include_examples 'collection::bootstrap'
+    include_examples 'collection::base'
+    include_examples 'collection::hhvm'
+    include_examples 'collection::nginx'
+    include_examples 'collection::php-fpm::webserver-test'
 
 end

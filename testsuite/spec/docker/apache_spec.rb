@@ -8,11 +8,8 @@ describe "Dockerfile" do
         set :docker_image, image.id
     end
 
-    # services
-    include_examples 'apache::listening::public'
-
-    # test after services are up
-    include_examples 'apache::modules'
-    include_examples 'apache::service::running'
+    include_examples 'collection::bootstrap'
+    include_examples 'collection::base'
+    include_examples 'collection::apache'
 
 end

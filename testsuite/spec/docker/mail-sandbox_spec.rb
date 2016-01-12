@@ -8,12 +8,11 @@ describe "Dockerfile" do
         set :docker_image, image.id
     end
 
-    # services
-    include_examples 'postfix::listening::public'
-    include_examples 'dovecot::listening::public'
+    include_examples 'collection::bootstrap'
+    include_examples 'collection::base'
+    include_examples 'collection::postfix'
+    include_examples 'collection::dovecot'
 
-    # test after services are up
-    include_examples 'postfix::service::running'
-    include_examples 'dovecot::service::running'
+
 
 end
