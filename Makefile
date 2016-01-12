@@ -9,7 +9,7 @@ list:
 
 all:       base php hhvm service apache nginx misc
 
-bootstrap: webdevops/bootstrap
+bootstrap: webdevops/bootstrap webdevops/ansible
 base:      webdevops/bootstrap webdevops/base webdevops/storage
 service:   webdevops/ssh webdevops/vsftp webdevops/postfix webdevops/mail-sandbox
 
@@ -30,6 +30,10 @@ provision:
 webdevops/bootstrap:
 	bash .bin/provision.sh bootstrap
 	bash .bin/build.sh bootstrap "${DOCKER_PREFIX}/bootstrap" "${DOCKER_LATEST}"
+
+webdevops/ansible:
+	bash .bin/provision.sh bootstrap
+	bash .bin/build.sh bootstrap "${DOCKER_PREFIX}/ansible" "${DOCKER_LATEST}"
 
 webdevops/base:
 	bash .bin/provision.sh base
