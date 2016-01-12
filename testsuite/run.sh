@@ -27,7 +27,9 @@ BASE_DIR=$(dirname "$SCRIPT_DIR")
 COLUMNS=$(tput cols)
 
 OS_VERSION=""
-OS_VERSION_LATEST="14.04"
+
+DOCKER_REPOSITORY="$(cat ../DOCKER_REPOSITORY)"
+DOCKER_TAG_LATEST="$(cat ../DOCKER_TAG_LATEST)"
 
 ###
  # Relative dir
@@ -309,7 +311,7 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm) ]] && {
     setupTestEnvironment "hhvm"
-    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 }
 
 #######################################
@@ -318,7 +320,7 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm-apache) ]] && {
     setupTestEnvironment "hhvm-apache"
-    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 }
 
 
@@ -328,7 +330,7 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm-nginx) ]] && {
     setupTestEnvironment "hhvm-nginx"
-    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 }
 
 #######################################
@@ -337,7 +339,7 @@ initEnvironment
 
 [[ $(checkTestTarget postfix) ]] && {
     setupTestEnvironment "postfix"
-    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 }
 
 #######################################
@@ -346,7 +348,7 @@ initEnvironment
 
 [[ $(checkTestTarget vsftp) ]] && {
     setupTestEnvironment "vsftp"
-    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
 }
 
@@ -356,7 +358,7 @@ initEnvironment
 
 [[ $(checkTestTarget mail-sandbox) ]] && {
     setupTestEnvironment "mail-sandbox"
-    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
 }
 
@@ -366,7 +368,7 @@ initEnvironment
 
 [[ $(checkTestTarget ssh) ]] && {
     setupTestEnvironment "ssh"
-    OS_VERSION="$OS_VERSION_LATEST" runTestForTag "latest"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
 }
 
