@@ -129,6 +129,26 @@ function printRepeatedChar() {
 initEnvironment
 
 #######################################
+# webdevops/bootstrap
+#######################################
+
+[[ $(checkTestTarget bootstrap) ]] && {
+    setupTestEnvironment "bootstrap"
+
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
+}
+
+#######################################
 # webdevops/ansible
 #######################################
 
