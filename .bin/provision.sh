@@ -25,7 +25,7 @@ READLINK='readlink'
 	}
 }
 
-SCRIPT_DIR=$(dirname $($READLINK -f "$0"))
+SCRIPT_DIR=$(dirname "$($READLINK -f "$0")")
 BASE_DIR=$(dirname "$SCRIPT_DIR")
 
 LOCALSCRIPT_DIR="${BASE_DIR}/_localscripts"
