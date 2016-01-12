@@ -11,6 +11,21 @@ Container                             | Distribution name        | PHP Version
 `webdevops/php-apache:debian-8-php7`  | jessie with dotdeb       | PHP 7.x (via dotdeb)
 `webdevops/php-apache:centos-7`       |                          | PHP 5.4
 
+## Filesystem layout
+
+Directory                       | Description
+------------------------------- | ------------------------------------------------------------------------------
+`/opt/docker/etc/httpd`         | Apache configuration
+`/opt/docker/etc/httpd/ssl`     | Apache ssl configuration with example server.crt, server.csr, server.key
+
+File                                      | Description
+----------------------------------------- | ------------------------------------------------------------------------------
+`/opt/docker/etc/httpd/main.conf`         | Main include file (will include `global.conf`, `php.conf` and `vhost.conf`) 
+`/opt/docker/etc/httpd/global.conf`       | Global apache configuration options
+`/opt/docker/etc/httpd/php.conf`          | PHP configuration (connection to FPM)
+`/opt/docker/etc/httpd/vhost.common.conf` | Vhost common stuff (placeholder)
+`/opt/docker/etc/httpd/vhost.conf`        | Default vhost
+`/opt/docker/etc/httpd/vhost.ssl.conf`    | Default ssl configuration for vhost
 
 ## Environment variables
 

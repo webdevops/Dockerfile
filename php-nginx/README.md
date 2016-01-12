@@ -23,6 +23,21 @@ Variable              | Description
 `WEB_DOCUMENT_INDEX`  | Document index (eg. `index.php`) for Nginx
 `WEB_ALIAS_DOMAIN`    | Alias domains (eg. `*.vm`) for Nginx
 
+## Filesystem layout
+
+Directory                       | Description
+------------------------------- | ------------------------------------------------------------------------------
+`/opt/docker/etc/nginx`         | Nginx configuration
+`/opt/docker/etc/nginx/ssl`     | Nginx ssl configuration with example server.crt, server.csr, server.key
+
+File                                      | Description
+----------------------------------------- | ------------------------------------------------------------------------------
+`/opt/docker/etc/nginx/main.conf`         | Main include file (will include `global.conf`, `php.conf` and `vhost.conf`) 
+`/opt/docker/etc/nginx/global.conf`       | Global nginx configuration options
+`/opt/docker/etc/nginx/php.conf`          | PHP configuration (connection to FPM)
+`/opt/docker/etc/nginx/vhost.common.conf` | Vhost common stuff (placeholder)
+`/opt/docker/etc/nginx/vhost.conf`        | Default vhost
+`/opt/docker/etc/nginx/vhost.ssl.conf`    | Default ssl configuration for vhost
 
 ## Container info
 
