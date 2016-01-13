@@ -6,8 +6,8 @@ else
     TEST_TARGET="all"
 fi
 
-if [ -z "$PULL" ]; then
-    PULL=0
+if [ -z "$DOCKER_PULL" ]; then
+    DOCKER_PULL=0
 fi
 
 set -o pipefail  # trace ERR through pipes
@@ -70,7 +70,7 @@ function runTestForTag() {
 
     echo ">>> Testing '$DOCKER_IMAGE_WITH_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]"
 
-    if [ "$PULL" -eq 1 ]; then
+    if [ "$DOCKER_PULL" -eq 1 ]; then
         echo " * Pulling $DOCKER_IMAGE_WITH_TAG from Docker hub ..."
         docker pull "$DOCKER_IMAGE_WITH_TAG"
     fi
