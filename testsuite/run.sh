@@ -6,6 +6,10 @@ else
     TEST_TARGET="all"
 fi
 
+if [ -z "$PULL" ]; then
+    PULL=0
+fi
+
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
@@ -65,6 +69,11 @@ function runTestForTag() {
     DOCKER_IMAGE_WITH_TAG="${DOCKER_IMAGE}:${DOCKER_TAG}"
 
     echo ">>> Testing '$DOCKER_IMAGE_WITH_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]"
+
+    if [ "$PULL" -eq 1 ]; then
+        echo " * Pulling $DOCKER_IMAGE_WITH_TAG from Docker hub ..."
+        docker pull "$DOCKER_IMAGE_WITH_TAG"
+    fi
 
     ## Build Dockerfile
     echo "# Temporary dockerfile for test run
