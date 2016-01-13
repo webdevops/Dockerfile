@@ -19,11 +19,12 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && echo "export TERM=xterm" >> /root/.bashrc \
     # System update
     && /usr/local/bin/apt-upgrade \
-    # Generate locales
+    # Base stuff
     && /usr/local/bin/apt-install \
+        lsb-release \
+        # Generate locales
         locales-all \
     # Install ansible
-    && /usr/local/bin/apt-install \
         python-dev \
         python-pip \
     && pip install ansible

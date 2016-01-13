@@ -25,7 +25,6 @@ RUN /usr/local/bin/apt-install \
 
 # Install common tools
 RUN /usr/local/bin/apt-install \
-        lsb-release \
         sudo \
         zip \
         unzip \

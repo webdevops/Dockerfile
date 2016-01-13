@@ -23,11 +23,11 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     # Generate locales
     && ln -s /usr/share/i18n/SUPPORTED /var/lib/locales/supported.d/all \
     && locale-gen \
-    # Install apt-add-repository
+    # Install base stuff
     && /usr/local/bin/apt-install \
         python-software-properties \
-    # Install ansible
-    && /usr/local/bin/apt-install \
+        lsb-release \
+        # Install ansible
         python-dev \
         python-pip \
     && pip install ansible

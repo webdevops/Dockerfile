@@ -26,7 +26,6 @@ RUN sed -ri 's/(deb.*\/debian jessie main)/\1 contrib non-free /' -- /etc/apt/so
 
 # Install common tools
 RUN /usr/local/bin/apt-install \
-        lsb-release \
         sudo \
         zip \
         unzip \
