@@ -23,6 +23,9 @@ misc:      webdevops/typo3
 test:
 	cd "testsuite/" && bash run.sh all
 
+test-with-pull:
+	cd "testsuite/" && DOCKER_PULL=1 bash run.sh all
+
 provision:
 	bash .bin/provision.sh
 
