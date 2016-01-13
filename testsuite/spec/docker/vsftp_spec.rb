@@ -9,7 +9,7 @@ describe "Dockerfile" do
     end
 
     include_examples 'collection::bootstrap'
-    include_examples 'collection::base'
+    include_examples 'collection::base::without-application'
     include_examples 'collection::vsftp'
 
 end
