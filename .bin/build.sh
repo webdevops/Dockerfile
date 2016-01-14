@@ -8,6 +8,9 @@ if [ -z "$DEBUG" ]; then
     DEBUG=0
 fi
 
+if [ -z "$DOCKER_PUSH" ]; then
+    DOCKER_PUSH=0
+fi
 
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
@@ -71,6 +74,18 @@ function waitForBuildStep() {
     fi
 }
 
+###
+ # Push image
+ #
+ # $1 -> docker container name (eg. webdevops/php)
+ # $2 -> docker container tag  (eg. ubuntu-14.04)
+ ##
+function dockerPushImage() {
+    CONTAINER_NAME="$1"
+    CONTAINER_TAG="$2"
+
+    docker push "${CONTAINER_NAME}:${CONTAINER_TAG}"
+}
 
 ###############################################################################
 # MAIN
@@ -96,6 +111,14 @@ if [ -f "${TARGET}/Dockerfile" ]; then
     buildDockerfile "${TARGET}" "${BASENAME}" "${TAGNAME}"
 
     waitForBuild
+
+    # push latest
+    if [ "${DOCKER_PUSH}" -eq 1 ]; then
+        echo " Starting push to docker hub"
+
+        dockerPushImage "${BASENAME}" "${TAGNAME}"
+    fi
+
 else
     # Target is a multiple tag container, each sub directory name is
     # the name of the docker image tag
@@ -115,11 +138,29 @@ else
     # build latest tag
     if [ -f "${TARGET}/${LATEST}/Dockerfile" ]; then
             DOCKERFILE="${TARGET}/${LATEST}"
-            buildDockerfile "${DOCKERFILE}" "${BASENAME}" "latest"
+            # Build dockerfile with cache (use previous build)
+            FORCE=0 buildDockerfile "${DOCKERFILE}" "${BASENAME}" "latest"
     fi
 
     # wait for final build
     waitForBuild
+
+    if [ "${DOCKER_PUSH}" -eq 1 ]; then
+        echo " Starting push to docker hub"
+
+        # push all images
+        for DOCKERFILE in $TARGET/*; do
+            if [ -f "$DOCKERFILE/Dockerfile" ]; then
+                TAGNAME=$(basename "$DOCKERFILE")
+                dockerPushImage "${BASENAME}" "${TAGNAME}"
+            fi
+         done
+
+        # push latest
+         if [ -f "${TARGET}/${LATEST}/Dockerfile" ]; then
+            dockerPushImage "${BASENAME}" "latest"
+         fi
+    fi
 fi
 
 echo ""

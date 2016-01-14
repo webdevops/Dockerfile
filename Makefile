@@ -23,11 +23,15 @@ misc:      webdevops/typo3
 test:
 	cd "testsuite/" && bash run.sh all
 
-test-with-pull:
-	cd "testsuite/" && DOCKER_PULL=1 bash run.sh all
+test-pull:
+	DOCKER_PULL=1 make test
 
 provision:
 	bash .bin/provision.sh
+
+publish:
+	make test
+	DOCKER_PUSH=1 make all
 
 webdevops/bootstrap:
 	bash .bin/provision.sh bootstrap

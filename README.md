@@ -34,6 +34,11 @@ Command                     | Description
 <br>                        |
 `make provision`            | Deploy all configuration files from [_provisioning/](_provisioning/README.md)
 <br>                        |
+`make test`                 | Run testsuite (use currently available docker images on your docker host)
+`make test-pull`            | Run testsuite but pull newest docker images from docker hub first
+<br>                        |
+`make publish`              | Run tests and rebuild them (use cache) and push them to docker hub
+<br>                        |
 `make base`                 | Build all base containers
 `make service`              | Build all service containers
 `make php`                  | Build all php containers
