@@ -4,8 +4,8 @@
 
 Variable         | Description
 ---------------- | ------------------------------------------------------------------------------
-`FTP_USER`       | FTP account - username
-`FTP_PASSWORD`   | FTP account - password
+`FTP_USER`       | FTP account - username (default: application)
+`FTP_PASSWORD`   | FTP account - password (default: application)
 `FTP_UID`        | UID of FTP account
 `FTP_GID`        | GID of FTP account
 `FTP_PATH`       | FTP root path
