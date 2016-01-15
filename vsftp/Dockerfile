@@ -5,8 +5,8 @@
 FROM webdevops/base:latest
 MAINTAINER info@webdevops.io
 
-ENV FTP_USER     dev
-ENV FTP_PASSWORD dev
+ENV FTP_USER     application
+ENV FTP_PASSWORD application
 ENV FTP_UID      1000
 ENV FTP_GID      1000
 ENV FTP_PASSWORD dev
@@ -22,7 +22,7 @@ RUN /usr/local/bin/apt-install \
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
-RUN /opt/docker/bin/control.sh provision.role.entrypoint webdevops-vsftp \
+RUN /opt/docker/bin/control.sh provision.role webdevops-vsftp \
     && /opt/docker/bin/bootstrap.sh
 
 EXPOSE 20

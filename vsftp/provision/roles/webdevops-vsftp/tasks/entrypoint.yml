@@ -1,16 +1,5 @@
 ---
 
-- name: Remove application user
-  user:
-    name:  "{{ APPLICATION_USER }}"
-    state: absent
-    force: yes
-
-- name: Remove application group
-  group:
-    name:  "{{ APPLICATION_GROUP }}"
-    state: absent
-
 - name: Ensure FTP_PATH exists
   file:
     path:    "{{ FTP_PATH }}"
