@@ -73,7 +73,7 @@ function buildLocalscripts() {
     rm -f scripts.tar
     tar -jmcf scripts.tar *
 
-    find "$BASE_DIR/bootstrap" -type d -depth 1 | while read DOCKER_DIR; do
+    find "$BASE_DIR/bootstrap" -maxdepth 1 -type d  | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
             cp scripts.tar "${DOCKER_DIR}/scripts.tar"
@@ -101,7 +101,7 @@ function clearProvision() {
     DOCKER_FILTER="$2"
 
     echo " * Clearing provision"
-    find "${BASE_DIR}/${DOCKER_CONTAINER}" -type d -depth 1 -iname "${DOCKER_FILTER}" | while read DOCKER_DIR; do
+    find "${BASE_DIR}/${DOCKER_CONTAINER}" -maxdepth 1 -type d -iname "${DOCKER_FILTER}" | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
             rm -rf "${DOCKER_DIR}/conf/"
@@ -130,7 +130,7 @@ function deployProvision() {
         echo " * Deploying provision with filter '$DOCKER_FILTER'"
     fi
 
-    find "${BASE_DIR}/${DOCKER_CONTAINER}" -type d -depth 1 -iname "${DOCKER_FILTER}" | while read DOCKER_DIR; do
+    find "${BASE_DIR}/${DOCKER_CONTAINER}" -depth 1 -type d -iname "${DOCKER_FILTER}" | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
             cp -f -r "${PROVISION_DIR}/${PROVISION_SUB_DIR}/" "${DOCKER_DIR}/conf"
