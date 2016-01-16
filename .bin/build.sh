@@ -22,6 +22,8 @@ BASENAME="$2"
 LATEST="$3"
 WORKDIR=$(pwd)
 
+source "${WORKDIR}/.bin/functions.sh"
+
 ###
  # Build dockerfile
  #
@@ -41,6 +43,7 @@ function buildDockerfile() {
 
     if [ "${FAST}" -eq 1 ]; then
         bash "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}" &
+        addBackgroundPidToList "${CONTAINER_NAME}:${CONTAINER_TAG}"
     else
         bash "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}"
     fi
@@ -70,6 +73,7 @@ function waitForBuild() {
 function waitForBuildStep() {
     if [ "${FAST}" -eq 1 ]; then
         echo "waiting for build..."
+        waitForBackgroundProcesses
         wait
     fi
 }
@@ -102,6 +106,8 @@ if [ "${DEBUG}" -eq 1 ]; then
 fi
 
 sleep 0.5
+
+initPidList
 
 if [ -f "${TARGET}/Dockerfile" ]; then
     # If target is only a simple container without sub folders
