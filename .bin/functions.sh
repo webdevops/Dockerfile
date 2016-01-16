@@ -30,7 +30,7 @@ waitForBackgroundProcesses() {
                 # get return code
                 if wait "$pid" 2> /dev/null; then
                     # success
-                    echo " -> Process ${title} success"
+                    echo " -> Process ${title} finished successfully"
                     unset PID_LIST[$pid]
                 else
                     # failed
