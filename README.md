@@ -33,11 +33,13 @@ Command                     | Description
 `FORCE=1 make all`          | Force container build (`docker build --no-cache ...`)
 <br>                        |
 `make provision`            | Deploy all configuration files from [_provisioning/](_provisioning/README.md)
+`make dist-update`          | Update local distrubtion images (CentOS, Debian, Ubuntu)
 <br>                        |
 `make test`                 | Run testsuite (use currently available docker images on your docker host)
-`make test-pull`            | Run testsuite but pull newest docker images from docker hub first
+`make test-hub-images`      | Run testsuite but pull newest docker images from docker hub first
 <br>                        |
-`make publish`              | Run tests and rebuild them (use cache) and push them to docker hub
+`make push`                 | Run tests and rebuild them (use cache) and push them to docker hub
+`make publish`              | Run `dist-update`, `all` with FORCE and `push`
 <br>                        |
 `make base`                 | Build all base containers
 `make service`              | Build all service containers

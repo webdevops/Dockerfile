@@ -23,13 +23,23 @@ misc:      webdevops/typo3
 test:
 	cd "testsuite/" && bash run.sh all
 
-test-pull:
+test-hub-images:
 	DOCKER_PULL=1 make test
 
 provision:
 	bash .bin/provision.sh
 
+dist-update:
+	docker pull -a centos
+	docker pull -a ubuntu
+	docker pull -a debian
+
 publish:
+	make dist-update
+	FORCE=1 make all
+	make push
+
+push:
 	make test
 	DOCKER_PUSH=1 make all
 
