@@ -24,19 +24,20 @@ Variable            | Description
 The whole docker directroy is deployed into `/opt/docker/`.
 
 
-Directory                       | Description
-------------------------------- | ------------------------------------------------------------------------------
-`/opt/docker/bin`               | Script directory for various script eg. `entrypoint.sh`
-`/opt/docker/bin/bootstrap.d`   | Directory for bash `*.sh` scripts which will automatcally run by `bootstrrap.sh` (will be removed after run, for usage in `Dockerfile`)
-`/opt/docker/bin/entrypoint.d`  | Directory for bash `*.sh` scripts which will automatcally run by `entrypoint.sh`
-`/opt/docker/bin/service.d`     | Service (wrapper) scripts for supervisord
-<br>                            |
-`/opt/docker/etc`               | Configuration directory
-`/opt/docker/etc/supervisor.d`  | Supervisor service configuration `*.conf` directory
-<br>                            |
-`/opt/docker/provision`         | Ansible provisioning configuration directory
-`/opt/docker/provision/roles`   | Ansible roles configuration directory
-
+Directory                            | Description
+------------------------------------ | ------------------------------------------------------------------------------
+`/opt/docker/bin`                    | Script directory for various script eg. `entrypoint.sh`
+`/opt/docker/bin/entrypoint.d`       | Entrypoint scripts
+`/opt/docker/bin/service.d`          | Service (wrapper) scripts for supervisord
+<br>                                 |
+`/opt/docker/etc`                    | Configuration directory
+`/opt/docker/etc/supervisor.d`       | Supervisor service configuration `*.conf` directory
+<br>                                 |
+`/opt/docker/provision`              | Ansible provisioning configuration directory
+`/opt/docker/provision/roles`        | Ansible roles configuration directory
+`/opt/docker/provision/bootstrap.d`  | Directory for bash `*.sh` scripts which will automatcally run by `bootstrrap.sh` (will be removed after run, for usage in `Dockerfile`)
+`/opt/docker/provision/entrypoint.d` | Directory for bash `*.sh` scripts which will automatcally run by `entrypoint.sh`
+`/opt/docker/provision/onbuild.d`    | Directory for bash `*.sh` scripts which will automatcally run by `onbuild` (`bootstrap.sh onbuild` must be called for execution with ONBUILD RUN) 
  
 
 File                                         | Description
