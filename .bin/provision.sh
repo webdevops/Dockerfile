@@ -56,6 +56,27 @@ function checkBuildTarget() {
     fi
 }
 
+###
+ # Generate list of directories
+ #
+ # $1     -> Directory
+ #
+ ##
+function listDirectories() {
+    find "$1" -maxdepth 1 -type d
+}
+
+###
+ # Generate list of directories with iname filter
+ #
+ # $1     -> Directory
+ # s2     -> Filter (find iname)
+ #
+ ##
+function listDirectoriesWithFilter() {
+    find "$1" -maxdepth 1 -type d -iname "$2"
+}
+
 #######################################
 # Localscripts
 #######################################
@@ -73,7 +94,7 @@ function buildLocalscripts() {
     rm -f scripts.tar
     tar -jmcf scripts.tar *
 
-    find "$BASE_DIR/bootstrap" -maxdepth 1 -type d | while read DOCKER_DIR; do
+    listDirectories "$BASE_DIR/bootstrap"  | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
             cp scripts.tar "${DOCKER_DIR}/scripts.tar"
@@ -101,7 +122,7 @@ function clearProvision() {
     DOCKER_FILTER="$2"
 
     echo " * Clearing provision"
-    find "${BASE_DIR}/${DOCKER_CONTAINER}" -maxdepth 1 -type d -iname "${DOCKER_FILTER}" | while read DOCKER_DIR; do
+    listDirectoriesWithFilter "${BASE_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}" | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
             rm -rf "${DOCKER_DIR}/conf/"
@@ -130,7 +151,7 @@ function deployProvision() {
         echo " * Deploying provision with filter '$DOCKER_FILTER'"
     fi
 
-    find "${BASE_DIR}/${DOCKER_CONTAINER}" -maxdepth 1 -type d -iname "${DOCKER_FILTER}" | while read DOCKER_DIR; do
+    listDirectoriesWithFilter "${BASE_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}" | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
             cp -f -r "${PROVISION_DIR}/${PROVISION_SUB_DIR}/." "${DOCKER_DIR}/conf/"
