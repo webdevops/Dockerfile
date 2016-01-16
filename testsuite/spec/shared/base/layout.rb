@@ -2,9 +2,6 @@ shared_examples 'base::layout' do
     it "includes the /opt/docker/bin files" do
         expect(file("/opt/docker")).to be_directory
         expect(file("/opt/docker/bin")).to be_directory
-        expect(file("/opt/docker/bin/bootstrap.d")).to be_directory
-        expect(file("/opt/docker/bin/entrypoint.d")).to be_directory
-        expect(file("/opt/docker/bin/onbuild.d")).to be_directory
         expect(file("/opt/docker/bin/service.d")).to be_directory
 
         expect(file("/opt/docker/bin/bootstrap.sh")).to be_executable
@@ -31,11 +28,14 @@ shared_examples 'base::layout' do
         expect(file("/opt/docker/etc/syslog-ng/syslog-ng.conf")).to be_file
     end
 
-    it "includes the /opt/docker/etc files" do
+    it "includes the /opt/docker/provision files" do
         expect(file("/opt/docker/provision/roles")).to be_directory
         expect(file("/opt/docker/provision/roles")).to be_directory
         expect(file("/opt/docker/provision/roles/webdevops-base")).to be_directory
         expect(file("/opt/docker/provision/roles/webdevops-cleanup")).to be_directory
+        expect(file("/opt/docker/provision/entrypoint.d")).to be_directory
+        expect(file("/opt/docker/provision/onbuild.d")).to be_directory
+        expect(file("/opt/docker/provision/bootstrap.d")).to be_directory
 
         expect(file("/opt/docker/etc/supervisor.conf")).to be_file
         expect(file("/opt/docker/etc/logrotate.d/syslog-ng")).to be_file
