@@ -8,7 +8,8 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 trap 'echo sigterm ; exit' SIGTERM
 trap 'echo sigkill ; exit' SIGKILL
 
-TASK="$1"
+# sanitize input and set task
+TASK="$(echo $1| sed 's/[^-_a-zA-Z0-9]*//g')"
 
 source /opt/docker/bin/config.sh
 
