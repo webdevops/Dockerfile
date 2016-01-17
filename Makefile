@@ -6,11 +6,11 @@ DOCKER_TAG_LATEST=`cat DOCKER_TAG_LATEST`
 list:
 	sh -c "echo; $(MAKE) -p no_targets__ | awk -F':' '/^[a-zA-Z0-9][^\$$#\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);for(i in A)print A[i]}' | grep -v '__\$$' | grep -v 'Makefile'| sort"
 
-all:       base apache nginx php hhvm service misc
+all:       base php apache nginx hhvm service misc applications
 
 bootstrap: webdevops/bootstrap webdevops/ansible
 base:      webdevops/bootstrap webdevops/base webdevops/storage
-service:   webdevops/ssh webdevops/vsftp webdevops/postfix webdevops/mail-sandbox
+service:   webdevops/ssh webdevops/vsftp webdevops/postfix
 
 php:       webdevops/php webdevops/php-apache webdevops/php-nginx
 hhvm:      webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
@@ -18,7 +18,9 @@ hhvm:      webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 apache:    webdevops/apache webdevops/php-apache webdevops/hhvm-apache
 nginx:     webdevops/nginx webdevops/php-nginx webdevops/hhvm-nginx
 
-misc:      webdevops/typo3 webdevops/piwik
+applications: webdevops/typo3 webdevops/piwik
+
+misc:      webdevops/mail-sandbox
 
 test:
 	cd "testsuite/" && bash run.sh all
