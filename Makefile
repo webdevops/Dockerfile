@@ -30,9 +30,13 @@ provision:
 	bash .bin/provision.sh
 
 dist-update:
-	docker pull -a centos
-	docker pull -a ubuntu
-	docker pull -a debian
+	docker pull centos:7
+	docker pull ubuntu:12.04
+	docker pull ubuntu:14.04
+	docker pull ubuntu:15.04
+	docker pull ubuntu:15.10
+	docker pull debian:7
+	docker pull debian:8
 
 publish:
 	make dist-update
