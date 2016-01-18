@@ -108,6 +108,7 @@ fi
 sleep 0.5
 
 initPidList
+timerStart
 
 if [ -f "${TARGET}/Dockerfile" ]; then
     # If target is only a simple container without sub folders
@@ -168,6 +169,11 @@ else
          fi
     fi
 fi
+
+echo ""
+echo ""
+
+echo "Build time: $(timerStep)"
 
 echo ""
 echo ""
