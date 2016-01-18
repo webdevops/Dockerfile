@@ -56,10 +56,10 @@ rebuild:
 	# Other containers
 	FORCE=1 make web
 	FORCE=1 make php
-	FORCE=1 hhvm
-	FORCE=1 service
-	FORCE=1 misc
-	FORCE=1 applications
+	FORCE=1 make hhvm
+	FORCE=1 make service
+	FORCE=1 make misc
+	FORCE=1 make applications
 
 push:
 	make test
