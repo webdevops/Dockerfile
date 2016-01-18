@@ -35,6 +35,8 @@ addBackgroundPidToList() {
 }
 
 waitForBackgroundProcesses() {
+    WAIT_BG_RETURN=0
+
     while [ 1 ]; do
 
         for pid in "${!PID_LIST[@]}"; do
@@ -50,13 +52,21 @@ waitForBackgroundProcesses() {
                 else
                     # failed
                     echo " -> Process ${title} FAILED"
-                    exit 1
+                    WAIT_BG_RETURN=1
+                    unset PID_LIST[$pid]
                 fi
 
             fi
         done
 
         if [ "${#PID_LIST[@]}" -eq 0 ]; then
+
+            # check if any subprocess failed
+            if [ "$WAIT_BG_RETURN" -ne 0 ]; then
+                logError "One or more child processes exited with failure!"
+                exitError 1
+            fi
+
             break
         fi
 
@@ -66,3 +76,4 @@ waitForBackgroundProcesses() {
 
     initPidList
 }
+
