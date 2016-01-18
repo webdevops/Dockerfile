@@ -2,3 +2,4 @@
 testsuite/Dockerfile
 testsuite/vendor/
 testsuite/.bundle/
+*.log
