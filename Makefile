@@ -30,6 +30,11 @@ test-hub-images:
 provision:
 	bash .bin/provision.sh
 
+publish:
+	make dist-update
+	make rebuild
+	make push
+
 dist-update:
 	docker pull centos:7
 	docker pull ubuntu:12.04
@@ -39,10 +44,21 @@ dist-update:
 	docker pull debian:7
 	docker pull debian:8
 
-publish:
-	make dist-update
-	FORCE=1 make all
-	make push
+rebuild:
+	# Rebuild all containers but use caching
+	# Bootstrap
+	FORCE=1 make webdevops/bootstrap
+	FORCE=0 make webdevops/ansible
+	# Base
+	FORCE=1 make webdevops/base
+	FORCE=0 make webdevops/storage
+	# Other containers
+	FORCE=1 make web
+	FORCE=1 make php
+	FORCE=1 hhvm
+	FORCE=1 service
+	FORCE=1 misc
+	FORCE=1 applications
 
 push:
 	make test
