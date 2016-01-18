@@ -32,9 +32,9 @@ provision:
 
 publish:
 	rm -f publish.log
-	make dist-update | tee --append - publish.log
-	make rebuild | tee --append - publish.log
-	make push | tee --append - publish.log
+	make dist-update | tee --append publish.log
+	make rebuild | tee --append publish.log
+	make push | tee --append publish.log
 
 dist-update:
 	docker pull centos:7
