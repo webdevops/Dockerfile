@@ -77,3 +77,24 @@ waitForBackgroundProcesses() {
     initPidList
 }
 
+
+#################################################
+# Timing handling
+#################################################
+
+timerStart() {
+    TIMER_START="$(date +%s)"
+}
+
+timerStep() {
+    TIMER_NOW="$(date +%s)"
+    TIMER_DIFF="$(expr ${TIMER_NOW} - ${TIMER_START})"
+
+    if [ "$TIMER_DIFF" -lt 60 ]; then
+        echo "${TIMER_DIFF} seconds"
+    elif [ "$TIMER_DIFF" -lt 3600 ]; then
+        echo "$(expr ${TIMER_DIFF} / 60) minutes"
+    else
+        echo "$(expr ${TIMER_DIFF} / 60 / 60) hours"
+    fi
+}
