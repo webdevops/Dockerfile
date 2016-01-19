@@ -31,10 +31,10 @@ provision:
 	bash .bin/provision.sh
 
 publish:
-	rm -f publish.log
-	make dist-update | tee --append publish.log
-	make rebuild | tee --append publish.log
-	make push | tee --append publish.log
+	make dist-update
+	make rebuild
+	make test
+	make push
 
 dist-update:
 	docker pull centos:7
@@ -46,7 +46,7 @@ dist-update:
 	docker pull debian:8
 
 rebuild:
-	# Rebuild all containers but use caching
+	# Rebuild all containers but use caching for duplicates
 	# Bootstrap
 	FORCE=1 make webdevops/bootstrap
 	FORCE=0 make webdevops/ansible
@@ -62,7 +62,6 @@ rebuild:
 	FORCE=1 make applications
 
 push:
-	make test
 	DOCKER_PUSH=1 make all
 
 webdevops/bootstrap:
