@@ -1,4 +1,4 @@
-# PHP with Apache container layout
+# PHP with Nginx container layout
 
 Container                            | Distribution name        | PHP Version
 ------------------------------------ | ------------------------ | --------------
