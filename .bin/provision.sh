@@ -256,6 +256,13 @@ function deployProvision() {
     deployProvision postfix/general postfix '*'
 }
 
+## Build vsftp
+[[ $(checkBuildTarget vsftp) ]] && {
+    echo "Building provision for webdevops/vsftp..."
+    clearProvision  vsftp  '*'
+    deployProvision vsftp/general vsftp '*'
+}
+
 ## Build typo3
 [[ $(checkBuildTarget typo3) ]] && {
     echo "Building provision for webdevops/typo3..."
