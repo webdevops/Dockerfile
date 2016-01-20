@@ -4,9 +4,10 @@
 # General handling
 #################################################
 
+
+
 log () {
     echo "$1"
-
 }
 
 logError() {
@@ -19,10 +20,12 @@ exitError() {
     exit $1
 }
 
+RETRY=5
+
 retry() {
     local n=1
-    local max=5
-    local delay=15
+    local max="$RETRY"
+    local delay=15m
     while true; do
         "$@" && break || {
             if [[ $n -lt $max ]]; then
