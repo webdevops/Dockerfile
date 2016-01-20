@@ -8,9 +8,23 @@ if [ -z "$DEBUG" ]; then
     DEBUG=0
 fi
 
-if [ -z "$DOCKER_PUSH" ]; then
-    DOCKER_PUSH=0
+
+if [ -z "${BUILD_MODE}" ]; then
+    BUILD_MODE="build"
 fi
+
+case "$BUILD_MODE" in
+
+    build|push)
+        BUILD_MODE="$BUILD_MODE"
+        ;;
+
+    *)
+        echo "[ERROR] Unknown build mode \"$BUILD_MODE\""
+        exit 1
+        ;;
+esac
+
 
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
@@ -78,18 +92,6 @@ function waitForBuildStep() {
     fi
 }
 
-###
- # Push image
- #
- # $1 -> docker container name (eg. webdevops/php)
- # $2 -> docker container tag  (eg. ubuntu-14.04)
- ##
-function dockerPushImage() {
-    CONTAINER_NAME="$1"
-    CONTAINER_TAG="$2"
-
-    docker push "${CONTAINER_NAME}:${CONTAINER_TAG}"
-}
 
 ###############################################################################
 # MAIN
@@ -110,70 +112,41 @@ sleep 0.5
 initPidList
 timerStart
 
-if [ -f "${TARGET}/Dockerfile" ]; then
-    # If target is only a simple container without sub folders
-    # just build it as single container -> latest tag
 
-    TAGNAME="latest"
-    buildDockerfile "${TARGET}" "${BASENAME}" "${TAGNAME}"
-
-    waitForBuild
-
-    # push latest
-    if [ "${DOCKER_PUSH}" -eq 1 ]; then
-        echo " Starting push to docker hub"
-
-        dockerPushImage "${BASENAME}" "${TAGNAME}"
-    fi
-
-else
-    # Target is a multiple tag container, each sub directory name is
-    # the name of the docker image tag
-
-    # build each subfolder as tag
-    for DOCKERFILE in $TARGET/*; do
-        if [ -f "$DOCKERFILE/Dockerfile" ]; then
-            TAGNAME=$(basename "$DOCKERFILE")
-            buildDockerfile "${DOCKERFILE}" "${BASENAME}" "${TAGNAME}"
+function buildTarget() {
+    case "$BUILD_MODE" in
+        build)
+            buildDockerfile "${DOCKERFILE_PATH}" "${BASENAME}" "${TAGNAME}"
             sleep 0.05
-        fi
-    done
+            ;;
 
-    # wait for build process
-    waitForBuildStep
+        push)
+            retry dockerPushImage "${BASENAME}" "${TAGNAME}"
+            ;;
+    esac
+}
 
-    # build latest tag
-    if [ -f "${TARGET}/${LATEST}/Dockerfile" ]; then
-            DOCKERFILE="${TARGET}/${LATEST}"
-            # Build dockerfile with cache (use previous build)
-            FORCE=0 buildDockerfile "${DOCKERFILE}" "${BASENAME}" "latest"
-    fi
+function buildTargetLatest() {
+    TAGNAME="latest"
 
-    # wait for final build
-    waitForBuild
+    ## build without force
+    FORCE=0 buildTarget
+}
 
-    if [ "${DOCKER_PUSH}" -eq 1 ]; then
-        echo " Starting push to docker hub"
+## Build each docker tag
+foreachDockerfileInPath "${TARGET}" "buildTarget"
 
-        # push all images
-        for DOCKERFILE in $TARGET/*; do
-            if [ -f "$DOCKERFILE/Dockerfile" ]; then
-                TAGNAME=$(basename "$DOCKERFILE")
-                dockerPushImage "${BASENAME}" "${TAGNAME}"
-            fi
-         done
+# wait for build process
+waitForBuildStep
 
-        # push latest
-         if [ -f "${TARGET}/${LATEST}/Dockerfile" ]; then
-            dockerPushImage "${BASENAME}" "latest"
-         fi
-    fi
-fi
+## Build docker tag latest
+foreachDockerfileInPath "${TARGET}" "buildTargetLatest" "${LATEST}"
+
+# wait for final build
+waitForBuild
 
 echo ""
-echo ""
-
-echo "Build time: $(timerStep)"
+echo " >>> Build time: $(timerStep)"
 
 echo ""
 echo ""

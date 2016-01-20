@@ -4,16 +4,38 @@
 # General handling
 #################################################
 
+log () {
+    echo "$1"
+
+}
 
 logError() {
-    echo " [ERROR] $1"
+    echo " [ERROR] $1" >&2
 }
 
 exitError() {
     echo ""
-    echo "$(date) Exit -> $1"
+    echo "$(date) Exit -> $1" >&2
     exit $1
 }
+
+retry() {
+    local n=1
+    local max=5
+    local delay=15
+    while true; do
+        "$@" && break || {
+            if [[ $n -lt $max ]]; then
+                    ((n++))
+                    log "Command failed. Attempt $n/$max:"
+                    sleep $delay;
+                else
+                    exitError "The command has failed after $n attempts."
+            fi
+        }
+    done
+}
+
 
 #################################################
 # Background process handling
@@ -25,17 +47,26 @@ initPidList() {
 }
 
 addBackgroundPidToList() {
-    BG_PID="$!"
+    local BG_PID="$!"
+
+echo "$BG_PID"
 
     if [ "$#" -eq 0 ]; then
         PID_LIST[$BG_PID]="$BG_PID"
     else
         PID_LIST[$BG_PID]="$*"
     fi
+
 }
 
 waitForBackgroundProcesses() {
-    WAIT_BG_RETURN=0
+    local WAIT_BG_RETURN=0
+
+    ## check if pidlist exists
+    if [ ${#PID_LIST[@]} -eq 0 ]; then
+        echo "No wait processes"
+        return
+    fi
 
     while [ 1 ]; do
 
@@ -87,8 +118,8 @@ timerStart() {
 }
 
 timerStep() {
-    TIMER_NOW="$(date +%s)"
-    TIMER_DIFF="$(expr ${TIMER_NOW} - ${TIMER_START})"
+    local TIMER_NOW="$(date +%s)"
+    local TIMER_DIFF="$(expr ${TIMER_NOW} - ${TIMER_START})"
 
     if [ "$TIMER_DIFF" -lt 60 ]; then
         echo "${TIMER_DIFF} seconds"
@@ -97,4 +128,48 @@ timerStep() {
     else
         echo "$(expr ${TIMER_DIFF} / 60 / 60) hours"
     fi
+}
+
+#################################################
+# Docker
+#################################################
+
+###
+ # Push image
+ #
+ # $1 -> docker container name (eg. webdevops/php)
+ # $2 -> docker container tag  (eg. ubuntu-14.04)
+ ##
+function dockerPushImage() {
+    CONTAINER_NAME="$1"
+    CONTAINER_TAG="$2"
+
+    docker push "${CONTAINER_NAME}:${CONTAINER_TAG}"
+}
+
+###
+ # Push image
+ #
+ # $1 -> base path
+ # $2 -> docker container tag  (eg. ubuntu-14.04)
+ # $3 -> filter
+ ##
+function foreachDockerfileInPath() {
+   DOCKER_BASE_PATH="$1"
+   CALLBACK="$2"
+   FILTER="*"
+
+    if [ "$#" -ge 3 ]; then
+        FILTER="$3"
+    fi
+
+    # build each subfolder as tag
+    for DOCKERFILE_PATH in $(find "${DOCKER_BASE_PATH}" -mindepth 1 -maxdepth 1 -type d -name "$FILTER"); do
+        # check if there is a Dockerfile
+        if [ -f "${DOCKERFILE_PATH}/Dockerfile" ]; then
+            DOCKERFILE="${DOCKERFILE_PATH}/Dockerfile"
+            TAGNAME=$(basename "${DOCKERFILE_PATH}")
+            ${CALLBACK}
+        fi
+    done
 }
