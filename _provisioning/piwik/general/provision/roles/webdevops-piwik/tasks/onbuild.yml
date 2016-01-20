@@ -1,0 +1,37 @@
+---
+
+
+- name: Setup target directory
+  file:
+    path:  /application/code/
+    state: directory
+    force: yes
+
+- name: Download piwik
+  get_url:
+    url:  http://builds.piwik.org/piwik.zip
+    dest: /tmp/piwik.zip
+    mode: 0440
+
+- name: Unpack piwik
+  unarchive:
+    src:  /tmp/piwik.zip
+    dest: /application/code/
+
+- name: Remove piwik archive
+  file:
+    path:  /tmp/piwik.zip
+    state: absent
+    force: yes
+
+- name: Fix directory owner
+  command: find /application/code/ -type d -exec chown "{{ APPLICATION_USER }}" {} \;
+
+- name: Fix file owner
+  command: find  /application/code/ -type f -exec chown "{{ APPLICATION_USER }}" {} \;
+
+- name: Fix directory rights
+  command: find /application/code/ -type d -exec chmod 0755 {} \;
+
+- name: Fix file rights
+  command: find  /application/code/ -type f -exec chmod 0644 {} \;

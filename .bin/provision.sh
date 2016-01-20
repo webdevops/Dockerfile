@@ -263,4 +263,11 @@ function deployProvision() {
     deployProvision typo3/general  typo3  '*'
 }
 
+## Build piwik
+[[ $(checkBuildTarget piwik) ]] && {
+    echo "Building provision for webdevops/piwik..."
+    clearProvision  piwik  '*'
+    deployProvision piwik/general piwik '*'
+}
+
 exit 0
