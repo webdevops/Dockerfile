@@ -47,27 +47,25 @@ retry() {
 initPidList() {
     unset PID_LIST
     declare -a PID_LIST
+    PID_LIST=()
 }
 
 addBackgroundPidToList() {
     local BG_PID="$!"
-
-echo "$BG_PID"
 
     if [ "$#" -eq 0 ]; then
         PID_LIST[$BG_PID]="$BG_PID"
     else
         PID_LIST[$BG_PID]="$*"
     fi
-
 }
 
 waitForBackgroundProcesses() {
     local WAIT_BG_RETURN=0
 
     ## check if pidlist exists
-    if [ ${#PID_LIST[@]} -eq 0 ]; then
-        echo "No wait processes"
+    if [[ -z "${PID_LIST[@]:+${PID_LIST[@]}}" ]]; then
+        echo " -> No background processes found"
         return
     fi
 
