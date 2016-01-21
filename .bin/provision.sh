@@ -236,7 +236,6 @@ function deployProvision() {
     deployProvision apache/general      php-apache  '*'
     deployProvision apache/centos       php-apache  'centos-*'
     deployProvision php-apache/general  php-apache  '*'
-    deployProvision php-apache/debian-php7  php-apache  'debian-*-php7'
 }
 
 ## Build php-nginx
@@ -246,7 +245,6 @@ function deployProvision() {
     deployProvision nginx/general      php-nginx  '*'
     deployProvision nginx/centos       php-nginx  'centos-*'
     deployProvision php-nginx/general  php-nginx  '*'
-    deployProvision php-nginx/debian-php7  php-nginx  'debian-*-php7'
 }
 
 ## Build postfix
