@@ -11,7 +11,8 @@ describe "Dockerfile" do
     include_examples 'collection::bootstrap'
     include_examples 'collection::base'
     include_examples 'collection::php7'
-    include_examples 'collection::php-fpm::local-only'
+    include_examples 'collection::php-fpm7'
+    include_examples 'collection::php-fpm7::local-only'
     include_examples 'collection::apache'
     include_examples 'collection::php-fpm::webserver-test'
 

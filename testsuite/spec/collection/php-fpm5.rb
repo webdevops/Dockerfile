@@ -1,4 +1,9 @@
-shared_examples 'collection::php-fpm::public' do
+shared_examples 'collection::php-fpm5' do
+    include_examples 'php-fpm::layout'
+    include_examples 'php-fpm5::layout'
+end
+
+shared_examples 'collection::php-fpm5::public' do
     # services
     include_examples 'php-fpm::listening::public'
 
@@ -7,7 +12,7 @@ shared_examples 'collection::php-fpm::public' do
 end
 
 
-shared_examples 'collection::php-fpm::local-only' do
+shared_examples 'collection::php-fpm5::local-only' do
     # services
     include_examples 'php-fpm::listening::local-only'
 
