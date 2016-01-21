@@ -249,11 +249,32 @@ function deployProvision() {
     deployProvision php-nginx/debian-php7  php-nginx  'debian-*-php7'
 }
 
+## Build postfix
+[[ $(checkBuildTarget postfix) ]] && {
+    echo "Building provision for webdevops/postfix..."
+    clearProvision  postfix  '*'
+    deployProvision postfix/general postfix '*'
+}
+
+## Build vsftp
+[[ $(checkBuildTarget vsftp) ]] && {
+    echo "Building provision for webdevops/vsftp..."
+    clearProvision  vsftp  '*'
+    deployProvision vsftp/general vsftp '*'
+}
+
 ## Build typo3
 [[ $(checkBuildTarget typo3) ]] && {
     echo "Building provision for webdevops/typo3..."
     clearProvision  typo3  '*'
     deployProvision typo3/general  typo3  '*'
+}
+
+## Build piwik
+[[ $(checkBuildTarget piwik) ]] && {
+    echo "Building provision for webdevops/piwik..."
+    clearProvision  piwik  '*'
+    deployProvision piwik/general piwik '*'
 }
 
 exit 0

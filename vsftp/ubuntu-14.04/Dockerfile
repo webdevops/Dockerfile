@@ -21,7 +21,7 @@ RUN /usr/local/bin/apt-install \
             /var/log/supervisor
 
 # Deploy scripts/configurations
-COPY . /opt/docker/
+COPY conf/ /opt/docker/
 RUN /opt/docker/bin/control.sh provision.role webdevops-vsftp \
     && /opt/docker/bin/bootstrap.sh
 

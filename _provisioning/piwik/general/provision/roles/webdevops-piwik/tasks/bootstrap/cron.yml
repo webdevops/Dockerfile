@@ -1,0 +1,11 @@
+---
+
+- name: Create link for crontab
+  file:
+    src:  '/opt/docker/etc/cron/crontab'
+    dest: '/etc/cron.d/piwik'
+    state: link
+    force: yes
+
+- name: Add newline to crontab
+  raw: 'echo >> /opt/docker/etc/crontab'

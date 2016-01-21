@@ -1,0 +1,37 @@
+---
+#############################
+# Gather environment stuff
+#############################
+
+- stat: path=/usr/sbin/php-fpm7.0
+  register: php7_debian
+
+- name: Fact - php5 [RedHat family]
+  set_fact:
+     php_pool_conf: /etc/php-fpm.d/www.conf
+     php_base_path: false
+  when: ansible_os_family == 'RedHat'
+
+- name: Fact - php5 [Debian family]
+  set_fact:
+     php_pool_conf: /etc/php5/fpm/pool.d/www.conf
+     php_base_path: /etc/php5
+  when: ansible_os_family == 'Debian'
+
+- name: Fact - php7 [Debian family]
+  set_fact:
+     php_pool_conf: /etc/php/7.0/fpm/pool.d/www.conf
+     php_base_path: /etc/php/7.0
+  when: ansible_os_family == 'Debian' and php7_debian.stat.exists is defined and php7_debian.stat.exists
+
+#############################
+# Run tasks
+#############################
+
+- include: bootstrap/cron.yml
+
+- include: bootstrap/php.redhat.yml php_base_path="{{ php_base_path }}"
+  when: ansible_os_family == 'RedHat'
+
+- include: bootstrap/php.debian.yml php_base_path="{{ php_base_path }}"
+  when: ansible_os_family == 'Debian'

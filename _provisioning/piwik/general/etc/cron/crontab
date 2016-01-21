@@ -1,0 +1,1 @@
+5 * * * * application bash /opt/docker/bin/piwik-cron.sh &> /dev/null

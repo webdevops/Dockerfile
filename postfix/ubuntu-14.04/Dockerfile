@@ -6,7 +6,7 @@ FROM webdevops/base:latest
 MAINTAINER info@webdevops.io
 
 # Deploy scripts/configurations
-COPY . /opt/docker/
+COPY conf/ /opt/docker/
 RUN /opt/docker/bin/control.sh provision.role.entrypoint webdevops-postfix \
     && /opt/docker/bin/control.sh service.enable postfix \
     && /opt/docker/bin/bootstrap.sh
