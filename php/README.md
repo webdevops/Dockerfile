@@ -12,6 +12,16 @@ Container                           | Distribution name        | PHP Version
 `webdevops/php:centos-7`            |                          | PHP 5.4
 
 
+## Filesystem layout
+
+The whole docker directroy is deployed into `/opt/docker/`.
+
+File                                                   | Description
+------------------------------------------------------ | ------------------------------------------------------------------------------
+`/opt/docker/etc/php/fpm/php-fpm.conf`                 | FPM daemon configuration
+`/opt/docker/etc/php/fpm/pool.d/application.conf`      | FPM pool configuration
+
+
 ## Environment variables
 
 Variable            | Description
