@@ -2,12 +2,14 @@
 
 - name: Set php pool file
   set_fact:
-     php_pool_conf: /etc/php-fpm.d/www.conf
+     php_pool_conf: www.conf
+     php_pool_dir:  /etc/php-fpm.d
   when: ansible_os_family == 'RedHat'
 
 - name: Set php pool file
   set_fact:
-     php_pool_conf: /etc/php/7.0/fpm/pool.d/www.conf
+     php_pool_conf: www.conf
+     php_pool_dir:  /etc/php/7.0/fpm/pool.d
   when: ansible_os_family == 'Debian'
 
 - name: Create php directories
@@ -19,18 +21,21 @@
     group: "root"
   with_items:
     - /opt/docker/etc/php/fpm/
-    - /opt/docker/etc/php/fpm/pool.d/
 
-- name: Move php-fpm main file to /opt/docker/etc/php/fpm/pool.d/
-  command: "mv {{ php_pool_conf }} /opt/docker/etc/php/fpm/pool.d/application.conf"
+- name: Move php-fpm pool directory file to /opt/docker/etc/php/
+  command: "mv {{ php_pool_dir }}  /opt/docker/etc/php/fpm/pool.d"
+
+- name: Rename pool file file to application.conf"
+  command: "mv /opt/docker/etc/php/fpm/pool.d/{{ php_pool_conf }} /opt/docker/etc/php/fpm/pool.d/application.conf"
 
 - name: Symlink php-fpm main file
   file:
-    path: "{{ php_pool_conf }}"
-    src:  "/opt/docker/etc/php/fpm/pool.d/application.conf"
+    path: "{{ php_pool_dir }}"
+    src:  "/opt/docker/etc/php/fpm/pool.d"
     state: link
     owner: "root"
     group: "root"
+
 
 - name: Configure php-fpm pool user (www.conf)
   lineinfile:
