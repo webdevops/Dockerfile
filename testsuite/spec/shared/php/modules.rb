@@ -23,6 +23,7 @@ shared_examples 'php::modules' do
         its(:stdout) { should     contain('mbstring') }
         its(:stdout) { should     contain('mysqli') }
         its(:stdout) { should     contain('mysqlnd') }
+        its(:stdout) { should     contain('mcrypt') }
         its(:stdout) { should     contain('openssl') }
         its(:stdout) { should     contain('pcntl') }
         its(:stdout) { should     contain('pcre') }
