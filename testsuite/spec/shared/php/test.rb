@@ -13,6 +13,14 @@ shared_examples 'php::cli::test::sha1' do
     end
 end
 
+shared_examples 'php::cli::test::php_ini_scanned_files' do
+    describe command('php -r "echo php_ini_scanned_files();"') do
+        its(:stdout) { should contain('-docker.ini') }
+
+        its(:exit_status) { should eq 0 }
+    end
+end
+
 shared_examples 'php::fpm::test::sha1' do
     describe command('wget -O- http://localhost/php-test.php?test=sha1') do
         its(:stdout) { should_not contain('PHP Notice') }
@@ -23,5 +31,16 @@ shared_examples 'php::fpm::test::sha1' do
         its(:stderr) { should_not contain('PHP Warning') }
 
         its(:stdout) { should     contain('2ae62521966cf6d4188acefc943c903e5fc0a25c') }
+
+        its(:exit_status) { should eq 0 }
+    end
+end
+
+
+shared_examples 'php::fpm::test::php_ini_scanned_files' do
+    describe command('wget -O- http://localhost/php-test.php?test=php_ini_scanned_files') do
+        its(:stdout) { should contain('-docker.ini') }
+
+        its(:exit_status) { should eq 0 }
     end
 end

@@ -23,5 +23,6 @@ end
 
 shared_examples 'collection::php-fpm::webserver-test' do
     include_examples 'php::fpm::test::sha1'
+    include_examples 'php::fpm::test::php_ini_scanned_files'
 end
 

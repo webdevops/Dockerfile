@@ -4,6 +4,7 @@ shared_examples 'php-fpm::layout' do
         expect(file("/opt/docker/etc/php/fpm")).to be_directory
         expect(file("/opt/docker/etc/php/fpm/pool.d")).to be_directory
 
+        expect(file("/opt/docker/etc/php/php.ini")).to be_file
         expect(file("/opt/docker/etc/php/fpm/php-fpm.conf")).to be_file
         expect(file("/opt/docker/etc/php/fpm/pool.d/application.conf")).to be_file
     end
