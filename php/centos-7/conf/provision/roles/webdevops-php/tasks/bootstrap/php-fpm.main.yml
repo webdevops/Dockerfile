@@ -10,16 +10,6 @@
      php_main_conf: /etc/php5/fpm/php-fpm.conf
   when: ansible_os_family == 'Debian'
 
-- name: Create php directories
-  file:
-    path:  "{{ item }}"
-    state: directory
-    mode:  0755
-    owner: "root"
-    group: "root"
-  with_items:
-    - /opt/docker/etc/php/fpm/
-
 - name: Move php-fpm main file to /opt/docker/etc/php/fpm/
   command: "mv {{ php_main_conf }} /opt/docker/etc/php/fpm/php-fpm.conf"
 
