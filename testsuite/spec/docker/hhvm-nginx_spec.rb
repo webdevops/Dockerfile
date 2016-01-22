@@ -12,6 +12,6 @@ describe "Dockerfile" do
     include_examples 'collection::base'
     include_examples 'collection::hhvm'
     include_examples 'collection::nginx'
-    include_examples 'collection::php-fpm::webserver-test'
+    include_examples 'collection::hhvm::webserver-test'
 
 end

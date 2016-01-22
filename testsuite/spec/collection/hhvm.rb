@@ -10,3 +10,7 @@ shared_examples 'collection::hhvm' do
     # test after services are up
     include_examples 'hhvm::service::running'
 end
+
+shared_examples 'collection::hhvm::webserver-test' do
+    include_examples 'php::fpm::test::sha1'
+end
