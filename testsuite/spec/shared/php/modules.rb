@@ -1,6 +1,8 @@
 shared_examples 'php::modules' do
     describe command('php -m') do
         its(:stdout) { should_not contain('xdebug') }
+        its(:stdout) { should_not contain('apc') }
+
         its(:stdout) { should     contain('bcmath') }
         its(:stdout) { should     contain('bz2') }
         its(:stdout) { should     contain('calendar') }
