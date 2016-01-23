@@ -8,6 +8,9 @@ if [ -z "$DEBUG" ]; then
     DEBUG=0
 fi
 
+if [ -z "$FORCE" ]; then
+    FORCE=0
+fi
 
 if [ -z "${BUILD_MODE}" ]; then
     BUILD_MODE="build"
