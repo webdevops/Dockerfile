@@ -156,8 +156,7 @@ function buildTarget() {
 function buildTargetLatest() {
     TAGNAME="latest"
 
-    ## build without force
-    FORCE=0 buildTarget
+    buildTarget
 }
 
 echo "Building ${BASENAME}"
