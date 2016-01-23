@@ -9,6 +9,10 @@ switch($_GET['test']) {
         echo 'PHP ' . phpversion();
         break;
 
+    case 'php_sapi_name':
+        echo php_sapi_name();
+        break;
+
     case 'get_loaded_extensions':
         $moduleList = array_merge(get_loaded_extensions(), get_loaded_extensions(true));
         echo implode("\n", $moduleList);

@@ -26,6 +26,7 @@ shared_examples 'collection::php-fpm7::webserver-test' do
     include_examples 'php-fpm7::modules'
     include_examples 'php::fpm::test::sha1'
     include_examples 'php::fpm::test::php_ini_scanned_files'
+    include_examples 'php::fpm::test::php_sapi_name'
     include_examples 'php7::fpm::test::version'
 end
 
