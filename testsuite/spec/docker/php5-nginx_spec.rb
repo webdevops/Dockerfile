@@ -14,6 +14,6 @@ describe "Dockerfile" do
     include_examples 'collection::php-fpm5'
     include_examples 'collection::php-fpm5::local-only'
     include_examples 'collection::nginx'
-    include_examples 'collection::php-fpm::webserver-test'
+    include_examples 'collection::php-fpm5::webserver-test'
 
 end

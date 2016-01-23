@@ -44,3 +44,33 @@ shared_examples 'php::fpm::test::php_ini_scanned_files' do
         its(:exit_status) { should eq 0 }
     end
 end
+
+shared_examples 'php5::fpm::test::version' do
+    describe command('wget -O- http://localhost/php-test.php?test=version') do
+        its(:stdout) { should_not contain('PHP Notice') }
+        its(:stdout) { should_not contain('Notice') }
+        its(:stdout) { should_not contain('PHP Warning') }
+        its(:stderr) { should_not contain('PHP Notice') }
+        its(:stderr) { should_not contain('Notice') }
+        its(:stderr) { should_not contain('PHP Warning') }
+
+        its(:stdout) { should match %r!PHP 5\.[3-9]\.[0-9]{1,2}(-[^\(]*)?! }
+
+        its(:exit_status) { should eq 0 }
+    end
+end
+
+shared_examples 'php7::fpm::test::version' do
+    describe command('wget -O- http://localhost/php-test.php?test=version') do
+        its(:stdout) { should_not contain('PHP Notice') }
+        its(:stdout) { should_not contain('Notice') }
+        its(:stdout) { should_not contain('PHP Warning') }
+        its(:stderr) { should_not contain('PHP Notice') }
+        its(:stderr) { should_not contain('Notice') }
+        its(:stderr) { should_not contain('PHP Warning') }
+
+        its(:stdout) { should match %r!PHP 7\.[0-9]\.[0-9]{1,2}(-[^\(]*)?! }
+
+        its(:exit_status) { should eq 0 }
+    end
+end

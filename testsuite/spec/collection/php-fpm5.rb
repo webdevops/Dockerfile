@@ -21,8 +21,11 @@ shared_examples 'collection::php-fpm5::local-only' do
 end
 
 
-shared_examples 'collection::php-fpm::webserver-test' do
+shared_examples 'collection::php-fpm5::webserver-test' do
+    include_examples 'php-fpm::modules'
+    include_examples 'php-fpm5::modules'
     include_examples 'php::fpm::test::sha1'
     include_examples 'php::fpm::test::php_ini_scanned_files'
+    include_examples 'php5::fpm::test::version'
 end
 
