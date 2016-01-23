@@ -120,7 +120,7 @@ function setSpecTest() {
 function setupTestEnvironment() {
     echo ""
     printRepeatedChar "="
-    echo "=== webdevops/$1"
+    echo "=== Testing docker image webdevops/$1"
     printRepeatedChar "="
     echo ""
 
@@ -135,7 +135,7 @@ function setupTestEnvironment() {
 }
 
 function printRepeatedChar() {
-    printf "${1}%.0s" $(seq 1 ${COLUMNS})
+    printf "${1}%.0s" $(seq 1 50)
     echo
 }
 

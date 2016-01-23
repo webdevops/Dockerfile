@@ -40,6 +40,11 @@ retry() {
 }
 
 
+function printLine() {
+    printf "${1}%.0s" $(seq 1 50)
+    echo
+}
+
 #################################################
 # Background process handling
 #################################################
@@ -65,7 +70,7 @@ waitForBackgroundProcesses() {
 
     ## check if pidlist exists
     if [[ -z "${PID_LIST[@]:+${PID_LIST[@]}}" ]]; then
-        echo " -> No background processes found"
+        log " -> No background processes found"
         return
     fi
 
@@ -79,11 +84,11 @@ waitForBackgroundProcesses() {
                 # get return code
                 if wait "$pid" 2> /dev/null; then
                     # success
-                    echo " -> Process ${title} finished successfully"
+                    log "    - \"${title}\" finished successfully"
                     unset PID_LIST[$pid]
                 else
                     # failed
-                    echo " -> Process ${title} FAILED"
+                    log "    - Process \"${title}\" FAILED"
                     WAIT_BG_RETURN=1
                     unset PID_LIST[$pid]
                 fi

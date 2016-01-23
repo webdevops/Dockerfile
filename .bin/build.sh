@@ -53,11 +53,11 @@ function buildDockerfile() {
     CONTAINER_NAME="$2"
     CONTAINER_TAG="$3"
 
-    echo " Starting build of ${CONTAINER_NAME}:${CONTAINER_TAG} ..."
+    echo ">> Starting build of ${CONTAINER_NAME}:${CONTAINER_TAG}"
 
     if [ "${FAST}" -eq 1 ]; then
         bash "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}" &
-        addBackgroundPidToList "${CONTAINER_NAME}:${CONTAINER_TAG}"
+        addBackgroundPidToList "${CONTAINER_TAG}"
     else
         bash "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}"
     fi
@@ -86,7 +86,7 @@ function waitForBuild() {
  ##
 function waitForBuildStep() {
     if [ "${FAST}" -eq 1 ]; then
-        echo "waiting for build..."
+        echo " -> waiting for background build process..."
         waitForBackgroundProcesses
         wait
     fi
@@ -97,21 +97,39 @@ function waitForBuildStep() {
 # MAIN
 ###############################################################################
 
+printLine "="
+
 if [ "${FAST}" -eq 1 ]; then
-    echo "Building $BASENAME (FAST MODE)"
+    echo -n "== Building docker image $BASENAME (PARALLEL MODE)"
 else
-    echo "Building $BASENAME (SLOW MODE)"
+    echo -n "== Building docker image $BASENAME"
 fi
 
 if [ "${DEBUG}" -eq 1 ]; then
-    echo "    +++++++ DEBUG MODE +++++++    "
+    echo -n " >>DEBUG MODE<<"
 fi
+echo ""
+
+printLine "="
+echo ""
 
 sleep 0.5
 
+
+#############################
+# Provision
+#############################
+
+bash "${WORKDIR}/.bin/provision.sh" "$TARGET"
+echo ""
+
+#############################
+# Docker build
+#############################
+
+
 initPidList
 timerStart
-
 
 function buildTarget() {
     case "$BUILD_MODE" in
@@ -133,6 +151,7 @@ function buildTargetLatest() {
     FORCE=0 buildTarget
 }
 
+echo "Building ${BASENAME}"
 ## Build each docker tag
 foreachDockerfileInPath "${TARGET}" "buildTarget"
 
@@ -146,7 +165,7 @@ foreachDockerfileInPath "${TARGET}" "buildTargetLatest" "${LATEST}"
 waitForBuild
 
 echo ""
-echo " >>> Build time: $(timerStep)"
+echo ">>> Build time: $(timerStep)"
 
 echo ""
 echo ""
