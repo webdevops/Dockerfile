@@ -108,6 +108,12 @@ fi
 if [ "${DEBUG}" -eq 1 ]; then
     echo -n " >>DEBUG MODE<<"
 fi
+
+
+if [ "${FORCE}" -eq 1 ]; then
+    echo -n " >>FORCE MODE<<"
+fi
+
 echo ""
 
 printLine "="
