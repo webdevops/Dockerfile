@@ -1,4 +1,6 @@
 shared_examples 'collection::apache' do
+    include_examples 'apache::layout'
+
     # services
     include_examples 'apache::listening::public'
 

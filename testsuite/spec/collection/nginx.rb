@@ -1,4 +1,6 @@
 shared_examples 'collection::nginx' do
+    include_examples 'nginx::layout'
+
     # services
     include_examples 'nginx::listening::public'
 
