@@ -8,12 +8,8 @@ describe "Dockerfile" do
         set :docker_image, image.id
     end
 
-    # services
-    include_examples 'vsftp::listening::public'
-
-    # test after services are up
-    include_examples 'vsftp::user'
-    include_examples 'vsftp::service::running'
-
+    include_examples 'collection::bootstrap'
+    include_examples 'collection::base::without-application'
+    include_examples 'collection::vsftp'
 
 end

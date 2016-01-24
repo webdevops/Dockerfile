@@ -3,6 +3,7 @@
 shopt -s nullglob
 
 PROVISION_REGISTRY_PATH="/opt/docker/etc/.registry"
+PROVISION_REGISTRY_PATH="/opt/docker/etc/.registry"
 
 ###
  # Check if current user is root
@@ -55,12 +56,38 @@ function replaceTextInFile() {
 }
 
 ###
+ # Run "entrypoint" scripts
+ ##
+function runEntrypoints() {
+    ###############
+    # Try to find entrypoint
+    ###############
+
+    ENTRYPOINT_SCRIPT="/opt/docker/bin/entrypoint.d/${TASK}.sh"
+
+    if [ -f "$ENTRYPOINT_SCRIPT" ]; then
+        echo "Executing entrypoint \"$(basename $ENTRYPOINT_SCRIPT .sh)\""
+        . "$ENTRYPOINT_SCRIPT"
+    fi
+
+    ###############
+    # Run default
+    ###############
+    if [ -f "/opt/docker/bin/entrypoint.d/default.sh" ]; then
+        echo "Executing default entrypoint"
+        . /opt/docker/bin/entrypoint.d/default.sh
+    fi
+
+    exit
+}
+
+###
  # Run "bootstrap" provisioning
  ##
 function runProvisionBootstrap() {
     mkdir -p /opt/docker/bin/registry/
 
-    for FILE in /opt/docker/bin/bootstrap.d/*.sh; do
+    for FILE in /opt/docker/provision/bootstrap.d/*.sh; do
         # run custom scripts, only once
         . "$FILE"
         rm -f -- "$FILE"
@@ -78,7 +105,7 @@ function runProvisionBootstrap() {
 function runProvisionOnBuild() {
     mkdir -p /opt/docker/bin/registry/
 
-    for FILE in /opt/docker/bin/onbuild.d/*.sh; do
+    for FILE in /opt/docker/provision/onbuild.d/*.sh; do
         # run custom scripts
         . "$FILE"
     done
@@ -90,7 +117,7 @@ function runProvisionOnBuild() {
  # Run "entrypoint" provisioning
  ##
 function runProvisionEntrypoint() {
-    for FILE in /opt/docker/bin/entrypoint.d/*.sh; do
+    for FILE in /opt/docker/provision/entrypoint.d/*.sh; do
         # run custom scripts
         . "$FILE"
     done

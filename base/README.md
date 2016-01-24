@@ -1,14 +1,15 @@
 # Base container layout
 
 ## Containers
-
-* [Ubuntu 12.04 "Precise Pangolin" LTS](ubuntu-12.04/Dockerfile)
-* [Ubuntu 14.04 "Trusty Tahr" LTS](ubuntu-14.04/Dockerfile)
-* [Ubuntu 15.04 "Vivid Vervet"](ubuntu-15.04/Dockerfile)
-* [Ubuntu 15.10 "Wily Werewolf"](ubuntu-15.10/Dockerfile)
-* [Debian 7 "wheezy"](debian-7/Dockerfile)
-* [Debian 8 "jessie"](debian-8/Dockerfile)
-* [Centos 7](centos-7/Dockerfile)
+Container                           | Distribution name                                                                 
+----------------------------------- | -------------------------
+`webdevops/base:ubuntu-12.04`       | precise                   
+`webdevops/base:ubuntu-14.04`       | trusty (LTS)             
+`webdevops/base:ubuntu-15.04`       | vivid                    
+`webdevops/base:ubuntu-15.10`       | wily                     
+`webdevops/base:debian-7`           | wheezy                   
+`webdevops/base:debian-8`           | jessie                   
+`webdevops/base:centos-7`           |                          
 
 ## Environment variables
 
@@ -23,19 +24,20 @@ Variable            | Description
 The whole docker directroy is deployed into `/opt/docker/`.
 
 
-Directory                       | Description
-------------------------------- | ------------------------------------------------------------------------------
-`/opt/docker/bin`               | Script directory for various script eg. `entrypoint.sh`
-`/opt/docker/bin/bootstrap.d`   | Directory for bash `*.sh` scripts which will automatcally run by `bootstrrap.sh` (will be removed after run, for usage in `Dockerfile`)
-`/opt/docker/bin/entrypoint.d`  | Directory for bash `*.sh` scripts which will automatcally run by `entrypoint.sh`
-`/opt/docker/bin/service.d`     | Service (wrapper) scripts for supervisord
-<br>                            |
-`/opt/docker/etc`               | Configuration directory
-`/opt/docker/etc/supervisor.d`  | Supervisor service configuration `*.conf` directory
-<br>                            |
-`/opt/docker/provision`         | Ansible provisioning configuration directory
-`/opt/docker/provision/roles`   | Ansible roles configuration directory
-
+Directory                            | Description
+------------------------------------ | ------------------------------------------------------------------------------
+`/opt/docker/bin`                    | Script directory for various script eg. `entrypoint.sh`
+`/opt/docker/bin/entrypoint.d`       | Entrypoint scripts
+`/opt/docker/bin/service.d`          | Service (wrapper) scripts for supervisord
+<br>                                 |
+`/opt/docker/etc`                    | Configuration directory
+`/opt/docker/etc/supervisor.d`       | Supervisor service configuration `*.conf` directory
+<br>                                 |
+`/opt/docker/provision`              | Ansible provisioning configuration directory
+`/opt/docker/provision/roles`        | Ansible roles configuration directory
+`/opt/docker/provision/bootstrap.d`  | Directory for bash `*.sh` scripts which will automatcally run by `bootstrrap.sh` (will be removed after run, for usage in `Dockerfile`)
+`/opt/docker/provision/entrypoint.d` | Directory for bash `*.sh` scripts which will automatcally run by `entrypoint.sh`
+`/opt/docker/provision/onbuild.d`    | Directory for bash `*.sh` scripts which will automatcally run by `onbuild` (`bootstrap.sh onbuild` must be called for execution with ONBUILD RUN) 
  
 
 File                                         | Description

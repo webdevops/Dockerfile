@@ -1,7 +1,7 @@
-# PHP with Apache container layout
+# PHP with Nginx container layout
 
-Container                            | Distribution name        | PHP Version                                                               
------------------------------------- | -----------------------------------------
+Container                            | Distribution name        | PHP Version
+------------------------------------ | ------------------------ | --------------
 `webdevops/php-nginx:ubuntu-12.04`   | precise                  | PHP 5.3
 `webdevops/php-nginx:ubuntu-14.04`   | trusty (LTS)             | PHP 5.5
 `webdevops/php-nginx:ubuntu-15.04`   | vivid                    | PHP 5.6
@@ -30,14 +30,16 @@ Directory                       | Description
 `/opt/docker/etc/nginx`         | Nginx configuration
 `/opt/docker/etc/nginx/ssl`     | Nginx ssl configuration with example server.crt, server.csr, server.key
 
-File                                      | Description
------------------------------------------ | ------------------------------------------------------------------------------
-`/opt/docker/etc/nginx/main.conf`         | Main include file (will include `global.conf`, `php.conf` and `vhost.conf`) 
-`/opt/docker/etc/nginx/global.conf`       | Global nginx configuration options
-`/opt/docker/etc/nginx/php.conf`          | PHP configuration (connection to FPM)
-`/opt/docker/etc/nginx/vhost.common.conf` | Vhost common stuff (placeholder)
-`/opt/docker/etc/nginx/vhost.conf`        | Default vhost
-`/opt/docker/etc/nginx/vhost.ssl.conf`    | Default ssl configuration for vhost
+File                                                | Description
+--------------------------------------------------- | ------------------------------------------------------------------------------
+`/opt/docker/etc/nginx/main.conf`                   | Main include file (will include `global.conf`, `php.conf` and `vhost.conf`) 
+`/opt/docker/etc/nginx/global.conf`                 | Global nginx configuration options
+`/opt/docker/etc/nginx/php.conf`                    | PHP configuration (connection to FPM)
+`/opt/docker/etc/nginx/vhost.common.conf`           | Vhost common stuff (placeholder)
+`/opt/docker/etc/nginx/vhost.conf`                  | Default vhost
+`/opt/docker/etc/nginx/vhost.ssl.conf`              | Default ssl configuration for vhost
+`/opt/docker/etc/php/fpm/php-fpm.conf`              | PHP FPM daemon configuration
+`/opt/docker/etc/php/fpm/pool.d/application.conf`   | PHP FPM pool configuration
 
 ## Container info
 

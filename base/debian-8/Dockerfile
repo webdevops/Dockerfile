@@ -4,6 +4,9 @@
 
 FROM webdevops/bootstrap:debian-8
 MAINTAINER info@webdevops.io
+LABEL vendor=WebDevOps.io
+LABEL io.webdevops.layout=4
+LABEL io.webdevops.version=0.17.0
 
 ENV APPLICATION_USER  application
 ENV APPLICATION_GROUP application
@@ -26,7 +29,6 @@ RUN sed -ri 's/(deb.*\/debian jessie main)/\1 contrib non-free /' -- /etc/apt/so
 
 # Install common tools
 RUN /usr/local/bin/apt-install \
-        lsb-release \
         sudo \
         zip \
         unzip \

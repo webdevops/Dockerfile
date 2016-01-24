@@ -35,3 +35,16 @@
     owner:   "{{ APPLICATION_USER }}"
     group:   "{{ APPLICATION_GROUP }}"
     recurse: yes
+
+- name: Fix rights of ssl files
+  file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    mode:  "{{ item.mode }}"
+    owner: "root"
+    group: "root"
+  with_items:
+    - { path: '/opt/docker/etc/nginx/ssl',            state: 'directory', mode: '0750' }
+    - { path: '/opt/docker/etc/nginx/ssl/server.crt', state: 'file',      mode: '0640' }
+    - { path: '/opt/docker/etc/nginx/ssl/server.csr', state: 'file',      mode: '0640' }
+    - { path: '/opt/docker/etc/nginx/ssl/server.key', state: 'file',      mode: '0640' }

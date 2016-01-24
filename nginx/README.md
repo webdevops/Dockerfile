@@ -1,5 +1,17 @@
 # Nginx webserver Docker container
 
+
+Container                           | Distribution name                                                                 
+----------------------------------- | -------------------
+`webdevops/nginx:ubuntu-12.04`      | precise            
+`webdevops/nginx:ubuntu-14.04`      | trusty (LTS)       
+`webdevops/nginx:ubuntu-15.04`      | vivid              
+`webdevops/nginx:ubuntu-15.10`      | wily               
+`webdevops/nginx:debian-7`          | wheezy            
+`webdevops/nginx:debian-8`          | jessie            
+`webdevops/nginx:centos-7`          |                    
+
+
 ## Environment variables
 
 Variable               | Description

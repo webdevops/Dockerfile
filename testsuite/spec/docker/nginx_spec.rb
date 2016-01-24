@@ -8,10 +8,9 @@ describe "Dockerfile" do
         set :docker_image, image.id
     end
 
-    # services
-    include_examples 'nginx::listening::public'
+    include_examples 'collection::bootstrap'
+    include_examples 'collection::base'
+    include_examples 'collection::nginx'
 
-    # test after services are up
-    include_examples 'nginx::service::running'
 
 end

@@ -6,6 +6,10 @@ else
     TEST_TARGET="all"
 fi
 
+if [ -z "$DOCKER_PULL" ]; then
+    DOCKER_PULL=0
+fi
+
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
@@ -26,10 +30,12 @@ SCRIPT_DIR=$(dirname $($READLINK -f "$0"))
 BASE_DIR=$(dirname "$SCRIPT_DIR")
 COLUMNS=$(tput cols)
 
+cd "$SCRIPT_DIR"
+
 OS_VERSION=""
 
-DOCKER_REPOSITORY="$(cat ../DOCKER_REPOSITORY)"
-DOCKER_TAG_LATEST="$(cat ../DOCKER_TAG_LATEST)"
+DOCKER_REPOSITORY="$(cat "$BASE_DIR/DOCKER_REPOSITORY")"
+DOCKER_TAG_LATEST="$(cat "$BASE_DIR/DOCKER_TAG_LATEST")"
 
 ###
  # Relative dir
@@ -64,7 +70,12 @@ function runTestForTag() {
     DOCKER_TAG="$1"
     DOCKER_IMAGE_WITH_TAG="${DOCKER_IMAGE}:${DOCKER_TAG}"
 
-    echo ">>> Testing '$DOCKER_IMAGE_WITH_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]"
+    echo ">> Testing '$DOCKER_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]"
+
+    if [ "$DOCKER_PULL" -eq 1 ]; then
+        echo " * Pulling $DOCKER_IMAGE_WITH_TAG from Docker hub ..."
+        docker pull "$DOCKER_IMAGE_WITH_TAG"
+    fi
 
     ## Build Dockerfile
     echo "# Temporary dockerfile for test run
@@ -109,7 +120,7 @@ function setSpecTest() {
 function setupTestEnvironment() {
     echo ""
     printRepeatedChar "="
-    echo "=== webdevops/$1"
+    echo "=== Testing docker image webdevops/$1"
     printRepeatedChar "="
     echo ""
 
@@ -124,7 +135,7 @@ function setupTestEnvironment() {
 }
 
 function printRepeatedChar() {
-    printf "${1}%.0s" $(seq 1 ${COLUMNS})
+    printf "${1}%.0s" $(seq 1 50)
     echo
 }
 

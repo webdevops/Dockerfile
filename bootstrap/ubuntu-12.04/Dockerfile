@@ -4,6 +4,9 @@
 
 FROM ubuntu:12.04
 MAINTAINER info@webdevops.io
+LABEL vendor=WebDevOps.io
+LABEL io.webdevops.layout=4
+LABEL io.webdevops.version=0.17.0
 
 # Ensure UTF-8
 RUN locale-gen en_US.UTF-8
@@ -23,11 +26,11 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     # Generate locales
     && ln -s /usr/share/i18n/SUPPORTED /var/lib/locales/supported.d/all \
     && locale-gen \
-    # Install apt-add-repository
+    # Install base stuff
     && /usr/local/bin/apt-install \
         python-software-properties \
-    # Install ansible
-    && /usr/local/bin/apt-install \
+        lsb-release \
+        # Install ansible
         python-dev \
         python-pip \
     && pip install ansible

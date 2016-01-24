@@ -1,0 +1,43 @@
+---
+
+- name: Create php directories
+  file:
+    path:  "{{ item }}"
+    state: directory
+    mode:  0755
+    owner: "root"
+    group: "root"
+  with_items:
+    - /opt/docker/etc/php/
+    - /opt/docker/etc/php/fpm/
+
+- name: Create /opt/docker/etc/php/php.ini"
+  file:
+    path:  "/opt/docker/etc/php/php.ini"
+    state: touch
+    mode:  0744
+    owner: root
+    group: root
+
+- name: Link php.ini for cli and fpm [Debian family]
+  file:
+    src:  '{{ item.file }}'
+    dest: '/etc/php5/{{ item.category }}/conf.d/{{ item.target }}'
+    force: yes
+    state: link
+  with_items:
+  # PHP cli
+   - { category: 'cli', file: '/etc/php5/mods-available/mcrypt.ini', target: '20-mcrypt.ini' }
+   - { category: 'cli', file: '/opt/docker/etc/php/php.ini',         target: '99-docker.ini' }
+   # PHP fpm
+   - { category: 'fpm', file: '/etc/php5/mods-available/mcrypt.ini', target: '20-mcrypt.ini' }
+   - { category: 'fpm', file: '/opt/docker/etc/php/php.ini',         target: '99-docker.ini' }
+  when: ansible_os_family == 'Debian'
+
+- name: Create link for additional php.ini [RedHat family]
+  file:
+    src:  '/opt/docker/etc/php/php.ini'
+    dest: '/etc/php.d/zzz-docker.ini'
+    state: link
+    force: yes
+  when: ansible_os_family == 'RedHat'

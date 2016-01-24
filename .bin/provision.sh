@@ -56,12 +56,33 @@ function checkBuildTarget() {
     fi
 }
 
+###
+ # Generate list of directories
+ #
+ # $1     -> Directory
+ #
+ ##
+function listDirectories() {
+    find "$1" -maxdepth 1 -type d
+}
+
+###
+ # Generate list of directories with iname filter
+ #
+ # $1     -> Directory
+ # s2     -> Filter (find iname)
+ #
+ ##
+function listDirectoriesWithFilter() {
+    find "$1" -maxdepth 1 -type d -iname "$2"
+}
+
 #######################################
 # Localscripts
 #######################################
 
 ###
- # Build localscripts
+ # Build configuration
  #
  # Build tar file from _localscripts for bootstrap containers
  #
@@ -73,7 +94,7 @@ function buildLocalscripts() {
     rm -f scripts.tar
     tar -jmcf scripts.tar *
 
-    find "$BASE_DIR/bootstrap" -type d -depth 1 | while read DOCKER_DIR; do
+    listDirectories "$BASE_DIR/bootstrap"  | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
             cp scripts.tar "${DOCKER_DIR}/scripts.tar"
@@ -84,11 +105,11 @@ function buildLocalscripts() {
 }
 
 #######################################
-# Provision
+# Configuration
 #######################################
 
 ###
- # Clear provisioning
+ # Clear configuration
  #
  # Clear conf/ directory of each docker container
  #
@@ -96,12 +117,12 @@ function buildLocalscripts() {
  # $2 -> sub directory filter (eg. "*" for all or "ubuntu-*" for only ubuntu containers)
  #
  ##
-function clearProvision() {
+function clearConfiguration() {
     DOCKER_CONTAINER="$1"
     DOCKER_FILTER="$2"
 
-    echo " * Clearing provision"
-    find "${BASE_DIR}/${DOCKER_CONTAINER}" -type d -depth 1 -iname "${DOCKER_FILTER}" | while read DOCKER_DIR; do
+    echo " -> Clearing configuration"
+    listDirectoriesWithFilter "${BASE_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}" | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
             rm -rf "${DOCKER_DIR}/conf/"
@@ -110,7 +131,7 @@ function clearProvision() {
 }
 
 ###
- # Deploy provisioning
+ # Deploy configuration
  #
  # Deploy conf/ directory into each docker container
  #
@@ -119,23 +140,33 @@ function clearProvision() {
  # $3 -> sub directory filter (eg. "*" for all or "ubuntu-*" for only ubuntu containers)
  #
  ##
-function deployProvision() {
+function deploConfiguration() {
     PROVISION_SUB_DIR="$1"
     DOCKER_CONTAINER="$2"
     DOCKER_FILTER="$3"
 
     if [ "$DOCKER_FILTER" == "*" ]; then
-        echo " * Deploying provision"
+        echo " -> Deploying configuration"
     else
-        echo " * Deploying provision with filter '$DOCKER_FILTER'"
+        echo " -> Deploying configuration with filter '$DOCKER_FILTER'"
     fi
 
-    find "${BASE_DIR}/${DOCKER_CONTAINER}" -type d -depth 1 -iname "${DOCKER_FILTER}" | while read DOCKER_DIR; do
+    listDirectoriesWithFilter "${BASE_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}" | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
-            cp -f -r "${PROVISION_DIR}/${PROVISION_SUB_DIR}/" "${DOCKER_DIR}/conf"
+            cp -f -r "${PROVISION_DIR}/${PROVISION_SUB_DIR}/." "${DOCKER_DIR}/conf/"
         fi
     done
+}
+
+
+###
+ # Header message
+ #
+ # $1 -> container name (eg. php)
+ ##
+function header() {
+    echo "Building configuration for webdevops/$1"
 }
 
 ###############################################################################
@@ -145,94 +176,113 @@ function deployProvision() {
 
 ## Build bootstrap
 [[ $(checkBuildTarget bootstrap) ]] && {
-    echo "Building provision for webdevops/bootstrap..."
+    header "bootstrap"
     buildLocalscripts
 }
 
 ## Build base
 [[ $(checkBuildTarget base) ]] && {
-    echo "Building provision for webdevops/base..."
-    clearProvision  base  '*'
-    deployProvision base/general        base  '*'
-    deployProvision base/centos         base  'centos-*'
+    header "base"
+    clearConfiguration  base  '*'
+    deploConfiguration base/general        base  '*'
+    deploConfiguration base/centos         base  'centos-*'
 }
 
 ## Build apache
 [[ $(checkBuildTarget apache) ]] && {
-    echo "Building provision for webdevops/apache..."
-    clearProvision  apache '*'
-    deployProvision apache/general  apache  '*'
-    deployProvision apache/centos   apache  'centos-*'
+    header "apache"
+    clearConfiguration  apache '*'
+    deploConfiguration apache/general  apache  '*'
+    deploConfiguration apache/centos   apache  'centos-*'
 }
 
 ## Build nginx
 [[ $(checkBuildTarget nginx) ]] && {
-    echo "Building provision for webdevops/nginx..."
-    clearProvision  nginx '*'
-    deployProvision nginx/general  nginx  '*'
-    deployProvision nginx/centos   nginx  'centos-*'
+    header "nginx"
+    clearConfiguration  nginx '*'
+    deploConfiguration nginx/general  nginx  '*'
+    deploConfiguration nginx/centos   nginx  'centos-*'
 }
 
 ## Build hhvm
 [[ $(checkBuildTarget hhvm) ]] && {
-    echo "Building provision for webdevops/hhvm..."
-    clearProvision  hhvm  '*'
-    deployProvision hhvm/general  hhvm  '*'
+    header "hhvm"
+    clearConfiguration  hhvm  '*'
+    deploConfiguration hhvm/general  hhvm  '*'
 }
 
 ## Build hhvm-apache
 [[ $(checkBuildTarget hhvm-apache) ]] && {
-    echo "Building provision for webdevops/hhvm-apache..."
-    clearProvision  hhvm-apache  '*'
-    deployProvision apache/general       hhvm-apache  '*'
-    deployProvision hhvm-apache/general  hhvm-apache  '*'
+    header "hhvm-apache"
+    clearConfiguration  hhvm-apache  '*'
+    deploConfiguration apache/general       hhvm-apache  '*'
+    deploConfiguration hhvm-apache/general  hhvm-apache  '*'
 }
 
 ## Build hhvm-nginx
 [[ $(checkBuildTarget hhvm-nginx) ]] && {
-    echo "Building provision for webdevops/hhvm-nginx..."
-    clearProvision  hhvm-nginx  '*'
-    deployProvision nginx/general       hhvm-nginx  '*'
-    deployProvision nginx/centos        hhvm-nginx  'centos-*'
-    deployProvision hhvm-nginx/general  hhvm-nginx  '*'
+    header "hhvm-nginx"
+    clearConfiguration  hhvm-nginx  '*'
+    deploConfiguration nginx/general       hhvm-nginx  '*'
+    deploConfiguration nginx/centos        hhvm-nginx  'centos-*'
+    deploConfiguration hhvm-nginx/general  hhvm-nginx  '*'
 }
 
 ## Build php
 [[ $(checkBuildTarget php) ]] && {
-    echo "Building provision for webdevops/php..."
-    clearProvision  php  '*'
-    deployProvision php/general       php  '*'
-    deployProvision php/ubuntu-12.04  php  'ubuntu-12.04'
+    header "php"
+    clearConfiguration  php  '*'
+    deploConfiguration php/general       php  '*'
+    deploConfiguration php/ubuntu-12.04  php  'ubuntu-12.04'
 
-    clearProvision  php  'debian-*-php7'
-    deployProvision php/debian-php7  php  'debian-*-php7'
+    clearConfiguration  php  'debian-*-php7'
+    deploConfiguration php/debian-php7  php  'debian-*-php7'
 }
 
 ## Build php-apache
 [[ $(checkBuildTarget php-apache) ]] && {
-    echo "Building provision for webdevops/php-apache..."
-    clearProvision  php-apache  '*'
-    deployProvision apache/general      php-apache  '*'
-    deployProvision apache/centos       php-apache  'centos-*'
-    deployProvision php-apache/general  php-apache  '*'
-    deployProvision php-apache/debian-php7  php-apache  'debian-*-php7'
+    header "php-apache"
+    clearConfiguration  php-apache  '*'
+    deploConfiguration apache/general      php-apache  '*'
+    deploConfiguration apache/centos       php-apache  'centos-*'
+    deploConfiguration php-apache/general  php-apache  '*'
 }
 
 ## Build php-nginx
 [[ $(checkBuildTarget php-nginx) ]] && {
-    echo "Building provision for webdevops/php-nginx..."
-    clearProvision  php-nginx  '*'
-    deployProvision nginx/general      php-nginx  '*'
-    deployProvision nginx/centos       php-nginx  'centos-*'
-    deployProvision php-nginx/general  php-nginx  '*'
-    deployProvision php-nginx/debian-php7  php-nginx  'debian-*-php7'
+    header "php-nginx"
+    clearConfiguration  php-nginx  '*'
+    deploConfiguration nginx/general      php-nginx  '*'
+    deploConfiguration nginx/centos       php-nginx  'centos-*'
+    deploConfiguration php-nginx/general  php-nginx  '*'
+}
+
+## Build postfix
+[[ $(checkBuildTarget postfix) ]] && {
+    header "postfix"
+    clearConfiguration  postfix  '*'
+    deploConfiguration postfix/general postfix '*'
+}
+
+## Build vsftp
+[[ $(checkBuildTarget vsftp) ]] && {
+    header "vsftp"
+    clearConfiguration  vsftp  '*'
+    deploConfiguration vsftp/general vsftp '*'
 }
 
 ## Build typo3
 [[ $(checkBuildTarget typo3) ]] && {
-    echo "Building provision for webdevops/typo3..."
-    clearProvision  typo3  '*'
-    deployProvision typo3/general  typo3  '*'
+    header "typo3"
+    clearConfiguration  typo3  '*'
+    deploConfiguration typo3/general  typo3  '*'
+}
+
+## Build piwik
+[[ $(checkBuildTarget piwik) ]] && {
+    header "piwik"
+    clearConfiguration  piwik  '*'
+    deploConfiguration piwik/general piwik '*'
 }
 
 exit 0

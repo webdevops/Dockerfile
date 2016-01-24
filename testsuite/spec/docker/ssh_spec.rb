@@ -8,10 +8,8 @@ describe "Dockerfile" do
         set :docker_image, image.id
     end
 
-    # services
-    include_examples 'ssh::listening::public'
-
-    # test after services are up
-    include_examples 'ssh::service::running'
+    include_examples 'collection::bootstrap'
+    include_examples 'collection::base'
+    include_examples 'collection::ssh'
 
 end

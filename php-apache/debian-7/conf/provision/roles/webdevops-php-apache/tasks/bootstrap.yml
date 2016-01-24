@@ -1,18 +1,7 @@
 ---
-
-- name: Set php pool file
-  set_fact:
-     php_pool_conf: /etc/php-fpm.d/www.conf
-  when: ansible_os_family == 'RedHat'
-
-- name: Set php pool file
-  set_fact:
-     php_pool_conf: /etc/php5/fpm/pool.d/www.conf
-  when: ansible_os_family == 'Debian'
-
 - name: Restrict php-fpm to local connection
   lineinfile:
-    dest:   '{{ php_pool_conf }}'
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
     regexp: '^[\s;]*{{ item.key }}[\s]*='
     line:   '{{ item.key }} = {{ item.value }}'
   with_items:
