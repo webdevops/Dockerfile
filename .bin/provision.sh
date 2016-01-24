@@ -140,7 +140,7 @@ function clearConfiguration() {
  # $3 -> sub directory filter (eg. "*" for all or "ubuntu-*" for only ubuntu containers)
  #
  ##
-function deploConfiguration() {
+function deployConfiguration() {
     PROVISION_SUB_DIR="$1"
     DOCKER_CONTAINER="$2"
     DOCKER_FILTER="$3"
@@ -184,112 +184,112 @@ function header() {
 [[ $(checkBuildTarget base) ]] && {
     header "base"
     clearConfiguration  base  '*'
-    deploConfiguration base/general        base  '*'
-    deploConfiguration base/centos         base  'centos-*'
+    deployConfiguration base/general        base  '*'
+    deployConfiguration base/centos         base  'centos-*'
 }
 
 ## Build apache
 [[ $(checkBuildTarget apache) ]] && {
     header "apache"
     clearConfiguration  apache '*'
-    deploConfiguration apache/general  apache  '*'
-    deploConfiguration apache/centos   apache  'centos-*'
+    deployConfiguration apache/general  apache  '*'
+    deployConfiguration apache/centos   apache  'centos-*'
 }
 
 ## Build nginx
 [[ $(checkBuildTarget nginx) ]] && {
     header "nginx"
     clearConfiguration  nginx '*'
-    deploConfiguration nginx/general  nginx  '*'
-    deploConfiguration nginx/centos   nginx  'centos-*'
+    deployConfiguration nginx/general  nginx  '*'
+    deployConfiguration nginx/centos   nginx  'centos-*'
 }
 
 ## Build hhvm
 [[ $(checkBuildTarget hhvm) ]] && {
     header "hhvm"
     clearConfiguration  hhvm  '*'
-    deploConfiguration hhvm/general  hhvm  '*'
+    deployConfiguration hhvm/general  hhvm  '*'
 }
 
 ## Build hhvm-apache
 [[ $(checkBuildTarget hhvm-apache) ]] && {
     header "hhvm-apache"
     clearConfiguration  hhvm-apache  '*'
-    deploConfiguration apache/general       hhvm-apache  '*'
-    deploConfiguration hhvm-apache/general  hhvm-apache  '*'
+    deployConfiguration apache/general       hhvm-apache  '*'
+    deployConfiguration hhvm-apache/general  hhvm-apache  '*'
 }
 
 ## Build hhvm-nginx
 [[ $(checkBuildTarget hhvm-nginx) ]] && {
     header "hhvm-nginx"
     clearConfiguration  hhvm-nginx  '*'
-    deploConfiguration nginx/general       hhvm-nginx  '*'
-    deploConfiguration nginx/centos        hhvm-nginx  'centos-*'
-    deploConfiguration hhvm-nginx/general  hhvm-nginx  '*'
+    deployConfiguration nginx/general       hhvm-nginx  '*'
+    deployConfiguration nginx/centos        hhvm-nginx  'centos-*'
+    deployConfiguration hhvm-nginx/general  hhvm-nginx  '*'
 }
 
 ## Build php
 [[ $(checkBuildTarget php) ]] && {
     header "php"
     clearConfiguration  php  '*'
-    deploConfiguration php/general       php  '*'
-    deploConfiguration php/ubuntu-12.04  php  'ubuntu-12.04'
+    deployConfiguration php/general       php  '*'
+    deployConfiguration php/ubuntu-12.04  php  'ubuntu-12.04'
 
     clearConfiguration  php  'debian-*-php7'
-    deploConfiguration php/debian-php7  php  'debian-*-php7'
+    deployConfiguration php/debian-php7  php  'debian-*-php7'
 }
 
 ## Build php-apache
 [[ $(checkBuildTarget php-apache) ]] && {
     header "php-apache"
     clearConfiguration  php-apache  '*'
-    deploConfiguration apache/general      php-apache  '*'
-    deploConfiguration apache/centos       php-apache  'centos-*'
-    deploConfiguration php-apache/general  php-apache  '*'
+    deployConfiguration apache/general      php-apache  '*'
+    deployConfiguration apache/centos       php-apache  'centos-*'
+    deployConfiguration php-apache/general  php-apache  '*'
 }
 
 ## Build php-nginx
 [[ $(checkBuildTarget php-nginx) ]] && {
     header "php-nginx"
     clearConfiguration  php-nginx  '*'
-    deploConfiguration nginx/general      php-nginx  '*'
-    deploConfiguration nginx/centos       php-nginx  'centos-*'
-    deploConfiguration php-nginx/general  php-nginx  '*'
+    deployConfiguration nginx/general      php-nginx  '*'
+    deployConfiguration nginx/centos       php-nginx  'centos-*'
+    deployConfiguration php-nginx/general  php-nginx  '*'
 }
 
 ## Build postfix
 [[ $(checkBuildTarget postfix) ]] && {
     header "postfix"
     clearConfiguration  postfix  '*'
-    deploConfiguration postfix/general postfix '*'
+    deployConfiguration postfix/general postfix '*'
 }
 
 ## Build mail-sandbox
 [[ $(checkBuildTarget mail-sandbox) ]] && {
     header "postfix"
     clearConfiguration mail-sandbox  '*'
-    deploConfiguration mail-sandbox/general mail-sandbox '*'
+    deployConfiguration mail-sandbox/general mail-sandbox '*'
 }
 
 ## Build vsftp
 [[ $(checkBuildTarget vsftp) ]] && {
     header "vsftp"
     clearConfiguration  vsftp  '*'
-    deploConfiguration vsftp/general vsftp '*'
+    deployConfiguration vsftp/general vsftp '*'
 }
 
 ## Build typo3
 [[ $(checkBuildTarget typo3) ]] && {
     header "typo3"
     clearConfiguration  typo3  '*'
-    deploConfiguration typo3/general  typo3  '*'
+    deployConfiguration typo3/general  typo3  '*'
 }
 
 ## Build piwik
 [[ $(checkBuildTarget piwik) ]] && {
     header "piwik"
     clearConfiguration  piwik  '*'
-    deploConfiguration piwik/general piwik '*'
+    deployConfiguration piwik/general piwik '*'
 }
 
 exit 0
