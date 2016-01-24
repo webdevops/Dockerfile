@@ -266,7 +266,7 @@ function header() {
 
 ## Build mail-sandbox
 [[ $(checkBuildTarget mail-sandbox) ]] && {
-    header "postfix"
+    header "mail-sandbox"
     clearConfiguration mail-sandbox  '*'
     deployConfiguration mail-sandbox/general mail-sandbox '*'
 }
