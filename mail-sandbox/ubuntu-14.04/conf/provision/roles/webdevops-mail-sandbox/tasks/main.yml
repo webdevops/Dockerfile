@@ -1,0 +1,15 @@
+- include: bootstrap/postfix.yml
+  tags:
+    - bootstrap
+
+- include: bootstrap/dovecot.yml
+  tags:
+    - bootstrap
+
+- include: entrypoint/user.yml
+  tags:
+    - entrypoint
+
+- include: entrypoint/postfix.yml
+  tags:
+    - entrypoint
