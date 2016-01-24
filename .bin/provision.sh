@@ -264,6 +264,13 @@ function header() {
     deploConfiguration postfix/general postfix '*'
 }
 
+## Build mail-sandbox
+[[ $(checkBuildTarget mail-sandbox) ]] && {
+    header "postfix"
+    clearConfiguration mail-sandbox  '*'
+    deploConfiguration mail-sandbox/general mail-sandbox '*'
+}
+
 ## Build vsftp
 [[ $(checkBuildTarget vsftp) ]] && {
     header "vsftp"
