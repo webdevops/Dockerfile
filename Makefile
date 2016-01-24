@@ -58,7 +58,7 @@ rebuild:
 	FORCE=1 make applications
 
 push:
-	DOCKER_PUSH=1 make all
+	BUILD_MODE=push make all
 
 webdevops/bootstrap:
 	bash .bin/build.sh bootstrap "${DOCKER_REPOSITORY}/bootstrap" "${DOCKER_TAG_LATEST}"
