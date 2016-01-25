@@ -52,9 +52,9 @@ source "${WORKDIR}/.bin/functions.sh"
  #
  ##
 function buildDockerfile() {
-    DOCKERFILE_PATH="$1"
-    CONTAINER_NAME="$2"
-    CONTAINER_TAG="$3"
+    local DOCKERFILE_PATH="$1"
+    local CONTAINER_NAME="$2"
+    local CONTAINER_TAG="$3"
 
     echo ">> Starting build of ${CONTAINER_NAME}:${CONTAINER_TAG}"
 
@@ -63,6 +63,34 @@ function buildDockerfile() {
         addBackgroundPidToList "${CONTAINER_TAG}"
     else
         bash "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}"
+    fi
+
+    cd "$WORKDIR"
+}
+
+###
+ # Push dockerfile
+ #
+ # will push one docker container, background mode if FAST mode is active
+ #
+ # $1 -> dockerfile path       (php/)
+ # $2 -> docker container name (eg. webdevops/php)
+ # $3 -> docker container tag  (eg. ubuntu-14.04)
+ #
+ ##
+function pushDockerfile() {
+    local DOCKERFILE_PATH="$1"
+    local CONTAINER_NAME="$2"
+    local CONTAINER_TAG="$3"
+
+    echo ">> Starting push of ${CONTAINER_NAME}:${CONTAINER_TAG}"
+
+    if [ "${FAST}" -eq 1 ]; then
+        LOGFILE="$(mktemp /tmp/docker.push.XXXXXXXXXX)"
+        bash "${WORKDIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}" > "$LOGFILE" &
+        addBackgroundPidToList "${CONTAINER_TAG}" "$LOGFILE"
+    else
+        bash "${WORKDIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}"
     fi
 
     cd "$WORKDIR"
@@ -148,7 +176,9 @@ function buildTarget() {
             ;;
 
         push)
-            retry dockerPushImage "${BASENAME}" "${TAGNAME}"
+            ## Fast not allowed :(
+            FAST=0 pushDockerfile "${DOCKERFILE_PATH}" "${BASENAME}" "${TAGNAME}"
+            sleep 0.05
             ;;
     esac
 }
@@ -171,6 +201,8 @@ foreachDockerfileInPath "${TARGET}" "buildTargetLatest" "${LATEST}"
 
 # wait for final build
 waitForBuild
+
+logOutputFromBackgroundProcesses
 
 echo ""
 echo ">>> Build time: $(timerStep)"
