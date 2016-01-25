@@ -53,16 +53,34 @@ initPidList() {
     unset PID_LIST
     declare -a PID_LIST
     PID_LIST=()
+
+    unset PID_LOG_TITLE
+    declare -a PID_LOG_TITLE
+    PID_LOG_TITLE=()
+
+    unset PID_LOG_FILE
+    declare -a PID_LOG_FILE
+    PID_LOG_FILE=()
 }
 
 addBackgroundPidToList() {
     local BG_PID="$!"
 
-    if [ "$#" -eq 0 ]; then
-        PID_LIST[$BG_PID]="$BG_PID"
-    else
-        PID_LIST[$BG_PID]="$*"
-    fi
+    case "$#" in
+        1)
+            PID_LIST[$BG_PID]="$1"
+            ;;
+
+        2)
+            PID_LIST[$BG_PID]="$1"
+            PID_LOG_TITLE[$BG_PID]="$1"
+            PID_LOG_FILE[$BG_PID]="$2"
+            ;;
+
+        *)
+            PID_LIST[$BG_PID]="$BG_PID"
+            ;;
+    esac
 }
 
 waitForBackgroundProcesses() {
@@ -77,7 +95,7 @@ waitForBackgroundProcesses() {
     while [ 1 ]; do
 
         for pid in "${!PID_LIST[@]}"; do
-            title=${PID_LIST[$pid]}
+            title="${PID_LIST[$pid]}"
 
             # check if pid is finished
             if ! kill -0 "$pid" 2> /dev/null; then
@@ -97,10 +115,12 @@ waitForBackgroundProcesses() {
         done
 
         if [ "${#PID_LIST[@]}" -eq 0 ]; then
-
             # check if any subprocess failed
             if [ "$WAIT_BG_RETURN" -ne 0 ]; then
                 logError "One or more child processes exited with failure!"
+
+                logOutputFromBackgroundProcesses
+
                 exitError 1
             fi
 
@@ -114,6 +134,29 @@ waitForBackgroundProcesses() {
     initPidList
 }
 
+logOutputFromBackgroundProcesses() {
+    ## check if pidlist exists
+    if [[ -z "${PID_LOG_FILE[@]:+${PID_LOG_FILE[@]}}" ]]; then
+        return
+    fi
+
+    echo ""
+    echo "Showing logs:"
+
+    for pid in "${!PID_LOG_FILE[@]}"; do
+        title="${PID_LOG_TITLE[$pid]}"
+        log="${PID_LOG_FILE[$pid]}"
+
+        sed -e "s/^/\[log:$title\] /" -- "$log"
+        rm -f -- "$log"
+
+        unset PID_LOG_TITLE[$pid]
+        unset PID_LOG_FILE[$pid]
+
+        echo ""
+        echo ""
+    done
+}
 
 #################################################
 # Timing handling
