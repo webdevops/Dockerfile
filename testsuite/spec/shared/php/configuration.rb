@@ -16,9 +16,21 @@ shared_examples 'php::cli::configuration' do
             its(:value) { should eq '50M' }
         end
 
+        context php_config('max_input_vars') do
+            its(:value) { should eq 5000 }
+        end
+
         #####################
         # Settings
         #####################
+
+        context  php_config('variables_order') do
+            its(:value) { should eq 'GPCS' }
+        end
+
+        context  php_config('request_order') do
+            its(:value) { should eq 'GP' }
+        end
 
         context  php_config('date.timezone') do
             its(:value) { should eq 'UTC' }
