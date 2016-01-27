@@ -7,4 +7,11 @@ shared_examples 'postfix::service::running' do
 
         its(:exit_status) { should eq 0 }
     end
+
+    describe command('mailq') do
+        its(:stdout) { should_not contain('warning') }
+        its(:stderr) { should_not contain('warning') }
+
+        its(:exit_status) { should eq 0 }
+    end
 end
