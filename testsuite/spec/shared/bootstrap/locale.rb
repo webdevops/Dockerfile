@@ -1,4 +1,4 @@
-shared_examples 'base::locales' do
+shared_examples 'bootstrap::locales' do
     describe command('locale -a') do
         its(:stdout) { should contain('C') }
         its(:stdout) { should contain('POSIX') }

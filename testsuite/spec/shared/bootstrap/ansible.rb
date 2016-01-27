@@ -1,4 +1,4 @@
-shared_examples 'base::ansible' do
+shared_examples 'bootstrap::ansible' do
     it "should be ansible installed" do
         if os[:family] == 'redhat'
             expect(file("/usr/bin/ansible")).to be_executable

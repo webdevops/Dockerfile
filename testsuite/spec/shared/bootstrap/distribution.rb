@@ -1,4 +1,4 @@
-shared_examples 'base::distribution' do
+shared_examples 'bootstrap::distribution' do
 
     #########################
     # CentOS
