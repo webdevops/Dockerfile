@@ -5,7 +5,7 @@ if [ -z "$RETRY_COUNT" ]; then
 fi
 
 if [ -z "$RETRY_DELAY" ]; then
-    RETRY_DELAY=1
+    RETRY_DELAY="1m"
 fi
 
 RETURN_CODE=0
