@@ -15,12 +15,20 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 # Fix readlink issue on macos
 
 READLINK='readlink'
+TAR='tar'
 
 [[ `uname` == 'Darwin' ]] && {
 	which greadlink > /dev/null && {
 		READLINK='greadlink'
 	} || {
 		echo 'ERROR: GNU utils required for Mac. You may use homebrew to install them: brew install coreutils gnu-sed'
+		exit 1
+	}
+
+	which gtar > /dev/null && {
+		TAR='gtar'
+	} || {
+		echo 'ERROR: GNU tar required for Mac. You may use homebrew to install them: brew install gnu-tar'
 		exit 1
 	}
 }
@@ -92,7 +100,7 @@ function buildLocalscripts() {
 
     cd "${LOCALSCRIPT_DIR}"
     rm -f scripts.tar
-    tar -jmcf scripts.tar *
+    $TAR -jmc --owner=0 --group=0 -f scripts.tar *
 
     listDirectories "$BASE_DIR/bootstrap"  | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
