@@ -59,10 +59,10 @@ function buildDockerfile() {
     echo ">> Starting build of ${CONTAINER_NAME}:${CONTAINER_TAG}"
 
     if [ "${FAST}" -eq 1 ]; then
-        bash "${WORKDIR}/.bin/retry.sh" bash "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}" &
+        RETRY_COUNT=3 "${WORKDIR}/.bin/retry.sh" "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}" &
         addBackgroundPidToList "${CONTAINER_TAG}"
     else
-        bash "${WORKDIR}/.bin/retry.sh" "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}"
+        RETRY_COUNT=3 "${WORKDIR}/.bin/retry.sh" "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}"
     fi
 
     cd "$WORKDIR"
@@ -87,10 +87,10 @@ function pushDockerfile() {
 
     if [ "${FAST}" -eq 1 ]; then
         LOGFILE="$(mktemp /tmp/docker.push.XXXXXXXXXX)"
-        bash "${WORKDIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}" > "$LOGFILE" &
+        "${WORKDIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}" > "$LOGFILE" &
         addBackgroundPidToList "${CONTAINER_TAG}" "$LOGFILE"
     else
-        bash "${WORKDIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}"
+        "${WORKDIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}"
     fi
 
     cd "$WORKDIR"
