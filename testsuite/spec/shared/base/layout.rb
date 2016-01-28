@@ -94,6 +94,14 @@ shared_examples 'base::layout' do
         "/opt/docker/bin/entrypoint.sh",
         "/opt/docker/bin/logwatch.sh",
         "/opt/docker/bin/provision.sh",
+        "/opt/docker/bin/service.d/dnsmasq.sh",
+        "/opt/docker/bin/service.d/postfix.sh",
+        "/opt/docker/bin/service.d/syslog-ng.sh",
+        "/opt/docker/bin/entrypoint.d/cli.sh",
+        "/opt/docker/bin/entrypoint.d/default.sh",
+        "/opt/docker/bin/entrypoint.d/noop.sh",
+        "/opt/docker/bin/entrypoint.d/root.sh",
+        "/opt/docker/bin/entrypoint.d/supervisord.sh",
     ].each do |file|
         describe file("#{file}") do
             # Type check
