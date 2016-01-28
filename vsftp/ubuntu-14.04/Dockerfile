@@ -18,7 +18,7 @@ ENV FTP_PATH     /data/ftp/
 # Install vsftp
 RUN /usr/local/bin/apt-install \
         vsftpd \
-    && ln -sf /opt/docker/etc/vsftpd.conf /etc/vsftpd.conf \
+    && ln -sf /opt/docker/etc/vsftpd/vsftpd.conf /etc/vsftpd.conf \
     && mkdir -p \
             /var/run/vsftpd/empty \
             /var/log/supervisor
