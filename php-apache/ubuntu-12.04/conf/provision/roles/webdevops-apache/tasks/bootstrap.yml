@@ -1,0 +1,62 @@
+---
+
+- name: Set apache vhost file [RedHat family]
+  set_fact:
+     apache_docker_vhost: /etc/httpd/conf.d/docker.conf
+  when: ansible_os_family == 'RedHat'
+
+- name: Set apache vhost file [Debian family]
+  set_fact:
+     apache_docker_vhost: /etc/apache2/sites-enabled/10-docker.conf
+  when: ansible_os_family == 'Debian'
+
+- name: Enable apache main config
+  file:
+    src:  '/opt/docker/etc/httpd/main.conf'
+    dest: '{{ apache_docker_vhost }}'
+    state: link
+    force: yes
+
+- name: Ensure document root is available
+  file:
+    path:    "{{ DOCUMENT_ROOT }}"
+    state:   directory
+    owner:   "{{ APPLICATION_USER }}"
+    group:   "{{ APPLICATION_GROUP }}"
+    recurse: yes
+
+- name: Ensure /var/run/apache2 exists
+  file:
+    path:    '/var/run/apache2'
+    state:   directory
+    recurse: yes
+
+- name: Switch MPM to worker [RedHat family]
+  lineinfile:
+    dest:   '/etc/httpd/conf.modules.d/00-mpm.conf'
+    regexp: '^[\s#]*{{ item.line }}'
+    line:   '{{ item.prefix }}{{ item.line }}'
+  with_items:
+   - { line: 'LoadModule mpm_prefork_module modules/mod_mpm_prefork.so', prefix: "#" }
+   - { line: 'LoadModule mpm_event_module modules/mod_mpm_event.so',   prefix: "" }
+  when: ansible_os_family == 'RedHat'
+
+- name: Switch MPM to event for Apache 2.4 and higher [Ubuntu family]
+  command: "{{ item }}"
+  with_items:
+   - 'a2dismod mpm_event'
+   - 'a2enmod mpm_event'
+  when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_lsb.major_release|int >= 8)
+
+- name: Fix rights of ssl files
+  file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    mode:  "{{ item.mode }}"
+    owner: "root"
+    group: "root"
+  with_items:
+    - { path: '/opt/docker/etc/httpd/ssl',            state: 'directory', mode: '0750' }
+    - { path: '/opt/docker/etc/httpd/ssl/server.crt', state: 'file',      mode: '0640' }
+    - { path: '/opt/docker/etc/httpd/ssl/server.csr', state: 'file',      mode: '0640' }
+    - { path: '/opt/docker/etc/httpd/ssl/server.key', state: 'file',      mode: '0640' }

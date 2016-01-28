@@ -274,7 +274,7 @@ initEnvironment
     setupTestEnvironment "php-apache"
     setSpecTest "php5-apache"
 
-    #OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
