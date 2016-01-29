@@ -19,6 +19,11 @@ ADD scripts.tar ./
 # Init bootstrap (and install ansible)
 RUN export DEBIAN_FRONTEND=noninteractive \
     && set -x \
+    # Add multiverse
+    && echo "deb http://archive.ubuntu.com/ubuntu/ precise-security multiverse" >> /etc/apt/sources.list \
+    && echo "deb-src http://archive.ubuntu.com/ubuntu/ precise-security multiverse" >> /etc/apt/sources.list \
+    && echo "deb http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
+    && echo "deb-src http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
     # Fix root terminal
     && echo "export TERM=xterm" >> /root/.bashrc \
     # System update
