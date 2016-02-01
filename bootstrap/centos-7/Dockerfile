@@ -6,7 +6,7 @@ FROM centos:7
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.17.0
+LABEL io.webdevops.version=0.18.0
 
 # Add common scripts (from _localscripts)
 ADD scripts.tar ./
