@@ -83,6 +83,10 @@ FROM $DOCKER_IMAGE_WITH_TAG
 COPY conf/ /
     " > "${SCRIPT_DIR}/Dockerfile"
 
+    # Check if docker image is available, but don't count as real test
+    OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "spec/image.rb" > /dev/null
+
+    # Run testsuite for docker image
     OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH"
 
     rm -f "${SCRIPT_DIR}/Dockerfile"

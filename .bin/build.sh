@@ -123,6 +123,55 @@ function waitForBuildStep() {
     fi
 }
 
+###
+ # Run build task
+ #
+ ##
+function buildTarget() {
+    case "$BUILD_MODE" in
+        build)
+            buildDockerfile "${DOCKERFILE_PATH}" "${BASENAME}" "${TAGNAME}"
+            sleep 0.05
+            ;;
+
+        push)
+            ## Fast not allowed :(
+            FAST=0 pushDockerfile "${DOCKERFILE_PATH}" "${BASENAME}" "${TAGNAME}"
+            sleep 0.05
+            ;;
+    esac
+}
+
+###
+ # Run build task for latest container
+ #
+ ##
+function buildTargetLatest() {
+    TAGNAME="latest"
+
+    buildTarget
+}
+
+###
+ # Check if docker image is available
+ ##
+function checkBuild() {
+    if [[ -n "$(docker images -q "${BASENAME}:${TAGNAME}" 2> /dev/null)" ]]; then
+        echo " -> Image ${BASENAME}:${TAGNAME} found"
+    else
+        echo " [ERROR] Docker image '${BASENAME}:${TAGNAME}' not found, build failure!"
+        exit 1;
+    fi
+}
+
+###
+ # Check if docker image is available (latest image)
+ ##
+function checkBuildLatest() {
+    TAGNAME="latest"
+    checkBuild
+}
+
 
 ###############################################################################
 # MAIN
@@ -161,33 +210,15 @@ bash "${WORKDIR}/.bin/provision.sh" "$TARGET"
 echo ""
 
 #############################
-# Docker build
+# Main
 #############################
 
+## Init
 
 initPidList
 timerStart
 
-function buildTarget() {
-    case "$BUILD_MODE" in
-        build)
-            buildDockerfile "${DOCKERFILE_PATH}" "${BASENAME}" "${TAGNAME}"
-            sleep 0.05
-            ;;
-
-        push)
-            ## Fast not allowed :(
-            FAST=0 pushDockerfile "${DOCKERFILE_PATH}" "${BASENAME}" "${TAGNAME}"
-            sleep 0.05
-            ;;
-    esac
-}
-
-function buildTargetLatest() {
-    TAGNAME="latest"
-
-    buildTarget
-}
+## Build image
 
 echo "Building ${BASENAME}"
 ## Build each docker tag
@@ -204,8 +235,12 @@ waitForBuild
 
 logOutputFromBackgroundProcesses
 
-echo ""
-echo ">>> Build time: $(timerStep)"
+## Check builds
+
+echo ">> Checking built images"
+foreachDockerfileInPath "${TARGET}" "checkBuild"
+foreachDockerfileInPath "${TARGET}" "checkBuildLatest" "${LATEST}"
 
 echo ""
+echo ">>> Build time: $(timerStep)"
 echo ""
