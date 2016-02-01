@@ -28,12 +28,14 @@ if [ "$FORCE" -eq 1 ]; then
     DOCKER_OPTS="$DOCKER_OPTS --no-cache"
 fi
 
+# Prevent pull of parent docker images
+DOCKER_OPTS="$DOCKER_OPTS --pull=false"
 
 cd "$DOCKERFILE_PATH"
 
 if [ "$DEBUG" -eq 0 ]; then
     # Background mode, write all logs into tmpfile
-    LOGFILE=$(mktemp /tmp/docker.build.XXXXXXXXXX)
+    LOGFILE="$(mktemp /tmp/docker.build.XXXXXXXXXX)"
     docker build $DOCKER_OPTS -t "${CONTAINER_NAME}:${CONTAINER_TAG}" . &> "$LOGFILE"
     DOCKER_BUILD_RET="$?"
 else

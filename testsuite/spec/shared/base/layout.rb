@@ -1,43 +1,135 @@
 shared_examples 'base::layout' do
-    it "includes the /opt/docker/bin files" do
-        expect(file("/opt/docker")).to be_directory
-        expect(file("/opt/docker/bin")).to be_directory
-        expect(file("/opt/docker/bin/service.d")).to be_directory
+    #########################
+    ## Directories
+    #########################
+    [
+        "/opt/",
+        "/opt/docker",
+        "/opt/docker/bin",
+        "/opt/docker/bin/service.d",
+        "/opt/docker/etc",
+        "/opt/docker/etc/logrotate.d",
+        "/opt/docker/etc/supervisor.d",
+        "/opt/docker/etc/syslog-ng",
+        "/opt/docker/provision/roles",
+        "/opt/docker/provision/roles",
+        "/opt/docker/provision/roles/webdevops-base",
+        "/opt/docker/provision/roles/webdevops-cleanup",
+        "/opt/docker/provision/entrypoint.d",
+        "/opt/docker/provision/onbuild.d",
+        "/opt/docker/provision/bootstrap.d",
+    ].each do |file|
+        describe file("#{file}") do
+            # Type check
+            it { should be_directory }
 
-        expect(file("/opt/docker/bin/bootstrap.sh")).to be_executable
-        expect(file("/opt/docker/bin/config.sh")).to be_executable
-        expect(file("/opt/docker/bin/control.sh")).to be_executable
-        expect(file("/opt/docker/bin/entrypoint.sh")).to be_executable
-        expect(file("/opt/docker/bin/logwatch.sh")).to be_executable
-        expect(file("/opt/docker/bin/provision.sh")).to be_executable
+            # Owner test
+            it { should be_owned_by 'root' }
+            it { should be_grouped_into 'root' }
+
+            # Read test
+            it { should be_readable.by('owner') }
+            it { should be_readable.by('group') }
+            it { should be_readable.by('others') }
+
+            # Write test
+            it { should be_writable.by('owner') }
+            it { should_not be_writable.by('group') }
+            it { should_not be_writable.by('others') }
+
+            # Exectuable test
+            it { should be_executable.by('owner') }
+            it { should be_executable.by('group') }
+            it { should be_executable.by('others') }
+        end
     end
 
-    it "includes the /opt/docker/etc files" do
-        expect(file("/opt/docker/etc")).to be_directory
-        expect(file("/opt/docker/etc/logrotate.d")).to be_directory
-        expect(file("/opt/docker/etc/supervisor.d")).to be_directory
-        expect(file("/opt/docker/etc/syslog-ng")).to be_directory
+    #########################
+    ## Files
+    #########################
+    [
+        "/opt/docker/etc/supervisor.conf",
+        "/opt/docker/etc/logrotate.d/syslog-ng",
+        "/opt/docker/etc/supervisor.d/cron.conf",
+        "/opt/docker/etc/supervisor.d/dnsmasq.conf",
+        "/opt/docker/etc/supervisor.d/postfix.conf",
+        "/opt/docker/etc/supervisor.d/ssh.conf",
+        "/opt/docker/etc/supervisor.d/syslog-ng.conf",
+        "/opt/docker/etc/syslog-ng/syslog-ng.conf",
+        "/opt/docker/etc/supervisor.conf",
+        "/opt/docker/etc/logrotate.d/syslog-ng",
+    ].each do |file|
+        describe file("#{file}") do
+            # Type check
+            it { should be_file }
 
-        expect(file("/opt/docker/etc/supervisor.conf")).to be_file
-        expect(file("/opt/docker/etc/logrotate.d/syslog-ng")).to be_file
-        expect(file("/opt/docker/etc/supervisor.d/cron.conf")).to be_file
-        expect(file("/opt/docker/etc/supervisor.d/dnsmasq.conf")).to be_file
-        expect(file("/opt/docker/etc/supervisor.d/postfix.conf")).to be_file
-        expect(file("/opt/docker/etc/supervisor.d/ssh.conf")).to be_file
-        expect(file("/opt/docker/etc/supervisor.d/syslog-ng.conf")).to be_file
-        expect(file("/opt/docker/etc/syslog-ng/syslog-ng.conf")).to be_file
+            # Owner test
+            it { should be_owned_by 'root' }
+            it { should be_grouped_into 'root' }
+
+            # Read test
+            it { should be_readable.by('owner') }
+            it { should be_readable.by('group') }
+            it { should be_readable.by('others') }
+
+            # Write test
+            it { should be_writable.by('owner') }
+            it { should_not be_writable.by('group') }
+            it { should_not be_writable.by('others') }
+
+            # Exectuable test
+            it { should_not be_executable.by('owner') }
+            it { should_not be_executable.by('group') }
+            it { should_not be_executable.by('others') }
+        end
     end
 
-    it "includes the /opt/docker/provision files" do
-        expect(file("/opt/docker/provision/roles")).to be_directory
-        expect(file("/opt/docker/provision/roles")).to be_directory
-        expect(file("/opt/docker/provision/roles/webdevops-base")).to be_directory
-        expect(file("/opt/docker/provision/roles/webdevops-cleanup")).to be_directory
-        expect(file("/opt/docker/provision/entrypoint.d")).to be_directory
-        expect(file("/opt/docker/provision/onbuild.d")).to be_directory
-        expect(file("/opt/docker/provision/bootstrap.d")).to be_directory
+    #########################
+    ## Scripts
+    #########################
+    [
+        "/opt/docker/bin/bootstrap.sh",
+        "/opt/docker/bin/config.sh",
+        "/opt/docker/bin/control.sh",
+        "/opt/docker/bin/entrypoint.sh",
+        "/opt/docker/bin/logwatch.sh",
+        "/opt/docker/bin/provision.sh",
+        "/opt/docker/bin/service.d/dnsmasq.sh",
+        "/opt/docker/bin/service.d/postfix.sh",
+        "/opt/docker/bin/service.d/syslog-ng.sh",
+        "/opt/docker/bin/entrypoint.d/cli.sh",
+        "/opt/docker/bin/entrypoint.d/default.sh",
+        "/opt/docker/bin/entrypoint.d/noop.sh",
+        "/opt/docker/bin/entrypoint.d/root.sh",
+        "/opt/docker/bin/entrypoint.d/supervisord.sh",
+    ].each do |file|
+        describe file("#{file}") do
+            # Type check
+            it { should be_file }
+            it { should be_executable }
 
-        expect(file("/opt/docker/etc/supervisor.conf")).to be_file
-        expect(file("/opt/docker/etc/logrotate.d/syslog-ng")).to be_file
+            # Owner test
+            it { should be_owned_by 'root' }
+            it { should be_grouped_into 'root' }
+
+            # Owner test
+            it { should be_owned_by 'root' }
+            it { should be_grouped_into 'root' }
+
+            # Read test
+            it { should be_readable.by('owner') }
+            it { should be_readable.by('group') }
+            it { should be_readable.by('others') }
+
+            # Write test
+            it { should be_writable.by('owner') }
+            it { should_not be_writable.by('group') }
+            it { should_not be_writable.by('others') }
+
+            # Exectuable test
+            it { should be_executable.by('owner') }
+            it { should be_executable.by('group') }
+            it { should be_executable.by('others') }
+        end
     end
 end

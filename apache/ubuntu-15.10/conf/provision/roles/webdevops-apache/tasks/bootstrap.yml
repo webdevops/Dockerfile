@@ -46,7 +46,7 @@
   with_items:
    - 'a2dismod mpm_event'
    - 'a2enmod mpm_event'
-  when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_lsb.major_release|int >= 8)
+  when: (ansible_distribution == 'Ubuntu' and ansible_lsb.major_release|int >= 14) or (ansible_distribution == 'Debian' and ansible_lsb.major_release|int >= 8)
 
 - name: Fix rights of ssl files
   file:

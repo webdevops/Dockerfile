@@ -6,7 +6,7 @@ FROM webdevops/base:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.17.0
+LABEL io.webdevops.version=0.18.0
 
 ENV FTP_USER     application
 ENV FTP_PASSWORD application
@@ -18,7 +18,7 @@ ENV FTP_PATH     /data/ftp/
 # Install vsftp
 RUN /usr/local/bin/apt-install \
         vsftpd \
-    && ln -sf /opt/docker/etc/vsftpd.conf /etc/vsftpd.conf \
+    && ln -sf /opt/docker/etc/vsftpd/vsftpd.conf /etc/vsftpd.conf \
     && mkdir -p \
             /var/run/vsftpd/empty \
             /var/log/supervisor

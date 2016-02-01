@@ -1,5 +1,6 @@
 shared_examples 'collection::bootstrap' do
-    include_examples 'base::distribution'
-    include_examples 'base::ansible'
-    include_examples 'base::locales'
+    include_examples 'bootstrap::layout'
+    include_examples 'bootstrap::distribution'
+    include_examples 'bootstrap::ansible'
+    include_examples 'bootstrap::locales'
 end

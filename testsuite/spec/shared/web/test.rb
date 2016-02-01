@@ -1,14 +1,12 @@
 shared_examples 'web::test::pi' do
-    describe command('wget -O- http://localhost/pi-number.html') do
-        its(:stdout) { should     contain('3.14159265359') }
+    [
+        'http://localhost/pi-number.html',
+        'https://localhost/pi-number.html'
+    ].each do |url|
+        describe command("curl --insecure #{url}") do
+            its(:stdout) { should     contain('3.14159265359') }
 
-        its(:exit_status) { should eq 0 }
-    end
-
-    describe command('curl --insecure https://localhost/pi-number.html') do
-        its(:stdout) { should     contain('3.14159265359') }
-
-        its(:exit_status) { should eq 0 }
+            its(:exit_status) { should eq 0 }
+        end
     end
 end
-

@@ -6,7 +6,7 @@ FROM ubuntu:12.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.17.0
+LABEL io.webdevops.version=0.18.0
 
 # Ensure UTF-8
 RUN locale-gen en_US.UTF-8
@@ -19,6 +19,11 @@ ADD scripts.tar ./
 # Init bootstrap (and install ansible)
 RUN export DEBIAN_FRONTEND=noninteractive \
     && set -x \
+    # Add multiverse
+    && echo "deb http://archive.ubuntu.com/ubuntu/ precise-security multiverse" >> /etc/apt/sources.list \
+    && echo "deb-src http://archive.ubuntu.com/ubuntu/ precise-security multiverse" >> /etc/apt/sources.list \
+    && echo "deb http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
+    && echo "deb-src http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
     # Fix root terminal
     && echo "export TERM=xterm" >> /root/.bashrc \
     # System update

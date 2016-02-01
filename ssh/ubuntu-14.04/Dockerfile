@@ -6,7 +6,7 @@ FROM webdevops/base:ubuntu-14.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.17.0
+LABEL io.webdevops.version=0.18.0
 
 RUN mkdir -p /var/run/sshd \
     &&  bash /opt/docker/bin/control.sh service.enable ssh

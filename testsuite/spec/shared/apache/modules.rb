@@ -25,7 +25,7 @@ shared_examples 'apache::modules' do
         its(:stdout) { should contain('status_module') }
 
         ## mpm module
-        if os[:family] == 'debian' and os[:version] == '7'
+        if (os[:family] == 'debian' and os[:version] == '7') or (os[:family] == 'ubuntu' and os[:version] == '12.04')
             its(:stdout) { should contain('mpm_worker_module') }
         else
             its(:stdout) { should contain('mpm_event_module') }

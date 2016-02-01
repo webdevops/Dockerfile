@@ -1,0 +1,4 @@
+---
+
+MAILBOX_USERNAME:  "{{ lookup('env','MAILBOX_USERNAME') }}"
+MAILBOX_PASSWORD:  "{{ lookup('env','MAILBOX_PASSWORD')| password_hash('sha256') }}"

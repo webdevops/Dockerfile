@@ -6,7 +6,7 @@ FROM webdevops/base:debian-8
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.17.0
+LABEL io.webdevops.version=0.18.0
 
 # Install dotdeb
 RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list \

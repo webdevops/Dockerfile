@@ -52,17 +52,45 @@ source "${WORKDIR}/.bin/functions.sh"
  #
  ##
 function buildDockerfile() {
-    DOCKERFILE_PATH="$1"
-    CONTAINER_NAME="$2"
-    CONTAINER_TAG="$3"
+    local DOCKERFILE_PATH="$1"
+    local CONTAINER_NAME="$2"
+    local CONTAINER_TAG="$3"
 
     echo ">> Starting build of ${CONTAINER_NAME}:${CONTAINER_TAG}"
 
     if [ "${FAST}" -eq 1 ]; then
-        bash "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}" &
+        RETRY_COUNT=3 "${WORKDIR}/.bin/retry.sh" "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}" &
         addBackgroundPidToList "${CONTAINER_TAG}"
     else
-        bash "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}"
+        RETRY_COUNT=3 "${WORKDIR}/.bin/retry.sh" "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}"
+    fi
+
+    cd "$WORKDIR"
+}
+
+###
+ # Push dockerfile
+ #
+ # will push one docker container, background mode if FAST mode is active
+ #
+ # $1 -> dockerfile path       (php/)
+ # $2 -> docker container name (eg. webdevops/php)
+ # $3 -> docker container tag  (eg. ubuntu-14.04)
+ #
+ ##
+function pushDockerfile() {
+    local DOCKERFILE_PATH="$1"
+    local CONTAINER_NAME="$2"
+    local CONTAINER_TAG="$3"
+
+    echo ">> Starting push of ${CONTAINER_NAME}:${CONTAINER_TAG}"
+
+    if [ "${FAST}" -eq 1 ]; then
+        LOGFILE="$(mktemp /tmp/docker.push.XXXXXXXXXX)"
+        "${WORKDIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}" > "$LOGFILE" &
+        addBackgroundPidToList "${CONTAINER_TAG}" "$LOGFILE"
+    else
+        "${WORKDIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}"
     fi
 
     cd "$WORKDIR"
@@ -93,6 +121,55 @@ function waitForBuildStep() {
         waitForBackgroundProcesses
         wait
     fi
+}
+
+###
+ # Run build task
+ #
+ ##
+function buildTarget() {
+    case "$BUILD_MODE" in
+        build)
+            buildDockerfile "${DOCKERFILE_PATH}" "${BASENAME}" "${TAGNAME}"
+            sleep 0.05
+            ;;
+
+        push)
+            ## Fast not allowed :(
+            FAST=0 pushDockerfile "${DOCKERFILE_PATH}" "${BASENAME}" "${TAGNAME}"
+            sleep 0.05
+            ;;
+    esac
+}
+
+###
+ # Run build task for latest container
+ #
+ ##
+function buildTargetLatest() {
+    TAGNAME="latest"
+
+    buildTarget
+}
+
+###
+ # Check if docker image is available
+ ##
+function checkBuild() {
+    if [[ -n "$(docker images -q "${BASENAME}:${TAGNAME}" 2> /dev/null)" ]]; then
+        echo " -> Image ${BASENAME}:${TAGNAME} found"
+    else
+        echo " [ERROR] Docker image '${BASENAME}:${TAGNAME}' not found, build failure!"
+        exit 1;
+    fi
+}
+
+###
+ # Check if docker image is available (latest image)
+ ##
+function checkBuildLatest() {
+    TAGNAME="latest"
+    checkBuild
 }
 
 
@@ -133,31 +210,15 @@ bash "${WORKDIR}/.bin/provision.sh" "$TARGET"
 echo ""
 
 #############################
-# Docker build
+# Main
 #############################
 
+## Init
 
 initPidList
 timerStart
 
-function buildTarget() {
-    case "$BUILD_MODE" in
-        build)
-            buildDockerfile "${DOCKERFILE_PATH}" "${BASENAME}" "${TAGNAME}"
-            sleep 0.05
-            ;;
-
-        push)
-            retry dockerPushImage "${BASENAME}" "${TAGNAME}"
-            ;;
-    esac
-}
-
-function buildTargetLatest() {
-    TAGNAME="latest"
-
-    buildTarget
-}
+## Build image
 
 echo "Building ${BASENAME}"
 ## Build each docker tag
@@ -172,8 +233,14 @@ foreachDockerfileInPath "${TARGET}" "buildTargetLatest" "${LATEST}"
 # wait for final build
 waitForBuild
 
-echo ""
-echo ">>> Build time: $(timerStep)"
+logOutputFromBackgroundProcesses
+
+## Check builds
+
+echo ">> Checking built images"
+foreachDockerfileInPath "${TARGET}" "checkBuild"
+foreachDockerfileInPath "${TARGET}" "checkBuildLatest" "${LATEST}"
 
 echo ""
+echo ">>> Build time: $(timerStep)"
 echo ""

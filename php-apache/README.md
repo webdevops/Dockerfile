@@ -29,15 +29,6 @@ File                                                | Description
 `/opt/docker/etc/php/fpm/php-fpm.conf`              | PHP FPM daemon configuration
 `/opt/docker/etc/php/fpm/pool.d/application.conf`   | PHP FPM pool configuration
 
-
-The whole docker directroy is deployed into `/opt/docker/`.
-
-File                                                   | Description
------------------------------------------------------- | ------------------------------------------------------------------------------
-
-
-
-
 ## Environment variables
 
 Variable              | Description
