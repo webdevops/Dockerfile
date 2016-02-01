@@ -6,7 +6,7 @@ FROM webdevops/php-nginx:ubuntu-14.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.17.0
+LABEL io.webdevops.version=0.18.0
 
 ENV WEB_DOCUMENT_ROOT  /application/code/piwik/
 ENV PIWIK_URL          http://example.com/

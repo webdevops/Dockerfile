@@ -6,7 +6,7 @@ FROM webdevops/base:debian-8
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.17.0
+LABEL io.webdevops.version=0.18.0
 
 # Install tools
 RUN /usr/local/bin/apt-install \
