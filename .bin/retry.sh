@@ -16,11 +16,11 @@ retry() {
     until [[ "$n" -ge "$RETRY_COUNT" ]]; do
         RETURN_CODE="0"
         "$@" && break || {
-            ((n++))
             echo ""
             echo " [WARNING] Command failed. Attempt $n/$RETRY_COUNT:"
             echo ""
             echo ""
+            ((n++))
             RETURN_CODE=1
             sleep 1;
         }
