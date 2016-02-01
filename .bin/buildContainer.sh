@@ -28,6 +28,8 @@ if [ "$FORCE" -eq 1 ]; then
     DOCKER_OPTS="$DOCKER_OPTS --no-cache"
 fi
 
+# Prevent pull of parent docker images
+DOCKER_OPTS="$DOCKER_OPTS --pull=false"
 
 cd "$DOCKERFILE_PATH"
 
