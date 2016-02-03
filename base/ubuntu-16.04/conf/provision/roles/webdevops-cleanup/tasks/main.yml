@@ -1,0 +1,7 @@
+---
+
+- include: cleanup.yml
+  tags:
+    - bootstrap
+    - onbuild
+    - entrypoint

@@ -156,6 +156,7 @@ initEnvironment
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -176,6 +177,7 @@ initEnvironment
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -196,6 +198,7 @@ initEnvironment
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"

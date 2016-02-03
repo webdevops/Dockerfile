@@ -1,0 +1,31 @@
+---
+
+- name: Set php main file
+  set_fact:
+     php_main_conf: /etc/php-fpm.conf
+  when: ansible_os_family == 'RedHat'
+
+- name: Set php main file
+  set_fact:
+     php_main_conf: /etc/php5/fpm/php-fpm.conf
+  when: ansible_os_family == 'Debian'
+
+- name: Move php-fpm main file to /opt/docker/etc/php/fpm/
+  command: "mv {{ php_main_conf }} /opt/docker/etc/php/fpm/php-fpm.conf"
+
+- name: Symlink php-fpm main file
+  file:
+    path: "{{ php_main_conf }}"
+    src:  "/opt/docker/etc/php/fpm/php-fpm.conf"
+    state: link
+    owner: "root"
+    group: "root"
+
+- name: Configure php-fpm main
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/php-fpm.conf'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: 'error_log', value: "/var/log/php5-fpm/fpm.log" }
+   - { key: 'pid',       value: "/var/run/php5-fpm.pid" }
