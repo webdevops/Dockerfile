@@ -6,6 +6,8 @@ Container                           | Distribution name        | PHP Version
 `webdevops/php:ubuntu-14.04`        | trusty (LTS)             | PHP 5.5
 `webdevops/php:ubuntu-15.04`        | vivid                    | PHP 5.6
 `webdevops/php:ubuntu-15.10`        | wily                     | PHP 5.6
+`webdevops/php:ubuntu-16.04`        | xenial (LTS)             | PHP 5.6
+`webdevops/php:ubuntu-16.04-php7`   | xenial (LTS)             | PHP 7.0
 `webdevops/php:debian-7`            | wheezy                   | PHP 5.4
 `webdevops/php:debian-8`            | jessie                   | PHP 5.6
 `webdevops/php:debian-8-php7`       | jessie with dotdeb       | PHP 7.x (via dotdeb)
