@@ -220,6 +220,7 @@ initEnvironment
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -227,6 +228,10 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+
+    setEnvironmentOsFamily "ubuntu"
+    setSpecTest "php7"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04-php7"
 
     setEnvironmentOsFamily "debian"
     setSpecTest "php7"
@@ -240,10 +245,11 @@ initEnvironment
 [[ $(checkTestTarget apache) ]] && {
     setupTestEnvironment "apache"
 
-    #OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -264,6 +270,7 @@ initEnvironment
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -285,6 +292,7 @@ initEnvironment
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -292,6 +300,10 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+
+    setEnvironmentOsFamily "ubuntu"
+    setSpecTest "php7-apache"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04-php7"
 
     setEnvironmentOsFamily "debian"
     setSpecTest "php7-apache"
@@ -310,6 +322,7 @@ initEnvironment
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -317,6 +330,10 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+
+    setEnvironmentOsFamily "ubuntu"
+    setSpecTest "php7-nginx"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04-php7"
 
     setEnvironmentOsFamily "debian"
     setSpecTest "php7-nginx"
