@@ -10,6 +10,10 @@ LABEL io.webdevops.version=0.18.0
 
 # Deploy scripts/configurations
 COPY . /opt/docker/
-RUN bash /opt/docker/bin/bootstrap.sh
+RUN mkdir /storage/ \
+    && chmod 777 /storage/ \
+    && bash /opt/docker/bin/bootstrap.sh
+
+VOLUME "/storage"
 
 CMD ["noop"]
