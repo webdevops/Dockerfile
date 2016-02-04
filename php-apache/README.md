@@ -1,15 +1,17 @@
 # PHP with Apache container layout
 
-Container                             | Distribution name        | PHP Version                                                               
-------------------------------------- | -----------------------------------------
-`webdevops/php-apache:ubuntu-12.04`   | precise                  | PHP 5.3
-`webdevops/php-apache:ubuntu-14.04`   | trusty (LTS)             | PHP 5.5
-`webdevops/php-apache:ubuntu-15.04`   | vivid                    | PHP 5.6
-`webdevops/php-apache:ubuntu-15.10`   | wily                     | PHP 5.6
-`webdevops/php-apache:debian-7`       | wheezy                   | PHP 5.4
-`webdevops/php-apache:debian-8`       | jessie                   | PHP 5.6
-`webdevops/php-apache:debian-8-php7`  | jessie with dotdeb       | PHP 7.x (via dotdeb)
-`webdevops/php-apache:centos-7`       |                          | PHP 5.4
+Container                                | Distribution name        | PHP Version                                                               
+---------------------------------------- | -----------------------------------------
+`webdevops/php-apache:ubuntu-12.04`      | precise                  | PHP 5.3
+`webdevops/php-apache:ubuntu-14.04`      | trusty (LTS)             | PHP 5.5
+`webdevops/php-apache:ubuntu-15.04`      | vivid                    | PHP 5.6
+`webdevops/php-apache:ubuntu-15.10`      | wily                     | PHP 5.6
+`webdevops/php-apache:ubuntu-16.04`      | xenial (LTS)             | PHP 5.6
+`webdevops/php-apache:ubuntu-16.04-php7` | xenial (LTS)             | PHP 7.0
+`webdevops/php-apache:debian-7`          | wheezy                   | PHP 5.4
+`webdevops/php-apache:debian-8`          | jessie                   | PHP 5.6
+`webdevops/php-apache:debian-8-php7`     | jessie with dotdeb       | PHP 7.x (via dotdeb)
+`webdevops/php-apache:centos-7`          |                          | PHP 5.4
 
 ## Filesystem layout
 
