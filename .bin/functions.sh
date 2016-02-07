@@ -83,6 +83,8 @@ addBackgroundPidToList() {
     esac
 }
 
+
+ALWAYS_SHOW_LOGS=0
 waitForBackgroundProcesses() {
     local WAIT_BG_RETURN=0
 
@@ -131,6 +133,10 @@ waitForBackgroundProcesses() {
 
     done
 
+    if [[ "$ALWAYS_SHOW_LOGS" -eq 1 ]]; then
+        logOutputFromBackgroundProcesses
+    fi
+
     initPidList
 }
 
@@ -147,7 +153,9 @@ logOutputFromBackgroundProcesses() {
         title="${PID_LOG_TITLE[$pid]}"
         log="${PID_LOG_FILE[$pid]}"
 
-        sed -e "s/^/\[log:$title\] /" -- "$log"
+        echo "$title"
+
+        cat "$log"
         rm -f -- "$log"
 
         unset PID_LOG_TITLE[$pid]

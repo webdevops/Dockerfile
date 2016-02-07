@@ -10,6 +10,10 @@ if [ -z "$DOCKER_PULL" ]; then
     DOCKER_PULL=0
 fi
 
+if [ -z "$FAST" ]; then
+    FAST=1
+fi
+
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
@@ -29,6 +33,8 @@ READLINK='readlink'
 SCRIPT_DIR=$(dirname $($READLINK -f "$0"))
 BASE_DIR=$(dirname "$SCRIPT_DIR")
 COLUMNS=$(tput cols)
+
+source "${BASE_DIR}/.bin/functions.sh"
 
 cd "$SCRIPT_DIR"
 
@@ -70,26 +76,46 @@ function runTestForTag() {
     DOCKER_TAG="$1"
     DOCKER_IMAGE_WITH_TAG="${DOCKER_IMAGE}:${DOCKER_TAG}"
 
-    echo ">> Testing '$DOCKER_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]"
-
     if [ "$DOCKER_PULL" -eq 1 ]; then
         echo " * Pulling $DOCKER_IMAGE_WITH_TAG from Docker hub ..."
         docker pull "$DOCKER_IMAGE_WITH_TAG"
     fi
 
     ## Build Dockerfile
-    echo "# Temporary dockerfile for test run
-FROM $DOCKER_IMAGE_WITH_TAG
+    echo "FROM $DOCKER_IMAGE_WITH_TAG
 COPY conf/ /
-    " > "${SCRIPT_DIR}/Dockerfile"
+    " > Dockerfile
+
+    DOCKERFILE_TAR="docker.test.${DOCKER_IMAGE//\//-}-${DOCKER_TAG}.tar"
+
+    # Build tar from dockerfile
+    tar cf "$DOCKERFILE_TAR" "Dockerfile" "conf/"
+    rm -f "${SCRIPT_DIR}/Dockerfile"
 
     # Check if docker image is available, but don't count as real test
     OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "spec/image.rb" > /dev/null
 
-    # Run testsuite for docker image
-    OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH"
+    if [ "${FAST}" -eq 1 ]; then
+        LOGFILE="$(mktemp /tmp/docker.test.XXXXXXXXXX)"
 
-    rm -f "${SCRIPT_DIR}/Dockerfile"
+        echo ">> Starting test of ${DOCKER_IMAGE_WITH_TAG}"
+
+        # Run testsuite for docker image
+        DOCKERFILE="$DOCKERFILE_TAR" OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH" > $LOGFILE &
+
+        addBackgroundPidToList ">> Testing '$DOCKER_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]" "$LOGFILE"
+    else
+        echo ">> Testing '$DOCKER_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]"
+
+        # Run testsuite for docker image
+        DOCKERFILE="$DOCKERFILE_TAR" OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH"
+    fi
+}
+
+function waitForTestRun() {
+    if [ "${FAST}" -eq 1 ]; then
+        ALWAYS_SHOW_LOGS=1 waitForBackgroundProcesses
+    fi
 }
 
 ###
@@ -164,6 +190,8 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+
+    waitForTestRun
 }
 
 #######################################
@@ -185,6 +213,8 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+
+    waitForTestRun
 }
 
 #######################################
@@ -206,6 +236,8 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+
+    waitForTestRun
 }
 
 #######################################
@@ -236,6 +268,8 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     setSpecTest "php7"
     OS_VERSION="8" runTestForTag "debian-8-php7"
+
+    waitForTestRun
 }
 
 #######################################
@@ -278,6 +312,8 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+
+    waitForTestRun
 }
 
 #######################################
@@ -308,6 +344,8 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     setSpecTest "php7-apache"
     OS_VERSION="8" runTestForTag "debian-8-php7"
+
+    waitForTestRun
 }
 
 #######################################
@@ -338,6 +376,8 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     setSpecTest "php7-nginx"
     OS_VERSION="8" runTestForTag "debian-8-php7"
+
+    waitForTestRun
 }
 
 #######################################
@@ -347,6 +387,8 @@ initEnvironment
 [[ $(checkTestTarget hhvm) ]] && {
     setupTestEnvironment "hhvm"
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
+
+    waitForTestRun
 }
 
 #######################################
@@ -356,6 +398,8 @@ initEnvironment
 [[ $(checkTestTarget hhvm-apache) ]] && {
     setupTestEnvironment "hhvm-apache"
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
+
+    waitForTestRun
 }
 
 
@@ -366,6 +410,8 @@ initEnvironment
 [[ $(checkTestTarget hhvm-nginx) ]] && {
     setupTestEnvironment "hhvm-nginx"
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
+
+    waitForTestRun
 }
 
 #######################################
@@ -375,6 +421,8 @@ initEnvironment
 [[ $(checkTestTarget postfix) ]] && {
     setupTestEnvironment "postfix"
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
+
+    waitForTestRun
 }
 
 #######################################
@@ -385,6 +433,7 @@ initEnvironment
     setupTestEnvironment "vsftp"
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
+    waitForTestRun
 }
 
 #######################################
@@ -395,6 +444,7 @@ initEnvironment
     setupTestEnvironment "mail-sandbox"
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
+    waitForTestRun
 }
 
 #######################################
@@ -405,7 +455,10 @@ initEnvironment
     setupTestEnvironment "ssh"
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
+    waitForTestRun
 }
+
+rm -f docker.test.*.tar
 
 echo ""
 echo " >>> finished, all tests PASSED <<<"
