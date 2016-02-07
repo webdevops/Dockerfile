@@ -116,6 +116,8 @@ function waitForTestRun() {
     if [ "${FAST}" -eq 1 ]; then
         ALWAYS_SHOW_LOGS=1 waitForBackgroundProcesses
     fi
+
+    rm -f docker.test.*.tar
 }
 
 ###
@@ -291,6 +293,8 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+
+    waitForTestRun
 }
 
 #######################################
@@ -457,8 +461,6 @@ initEnvironment
 
     waitForTestRun
 }
-
-rm -f docker.test.*.tar
 
 echo ""
 echo " >>> finished, all tests PASSED <<<"
