@@ -114,6 +114,7 @@ COPY conf/ /
 
 function waitForTestRun() {
     if [ "${FAST}" -eq 1 ]; then
+        echo " -> waiting for background build process..."
         ALWAYS_SHOW_LOGS=1 waitForBackgroundProcesses
     fi
 
