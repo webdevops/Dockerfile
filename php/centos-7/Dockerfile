@@ -34,6 +34,7 @@ RUN /usr/local/bin/yum-install \
         geoip \
         php-ldap \
         php-memcache \
+        php-pecl-redis \
         ImageMagick \
         ImageMagick-devel \
         ImageMagick-perl \

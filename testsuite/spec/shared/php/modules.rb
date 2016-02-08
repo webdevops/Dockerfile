@@ -68,6 +68,12 @@ shared_examples 'php5::modules' do
         its(:stdout) { should     contain('mhash') }
         its(:stdout) { should     contain('wddx') }
 
+        if (os[:family] == 'ubuntu' and (os[:version] == '12.04' or os[:version] == '16.04') ) or (os[:family] == 'debian' and os[:version] == '7' )
+            its(:stdout) { should_not contain('redis') }
+        else
+            its(:stdout) { should     contain('redis') }
+        end
+
         its(:exit_status) { should eq 0 }
     end
 end
@@ -75,6 +81,7 @@ end
 shared_examples 'php7::modules' do
     describe command('php -m') do
         its(:stdout) { should     contain('Zend OPcache') }
+        its(:stdout) { should     contain('redis') }
 
         its(:exit_status) { should eq 0 }
     end
@@ -150,6 +157,12 @@ shared_examples 'php-fpm5::modules' do
         its(:stdout) { should     contain('mhash') }
         its(:stdout) { should     contain('wddx') }
 
+        if (os[:family] == 'ubuntu' and (os[:version] == '12.04' or os[:version] == '16.04') ) or (os[:family] == 'debian' and os[:version] == '7' )
+            its(:stdout) { should_not contain('redis') }
+        else
+            its(:stdout) { should     contain('redis') }
+        end
+
         its(:exit_status) { should eq 0 }
     end
 end
@@ -157,6 +170,7 @@ end
 shared_examples 'php-fpm7::modules' do
     describe command('wget -O- http://localhost/php-test.php?test=get_loaded_extensions') do
         its(:stdout) { should     contain('Zend OPcache') }
+        its(:stdout) { should     contain('redis') }
 
         its(:exit_status) { should eq 0 }
     end
