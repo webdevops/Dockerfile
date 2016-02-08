@@ -1,0 +1,51 @@
+---
+
+- name: Set php pool file
+  set_fact:
+     php_pool_conf: www.conf
+     php_pool_dir:  /etc/php-fpm.d
+  when: ansible_os_family == 'RedHat'
+
+- name: Set php pool file
+  set_fact:
+     php_pool_conf: www.conf
+     php_pool_dir:  /etc/php5/fpm/pool.d
+  when: ansible_os_family == 'Debian'
+
+- name: Move php-fpm pool directory file to /opt/docker/etc/php/
+  command: "mv {{ php_pool_dir }}  /opt/docker/etc/php/fpm/pool.d"
+
+- name: Rename pool file file to application.conf"
+  command: "mv /opt/docker/etc/php/fpm/pool.d/{{ php_pool_conf }} /opt/docker/etc/php/fpm/pool.d/application.conf"
+
+- name: Symlink php-fpm main file
+  file:
+    path: "{{ php_pool_dir }}"
+    src:  "/opt/docker/etc/php/fpm/pool.d"
+    state: link
+    owner: "root"
+    group: "root"
+
+- name: Configure php-fpm pool user (www.conf)
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: 'listen',                      value: "0.0.0.0:9000" }
+   - { key: 'catch_workers_output',        value: "yes" }
+   - { key: 'access.log',                  value: "/var/log/php5-fpm/access.log" }
+   - { key: 'slowlog',                     value: "/var/log/php5-fpm/slow.log" }
+   - { key: 'php_admin_value[error_log]',  value: "/var/log/php5-fpm/error.log" }
+   - { key: 'php_admin_value[log_errors]', value: "on" }
+   - { key: 'user',                        value: "{{ APPLICATION_USER }}" }
+   - { key: 'group',                       value: "{{ APPLICATION_GROUP }}" }
+
+- name: Disable php-fpm connection limit
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   ';{{ item.key }}'
+  with_items:
+   - { key: 'listen.allowed_clients' }
+

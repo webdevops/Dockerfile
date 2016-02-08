@@ -6,7 +6,7 @@ FROM webdevops/base:centos-7
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.18.0
+LABEL io.webdevops.version=0.19.0
 
 # Install tools
 RUN /usr/local/bin/yum-install \
@@ -34,6 +34,7 @@ RUN /usr/local/bin/yum-install \
         geoip \
         php-ldap \
         php-memcache \
+        php-pecl-redis \
         ImageMagick \
         ImageMagick-devel \
         ImageMagick-perl \

@@ -38,6 +38,7 @@ dist-update:
 	docker pull ubuntu:14.04
 	docker pull ubuntu:15.04
 	docker pull ubuntu:15.10
+	docker pull ubuntu:16.04
 	docker pull debian:7
 	docker pull debian:8
 

@@ -5,6 +5,7 @@
 #FROM webdevops/bootstrap:ubuntu-14.04
 #FROM webdevops/bootstrap:ubuntu-15.04
 #FROM webdevops/bootstrap:ubuntu-15.10
+#FROM webdevops/bootstrap:ubuntu-16.04
 
 #FROM webdevops/base:centos-7
 #FROM webdevops/base:debian-7
@@ -13,6 +14,7 @@
 #FROM webdevops/base:ubuntu-14.04
 #FROM webdevops/base:ubuntu-15.04
 #FROM webdevops/base:ubuntu-15.10
+#FROM webdevops/base:ubuntu-16.04
 
 #FROM webdevops/php:centos-7
 #FROM webdevops/php:debian-7
@@ -22,6 +24,8 @@
 #FROM webdevops/php:ubuntu-14.04
 #FROM webdevops/php:ubuntu-15.04
 #FROM webdevops/php:ubuntu-15.10
+#FROM webdevops/php:ubuntu-16.04
+#FROM webdevops/php:ubuntu-16.04-php7
 
 #FROM webdevops/apache:centos-7
 #FROM webdevops/apache:debian-7
@@ -31,6 +35,7 @@
 #FROM webdevops/apache:ubuntu-14.04
 #FROM webdevops/apache:ubuntu-15.04
 #FROM webdevops/apache:ubuntu-15.10
+#FROM webdevops/apache:ubuntu-16.04
 
 #FROM webdevops/nginx:centos-7
 #FROM webdevops/nginx:debian-7
@@ -40,6 +45,7 @@
 #FROM webdevops/nginx:ubuntu-14.04
 #FROM webdevops/nginx:ubuntu-15.04
 #FROM webdevops/nginx:ubuntu-15.10
+#FROM webdevops/nginx:ubuntu-16.04
 
 #FROM webdevops/php-apache:centos-7
 #FROM webdevops/php-apache:debian-7
@@ -49,6 +55,8 @@
 #FROM webdevops/php-apache:ubuntu-14.04
 #FROM webdevops/php-apache:ubuntu-15.04
 #FROM webdevops/php-apache:ubuntu-15.10
+#FROM webdevops/php-apache:ubuntu-16.04
+#FROM webdevops/php-apache:ubuntu-16.04-php7
 
 #FROM webdevops/php-nginx:centos-7
 #FROM webdevops/php-nginx:debian-7
@@ -58,6 +66,8 @@
 #FROM webdevops/php-nginx:ubuntu-14.04
 #FROM webdevops/php-nginx:ubuntu-15.04
 #FROM webdevops/php-nginx:ubuntu-15.10
+#FROM webdevops/php-nginx:ubuntu-16.04
+#FROM webdevops/php-nginx:ubuntu-16.04-php7
 
 #FROM webdevops/hhvm
 #FROM webdevops/hhvm-apache

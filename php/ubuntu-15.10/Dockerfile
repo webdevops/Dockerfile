@@ -6,7 +6,7 @@ FROM webdevops/base:ubuntu-15.10
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.18.0
+LABEL io.webdevops.version=0.19.0
 
 # Install tools
 RUN /usr/local/bin/apt-install \
@@ -33,6 +33,7 @@ RUN /usr/local/bin/apt-install \
         php5-memcache \
         php5-memcached \
         php5-imagick \
+        php5-redis \
         php-pear \
     && pear channel-update pear.php.net \
     && pear upgrade-all \

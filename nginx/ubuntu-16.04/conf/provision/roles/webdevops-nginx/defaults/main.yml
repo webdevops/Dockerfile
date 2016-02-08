@@ -1,0 +1,18 @@
+---
+
+APPLICATION_USER:  "{{ lookup('env','APPLICATION_USER') }}"
+APPLICATION_GROUP: "{{ lookup('env','APPLICATION_GROUP') }}"
+DOCUMENT_ROOT:     "{{ lookup('env','WEB_DOCUMENT_ROOT') }}"
+
+NGINX_VARS:
+  - variable: DOCUMENT_INDEX
+    value:    "{{ lookup('env','WEB_DOCUMENT_INDEX') }}"
+
+  - variable: DOCUMENT_ROOT
+    value:    "{{ lookup('env','WEB_DOCUMENT_ROOT') }}"
+
+  - variable: ALIAS_DOMAIN
+    value:    "{{ lookup('env','WEB_ALIAS_DOMAIN') }}"
+
+  - variable: SERVERNAME
+    value:    "{{ ansible_nodename }}"

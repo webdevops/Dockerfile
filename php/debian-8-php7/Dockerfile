@@ -6,7 +6,7 @@ FROM webdevops/base:debian-8
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.18.0
+LABEL io.webdevops.version=0.19.0
 
 # Install dotdeb
 RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list \
@@ -34,6 +34,7 @@ RUN /usr/local/bin/apt-install \
         php7.0-xmlrpc \
         php7.0-xsl \
         php7.0-bz2 \
+        php7.0-redis \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
 # Deploy scripts/configurations

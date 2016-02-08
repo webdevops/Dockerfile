@@ -2,7 +2,7 @@ FROM zendesk/samson
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.18.0
+LABEL io.webdevops.version=0.19.0
 
 ENV PATH             /opt/ansible/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin/:/app/bin/:/opt/deployment
 ENV PYTHONPATH       /opt/ansible/lib

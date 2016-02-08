@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe "Dockerfile" do
     before(:all) do
-        image = Docker::Image.build_from_dir('.')
+        image = Docker::Image.build_from_tar(File.new(ENV['DOCKERFILE'], 'r'))
         set :docker_image, image.id
     end
 

@@ -243,8 +243,9 @@ function header() {
     deployConfiguration php/general       php  '*'
     deployConfiguration php/ubuntu-12.04  php  'ubuntu-12.04'
 
+    # deploy php7 configuration to *-php7 containers
     clearConfiguration  php  'debian-*-php7'
-    deployConfiguration php/debian-php7  php  'debian-*-php7'
+    deployConfiguration php/php7          php  '*-php7'
 }
 
 ## Build php-apache
