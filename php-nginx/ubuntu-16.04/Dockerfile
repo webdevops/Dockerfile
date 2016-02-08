@@ -6,7 +6,7 @@ FROM webdevops/php:ubuntu-16.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.18.0
+LABEL io.webdevops.version=0.19.0
 
 ENV WEB_DOCUMENT_ROOT  /application/code/
 ENV WEB_DOCUMENT_INDEX index.php
