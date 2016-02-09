@@ -104,6 +104,7 @@ COPY conf/ /
         DOCKERFILE="$DOCKERFILE_TAR" OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH" > $LOGFILE &
 
         addBackgroundPidToList "Test '$DOCKER_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]" "$LOGFILE"
+        sleep 5
     else
         echo ">> Testing '$DOCKER_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]"
 
@@ -257,6 +258,8 @@ initEnvironment
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
     OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
 
+    waitForTestRun
+
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
 
@@ -335,6 +338,8 @@ initEnvironment
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
     OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
 
+    waitForTestRun
+
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
 
@@ -366,6 +371,8 @@ initEnvironment
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
     OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+
+    waitForTestRun
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
