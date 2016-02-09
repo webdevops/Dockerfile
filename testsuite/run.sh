@@ -11,7 +11,7 @@ if [ -z "$DOCKER_PULL" ]; then
 fi
 
 if [ -z "$FAST" ]; then
-    FAST=0
+    FAST=1
 fi
 
 set -o pipefail  # trace ERR through pipes
