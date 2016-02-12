@@ -90,7 +90,7 @@ function listDirectoriesWithFilter() {
 #######################################
 
 ###
- # Build configuration
+ # Build localscripts
  #
  # Build tar file from _localscripts for bootstrap containers
  #
@@ -101,15 +101,24 @@ function buildLocalscripts() {
     cd "${LOCALSCRIPT_DIR}"
     rm -f scripts.tar
     $TAR -jmc --owner=0 --group=0 -f scripts.tar *
+}
 
-    listDirectories "$BASE_DIR/bootstrap"  | while read DOCKER_DIR; do
+###
+ # Deploy localscripts
+ #
+ # Copy tar to various containers
+ #
+ ##
+function deployLocalscripts() {
+    DOCKER_CONTAINER="$1"
+    DOCKER_FILTER="$2"
+
+    listDirectoriesWithFilter "${BASE_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}"  | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
             cp scripts.tar "${DOCKER_DIR}/scripts.tar"
         fi
     done
-
-    rm -f scripts.tar
 }
 
 #######################################
@@ -186,6 +195,12 @@ function header() {
 [[ $(checkBuildTarget bootstrap) ]] && {
     header "bootstrap"
     buildLocalscripts
+    deployLocalscripts bootstrap          '*'
+
+    # Samson
+    deployLocalscripts samson-deployment  '*'
+
+    rm -f scripts.tar
 }
 
 ## Build base
@@ -299,6 +314,22 @@ function header() {
     header "piwik"
     clearConfiguration  piwik  '*'
     deployConfiguration piwik/general piwik '*'
+}
+
+## Build samson-deployment
+[[ $(checkBuildTarget samson-deployment) ]] && {
+    header "samson-deployment"
+
+    # Bootstrap
+    buildLocalscripts
+    deployLocalscripts samson-deployment  '*'
+    rm -f scripts.tar
+
+    # Base
+    deployConfiguration base/general        samson-deployment 'latest'
+
+    # Samson deployment
+    deployConfiguration samson-deployment/general        samson-deployment 'latest'
 }
 
 exit 0
