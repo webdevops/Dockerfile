@@ -21,6 +21,12 @@ MKTEMP='mktemp'
 	}
 }
 
+
+if [[ "$RETRY_COUNT" -le 1 ]]; then
+    exec "$@"
+fi
+
+
 LOGFILE="$($MKTEMP --tmpdir retry.XXXXXXXXXX)"
 
 exec 1>"$LOGFILE" 2>&1
