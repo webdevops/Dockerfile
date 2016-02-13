@@ -1,0 +1,9 @@
+---
+
+- include: bootstrap/misc.yml
+- include: bootstrap/user.yml
+- include: bootstrap/supervisor.yml
+- include: bootstrap/dnsmasq.yml
+- include: bootstrap/postfix.yml
+- include: bootstrap/syslog-ng.yml
+- include: bootstrap/logrotate.yml

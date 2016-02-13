@@ -92,7 +92,7 @@ end
 ###########################################################
 
 shared_examples 'php-fpm::modules' do
-    describe command('wget -O- http://localhost/php-test.php?test=get_loaded_extensions') do
+    describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
         its(:stdout) { should_not contain('xdebug') }
         its(:stdout) { should_not contain('apc') }
 
@@ -152,7 +152,7 @@ shared_examples 'php-fpm::modules' do
 end
 
 shared_examples 'php-fpm5::modules' do
-    describe command('wget -O- http://localhost/php-test.php?test=get_loaded_extensions') do
+    describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
         its(:stdout) { should     contain('shmop') }
         its(:stdout) { should     contain('mhash') }
         its(:stdout) { should     contain('wddx') }
@@ -168,7 +168,7 @@ shared_examples 'php-fpm5::modules' do
 end
 
 shared_examples 'php-fpm7::modules' do
-    describe command('wget -O- http://localhost/php-test.php?test=get_loaded_extensions') do
+    describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
         its(:stdout) { should     contain('Zend OPcache') }
         its(:stdout) { should     contain('redis') }
 

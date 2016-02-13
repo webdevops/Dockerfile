@@ -7,6 +7,9 @@ shared_examples 'collection::apache' do
     # test after services are up
     include_examples 'apache::modules'
     include_examples 'apache::service::running'
-    include_examples 'web::test::pi'
+
+    wait_retry 30 do
+        include_examples 'web::test::pi'
+    end
 end
 

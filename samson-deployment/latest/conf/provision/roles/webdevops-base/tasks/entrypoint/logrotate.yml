@@ -1,0 +1,10 @@
+---
+
+- name: Register logrotate configurations
+  file:
+    src:  '{{ item }}'
+    dest: '/etc/logrotate.d/{{ item | basename }}'
+    state: link
+    force: yes
+  with_fileglob:
+    - /opt/docker/etc/logrotate.d/*

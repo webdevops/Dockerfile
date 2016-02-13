@@ -34,7 +34,7 @@ shared_examples 'php::fpm::test::sha1' do
         'http://localhost/php-test.php?test=sha1',
         'https://localhost/php-test.php?test=sha1'
     ].each do |url|
-        describe command("curl --insecure #{url}") do
+        describe command("curl --insecure --silent --retry 10 --fail #{url}") do
             its(:stdout) { should_not contain('PHP Notice') }
             its(:stdout) { should_not contain('Notice') }
             its(:stdout) { should_not contain('PHP Warning') }
@@ -54,7 +54,7 @@ shared_examples 'php::fpm::test::php_sapi_name' do
         'http://localhost/php-test.php?test=php_sapi_name',
         'https://localhost/php-test.php?test=php_sapi_name'
     ].each do |url|
-        describe command("curl --insecure #{url}") do
+        describe command("curl --insecure --silent --retry 10 --fail #{url}") do
             its(:stdout) { should_not contain('PHP Notice') }
             its(:stdout) { should_not contain('Notice') }
             its(:stdout) { should_not contain('PHP Warning') }
@@ -75,7 +75,7 @@ shared_examples 'php::fpm::test::php_ini_scanned_files' do
         'http://localhost/php-test.php?test=php_ini_scanned_files',
         'https://localhost/php-test.php?test=php_ini_scanned_files'
     ].each do |url|
-        describe command("curl --insecure #{url}") do
+        describe command("curl --insecure --silent --retry 10 --fail #{url}") do
             its(:stdout) { should_not contain('PHP Notice') }
             its(:stdout) { should_not contain('Notice') }
             its(:stdout) { should_not contain('PHP Warning') }
@@ -94,7 +94,7 @@ shared_examples 'php5::fpm::test::version' do
         'http://localhost/php-test.php?test=version',
         'https://localhost/php-test.php?test=version'
     ].each do |url|
-        describe command("curl --insecure #{url}") do
+        describe command("curl --insecure --silent --retry 10 --fail #{url}") do
             its(:stdout) { should_not contain('PHP Notice') }
             its(:stdout) { should_not contain('Notice') }
             its(:stdout) { should_not contain('PHP Warning') }
@@ -114,7 +114,7 @@ shared_examples 'php7::fpm::test::version' do
         'http://localhost/php-test.php?test=version',
         'https://localhost/php-test.php?test=version'
     ].each do |url|
-        describe command("curl --insecure #{url}") do
+        describe command("curl --insecure --silent --retry 10 --fail #{url}") do
             its(:stdout) { should_not contain('PHP Notice') }
             its(:stdout) { should_not contain('Notice') }
             its(:stdout) { should_not contain('PHP Warning') }

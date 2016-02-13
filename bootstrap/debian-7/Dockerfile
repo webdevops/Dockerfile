@@ -13,7 +13,7 @@ ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
 # Add common scripts (from _localscripts)
-ADD scripts.tar ./
+ADD scripts.tar /
 
 # Init bootstrap (and install ansible)
 RUN export DEBIAN_FRONTEND=noninteractive \

@@ -17,7 +17,7 @@ hhvm:      webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
 web:       webdevops/apache webdevops/nginx
 
-applications: webdevops/typo3 webdevops/piwik
+applications: webdevops/typo3 webdevops/piwik webdevops/samson-deployment
 
 misc:      webdevops/mail-sandbox
 
@@ -85,9 +85,6 @@ webdevops/php-apache:
 webdevops/php-nginx:
 	bash .bin/build.sh php-nginx "${DOCKER_REPOSITORY}/php-nginx" "${DOCKER_TAG_LATEST}"
 
-webdevops/samson-deployment:
-	bash .bin/build.sh samson-deployment "${DOCKER_REPOSITORY}/samson-deployment" "${DOCKER_TAG_LATEST}"
-
 webdevops/hhvm:
 	bash .bin/build.sh hhvm "${DOCKER_REPOSITORY}/hhvm" "${DOCKER_TAG_LATEST}"
 
@@ -117,3 +114,6 @@ webdevops/typo3:
 
 webdevops/piwik:
 	bash .bin/build.sh piwik "${DOCKER_REPOSITORY}/piwik" "${DOCKER_TAG_LATEST}"
+
+webdevops/samson-deployment:
+	bash .bin/build.sh samson-deployment "${DOCKER_REPOSITORY}/samson-deployment" "${DOCKER_TAG_LATEST}"

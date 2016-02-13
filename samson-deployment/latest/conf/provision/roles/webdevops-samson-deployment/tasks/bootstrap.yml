@@ -1,0 +1,7 @@
+---
+- name: Fix rights
+  file:
+    path: "/app"
+    owner: "{{ APPLICATION_USER }}"
+    group: "{{ APPLICATION_GROUP }}"
+    recurse: yes

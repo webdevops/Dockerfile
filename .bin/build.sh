@@ -59,10 +59,10 @@ function buildDockerfile() {
     echo ">> Starting build of ${CONTAINER_NAME}:${CONTAINER_TAG}"
 
     if [ "${FAST}" -eq 1 ]; then
-        RETRY_COUNT=3 "${WORKDIR}/.bin/retry.sh" "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}" &
+        "${WORKDIR}/.bin/retry.sh" "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}" &
         addBackgroundPidToList "${CONTAINER_TAG}"
     else
-        RETRY_COUNT=3 "${WORKDIR}/.bin/retry.sh" "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}"
+        "${WORKDIR}/.bin/retry.sh" "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}"
     fi
 
     cd "$WORKDIR"

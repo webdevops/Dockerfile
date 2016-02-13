@@ -9,7 +9,7 @@ LABEL io.webdevops.layout=4
 LABEL io.webdevops.version=0.19.0
 
 # Add common scripts (from _localscripts)
-ADD scripts.tar ./
+ADD scripts.tar /
 
 # Init bootstrap (and install ansible)
 RUN set -x \
