@@ -96,10 +96,14 @@ RUN /usr/local/bin/apt-install \
         git \
         rsync
 
-# Ansistratno
+# Ansistratno (https://github.com/ansistrano)
 RUN ansible-galaxy install --force \
     carlosbuenosvinos.ansistrano-deploy \
     carlosbuenosvinos.ansistrano-rollback
+
+# PHP Deployer (http://deployer.org/)
+RUN wget --quiet -O/usr/local/bin/dep http://deployer.org/deployer.phar \
+    && chmod +x /usr/local/bin/dep
 
 # Docker (client)
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
