@@ -135,8 +135,7 @@ function buildTarget() {
             ;;
 
         push)
-            ## Fast not allowed :(
-            FAST=0 pushDockerfile "${DOCKERFILE_PATH}" "${BASENAME}" "${TAGNAME}"
+            pushDockerfile "${DOCKERFILE_PATH}" "${BASENAME}" "${TAGNAME}"
             sleep 0.05
             ;;
     esac
@@ -235,11 +234,14 @@ waitForBuild
 
 logOutputFromBackgroundProcesses
 
-## Check builds
-
-echo ">> Checking built images"
-foreachDockerfileInPath "${TARGET}" "checkBuild"
-foreachDockerfileInPath "${TARGET}" "checkBuildLatest" "${LATEST}"
+## Check builds (only "build" mode)
+case "$BUILD_MODE" in
+    build)
+        echo ">> Checking built images"
+        foreachDockerfileInPath "${TARGET}" "checkBuild"
+        foreachDockerfileInPath "${TARGET}" "checkBuildLatest" "${LATEST}"
+        ;;
+esac
 
 echo ""
 echo ">>> Build time: $(timerStep)"
