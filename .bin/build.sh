@@ -235,11 +235,14 @@ waitForBuild
 
 logOutputFromBackgroundProcesses
 
-## Check builds
-
-echo ">> Checking built images"
-foreachDockerfileInPath "${TARGET}" "checkBuild"
-foreachDockerfileInPath "${TARGET}" "checkBuildLatest" "${LATEST}"
+## Check builds (only "build" mode)
+case "$BUILD_MODE" in
+    build)
+        echo ">> Checking built images"
+        foreachDockerfileInPath "${TARGET}" "checkBuild"
+        foreachDockerfileInPath "${TARGET}" "checkBuildLatest" "${LATEST}"
+        ;;
+esac
 
 echo ""
 echo ">>> Build time: $(timerStep)"
