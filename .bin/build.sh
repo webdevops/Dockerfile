@@ -135,8 +135,7 @@ function buildTarget() {
             ;;
 
         push)
-            ## Fast not allowed :(
-            FAST=0 pushDockerfile "${DOCKERFILE_PATH}" "${BASENAME}" "${TAGNAME}"
+            pushDockerfile "${DOCKERFILE_PATH}" "${BASENAME}" "${TAGNAME}"
             sleep 0.05
             ;;
     esac
