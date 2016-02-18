@@ -129,10 +129,18 @@ RUN /usr/local/bin/apt-install \
         php5-json \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
+# NGINX reverse proxy
+RUN /usr/local/bin/apt-install \
+        nginx
+
+# Precompile assets
+ADD database.yml    /app/config/database.yml
+RUN cd /app/ \
+    && RAILS_ENV=production bundle exec rake assets:precompile
+
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role webdevops-samson-deployment \
-    && bash /opt/docker/bin/control.sh provision.role.finish webdevops-samson-deployment \
+RUN bash /opt/docker/bin/control.sh provision.role webdevops-samson-deployment \ \
     && bash /opt/docker/bin/bootstrap.sh
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
