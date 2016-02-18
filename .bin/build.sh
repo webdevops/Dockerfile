@@ -117,7 +117,7 @@ function waitForBuild() {
  ##
 function waitForBuildStep() {
     if [ "${FAST}" -eq 1 ]; then
-        echo " -> waiting for background build process..."
+        echo " -> waiting for background processes..."
         waitForBackgroundProcesses
         wait
     fi
@@ -179,9 +179,9 @@ function checkBuildLatest() {
 printLine "="
 
 if [ "${FAST}" -eq 1 ]; then
-    echo -n "== Building docker image $BASENAME (PARALLEL MODE)"
+    echo -n "== Docker image $BASENAME (PARALLEL MODE)"
 else
-    echo -n "== Building docker image $BASENAME"
+    echo -n "== Docker image $BASENAME"
 fi
 
 if [ "${DEBUG}" -eq 1 ]; then

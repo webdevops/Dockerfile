@@ -17,7 +17,7 @@ hhvm:      webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
 web:       webdevops/apache webdevops/nginx
 
-applications: webdevops/typo3 webdevops/piwik webdevops/samson-deployment
+applications: webdevops/typo3 webdevops/piwik
 
 misc:      webdevops/mail-sandbox
 
