@@ -143,5 +143,7 @@ COPY conf/ /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role webdevops-samson-deployment \ \
     && bash /opt/docker/bin/bootstrap.sh
 
+EXPOSE 80 9080
+
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 CMD ["supervisord"]
