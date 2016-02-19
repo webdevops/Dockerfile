@@ -1,7 +1,7 @@
 # PHP with Apache container layout
 
 Container                                | Distribution name        | PHP Version                                                               
----------------------------------------- | -----------------------------------------
+---------------------------------------- | -------------------------|---------------
 `webdevops/php-apache:ubuntu-12.04`      | precise                  | PHP 5.3
 `webdevops/php-apache:ubuntu-14.04`      | trusty (LTS)             | PHP 5.5
 `webdevops/php-apache:ubuntu-15.04`      | vivid                    | PHP 5.6
