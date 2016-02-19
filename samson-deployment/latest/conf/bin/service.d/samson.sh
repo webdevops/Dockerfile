@@ -2,5 +2,5 @@
 
 echo "(Re-)Starting Samson"
 cd /app/
-bin/rake db:migrate RAILS_ENV=development
-exec bundle exec puma -C ./config/puma.rb
+bin/rake db:migrate
+exec bundle exec puma -C ./config/puma.rb -e "$RAILS_ENV"
