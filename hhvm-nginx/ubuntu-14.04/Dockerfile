@@ -22,7 +22,6 @@ RUN bash /opt/docker/bin/control.sh provision.role webdevops-nginx \
     && bash /opt/docker/bin/control.sh provision.role webdevops-hhvm-nginx \
     && bash /opt/docker/bin/bootstrap.sh
 
-EXPOSE 80
-EXPOSE 443
+EXPOSE 80 443
 
 CMD ["supervisord"]

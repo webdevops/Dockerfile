@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 15.10 Base Docker container
+# Ubuntu 15.10 Ansible Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/bootstrap:ubuntu-15.10

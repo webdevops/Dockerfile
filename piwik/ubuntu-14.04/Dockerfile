@@ -19,5 +19,4 @@ RUN /opt/docker/bin/control.sh provision.role webdevops-piwik \
 
 ONBUILD RUN /opt/docker/bin/bootstrap.sh onbuild
 
-EXPOSE 80
-EXPOSE 443
+EXPOSE 80 443

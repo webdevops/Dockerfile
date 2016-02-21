@@ -27,7 +27,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         lsb-release \
         # Generate locales
         locales-all \
-    # Install ansible
+        # Install ansible
         python-dev \
         python-pip \
     && pip install ansible

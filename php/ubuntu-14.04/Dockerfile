@@ -22,7 +22,6 @@ RUN /usr/local/bin/apt-install \
         php5-curl \
         php5-mysqlnd \
         php5-xdebug \
-        php5-memcached \
         php5-mcrypt \
         php5-gd \
         php5-sqlite \

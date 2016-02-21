@@ -25,10 +25,7 @@ RUN /opt/docker/bin/control.sh provision.role webdevops-mail-sandbox \
     && /opt/docker/bin/bootstrap.sh
 
 # SMTP
-EXPOSE 25
-EXPOSE 465
-EXPOSE 587
+EXPOSE 25 465 587
 
 # IMAP
-EXPOSE 143
-EXPOSE 993
+EXPOSE 143 993

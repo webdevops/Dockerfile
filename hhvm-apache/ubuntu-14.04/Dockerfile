@@ -30,9 +30,6 @@ RUN bash /opt/docker/bin/control.sh provision.role webdevops-apache \
     && bash /opt/docker/bin/control.sh provision.role webdevops-hhvm-apache \
     && bash /opt/docker/bin/bootstrap.sh
 
-RUN chmod +x /opt/docker/bin/service.d/httpd.sh
-
-EXPOSE 80
-EXPOSE 443
+EXPOSE 80 443
 
 CMD ["supervisord"]
