@@ -22,3 +22,9 @@ indent_size = 2
 
 [*.conf]
 indent_size = 2
+
+[DOCKER_REPOSITORY]
+insert_final_newline = false
+
+[DOCKER_TAG_LATEST]
+insert_final_newline = false
