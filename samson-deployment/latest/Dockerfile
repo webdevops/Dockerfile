@@ -135,13 +135,13 @@ RUN /usr/local/bin/apt-install \
 
 # Precompile assets
 ADD database.yml    /app/config/database.yml
-RUN cd /app/ \
-    && RAILS_ENV=production bundle exec rake assets:precompile
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
 RUN bash /opt/docker/bin/control.sh provision.role webdevops-samson-deployment \ \
     && bash /opt/docker/bin/bootstrap.sh
+
+RUN rake assets:precompile
 
 EXPOSE 80 9080
 
