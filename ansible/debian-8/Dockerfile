@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# Debian 8 Base Docker container
+# Debian 8 Ansible Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/bootstrap:debian-8

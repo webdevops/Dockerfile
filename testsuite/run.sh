@@ -194,6 +194,7 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     waitForTestRun
 }
@@ -217,6 +218,7 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     waitForTestRun
 }
@@ -240,6 +242,7 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     waitForTestRun
 }
@@ -266,6 +269,7 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "ubuntu"
     setSpecTest "php7"
@@ -274,6 +278,7 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     setSpecTest "php7"
     OS_VERSION="8" runTestForTag "debian-8-php7"
+    OS_VERSION="testing" runTestForTag "debian-9-php7"
 
     waitForTestRun
 }
@@ -297,6 +302,7 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     waitForTestRun
 }
@@ -320,6 +326,7 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     waitForTestRun
 }
@@ -346,6 +353,7 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "ubuntu"
     setSpecTest "php7-apache"
@@ -354,6 +362,7 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     setSpecTest "php7-apache"
     OS_VERSION="8" runTestForTag "debian-8-php7"
+    OS_VERSION="testing" runTestForTag "debian-9-php7"
 
     waitForTestRun
 }
@@ -380,6 +389,7 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "ubuntu"
     setSpecTest "php7-nginx"
@@ -388,6 +398,7 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     setSpecTest "php7-nginx"
     OS_VERSION="8" runTestForTag "debian-8-php7"
+    OS_VERSION="testing" runTestForTag "debian-9-php7"
 
     waitForTestRun
 }

@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 16.04 Base Docker container
+# Ubuntu 16.04 Ansible Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/bootstrap:ubuntu-16.04

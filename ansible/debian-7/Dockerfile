@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# Debian 7 Base Docker container
+# Debian 7 Ansible Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/bootstrap:debian-7

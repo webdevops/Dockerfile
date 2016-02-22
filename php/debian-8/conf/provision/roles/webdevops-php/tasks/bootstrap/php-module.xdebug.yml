@@ -23,3 +23,4 @@
   with_items:
     - 'zend_extension'
     - 'extension'
+  ignore_errors: yes

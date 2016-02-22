@@ -82,6 +82,8 @@ RUN bash /opt/docker/bin/control.sh provision.role webdevops-base \
 # Samson
 ###############################################################################
 
+ENV RAILS_ENV="production"
+
 # Ansible
 RUN /usr/local/bin/apt-install \
         python-crypto \
@@ -138,7 +140,7 @@ ADD database.yml    /app/config/database.yml
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role webdevops-samson-deployment \ \
+RUN bash /opt/docker/bin/control.sh provision.role webdevops-samson-deployment \
     && bash /opt/docker/bin/bootstrap.sh
 
 RUN rake assets:precompile

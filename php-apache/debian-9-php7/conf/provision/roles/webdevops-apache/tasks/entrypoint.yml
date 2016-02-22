@@ -1,0 +1,15 @@
+---
+
+- name: Get list of apache configuration files
+  shell: ls -1 /opt/docker/etc/httpd/*.conf
+  register: http_conf_list
+  ignore_errors: true
+
+- name: Set apache variables
+  replace:
+    dest:    '{{ item[1] }}'
+    regexp:  '<{{ item[0].variable }}>'
+    replace: '{{ item[0].value }}'
+  with_nested:
+   - HTTPD_VARS
+   - http_conf_list.stdout_lines

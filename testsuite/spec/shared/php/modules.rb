@@ -68,7 +68,9 @@ shared_examples 'php5::modules' do
         its(:stdout) { should     contain('mhash') }
         its(:stdout) { should     contain('wddx') }
 
-        if (os[:family] == 'ubuntu' and (os[:version] == '12.04' or os[:version] == '16.04') ) or (os[:family] == 'debian' and os[:version] == '7' )
+        if (os[:family] == 'ubuntu' and (os[:version] == '12.04' or os[:version] == '16.04') ) or
+           (os[:family] == 'debian' and os[:version] == '7' ) or
+           (os[:family] == 'debian' and os[:version] == 'testing' )
             its(:stdout) { should_not contain('redis') }
         else
             its(:stdout) { should     contain('redis') }
@@ -157,7 +159,9 @@ shared_examples 'php-fpm5::modules' do
         its(:stdout) { should     contain('mhash') }
         its(:stdout) { should     contain('wddx') }
 
-        if (os[:family] == 'ubuntu' and (os[:version] == '12.04' or os[:version] == '16.04') ) or (os[:family] == 'debian' and os[:version] == '7' )
+        if (os[:family] == 'ubuntu' and (os[:version] == '12.04' or os[:version] == '16.04') ) or
+           (os[:family] == 'debian' and os[:version] == '7' ) or
+           (os[:family] == 'debian' and os[:version] == 'testing' )
             its(:stdout) { should_not contain('redis') }
         else
             its(:stdout) { should     contain('redis') }

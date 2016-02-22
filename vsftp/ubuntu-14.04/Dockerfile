@@ -28,13 +28,6 @@ COPY conf/ /opt/docker/
 RUN /opt/docker/bin/control.sh provision.role webdevops-vsftp \
     && /opt/docker/bin/bootstrap.sh
 
-EXPOSE 20
-EXPOSE 21
-EXPOSE 12020
-EXPOSE 12021
-EXPOSE 12022
-EXPOSE 12023
-EXPOSE 12024
-EXPOSE 12025
+EXPOSE 20 21 12020 12021 12022 12023 12024 12025
 
 CMD ["supervisord"]
