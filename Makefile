@@ -41,7 +41,7 @@ dist-update:
 	docker pull ubuntu:16.04
 	docker pull debian:7
 	docker pull debian:8
-	docker pull debian:strech
+	docker pull debian:stretch
 
 rebuild:
 	# Rebuild all containers but use caching for duplicates
