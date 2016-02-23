@@ -98,14 +98,9 @@ RUN /usr/local/bin/apt-install \
         git \
         rsync
 
-# Ansistratno (https://github.com/ansistrano)
-RUN ansible-galaxy install --force \
-    carlosbuenosvinos.ansistrano-deploy \
-    carlosbuenosvinos.ansistrano-rollback
-
-# PHP Deployer (http://deployer.org/)
-RUN wget --quiet -O/usr/local/bin/dep http://deployer.org/deployer.phar \
-    && chmod +x /usr/local/bin/dep
+# NGINX reverse proxy
+RUN /usr/local/bin/apt-install \
+        nginx
 
 # Docker (client)
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
@@ -131,9 +126,17 @@ RUN /usr/local/bin/apt-install \
         php5-json \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
-# NGINX reverse proxy
-RUN /usr/local/bin/apt-install \
-        nginx
+
+RUN set -x \
+    # Deployer: Ansistratno (https://github.com/ansistrano)
+    && ansible-galaxy install --force \
+        carlosbuenosvinos.ansistrano-deploy \
+        carlosbuenosvinos.ansistrano-rollback \
+    # Deployer: PHP Deployer (http://deployer.org/)
+    && wget --quiet -O/usr/local/bin/dep http://deployer.org/deployer.phar \
+    && chmod +x /usr/local/bin/dep \
+    # Deployer: capistrano
+    && gem install capistrano
 
 # Precompile assets
 ADD database.yml    /app/config/database.yml
@@ -145,7 +148,7 @@ RUN bash /opt/docker/bin/control.sh provision.role webdevops-samson-deployment \
 
 RUN rake assets:precompile
 
-EXPOSE 80 9080
+EXPOSE 80
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 CMD ["supervisord"]

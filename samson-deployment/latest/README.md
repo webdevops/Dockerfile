@@ -1,13 +1,16 @@
 # Samson deployment container layout
 
-This conntainer is based on [zendesk/samson](https://hub.docker.com/r/zendesk/samson/) which provides a [samson deployment service](https://github.com/zendesk/samson).
+[ZenDesk's](https://www.zendesk.com/) Deployment web ui with Ansible Ansistrano, Capistrano and PHP Deployer support
 
-# Packages
+[Samson Boilerplate is available at GitHub.](https://github.com/webdevops/samson-deployment)
 
-* [Ansible](https://docs.ansible.com/)
-* [Ansistrano](https://github.com/ansistrano/deploy) (Ansible Deployment, like capistrano)
-* Rsync
-* Git
-* Docker and docker-compose (as client)
-* Gulp, Grunt and Bower
-* PHP with composer
+Installed packages:
+* [Samson deployment web ui](https://github.com/zendesk/samson)
+* [Ansible](https://www.ansible.com/) with [Ansistrano](https://github.com/ansistrano)
+* [Capistrano](http://capistranorb.com/)
+* [PHP Deployer](http://deployer.org/)
+* git
+* rsync
+* docker & docker-compose (as client)
+* gulp, grunt, bower
+* PHP cli & [composer](https://getcomposer.org/)
