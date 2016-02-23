@@ -5,8 +5,8 @@
 FROM debian:stretch
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.19.0
+LABEL io.webdevops.layout=5
+LABEL io.webdevops.version=0.20.0
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8
