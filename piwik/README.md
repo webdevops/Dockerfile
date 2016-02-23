@@ -2,7 +2,7 @@
 
 Based on `webdevops/php-nginx:ubuntu-14.04` with automatic Piwik installer
 
-Install location is `/application/code/piwik`, crontask is automatically configured.
+Install location is `/app/piwik`, crontask is automatically configured.
 
 ## Environment variables
 

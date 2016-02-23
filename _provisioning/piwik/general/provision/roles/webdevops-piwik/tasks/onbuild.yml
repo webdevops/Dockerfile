@@ -3,7 +3,7 @@
 
 - name: Setup target directory
   file:
-    path:  /application/code/
+    path:  /app/
     state: directory
     force: yes
 
@@ -16,7 +16,7 @@
 - name: Unpack piwik
   unarchive:
     src:  /tmp/piwik.zip
-    dest: /application/code/
+    dest: /app/
 
 - name: Remove piwik archive
   file:
@@ -25,13 +25,13 @@
     force: yes
 
 - name: Fix directory owner
-  command: find /application/code/ -type d -exec chown "{{ APPLICATION_USER }}" {} \;
+  command: find /app/ -type d -exec chown "{{ APPLICATION_USER }}" {} \;
 
 - name: Fix file owner
-  command: find  /application/code/ -type f -exec chown "{{ APPLICATION_USER }}" {} \;
+  command: find  /app/ -type f -exec chown "{{ APPLICATION_USER }}" {} \;
 
 - name: Fix directory rights
-  command: find /application/code/ -type d -exec chmod 0755 {} \;
+  command: find /app/ -type d -exec chmod 0755 {} \;
 
 - name: Fix file rights
-  command: find  /application/code/ -type f -exec chmod 0644 {} \;
+  command: find  /app/ -type f -exec chmod 0644 {} \;
