@@ -9,7 +9,7 @@ main:
     - "8000:80"
     - "8443:443"
 #  volumes:
-#    - "./code:/application/code/"
+#    - "./code:/app/"
 
 mysql:
   image: mysql:5.6

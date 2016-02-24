@@ -5,10 +5,10 @@
 FROM webdevops/base:ubuntu-15.10
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.19.0
+LABEL io.webdevops.layout=5
+LABEL io.webdevops.version=0.20.0
 
-ENV WEB_DOCUMENT_ROOT  /application/code/
+ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 

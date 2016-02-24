@@ -1,8 +1,8 @@
 FROM zendesk/samson
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=4
-LABEL io.webdevops.version=0.19.0
+LABEL io.webdevops.layout=5
+LABEL io.webdevops.version=0.20.0
 
 ###############################################################################
 # Bootstrap
@@ -51,6 +51,7 @@ RUN sed -ri 's/(deb.*\/debian jessie main)/\1 contrib non-free /' -- /etc/apt/so
         logrotate \
         openssh-server \
         mysql-client \
+        sqlite \
         cron \
         dnsmasq \
         postfix
@@ -114,7 +115,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && npm install -g gulp \
     && npm install -g grunt-cli \
-    && npm install -g bower
+    && npm install -g bower \
+    && npm install -g npm-cache
 
 # PHP stack
 RUN /usr/local/bin/apt-install \
@@ -126,7 +128,7 @@ RUN /usr/local/bin/apt-install \
         php5-json \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
-
+# Deployer stack
 RUN set -x \
     # Deployer: Ansistratno (https://github.com/ansistrano)
     && ansible-galaxy install --force \
@@ -135,7 +137,7 @@ RUN set -x \
     # Deployer: PHP Deployer (http://deployer.org/)
     && wget --quiet -O/usr/local/bin/dep http://deployer.org/deployer.phar \
     && chmod +x /usr/local/bin/dep \
-    # Deployer: capistrano
+    # Deployer: capistrano (http://capistranorb.com/)
     && gem install capistrano
 
 # Precompile assets

@@ -7,4 +7,4 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 
 . /opt/docker/bin/piwik-env.sh
 
-/usr/bin/php /application/code/piwik/console core:archive --url="$PIWIK_URL"
+/usr/bin/php /app/code/piwik/console core:archive --url="$PIWIK_URL"

@@ -3,6 +3,6 @@
 
 - name: Clear target directory
   file:
-    path:  /application/code/
+    path:  /app/
     state: absent
     force: yes
