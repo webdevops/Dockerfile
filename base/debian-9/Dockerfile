@@ -23,6 +23,7 @@ RUN sed -ri 's/(deb.*\/debian stretch main)/\1 contrib non-free /' -- /etc/apt/s
         logrotate \
         openssh-server \
         mysql-client \
+        sqlite \
         cron \
         dnsmasq \
         postfix

@@ -23,6 +23,7 @@ RUN sed -ri 's/(deb.*\/debian wheezy main)/\1 contrib non-free /' -- /etc/apt/so
         logrotate \
         openssh-server \
         mysql-client \
+        sqlite \
         cron \
         dnsmasq \
         postfix

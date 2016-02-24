@@ -22,6 +22,7 @@ RUN /usr/local/bin/apt-install \
         logrotate \
         openssh-server \
         mysql-client \
+        sqlite \
         cron \
         dnsmasq \
         postfix

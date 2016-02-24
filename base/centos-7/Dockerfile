@@ -22,6 +22,7 @@ RUN /usr/local/bin/yum-install \
         logrotate \
         openssh-server \
         mysql \
+        sqlite \
         dnsmasq \
         postfix
 
