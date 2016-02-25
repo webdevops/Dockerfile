@@ -1,4 +1,5 @@
 shared_examples 'bootstrap::ansible' do
+
     it "should be ansible installed" do
         if os[:family] == 'redhat'
             expect(file("/usr/bin/ansible")).to be_executable
@@ -10,7 +11,13 @@ shared_examples 'bootstrap::ansible' do
     end
 
     describe command('ansible --version') do
-        its(:stdout) { should match %r!ansible 2.0.[0-9]+! }
+        its(:stdout) { should match $packageVersions[:ansible] }
+
+        its(:exit_status) { should eq 0 }
+    end
+
+    describe command('ansible-playbook --version') do
+        its(:stdout) { should match $packageVersions[:ansiblePlaybook] }
 
         its(:exit_status) { should eq 0 }
     end

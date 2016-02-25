@@ -35,7 +35,10 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && /usr/local/bin/apt-install \
         python-software-properties \
         lsb-release \
-        # Install ansible
+        ca-certificates \
+    # Install ansible
         python-dev \
+        python-setuptools \
         python-pip \
     && pip install ansible
+
