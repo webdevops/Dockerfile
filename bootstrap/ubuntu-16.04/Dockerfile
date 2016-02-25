@@ -30,9 +30,13 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && /usr/local/bin/apt-install \
         software-properties-common \
         lsb-release \
+        ca-certificates \
     && apt-add-repository multiverse \
     # Install ansible
     && /usr/local/bin/apt-install \
         python-dev \
+        python-setuptools \
         python-pip \
-    && pip install ansible
+    && pip install ansible \
+    ## workaround for ubuntu 16.04
+    && chmod +x /usr/local/bin/ansible*

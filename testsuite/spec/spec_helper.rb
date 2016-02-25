@@ -9,6 +9,11 @@ set :backend, :docker
 set :docker_container, ENV['DOCKER_IMAGE']
 set :os, :family => ENV['OS_FAMILY'], :version => ENV['OS_VERSION'], :arch => 'x86_64'
 
+$packageVersions = {}
+$packageVersions[:ansible]         = %r!ansible 2.([0-9]\.?)+!
+$packageVersions[:ansiblePlaybook] = %r!ansible-playbook 2.([0-9]\.?)+!
+
+
 def wait_retry(time, increment = 1, elapsed_time = 0, &block)
   begin
     yield
