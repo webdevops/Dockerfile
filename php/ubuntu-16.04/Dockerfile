@@ -30,7 +30,6 @@ RUN /usr/local/bin/apt-install \
         php5-geoip \
         php5-ldap \
         php5-memcache \
-        php5-memcached \
         php5-imagick \
         php-pear \
     && pear channel-update pear.php.net \
