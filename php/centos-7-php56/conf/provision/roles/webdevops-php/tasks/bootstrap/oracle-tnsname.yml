@@ -1,0 +1,23 @@
+---
+
+- name: Set tnsnames.orafile
+  set_fact:
+     tnsnames_ora: tnsnames.ora
+     oracle_dir: /etc/oracle
+
+- name: Create directory oracle
+  file: 
+    path: "{{ oracle_dir }}"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode:  0600
+    recurse: yes
+
+- name: Link tnsnames.ora
+  file:
+    path: "{{ oracle_dir }}/{{tnsnames_ora}}"
+    src:  "/opt/docker/etc/oracle/tnsnames.ora"
+    state: link
+    owner: "root"
+    group: "root"
