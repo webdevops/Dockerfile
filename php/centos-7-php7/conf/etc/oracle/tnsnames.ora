@@ -1,0 +1,8 @@
+ORA11G =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST=oracledb)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = ORA11G)
+    )
+  )
