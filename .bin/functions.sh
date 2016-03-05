@@ -204,6 +204,10 @@ function dockerPushImage() {
     docker push "${CONTAINER_NAME}:${CONTAINER_TAG}"
 }
 
+function checkBlacklist() {
+    echo "$*" | grep -vF "$(cat ${WORKDIR}/BLACKLIST)"
+}
+
 ###
  # Push image
  #
@@ -226,7 +230,10 @@ function foreachDockerfileInPath() {
         if [ -f "${DOCKERFILE_PATH}/Dockerfile" ]; then
             DOCKERFILE="${DOCKERFILE_PATH}/Dockerfile"
             TAGNAME=$(basename "${DOCKERFILE_PATH}")
-            ${CALLBACK}
+
+            if [[ -n "$(checkBlacklist "${BASENAME}:${TAGNAME}")" ]]; then
+                ${CALLBACK}
+            fi
         fi
     done
 }
