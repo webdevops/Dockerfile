@@ -8,11 +8,6 @@ LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=5
 LABEL io.webdevops.version=0.20.0
 
-# Install dotdeb
-RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list \
-    && echo "deb-src http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list \
-    && wget wget -O- https://www.dotdeb.org/dotdeb.gpg | apt-key add  -
-
 # Install tools
 RUN /usr/local/bin/apt-install \
         imagemagick \
@@ -34,8 +29,7 @@ RUN /usr/local/bin/apt-install \
         php7.0-xmlrpc \
         php7.0-xsl \
         php7.0-bz2 \
-        php7.0-redis \
-        php-readline \
+        php-redis \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
 # Deploy scripts/configurations
