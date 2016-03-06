@@ -29,12 +29,13 @@ fi
 
 LOGFILE="$($MKTEMP --tmpdir retry.XXXXXXXXXX)"
 
-exec 1>"$LOGFILE" 2>&1
-
 retry() {
     local n=0
 
     until [[ "$n" -ge "$RETRY_COUNT" ]]; do
+        # Reset logfile for this try
+        echo > "$LOGFILE"
+
         RETURN_CODE="0"
         "$@" && break || {
             ((n++))
@@ -52,9 +53,8 @@ retry() {
     fi
 }
 
-retry "$@"
+retry "$@" &> "$LOGFILE"
 
-exec &>/dev/tty
 if [[ "$RETURN_CODE" -ne 0 ]]; then
     cat "$LOGFILE"
 fi

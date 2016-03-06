@@ -28,3 +28,6 @@ insert_final_newline = false
 
 [DOCKER_TAG_LATEST]
 insert_final_newline = false
+
+[BLACKLIST]
+insert_final_newline = false

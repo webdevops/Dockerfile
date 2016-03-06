@@ -16,5 +16,6 @@ RUN /opt/docker/bin/control.sh provision.role.entrypoint webdevops-typo3 \
     && /opt/docker/bin/bootstrap.sh
 
 ONBUILD RUN composer create-project typo3/cms-base-distribution /app/
+ONBUILD VOLUME /app
 
 EXPOSE 80 443

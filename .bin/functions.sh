@@ -153,16 +153,19 @@ logOutputFromBackgroundProcesses() {
         title="${PID_LOG_TITLE[$pid]}"
         log="${PID_LOG_FILE[$pid]}"
 
-        echo "$title"
+        if [[ -s "$log" ]]; then
+            echo "-- $title --:"
 
-        cat "$log"
-        rm -f -- "$log"
+            cat "$log"
+            rm -f -- "$log"
+
+            echo ""
+            echo ""
+        fi
 
         unset PID_LOG_TITLE[$pid]
         unset PID_LOG_FILE[$pid]
 
-        echo ""
-        echo ""
     done
 }
 
@@ -204,6 +207,10 @@ function dockerPushImage() {
     docker push "${CONTAINER_NAME}:${CONTAINER_TAG}"
 }
 
+function checkBlacklist() {
+    echo "$*" | grep -vF "$(cat ${WORKDIR}/BLACKLIST)"
+}
+
 ###
  # Push image
  #
@@ -226,7 +233,10 @@ function foreachDockerfileInPath() {
         if [ -f "${DOCKERFILE_PATH}/Dockerfile" ]; then
             DOCKERFILE="${DOCKERFILE_PATH}/Dockerfile"
             TAGNAME=$(basename "${DOCKERFILE_PATH}")
-            ${CALLBACK}
+
+            if [[ -n "$(checkBlacklist "${BASENAME}:${TAGNAME}")" ]]; then
+                ${CALLBACK}
+            fi
         fi
     done
 }
