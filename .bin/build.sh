@@ -37,9 +37,9 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 TARGET="$1"
 BASENAME="$2"
 LATEST="$3"
-WORKDIR=$(pwd)
+BASE_DIR="$(pwd)"
 
-source "${WORKDIR}/.bin/functions.sh"
+source "${BASE_DIR}/.bin/functions.sh"
 
 ###
  # Build dockerfile
@@ -60,13 +60,13 @@ function buildDockerfile() {
 
     if [ "${FAST}" -eq 1 ]; then
         LOGFILE="$(mktemp /tmp/docker.build.XXXXXXXXXX)"
-        "${WORKDIR}/.bin/retry.sh" "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}" &> "$LOGFILE" &
+        "${BASE_DIR}/.bin/retry.sh" "${BASE_DIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}" &> "$LOGFILE" &
         addBackgroundPidToList "${CONTAINER_TAG}" "$LOGFILE"
     else
-        "${WORKDIR}/.bin/retry.sh" "${WORKDIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}"
+        "${BASE_DIR}/.bin/retry.sh" "${BASE_DIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}"
     fi
 
-    cd "$WORKDIR"
+    cd "$BASE_DIR"
 }
 
 ###
@@ -88,13 +88,13 @@ function pushDockerfile() {
 
     if [ "${FAST}" -eq 1 ]; then
         LOGFILE="$(mktemp /tmp/docker.push.XXXXXXXXXX)"
-        "${WORKDIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}" &> "$LOGFILE" &
+        "${BASE_DIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}" &> "$LOGFILE" &
         addBackgroundPidToList "${CONTAINER_TAG}" "$LOGFILE"
     else
-        "${WORKDIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}"
+        "${BASE_DIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}"
     fi
 
-    cd "$WORKDIR"
+    cd "$BASE_DIR"
 }
 
 ###
@@ -206,7 +206,7 @@ sleep 0.5
 # Provision
 #############################
 
-bash "${WORKDIR}/.bin/provision.sh" "$TARGET"
+bash "${BASE_DIR}/.bin/provision.sh" "$TARGET"
 echo ""
 
 #############################
