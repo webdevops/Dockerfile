@@ -8,7 +8,7 @@ LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=5
 LABEL io.webdevops.version=0.20.0
 
-ENV WEB_DOCUMENT_ROOT  /apppiwik/
+ENV WEB_DOCUMENT_ROOT  /app/piwik/
 ENV PIWIK_URL          http://example.com/
 
 # Deploy scripts/configurations
@@ -18,5 +18,6 @@ RUN /opt/docker/bin/control.sh provision.role webdevops-piwik \
     && /opt/docker/bin/bootstrap.sh
 
 ONBUILD RUN /opt/docker/bin/bootstrap.sh onbuild
+ONBUILD VOLUME /app
 
 EXPOSE 80 443
