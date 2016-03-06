@@ -6,6 +6,11 @@ else
     BUILD_TARGET="all"
 fi
 
+if [[ "$BUILD_MODE" == "push" ]]; then
+    # skip provision on push
+    exit 0
+fi
+
 
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions

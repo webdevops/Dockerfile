@@ -76,6 +76,10 @@ function runTestForTag() {
     DOCKER_TAG="$1"
     DOCKER_IMAGE_WITH_TAG="${DOCKER_IMAGE}:${DOCKER_TAG}"
 
+    if [[ -z "$(checkBlacklist "${DOCKER_IMAGE_WITH_TAG}")" ]]; then
+        return
+    fi
+
     if [ "$DOCKER_PULL" -eq 1 ]; then
         echo " * Pulling $DOCKER_IMAGE_WITH_TAG from Docker hub ..."
         docker pull "$DOCKER_IMAGE_WITH_TAG"

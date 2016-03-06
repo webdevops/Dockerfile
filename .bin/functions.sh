@@ -208,8 +208,8 @@ function dockerPushImage() {
 }
 
 function checkBlacklist() {
-    if [[ -s "${WORKDIR}/BLACKLIST" ]]; then
-        echo "$*" | grep -vF "$(cat "${WORKDIR}/BLACKLIST")"
+    if [[ -s "${BASE_DIR}/BLACKLIST" ]]; then
+        echo "$*" | grep -vF "$(cat "${BASE_DIR}/BLACKLIST")"
     else
         echo "$*"
     fi
