@@ -34,9 +34,9 @@
   with_items:
    - { key: 'listen',                      value: "0.0.0.0:9000" }
    - { key: 'catch_workers_output',        value: "yes" }
-   - { key: 'access.log',                  value: "/var/log/php7-fpm/access.log" }
-   - { key: 'slowlog',                     value: "/var/log/php7-fpm/slow.log" }
-   - { key: 'php_admin_value[error_log]',  value: "/var/log/php7-fpm/error.log" }
+   - { key: 'access.log',                  value: "/var/log/php5-fpm/access.log" }
+   - { key: 'slowlog',                     value: "/var/log/php5-fpm/slow.log" }
+   - { key: 'php_admin_value[error_log]',  value: "/var/log/php5-fpm/error.log" }
    - { key: 'php_admin_value[log_errors]', value: "on" }
    - { key: 'user',                        value: "{{ APPLICATION_USER }}" }
    - { key: 'group',                       value: "{{ APPLICATION_GROUP }}" }
