@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if [ -z "$RETRY_COUNT" ]; then
-    RETRY_COUNT=5
+if [ -z "$RETRY" ]; then
+    RETRY=1
 fi
 
 if [ -z "$RETRY_DELAY" ]; then
@@ -22,7 +22,7 @@ MKTEMP='mktemp'
 }
 
 
-if [[ "$RETRY_COUNT" -le 1 ]]; then
+if [[ "$RETRY" -le 1 ]]; then
     exec "$@"
 fi
 
@@ -32,7 +32,7 @@ LOGFILE="$($MKTEMP --tmpdir retry.XXXXXXXXXX)"
 retry() {
     local n=0
 
-    until [[ "$n" -ge "$RETRY_COUNT" ]]; do
+    until [[ "$n" -ge "$RETRY" ]]; do
         # Reset logfile for this try
         echo > "$LOGFILE"
 
@@ -40,7 +40,7 @@ retry() {
         "$@" && break || {
             ((n++))
             echo ""
-            echo " [WARNING] Command failed. Retry now ... $n/$RETRY_COUNT:"
+            echo " [WARNING] Command failed. Retry now ... $n/$RETRY:"
             echo ""
             echo ""
             RETURN_CODE=1
