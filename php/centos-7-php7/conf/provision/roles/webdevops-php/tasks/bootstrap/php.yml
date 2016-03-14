@@ -22,7 +22,7 @@
 - name: Link php.ini for cli and fpm [Debian family]
   file:
     src:  '{{ item.file }}'
-    dest: '/etc/php5/{{ item.category }}/conf.d/{{ item.target }}'
+    dest: '/etc/php7/{{ item.category }}/conf.d/{{ item.target }}'
     force: yes
     state: link
   with_items:

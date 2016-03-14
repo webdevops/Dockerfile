@@ -7,12 +7,12 @@
 
 - name: Set php oci file [Debian family]
   set_fact:
-     php_oci_conf: /etc/php5/mods-available/oci8.ini
+     php_oci_conf: /etc/php7/mods-available/oci8.ini
   when: ansible_os_family == 'Debian'
 
 - name: Set php oci file [Ubuntu 12.04]
   set_fact:
-     php_oci_conf: /etc/php5/conf.d/oci8.ini
+     php_oci_conf: /etc/php7/conf.d/oci8.ini
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == "12.04"
 
 - name: Create oci8.ini
