@@ -2,7 +2,7 @@
 
 - name: Symlink php-fpm binary
   file:
-    path: "/usr/sbin/php5-fpm"
+    path: "/usr/sbin/php7-fpm"
     src:  "/sbin/php-fpm"
     state: link
     owner: "root"
@@ -17,14 +17,14 @@
 
 - name: Create php-fpm log directory
   file:
-    path: "/var/log/php5-fpm/"
+    path: "/var/log/php7-fpm/"
     state: directory
     owner: "root"
     group: "root"
 
 - name: Create php-fpm log files
   file:
-    path: "/var/log/php5-fpm/{{ item }}"
+    path: "/var/log/php7-fpm/{{ item }}"
     state: touch
     owner: "root"
     group: "root"

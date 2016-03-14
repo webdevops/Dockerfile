@@ -27,10 +27,10 @@
     state: link
   with_items:
   # PHP cli
-   - { category: 'cli', file: '/etc/php5/mods-available/mcrypt.ini', target: '20-mcrypt.ini' }
+   - { category: 'cli', file: '/etc/php7/mods-available/mcrypt.ini', target: '20-mcrypt.ini' }
    - { category: 'cli', file: '/opt/docker/etc/php/php.ini',         target: '99-docker.ini' }
    # PHP fpm
-   - { category: 'fpm', file: '/etc/php5/mods-available/mcrypt.ini', target: '20-mcrypt.ini' }
+   - { category: 'fpm', file: '/etc/php7/mods-available/mcrypt.ini', target: '20-mcrypt.ini' }
    - { category: 'fpm', file: '/opt/docker/etc/php/php.ini',         target: '99-docker.ini' }
   when: ansible_os_family == 'Debian'
 
