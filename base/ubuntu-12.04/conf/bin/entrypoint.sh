@@ -27,4 +27,4 @@ fi
 ## COMMAND
 #############################
 
-runEntrypoints
+runEntrypoints "$@"
