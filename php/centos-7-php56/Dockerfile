@@ -74,7 +74,7 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
         php56w-opcache \ 
     && pear channel-update pear.php.net \
     && pear config-set auto_discover 1 \
-    && printf "\n" | pecl install oci8-2.0.10 \
+    && printf "instantclient,/usr/lib/oracle/11.2/client64/lib/\n" | pecl install oci8-2.0.10 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
 # Deploy scripts/configurations
