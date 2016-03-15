@@ -36,10 +36,19 @@
    - { key: 'catch_workers_output',        value: "yes" }
    - { key: 'access.log',                  value: "/var/log/php5-fpm/access.log" }
    - { key: 'slowlog',                     value: "/var/log/php5-fpm/slow.log" }
-   - { key: 'php_admin_value[error_log]',  value: "/var/log/php5-fpm/error.log" }
-   - { key: 'php_admin_value[log_errors]', value: "on" }
+#   - { key: 'php_admin_value\[error_log\]',  value: "/var/log/php5-fpm/error.log" }
+#   - { key: 'php_admin_value\[log_errors\]', value: "on" }
    - { key: 'user',                        value: "{{ APPLICATION_USER }}" }
    - { key: 'group',                       value: "{{ APPLICATION_GROUP }}" }
+
+- name: Configure php_admin_value (www.conf)
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    regexp: '^{{item.var}}\[{{ item.key }}\]'
+    line:   '{{item.var}}[{{ item.key }}] = {{ item.value }}'
+  with_items:
+    - { var: php_admin_value, key: error_log , value: '/var/log/php5-fpm/error.log'}
+    - { var: php_admin_flag, key: log_errors , value: 'on'}
 
 - name: Disable php-fpm connection limit
   lineinfile:
