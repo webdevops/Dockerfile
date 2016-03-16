@@ -1,5 +1,1 @@
 ---
-
-- include: entrypoint/user.yml
-- include: entrypoint/postfix.yml
-- include: entrypoint/logrotate.yml
