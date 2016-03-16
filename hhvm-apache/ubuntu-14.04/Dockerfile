@@ -26,8 +26,8 @@ RUN /usr/local/bin/apt-install \
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role webdevops-apache \
-    && bash /opt/docker/bin/control.sh provision.role webdevops-hhvm-apache \
+RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-apache \
+    && bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-hhvm-apache \
     && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 80 443

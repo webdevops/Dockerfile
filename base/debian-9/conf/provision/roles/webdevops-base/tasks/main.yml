@@ -4,6 +4,10 @@
   tags:
     - bootstrap
 
+- include: build.yml
+  tags:
+    - build
+
 - include: entrypoint.yml
   tags:
     - entrypoint

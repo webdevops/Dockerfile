@@ -47,7 +47,7 @@
 #FROM webdevops/nginx:debian-7
 #FROM webdevops/nginx:debian-8
 #FROM webdevops/nginx:debian-8-php7
-#FROM webdevops/nginx:debian-9
+FROM webdevops/nginx:debian-9
 #FROM webdevops/nginx:debian-9-php7
 #FROM webdevops/nginx:ubuntu-12.04
 #FROM webdevops/nginx:ubuntu-14.04
