@@ -21,12 +21,17 @@ case "$CONTROL_COMMAND" in
     ## main roles
     "provision.role")
         provisionRoleAdd "provision.main.bootstrap"  "$1"
+        provisionRoleAdd "provision.main.build"      "$1"
         provisionRoleAdd "provision.main.onbuild"    "$1"
         provisionRoleAdd "provision.main.entrypoint" "$1"
         ;;
 
     "provision.role.bootstrap")
         provisionRoleAdd "provision.main.bootstrap" "$1"
+        ;;
+
+    "provision.role.build")
+        provisionRoleAdd "provision.main.build" "$1"
         ;;
 
     "provision.role.onbuild")
@@ -40,12 +45,17 @@ case "$CONTROL_COMMAND" in
     ## startup roles
     "provision.role.startup")
         provisionRoleAdd "provision.startup.bootstrap"  "$1"
+        provisionRoleAdd "provision.startup.build"      "$1"
         provisionRoleAdd "provision.startup.onbuild"    "$1"
         provisionRoleAdd "provision.startup.entrypoint" "$1"
         ;;
 
     "provision.role.startup.bootstrap")
         provisionRoleAdd "provision.startup.bootstrap" "$1"
+        ;;
+
+    "provision.role.startup.build")
+        provisionRoleAdd "provision.startup.build" "$1"
         ;;
 
     "provision.role.startup.onbuild")
@@ -59,12 +69,17 @@ case "$CONTROL_COMMAND" in
     ## startup roles
     "provision.role.finish")
         provisionRoleAdd "provision.finish.bootstrap"  "$1"
+        provisionRoleAdd "provision.finish.build"      "$1"
         provisionRoleAdd "provision.finish.onbuild"    "$1"
         provisionRoleAdd "provision.finish.entrypoint" "$1"
         ;;
 
     "provision.role.finish.bootstrap")
         provisionRoleAdd "provision.finish.bootstrap" "$1"
+        ;;
+
+    "provision.role.finish.build")
+        provisionRoleAdd "provision.finish.build" "$1"
         ;;
 
     "provision.role.finish.onbuild")

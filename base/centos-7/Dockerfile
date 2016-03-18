@@ -46,8 +46,8 @@ RUN /usr/local/bin/yum-install \
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role webdevops-base \
-    && bash /opt/docker/bin/control.sh provision.role.finish webdevops-cleanup \
+RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-base \
+    && bash /opt/docker/bin/control.sh provision.role.finish.build webdevops-cleanup \
     && bash /opt/docker/bin/bootstrap.sh
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
