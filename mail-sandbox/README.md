@@ -1,6 +1,6 @@
 # Mail sandbox container layout
 
-Automatic build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
+Automated build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
 
 Mail sandbox which catches all mails and delivers them to a local user and is accessable via IMAP.
 

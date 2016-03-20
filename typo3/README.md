@@ -1,6 +1,6 @@
 # TYPO3 container
 
-Automatic build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
+Automated build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
 
 Based on `webdevops/php-apache:ubuntu-14.04` with automatic TYPO3 installer
 
