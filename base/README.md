@@ -73,13 +73,13 @@ Main task file: `/opt/docker/provision/roles/yourrolename/tasks/main.yml`
 To register your role execute following script in your `Dockerfile`:
 
 For `bootstrap` and `entrypoint` tag:
-`RUN bash /opt/docker/bin/control.sh provision.role.bootstrap yourrolename`
+`RUN bash /opt/docker/bin/control.sh provision.role yourrolename`
 
 For only `bootstrap` tag:
-`RUN bash /opt/docker/bin/control.sh provision.role.bootstrap.bootstrap yourrolename`
+`RUN bash /opt/docker/bin/control.sh provision.role.bootstrap yourrolename`
 
 For only `entrypoint` tag:
-`RUN bash /opt/docker/bin/control.sh provision.role.bootstrap.entrypoint yourrolename`
+`RUN bash /opt/docker/bin/control.sh provision.role.entrypoint yourrolename`
 
 ## `entrypoint.sh`
 
