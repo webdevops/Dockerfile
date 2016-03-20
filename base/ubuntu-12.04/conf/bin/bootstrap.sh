@@ -37,6 +37,7 @@ case "$BOOTSTRAP_MODE" in
     "bootstrap")
         # Init and run bootstrap system
         runProvisionBootstrap
+        runProvisionBuild
         ;;
 
     *)

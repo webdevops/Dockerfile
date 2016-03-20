@@ -1,5 +1,7 @@
 # Ansible Docker container
 
+Automatic build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
+
 Containers with Ansible pre-installed (see `webdevops/bootstrap`).
 Ansible is installed via `pip` and each container will always contain the latest version of Ansible.
 

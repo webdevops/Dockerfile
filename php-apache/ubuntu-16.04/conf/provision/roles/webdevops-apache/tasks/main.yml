@@ -3,7 +3,3 @@
 - include: bootstrap.yml
   tags:
     - bootstrap
-
-- include: entrypoint.yml
-  tags:
-    - entrypoint

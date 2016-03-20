@@ -1,5 +1,7 @@
 # Bootstrap container layout
 
+Automatic build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
+
 Based on official distribution containers with installed Ansible packages (via pip) and all locales.
 
 ## Container info

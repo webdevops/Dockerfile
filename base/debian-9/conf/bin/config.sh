@@ -66,7 +66,6 @@ function runEntrypoints() {
     ENTRYPOINT_SCRIPT="/opt/docker/bin/entrypoint.d/${TASK}.sh"
 
     if [ -f "$ENTRYPOINT_SCRIPT" ]; then
-        echo "Executing entrypoint \"$(basename $ENTRYPOINT_SCRIPT .sh)\""
         . "$ENTRYPOINT_SCRIPT"
     fi
 
@@ -74,7 +73,6 @@ function runEntrypoints() {
     # Run default
     ###############
     if [ -f "/opt/docker/bin/entrypoint.d/default.sh" ]; then
-        echo "Executing default entrypoint"
         . /opt/docker/bin/entrypoint.d/default.sh
     fi
 
@@ -85,8 +83,6 @@ function runEntrypoints() {
  # Run "bootstrap" provisioning
  ##
 function runProvisionBootstrap() {
-    mkdir -p /opt/docker/bin/registry/
-
     for FILE in /opt/docker/provision/bootstrap.d/*.sh; do
         # run custom scripts, only once
         . "$FILE"
@@ -100,11 +96,22 @@ function runProvisionBootstrap() {
 }
 
 ###
+ # Run "build" provisioning
+ ##
+function runProvisionBuild() {
+    for FILE in /opt/docker/provision/build.d/*.sh; do
+        # run custom scripts, only once
+        . "$FILE"
+        rm -f -- "$FILE"
+    done
+
+    runDockerProvision build
+}
+
+###
  # Run "onbuild" provisioning
  ##
 function runProvisionOnBuild() {
-    mkdir -p /opt/docker/bin/registry/
-
     for FILE in /opt/docker/provision/onbuild.d/*.sh; do
         # run custom scripts
         . "$FILE"

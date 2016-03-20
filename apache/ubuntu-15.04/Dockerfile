@@ -6,7 +6,7 @@ FROM webdevops/base:ubuntu-15.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=5
-LABEL io.webdevops.version=0.20.0
+LABEL io.webdevops.version=0.21.0
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
@@ -27,7 +27,7 @@ RUN /usr/local/bin/apt-install \
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role webdevops-apache \
+RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-apache \
     && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 80 443
