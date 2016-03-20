@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
 ## [Unreleased]
+- Improved entrypoint startup time
+- Removed entrypoint ansible provisioning if not needed
 
 ## [0.20.0] - 2016-03-24
 ### Added
