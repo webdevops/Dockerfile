@@ -1,5 +1,6 @@
 # Nginx webserver Docker container
 
+Automatic build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
 
 Container                           | Distribution name                                                                 
 ----------------------------------- | -------------------
