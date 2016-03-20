@@ -2,11 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
-## [Unreleased]
+## [0.21.0] - 2016-03-20
+### Changed
 - Improved entrypoint startup time
 - Removed entrypoint ansible provisioning if not needed
 
-## [0.20.0] - 2016-03-24
+## [0.20.0] - 2016-02-24
 ### Added
 - Added sqlite to base images
 
