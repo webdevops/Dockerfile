@@ -1,5 +1,7 @@
 # PHP with Nginx container layout
 
+Automatic build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
+
 Container                               | Distribution name        | PHP Version
 --------------------------------------- | ------------------------ | --------------
 `webdevops/php-nginx:ubuntu-12.04`      | precise                  | PHP 5.3
