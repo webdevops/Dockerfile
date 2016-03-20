@@ -21,7 +21,7 @@ web:       webdevops/apache webdevops/nginx
 
 applications: webdevops/typo3 webdevops/piwik
 
-misc:      webdevops/mail-sandbox
+misc:      webdevops/mail-sandbox webdevops/sphinx
 
 test:
 	cd "test/" && make all
@@ -124,3 +124,6 @@ webdevops/piwik:
 
 webdevops/samson-deployment:
 	bash bin/build.sh samson-deployment "${DOCKER_REPOSITORY}/samson-deployment" "${DOCKER_TAG_LATEST}"
+
+webdevops/sphinx:
+	bash .bin/build.sh sphinx "${DOCKER_REPOSITORY}/sphinx" "${DOCKER_TAG_LATEST}"
