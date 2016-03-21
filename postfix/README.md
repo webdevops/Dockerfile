@@ -1,6 +1,6 @@
 # Postfix container layout
 
-Automatic build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
+Automated build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
 
 ## Environment variables
 

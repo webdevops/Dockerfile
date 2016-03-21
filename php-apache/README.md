@@ -1,6 +1,6 @@
 # PHP with Apache container layout
 
-Automatic build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
+Automated build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
 
 Container                                | Distribution name        | PHP Version                                                               
 ---------------------------------------- | -------------------------|---------------
