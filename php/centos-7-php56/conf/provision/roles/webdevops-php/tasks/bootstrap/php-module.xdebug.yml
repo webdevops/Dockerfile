@@ -1,0 +1,26 @@
+---
+
+- name: Set php xdebug file [RedHat family]
+  set_fact:
+     php_xdebug_conf: /etc/php.d/xdebug.ini
+  when: ansible_os_family == 'RedHat'
+
+- name: Set php xdebug file [Debian family]
+  set_fact:
+     php_xdebug_conf: /etc/php5/mods-available/xdebug.ini
+  when: ansible_os_family == 'Debian'
+
+- name: Set php xdebug file [Ubuntu 12.04]
+  set_fact:
+     php_xdebug_conf: /etc/php5/conf.d/xdebug.ini
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == "12.04"
+
+- name: Disable xdebug
+  replace:
+    dest:    '{{ php_xdebug_conf }}'
+    regexp:  '^[\s]*({{ item }}[\s]*=.*)$'
+    replace: ';\1'
+  with_items:
+    - 'zend_extension'
+    - 'extension'
+  ignore_errors: yes
