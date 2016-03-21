@@ -1,0 +1,31 @@
+---
+
+- name: Set php oci file [RedHat family]
+  set_fact:
+     php_oci_conf: /etc/php.d/oci8.ini
+  when: ansible_os_family == 'RedHat'
+
+- name: Set php oci file [Debian family]
+  set_fact:
+     php_oci_conf: /etc/php7/mods-available/oci8.ini
+  when: ansible_os_family == 'Debian'
+
+- name: Set php oci file [Ubuntu 12.04]
+  set_fact:
+     php_oci_conf: /etc/php7/conf.d/oci8.ini
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == "12.04"
+
+- name: Create oci8.ini
+  file: 
+    path: "{{ php_oci_conf }}"
+    state: touch
+    owner: "root"
+    group: "root"
+    mode:  0600
+
+- name: Write oci8.ini
+  lineinfile:
+    dest : "{{ php_oci_conf }}"
+    regexp: '^'
+    line: extension=oci8.so
+    state: present
