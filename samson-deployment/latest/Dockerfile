@@ -128,6 +128,10 @@ RUN /usr/local/bin/apt-install \
         php5-json \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
+# Add java
+RUN /usr/local/bin/apt-install \
+    openjdk-7-jre
+
 # Deployer stack
 RUN set -x \
     # Deployer: Ansistratno (https://github.com/ansistrano)
