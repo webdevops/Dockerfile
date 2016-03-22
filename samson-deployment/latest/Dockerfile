@@ -112,7 +112,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && pip install docker-compose
 
 # NPM stack
-RUN export DEBIAN_FRONTEND=noninteractive && set -x \
+RUN npm install -g npm \
+    && npm update -g \
     && npm install -g gulp \
     && npm install -g grunt-cli \
     && npm install -g bower \
