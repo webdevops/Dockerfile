@@ -1,6 +1,6 @@
 .idea
-testsuite/Dockerfile
-testsuite/vendor/
-testsuite/.bundle/
-testsuite/docker.test.*.tar
+/test/Dockerfile
+/test/vendor/
+/test/.bundle/
+/test/docker.test.*.tar
 *.log

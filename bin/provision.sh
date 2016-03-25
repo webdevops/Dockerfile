@@ -41,8 +41,9 @@ TAR='tar'
 SCRIPT_DIR=$(dirname "$($READLINK -f "$0")")
 BASE_DIR=$(dirname "$SCRIPT_DIR")
 
-LOCALSCRIPT_DIR="${BASE_DIR}/_localscripts"
-PROVISION_DIR="${BASE_DIR}/_provisioning"
+LOCALSCRIPT_DIR="${BASE_DIR}/localscripts"
+PROVISION_DIR="${BASE_DIR}/provisioning"
+DOCKER_DIR="${BASE_DIR}/docker"
 
 
 ###
@@ -118,7 +119,7 @@ function deployLocalscripts() {
     DOCKER_CONTAINER="$1"
     DOCKER_FILTER="$2"
 
-    listDirectoriesWithFilter "${BASE_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}"  | while read DOCKER_DIR; do
+    listDirectoriesWithFilter "${DOCKER_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}"  | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
             cp scripts.tar "${DOCKER_DIR}/scripts.tar"
@@ -144,7 +145,7 @@ function clearConfiguration() {
     DOCKER_FILTER="$2"
 
     echo " -> Clearing configuration"
-    listDirectoriesWithFilter "${BASE_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}" | while read DOCKER_DIR; do
+    listDirectoriesWithFilter "${DOCKER_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}" | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
             rm -rf "${DOCKER_DIR}/conf/"
@@ -173,7 +174,7 @@ function deployConfiguration() {
         echo " -> Deploying configuration with filter '$DOCKER_FILTER'"
     fi
 
-    listDirectoriesWithFilter "${BASE_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}" | while read DOCKER_DIR; do
+    listDirectoriesWithFilter "${DOCKER_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}" | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
             cp -f -r "${PROVISION_DIR}/${PROVISION_SUB_DIR}/." "${DOCKER_DIR}/conf/"

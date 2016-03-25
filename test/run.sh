@@ -34,7 +34,7 @@ SCRIPT_DIR=$(dirname $($READLINK -f "$0"))
 BASE_DIR=$(dirname "$SCRIPT_DIR")
 COLUMNS=$(tput cols)
 
-source "${BASE_DIR}/.bin/functions.sh"
+source "${BASE_DIR}/bin/functions.sh"
 
 cd "$SCRIPT_DIR"
 

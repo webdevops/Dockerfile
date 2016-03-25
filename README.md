@@ -4,22 +4,22 @@ Dockerfiles for various prebuilt docker containers
 
 [![Docker layout](https://static.webdevops.io/docker-layout.small.png)](https://static.webdevops.io/docker-layout.png)
 
-Dockerfile                                         | Description                                                                        | Depends on                                                           |
--------------------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-[`bootstrap`](base/README.md)                      | Distribution with ansible and some scripts                                         | official docker files                                                |
-[`base`](base/README.md)                           | Base containers for WebDevOps service containers                                   | [`webdevops/bootstrap`](https://hub.docker.com/r/webdevops/bootstrap/) |
-[`php`](php/README.md)                             | PHP (cli and fpm) service containers                                               | [`webdevops/base`](https://hub.docker.com/r/webdevops/base/)         |
-[`php-apache`](php-apache/README.md)               | PHP (cli and fpm) with Apache service containers                                   | [`webdevops/php`](https://hub.docker.com/r/webdevops/php/)           |
-[`php-nginx`](php-nginx/README.md)                 | PHP (cli and fpm) with Nginx service containers                                    | [`webdevops/php`](https://hub.docker.com/r/webdevops/php/)           |
-[`hhvm`](hhvm/README.md)                           | HHVM (cli and fcgi) service containers                                             | [`webdevops/base`](https://hub.docker.com/r/webdevops/base/)         |
-[`hhvm-apache`](hhvm-apache/README.md)             | HHVM (cli and fcgi) with Apache service containers                                 | [`webdevops/hhvm`](https://hub.docker.com/r/webdevops/hhvm/)         |
-[`hhvm-nginx`](hhvm-nginx/README.md)               | HHVM (cli and fcgi) with Nginx service containers                                  | [`webdevops/hhvm`](https://hub.docker.com/r/webdevops/hhvm/)         |
-[`vsftp`](vsftp/README.md)                         | VSFTP (ftp service) service container                                              | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
-[`storage`](storage/README.md)                     | Storage (noop) container                                                           | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
-[`ssh`](ssh/README.md)                             | SSH service container                                                              | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
-[`postfix`](postfix/README.md)                     | Postfix service container                                                          | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
-[`mail-sandbox`](mail-sandbox/README.md)           | Mail catcher service container (catches all mails via SMTP and are accessable via IMAP) | [`webdevops/postfix:latest`](https://hub.docker.com/r/webdevops/postfix/)  |
-[`samson-deployment`](samson-deployment/README.md) | [Samson](https://github.com/webdevops/samson-deployment) based deployment service  | [`zendesk/samson`](https://hub.docker.com/r/zendesk/samson/)         |
+Dockerfile                                                | Description                                                                        | Depends on                                                           |
+--------------------------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+[`bootstrap`](docker/base/README.md)                      | Distribution with ansible and some scripts                                         | official docker files                                                |
+[`base`](docker/base/README.md)                           | Base containers for WebDevOps service containers                                   | [`webdevops/bootstrap`](https://hub.docker.com/r/webdevops/bootstrap/) |
+[`php`](docker/php/README.md)                             | PHP (cli and fpm) service containers                                               | [`webdevops/base`](https://hub.docker.com/r/webdevops/base/)         |
+[`php-apache`](docker/php-apache/README.md)               | PHP (cli and fpm) with Apache service containers                                   | [`webdevops/php`](https://hub.docker.com/r/webdevops/php/)           |
+[`php-nginx`](docker/php-nginx/README.md)                 | PHP (cli and fpm) with Nginx service containers                                    | [`webdevops/php`](https://hub.docker.com/r/webdevops/php/)           |
+[`hhvm`](docker/hhvm/README.md)                           | HHVM (cli and fcgi) service containers                                             | [`webdevops/base`](https://hub.docker.com/r/webdevops/base/)         |
+[`hhvm-apache`](docker/hhvm-apache/README.md)             | HHVM (cli and fcgi) with Apache service containers                                 | [`webdevops/hhvm`](https://hub.docker.com/r/webdevops/hhvm/)         |
+[`hhvm-nginx`](docker/hhvm-nginx/README.md)               | HHVM (cli and fcgi) with Nginx service containers                                  | [`webdevops/hhvm`](https://hub.docker.com/r/webdevops/hhvm/)         |
+[`vsftp`](docker/vsftp/README.md)                         | VSFTP (ftp service) service container                                              | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
+[`storage`](docker/storage/README.md)                     | Storage (noop) container                                                           | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
+[`ssh`](docker/ssh/README.md)                             | SSH service container                                                              | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
+[`postfix`](docker/postfix/README.md)                     | Postfix service container                                                          | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)  |
+[`mail-sandbox`](docker/mail-sandbox/README.md)           | Mail catcher service container (catches all mails via SMTP and are accessable via IMAP) | [`webdevops/postfix:latest`](https://hub.docker.com/r/webdevops/postfix/)  |
+[`samson-deployment`](docker/samson-deployment/README.md) | [Samson](https://github.com/webdevops/samson-deployment) based deployment service  | [`zendesk/samson`](https://hub.docker.com/r/zendesk/samson/)         |
 
 # Building
 
@@ -52,7 +52,7 @@ Command                     | Description
 # Provisioning
 
 All `base` inherited containers provides an modular provisioning available as simple shell scripts and ansible roles.
-See [base/README.md](base/README.md) for more informations.
+See [docker/base/README.md](docker/base/README.md) for more informations.
 
 The configuration and provisioning files are build from [_provisioning/](_provisioning/README.md) to get a consistent
 configuraiton for all containers. This also should reduce copy&paste errors because the configuration will be deployed

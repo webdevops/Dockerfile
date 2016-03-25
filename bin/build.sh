@@ -39,7 +39,7 @@ BASENAME="$2"
 LATEST="$3"
 BASE_DIR="$(pwd)"
 
-source "${BASE_DIR}/.bin/functions.sh"
+source "${BASE_DIR}/bin/functions.sh"
 
 ###
  # Build dockerfile
@@ -60,10 +60,10 @@ function buildDockerfile() {
 
     if [ "${FAST}" -eq 1 ]; then
         LOGFILE="$(mktemp /tmp/docker.build.XXXXXXXXXX)"
-        "${BASE_DIR}/.bin/retry.sh" "${BASE_DIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}" &> "$LOGFILE" &
+        "${BASE_DIR}/bin/retry.sh" "${BASE_DIR}/bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}" &> "$LOGFILE" &
         addBackgroundPidToList "${CONTAINER_TAG}" "$LOGFILE"
     else
-        "${BASE_DIR}/.bin/retry.sh" "${BASE_DIR}/.bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}"
+        "${BASE_DIR}/bin/retry.sh" "${BASE_DIR}/bin/buildContainer.sh" "${DOCKERFILE_PATH}" "${CONTAINER_NAME}" "${CONTAINER_TAG}"
     fi
 
     cd "$BASE_DIR"
@@ -88,10 +88,10 @@ function pushDockerfile() {
 
     if [ "${FAST}" -eq 1 ]; then
         LOGFILE="$(mktemp /tmp/docker.push.XXXXXXXXXX)"
-        "${BASE_DIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}" &> "$LOGFILE" &
+        "${BASE_DIR}/bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}" &> "$LOGFILE" &
         addBackgroundPidToList "${CONTAINER_TAG}" "$LOGFILE"
     else
-        "${BASE_DIR}/.bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}"
+        "${BASE_DIR}/bin/retry.sh" docker push "${CONTAINER_NAME}:${CONTAINER_TAG}"
     fi
 
     cd "$BASE_DIR"
@@ -206,7 +206,7 @@ sleep 0.5
 # Provision
 #############################
 
-bash "${BASE_DIR}/.bin/provision.sh" "$TARGET"
+bash "${BASE_DIR}/bin/provision.sh" "$TARGET"
 echo ""
 
 #############################
@@ -222,13 +222,13 @@ timerStart
 
 echo "Building ${BASENAME}"
 ## Build each docker tag
-foreachDockerfileInPath "${TARGET}" "buildTarget"
+foreachDockerfileInPath "docker/${TARGET}" "buildTarget"
 
 # wait for build process
 waitForBuildStep
 
 ## Build docker tag latest
-foreachDockerfileInPath "${TARGET}" "buildTargetLatest" "${LATEST}"
+foreachDockerfileInPath "docker/${TARGET}" "buildTargetLatest" "${LATEST}"
 
 # wait for final build
 waitForBuild
@@ -239,8 +239,8 @@ logOutputFromBackgroundProcesses
 case "$BUILD_MODE" in
     build)
         echo ">> Checking built images"
-        foreachDockerfileInPath "${TARGET}" "checkBuild"
-        foreachDockerfileInPath "${TARGET}" "checkBuildLatest" "${LATEST}"
+        foreachDockerfileInPath "docker/${TARGET}" "checkBuild"
+        foreachDockerfileInPath "docker/${TARGET}" "checkBuildLatest" "${LATEST}"
         ;;
 esac
 
