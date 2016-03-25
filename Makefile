@@ -1,5 +1,7 @@
 ARGS = $(filter-out $@,$(MAKECMDGOALS))
 MAKEFLAGS += --silent
+.PHONY: test
+
 DOCKER_REPOSITORY=`cat DOCKER_REPOSITORY`
 DOCKER_TAG_LATEST=`cat DOCKER_TAG_LATEST`
 
@@ -22,13 +24,13 @@ applications: webdevops/typo3 webdevops/piwik
 misc:      webdevops/mail-sandbox
 
 test:
-	cd "testsuite/" && make all
+	cd "test/" && make all
 
 test-hub-images:
 	DOCKER_PULL=1 make test
 
 provision:
-	bash .bin/provision.sh
+	bash bin/provision.sh
 
 publish:    dist-update rebuild test push
 
@@ -63,58 +65,58 @@ push:
 	BUILD_MODE=push make all
 
 webdevops/bootstrap:
-	bash .bin/build.sh bootstrap "${DOCKER_REPOSITORY}/bootstrap" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh bootstrap "${DOCKER_REPOSITORY}/bootstrap" "${DOCKER_TAG_LATEST}"
 
 webdevops/ansible:
-	bash .bin/build.sh bootstrap "${DOCKER_REPOSITORY}/ansible" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh bootstrap "${DOCKER_REPOSITORY}/ansible" "${DOCKER_TAG_LATEST}"
 
 webdevops/base:
-	bash .bin/build.sh base "${DOCKER_REPOSITORY}/base" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh base "${DOCKER_REPOSITORY}/base" "${DOCKER_TAG_LATEST}"
 
 webdevops/php:
-	bash .bin/build.sh php "${DOCKER_REPOSITORY}/php" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh php "${DOCKER_REPOSITORY}/php" "${DOCKER_TAG_LATEST}"
 
 webdevops/apache:
-	bash .bin/build.sh apache "${DOCKER_REPOSITORY}/apache" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh apache "${DOCKER_REPOSITORY}/apache" "${DOCKER_TAG_LATEST}"
 
 webdevops/nginx:
-	bash .bin/build.sh nginx "${DOCKER_REPOSITORY}/nginx" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh nginx "${DOCKER_REPOSITORY}/nginx" "${DOCKER_TAG_LATEST}"
 
 webdevops/php-apache:
-	bash .bin/build.sh php-apache "${DOCKER_REPOSITORY}/php-apache" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh php-apache "${DOCKER_REPOSITORY}/php-apache" "${DOCKER_TAG_LATEST}"
 
 webdevops/php-nginx:
-	bash .bin/build.sh php-nginx "${DOCKER_REPOSITORY}/php-nginx" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh php-nginx "${DOCKER_REPOSITORY}/php-nginx" "${DOCKER_TAG_LATEST}"
 
 webdevops/hhvm:
-	bash .bin/build.sh hhvm "${DOCKER_REPOSITORY}/hhvm" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh hhvm "${DOCKER_REPOSITORY}/hhvm" "${DOCKER_TAG_LATEST}"
 
 webdevops/hhvm-apache:
-	bash .bin/build.sh hhvm-apache "${DOCKER_REPOSITORY}/hhvm-apache" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh hhvm-apache "${DOCKER_REPOSITORY}/hhvm-apache" "${DOCKER_TAG_LATEST}"
 
 webdevops/hhvm-nginx:
-	bash .bin/build.sh hhvm-nginx "${DOCKER_REPOSITORY}/hhvm-nginx" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh hhvm-nginx "${DOCKER_REPOSITORY}/hhvm-nginx" "${DOCKER_TAG_LATEST}"
 
 webdevops/ssh:
-	bash .bin/build.sh ssh "${DOCKER_REPOSITORY}/ssh" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh ssh "${DOCKER_REPOSITORY}/ssh" "${DOCKER_TAG_LATEST}"
 
 webdevops/storage:
-	bash .bin/build.sh storage "${DOCKER_REPOSITORY}/storage" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh storage "${DOCKER_REPOSITORY}/storage" "${DOCKER_TAG_LATEST}"
 
 webdevops/vsftp:
-	bash .bin/build.sh vsftp "${DOCKER_REPOSITORY}/vsftp" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh vsftp "${DOCKER_REPOSITORY}/vsftp" "${DOCKER_TAG_LATEST}"
 
 webdevops/postfix:
-	bash .bin/build.sh postfix "${DOCKER_REPOSITORY}/postfix" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh postfix "${DOCKER_REPOSITORY}/postfix" "${DOCKER_TAG_LATEST}"
 
 webdevops/mail-sandbox:
-	bash .bin/build.sh mail-sandbox "${DOCKER_REPOSITORY}/mail-sandbox" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh mail-sandbox "${DOCKER_REPOSITORY}/mail-sandbox" "${DOCKER_TAG_LATEST}"
 
 webdevops/typo3:
-	bash .bin/build.sh typo3 "${DOCKER_REPOSITORY}/typo3" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh typo3 "${DOCKER_REPOSITORY}/typo3" "${DOCKER_TAG_LATEST}"
 
 webdevops/piwik:
-	bash .bin/build.sh piwik "${DOCKER_REPOSITORY}/piwik" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh piwik "${DOCKER_REPOSITORY}/piwik" "${DOCKER_TAG_LATEST}"
 
 webdevops/samson-deployment:
-	bash .bin/build.sh samson-deployment "${DOCKER_REPOSITORY}/samson-deployment" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh samson-deployment "${DOCKER_REPOSITORY}/samson-deployment" "${DOCKER_TAG_LATEST}"
