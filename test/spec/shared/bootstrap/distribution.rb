@@ -43,4 +43,14 @@ shared_examples 'bootstrap::distribution' do
 
         its(:exit_status) { should eq 0 }
     end
+
+    #########################
+    # Alpine
+    #########################
+
+    describe command('sed -e "s/^/Release: /" /etc/alpine-release'), :if => os[:family] == 'alpine' do
+        its(:stdout) { should contain('Release: ' + os[:version] + '.') }
+
+        its(:exit_status) { should eq 0 }
+    end
 end

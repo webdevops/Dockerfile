@@ -2,6 +2,14 @@
 
 - action: setup
 
+- name: Setup document root
+  file:
+    path:    "{{ DOCUMENT_ROOT }}"
+    state:   directory
+    owner:   "{{ APPLICATION_USER }}"
+    group:   "{{ APPLICATION_GROUP }}"
+    recurse: yes
+
 - name: Setup hhvm run directory
   file:
     path:  /var/run/hhvm/

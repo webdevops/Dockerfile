@@ -23,9 +23,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && echo "export TERM=xterm" >> /root/.bashrc \
     # System update
     && /usr/local/bin/apt-upgrade \
-    # Generate locales
-    && ln -s /usr/share/i18n/SUPPORTED /var/lib/locales/supported.d/all \
-    && locale-gen \
     # Install base stuff
     && /usr/local/bin/apt-install \
         software-properties-common \

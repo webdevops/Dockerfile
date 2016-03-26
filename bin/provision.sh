@@ -217,6 +217,13 @@ function header() {
     deployConfiguration base/centos         base  'centos-*'
 }
 
+## Build base-app
+[[ $(checkBuildTarget base-app) ]] && {
+    header "base-app"
+    clearConfiguration  base-app  '*'
+    deployConfiguration base-app/general        base-app  '*'
+}
+
 ## Build apache
 [[ $(checkBuildTarget apache) ]] && {
     header "apache"

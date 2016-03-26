@@ -11,7 +11,7 @@ list:
 all:       bootstrap base web php hhvm service misc applications
 
 bootstrap: webdevops/bootstrap webdevops/ansible
-base:      webdevops/base webdevops/storage
+base:      webdevops/base webdevops/base-app webdevops/storage
 service:   webdevops/ssh webdevops/vsftp webdevops/postfix
 
 php:       webdevops/php webdevops/php-apache webdevops/php-nginx
@@ -44,6 +44,7 @@ dist-update:
 	docker pull debian:7
 	docker pull debian:8
 	docker pull debian:stretch
+	docker pull alpine:3.3
 
 rebuild:
 	# Rebuild all containers but use caching for duplicates
@@ -72,6 +73,9 @@ webdevops/ansible:
 
 webdevops/base:
 	bash bin/build.sh base "${DOCKER_REPOSITORY}/base" "${DOCKER_TAG_LATEST}"
+
+webdevops/base-app:
+	bash bin/build.sh base-app "${DOCKER_REPOSITORY}/base-app" "${DOCKER_TAG_LATEST}"
 
 webdevops/php:
 	bash bin/build.sh php "${DOCKER_REPOSITORY}/php" "${DOCKER_TAG_LATEST}"

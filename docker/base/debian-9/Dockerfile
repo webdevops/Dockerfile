@@ -8,42 +8,17 @@ LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=5
 LABEL io.webdevops.version=0.21.0
 
-ENV APPLICATION_USER  application
-ENV APPLICATION_GROUP application
-ENV APPLICATION_UID   1000
-ENV APPLICATION_GID   1000
 ENV DOCKER_CONF_HOME  /opt/docker/
 
-# Install services
-RUN sed -ri 's/(deb.*\/debian stretch main)/\1 contrib non-free /' -- /etc/apt/sources.list \
-    && /usr/local/bin/apt-install \
-        supervisor \
-        syslog-ng \
-        syslog-ng-core \
-        logrotate \
-        openssh-server \
-        mysql-client \
-        sqlite \
-        cron \
-        dnsmasq \
-        postfix
-
-# Install common tools
+# Install packages
 RUN /usr/local/bin/apt-install \
-        sudo \
-        zip \
-        unzip \
-        bzip2 \
-        wget \
-        curl \
-        net-tools \
-        moreutils \
-        dnsutils \
-        openssh-client \
-        rsync \
-        git \
-        nano \
-        vim
+    supervisor \
+    syslog-ng \
+    syslog-ng-core \
+    logrotate \
+    cron \
+    wget \
+    curl
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/

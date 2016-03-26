@@ -5,6 +5,8 @@
 FROM webdevops/base:debian-7
 MAINTAINER info@webdevops.io
 
+ENV WEB_DOCUMENT_ROOT  /app
+
 # Install dotdeb
 RUN echo "deb http://packages.dotdeb.org wheezy all" >> /etc/apt/sources.list \
     && echo "deb-src http://packages.dotdeb.org wheezy all" >> /etc/apt/sources.list \

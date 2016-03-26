@@ -2,7 +2,7 @@
 # CentOS 7 PHP Docker container
 #++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base:centos-7
+FROM webdevops/base-app:centos-7
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=5

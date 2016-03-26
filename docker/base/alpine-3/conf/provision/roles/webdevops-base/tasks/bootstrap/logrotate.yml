@@ -1,0 +1,16 @@
+---
+
+- name: Configure logrotate running user
+  lineinfile:
+    dest:   /etc/logrotate.conf
+    regexp: '^su [-_a-zA-Z0-9]+ [-_a-zA-Z0-9]+'
+    line:   'su root adm'
+
+- name: Register logrotate configurations
+  file:
+    src:  '{{ item }}'
+    dest: '/etc/logrotate.d/{{ item | basename }}'
+    state: link
+    force: yes
+  with_fileglob:
+    - /opt/docker/etc/logrotate.d/*

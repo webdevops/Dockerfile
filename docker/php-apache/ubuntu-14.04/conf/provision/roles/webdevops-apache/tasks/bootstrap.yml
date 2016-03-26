@@ -21,8 +21,6 @@
   file:
     path:    "{{ DOCUMENT_ROOT }}"
     state:   directory
-    owner:   "{{ APPLICATION_USER }}"
-    group:   "{{ APPLICATION_GROUP }}"
     recurse: yes
 
 - name: Ensure /var/run/apache2 exists
