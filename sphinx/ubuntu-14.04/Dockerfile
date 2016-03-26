@@ -24,4 +24,6 @@ RUN /usr/local/bin/apt-install \
     && pip install --upgrade sphinxcontrib-googlechart \
     && pip install --upgrade sphinxcontrib-googlemaps \
     && pip install --upgrade sphinxcontrib-httpdomain \
-    && pip install --upgrade sphinxcontrib-slide
+    && pip install --upgrade sphinxcontrib-slide \
+    && pip install --upgrade sphinx-autobuild \
+    && pip install --upgrade recommonmark
