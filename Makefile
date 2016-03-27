@@ -126,4 +126,4 @@ webdevops/samson-deployment:
 	bash bin/build.sh samson-deployment "${DOCKER_REPOSITORY}/samson-deployment" "${DOCKER_TAG_LATEST}"
 
 webdevops/sphinx:
-	bash .bin/build.sh sphinx "${DOCKER_REPOSITORY}/sphinx" "${DOCKER_TAG_LATEST}"
+	bash bin/build.sh sphinx "${DOCKER_REPOSITORY}/sphinx" "${DOCKER_TAG_LATEST}"
