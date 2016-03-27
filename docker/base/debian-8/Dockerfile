@@ -18,7 +18,8 @@ RUN /usr/local/bin/apt-install \
     logrotate \
     cron \
     wget \
-    curl
+    curl \
+    net-tools
 
 
 # Deploy scripts/configurations

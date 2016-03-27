@@ -12,13 +12,14 @@ ENV DOCKER_CONF_HOME  /opt/docker/
 
 # Install services
 RUN /usr/local/bin/apt-install \
-        supervisor \
-        syslog-ng \
-        syslog-ng-core \
-        logrotate \
-        cron \
-        wget \
-        curl
+    supervisor \
+    syslog-ng \
+    syslog-ng-core \
+    logrotate \
+    cron \
+    wget \
+    curl \
+    net-tools
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/

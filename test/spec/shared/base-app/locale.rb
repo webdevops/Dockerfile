@@ -8,7 +8,6 @@ shared_examples 'base-app::locales' do
         its(:stdout) { should contain('es_BO') }
         its(:stdout) { should contain('st_ZA') }
         its(:stdout) { should contain('zu_ZA') }
-        its(:stdout) { should contain('en_DK') }
         its(:stdout) { should contain('ca_ES') }
         its(:stdout) { should contain('fr_FR') }
 

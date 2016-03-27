@@ -2,7 +2,7 @@
 # Postfix Docker container
 #++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base:latest
+FROM webdevops/base-app:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=5

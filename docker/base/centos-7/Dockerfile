@@ -12,12 +12,13 @@ ENV DOCKER_CONF_HOME  /opt/docker/
 
 # Install services
 RUN /usr/local/bin/yum-install \
-        cronie \
-        supervisor \
-        syslog-ng \
-        logrotate \
-        wget \
-        curl
+    cronie \
+    supervisor \
+    syslog-ng \
+    logrotate \
+    wget \
+    curl \
+    net-tools
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
