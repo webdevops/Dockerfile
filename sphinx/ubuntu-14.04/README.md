@@ -16,4 +16,7 @@ webdevops/postfix:latest            | [![](https://badge.imagelayers.io/webdevop
 ## Example usage
 
 Running a sphinx-autobuild server for Live preview.
+
+```bash
 docker run -t -i --rm -p 8080:8000 -v <yourDocsDirectory>:/opt/docs webdevops/sphinx sphinx-autobuild -H 0.0.0.0 /opt/docs html
+```
