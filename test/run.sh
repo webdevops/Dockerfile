@@ -516,6 +516,18 @@ initEnvironment
     waitForTestRun
 }
 
+#######################################
+# webdevops/sphinx
+#######################################
+
+[[ $(checkTestTarget sphinx) ]] && {
+    setupTestEnvironment "sphinx"
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "latest"
+
+    waitForTestRun
+}
+
 echo ""
 echo " >>> finished, all tests PASSED <<<"
 echo ""
