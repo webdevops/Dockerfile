@@ -10,6 +10,11 @@
      apache_docker_vhost: /etc/apache2/sites-enabled/10-docker.conf
   when: ansible_os_family == 'Debian'
 
+- name: Set apache vhost file [Alpine family]
+  set_fact:
+     apache_docker_vhost: /etc/apache2/conf.d/docker.conf
+  when: ansible_os_family == 'Alpine'
+
 - name: Enable apache main config
   file:
     src:  '/opt/docker/etc/httpd/main.conf'
@@ -45,6 +50,19 @@
    - 'a2dismod mpm_event'
    - 'a2enmod mpm_event'
   when: (ansible_distribution == 'Ubuntu' and ansible_lsb.major_release|int >= 14) or (ansible_distribution == 'Debian' and ansible_lsb.major_release|int >= 8)
+
+- name: Switch MPM to worker [Alpine family]
+  lineinfile:
+    dest:   '/etc/apache2/httpd.conf'
+    regexp: '^[\s#]*{{ item.line }}'
+    line:   '{{ item.prefix }}{{ item.line }}'
+  with_items:
+   - { line: 'LoadModule mpm_prefork_module modules/mod_mpm_prefork.so', prefix: "#" }
+   - { line: 'LoadModule mpm_event_module modules/mod_mpm_event.so',   prefix: "" }
+   - { line: 'LoadModule deflate_module modules/mod_deflate.so',   prefix: "" }
+   - { line: 'LoadModule rewrite_module modules/mod_rewrite.so',   prefix: "" }
+   - { line: 'LoadModule logio_module modules/mod_logio.so',   prefix: "" }
+  when: ansible_os_family == 'Alpine'
 
 - name: Fix rights of ssl files
   file:

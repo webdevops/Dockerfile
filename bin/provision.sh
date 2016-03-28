@@ -215,6 +215,7 @@ function header() {
     clearConfiguration  base  '*'
     deployConfiguration base/general        base  '*'
     deployConfiguration base/centos         base  'centos-*'
+    deployConfiguration base/alpine         base  'alpine-*'
 }
 
 ## Build base-app
@@ -230,6 +231,7 @@ function header() {
     clearConfiguration  apache '*'
     deployConfiguration apache/general  apache  '*'
     deployConfiguration apache/centos   apache  'centos-*'
+    deployConfiguration apache/alpine   apache  'alpine-*'
 }
 
 ## Build nginx
