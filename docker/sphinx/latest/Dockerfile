@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# Postfix Docker container
+# Sphinx Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/bootstrap:alpine-3
