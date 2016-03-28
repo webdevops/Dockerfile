@@ -1,7 +1,7 @@
 shared_examples 'bootstrap::ansible' do
 
     it "should be ansible installed" do
-        if os[:family] == 'redhat'
+        if ['redhat', 'alpine'].include?(os[:family])
             expect(file("/usr/bin/ansible")).to be_executable
             expect(file("/usr/bin/ansible-playbook")).to be_executable
         elsif ['debian', 'ubuntu'].include?(os[:family])
