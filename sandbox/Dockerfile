@@ -43,6 +43,7 @@
 #FROM webdevops/apache:ubuntu-15.10
 #FROM webdevops/apache:ubuntu-16.04
 
+#FROM webdevops/nginx:alpine-3
 #FROM webdevops/nginx:centos-7
 #FROM webdevops/nginx:debian-7
 #FROM webdevops/nginx:debian-8
