@@ -31,3 +31,4 @@ RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-apache \
 EXPOSE 80 443
 
 CMD ["supervisord"]
+
