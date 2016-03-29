@@ -34,6 +34,13 @@
     state:   directory
     recurse: yes
 
+- name: Ensure /run/apache2 exists
+  file:
+    path:    '/run/apache2'
+    state:   directory
+    recurse: yes
+  when: ansible_os_family == 'Alpine'
+
 - name: Switch MPM to worker [RedHat family]
   lineinfile:
     dest:   '/etc/httpd/conf.modules.d/00-mpm.conf'
@@ -51,7 +58,7 @@
    - 'a2enmod mpm_event'
   when: (ansible_distribution == 'Ubuntu' and ansible_lsb.major_release|int >= 14) or (ansible_distribution == 'Debian' and ansible_lsb.major_release|int >= 8)
 
-- name: Switch MPM to worker [Alpine family]
+- name: Manage modules [Alpine family]
   lineinfile:
     dest:   '/etc/apache2/httpd.conf'
     regexp: '^[\s#]*{{ item.line }}'
@@ -62,6 +69,34 @@
    - { line: 'LoadModule deflate_module modules/mod_deflate.so',   prefix: "" }
    - { line: 'LoadModule rewrite_module modules/mod_rewrite.so',   prefix: "" }
    - { line: 'LoadModule logio_module modules/mod_logio.so',   prefix: "" }
+   - { line: 'LoadModule slotmem_shm_module modules/mod_slotmem_shm.so',   prefix: "" }
+  when: ansible_os_family == 'Alpine'
+
+- name: Fix ssl support [Alpine family]
+  lineinfile:
+    dest:   '/etc/apache2/conf.d/ssl.conf'
+    regexp: '{{ item.regexp }}'
+    line:   '{{ item.line }}'
+  with_items:
+   - { regexp: 'LoadModule ssl_module',           line: 'LoadModule ssl_module /usr/lib/apache2/mod_ssl.so' }
+   - { regexp: 'LoadModule socache_shmcb_module', line: 'LoadModule socache_shmcb_module /usr/lib/apache2/mod_socache_shmcb.so' }
+  when: ansible_os_family == 'Alpine'
+
+- name: Disable proxy [Alpine family]
+  lineinfile:
+    dest:   '/etc/apache2/conf.d/proxy.conf'
+    regexp: '^[\s#]*{{ item.line }}'
+    line:   '{{ item.prefix }}{{ item.line }}'
+  with_items:
+   - { line: 'LoadModule proxy_ajp_module modules/mod_proxy_ajp.so',           prefix: "#" }
+   - { line: 'LoadModule proxy_connect_module modules/mod_proxy_connect.so',   prefix: "#" }
+   - { line: 'LoadModule proxy_balancer_module modules/mod_proxy_balancer.so', prefix: "#" }
+   - { line: 'LoadModule proxy_express_module modules/mod_proxy_express.so',   prefix: "#" }
+   - { line: 'LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so',         prefix: "#" }
+   - { line: 'LoadModule proxy_fdpass_module modules/mod_proxy_fdpass.so',     prefix: "#" }
+   - { line: 'LoadModule proxy_ftp_module modules/mod_proxy_ftp.so',           prefix: "#" }
+   - { line: 'LoadModule proxy_http_module modules/mod_proxy_http.so',         prefix: "#" }
+   - { line: 'LoadModule proxy_scgi_module modules/mod_proxy_scgi.so',         prefix: "#" }
   when: ansible_os_family == 'Alpine'
 
 - name: Fix rights of ssl files
