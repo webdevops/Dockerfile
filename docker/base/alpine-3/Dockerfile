@@ -14,11 +14,10 @@ ENV DOCKER_CONF_HOME  /opt/docker/
 RUN /usr/local/bin/apk-install \
         supervisor \
         syslog-ng \
-        syslog-ng-core \
         logrotate \
-        cron \
         wget \
-        curl
+        curl \
+        sed
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
