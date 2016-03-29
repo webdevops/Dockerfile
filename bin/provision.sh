@@ -240,6 +240,7 @@ function header() {
     clearConfiguration  nginx '*'
     deployConfiguration nginx/general  nginx  '*'
     deployConfiguration nginx/centos   nginx  'centos-*'
+    deployConfiguration nginx/alpine   nginx  'alpine-*'
 }
 
 ## Build hhvm
