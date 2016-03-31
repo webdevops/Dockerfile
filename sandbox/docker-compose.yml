@@ -1,6 +1,7 @@
 main:
   build: .
-#  environment:
+  environment:
+     - CLI_SCRIPT=date
 #    - APPLICATION_UID=2001
 #    - APPLICATION_GID=2002
   links:
