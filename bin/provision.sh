@@ -273,6 +273,7 @@ function header() {
     clearConfiguration  php  '*'
     deployConfiguration php/general       php  '*'
     deployConfiguration php/ubuntu-12.04  php  'ubuntu-12.04'
+    deployConfiguration php/alpine        php  'alpine-*'
 
     # deploy php7 configuration to *-php7 containers
     clearConfiguration  php  'debian-*-php7'

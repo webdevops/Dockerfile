@@ -41,3 +41,11 @@
     state: link
     force: yes
   when: ansible_os_family == 'RedHat'
+
+- name: Create link for additional php.ini [Alpine family]
+  file:
+    src:  '/opt/docker/etc/php/php.ini'
+    dest: '/etc/php/conf.d/xzzz-docker.ini'
+    state: link
+    force: yes
+  when: ansible_os_family == 'Alpine'
