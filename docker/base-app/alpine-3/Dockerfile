@@ -16,7 +16,7 @@ ENV APPLICATION_GID   1000
 
 RUN /usr/local/bin/apk-install \
     # Install services
-    openssh-server \
+    openssh \
     mysql-client \
     sqlite \
     dnsmasq \
@@ -30,7 +30,8 @@ RUN /usr/local/bin/apk-install \
     curl \
     net-tools \
     moreutils \
-    dnsutils \
+    drill \
+    ldns \
     openssh-client \
     rsync \
     git \
