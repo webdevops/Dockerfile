@@ -1,0 +1,501 @@
+#!/bin/bash
+
+set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
+
+#######################################
+## Debian
+#######################################
+
+if [[ -f /etc/os-release ]] && [[ -n "$(awk -F= '/^NAME/{print $2}' /etc/os-release|grep -i Debian)" ]]; then
+    /usr/local/bin/apt-install locales-all
+fi
+
+#######################################
+## Ubuntu
+#######################################
+
+if [[ -f /etc/os-release ]] && [[ -n "$(awk -F= '/^NAME/{print $2}' /etc/os-release|grep -i Ubuntu)" ]]; then
+    ln -s /usr/share/i18n/SUPPORTED /var/lib/locales/supported.d/all
+    locale-gen
+fi
+
+#######################################
+## RedHat family
+#######################################
+
+function localedefdebug() {
+    echo $*
+    localedef "$@"
+}
+
+if [[ -f /etc/redhat-release ]]; then
+
+    # Failing locales
+    ## && localedefdebug -c -i bo_CN -f UTF-8 bo_CN.utf8 \
+    ## && localedefdebug -c -i bo_IN -f UTF-8 bo_IN.utf8 \
+    ## && localedefdebug -c -i ca_ES -f ISO-8859-15@valencia ca_ES.iso885915@valencia \
+    ## && localedefdebug -c -i ca_ES@valencia -f UTF-8 ca_ES.utf8@valencia \
+    ## && localedefdebug -c -i ce_RU -f UTF-8 ce_RU.utf8 \
+    ## && localedefdebug -c -i ckb_IQ -f UTF-8 ckb_IQ.utf8 \
+    ## && localedefdebug -c -i de_LI -f UTF-8 de_LI.utf8 \
+    ## && localedefdebug -c -i ug_CN@latin -f UTF-8 ug_CN.utf8@latin \
+    ## && localedefdebug -c -i en_DK -f ISO-8859-1 en_DK.iso88591 \
+    ## && localedefdebug -c -i en_DK -f ISO-8859-15 en_DK.iso885915 \
+    ## && localedefdebug -c -i en_DK -f UTF-8 en_DK.utf8 \
+    ## && localedefdebug -c -i eo -f ISO-8859-3 eo.iso88593 \
+    ## && localedefdebug -c -i eo_US -f UTF-8 eo_US.utf8 \
+    ## && localedefdebug -c -i eo -f UTF-8 eo.utf8 \
+    ## && localedefdebug -c -i eu_FR -f ISO-8859-1 eu_FR.iso88591 \
+    ## && localedefdebug -c -i eu_FR@euro -f ISO-8859-15 eu_FR.iso885915@euro \
+    ## && localedefdebug -c -i eu_FR -f UTF-8 eu_FR.utf8 \
+    ## && localedefdebug -c -i ia -f UTF-8 ia.utf8 \
+    ## && localedefdebug -c -i ln_CD -f UTF-8 ln_CD.utf8 \
+    ## && localedefdebug -c -i sd_PK -f UTF-8 sd_PK.utf8 \
+    ## && localedefdebug -c -i zh_HK -f BIG5HKSCS zh_HK.big5hkscs \
+
+    # Generate localeslocale -a|grep '\.'| while read LOCALE; do LOCALE_LANG=$(echo $LOCALE|cut -d '.' -f 1); LOCALE_CHARSET=$(echo $LOCALE|cut -d '.' -f 2); echo "&& localedefdebug -c -i $LOCALE_LANG -f $LOCALE_CHARSET $LOCALE_LANG.$LOCALE_CHARSET ; \$(exit 0) \\"; done;
+    # ->
+    /bin/true \
+    && localedefdebug -c -i aa_DJ -f ISO-8859-1 aa_DJ.iso88591 \
+    && localedefdebug -c -i aa_DJ -f UTF-8 aa_DJ.utf8 \
+    && localedefdebug -c -i aa_ER -f UTF-8 aa_ER.utf8 \
+    && localedefdebug -c -i aa_ER@saaho -f UTF-8 aa_ER.utf8@saaho \
+    && localedefdebug -c -i aa_ET -f UTF-8 aa_ET.utf8 \
+    && localedefdebug -c -i af_ZA -f ISO-8859-1 af_ZA.iso88591 \
+    && localedefdebug -c -i af_ZA -f UTF-8 af_ZA.utf8 \
+    && localedefdebug -c -i am_ET -f UTF-8 am_ET.utf8 \
+    && localedefdebug -c -i an_ES -f ISO-8859-15 an_ES.iso885915 \
+    && localedefdebug -c -i an_ES -f UTF-8 an_ES.utf8 \
+    && localedefdebug -c -i ar_AE -f ISO-8859-6 ar_AE.iso88596 \
+    && localedefdebug -c -i ar_AE -f UTF-8 ar_AE.utf8 \
+    && localedefdebug -c -i ar_BH -f ISO-8859-6 ar_BH.iso88596 \
+    && localedefdebug -c -i ar_BH -f UTF-8 ar_BH.utf8 \
+    && localedefdebug -c -i ar_DZ -f ISO-8859-6 ar_DZ.iso88596 \
+    && localedefdebug -c -i ar_DZ -f UTF-8 ar_DZ.utf8 \
+    && localedefdebug -c -i ar_EG -f ISO-8859-6 ar_EG.iso88596 \
+    && localedefdebug -c -i ar_EG -f UTF-8 ar_EG.utf8 \
+    && localedefdebug -c -i ar_IN -f UTF-8 ar_IN.utf8 \
+    && localedefdebug -c -i ar_IQ -f ISO-8859-6 ar_IQ.iso88596 \
+    && localedefdebug -c -i ar_IQ -f UTF-8 ar_IQ.utf8 \
+    && localedefdebug -c -i ar_JO -f ISO-8859-6 ar_JO.iso88596 \
+    && localedefdebug -c -i ar_JO -f UTF-8 ar_JO.utf8 \
+    && localedefdebug -c -i ar_KW -f ISO-8859-6 ar_KW.iso88596 \
+    && localedefdebug -c -i ar_KW -f UTF-8 ar_KW.utf8 \
+    && localedefdebug -c -i ar_LB -f ISO-8859-6 ar_LB.iso88596 \
+    && localedefdebug -c -i ar_LB -f UTF-8 ar_LB.utf8 \
+    && localedefdebug -c -i ar_LY -f ISO-8859-6 ar_LY.iso88596 \
+    && localedefdebug -c -i ar_LY -f UTF-8 ar_LY.utf8 \
+    && localedefdebug -c -i ar_MA -f ISO-8859-6 ar_MA.iso88596 \
+    && localedefdebug -c -i ar_MA -f UTF-8 ar_MA.utf8 \
+    && localedefdebug -c -i ar_OM -f ISO-8859-6 ar_OM.iso88596 \
+    && localedefdebug -c -i ar_OM -f UTF-8 ar_OM.utf8 \
+    && localedefdebug -c -i ar_QA -f ISO-8859-6 ar_QA.iso88596 \
+    && localedefdebug -c -i ar_QA -f UTF-8 ar_QA.utf8 \
+    && localedefdebug -c -i ar_SA -f ISO-8859-6 ar_SA.iso88596 \
+    && localedefdebug -c -i ar_SA -f UTF-8 ar_SA.utf8 \
+    && localedefdebug -c -i ar_SD -f ISO-8859-6 ar_SD.iso88596 \
+    && localedefdebug -c -i ar_SD -f UTF-8 ar_SD.utf8 \
+    && localedefdebug -c -i ar_SY -f ISO-8859-6 ar_SY.iso88596 \
+    && localedefdebug -c -i ar_SY -f UTF-8 ar_SY.utf8 \
+    && localedefdebug -c -i ar_TN -f ISO-8859-6 ar_TN.iso88596 \
+    && localedefdebug -c -i ar_TN -f UTF-8 ar_TN.utf8 \
+    && localedefdebug -c -i ar_YE -f ISO-8859-6 ar_YE.iso88596 \
+    && localedefdebug -c -i ar_YE -f UTF-8 ar_YE.utf8 \
+    && localedefdebug -c -i as_IN -f UTF-8 as_IN.utf8 \
+    && localedefdebug -c -i ast_ES -f ISO-8859-15 ast_ES.iso885915 \
+    && localedefdebug -c -i ast_ES -f UTF-8 ast_ES.utf8 \
+    && localedefdebug -c -i az_AZ -f UTF-8 az_AZ.utf8 \
+    && localedefdebug -c -i be_BY -f CP1251 be_BY.cp1251 \
+    && localedefdebug -c -i be_BY -f UTF-8 be_BY.utf8 \
+    && localedefdebug -c -i be_BY@latin -f UTF-8 be_BY.utf8@latin \
+    && localedefdebug -c -i bem_ZM -f UTF-8 bem_ZM.utf8 \
+    && localedefdebug -c -i ber_DZ -f UTF-8 ber_DZ.utf8 \
+    && localedefdebug -c -i ber_MA -f UTF-8 ber_MA.utf8 \
+    && localedefdebug -c -i bg_BG -f CP1251 bg_BG.cp1251 \
+    && localedefdebug -c -i bg_BG -f UTF-8 bg_BG.utf8 \
+    && localedefdebug -c -i bho_IN -f UTF-8 bho_IN.utf8 \
+    && localedefdebug -c -i bn_BD -f UTF-8 bn_BD.utf8 \
+    && localedefdebug -c -i bn_IN -f UTF-8 bn_IN.utf8 \
+    && localedefdebug -c -i br_FR -f ISO-8859-1 br_FR.iso88591 \
+    && localedefdebug -c -i br_FR@euro -f ISO-8859-15 br_FR.iso885915@euro \
+    && localedefdebug -c -i br_FR -f UTF-8 br_FR.utf8 \
+    && localedefdebug -c -i brx_IN -f UTF-8 brx_IN.utf8 \
+    && localedefdebug -c -i bs_BA -f ISO-8859-2 bs_BA.iso88592 \
+    && localedefdebug -c -i bs_BA -f UTF-8 bs_BA.utf8 \
+    && localedefdebug -c -i byn_ER -f UTF-8 byn_ER.utf8 \
+    && localedefdebug -c -i ca_AD -f ISO-8859-15 ca_AD.iso885915 \
+    && localedefdebug -c -i ca_AD -f UTF-8 ca_AD.utf8 \
+    && localedefdebug -c -i ca_ES -f ISO-8859-1 ca_ES.iso88591 \
+    && localedefdebug -c -i ca_ES@euro -f ISO-8859-15 ca_ES.iso885915@euro \
+    && localedefdebug -c -i ca_ES -f UTF-8 ca_ES.utf8 \
+    && localedefdebug -c -i ca_FR -f ISO-8859-15 ca_FR.iso885915 \
+    && localedefdebug -c -i ca_FR -f UTF-8 ca_FR.utf8 \
+    && localedefdebug -c -i ca_IT -f ISO-8859-15 ca_IT.iso885915 \
+    && localedefdebug -c -i ca_IT -f UTF-8 ca_IT.utf8 \
+    && localedefdebug -c -i crh_UA -f UTF-8 crh_UA.utf8 \
+    && localedefdebug -c -i csb_PL -f UTF-8 csb_PL.utf8 \
+    && localedefdebug -c -i cs_CZ -f ISO-8859-2 cs_CZ.iso88592 \
+    && localedefdebug -c -i cs_CZ -f UTF-8 cs_CZ.utf8 \
+    && localedefdebug -c -i cv_RU -f UTF-8 cv_RU.utf8 \
+    && localedefdebug -c -i cy_GB -f ISO-8859-14 cy_GB.iso885914 \
+    && localedefdebug -c -i cy_GB -f UTF-8 cy_GB.utf8 \
+    && localedefdebug -c -i da_DK -f ISO-8859-1 da_DK.iso88591 \
+    && localedefdebug -c -i da_DK -f UTF-8 da_DK.utf8 \
+    && localedefdebug -c -i de_AT -f ISO-8859-1 de_AT.iso88591 \
+    && localedefdebug -c -i de_AT@euro -f ISO-8859-15 de_AT.iso885915@euro \
+    && localedefdebug -c -i de_AT -f UTF-8 de_AT.utf8 \
+    && localedefdebug -c -i de_BE -f ISO-8859-1 de_BE.iso88591 \
+    && localedefdebug -c -i de_BE@euro -f ISO-8859-15 de_BE.iso885915@euro \
+    && localedefdebug -c -i de_BE -f UTF-8 de_BE.utf8 \
+    && localedefdebug -c -i de_CH -f ISO-8859-1 de_CH.iso88591 \
+    && localedefdebug -c -i de_CH -f UTF-8 de_CH.utf8 \
+    && localedefdebug -c -i de_DE -f ISO-8859-1 de_DE.iso88591 \
+    && localedefdebug -c -i de_DE@euro -f ISO-8859-15 de_DE.iso885915@euro \
+    && localedefdebug -c -i de_DE -f UTF-8 de_DE.utf8 \
+    && localedefdebug -c -i de_LU -f ISO-8859-1 de_LU.iso88591 \
+    && localedefdebug -c -i de_LU@euro -f ISO-8859-15 de_LU.iso885915@euro \
+    && localedefdebug -c -i de_LU -f UTF-8 de_LU.utf8 \
+    && localedefdebug -c -i dv_MV -f UTF-8 dv_MV.utf8 \
+    && localedefdebug -c -i dz_BT -f UTF-8 dz_BT.utf8 \
+    && localedefdebug -c -i el_CY -f ISO-8859-7 el_CY.iso88597 \
+    && localedefdebug -c -i el_CY -f UTF-8 el_CY.utf8 \
+    && localedefdebug -c -i el_GR -f ISO-8859-7 el_GR.iso88597 \
+    && localedefdebug -c -i el_GR -f UTF-8 el_GR.utf8 \
+    && localedefdebug -c -i en_AG -f UTF-8 en_AG.utf8 \
+    && localedefdebug -c -i en_AU -f ISO-8859-1 en_AU.iso88591 \
+    && localedefdebug -c -i en_AU -f UTF-8 en_AU.utf8 \
+    && localedefdebug -c -i en_BW -f ISO-8859-1 en_BW.iso88591 \
+    && localedefdebug -c -i en_BW -f UTF-8 en_BW.utf8 \
+    && localedefdebug -c -i en_CA -f ISO-8859-1 en_CA.iso88591 \
+    && localedefdebug -c -i en_CA -f UTF-8 en_CA.utf8 \
+    && localedefdebug -c -i en_GB -f ISO-8859-1 en_GB.iso88591 \
+    && localedefdebug -c -i en_GB -f ISO-8859-15 en_GB.iso885915 \
+    && localedefdebug -c -i en_GB -f UTF-8 en_GB.utf8 \
+    && localedefdebug -c -i en_HK -f ISO-8859-1 en_HK.iso88591 \
+    && localedefdebug -c -i en_HK -f UTF-8 en_HK.utf8 \
+    && localedefdebug -c -i en_IE -f ISO-8859-1 en_IE.iso88591 \
+    && localedefdebug -c -i en_IE@euro -f ISO-8859-15 en_IE.iso885915@euro \
+    && localedefdebug -c -i en_IE -f UTF-8 en_IE.utf8 \
+    && localedefdebug -c -i en_IN -f UTF-8 en_IN.utf8 \
+    && localedefdebug -c -i en_NG -f UTF-8 en_NG.utf8 \
+    && localedefdebug -c -i en_NZ -f ISO-8859-1 en_NZ.iso88591 \
+    && localedefdebug -c -i en_NZ -f UTF-8 en_NZ.utf8 \
+    && localedefdebug -c -i en_PH -f ISO-8859-1 en_PH.iso88591 \
+    && localedefdebug -c -i en_PH -f UTF-8 en_PH.utf8 \
+    && localedefdebug -c -i en_SG -f ISO-8859-1 en_SG.iso88591 \
+    && localedefdebug -c -i en_SG -f UTF-8 en_SG.utf8 \
+    && localedefdebug -c -i en_US -f ISO-8859-1 en_US.iso88591 \
+    && localedefdebug -c -i en_US -f ISO-8859-15 en_US.iso885915 \
+    && localedefdebug -c -i en_US -f UTF-8 en_US.utf8 \
+    && localedefdebug -c -i en_ZA -f ISO-8859-1 en_ZA.iso88591 \
+    && localedefdebug -c -i en_ZA -f UTF-8 en_ZA.utf8 \
+    && localedefdebug -c -i en_ZM -f UTF-8 en_ZM.utf8 \
+    && localedefdebug -c -i en_ZW -f ISO-8859-1 en_ZW.iso88591 \
+    && localedefdebug -c -i en_ZW -f UTF-8 en_ZW.utf8 \
+    && localedefdebug -c -i es_AR -f ISO-8859-1 es_AR.iso88591 \
+    && localedefdebug -c -i es_AR -f UTF-8 es_AR.utf8 \
+    && localedefdebug -c -i es_BO -f ISO-8859-1 es_BO.iso88591 \
+    && localedefdebug -c -i es_BO -f UTF-8 es_BO.utf8 \
+    && localedefdebug -c -i es_CL -f ISO-8859-1 es_CL.iso88591 \
+    && localedefdebug -c -i es_CL -f UTF-8 es_CL.utf8 \
+    && localedefdebug -c -i es_CO -f ISO-8859-1 es_CO.iso88591 \
+    && localedefdebug -c -i es_CO -f UTF-8 es_CO.utf8 \
+    && localedefdebug -c -i es_CR -f ISO-8859-1 es_CR.iso88591 \
+    && localedefdebug -c -i es_CR -f UTF-8 es_CR.utf8 \
+    && localedefdebug -c -i es_CU -f UTF-8 es_CU.utf8 \
+    && localedefdebug -c -i es_DO -f ISO-8859-1 es_DO.iso88591 \
+    && localedefdebug -c -i es_DO -f UTF-8 es_DO.utf8 \
+    && localedefdebug -c -i es_EC -f ISO-8859-1 es_EC.iso88591 \
+    && localedefdebug -c -i es_EC -f UTF-8 es_EC.utf8 \
+    && localedefdebug -c -i es_ES -f ISO-8859-1 es_ES.iso88591 \
+    && localedefdebug -c -i es_ES@euro -f ISO-8859-15 es_ES.iso885915@euro \
+    && localedefdebug -c -i es_ES -f UTF-8 es_ES.utf8 \
+    && localedefdebug -c -i es_GT -f ISO-8859-1 es_GT.iso88591 \
+    && localedefdebug -c -i es_GT -f UTF-8 es_GT.utf8 \
+    && localedefdebug -c -i es_HN -f ISO-8859-1 es_HN.iso88591 \
+    && localedefdebug -c -i es_HN -f UTF-8 es_HN.utf8 \
+    && localedefdebug -c -i es_MX -f ISO-8859-1 es_MX.iso88591 \
+    && localedefdebug -c -i es_MX -f UTF-8 es_MX.utf8 \
+    && localedefdebug -c -i es_NI -f ISO-8859-1 es_NI.iso88591 \
+    && localedefdebug -c -i es_NI -f UTF-8 es_NI.utf8 \
+    && localedefdebug -c -i es_PA -f ISO-8859-1 es_PA.iso88591 \
+    && localedefdebug -c -i es_PA -f UTF-8 es_PA.utf8 \
+    && localedefdebug -c -i es_PE -f ISO-8859-1 es_PE.iso88591 \
+    && localedefdebug -c -i es_PE -f UTF-8 es_PE.utf8 \
+    && localedefdebug -c -i es_PR -f ISO-8859-1 es_PR.iso88591 \
+    && localedefdebug -c -i es_PR -f UTF-8 es_PR.utf8 \
+    && localedefdebug -c -i es_PY -f ISO-8859-1 es_PY.iso88591 \
+    && localedefdebug -c -i es_PY -f UTF-8 es_PY.utf8 \
+    && localedefdebug -c -i es_SV -f ISO-8859-1 es_SV.iso88591 \
+    && localedefdebug -c -i es_SV -f UTF-8 es_SV.utf8 \
+    && localedefdebug -c -i es_US -f ISO-8859-1 es_US.iso88591 \
+    && localedefdebug -c -i es_US -f UTF-8 es_US.utf8 \
+    && localedefdebug -c -i es_UY -f ISO-8859-1 es_UY.iso88591 \
+    && localedefdebug -c -i es_UY -f UTF-8 es_UY.utf8 \
+    && localedefdebug -c -i es_VE -f ISO-8859-1 es_VE.iso88591 \
+    && localedefdebug -c -i es_VE -f UTF-8 es_VE.utf8 \
+    && localedefdebug -c -i et_EE -f ISO-8859-1 et_EE.iso88591 \
+    && localedefdebug -c -i et_EE -f ISO-8859-15 et_EE.iso885915 \
+    && localedefdebug -c -i et_EE -f UTF-8 et_EE.utf8 \
+    && localedefdebug -c -i eu_ES -f ISO-8859-1 eu_ES.iso88591 \
+    && localedefdebug -c -i eu_ES@euro -f ISO-8859-15 eu_ES.iso885915@euro \
+    && localedefdebug -c -i eu_ES -f UTF-8 eu_ES.utf8 \
+    && localedefdebug -c -i fa_IR -f UTF-8 fa_IR.utf8 \
+    && localedefdebug -c -i ff_SN -f UTF-8 ff_SN.utf8 \
+    && localedefdebug -c -i fi_FI -f ISO-8859-1 fi_FI.iso88591 \
+    && localedefdebug -c -i fi_FI@euro -f ISO-8859-15 fi_FI.iso885915@euro \
+    && localedefdebug -c -i fi_FI -f UTF-8 fi_FI.utf8 \
+    && localedefdebug -c -i fil_PH -f UTF-8 fil_PH.utf8 \
+    && localedefdebug -c -i fo_FO -f ISO-8859-1 fo_FO.iso88591 \
+    && localedefdebug -c -i fo_FO -f UTF-8 fo_FO.utf8 \
+    && localedefdebug -c -i fr_BE -f ISO-8859-1 fr_BE.iso88591 \
+    && localedefdebug -c -i fr_BE@euro -f ISO-8859-15 fr_BE.iso885915@euro \
+    && localedefdebug -c -i fr_BE -f UTF-8 fr_BE.utf8 \
+    && localedefdebug -c -i fr_CA -f ISO-8859-1 fr_CA.iso88591 \
+    && localedefdebug -c -i fr_CA -f UTF-8 fr_CA.utf8 \
+    && localedefdebug -c -i fr_CH -f ISO-8859-1 fr_CH.iso88591 \
+    && localedefdebug -c -i fr_CH -f UTF-8 fr_CH.utf8 \
+    && localedefdebug -c -i fr_FR -f ISO-8859-1 fr_FR.iso88591 \
+    && localedefdebug -c -i fr_FR@euro -f ISO-8859-15 fr_FR.iso885915@euro \
+    && localedefdebug -c -i fr_FR -f UTF-8 fr_FR.utf8 \
+    && localedefdebug -c -i fr_LU -f ISO-8859-1 fr_LU.iso88591 \
+    && localedefdebug -c -i fr_LU@euro -f ISO-8859-15 fr_LU.iso885915@euro \
+    && localedefdebug -c -i fr_LU -f UTF-8 fr_LU.utf8 \
+    && localedefdebug -c -i fur_IT -f UTF-8 fur_IT.utf8 \
+    && localedefdebug -c -i fy_DE -f UTF-8 fy_DE.utf8 \
+    && localedefdebug -c -i fy_NL -f UTF-8 fy_NL.utf8 \
+    && localedefdebug -c -i ga_IE -f ISO-8859-1 ga_IE.iso88591 \
+    && localedefdebug -c -i ga_IE@euro -f ISO-8859-15 ga_IE.iso885915@euro \
+    && localedefdebug -c -i ga_IE -f UTF-8 ga_IE.utf8 \
+    && localedefdebug -c -i gd_GB -f ISO-8859-15 gd_GB.iso885915 \
+    && localedefdebug -c -i gd_GB -f UTF-8 gd_GB.utf8 \
+    && localedefdebug -c -i gez_ER -f UTF-8 gez_ER.utf8 \
+    && localedefdebug -c -i gez_ER@abegede -f UTF-8 gez_ER.utf8@abegede \
+    && localedefdebug -c -i gez_ET -f UTF-8 gez_ET.utf8 \
+    && localedefdebug -c -i gez_ET@abegede -f UTF-8 gez_ET.utf8@abegede \
+    && localedefdebug -c -i gl_ES -f ISO-8859-1 gl_ES.iso88591 \
+    && localedefdebug -c -i gl_ES@euro -f ISO-8859-15 gl_ES.iso885915@euro \
+    && localedefdebug -c -i gl_ES -f UTF-8 gl_ES.utf8 \
+    && localedefdebug -c -i gu_IN -f UTF-8 gu_IN.utf8 \
+    && localedefdebug -c -i gv_GB -f ISO-8859-1 gv_GB.iso88591 \
+    && localedefdebug -c -i gv_GB -f UTF-8 gv_GB.utf8 \
+    && localedefdebug -c -i ha_NG -f UTF-8 ha_NG.utf8 \
+    && localedefdebug -c -i he_IL -f ISO-8859-8 he_IL.iso88598 \
+    && localedefdebug -c -i he_IL -f UTF-8 he_IL.utf8 \
+    && localedefdebug -c -i hi_IN -f UTF-8 hi_IN.utf8 \
+    && localedefdebug -c -i hne_IN -f UTF-8 hne_IN.utf8 \
+    && localedefdebug -c -i hr_HR -f ISO-8859-2 hr_HR.iso88592 \
+    && localedefdebug -c -i hr_HR -f UTF-8 hr_HR.utf8 \
+    && localedefdebug -c -i hsb_DE -f ISO-8859-2 hsb_DE.iso88592 \
+    && localedefdebug -c -i hsb_DE -f UTF-8 hsb_DE.utf8 \
+    && localedefdebug -c -i ht_HT -f UTF-8 ht_HT.utf8 \
+    && localedefdebug -c -i hu_HU -f ISO-8859-2 hu_HU.iso88592 \
+    && localedefdebug -c -i hu_HU -f UTF-8 hu_HU.utf8 \
+    && localedefdebug -c -i hy_AM -f ARMSCII-8 hy_AM.armscii8 \
+    && localedefdebug -c -i hy_AM -f UTF-8 hy_AM.utf8 \
+    && localedefdebug -c -i id_ID -f ISO-8859-1 id_ID.iso88591 \
+    && localedefdebug -c -i id_ID -f UTF-8 id_ID.utf8 \
+    && localedefdebug -c -i ig_NG -f UTF-8 ig_NG.utf8 \
+    && localedefdebug -c -i ik_CA -f UTF-8 ik_CA.utf8 \
+    && localedefdebug -c -i is_IS -f ISO-8859-1 is_IS.iso88591 \
+    && localedefdebug -c -i is_IS -f UTF-8 is_IS.utf8 \
+    && localedefdebug -c -i it_CH -f ISO-8859-1 it_CH.iso88591 \
+    && localedefdebug -c -i it_CH -f UTF-8 it_CH.utf8 \
+    && localedefdebug -c -i it_IT -f ISO-8859-1 it_IT.iso88591 \
+    && localedefdebug -c -i it_IT@euro -f ISO-8859-15 it_IT.iso885915@euro \
+    && localedefdebug -c -i it_IT -f UTF-8 it_IT.utf8 \
+    && localedefdebug -c -i iu_CA -f UTF-8 iu_CA.utf8 \
+    && localedefdebug -c -i iw_IL -f ISO-8859-8 iw_IL.iso88598 \
+    && localedefdebug -c -i iw_IL -f UTF-8 iw_IL.utf8 \
+    && localedefdebug -c -i ja_JP -f EUC-JP ja_JP.eucjp \
+    && localedefdebug -c -i ja_JP -f UTF-8 ja_JP.utf8 \
+    && localedefdebug -c -i ka_GE -f GEORGIAN-PS ka_GE.georgianps \
+    && localedefdebug -c -i ka_GE -f UTF-8 ka_GE.utf8 \
+    && localedefdebug -c -i kk_KZ -f PT154 kk_KZ.pt154 \
+    && localedefdebug -c -i kk_KZ -f RK1048 kk_KZ.rk1048 \
+    && localedefdebug -c -i kk_KZ -f UTF-8 kk_KZ.utf8 \
+    && localedefdebug -c -i kl_GL -f ISO-8859-1 kl_GL.iso88591 \
+    && localedefdebug -c -i kl_GL -f UTF-8 kl_GL.utf8 \
+    && localedefdebug -c -i km_KH -f UTF-8 km_KH.utf8 \
+    && localedefdebug -c -i kn_IN -f UTF-8 kn_IN.utf8 \
+    && localedefdebug -c -i kok_IN -f UTF-8 kok_IN.utf8 \
+    && localedefdebug -c -i ko_KR -f EUC-KR ko_KR.euckr \
+    && localedefdebug -c -i ko_KR -f UTF-8 ko_KR.utf8 \
+    && localedefdebug -c -i ks_IN -f UTF-8 ks_IN.utf8 \
+    && localedefdebug -c -i ks_IN@devanagari -f UTF-8 ks_IN.utf8@devanagari \
+    && localedefdebug -c -i ku_TR -f ISO-8859-9 ku_TR.iso88599 \
+    && localedefdebug -c -i ku_TR -f UTF-8 ku_TR.utf8 \
+    && localedefdebug -c -i kw_GB -f ISO-8859-1 kw_GB.iso88591 \
+    && localedefdebug -c -i kw_GB -f UTF-8 kw_GB.utf8 \
+    && localedefdebug -c -i ky_KG -f UTF-8 ky_KG.utf8 \
+    && localedefdebug -c -i lb_LU -f UTF-8 lb_LU.utf8 \
+    && localedefdebug -c -i lg_UG -f ISO-8859-10 lg_UG.iso885910 \
+    && localedefdebug -c -i lg_UG -f UTF-8 lg_UG.utf8 \
+    && localedefdebug -c -i li_BE -f UTF-8 li_BE.utf8 \
+    && localedefdebug -c -i lij_IT -f UTF-8 lij_IT.utf8 \
+    && localedefdebug -c -i li_NL -f UTF-8 li_NL.utf8 \
+    && localedefdebug -c -i lo_LA -f UTF-8 lo_LA.utf8 \
+    && localedefdebug -c -i lt_LT -f ISO-8859-13 lt_LT.iso885913 \
+    && localedefdebug -c -i lt_LT -f UTF-8 lt_LT.utf8 \
+    && localedefdebug -c -i lv_LV -f ISO-8859-13 lv_LV.iso885913 \
+    && localedefdebug -c -i lv_LV -f UTF-8 lv_LV.utf8 \
+    && localedefdebug -c -i mai_IN -f UTF-8 mai_IN.utf8 \
+    && localedefdebug -c -i mg_MG -f ISO-8859-15 mg_MG.iso885915 \
+    && localedefdebug -c -i mg_MG -f UTF-8 mg_MG.utf8 \
+    && localedefdebug -c -i mhr_RU -f UTF-8 mhr_RU.utf8 \
+    && localedefdebug -c -i mi_NZ -f ISO-8859-13 mi_NZ.iso885913 \
+    && localedefdebug -c -i mi_NZ -f UTF-8 mi_NZ.utf8 \
+    && localedefdebug -c -i mk_MK -f ISO-8859-5 mk_MK.iso88595 \
+    && localedefdebug -c -i mk_MK -f UTF-8 mk_MK.utf8 \
+    && localedefdebug -c -i ml_IN -f UTF-8 ml_IN.utf8 \
+    && localedefdebug -c -i mn_MN -f UTF-8 mn_MN.utf8 \
+    && localedefdebug -c -i mr_IN -f UTF-8 mr_IN.utf8 \
+    && localedefdebug -c -i ms_MY -f ISO-8859-1 ms_MY.iso88591 \
+    && localedefdebug -c -i ms_MY -f UTF-8 ms_MY.utf8 \
+    && localedefdebug -c -i mt_MT -f ISO-8859-3 mt_MT.iso88593 \
+    && localedefdebug -c -i mt_MT -f UTF-8 mt_MT.utf8 \
+    && localedefdebug -c -i my_MM -f UTF-8 my_MM.utf8 \
+    && localedefdebug -c -i nan_TW@latin -f UTF-8 nan_TW.utf8@latin \
+    && localedefdebug -c -i nb_NO -f ISO-8859-1 nb_NO.iso88591 \
+    && localedefdebug -c -i nb_NO -f UTF-8 nb_NO.utf8 \
+    && localedefdebug -c -i nds_DE -f UTF-8 nds_DE.utf8 \
+    && localedefdebug -c -i nds_NL -f UTF-8 nds_NL.utf8 \
+    && localedefdebug -c -i ne_NP -f UTF-8 ne_NP.utf8 \
+    && localedefdebug -c -i nl_AW -f UTF-8 nl_AW.utf8 \
+    && localedefdebug -c -i nl_BE -f ISO-8859-1 nl_BE.iso88591 \
+    && localedefdebug -c -i nl_BE@euro -f ISO-8859-15 nl_BE.iso885915@euro \
+    && localedefdebug -c -i nl_BE -f UTF-8 nl_BE.utf8 \
+    && localedefdebug -c -i nl_NL -f ISO-8859-1 nl_NL.iso88591 \
+    && localedefdebug -c -i nl_NL@euro -f ISO-8859-15 nl_NL.iso885915@euro \
+    && localedefdebug -c -i nl_NL -f UTF-8 nl_NL.utf8 \
+    && localedefdebug -c -i nn_NO -f ISO-8859-1 nn_NO.iso88591 \
+    && localedefdebug -c -i nn_NO -f UTF-8 nn_NO.utf8 \
+    && localedefdebug -c -i nr_ZA -f UTF-8 nr_ZA.utf8 \
+    && localedefdebug -c -i nso_ZA -f UTF-8 nso_ZA.utf8 \
+    && localedefdebug -c -i oc_FR -f ISO-8859-1 oc_FR.iso88591 \
+    && localedefdebug -c -i oc_FR -f UTF-8 oc_FR.utf8 \
+    && localedefdebug -c -i om_ET -f UTF-8 om_ET.utf8 \
+    && localedefdebug -c -i om_KE -f ISO-8859-1 om_KE.iso88591 \
+    && localedefdebug -c -i om_KE -f UTF-8 om_KE.utf8 \
+    && localedefdebug -c -i or_IN -f UTF-8 or_IN.utf8 \
+    && localedefdebug -c -i os_RU -f UTF-8 os_RU.utf8 \
+    && localedefdebug -c -i pa_IN -f UTF-8 pa_IN.utf8 \
+    && localedefdebug -c -i pap_AN -f UTF-8 pap_AN.utf8 \
+    && localedefdebug -c -i pa_PK -f UTF-8 pa_PK.utf8 \
+    && localedefdebug -c -i pl_PL -f ISO-8859-2 pl_PL.iso88592 \
+    && localedefdebug -c -i pl_PL -f UTF-8 pl_PL.utf8 \
+    && localedefdebug -c -i ps_AF -f UTF-8 ps_AF.utf8 \
+    && localedefdebug -c -i pt_BR -f ISO-8859-1 pt_BR.iso88591 \
+    && localedefdebug -c -i pt_BR -f UTF-8 pt_BR.utf8 \
+    && localedefdebug -c -i pt_PT -f ISO-8859-1 pt_PT.iso88591 \
+    && localedefdebug -c -i pt_PT@euro -f ISO-8859-15 pt_PT.iso885915@euro \
+    && localedefdebug -c -i pt_PT -f UTF-8 pt_PT.utf8 \
+    && localedefdebug -c -i ro_RO -f ISO-8859-2 ro_RO.iso88592 \
+    && localedefdebug -c -i ro_RO -f UTF-8 ro_RO.utf8 \
+    && localedefdebug -c -i ru_RU -f CP1251 ru_RU.cp1251 \
+    && localedefdebug -c -i ru_RU -f ISO-8859-5 ru_RU.iso88595 \
+    && localedefdebug -c -i ru_RU -f KOI8-R ru_RU.koi8r \
+    && localedefdebug -c -i ru_RU -f UTF-8 ru_RU.utf8 \
+    && localedefdebug -c -i ru_UA -f KOI8-U ru_UA.koi8u \
+    && localedefdebug -c -i ru_UA -f UTF-8 ru_UA.utf8 \
+    && localedefdebug -c -i rw_RW -f UTF-8 rw_RW.utf8 \
+    && localedefdebug -c -i sa_IN -f UTF-8 sa_IN.utf8 \
+    && localedefdebug -c -i sc_IT -f UTF-8 sc_IT.utf8 \
+    && localedefdebug -c -i sd_IN -f UTF-8 sd_IN.utf8 \
+    && localedefdebug -c -i sd_IN@devanagari -f UTF-8 sd_IN.utf8@devanagari \
+    && localedefdebug -c -i se_NO -f UTF-8 se_NO.utf8 \
+    && localedefdebug -c -i shs_CA -f UTF-8 shs_CA.utf8 \
+    && localedefdebug -c -i sid_ET -f UTF-8 sid_ET.utf8 \
+    && localedefdebug -c -i si_LK -f UTF-8 si_LK.utf8 \
+    && localedefdebug -c -i sk_SK -f ISO-8859-2 sk_SK.iso88592 \
+    && localedefdebug -c -i sk_SK -f UTF-8 sk_SK.utf8 \
+    && localedefdebug -c -i sl_SI -f ISO-8859-2 sl_SI.iso88592 \
+    && localedefdebug -c -i sl_SI -f UTF-8 sl_SI.utf8 \
+    && localedefdebug -c -i so_DJ -f ISO-8859-1 so_DJ.iso88591 \
+    && localedefdebug -c -i so_DJ -f UTF-8 so_DJ.utf8 \
+    && localedefdebug -c -i so_ET -f UTF-8 so_ET.utf8 \
+    && localedefdebug -c -i so_KE -f ISO-8859-1 so_KE.iso88591 \
+    && localedefdebug -c -i so_KE -f UTF-8 so_KE.utf8 \
+    && localedefdebug -c -i so_SO -f ISO-8859-1 so_SO.iso88591 \
+    && localedefdebug -c -i so_SO -f UTF-8 so_SO.utf8 \
+    && localedefdebug -c -i sq_AL -f ISO-8859-1 sq_AL.iso88591 \
+    && localedefdebug -c -i sq_AL -f UTF-8 sq_AL.utf8 \
+    && localedefdebug -c -i sq_MK -f UTF-8 sq_MK.utf8 \
+    && localedefdebug -c -i sr_ME -f UTF-8 sr_ME.utf8 \
+    && localedefdebug -c -i sr_RS -f UTF-8 sr_RS.utf8 \
+    && localedefdebug -c -i sr_RS@latin -f UTF-8 sr_RS.utf8@latin \
+    && localedefdebug -c -i ss_ZA -f UTF-8 ss_ZA.utf8 \
+    && localedefdebug -c -i st_ZA -f ISO-8859-1 st_ZA.iso88591 \
+    && localedefdebug -c -i st_ZA -f UTF-8 st_ZA.utf8 \
+    && localedefdebug -c -i sv_FI -f ISO-8859-1 sv_FI.iso88591 \
+    && localedefdebug -c -i sv_FI@euro -f ISO-8859-15 sv_FI.iso885915@euro \
+    && localedefdebug -c -i sv_FI -f UTF-8 sv_FI.utf8 \
+    && localedefdebug -c -i sv_SE -f ISO-8859-1 sv_SE.iso88591 \
+    && localedefdebug -c -i sv_SE -f ISO-8859-15 sv_SE.iso885915 \
+    && localedefdebug -c -i sv_SE -f UTF-8 sv_SE.utf8 \
+    && localedefdebug -c -i sw_KE -f UTF-8 sw_KE.utf8 \
+    && localedefdebug -c -i sw_TZ -f UTF-8 sw_TZ.utf8 \
+    && localedefdebug -c -i ta_IN -f UTF-8 ta_IN.utf8 \
+    && localedefdebug -c -i ta_LK -f UTF-8 ta_LK.utf8 \
+    && localedefdebug -c -i te_IN -f UTF-8 te_IN.utf8 \
+    && localedefdebug -c -i tg_TJ -f KOI8-T tg_TJ.koi8t \
+    && localedefdebug -c -i tg_TJ -f UTF-8 tg_TJ.utf8 \
+    && localedefdebug -c -i th_TH -f TIS-620 th_TH.tis620 \
+    && localedefdebug -c -i th_TH -f UTF-8 th_TH.utf8 \
+    && localedefdebug -c -i ti_ER -f UTF-8 ti_ER.utf8 \
+    && localedefdebug -c -i ti_ET -f UTF-8 ti_ET.utf8 \
+    && localedefdebug -c -i tig_ER -f UTF-8 tig_ER.utf8 \
+    && localedefdebug -c -i tk_TM -f UTF-8 tk_TM.utf8 \
+    && localedefdebug -c -i tl_PH -f ISO-8859-1 tl_PH.iso88591 \
+    && localedefdebug -c -i tl_PH -f UTF-8 tl_PH.utf8 \
+    && localedefdebug -c -i tn_ZA -f UTF-8 tn_ZA.utf8 \
+    && localedefdebug -c -i tr_CY -f ISO-8859-9 tr_CY.iso88599 \
+    && localedefdebug -c -i tr_CY -f UTF-8 tr_CY.utf8 \
+    && localedefdebug -c -i tr_TR -f ISO-8859-9 tr_TR.iso88599 \
+    && localedefdebug -c -i tr_TR -f UTF-8 tr_TR.utf8 \
+    && localedefdebug -c -i ts_ZA -f UTF-8 ts_ZA.utf8 \
+    && localedefdebug -c -i tt_RU -f UTF-8 tt_RU.utf8 \
+    && localedefdebug -c -i tt_RU@iqtelif -f UTF-8 tt_RU.utf8@iqtelif \
+    && localedefdebug -c -i ug_CN -f UTF-8 ug_CN.utf8 \
+    && localedefdebug -c -i uk_UA -f KOI8-U uk_UA.koi8u \
+    && localedefdebug -c -i uk_UA -f UTF-8 uk_UA.utf8 \
+    && localedefdebug -c -i unm_US -f UTF-8 unm_US.utf8 \
+    && localedefdebug -c -i ur_IN -f UTF-8 ur_IN.utf8 \
+    && localedefdebug -c -i ur_PK -f UTF-8 ur_PK.utf8 \
+    && localedefdebug -c -i uz_UZ -f ISO-8859-1 uz_UZ.iso88591 \
+    && localedefdebug -c -i uz_UZ -f UTF-8 uz_UZ.utf8 \
+    && localedefdebug -c -i uz_UZ@cyrillic -f UTF-8 uz_UZ.utf8@cyrillic \
+    && localedefdebug -c -i ve_ZA -f UTF-8 ve_ZA.utf8 \
+    && localedefdebug -c -i vi_VN -f TCVN5712-1 vi_VN.tcvn \
+    && localedefdebug -c -i vi_VN -f UTF-8 vi_VN.utf8 \
+    && localedefdebug -c -i wa_BE -f ISO-8859-1 wa_BE.iso88591 \
+    && localedefdebug -c -i wa_BE@euro -f ISO-8859-15 wa_BE.iso885915@euro \
+    && localedefdebug -c -i wa_BE -f UTF-8 wa_BE.utf8 \
+    && localedefdebug -c -i wae_CH -f UTF-8 wae_CH.utf8 \
+    && localedefdebug -c -i wal_ET -f UTF-8 wal_ET.utf8 \
+    && localedefdebug -c -i wo_SN -f UTF-8 wo_SN.utf8 \
+    && localedefdebug -c -i xh_ZA -f ISO-8859-1 xh_ZA.iso88591 \
+    && localedefdebug -c -i xh_ZA -f UTF-8 xh_ZA.utf8 \
+    && localedefdebug -c -i yi_US -f CP1255 yi_US.cp1255 \
+    && localedefdebug -c -i yi_US -f UTF-8 yi_US.utf8 \
+    && localedefdebug -c -i yo_NG -f UTF-8 yo_NG.utf8 \
+    && localedefdebug -c -i yue_HK -f UTF-8 yue_HK.utf8 \
+    && localedefdebug -c -i zh_CN -f GB18030 zh_CN.gb18030 \
+    && localedefdebug -c -i zh_CN -f GB2312 zh_CN.gb2312 \
+    && localedefdebug -c -i zh_CN -f GBK zh_CN.gbk \
+    && localedefdebug -c -i zh_CN -f UTF-8 zh_CN.utf8 \
+    && localedefdebug -c -i zh_HK -f UTF-8 zh_HK.utf8 \
+    && localedefdebug -c -i zh_SG -f GB2312 zh_SG.gb2312 \
+    && localedefdebug -c -i zh_SG -f GBK zh_SG.gbk \
+    && localedefdebug -c -i zh_SG -f UTF-8 zh_SG.utf8 \
+    && localedefdebug -c -i zh_TW -f BIG5 zh_TW.big5 \
+    && localedefdebug -c -i zh_TW -f EUC-TW zh_TW.euctw \
+    && localedefdebug -c -i zh_TW -f UTF-8 zh_TW.utf8 \
+    && localedefdebug -c -i zu_ZA -f ISO-8859-1 zu_ZA.iso88591 \
+    && localedefdebug -c -i zu_ZA -f UTF-8 zu_ZA.utf8 \
+    && /bin/true
+fi

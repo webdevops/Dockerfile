@@ -2,7 +2,7 @@
 # Ubuntu 16.04 PHP Docker container
 #++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base:ubuntu-16.04
+FROM webdevops/base-app:ubuntu-16.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=5

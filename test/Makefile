@@ -18,6 +18,9 @@ ansible:
 base:
 	bash ./run.sh base
 
+base-app:
+	bash ./run.sh base-app
+
 php:
 	bash ./run.sh php
 

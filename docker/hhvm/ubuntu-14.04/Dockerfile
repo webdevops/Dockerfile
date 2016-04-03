@@ -2,11 +2,13 @@
 # Ubuntu 14.04 HHVM Docker container
 #++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base:ubuntu-14.04
+FROM webdevops/base-app:ubuntu-14.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=5
 LABEL io.webdevops.version=0.21.0
+
+ENV WEB_DOCUMENT_ROOT  /app
 
 # Install tools
 RUN /usr/local/bin/apt-install \

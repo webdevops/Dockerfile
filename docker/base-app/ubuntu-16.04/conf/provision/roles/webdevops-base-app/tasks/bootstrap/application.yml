@@ -1,0 +1,10 @@
+---
+
+- name: Init application directory
+  file:
+    path: "/{{ APPLICATION_PATH }}"
+    state: directory
+    mode:  0755
+    owner: "{{ APPLICATION_USER }}"
+    group: "{{ APPLICATION_GROUP }}"
+    recurse: yes

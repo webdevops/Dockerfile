@@ -215,6 +215,14 @@ function header() {
     clearConfiguration  base  '*'
     deployConfiguration base/general        base  '*'
     deployConfiguration base/centos         base  'centos-*'
+    deployConfiguration base/alpine         base  'alpine-*'
+}
+
+## Build base-app
+[[ $(checkBuildTarget base-app) ]] && {
+    header "base-app"
+    clearConfiguration  base-app  '*'
+    deployConfiguration base-app/general        base-app  '*'
 }
 
 ## Build apache
@@ -223,6 +231,7 @@ function header() {
     clearConfiguration  apache '*'
     deployConfiguration apache/general  apache  '*'
     deployConfiguration apache/centos   apache  'centos-*'
+    deployConfiguration apache/alpine   apache  'alpine-*'
 }
 
 ## Build nginx
@@ -231,6 +240,7 @@ function header() {
     clearConfiguration  nginx '*'
     deployConfiguration nginx/general  nginx  '*'
     deployConfiguration nginx/centos   nginx  'centos-*'
+    deployConfiguration nginx/alpine   nginx  'alpine-*'
 }
 
 ## Build hhvm
@@ -263,6 +273,7 @@ function header() {
     clearConfiguration  php  '*'
     deployConfiguration php/general       php  '*'
     deployConfiguration php/ubuntu-12.04  php  'ubuntu-12.04'
+    deployConfiguration php/alpine        php  'alpine-*'
 
     # deploy php7 configuration to *-php7 containers
     clearConfiguration  php  'debian-*-php7'
@@ -275,6 +286,7 @@ function header() {
     clearConfiguration  php-apache  '*'
     deployConfiguration apache/general      php-apache  '*'
     deployConfiguration apache/centos       php-apache  'centos-*'
+    deployConfiguration apache/alpine       php-apache  'alpine-*'
     deployConfiguration php-apache/general  php-apache  '*'
 }
 
@@ -284,6 +296,7 @@ function header() {
     clearConfiguration  php-nginx  '*'
     deployConfiguration nginx/general      php-nginx  '*'
     deployConfiguration nginx/centos       php-nginx  'centos-*'
+    deployConfiguration nginx/alpine       php-nginx  'alpine-*'
     deployConfiguration php-nginx/general  php-nginx  '*'
 }
 

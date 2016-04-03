@@ -15,6 +15,11 @@
      php_xdebug_conf: /etc/php5/conf.d/xdebug.ini
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == "12.04"
 
+- name: Set php xdebug file [Alpine family]
+  set_fact:
+     php_xdebug_conf: /etc/php/conf.d/xdebug.ini
+  when: ansible_distribution == 'Alpine'
+
 - name: Disable xdebug
   replace:
     dest:    '{{ php_xdebug_conf }}'
