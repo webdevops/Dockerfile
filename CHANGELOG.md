@@ -6,6 +6,7 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 ### Changed
 - Introduced base-app for application images
 - Added alpine-3 images
+- Added sphinx image
 
 ## [0.21.6] - 2016-03-25
 ### Changed
