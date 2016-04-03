@@ -5,7 +5,7 @@
 FROM debian:8
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=5
+LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.21.0
 
 # Ensure UTF-8
@@ -20,14 +20,14 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && set -x \
     # Fix root terminal
     && echo "export TERM=xterm" >> /root/.bashrc \
+    # Enable non-free
+    && sed -ri 's/(deb.*\/debian jessie main)/\1 contrib non-free /' -- /etc/apt/sources.list \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Base stuff
     && /usr/local/bin/apt-install \
         lsb-release \
         ca-certificates \
-        # Generate locales
-        locales-all \
     # Install ansible
         python-dev \
         python-setuptools \

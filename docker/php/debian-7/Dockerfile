@@ -2,10 +2,10 @@
 # Debian 7 PHP Docker container
 #++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base:debian-7
+FROM webdevops/base-app:debian-7
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=5
+LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.21.0
 
 # Install tools

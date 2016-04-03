@@ -1,5 +1,3 @@
 ---
 
-APPLICATION_USER:  "{{ lookup('env','APPLICATION_USER') }}"
-APPLICATION_GROUP: "{{ lookup('env','APPLICATION_GROUP') }}"
 DOCUMENT_ROOT:     "{{ lookup('env','WEB_DOCUMENT_ROOT') }}"

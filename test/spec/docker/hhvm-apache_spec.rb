@@ -10,6 +10,7 @@ describe "Dockerfile" do
 
     include_examples 'collection::bootstrap'
     include_examples 'collection::base'
+    include_examples 'collection::base-app'
     include_examples 'collection::hhvm'
     include_examples 'collection::apache'
     include_examples 'collection::hhvm::webserver-test'

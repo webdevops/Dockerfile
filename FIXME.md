@@ -20,3 +20,6 @@ Mostly upstream issues (eg. missing or broken packages)
 
 ## Debian 9 (PHP 7)
 - Missing memcached
+
+## Alpine 3 (PHP5)
+- Missing mhash

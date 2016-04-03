@@ -5,7 +5,7 @@
 #############################################
 
 if [ -n "${CLI_SCRIPT}" ]; then
-    if [ -n "APPLICATION_USER" ]; then
+    if [ -n "$APPLICATION_USER" ]; then
         # Run as EFFECTIVE_USER
         shift
         exec sudo -H -E -u "${APPLICATION_USER}" ${CLI_SCRIPT} "$@"
@@ -14,6 +14,6 @@ if [ -n "${CLI_SCRIPT}" ]; then
         exec ${CLI_SCRIPT} "$@"
     fi
 else
-    echo "[ERROR] No CLI_SCRIPT in docker-env.yml defined"
+    echo "[ERROR] No CLI_SCRIPT in in docker environment defined"
     exit 1
 fi

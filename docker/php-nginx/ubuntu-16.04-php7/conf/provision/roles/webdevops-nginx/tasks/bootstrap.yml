@@ -20,20 +20,18 @@
     path:  "/etc/nginx/sites-enabled/default"
     state: absent
 
-- name: Replace default nginx.conf [RedHat family]
+- name: Replace default nginx.conf [RedHat/Alpine family]
   file:
     src:  '/opt/docker/etc/nginx/nginx.conf'
     dest: '/etc/nginx/nginx.conf'
     state: link
     force: yes
-  when: ansible_os_family == 'RedHat'
+  when: ansible_os_family == 'RedHat' or ansible_os_family == 'Alpine'
 
 - name: Ensure document root is available
   file:
     path:    "{{ DOCUMENT_ROOT }}"
     state:   directory
-    owner:   "{{ APPLICATION_USER }}"
-    group:   "{{ APPLICATION_GROUP }}"
     recurse: yes
 
 - name: Fix rights of ssl files

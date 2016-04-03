@@ -5,7 +5,7 @@
 FROM ubuntu:15.10
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=5
+LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.21.0
 
 # Ensure UTF-8
@@ -23,9 +23,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && echo "export TERM=xterm" >> /root/.bashrc \
     # System update
     && /usr/local/bin/apt-upgrade \
-    # Generate locales
-    && ln -s /usr/share/i18n/SUPPORTED /var/lib/locales/supported.d/all \
-    && locale-gen \
     # Install base stuff
     && /usr/local/bin/apt-install \
         software-properties-common \

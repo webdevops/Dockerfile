@@ -65,7 +65,11 @@ end
 shared_examples 'php5::modules' do
     describe command('php -m') do
         its(:stdout) { should     contain('shmop') }
-        its(:stdout) { should     contain('mhash') }
+
+        if ( os[:family] != 'alpine' )
+            its(:stdout) { should     contain('mhash') }
+        end
+
         its(:stdout) { should     contain('wddx') }
 
         if (os[:family] == 'ubuntu' and (os[:version] == '12.04' or os[:version] == '16.04') ) or
@@ -122,7 +126,7 @@ shared_examples 'php-fpm::modules' do
         its(:stdout) { should     contain('mysqlnd') }
         its(:stdout) { should     contain('mcrypt') }
         its(:stdout) { should     contain('openssl') }
-        its(:stdout) { should_not contain('pcntl') }   # disabled by fpm
+        #its(:stdout) { should_not contain('pcntl') }   # disabled by fpm
         its(:stdout) { should     contain('pcre') }
         its(:stdout) { should     contain('PDO') }
         its(:stdout) { should     contain('pdo_mysql') }
@@ -156,7 +160,11 @@ end
 shared_examples 'php-fpm5::modules' do
     describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
         its(:stdout) { should     contain('shmop') }
-        its(:stdout) { should     contain('mhash') }
+
+        if ( os[:family] != 'alpine' )
+            its(:stdout) { should     contain('mhash') }
+        end
+
         its(:stdout) { should     contain('wddx') }
 
         if (os[:family] == 'ubuntu' and (os[:version] == '12.04' or os[:version] == '16.04') ) or

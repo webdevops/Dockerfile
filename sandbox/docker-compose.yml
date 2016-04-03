@@ -1,0 +1,23 @@
+main:
+  build: .
+  environment:
+     - CLI_SCRIPT=date
+#    - APPLICATION_UID=2001
+#    - APPLICATION_GID=2002
+  links:
+    - mysql
+  ports:
+    - "8000:80"
+    - "8443:443"
+#  volumes:
+#    - "./code:/app/"
+
+mysql:
+  image: mysql:5.6
+  ports:
+    - 13306:3306
+  environment:
+    - MYSQL_ROOT_PASSWORD=dev
+    - MYSQL_USER=dev
+    - MYSQL_PASSWORD=dev
+    - MYSQL_DATABASE=database
