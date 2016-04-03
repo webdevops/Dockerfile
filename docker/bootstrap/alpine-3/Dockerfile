@@ -5,8 +5,8 @@
 FROM alpine:3.3
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=5
-LABEL io.webdevops.version=0.20.0
+LABEL io.webdevops.layout=6
+LABEL io.webdevops.version=0.22.0
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8

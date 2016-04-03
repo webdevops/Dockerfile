@@ -5,8 +5,8 @@
 FROM webdevops/bootstrap:alpine-3
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=5
-LABEL io.webdevops.version=0.20.0
+LABEL io.webdevops.layout=6
+LABEL io.webdevops.version=0.22.0
 
 RUN /usr/local/bin/apk-install \
     py-pillow \
