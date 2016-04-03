@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
-## [0.22.0] - upcoming
+## [0.22.0] - 2016-04-03
 ### Changed
 - Introduced base-app for application images
 - Added alpine-3 images
