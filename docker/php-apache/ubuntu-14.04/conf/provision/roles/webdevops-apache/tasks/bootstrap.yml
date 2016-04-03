@@ -93,7 +93,7 @@
    - { line: 'LoadModule proxy_connect_module modules/mod_proxy_connect.so',   prefix: "#" }
    - { line: 'LoadModule proxy_balancer_module modules/mod_proxy_balancer.so', prefix: "#" }
    - { line: 'LoadModule proxy_express_module modules/mod_proxy_express.so',   prefix: "#" }
-   - { line: 'LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so',         prefix: "#" }
+   - { line: 'LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so',         prefix: "" }
    - { line: 'LoadModule proxy_fdpass_module modules/mod_proxy_fdpass.so',     prefix: "#" }
    - { line: 'LoadModule proxy_ftp_module modules/mod_proxy_ftp.so',           prefix: "#" }
    - { line: 'LoadModule proxy_http_module modules/mod_proxy_http.so',         prefix: "#" }

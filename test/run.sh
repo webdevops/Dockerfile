@@ -378,6 +378,9 @@ initEnvironment
     OS_VERSION="8" runTestForTag "debian-8"
     OS_VERSION="testing" runTestForTag "debian-9"
 
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "alpine-3"
+
     setEnvironmentOsFamily "ubuntu"
     setSpecTest "php7-apache"
     OS_VERSION="16.04" runTestForTag "ubuntu-16.04-php7"
@@ -411,6 +414,9 @@ initEnvironment
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
     OS_VERSION="testing" runTestForTag "debian-9"
+
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "alpine-3"
 
     setEnvironmentOsFamily "ubuntu"
     setSpecTest "php7-nginx"

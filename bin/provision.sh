@@ -286,6 +286,7 @@ function header() {
     clearConfiguration  php-apache  '*'
     deployConfiguration apache/general      php-apache  '*'
     deployConfiguration apache/centos       php-apache  'centos-*'
+    deployConfiguration apache/alpine       php-apache  'alpine-*'
     deployConfiguration php-apache/general  php-apache  '*'
 }
 
@@ -295,6 +296,7 @@ function header() {
     clearConfiguration  php-nginx  '*'
     deployConfiguration nginx/general      php-nginx  '*'
     deployConfiguration nginx/centos       php-nginx  'centos-*'
+    deployConfiguration nginx/alpine       php-nginx  'alpine-*'
     deployConfiguration php-nginx/general  php-nginx  '*'
 }
 
