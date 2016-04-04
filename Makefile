@@ -53,6 +53,7 @@ rebuild:
 	FORCE=0 make webdevops/ansible
 	# Base
 	FORCE=1 make webdevops/base
+	FORCE=1 make webdevops/base-app
 	FORCE=0 make webdevops/storage
 	# Other containers
 	FORCE=1 make web
