@@ -12,6 +12,12 @@
      php_pool_dir:  /etc/php/7.0/fpm/pool.d
   when: ansible_os_family == 'Debian'
 
+- name: Set php pool file
+  set_fact:
+     php_pool_conf: www.conf
+     php_pool_dir:  /etc/php7/php-fpm.d/www.conf
+  when: ansible_os_family == 'Alpine'
+
 - name: Create php directories
   file:
     path:  "{{ item }}"
