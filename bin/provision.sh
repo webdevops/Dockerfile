@@ -346,6 +346,7 @@ function header() {
 
     # Base
     deployConfiguration base/general        samson-deployment 'latest'
+    deployConfiguration base-app/general    samson-deployment 'latest'
 
     # Samson deployment
     deployConfiguration samson-deployment/general        samson-deployment 'latest'
