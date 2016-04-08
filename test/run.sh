@@ -158,12 +158,12 @@ function setSpecTest() {
 function setupTestEnvironment() {
     echo ""
     printRepeatedChar "="
-    echo "=== Testing docker image webdevops/$1"
+    echo "=== Testing docker image $DOCKER_REPOSITORY/$1"
     printRepeatedChar "="
     echo ""
 
     ## Set docker image
-    DOCKER_IMAGE="webdevops/$1"
+    DOCKER_IMAGE="$DOCKER_REPOSITORY/$1"
 
     ## Set test spec path
     setSpecTest "$1"
