@@ -1,10 +1,14 @@
 {% macro runRoleInline() %}
-    {%- if varargs -%}&& /opt/docker/bin/provision run --tag bootstrap {% for roleArg in varargs -%}{% set roleList = roleArg.split(' ') %}{% for role in roleList -%}
+	{%- if varargs %}&& {{ runRole(*varargs) }}{%- endif %}
+{% endmacro %}
+
+{% macro runRole() %}
+	{%- if varargs -%}/opt/docker/bin/provision run --tag bootstrap {% for roleArg in varargs -%}{% set roleList = roleArg.split(' ') %}{% for role in roleList -%}
         {% if role %}--role webdevops-{{ role }} {% endif %}
         {%- endfor -%}{%- endfor -%}
     \{%- endif %}
     && /opt/docker/bin/bootstrap.sh
-{% endmacro %}
+{%- endmacro %}
 
 
 {% macro registerRole(role='',bootstrap=False,build=False,onbuild=False,entrypoint=False) %}&& /opt/docker/bin/provision add {%if bootstrap%}--tag bootstrap {% endif %}{%if build%}--tag build {% endif %}{%if onbuild%}--tag onbuild {% endif %}{%if entrypoint%}--tag entrypoint {% endif %} webdevops-{{ role }}{% endmacro %}

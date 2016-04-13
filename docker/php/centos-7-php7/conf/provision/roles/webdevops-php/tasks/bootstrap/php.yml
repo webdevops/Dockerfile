@@ -33,7 +33,7 @@
    - { category: 'cli', file: '/opt/docker/etc/php/php.webdevops.ini', target: '98-webdevops.ini' }
    - { category: 'cli', file: '/opt/docker/etc/php/php.ini',           target: '99-docker.ini' }
    # PHP fpm
-   - { category: 'fpm', file: '/opt/docker/etc/php/php.webdevops.ini', target: '98-webdevops.ini' }
+   - { category: 'fpm', file: '/opt/docker/etc/php/php.webdevops.ini', target: '99-webdevops.ini' }
    - { category: 'fpm', file: '/opt/docker/etc/php/php.ini',           target: '99-docker.ini' }
 
   when: ansible_os_family == 'Debian'
