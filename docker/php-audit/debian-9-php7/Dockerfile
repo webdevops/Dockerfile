@@ -1,0 +1,26 @@
+#++++++++++++++++++++++++++++++++++++++
+# CentOS 7 PHP Docker container
+#++++++++++++++++++++++++++++++++++++++
+
+FROM webdevops/php:debian-9-php7
+MAINTAINER guillaume.camus@gmail.com
+LABEL vendor=infogene \
+	version=1.0 
+
+RUN /usr/local/bin/apt-install \
+		graphviz 
+RUN curl -o /usr/local/bin/phploc -L https://phar.phpunit.de/phploc.phar && chmod +x /usr/local/bin/phploc \
+	&& curl -o /usr/local/bin/phpunit -L https://phar.phpunit.de/phpunit.phar && chmod +x /usr/local/bin/phpunit \
+	&& curl -o /usr/local/bin/pdepend -L http://static.pdepend.org/php/latest/pdepend.phar && chmod +x /usr/local/bin/pdepend \
+	&& curl -o /usr/local/bin/phpmd -L http://static.phpmd.org/php/latest/phpmd.phar && chmod +x /usr/local/bin/phpmd \
+	&& curl -o /usr/local/bin/phpcs -L https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar && chmod +x /usr/local/bin/phpcs \
+	&& curl -o /usr/local/bin/phpcbf -L https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar && chmod +x /usr/local/bin/phpcbf \
+	&& curl -o /usr/local/bin/phpcpd -L https://phar.phpunit.de/phpcpd.phar && chmod +x /usr/local/bin/phpcpd \
+	&& curl -o /usr/local/bin/phpdcd -L https://phar.phpunit.de/phpdcd.phar && chmod +x /usr/local/bin/phpdcd \
+	&& curl -o /usr/local/bin/phpmetrics -L https://github.com/Halleck45/PhpMetrics/raw/master/build/phpmetrics.phar && chmod +x /usr/local/bin/phpmetrics \
+	&& curl -o /usr/local/bin/php-cs-fixer -L http://get.sensiolabs.org/php-cs-fixer.phar && chmod +x /usr/local/bin/php-cs-fixer \
+	&& curl -o /usr/local/bin/deprecation-detector -L https://github.com/sensiolabs-de/deprecation-detector/releases/download/0.1.0-alpha4/deprecation-detector.phar \
+	&& chmod +x /usr/local/bin/deprecation-detector \
+	&& COMPOSER_HOME="/usr/local/composer" COMPOSER_BIN_DIR="/usr/local/bin" composer global require "sstalle/php7cc"
+
+CMD ["noop"]

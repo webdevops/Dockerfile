@@ -338,6 +338,47 @@ initEnvironment
 }
 
 #######################################
+# infogene/php
+#######################################
+
+[[ $(checkTestTarget php-audit) ]] && {
+    setupTestEnvironment "php-audit"
+
+    ##########
+    # PHP 5
+    ##########
+
+    setSpecTest "php5-audit"
+    
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7-php56"
+    
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
+    OS_VERSION="testing" runTestForTag "debian-9"
+
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "alpine-3"
+
+    ##########
+    # PHP 7
+    ##########
+
+    setSpecTest "php7-audit"
+
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7-php7"
+    
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
+    OS_VERSION="testing" runTestForTag "debian-9-php7"
+
+    waitForTestRun
+}
+
+#######################################
 # webdevops/apache
 #######################################
 
