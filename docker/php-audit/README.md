@@ -23,3 +23,10 @@ Container                                 | Distribution name        | PHP Versi
 - [PHP Coding Standards Fixer](http://cs.sensiolabs.org/) 
 - [SensioLabs DeprecationDetector](https://github.com/sensiolabs-de/deprecation-detector)
 - [PHP 7 Compatibility Checker](https://github.com/sstalle/php7cc)
+
+## Usage
+
+```sh
+docker pull webdevops/php-audit
+docker run -ti -v $(pwd):/project webdevops/php-audit phploc src/
+```

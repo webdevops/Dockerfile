@@ -23,4 +23,7 @@ RUN curl -o /usr/local/bin/phploc -L https://phar.phpunit.de/phploc.phar && chmo
 	&& chmod +x /usr/local/bin/deprecation-detector \
 	&& COMPOSER_HOME="/usr/local/composer" COMPOSER_BIN_DIR="/usr/local/bin" composer global require "sstalle/php7cc"
 
+WORKDIR /project
+VOLUME  /project
+
 CMD ["noop"]
