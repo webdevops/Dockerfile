@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 ## clear dns file
 echo > /etc/dnsmasq.d/development
