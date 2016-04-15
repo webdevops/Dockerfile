@@ -27,6 +27,13 @@
 
 - name: Move php-fpm main file to /opt/docker/etc/php/fpm/
   command: "mv {{ php_main_conf }} /opt/docker/etc/php/fpm/php-fpm.conf"
+  args:
+    creates: /opt/docker/etc/php/fpm/php-fpm.conf
+
+- name: Remove php-fpm main file
+  file:
+    path: "{{ php_main_conf }}"
+    state: absent
 
 - name: Symlink php-fpm main file
   file:

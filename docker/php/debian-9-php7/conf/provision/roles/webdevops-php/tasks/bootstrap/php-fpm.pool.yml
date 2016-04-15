@@ -15,7 +15,7 @@
 - name: Set php pool file
   set_fact:
      php_pool_conf: www.conf
-     php_pool_dir:  /etc/php7/php-fpm.d/www.conf
+     php_pool_dir:  /etc/php7/php-fpm.d
   when: ansible_os_family == 'Alpine'
 
 - name: Create php directories
@@ -30,9 +30,18 @@
 
 - name: Move php-fpm pool directory file to /opt/docker/etc/php/
   command: "mv {{ php_pool_dir }}  /opt/docker/etc/php/fpm/pool.d"
+  args:
+    creates: /opt/docker/etc/php/fpm/pool.d
 
 - name: Rename pool file file to application.conf"
   command: "mv /opt/docker/etc/php/fpm/pool.d/{{ php_pool_conf }} /opt/docker/etc/php/fpm/pool.d/application.conf"
+  args:
+    creates: /opt/docker/etc/php/fpm/pool.d/application.conf
+
+- name: Remove php-fpm pool directory
+  file:
+    path: "{{ php_pool_dir }}"
+    state: absent
 
 - name: Symlink php-fpm main file
   file:

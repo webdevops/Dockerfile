@@ -24,7 +24,7 @@ RUN /usr/local/bin/apk-install \
         php7-pdo_mysql \
         php7-pdo_sqlite \
         php7-xdebug \
-        #php7-memcached \
+        php7-memcached \
         php7-mcrypt \
         #php7-gd \
         #libwebp \
@@ -44,7 +44,7 @@ RUN /usr/local/bin/apk-install \
         php7-exif \
         php7-ftp \
         php7-gettext \
-        #php7-iconv \
+        php7-iconv \
         php7-zip \
         php7-zlib \
         php7-shmop \
@@ -55,7 +55,7 @@ RUN /usr/local/bin/apk-install \
         geoip \
         php7-ldap \
         #php7-memcache \
-        #php7-redis \
+        php7-redis \
         php7-pear \
         php7-phar \
         php7-openssl \
