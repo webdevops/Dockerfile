@@ -9,6 +9,9 @@ set :backend, :docker
 set :docker_container, ENV['DOCKER_IMAGE']
 set :os, :family => ENV['OS_FAMILY'], :version => ENV['OS_VERSION'], :arch => 'x86_64'
 
+Excon.defaults[:write_timeout] = 1000
+Excon.defaults[:read_timeout] = 1000
+
 $packageVersions = {}
 $packageVersions[:ansible]         = %r!ansible 2.([0-9]\.?)+!
 $packageVersions[:ansiblePlaybook] = %r!ansible-playbook 2.([0-9]\.?)+!
