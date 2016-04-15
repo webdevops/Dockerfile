@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++
-# CentOS 7 PHP-Nginx Docker container
+# Alpine 7 PHP-Nginx Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/php:alpine-3
