@@ -1,12 +1,12 @@
 #++++++++++++++++++++++++++++++++++++++
-# CentOS 7 PHP-Nginx Docker container
+# Alpine 7 PHP-Nginx Docker container
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/php:alpine-3
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
-LABEL io.webdevops.version=0.21.0
+LABEL io.webdevops.version=0.23.0
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php

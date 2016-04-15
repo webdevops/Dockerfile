@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [0.23.0] - 2016-04-03
+### Changed
+- Enabled alpine-3-php7 images
+- Fixed some smaller issues
+- Added TYPO3 packages to sphinx image
+- Fixed build system for new docker version (1.11.0)
+
 ## [0.22.0] - 2016-04-03
 ### Changed
 - Introduced base-app for application images

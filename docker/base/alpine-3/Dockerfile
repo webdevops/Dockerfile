@@ -6,7 +6,7 @@ FROM webdevops/bootstrap:alpine-3
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
-LABEL io.webdevops.version=0.22.0
+LABEL io.webdevops.version=0.23.0
 
 ENV DOCKER_CONF_HOME  /opt/docker/
 

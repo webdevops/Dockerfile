@@ -6,7 +6,7 @@ FROM webdevops/base-app:alpine-3
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
-LABEL io.webdevops.version=0.21.0
+LABEL io.webdevops.version=0.23.0
 
 # Install tools
 RUN /usr/local/bin/apk-install \

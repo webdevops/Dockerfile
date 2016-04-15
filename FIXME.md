@@ -23,3 +23,6 @@ Mostly upstream issues (eg. missing or broken packages)
 
 ## Alpine 3 (PHP5)
 - Missing mhash
+
+## Alpine 3 (PHP7)
+- Missing gd

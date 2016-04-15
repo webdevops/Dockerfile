@@ -19,7 +19,6 @@ shared_examples 'php::modules' do
         its(:stdout) { should     contain('fileinfo') }
         its(:stdout) { should     contain('filter') }
         its(:stdout) { should     contain('ftp') }
-        its(:stdout) { should     contain('gd') }
         its(:stdout) { should     contain('gettext') }
         its(:stdout) { should     contain('hash') }
         its(:stdout) { should     contain('iconv') }
@@ -57,6 +56,10 @@ shared_examples 'php::modules' do
         its(:stdout) { should     contain('xsl') }
         its(:stdout) { should     contain('zip') }
         its(:stdout) { should     contain('zlib') }
+
+        if ( os[:family] != 'alpine' )
+            its(:stdout) { should     contain('gd') }
+        end
 
         its(:exit_status) { should eq 0 }
     end
@@ -114,7 +117,6 @@ shared_examples 'php-fpm::modules' do
         its(:stdout) { should     contain('fileinfo') }
         its(:stdout) { should     contain('filter') }
         its(:stdout) { should     contain('ftp') }
-        its(:stdout) { should     contain('gd') }
         its(:stdout) { should     contain('gettext') }
         its(:stdout) { should     contain('hash') }
         its(:stdout) { should     contain('iconv') }
@@ -152,6 +154,10 @@ shared_examples 'php-fpm::modules' do
         its(:stdout) { should     contain('xsl') }
         its(:stdout) { should     contain('zip') }
         its(:stdout) { should     contain('zlib') }
+
+        if ( os[:family] != 'alpine' )
+            its(:stdout) { should     contain('gd') }
+        end
 
         its(:exit_status) { should eq 0 }
     end
