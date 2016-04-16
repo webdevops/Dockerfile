@@ -159,7 +159,7 @@ logOutputFromBackgroundProcesses() {
             cat "$log"
             rm -f -- "$log"
 
-            echo "-- end of \"$title\" log --:"
+            echo "-- end of \"$title\" log --"
 
             echo ""
             echo ""

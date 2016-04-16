@@ -41,7 +41,7 @@ TAR='tar'
 SCRIPT_DIR=$(dirname "$($READLINK -f "$0")")
 BASE_DIR=$(dirname "$SCRIPT_DIR")
 
-LOCALSCRIPT_DIR="${BASE_DIR}/localscripts"
+BASELAYOUT_DIR="${BASE_DIR}/baselayout"
 PROVISION_DIR="${BASE_DIR}/provisioning"
 DOCKER_DIR="${BASE_DIR}/docker"
 
@@ -101,12 +101,12 @@ function listDirectoriesWithFilter() {
  # Build tar file from _localscripts for bootstrap containers
  #
  ##
-function buildLocalscripts() {
+function buildBaselayout() {
     echo " * Building localscripts"
 
-    cd "${LOCALSCRIPT_DIR}"
-    rm -f scripts.tar
-    $TAR -jmc --owner=0 --group=0 -f scripts.tar *
+    cd "${BASELAYOUT_DIR}"
+    rm -f baselayout.tar
+    $TAR -jmc --owner=0 --group=0 -f baselayout.tar *
 }
 
 ###
@@ -115,14 +115,14 @@ function buildLocalscripts() {
  # Copy tar to various containers
  #
  ##
-function deployLocalscripts() {
+function deployBaselayout() {
     DOCKER_CONTAINER="$1"
     DOCKER_FILTER="$2"
 
     listDirectoriesWithFilter "${DOCKER_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}"  | while read DOCKER_DIR; do
         if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
             echo "    - $(relativeDir $DOCKER_DIR)"
-            cp scripts.tar "${DOCKER_DIR}/scripts.tar"
+            cp baselayout.tar "${DOCKER_DIR}/baselayout.tar"
         fi
     done
 }
@@ -200,13 +200,13 @@ function header() {
 ## Build bootstrap
 [[ $(checkBuildTarget bootstrap) ]] && {
     header "bootstrap"
-    buildLocalscripts
-    deployLocalscripts bootstrap          '*'
+    buildBaselayout
+    deployBaselayout bootstrap          '*'
 
     # Samson
-    deployLocalscripts samson-deployment  '*'
+    deployBaselayout samson-deployment  '*'
 
-    rm -f scripts.tar
+    rm -f baselayout.tar
 }
 
 ## Build base
@@ -339,9 +339,9 @@ function header() {
     header "samson-deployment"
 
     # Bootstrap
-    buildLocalscripts
-    deployLocalscripts samson-deployment  '*'
-    rm -f scripts.tar
+    buildBaselayout
+    deployBaselayout samson-deployment  '*'
+    rm -f baselayout.tar
 
     # Base
     deployConfiguration base/general        samson-deployment 'latest'

@@ -12,8 +12,9 @@ LABEL io.webdevops.version=0.23.0
 ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
-# Add common scripts (from _localscripts)
-ADD scripts.tar /
+# Add baselayout (from baselayout/)
+ADD baselayout.tar /
+
 COPY conf/ /opt/docker/
 
 # Init bootstrap (and install ansible)
