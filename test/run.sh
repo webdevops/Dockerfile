@@ -30,9 +30,10 @@ READLINK='readlink'
 	}
 }
 
-SCRIPT_DIR=$(dirname $($READLINK -f "$0"))
-BASE_DIR=$(dirname "$SCRIPT_DIR")
-COLUMNS=$(tput cols)
+SLEEP_TIME=30
+SCRIPT_DIR="$(dirname $($READLINK -f "$0"))"
+BASE_DIR="$(dirname "$SCRIPT_DIR")"
+COLUMNS="$(tput cols)"
 
 source "${BASE_DIR}/bin/functions.sh"
 
@@ -85,16 +86,12 @@ function runTestForTag() {
         docker pull "$DOCKER_IMAGE_WITH_TAG"
     fi
 
+    DOCKERFILE="Dockerfile.${DOCKER_IMAGE//\//-}-${DOCKER_TAG}.test"
+
     ## Build Dockerfile
     echo "FROM $DOCKER_IMAGE_WITH_TAG
 COPY conf/ /
-    " > Dockerfile
-
-    DOCKERFILE_TAR="docker.test.${DOCKER_IMAGE//\//-}-${DOCKER_TAG}.tar"
-
-    # Build tar from dockerfile
-    tar cf "$DOCKERFILE_TAR" "Dockerfile" "conf/"
-    rm -f "${SCRIPT_DIR}/Dockerfile"
+    " > $DOCKERFILE
 
     # Check if docker image is available, but don't count as real test
     OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "spec/image.rb" > /dev/null
@@ -105,15 +102,15 @@ COPY conf/ /
         echo ">> Starting test of ${DOCKER_IMAGE_WITH_TAG}"
 
         # Run testsuite for docker image
-        DOCKERFILE="$DOCKERFILE_TAR" OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH" > $LOGFILE &
+        DOCKERFILE="$DOCKERFILE" OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH" &> $LOGFILE &
 
         addBackgroundPidToList "Test '$DOCKER_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]" "$LOGFILE"
-        sleep 1
+        sleep "$SLEEP_TIME"
     else
         echo ">> Testing '$DOCKER_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]"
 
         # Run testsuite for docker image
-        DOCKERFILE="$DOCKERFILE_TAR" OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH"
+        DOCKERFILE="$DOCKERFILE" OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH"
     fi
 }
 
@@ -123,7 +120,7 @@ function waitForTestRun() {
         ALWAYS_SHOW_LOGS=1 waitForBackgroundProcesses
     fi
 
-    rm -f docker.test.*.tar
+    rm -f Dockerfile.*.test
 }
 
 ###

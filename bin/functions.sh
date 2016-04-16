@@ -154,10 +154,12 @@ logOutputFromBackgroundProcesses() {
         log="${PID_LOG_FILE[$pid]}"
 
         if [[ -s "$log" ]]; then
-            echo "-- $title --:"
+            echo "-- begin of \"$title\" log --:"
 
             cat "$log"
             rm -f -- "$log"
+
+            echo "-- end of \"$title\" log --:"
 
             echo ""
             echo ""
