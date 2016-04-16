@@ -13,8 +13,8 @@ RUN locale-gen en_US.UTF-8
 ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
-# Add common scripts (from _localscripts)
-ADD scripts.tar /
+# Add baselayout (from baselayout/)
+ADD baselayout.tar /
 
 # Init bootstrap (and install ansible)
 RUN export DEBIAN_FRONTEND=noninteractive \

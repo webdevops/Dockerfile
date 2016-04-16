@@ -8,8 +8,8 @@ LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
 
-# Add common scripts (from _localscripts)
-ADD scripts.tar /
+# Add baselayout (from baselayout/)
+ADD baselayout.tar /
 
 # Init bootstrap (and install ansible)
 RUN set -x \
