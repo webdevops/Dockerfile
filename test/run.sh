@@ -30,7 +30,7 @@ READLINK='readlink'
 	}
 }
 
-SLEEP_TIME=30
+SLEEP_TIME=1
 SCRIPT_DIR="$(dirname $($READLINK -f "$0"))"
 BASE_DIR="$(dirname "$SCRIPT_DIR")"
 COLUMNS="$(tput cols)"
