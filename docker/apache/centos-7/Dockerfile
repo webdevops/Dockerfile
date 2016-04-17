@@ -14,7 +14,7 @@ ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
-### BEGIN GENERATED CONTENT :: apache:centos-7 ###
+### BEGIN GENERATED CONTENT :: apache:centos ###
 # Install tools
 RUN /usr/local/bin/yum-install \
         httpd \
@@ -23,7 +23,7 @@ RUN /usr/local/bin/yum-install \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf
-### END GENERATED CONTENT :: apache:centos-7 ###
+### END GENERATED CONTENT :: apache:centos ###
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
