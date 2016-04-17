@@ -45,6 +45,7 @@ source "$SCRIPT_DIR/functions.sh"
 
 BASELAYOUT_DIR="${BASE_DIR}/baselayout"
 PROVISION_DIR="${BASE_DIR}/provisioning"
+MACRO_DIR="${BASE_DIR}/macro"
 DOCKER_DIR="${BASE_DIR}/docker"
 
 
@@ -201,10 +202,10 @@ function deployDockerfileMacros() {
                 getMacroList "$DOCKERFILE_TARGET" | while read MACRO_TAG; do
 
                     ## build marker content file
-                    ## apache:alpine-3 -> apache/Dockerfile/Dockerfile.alpine-3
-                    MARKER_CONTENT_FILE="${MACRO_TAG/://Dockerfile/Dockerfile.}"
+                    ## apache:alpine-3 -> apache/Dockerfile.alpine-3
+                    MACRO_CONTENT_FILE="${MACRO_TAG/://Dockerfile.}"
 
-                    DOCKERFILE_CONTENT_FILE="${PROVISION_DIR}/${MARKER_CONTENT_FILE}"
+                    DOCKERFILE_CONTENT_FILE="${MACRO_DIR}/${MACRO_CONTENT_FILE}"
 
                     if [[ -f "$DOCKERFILE_CONTENT_FILE" ]]; then
                         echo "    - $(relativeDir $DOCKERFILE_DIR)"
