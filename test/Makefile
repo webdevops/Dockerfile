@@ -24,6 +24,9 @@ base-app:
 php:
 	bash ./run.sh php
 
+php-audit:
+	bash ./run.sh php-audit
+
 apache:
 	bash ./run.sh apache
 
