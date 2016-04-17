@@ -14,6 +14,7 @@ ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
+### BEGIN GENERATED CONTENT :: apache:ubuntu-14 ###
 # Install apache
 RUN /usr/local/bin/apt-install \
         apache2 \
@@ -24,8 +25,9 @@ RUN /usr/local/bin/apt-install \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
-	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
-	&& a2enmod actions fastcgi ssl rewrite headers
+	&& a2enmod actions fastcgi ssl rewrite headers version \
+	&& mkdir /var/lock/apache2
+### END GENERATED CONTENT :: apache:ubuntu-14 ###
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/

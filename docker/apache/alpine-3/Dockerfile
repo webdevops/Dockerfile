@@ -14,6 +14,7 @@ ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
+### BEGIN GENERATED CONTENT :: apache:alpine-3 ###
 # Install apache
 RUN /usr/local/bin/apk-install \
         apache2 \
@@ -24,6 +25,7 @@ RUN /usr/local/bin/apk-install \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/httpd.conf
+### END GENERATED CONTENT :: apache:alpine-3 ###
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/

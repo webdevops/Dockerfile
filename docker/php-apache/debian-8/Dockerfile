@@ -14,6 +14,7 @@ ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
+### BEGIN GENERATED CONTENT :: apache:debian-8 ###
 # Install apache
 RUN /usr/local/bin/apt-install \
         apache2 \
@@ -25,6 +26,7 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions fastcgi ssl rewrite headers
+### END GENERATED CONTENT :: apache:debian-8 ###
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
