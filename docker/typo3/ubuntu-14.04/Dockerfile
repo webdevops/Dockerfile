@@ -3,10 +3,12 @@
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/php-apache:ubuntu-14.04
+### BEGIN GENERATED CONTENT :: general:version ###
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
+### END GENERATED CONTENT :: general:version ###
 
 ENV WEB_DOCUMENT_ROOT /app/web/
 
