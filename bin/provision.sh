@@ -185,10 +185,10 @@ function deployConfiguration() {
 }
 
 ###
- # Deploy Dockerfile markers
+ # Deploy Dockerfile macros
  ##
-function deployDockerfileMarkers() {
-    echo " -> Deploying Dockerfile markers"
+function deployDockerfileMacros() {
+    echo " -> Deploying Dockerfile macros"
 
     # loop trough all docker images
     listDirectories "${DOCKER_DIR}" | while read DOCKER_CONTAINER_DIR; do
@@ -198,20 +198,20 @@ function deployDockerfileMarkers() {
                 DOCKERFILE_TARGET="${DOCKERFILE_DIR}/Dockerfile"
 
                 ## get list of markers
-                getMarkerList "$DOCKERFILE_TARGET" | while read MARKER_TAG; do
+                getMacroList "$DOCKERFILE_TARGET" | while read MACRO_TAG; do
 
                     ## build marker content file
                     ## apache:alpine-3 -> apache/Dockerfile/Dockerfile.alpine-3
-                    MARKER_CONTENT_FILE="${MARKER_TAG/://Dockerfile/Dockerfile.}"
+                    MARKER_CONTENT_FILE="${MACRO_TAG/://Dockerfile/Dockerfile.}"
 
                     DOCKERFILE_CONTENT_FILE="${PROVISION_DIR}/${MARKER_CONTENT_FILE}"
 
                     if [[ -f "$DOCKERFILE_CONTENT_FILE" ]]; then
                         echo "    - $(relativeDir $DOCKERFILE_DIR)"
-                        replaceMarkerArea "$DOCKERFILE_TARGET" "$DOCKERFILE_CONTENT_FILE" "$MARKER_TAG"
+                        replaceMacro "$DOCKERFILE_TARGET" "$DOCKERFILE_CONTENT_FILE" "$MACRO_TAG"
                     else
                         echo " ERROR "
-                        echo "Marker found: $MARKER_TAG"
+                        echo "Macro found: $MACRO_TAG"
                         echo "Missing content file: $DOCKERFILE_CONTENT_FILE"
                         exit 1
                     fi
@@ -248,7 +248,7 @@ function header() {
 
 ## Build dockerfile
 [[ $(checkBuildTarget Dockerfile) ]] && {
-    deployDockerfileMarkers
+    deployDockerfileMacros
 }
 
 ## Build base

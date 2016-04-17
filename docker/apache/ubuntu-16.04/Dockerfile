@@ -3,18 +3,18 @@
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:ubuntu-16.04
-### BEGIN GENERATED CONTENT :: general:version ###
+# <Macro general:version>
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
-### END GENERATED CONTENT :: general:version ###
+# </Macro>
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
-### BEGIN GENERATED CONTENT :: apache:ubuntu-16 ###
+# <Macro apache:ubuntu-16>
 # Install apache
 RUN /usr/local/bin/apt-install \
         apache2 \
@@ -26,7 +26,7 @@ RUN /usr/local/bin/apt-install \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
 	&& a2enmod actions fastcgi ssl rewrite headers version
-### END GENERATED CONTENT :: apache:ubuntu-16 ###
+# </Macro>
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/

@@ -3,7 +3,7 @@
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:debian-7
-### BEGIN GENERATED CONTENT :: general:version ###
+# <Macro general:version>
 
 ENV WEB_DOCUMENT_ROOT  /app
 

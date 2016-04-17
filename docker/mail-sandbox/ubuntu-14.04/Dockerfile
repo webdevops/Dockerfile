@@ -3,12 +3,12 @@
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/postfix:latest
-### BEGIN GENERATED CONTENT :: general:version ###
+# <Macro general:version>
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
-### END GENERATED CONTENT :: general:version ###
+# </Macro>
 
 ENV MAILBOX_USERNAME "sandbox"
 ENV MAILBOX_PASSWORD "mail"

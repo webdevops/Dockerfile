@@ -56,21 +56,21 @@ function printLine() {
 
 
 #################################################
-# Replace functions
+# Macro functions
 #################################################
 
 ###
- # Get list of markers in file
+ # Get list of macros in file
  #
  # $1 -> Target file
  ##
-function getMarkerList() {
+function getMacroList() {
     FILE_TARGET="$1"
 
-    grepRegexp='^### BEGIN GENERATED CONTENT :: .* ###'
-    sedRegexp='^### BEGIN GENERATED CONTENT :: \(.*\) ###'
+    grepRegexp='^# <Macro .*>'
+    sedRegexp='^# <Macro \([^>]*\)>'
 
-    MARKER_LIST="$(grep -E -e "$grepRegexp" "$FILE_TARGET" || exit 0 )"
+    MARKER_LIST="$(grep -h -E -e "$grepRegexp" "$FILE_TARGET" || exit 0 )"
 
     if [[ -n "$MARKER_LIST" ]]; then
         echo "$MARKER_LIST" | $SED -e "s/$sedRegexp/\\1/"
@@ -85,13 +85,13 @@ function getMarkerList() {
  # $2 -> Marker content file
  # $3 -> Marker name
  ##
-function replaceMarkerArea() {
+function replaceMacro() {
     FILE_TARGET="$1"
     FILE_CONTENT="$2"
-    MARKER="$3"
+    MACRO="$3"
 
-    lead="^### BEGIN GENERATED CONTENT :: $MARKER ###"
-    tail="^### END GENERATED CONTENT :: $MARKER ###"
+    lead="^# <Macro $MACRO>"
+    tail="^# <\/Macro>"
 
     $SED -i -e "/$lead/,/$tail/{ /$lead/{p; r $FILE_CONTENT
             }; /$tail/p; d }"  "$FILE_TARGET"
