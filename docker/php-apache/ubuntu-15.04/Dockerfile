@@ -16,19 +16,18 @@ ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 # </Macro>
 
-# <Macro apache:ubuntu-14>
+# <Macro apache:ubuntu-15>
 # Install apache
 RUN /usr/local/bin/apt-install \
         apache2 \
-        apache2-mpm-worker \
         libapache2-mod-fastcgi \
 	&& sed -ri ' \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
-	&& a2enmod actions fastcgi ssl rewrite headers version \
-	&& mkdir /var/lock/apache2
+	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
+	&& a2enmod actions fastcgi ssl rewrite headers
 # </Macro>
 
 # Deploy scripts/configurations

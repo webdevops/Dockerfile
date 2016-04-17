@@ -27,8 +27,8 @@ RUN /usr/local/bin/apt-install \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
-	&& a2enmod actions fastcgi ssl rewrite headers version \
-	&& mkdir /var/lock/apache2
+	&& a2enmod actions fastcgi ssl rewrite headers \
+	&& mkdir -p /var/lock/apache2
 # </Macro>
 
 # Deploy scripts/configurations

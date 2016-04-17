@@ -16,7 +16,7 @@ ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 # </Macro>
 
-# <Macro apache:ubuntu-14>
+# <Macro apache:ubuntu-12>
 # Install apache
 RUN /usr/local/bin/apt-install \
         apache2 \
@@ -28,7 +28,7 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions fastcgi ssl rewrite headers version \
-	&& mkdir /var/lock/apache2
+	&& mkdir -p /var/lock/apache2
 # </Macro>
 
 # Deploy scripts/configurations
