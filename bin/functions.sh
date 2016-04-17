@@ -1,10 +1,19 @@
 #!/usr/bin/env bash
 
+SED='sed'
+
+[[ `uname` == 'Darwin' ]] && {
+	which gsed > /dev/null && {
+		SED='gsed'
+	} || {
+		echo 'ERROR: GNU utils required for Mac. You may use homebrew to install them: brew install coreutils gnu-sed'
+		exit 1
+	}
+}
+
 #################################################
 # General handling
 #################################################
-
-
 
 log () {
     echo "$1"
@@ -43,6 +52,49 @@ retry() {
 function printLine() {
     printf "${1}%.0s" $(seq 1 50)
     echo
+}
+
+
+#################################################
+# Replace functions
+#################################################
+
+###
+ # Get list of markers in file
+ #
+ # $1 -> Target file
+ ##
+function getMarkerList() {
+    FILE_TARGET="$1"
+
+    grepRegexp='^### BEGIN GENERATED CONTENT :: .* ###'
+    sedRegexp='^### BEGIN GENERATED CONTENT :: \(.*\) ###'
+
+    MARKER_LIST="$(grep -E -e "$grepRegexp" "$FILE_TARGET" || exit 0 )"
+
+    if [[ -n "$MARKER_LIST" ]]; then
+        echo "$MARKER_LIST" | $SED -e "s/$sedRegexp/\\1/"
+    fi
+}
+
+
+###
+ # Replace marker area in one file with another file
+ #
+ # $1 -> Target file
+ # $2 -> Marker content file
+ # $3 -> Marker name
+ ##
+function replaceMarkerArea() {
+    FILE_TARGET="$1"
+    FILE_CONTENT="$2"
+    MARKER="$3"
+
+    lead="^### BEGIN GENERATED CONTENT :: $MARKER ###"
+    tail="^### END GENERATED CONTENT :: $MARKER ###"
+
+    $SED -i -e "/$lead/,/$tail/{ /$lead/{p; r $FILE_CONTENT
+            }; /$tail/p; d }"  "$FILE_TARGET"
 }
 
 #################################################
