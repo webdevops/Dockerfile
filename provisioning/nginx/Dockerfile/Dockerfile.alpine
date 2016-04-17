@@ -1,0 +1,3 @@
+# Install nginx
+RUN /usr/local/bin/apk-install \
+    nginx

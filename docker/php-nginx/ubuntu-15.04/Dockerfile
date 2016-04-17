@@ -14,10 +14,11 @@ ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
+### BEGIN GENERATED CONTENT :: nginx:ubuntu ###
 # Install nginx
 RUN /usr/local/bin/apt-install \
-        nginx \
-	&& ln -sf /opt/docker/etc/nginx/vhost.conf /etc/nginx/conf.d/10-docker.conf
+    nginx
+### END GENERATED CONTENT :: nginx:ubuntu ###
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/

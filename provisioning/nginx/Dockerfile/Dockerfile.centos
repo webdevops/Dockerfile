@@ -1,0 +1,3 @@
+# Install tools
+RUN /usr/local/bin/yum-install \
+    nginx

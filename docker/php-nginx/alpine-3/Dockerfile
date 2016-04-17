@@ -14,9 +14,11 @@ ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
+### BEGIN GENERATED CONTENT :: nginx:alpine ###
 # Install nginx
 RUN /usr/local/bin/apk-install \
     nginx
+### END GENERATED CONTENT :: nginx:alpine ###
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
