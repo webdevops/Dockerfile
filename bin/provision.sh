@@ -41,6 +41,8 @@ TAR='tar'
 SCRIPT_DIR=$(dirname "$($READLINK -f "$0")")
 BASE_DIR=$(dirname "$SCRIPT_DIR")
 
+source "$SCRIPT_DIR/functions.sh"
+
 BASELAYOUT_DIR="${BASE_DIR}/baselayout"
 PROVISION_DIR="${BASE_DIR}/provisioning"
 DOCKER_DIR="${BASE_DIR}/docker"
@@ -182,6 +184,42 @@ function deployConfiguration() {
     done
 }
 
+###
+ # Deploy Dockerfile markers
+ ##
+function deployDockerfileMarkers() {
+    echo " -> Deploying Dockerfile markers"
+
+    # loop trough all docker images
+    listDirectories "${DOCKER_DIR}" | while read DOCKER_CONTAINER_DIR; do
+        # loop trough all docker image tags
+        listDirectories "${DOCKER_CONTAINER_DIR}" | while read DOCKERFILE_DIR; do
+            if [ -f "${DOCKERFILE_DIR}/Dockerfile" ]; then
+                DOCKERFILE_TARGET="${DOCKERFILE_DIR}/Dockerfile"
+
+                ## get list of markers
+                getMarkerList "$DOCKERFILE_TARGET" | while read MARKER_TAG; do
+
+                    ## build marker content file
+                    ## apache:alpine-3 -> apache/Dockerfile/Dockerfile.alpine-3
+                    MARKER_CONTENT_FILE="${MARKER_TAG/://Dockerfile/Dockerfile.}"
+
+                    DOCKERFILE_CONTENT_FILE="${PROVISION_DIR}/${MARKER_CONTENT_FILE}"
+
+                    if [[ -f "$DOCKERFILE_CONTENT_FILE" ]]; then
+                        echo "    - $(relativeDir $DOCKERFILE_DIR)"
+                        replaceMarkerArea "$DOCKERFILE_TARGET" "$DOCKERFILE_CONTENT_FILE" "$MARKER_TAG"
+                    else
+                        echo " ERROR "
+                        echo "Marker found: $MARKER_TAG"
+                        echo "Missing content file: $DOCKERFILE_CONTENT_FILE"
+                        exit 1
+                    fi
+                done
+            fi
+        done
+    done
+}
 
 ###
  # Header message
@@ -196,7 +234,6 @@ function header() {
 # MAIN
 ###############################################################################
 
-
 ## Build bootstrap
 [[ $(checkBuildTarget bootstrap) ]] && {
     header "bootstrap"
@@ -207,6 +244,11 @@ function header() {
     deployBaselayout samson-deployment  '*'
 
     rm -f baselayout.tar
+}
+
+## Build dockerfile
+[[ $(checkBuildTarget Dockerfile) ]] && {
+    deployDockerfileMarkers
 }
 
 ## Build base
