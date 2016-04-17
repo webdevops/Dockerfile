@@ -10,7 +10,11 @@ LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
 # </Macro>
 
+# <Macro environment:web>
 ENV WEB_DOCUMENT_ROOT  /app
+ENV WEB_DOCUMENT_INDEX index.php
+ENV WEB_ALIAS_DOMAIN   *.vm
+# </Macro>
 
 # Install tools
 RUN /usr/local/bin/apt-install \
