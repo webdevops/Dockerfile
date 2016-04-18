@@ -1,26 +1,22 @@
 #++++++++++++++++++++++++++++++++++++++
-# CentOS 7 Nginx Docker container
+# Dockerfile for webdevops/nginx:alpine-3
+# -- automatically generated content --
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:alpine-3
-# <Macro general:version>
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
-# </Macro>
 
-# <Macro environment:web>
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
-# </Macro>
 
-# <Macro nginx:alpine>
 # Install nginx
 RUN /usr/local/bin/apk-install \
     nginx
-# </Macro>
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/

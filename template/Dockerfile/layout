@@ -1,0 +1,11 @@
+{% import 'Dockerfile/base'   as base %}
+{% import 'Dockerfile/apache' as apache %}
+{% import 'Dockerfile/nginx'  as nginx %}
+#++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/{{ Dockerfile.image }}:{{ Dockerfile.tag }}
+# -- automatically generated content --
+#++++++++++++++++++++++++++++++++++++++
+
+{% block content %}
+
+{% endblock %}

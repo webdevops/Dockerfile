@@ -1,0 +1,26 @@
+{% macro alpine(role='') -%}
+# Install nginx
+RUN /usr/local/bin/apk-install \
+    nginx
+{%- endmacro %}
+
+
+{% macro centos(role='') -%}
+# Install tools
+RUN /usr/local/bin/yum-install \
+    nginx
+{%- endmacro %}
+
+
+{% macro debian(role='') -%}
+# Install nginx
+RUN /usr/local/bin/apt-install \
+    nginx
+{%- endmacro %}
+
+
+{% macro ubuntu(role='') -%}
+# Install nginx
+RUN /usr/local/bin/apt-install \
+    nginx
+{%- endmacro %}

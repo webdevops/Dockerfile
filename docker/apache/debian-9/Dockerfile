@@ -1,22 +1,14 @@
 #++++++++++++++++++++++++++++++++++++++
-# Debian 9 Apache Docker container
+# Dockerfile for webdevops/apache:debian-9
+# -- automatically generated content --
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:debian-9
-# <Macro general:version>
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=6
-LABEL io.webdevops.version=0.23.0
-# </Macro>
 
-# <Macro environment:web>
-ENV WEB_DOCUMENT_ROOT  /app
-ENV WEB_DOCUMENT_INDEX index.php
-ENV WEB_ALIAS_DOMAIN   *.vm
-# </Macro>
+<Macro 'version'>
 
-# <Macro apache:debian-9>
+<Macro 'environmentWeb'>
+
 # Install apache
 RUN /usr/local/bin/apt-install \
         apache2 \
@@ -27,7 +19,6 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions fastcgi ssl rewrite headers
-# </Macro>
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/

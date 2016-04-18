@@ -1,0 +1,16 @@
+{{ base.from("base", "alpine-3") }}
+
+{{ base.version() }}
+
+{{ base.environmentWeb() }}
+
+{{ nginx.alpine() }}
+
+# Deploy scripts/configurations
+COPY conf/ /opt/docker/
+RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-nginx \
+    && bash /opt/docker/bin/bootstrap.sh
+
+EXPOSE 80 443
+
+CMD ["supervisord"]

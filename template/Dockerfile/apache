@@ -1,0 +1,115 @@
+{% macro alpine(role='') -%}
+# Install apache
+RUN /usr/local/bin/apk-install \
+        apache2 \
+        apache2-utils \
+        apache2-proxy \
+        apache2-ssl \
+	&& sed -ri ' \
+		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+		' /etc/apache2/httpd.conf
+{%- endmacro %}
+
+
+{% macro centos(role='') -%}
+# Install apache
+RUN /usr/local/bin/yum-install \
+        httpd \
+        mod_ssl \
+	&& sed -ri ' \
+		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf
+{%- endmacro %}
+
+
+{% macro debian8(role='') -%}
+# Install apache
+RUN /usr/local/bin/apt-install \
+        apache2 \
+        apache2-mpm-worker \
+        libapache2-mod-fastcgi \
+	&& sed -ri ' \
+		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+		' /etc/apache2/apache2.conf \
+	&& rm -f /etc/apache2/sites-enabled/* \
+	&& a2enmod actions fastcgi ssl rewrite headers
+{%- endmacro %}
+
+
+{% macro debian9(role='') -%}
+# Install apache
+RUN /usr/local/bin/apt-install \
+        apache2 \
+        libapache2-mod-fastcgi \
+	&& sed -ri ' \
+		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+		' /etc/apache2/apache2.conf \
+	&& rm -f /etc/apache2/sites-enabled/* \
+	&& a2enmod actions fastcgi ssl rewrite headers
+{%- endmacro %}
+
+
+{% macro ubuntu12(role='') -%}
+# Install apache
+RUN /usr/local/bin/apt-install \
+        apache2 \
+        apache2-mpm-worker \
+        libapache2-mod-fastcgi \
+	&& sed -ri ' \
+		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+		' /etc/apache2/apache2.conf \
+	&& rm -f /etc/apache2/sites-enabled/* \
+	&& a2enmod actions fastcgi ssl rewrite headers version \
+	&& mkdir -p /var/lock/apache2
+{%- endmacro %}
+
+
+{% macro ubuntu14(role='') -%}
+# Install apache
+RUN /usr/local/bin/apt-install \
+        apache2 \
+        apache2-mpm-worker \
+        libapache2-mod-fastcgi \
+	&& sed -ri ' \
+		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+		' /etc/apache2/apache2.conf \
+	&& rm -f /etc/apache2/sites-enabled/* \
+	&& a2enmod actions fastcgi ssl rewrite headers \
+	&& mkdir -p /var/lock/apache2
+{%- endmacro %}
+
+
+{% macro ubuntu15(role='') -%}
+# Install apache
+RUN /usr/local/bin/apt-install \
+        apache2 \
+        libapache2-mod-fastcgi \
+	&& sed -ri ' \
+		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+		' /etc/apache2/apache2.conf \
+	&& rm -f /etc/apache2/sites-enabled/* \
+	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
+	&& a2enmod actions fastcgi ssl rewrite headers
+{%- endmacro %}
+
+
+{% macro ubuntu16(role='') -%}
+# Install apache
+RUN /usr/local/bin/apt-install \
+        apache2 \
+        libapache2-mod-fastcgi \
+	&& sed -ri ' \
+		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+		' /etc/apache2/apache2.conf \
+	&& rm -f /etc/apache2/sites-enabled/* \
+	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
+	&& a2enmod actions fastcgi ssl rewrite headers
+{%- endmacro %}

@@ -1,0 +1,17 @@
+{{ base.from("php", "centos-7") }}
+
+{{ base.version() }}
+
+{{ base.environmentWeb() }}
+
+{{ apache.centos() }}
+
+# Deploy scripts/configurations
+COPY conf/ /opt/docker/
+RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-apache \
+    && bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php-apache \
+    && bash /opt/docker/bin/bootstrap.sh
+
+EXPOSE 80 443
+
+CMD ["supervisord"]

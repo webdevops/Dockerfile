@@ -1,26 +1,22 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 15.04 Nginx Docker container
+# Dockerfile for webdevops/nginx:ubuntu-15.04
+# -- automatically generated content --
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:ubuntu-15.04
-# <Macro general:version>
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
-# </Macro>
 
-# <Macro environment:web>
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
-# </Macro>
 
-# <Macro nginx:ubuntu>
 # Install nginx
 RUN /usr/local/bin/apt-install \
     nginx
-# </Macro>
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/

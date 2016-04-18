@@ -1,22 +1,19 @@
 #++++++++++++++++++++++++++++++++++++++
-# Ubuntu 15.04 PHP-Apache Docker container
+# Dockerfile for webdevops/php-apache:ubuntu-15.04
+# -- automatically generated content --
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/php:ubuntu-15.04
-# <Macro general:version>
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
-# </Macro>
 
-# <Macro environment:web>
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
-# </Macro>
 
-# <Macro apache:ubuntu-15>
 # Install apache
 RUN /usr/local/bin/apt-install \
         apache2 \
@@ -28,7 +25,6 @@ RUN /usr/local/bin/apt-install \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
 	&& a2enmod actions fastcgi ssl rewrite headers
-# </Macro>
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/

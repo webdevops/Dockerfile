@@ -1,22 +1,19 @@
 #++++++++++++++++++++++++++++++++++++++
-# Alpine 3 PHP-Apache Docker container
+# Dockerfile for webdevops/php-apache:alpine-3
+# -- automatically generated content --
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/php:alpine-3
-# <Macro general:version>
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
-# </Macro>
 
-# <Macro environment:web>
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
-# </Macro>
 
-# <Macro apache:alpine>
 # Install apache
 RUN /usr/local/bin/apk-install \
         apache2 \
@@ -27,7 +24,6 @@ RUN /usr/local/bin/apk-install \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/httpd.conf
-# </Macro>
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
@@ -38,4 +34,3 @@ RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-apache \
 EXPOSE 80 443
 
 CMD ["supervisord"]
-

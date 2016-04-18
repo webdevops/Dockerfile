@@ -1,26 +1,22 @@
 #++++++++++++++++++++++++++++++++++++++
-# CentOS 7 Nginx Docker container
+# Dockerfile for webdevops/nginx:centos-7
+# -- automatically generated content --
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:centos-7
-# <Macro general:version>
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
-# </Macro>
 
-# <Macro environment:web>
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
-# </Macro>
 
-# <Macro nginx:centos>
 # Install tools
 RUN /usr/local/bin/yum-install \
     nginx
-# </Macro>
 
 # Deploy scripts/configurations
 COPY conf/ /opt/docker/
