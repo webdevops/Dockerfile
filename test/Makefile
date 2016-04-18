@@ -24,6 +24,9 @@ base-app:
 php:
 	bash ./run.sh php
 
+php-dev:
+	bash ./run.sh php-dev
+
 apache:
 	bash ./run.sh apache
 

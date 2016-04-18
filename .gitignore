@@ -2,5 +2,6 @@
 /test/Dockerfile
 /test/vendor/
 /test/.bundle/
+/test/*.test
 /test/docker.test.*.tar
 *.log

@@ -321,8 +321,9 @@ initEnvironment
     # PHP 7
     ##########
 
-    setEnvironmentOsFamily "ubuntu"
     setSpecTest "php7"
+
+    setEnvironmentOsFamily "ubuntu"
     OS_VERSION="16.04" runTestForTag "ubuntu-16.04-php7"
 
     setEnvironmentOsFamily "debian"
@@ -335,6 +336,59 @@ initEnvironment
 
     waitForTestRun
 }
+
+#######################################
+# webdevops/php-dev
+#######################################
+
+[[ $(checkTestTarget php-dev) ]] && {
+    setupTestEnvironment "php-dev"
+
+    ##########
+    # PHP 5
+    ##########
+
+    setSpecTest "php5-dev"
+
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
+    OS_VERSION="testing" runTestForTag "debian-9"
+
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "alpine-3"
+
+    waitForTestRun
+
+    ##########
+    # PHP 7
+    ##########
+
+    setSpecTest "php7-dev"
+
+    setEnvironmentOsFamily "ubuntu"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04-php7"
+
+    setEnvironmentOsFamily "debian"
+    setSpecTest "php7"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
+    OS_VERSION="testing" runTestForTag "debian-9-php7"
+
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "alpine-3-php7"
+
+    waitForTestRun
+}
+
 
 #######################################
 # webdevops/apache
