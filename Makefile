@@ -15,7 +15,8 @@ bootstrap: webdevops/bootstrap webdevops/ansible
 base:      webdevops/base webdevops/base-app webdevops/storage
 service:   webdevops/ssh webdevops/vsftp webdevops/postfix
 
-php:       webdevops/php webdevops/php-dev webdevops/php-apache webdevops/php-dev-apache webdevops/php-nginx webdevops/php-dev-nginx
+php:       webdevops/php webdevops/php-apache webdevops/php-nginx 
+php-dev:   webdevops/php-dev webdevops/php-dev-apache webdevops/php-dev-nginx
 hhvm:      webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
 web:       webdevops/apache webdevops/nginx
