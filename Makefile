@@ -31,6 +31,7 @@ test-hub-images:
 	DOCKER_PULL=1 make test
 
 provision:
+	python bin/buildDockerfile.py --template=template/ --dockerfile=docker/
 	bash bin/provision.sh
 
 publish:    dist-update rebuild test push

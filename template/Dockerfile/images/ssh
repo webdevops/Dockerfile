@@ -1,0 +1,6 @@
+{% import 'Dockerfile/provision' as provision %}
+
+{% macro ubuntu() -%}
+RUN mkdir -p /var/run/sshd \
+    && /opt/docker/bin/control.sh service.enable ssh
+{%- endmacro %}

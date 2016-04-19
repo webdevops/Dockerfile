@@ -1,14 +1,14 @@
-#++++++++++++++++++++++++++++++++++++++
-# Sphinx Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/sphinx:latest
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/bootstrap:alpine-3
-# <Macro general:version>
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
-# </Macro>
 
 RUN /usr/local/bin/apk-install \
     # General sphinx

@@ -1,17 +1,11 @@
-{{ base.from("php", "debian-9") }}
+{{ docker.from("php", "debian-9") }}
 
-{{ base.version() }}
+{{ docker.version() }}
 
-{{ base.environmentWeb() }}
+{{ docker.environmentWeb() }}
 
-{{ apache.debian9() }}
+{{ docker.copy('conf/', '/opt/docker/') }}
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-apache \
-    && bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php-apache \
-    && bash /opt/docker/bin/bootstrap.sh
+{{ apache.debian9('php-apache') }}
 
-EXPOSE 80 443
-
-CMD ["supervisord"]
+{{ docker.expose('80 443') }}

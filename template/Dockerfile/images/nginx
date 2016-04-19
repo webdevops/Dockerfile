@@ -1,26 +1,32 @@
+{% import 'Dockerfile/provision' as provision %}
+
 {% macro alpine(role='') -%}
 # Install nginx
 RUN /usr/local/bin/apk-install \
-    nginx
+        nginx \
+    {{ provision.runRoleInline('nginx', role) }}
 {%- endmacro %}
 
 
 {% macro centos(role='') -%}
 # Install tools
 RUN /usr/local/bin/yum-install \
-    nginx
+        nginx \
+    {{ provision.runRoleInline('nginx', role) }}
 {%- endmacro %}
 
 
 {% macro debian(role='') -%}
 # Install nginx
 RUN /usr/local/bin/apt-install \
-    nginx
+        nginx \
+    {{ provision.runRoleInline('nginx', role) }}
 {%- endmacro %}
 
 
 {% macro ubuntu(role='') -%}
 # Install nginx
 RUN /usr/local/bin/apt-install \
-    nginx
+        nginx \
+    {{ provision.runRoleInline('nginx', role) }}
 {%- endmacro %}

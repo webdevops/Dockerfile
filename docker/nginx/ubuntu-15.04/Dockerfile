@@ -1,7 +1,7 @@
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
 # Dockerfile for webdevops/nginx:ubuntu-15.04
-# -- automatically generated content --
-#++++++++++++++++++++++++++++++++++++++
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:ubuntu-15.04
 
@@ -14,15 +14,13 @@ ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
+COPY conf/ /opt/docker/
+
 # Install nginx
 RUN /usr/local/bin/apt-install \
-    nginx
+        nginx \
+    && /opt/docker/bin/provision-run.sh webdevops-nginx \
+    && /opt/docker/bin/bootstrap.sh
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-nginx \
-    && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 80 443
-
-CMD ["supervisord"]

@@ -1,11 +1,11 @@
-#++++++++++++++++++++++++++++++++++++++
-# Debian 8 Ansible Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/ansible:debian-8
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/bootstrap:debian-8
-# <Macro general:version>
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
-# </Macro>

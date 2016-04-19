@@ -28,6 +28,8 @@ def processDockerfile(inputFile, template):
         }
     }
 
+    print "* Processing Dockerfile for " + dockerImage + ":" + dockerTag
+
     with open(inputFile, 'r') as fileInput:
         templateContent = fileInput.read()
 
@@ -38,7 +40,7 @@ def processDockerfile(inputFile, template):
 
         with open(outputFile, 'w') as fileOutput:
             fileOutput.write(renderedContent)
-            print "* Processed Dockerfile for " + dockerImage + ":" + dockerTag
+
 
 
 def main(args):

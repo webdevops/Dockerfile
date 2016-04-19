@@ -1,17 +1,11 @@
-{{ base.from("hhvm", "ubuntu-14.04") }}
+{{ docker.from("hhvm", "ubuntu-14.04") }}
 
-{{ base.version() }}
+{{ docker.version() }}
 
-{{ base.environmentWeb() }}
+{{ docker.environmentWeb() }}
 
-{{ nginx.ubuntu() }}
+{{ docker.copy('conf/', '/opt/docker/') }}
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-nginx \
-    && bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-hhvm-nginx \
-    && bash /opt/docker/bin/bootstrap.sh
+{{ nginx.ubuntu(role='hhvm-nginx') }}
 
-EXPOSE 80 443
-
-CMD ["supervisord"]
+{{ docker.expose('80 443') }}

@@ -1,3 +1,5 @@
+{% import 'Dockerfile/provision' as provision %}
+
 {% macro alpine(role='') -%}
 # Install apache
 RUN /usr/local/bin/apk-install \
@@ -8,7 +10,8 @@ RUN /usr/local/bin/apk-install \
 	&& sed -ri ' \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/httpd.conf
+		' /etc/apache2/httpd.conf \
+    {{ provision.runRoleInline('apache', role) }}
 {%- endmacro %}
 
 
@@ -20,7 +23,8 @@ RUN /usr/local/bin/yum-install \
 	&& sed -ri ' \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf
+		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf \
+    {{ provision.runRoleInline('apache', role) }}
 {%- endmacro %}
 
 
@@ -35,7 +39,8 @@ RUN /usr/local/bin/apt-install \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
-	&& a2enmod actions fastcgi ssl rewrite headers
+	&& a2enmod actions fastcgi ssl rewrite headers \
+	{{ provision.runRoleInline('apache', role) }}
 {%- endmacro %}
 
 
@@ -49,7 +54,8 @@ RUN /usr/local/bin/apt-install \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
-	&& a2enmod actions fastcgi ssl rewrite headers
+	&& a2enmod actions fastcgi ssl rewrite headers \
+    {{ provision.runRoleInline('apache', role) }}
 {%- endmacro %}
 
 
@@ -65,7 +71,8 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions fastcgi ssl rewrite headers version \
-	&& mkdir -p /var/lock/apache2
+	&& mkdir -p /var/lock/apache2 \
+    {{ provision.runRoleInline('apache', role) }}
 {%- endmacro %}
 
 
@@ -81,7 +88,8 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions fastcgi ssl rewrite headers \
-	&& mkdir -p /var/lock/apache2
+	&& mkdir -p /var/lock/apache2 \
+    {{ provision.runRoleInline('apache', role) }}
 {%- endmacro %}
 
 
@@ -96,7 +104,8 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
-	&& a2enmod actions fastcgi ssl rewrite headers
+	&& a2enmod actions fastcgi ssl rewrite headers \
+    {{ provision.runRoleInline('apache', role) }}
 {%- endmacro %}
 
 
@@ -111,5 +120,6 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
-	&& a2enmod actions fastcgi ssl rewrite headers
+	&& a2enmod actions fastcgi ssl rewrite headers \
+    {{ provision.runRoleInline('apache', role) }}
 {%- endmacro %}

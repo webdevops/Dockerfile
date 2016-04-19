@@ -1,40 +1,34 @@
-#++++++++++++++++++++++++++++++++++++++
-# Ubuntu 14.04 HHVM Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/hhvm:ubuntu-14.04
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base-app:ubuntu-14.04
-# <Macro general:version>
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
-# </Macro>
 
-# <Macro environment:web>
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
-# </Macro>
 
-# Install tools
-RUN /usr/local/bin/apt-install \
-        imagemagick \
-        graphicsmagick
+COPY conf/ /opt/docker/
 
-# Install php
+# Install hhvm environment
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0x5a16e7281be7a449 \
     && add-apt-repository "deb http://dl.hhvm.com/ubuntu $(lsb_release -sc) main" \
     && /usr/local/bin/apt-install \
         hhvm \
+        imagemagick \
+        graphicsmagick \
     && /usr/bin/update-alternatives --install /usr/bin/php php /usr/bin/hhvm 60 \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && /opt/docker/bin/provision-run.sh webdevops-hhvm \
+    && /opt/docker/bin/bootstrap.sh
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-hhvm \
-    && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 9000
 
-CMD ["supervisord"]

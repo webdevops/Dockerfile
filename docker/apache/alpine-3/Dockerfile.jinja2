@@ -1,16 +1,11 @@
-{{ base.from("base", "alpine-3") }}
+{{ docker.from("base", "alpine-3") }}
 
-{{ base.version() }}
+{{ docker.version() }}
 
-{{ base.environmentWeb() }}
+{{ docker.environmentWeb() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
 
 {{ apache.alpine() }}
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-apache \
-    && bash /opt/docker/bin/bootstrap.sh
-
-EXPOSE 80 443
-
-CMD ["supervisord"]
+{{ docker.expose('80 443') }}

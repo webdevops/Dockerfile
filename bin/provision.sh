@@ -186,43 +186,6 @@ function deployConfiguration() {
 }
 
 ###
- # Deploy Dockerfile macros
- ##
-function deployDockerfileMacros() {
-    echo " -> Deploying Dockerfile macros"
-
-    # loop trough all docker images
-    listDirectories "${DOCKER_DIR}" | while read DOCKER_CONTAINER_DIR; do
-        # loop trough all docker image tags
-        listDirectories "${DOCKER_CONTAINER_DIR}" | while read DOCKERFILE_DIR; do
-            if [ -f "${DOCKERFILE_DIR}/Dockerfile" ]; then
-                DOCKERFILE_TARGET="${DOCKERFILE_DIR}/Dockerfile"
-
-                ## get list of markers
-                getMacroList "$DOCKERFILE_TARGET" | while read MACRO_TAG; do
-
-                    ## build marker content file
-                    ## apache:alpine-3 -> apache/Dockerfile.alpine-3
-                    MACRO_CONTENT_FILE="${MACRO_TAG/://Dockerfile.}"
-
-                    DOCKERFILE_CONTENT_FILE="${MACRO_DIR}/${MACRO_CONTENT_FILE}"
-
-                    if [[ -f "$DOCKERFILE_CONTENT_FILE" ]]; then
-                        echo "    - $(relativeDir $DOCKERFILE_DIR)"
-                        replaceMacro "$DOCKERFILE_TARGET" "$DOCKERFILE_CONTENT_FILE" "$MACRO_TAG"
-                    else
-                        echo " ERROR "
-                        echo "Macro found: $MACRO_TAG"
-                        echo "Missing content file: $DOCKERFILE_CONTENT_FILE"
-                        exit 1
-                    fi
-                done
-            fi
-        done
-    done
-}
-
-###
  # Header message
  #
  # $1 -> container name (eg. php)
@@ -245,11 +208,6 @@ function header() {
     deployBaselayout samson-deployment  '*'
 
     rm -f baselayout.tar
-}
-
-## Build dockerfile
-[[ $(checkBuildTarget Dockerfile) ]] && {
-    deployDockerfileMacros
 }
 
 ## Build base

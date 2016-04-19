@@ -1,10 +1,22 @@
-{% import 'Dockerfile/base'   as base %}
-{% import 'Dockerfile/apache' as apache %}
-{% import 'Dockerfile/nginx'  as nginx %}
-#++++++++++++++++++++++++++++++++++++++
+{% import 'Dockerfile/docker'    as docker %}
+{% import 'Dockerfile/provision' as provision %}
+
+{% import 'Dockerfile/images/bootstrap'    as bootstrap %}
+{% import 'Dockerfile/images/base'         as base %}
+{% import 'Dockerfile/images/baseapp'      as baseapp %}
+{% import 'Dockerfile/images/apache'       as apache %}
+{% import 'Dockerfile/images/nginx'        as nginx %}
+{% import 'Dockerfile/images/hhvm'         as hhvm %}
+{% import 'Dockerfile/images/postfix'      as postfix %}
+{% import 'Dockerfile/images/mailsandbox'  as mailsandbox %}
+{% import 'Dockerfile/images/php5'         as php5 %}
+{% import 'Dockerfile/images/php7'         as php7 %}
+{% import 'Dockerfile/images/sphinx'       as sphinx %}
+{% import 'Dockerfile/images/ssh'          as ssh %}
+#+++++++++++++++++++++++++++++++++++++++
 # Dockerfile for webdevops/{{ Dockerfile.image }}:{{ Dockerfile.tag }}
-# -- automatically generated content --
-#++++++++++++++++++++++++++++++++++++++
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 {% block content %}
 

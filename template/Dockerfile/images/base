@@ -1,0 +1,61 @@
+{% import 'Dockerfile/provision' as provision %}
+
+{% macro alpine(role='') -%}
+# Install services
+RUN chmod +x /opt/docker/bin/* \
+    && /usr/local/bin/apk-install \
+        supervisor \
+        syslog-ng \
+        logrotate \
+        wget \
+        curl \
+        sed \
+    {{ provision.runRoleInline('base', role) }}
+{%- endmacro %}
+
+
+{% macro centos(role='') -%}
+# Install services
+RUN chmod +x /opt/docker/bin/* \
+    && /usr/local/bin/yum-install \
+        cronie \
+        supervisor \
+        syslog-ng \
+        logrotate \
+        wget \
+        curl \
+        net-tools \
+    {{ provision.runRoleInline('base', role) }}
+{%- endmacro %}
+
+
+{% macro debian(role='') -%}
+# Install packages
+RUN chmod +x /opt/docker/bin/* \
+    && /usr/local/bin/apt-install \
+        supervisor \
+        syslog-ng \
+        syslog-ng-core \
+        logrotate \
+        cron \
+        wget \
+        curl \
+        net-tools \
+    {{ provision.runRoleInline('base', role) }}
+{%- endmacro %}
+
+
+{% macro ubuntu(role='') -%}
+# Install services
+RUN chmod +x /opt/docker/bin/* \
+    && /usr/local/bin/apt-install \
+        supervisor \
+        syslog-ng \
+        syslog-ng-core \
+        logrotate \
+        cron \
+        wget \
+        curl \
+        net-tools \
+    {{ provision.runRoleInline('base', role) }}
+{%- endmacro %}

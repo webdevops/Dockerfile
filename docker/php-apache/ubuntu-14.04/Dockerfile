@@ -1,7 +1,7 @@
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
 # Dockerfile for webdevops/php-apache:ubuntu-14.04
-# -- automatically generated content --
-#++++++++++++++++++++++++++++++++++++++
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/php:ubuntu-14.04
 
@@ -14,6 +14,8 @@ ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
+COPY conf/ /opt/docker/
+
 # Install apache
 RUN /usr/local/bin/apt-install \
         apache2 \
@@ -25,14 +27,9 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions fastcgi ssl rewrite headers \
-	&& mkdir -p /var/lock/apache2
+	&& mkdir -p /var/lock/apache2 \
+    && /opt/docker/bin/provision-run.sh webdevops-apache webdevops-php-apache \
+    && /opt/docker/bin/bootstrap.sh
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-apache \
-    && bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php-apache \
-    && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 80 443
-
-CMD ["supervisord"]
