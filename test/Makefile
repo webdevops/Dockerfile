@@ -24,6 +24,9 @@ base-app:
 php:
 	bash ./run.sh php
 
+php-dev:
+	bash ./run.sh php-dev
+
 apache:
 	bash ./run.sh apache
 
@@ -33,8 +36,14 @@ nginx:
 php-apache:
 	bash ./run.sh php-apache
 
+php-dev-apache:
+	bash ./run.sh php-dev-apache
+
 php-nginx:
 	bash ./run.sh php-nginx
+
+php-dev-nginx:
+	bash ./run.sh php-dev-nginx
 
 hhvm:
 	bash ./run.sh hhvm
