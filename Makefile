@@ -15,7 +15,8 @@ bootstrap: webdevops/bootstrap webdevops/ansible
 base:      webdevops/base webdevops/base-app webdevops/storage
 service:   webdevops/ssh webdevops/vsftp webdevops/postfix
 
-php:       webdevops/php webdevops/php-apache webdevops/php-nginx
+php:       webdevops/php webdevops/php-apache webdevops/php-nginx 
+php-dev:   webdevops/php-dev webdevops/php-dev-apache webdevops/php-dev-nginx
 hhvm:      webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
 web:       webdevops/apache webdevops/nginx
@@ -83,6 +84,9 @@ webdevops/base-app:
 webdevops/php:
 	bash bin/build.sh php "${DOCKER_REPOSITORY}/php" "${DOCKER_TAG_LATEST}"
 
+webdevops/php-dev:
+	bash bin/build.sh php-dev "${DOCKER_REPOSITORY}/php-dev" "${DOCKER_TAG_LATEST}"
+
 webdevops/apache:
 	bash bin/build.sh apache "${DOCKER_REPOSITORY}/apache" "${DOCKER_TAG_LATEST}"
 
@@ -92,8 +96,14 @@ webdevops/nginx:
 webdevops/php-apache:
 	bash bin/build.sh php-apache "${DOCKER_REPOSITORY}/php-apache" "${DOCKER_TAG_LATEST}"
 
+webdevops/php-dev-apache:
+	bash bin/build.sh php-dev-apache "${DOCKER_REPOSITORY}/php-dev-apache" "${DOCKER_TAG_LATEST}"
+
 webdevops/php-nginx:
 	bash bin/build.sh php-nginx "${DOCKER_REPOSITORY}/php-nginx" "${DOCKER_TAG_LATEST}"
+
+webdevops/php-dev-nginx:
+	bash bin/build.sh php-dev-nginx "${DOCKER_REPOSITORY}/php-dev-nginx" "${DOCKER_TAG_LATEST}"
 
 webdevops/hhvm:
 	bash bin/build.sh hhvm "${DOCKER_REPOSITORY}/hhvm" "${DOCKER_TAG_LATEST}"
