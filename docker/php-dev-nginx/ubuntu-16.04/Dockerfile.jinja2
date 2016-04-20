@@ -1,0 +1,11 @@
+{{ docker.from("php-dev", "ubuntu-16.04") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentWeb() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ nginx.ubuntu('php-nginx') }}
+
+{{ docker.expose('80 443') }}

@@ -1,8 +1,10 @@
-#++++++++++++++++++++++++++++++++++++++
-# CentOS 7 PHP-Nginx Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/php-dev-nginx:centos-7
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/php-dev:centos-7
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
@@ -12,16 +14,13 @@ ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
+COPY conf/ /opt/docker/
+
 # Install tools
 RUN /usr/local/bin/yum-install \
-        nginx
+        nginx \
+    && /opt/docker/bin/provision-run.sh webdevops-nginx webdevops-php-nginx \
+    && /opt/docker/bin/bootstrap.sh
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-nginx \
-    && bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php-nginx \
-    && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 80 443
-
-CMD ["supervisord"]
