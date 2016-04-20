@@ -8,9 +8,10 @@
 {% import 'Dockerfile/images/nginx'        as nginx %}
 {% import 'Dockerfile/images/hhvm'         as hhvm %}
 {% import 'Dockerfile/images/postfix'      as postfix %}
-{% import 'Dockerfile/images/mailsandbox'  as mailsandbox %}
+{% import 'Dockerfile/images/mail-sandbox' as mailsandbox %}
 {% import 'Dockerfile/images/php5'         as php5 %}
 {% import 'Dockerfile/images/php7'         as php7 %}
+{% import 'Dockerfile/images/php-dev'      as phpdev %}
 {% import 'Dockerfile/images/sphinx'       as sphinx %}
 {% import 'Dockerfile/images/ssh'          as ssh %}
 #+++++++++++++++++++++++++++++++++++++++

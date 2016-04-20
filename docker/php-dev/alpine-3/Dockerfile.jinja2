@@ -1,0 +1,7 @@
+{{ docker.from("php", "alpine-3") }}
+
+{{ docker.version() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ phpdev.alpine() }}
