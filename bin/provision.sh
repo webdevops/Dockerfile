@@ -300,6 +300,34 @@ function header() {
     deployConfiguration php-nginx/general  php-nginx  '*'
 }
 
+
+## Build php-dev
+[[ $(checkBuildTarget php-dev) ]] && {
+    header "php-dev"
+    clearConfiguration  php-dev  '*'
+    deployConfiguration php-dev/general   php-dev  '*'
+}
+
+## Build php-dev-apache
+[[ $(checkBuildTarget php-dev-apache) ]] && {
+    header "php-dev-apache"
+    clearConfiguration  php-dev-apache  '*'
+    deployConfiguration apache/general      php-dev-apache  '*'
+    deployConfiguration apache/centos       php-dev-apache  'centos-*'
+    deployConfiguration apache/alpine       php-dev-apache  'alpine-*'
+    deployConfiguration php-apache/general  php-dev-apache  '*'
+}
+
+## Build php-dev-nginx
+[[ $(checkBuildTarget php-dev-nginx) ]] && {
+    header "php-dev-nginx"
+    clearConfiguration  php-dev-nginx  '*'
+    deployConfiguration nginx/general      php-dev-nginx  '*'
+    deployConfiguration nginx/centos       php-dev-nginx  'centos-*'
+    deployConfiguration nginx/alpine       php-dev-nginx  'alpine-*'
+    deployConfiguration php-nginx/general  php-dev-nginx  '*'
+}
+
 ## Build postfix
 [[ $(checkBuildTarget postfix) ]] && {
     header "postfix"
