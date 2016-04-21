@@ -308,24 +308,24 @@ function header() {
     deployConfiguration php-dev/general   php-dev  '*'
 }
 
-## Build php-dev-apache
-[[ $(checkBuildTarget php-dev-apache) ]] && {
-    header "php-dev-apache"
-    clearConfiguration  php-dev-apache  '*'
-    deployConfiguration apache/general      php-dev-apache  '*'
-    deployConfiguration apache/centos       php-dev-apache  'centos-*'
-    deployConfiguration apache/alpine       php-dev-apache  'alpine-*'
-    deployConfiguration php-apache/general  php-dev-apache  '*'
+## Build php-apache-dev
+[[ $(checkBuildTarget php-apache-dev) ]] && {
+    header "php-apache-dev"
+    clearConfiguration  php-apache-dev  '*'
+    deployConfiguration apache/general      php-apache-dev  '*'
+    deployConfiguration apache/centos       php-apache-dev  'centos-*'
+    deployConfiguration apache/alpine       php-apache-dev  'alpine-*'
+    deployConfiguration php-apache/general  php-apache-dev  '*'
 }
 
-## Build php-dev-nginx
-[[ $(checkBuildTarget php-dev-nginx) ]] && {
-    header "php-dev-nginx"
-    clearConfiguration  php-dev-nginx  '*'
-    deployConfiguration nginx/general      php-dev-nginx  '*'
-    deployConfiguration nginx/centos       php-dev-nginx  'centos-*'
-    deployConfiguration nginx/alpine       php-dev-nginx  'alpine-*'
-    deployConfiguration php-nginx/general  php-dev-nginx  '*'
+## Build php-nginx-dev
+[[ $(checkBuildTarget php-nginx-dev) ]] && {
+    header "php-nginx-dev"
+    clearConfiguration  php-nginx-dev  '*'
+    deployConfiguration nginx/general      php-nginx-dev  '*'
+    deployConfiguration nginx/centos       php-nginx-dev  'centos-*'
+    deployConfiguration nginx/alpine       php-nginx-dev  'alpine-*'
+    deployConfiguration php-nginx/general  php-nginx-dev  '*'
 }
 
 ## Build postfix

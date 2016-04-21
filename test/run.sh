@@ -497,17 +497,17 @@ initEnvironment
 
 
 #######################################
-# webdevops/php-dev-apache
+# webdevops/php-apache-dev
 #######################################
 
-[[ $(checkTestTarget php-dev-apache) ]] && {
-    setupTestEnvironment "php-dev-apache"
+[[ $(checkTestTarget php-apache-dev) ]] && {
+    setupTestEnvironment "php-apache-dev"
 
     ##########
     # PHP 5
     ##########
 
-    setSpecTest "php5-dev-apache"
+    setSpecTest "php5-apache-dev"
 
     OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
@@ -531,7 +531,7 @@ initEnvironment
     ##########
     # PHP 7
     ##########
-    setSpecTest "php7-dev-apache"
+    setSpecTest "php7-apache-dev"
 
     setEnvironmentOsFamily "ubuntu"
     OS_VERSION="16.04" runTestForTag "ubuntu-16.04-php7"
@@ -600,17 +600,17 @@ initEnvironment
 
 
 #######################################
-# webdevops/php-dev-nginx
+# webdevops/php-nginx-dev
 #######################################
 
-[[ $(checkTestTarget php-dev-nginx) ]] && {
-    setupTestEnvironment "php-dev-nginx"
+[[ $(checkTestTarget php-nginx-dev) ]] && {
+    setupTestEnvironment "php-nginx-dev"
 
     ##########
     # PHP 5
     ##########
 
-    setSpecTest "php5-dev-nginx"
+    setSpecTest "php5-nginx-dev"
 
     OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
@@ -634,7 +634,7 @@ initEnvironment
     ##########
     # PHP 7
     ##########
-    setSpecTest "php7-dev-nginx"
+    setSpecTest "php7-nginx-dev"
     
     setEnvironmentOsFamily "ubuntu"
     OS_VERSION="16.04" runTestForTag "ubuntu-16.04-php7"
