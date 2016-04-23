@@ -1,5 +1,5 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/php-dev-nginx:debian-9-php7
+# Dockerfile for webdevops/php-nginx-dev:debian-9-php7
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 

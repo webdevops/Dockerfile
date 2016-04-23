@@ -1,5 +1,5 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/php-dev-nginx:ubuntu-15.10
+# Dockerfile for webdevops/php-nginx-dev:ubuntu-15.10
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 

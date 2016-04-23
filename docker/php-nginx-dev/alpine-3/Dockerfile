@@ -1,5 +1,5 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/php-dev-nginx:alpine-3
+# Dockerfile for webdevops/php-nginx-dev:alpine-3
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 

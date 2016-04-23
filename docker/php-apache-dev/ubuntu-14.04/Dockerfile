@@ -1,5 +1,5 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/php-dev-apache:ubuntu-14.04
+# Dockerfile for webdevops/php-apache-dev:ubuntu-14.04
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 

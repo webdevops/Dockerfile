@@ -1,5 +1,5 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/php-dev-apache:centos-7
+# Dockerfile for webdevops/php-apache-dev:centos-7
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
