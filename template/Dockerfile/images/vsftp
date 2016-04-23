@@ -1,0 +1,12 @@
+{% import 'Dockerfile/provision' as provision %}
+
+{% macro ubuntu(role='') -%}
+# Install vsftp
+RUN /usr/local/bin/apt-install \
+        vsftpd \
+    && ln -sf /opt/docker/etc/vsftpd/vsftpd.conf /etc/vsftpd.conf \
+    && mkdir -p \
+            /var/run/vsftpd/empty \
+            /var/log/supervisor \
+    {{ provision.runRoleInline('vsftp', role) }}
+{%- endmacro %}

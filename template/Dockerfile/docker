@@ -34,6 +34,15 @@ ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 {%- endmacro %}
 
+{% macro environmentFtp() -%}
+ENV FTP_USER     application
+ENV FTP_PASSWORD application
+ENV FTP_UID      1000
+ENV FTP_GID      1000
+ENV FTP_PASSWORD dev
+ENV FTP_PATH     /data/ftp/
+{%- endmacro %}
+
 
 {% macro environmentApp() -%}
 ENV APPLICATION_USER  application
