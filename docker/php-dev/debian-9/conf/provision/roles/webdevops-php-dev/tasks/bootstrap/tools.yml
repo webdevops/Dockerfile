@@ -1,7 +1,7 @@
 ---
 
 - name: Downloading Tools
-  get_url: url={{ item.url }} dest={{ item.dest }} mode=0755
+  shell: curl -o "{{ item.dest }}" "{{ item.url }}" && chmod 755 "{{ item.dest }}"
   with_items:
     - { url: "https://phar.phpunit.de/phploc.phar", dest: /usr/local/bin/phploc }
     - { url: "https://phar.phpunit.de/phpunit.phar", dest: /usr/local/bin/phpunit }
