@@ -17,7 +17,7 @@ RUN /usr/local/bin/yum-install \
         # Install tools
         graphviz \
         # Install php development stuff
-        php5-xdebug \
+        php-pecl-xdebug \
     {{ provision.runRoleInline('php-dev', role) }}
 {%- endmacro %}
 
