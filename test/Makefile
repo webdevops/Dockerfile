@@ -36,13 +36,13 @@ nginx:
 php-apache:
 	bash ./run.sh php-apache
 
-php-dev-apache:
+php-apache-dev:
 	bash ./run.sh php-dev-apache
 
 php-nginx:
 	bash ./run.sh php-nginx
 
-php-dev-nginx:
+php-nginx-dev:
 	bash ./run.sh php-dev-nginx
 
 hhvm:
