@@ -17,7 +17,7 @@ RUN /usr/local/bin/apt-install \
         # Install tools
         graphviz \
         # Install php development stuff
-        php5-xdebug \
+        php-xdebug \
     && /opt/docker/bin/provision-run.sh webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
 

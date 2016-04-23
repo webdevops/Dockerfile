@@ -278,6 +278,7 @@ function header() {
 
     # deploy php7 configuration to *-php7 containers
     deployConfiguration php/php7          php  '*-php7'
+    deployConfiguration php/php7          php  'ubuntu-16.04'
 }
 
 ## Build php-apache
