@@ -42,7 +42,7 @@ RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list \
         php7.0-redis \
         php7.0-memcached \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    && /opt/docker/bin/provision-run.sh webdevops-php \
+    && /opt/docker/bin/provision add --tag bootstrap webdevops-php \
     && /opt/docker/bin/bootstrap.sh
 
 

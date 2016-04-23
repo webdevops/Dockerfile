@@ -21,7 +21,7 @@ RUN /usr/local/bin/apt-install \
         dovecot-imapd \
     && /opt/docker/bin/control.sh service.enable postfix \
     && /opt/docker/bin/control.sh service.enable dovecot \
-    && /opt/docker/bin/provision-run.sh webdevops-mail-sandbox \
+    && /opt/docker/bin/provision add --tag bootstrap webdevops-mail-sandbox \
     && /opt/docker/bin/bootstrap.sh
 
 

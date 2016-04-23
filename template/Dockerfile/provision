@@ -1,5 +1,5 @@
 {% macro runRoleInline() %}
-    {%- if varargs -%}&& /opt/docker/bin/provision-run.sh {% for role in varargs -%}
+    {%- if varargs -%}&& /opt/docker/bin/provision add --tag bootstrap {% for role in varargs -%}
         {% if role %}webdevops-{{ role }} {% endif %}
         {%- endfor -%}
     \{%- endif %}

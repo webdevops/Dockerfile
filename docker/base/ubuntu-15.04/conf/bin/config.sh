@@ -55,6 +55,22 @@ function replaceTextInFile() {
     sed -i "s/${SOURCE}/${REPLACE}/" "${TARGET}"
 }
 
+
+###
+ # Show deprecation notice
+ #
+ ##
+function deprecationNotice() {
+    echo ""
+    echo "###############################################################################"
+    echo "###      THIS CALL IS DEPRECATED AND WILL BE REMOVED IN THE FUTURE          ###"
+    echo ""
+    echo "$*"
+    echo ""
+    echo "###############################################################################"
+    echo ""
+}
+
 ###
  # Run "entrypoint" scripts
  ##
@@ -173,49 +189,9 @@ function buildProvisionRoleList() {
  #
  ##
 function runDockerProvision() {
-    ANSIBLE_PLAYBOOK="/opt/docker/provision/playbook.yml"
     ANSIBLE_TAG="$1"
-    ANSIBLE_DYNAMIC_PLAYBOOK=0
 
-
-    ## Create dynamic ansible playbook file
-    if [ ! -f "$ANSIBLE_PLAYBOOK" ]; then
-        TMP_PLAYBOOK=$(mktemp /tmp/docker.build.XXXXXXXXXX)
-        TMP_PLAYBOOK_ROLES=$(mktemp /tmp/docker.build.XXXXXXXXXX)
-
-        ## Create dynamic playbook file
-        echo "---
-
-- hosts: all
-  vars_files:
-    - "./variables.yml"
-  roles:
-" > "$TMP_PLAYBOOK"
-
-        ROLES_FILE=$(mktemp /tmp/docker.build.XXXXXXXXXX)
-
-        buildProvisionRoleList "provision.startup.${ANSIBLE_TAG}" >> "$TMP_PLAYBOOK_ROLES"
-        buildProvisionRoleList "provision.main.${ANSIBLE_TAG}"    >> "$TMP_PLAYBOOK_ROLES"
-        buildProvisionRoleList "provision.finish.${ANSIBLE_TAG}"  >> "$TMP_PLAYBOOK_ROLES"
-
-        # check if there is at last one role
-        if [ -s "$TMP_PLAYBOOK_ROLES" ]; then
-            cat "$TMP_PLAYBOOK" "$TMP_PLAYBOOK_ROLES" > $ANSIBLE_PLAYBOOK
-            ANSIBLE_DYNAMIC_PLAYBOOK=1
-        fi
-
-        rm -f -- "$TMP_PLAYBOOK" "$TMP_PLAYBOOK_ROLES"
-    fi
-
-    # Only run playbook if there is one
-    if [ -s "${ANSIBLE_PLAYBOOK}" ]; then
-        bash /opt/docker/bin/provision.sh "${ANSIBLE_PLAYBOOK}" "${ANSIBLE_TAG}"
-
-        # Remove dynamic playbook file
-        if [ "${ANSIBLE_DYNAMIC_PLAYBOOK}" -eq 1 ]; then
-            rm -f "${ANSIBLE_PLAYBOOK}"
-        fi
-    fi
+    /opt/docker/bin/provision run --tag "$ANSIBLE_TAG"
 }
 
 ###

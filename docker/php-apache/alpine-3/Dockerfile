@@ -26,7 +26,7 @@ RUN /usr/local/bin/apk-install \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/httpd.conf \
-    && /opt/docker/bin/provision-run.sh webdevops-apache webdevops-php-apache \
+    && /opt/docker/bin/provision add --tag bootstrap webdevops-apache webdevops-php-apache \
     && /opt/docker/bin/bootstrap.sh
 
 

@@ -43,6 +43,6 @@ RUN /usr/local/bin/apt-install \
         vim \
     && mkdir -p /var/lib/syslog-ng/ \
     && /usr/local/bin/generate-locales \
-    && /opt/docker/bin/provision-run.sh webdevops-base-app \
+    && /opt/docker/bin/provision add --tag bootstrap webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh
 

@@ -42,6 +42,6 @@ RUN /usr/local/bin/yum-install \
         nano \
         vim \
     && /usr/local/bin/generate-locales \
-    && /opt/docker/bin/provision-run.sh webdevops-base-app \
+    && /opt/docker/bin/provision add --tag bootstrap webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh
 

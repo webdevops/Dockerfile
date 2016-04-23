@@ -24,7 +24,7 @@ RUN /usr/local/bin/yum-install \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf \
-    && /opt/docker/bin/provision-run.sh webdevops-apache webdevops-php-apache \
+    && /opt/docker/bin/provision add --tag bootstrap webdevops-apache webdevops-php-apache \
     && /opt/docker/bin/bootstrap.sh
 
 

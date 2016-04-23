@@ -41,6 +41,6 @@ RUN /usr/local/bin/apk-install \
         git \
         nano \
         vim \
-    && /opt/docker/bin/provision-run.sh webdevops-base-app \
+    && /opt/docker/bin/provision add --tag bootstrap webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh
 

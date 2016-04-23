@@ -46,7 +46,7 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    && /opt/docker/bin/provision-run.sh webdevops-php \
+    && /opt/docker/bin/provision add --tag bootstrap webdevops-php \
     && /opt/docker/bin/bootstrap.sh
 
 
