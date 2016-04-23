@@ -4,4 +4,4 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ phpdev.debian() }}
+{{ php7dev.debian() }}

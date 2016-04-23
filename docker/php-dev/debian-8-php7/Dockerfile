@@ -12,9 +12,12 @@ LABEL io.webdevops.version=0.23.0
 
 COPY conf/ /opt/docker/
 
-# Install tools
+# Install development environment
 RUN /usr/local/bin/apt-install \
+        # Install tools
         graphviz \
+        # Install php development stuff
+        php7.0-xdebug \
     && /opt/docker/bin/provision-run.sh webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
 
