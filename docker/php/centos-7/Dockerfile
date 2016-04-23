@@ -28,7 +28,6 @@ RUN /usr/local/bin/yum-install \
         php-intl \
         php-curl \
         php-mysqlnd \
-        php-xdebug \
         php-memcached \
         php-mcrypt \
         php-gd \

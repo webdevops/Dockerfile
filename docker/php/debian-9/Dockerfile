@@ -28,7 +28,6 @@ RUN /usr/local/bin/apt-install \
         php5-intl \
         php5-curl \
         php5-mysqlnd \
-        #php-xdebug \
         php5-mcrypt \
         php5-gd \
         php5-sqlite \

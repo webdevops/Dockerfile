@@ -31,7 +31,6 @@ RUN /usr/local/bin/apk-install \
         php-mysqli \
         php-pdo_mysql \
         php-pdo_sqlite \
-        php-xdebug \
         php-memcached \
         php-mcrypt \
         php-gd \

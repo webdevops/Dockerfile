@@ -16,7 +16,6 @@ RUN /usr/local/bin/apk-install \
         php-mysqli \
         php-pdo_mysql \
         php-pdo_sqlite \
-        php-xdebug \
         php-memcached \
         php-mcrypt \
         php-gd \
@@ -72,7 +71,6 @@ RUN /usr/local/bin/yum-install \
         php-intl \
         php-curl \
         php-mysqlnd \
-        php-xdebug \
         php-memcached \
         php-mcrypt \
         php-gd \
@@ -115,7 +113,6 @@ RUN /usr/local/bin/apt-install \
         php5-intl \
         php5-curl \
         php5-mysqlnd \
-        php5-xdebug \
         php5-mcrypt \
         php5-gd \
         php5-sqlite \
@@ -150,7 +147,6 @@ RUN /usr/local/bin/apt-install \
         php5-intl \
         php5-curl \
         php5-mysqlnd \
-        php5-xdebug \
         php5-mcrypt \
         php5-gd \
         php5-sqlite \
@@ -186,7 +182,6 @@ RUN /usr/local/bin/apt-install \
         php5-intl \
         php5-curl \
         php5-mysqlnd \
-        #php-xdebug \
         php5-mcrypt \
         php5-gd \
         php5-sqlite \
@@ -221,7 +216,6 @@ RUN /usr/local/bin/apt-install \
         php5-intl \
         php5-curl \
         php5-mysqlnd \
-        #php-xdebug \
         php5-mcrypt \
         php5-gd \
         php5-sqlite \
@@ -257,7 +251,6 @@ RUN /usr/local/bin/apt-install \
         php5-intl \
         php5-curl \
         php5-mysqlnd \
-        php5-xdebug \
         php5-mcrypt \
         php5-gd \
         php5-sqlite \
@@ -292,7 +285,6 @@ RUN /usr/local/bin/apt-install \
         php5-intl \
         php5-curl \
         php5-mysqlnd \
-        #php5-xdebug \
         php5-mcrypt \
         php5-gd \
         php5-sqlite \
