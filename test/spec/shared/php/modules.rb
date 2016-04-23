@@ -4,7 +4,6 @@
 
 shared_examples 'php::modules' do
     describe command('php -m') do
-        its(:stdout) { should_not contain('xdebug') }
         its(:stdout) { should_not contain('apc') }
 
         its(:stdout) { should     contain('bcmath') }
@@ -65,6 +64,22 @@ shared_examples 'php::modules' do
     end
 end
 
+shared_examples 'php::modules::production' do
+    describe command('php -m') do
+        its(:stdout) { should_not contain('xdebug') }
+
+        its(:exit_status) { should eq 0 }
+    end
+end
+
+shared_examples 'php::modules::development' do
+    describe command('php -m') do
+        its(:stdout) { should contain('xdebug') }
+
+        its(:exit_status) { should eq 0 }
+    end
+end
+
 shared_examples 'php5::modules' do
     describe command('php -m') do
         its(:stdout) { should     contain('shmop') }
@@ -102,7 +117,6 @@ end
 
 shared_examples 'php-fpm::modules' do
     describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
-        its(:stdout) { should_not contain('xdebug') }
         its(:stdout) { should_not contain('apc') }
 
         its(:stdout) { should     contain('bcmath') }
@@ -158,6 +172,22 @@ shared_examples 'php-fpm::modules' do
         if ( os[:family] != 'alpine' )
             its(:stdout) { should     contain('gd') }
         end
+
+        its(:exit_status) { should eq 0 }
+    end
+end
+
+shared_examples 'php-fpm::modules::production' do
+    describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
+        its(:stdout) { should_not contain('xdebug') }
+
+        its(:exit_status) { should eq 0 }
+    end
+end
+
+shared_examples 'php-fpm::modules::development' do
+    describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
+        its(:stdout) { should contain('xdebug') }
 
         its(:exit_status) { should eq 0 }
     end

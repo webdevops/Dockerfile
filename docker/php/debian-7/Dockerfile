@@ -1,27 +1,33 @@
-#++++++++++++++++++++++++++++++++++++++
-# Debian 7 PHP Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/php:debian-7
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base-app:debian-7
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
 
-# Install tools
-RUN /usr/local/bin/apt-install \
-        imagemagick \
-        graphicsmagick
+ENV WEB_DOCUMENT_ROOT  /app
+ENV WEB_DOCUMENT_INDEX index.php
+ENV WEB_ALIAS_DOMAIN   *.vm
 
-# Install php
+COPY conf/ /opt/docker/
+
+# Install php environment
 RUN /usr/local/bin/apt-install \
+        # Install tools
+        imagemagick \
+        graphicsmagick \
+        # Install php (cli/fpm)
         php5-cli \
         php5-fpm \
         php5-json \
         php5-intl \
         php5-curl \
         php5-mysqlnd \
-        php5-xdebug \
         php5-mcrypt \
         php5-gd \
         php5-sqlite \
@@ -38,14 +44,9 @@ RUN /usr/local/bin/apt-install \
     && pear config-set auto_discover 1 \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && /opt/docker/bin/provision-run.sh webdevops-php \
+    && /opt/docker/bin/bootstrap.sh
 
-
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php \
-    && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 9000
-
-CMD ["supervisord"]

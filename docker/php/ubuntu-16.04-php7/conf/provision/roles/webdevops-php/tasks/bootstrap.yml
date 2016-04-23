@@ -1,7 +1,0 @@
----
-
-- include: bootstrap/php.yml
-- include: bootstrap/php-fpm.main.yml
-- include: bootstrap/php-fpm.pool.yml
-- include: bootstrap/php-fpm.yml
-- include: bootstrap/php-module.xdebug.yml

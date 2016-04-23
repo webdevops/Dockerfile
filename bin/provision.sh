@@ -41,8 +41,11 @@ TAR='tar'
 SCRIPT_DIR=$(dirname "$($READLINK -f "$0")")
 BASE_DIR=$(dirname "$SCRIPT_DIR")
 
+source "$SCRIPT_DIR/functions.sh"
+
 BASELAYOUT_DIR="${BASE_DIR}/baselayout"
 PROVISION_DIR="${BASE_DIR}/provisioning"
+MACRO_DIR="${BASE_DIR}/macro"
 DOCKER_DIR="${BASE_DIR}/docker"
 
 
@@ -182,7 +185,6 @@ function deployConfiguration() {
     done
 }
 
-
 ###
  # Header message
  #
@@ -195,7 +197,6 @@ function header() {
 ###############################################################################
 # MAIN
 ###############################################################################
-
 
 ## Build bootstrap
 [[ $(checkBuildTarget bootstrap) ]] && {
@@ -277,6 +278,7 @@ function header() {
 
     # deploy php7 configuration to *-php7 containers
     deployConfiguration php/php7          php  '*-php7'
+    deployConfiguration php/php7          php  'ubuntu-16.04'
 }
 
 ## Build php-apache
@@ -297,6 +299,34 @@ function header() {
     deployConfiguration nginx/centos       php-nginx  'centos-*'
     deployConfiguration nginx/alpine       php-nginx  'alpine-*'
     deployConfiguration php-nginx/general  php-nginx  '*'
+}
+
+
+## Build php-dev
+[[ $(checkBuildTarget php-dev) ]] && {
+    header "php-dev"
+    clearConfiguration  php-dev  '*'
+    deployConfiguration php-dev/general   php-dev  '*'
+}
+
+## Build php-apache-dev
+[[ $(checkBuildTarget php-apache-dev) ]] && {
+    header "php-apache-dev"
+    clearConfiguration  php-apache-dev  '*'
+    deployConfiguration apache/general      php-apache-dev  '*'
+    deployConfiguration apache/centos       php-apache-dev  'centos-*'
+    deployConfiguration apache/alpine       php-apache-dev  'alpine-*'
+    deployConfiguration php-apache/general  php-apache-dev  '*'
+}
+
+## Build php-nginx-dev
+[[ $(checkBuildTarget php-nginx-dev) ]] && {
+    header "php-nginx-dev"
+    clearConfiguration  php-nginx-dev  '*'
+    deployConfiguration nginx/general      php-nginx-dev  '*'
+    deployConfiguration nginx/centos       php-nginx-dev  'centos-*'
+    deployConfiguration nginx/alpine       php-nginx-dev  'alpine-*'
+    deployConfiguration php-nginx/general  php-nginx-dev  '*'
 }
 
 ## Build postfix

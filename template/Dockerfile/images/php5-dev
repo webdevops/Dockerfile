@@ -1,0 +1,44 @@
+{% import 'Dockerfile/provision' as provision %}
+
+{% macro alpine(role='') -%}
+# Install development environment
+RUN /usr/local/bin/apk-install \
+        # Install tools
+        graphviz \
+        # Install php development stuff
+        php-xdebug \
+    {{ provision.runRoleInline('php-dev', role) }}
+{%- endmacro %}
+
+
+{% macro centos(role='') -%}
+# Install development environment
+RUN /usr/local/bin/yum-install \
+        # Install tools
+        graphviz \
+        # Install php development stuff
+        php-pecl-xdebug \
+    {{ provision.runRoleInline('php-dev', role) }}
+{%- endmacro %}
+
+
+{% macro debian(role='') -%}
+# Install development environment
+RUN /usr/local/bin/apt-install \
+        # Install tools
+        graphviz \
+        # Install php development stuff
+        php5-xdebug \
+    {{ provision.runRoleInline('php-dev', role) }}
+{%- endmacro %}
+
+
+{% macro ubuntu(role='') -%}
+# Install development environment
+RUN /usr/local/bin/apt-install \
+        # Install tools
+        graphviz \
+        # Install php development stuff
+        php5-xdebug \
+    {{ provision.runRoleInline('php-dev', role) }}
+{%- endmacro %}

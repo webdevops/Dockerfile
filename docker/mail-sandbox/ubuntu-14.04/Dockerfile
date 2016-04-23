@@ -1,8 +1,10 @@
-#++++++++++++++++++++++++++++++++++++++
-# Postfix Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/mail-sandbox:ubuntu-14.04
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/postfix:latest
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
@@ -11,21 +13,16 @@ LABEL io.webdevops.version=0.23.0
 ENV MAILBOX_USERNAME "sandbox"
 ENV MAILBOX_PASSWORD "mail"
 
-# Install tools
-RUN /usr/local/bin/apt-install \
-    dovecot-core \
-    dovecot-imapd
-
-
-# Deploy scripts/configurations
 COPY conf/ /opt/docker/
-RUN /opt/docker/bin/control.sh provision.role webdevops-mail-sandbox \
+
+# Install services
+RUN /usr/local/bin/apt-install \
+        dovecot-core \
+        dovecot-imapd \
     && /opt/docker/bin/control.sh service.enable postfix \
     && /opt/docker/bin/control.sh service.enable dovecot \
+    && /opt/docker/bin/provision-run.sh webdevops-mail-sandbox \
     && /opt/docker/bin/bootstrap.sh
 
-# SMTP
-EXPOSE 25 465 587
 
-# IMAP
-EXPOSE 143 993
+EXPOSE 25 465 587 143 993

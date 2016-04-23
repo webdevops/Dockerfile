@@ -1,25 +1,30 @@
-#++++++++++++++++++++++++++++++++++++++
-# Debian 8 PHP Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/php:debian-8-php7
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base-app:debian-8
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
 
-# Install dotdeb
+ENV WEB_DOCUMENT_ROOT  /app
+ENV WEB_DOCUMENT_INDEX index.php
+ENV WEB_ALIAS_DOMAIN   *.vm
+
+COPY conf/ /opt/docker/
+
+# Install php environment
 RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list \
     && echo "deb-src http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list \
-    && wget wget -O- https://www.dotdeb.org/dotdeb.gpg | apt-key add  -
-
-# Install tools
-RUN /usr/local/bin/apt-install \
+    && wget -O- https://www.dotdeb.org/dotdeb.gpg | apt-key add  - \
+    && /usr/local/bin/apt-install \
+        # Install tools
         imagemagick \
-        graphicsmagick
-
-# Install php
-RUN /usr/local/bin/apt-install \
+        graphicsmagick \
+        # Install php (cli/fpm)
         php7.0-cli \
         php7.0-fpm \
         php7.0-json \
@@ -36,13 +41,9 @@ RUN /usr/local/bin/apt-install \
         php7.0-bz2 \
         php7.0-redis \
         php7.0-memcached \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && /opt/docker/bin/provision-run.sh webdevops-php \
+    && /opt/docker/bin/bootstrap.sh
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php \
-    && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 9000
-
-CMD ["supervisord"]

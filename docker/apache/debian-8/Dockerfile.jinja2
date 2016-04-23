@@ -1,0 +1,11 @@
+{{ docker.from("base", "debian-8") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentWeb() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ apache.debian8() }}
+
+{{ docker.expose('80 443') }}

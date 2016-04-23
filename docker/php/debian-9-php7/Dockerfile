@@ -1,20 +1,27 @@
-#++++++++++++++++++++++++++++++++++++++
-# Debian 9 PHP Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/php:debian-9-php7
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base-app:debian-9
+FROM webdevops/base-app:debian-8
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
 
-# Install tools
-RUN /usr/local/bin/apt-install \
-        imagemagick \
-        graphicsmagick
+ENV WEB_DOCUMENT_ROOT  /app
+ENV WEB_DOCUMENT_INDEX index.php
+ENV WEB_ALIAS_DOMAIN   *.vm
 
-# Install php
+COPY conf/ /opt/docker/
+
+# Install php environment
 RUN /usr/local/bin/apt-install \
+        # Install tools
+        imagemagick \
+        graphicsmagick \
+        # Install php (cli/fpm)
         php7.0-cli \
         php7.0-fpm \
         php7.0-json \
@@ -30,13 +37,9 @@ RUN /usr/local/bin/apt-install \
         php7.0-xsl \
         php7.0-bz2 \
         php-redis \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && /opt/docker/bin/provision-run.sh webdevops-php \
+    && /opt/docker/bin/bootstrap.sh
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php \
-    && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 9000
-
-CMD ["supervisord"]

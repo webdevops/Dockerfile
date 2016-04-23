@@ -1,0 +1,9 @@
+{{ docker.fromOfficial("ubuntu", "12.04") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentLang() }}
+
+{{ docker.add('baselayout.tar', '/') }}
+
+{{ bootstrap.ubuntu12() }}

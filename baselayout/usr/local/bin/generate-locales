@@ -10,7 +10,7 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 ## Debian
 #######################################
 
-if [[ -f /etc/os-release ]] && [[ -n "$(awk -F= '/^NAME/{print $2}' /etc/os-release|grep -i Debian)" ]]; then
+if [[ "$(lsb_release -i -s)" == "Debian" ]]; then
     /usr/local/bin/apt-install locales-all
 fi
 
@@ -18,9 +18,15 @@ fi
 ## Ubuntu
 #######################################
 
-if [[ -f /etc/os-release ]] && [[ -n "$(awk -F= '/^NAME/{print $2}' /etc/os-release|grep -i Ubuntu)" ]]; then
-    ln -s /usr/share/i18n/SUPPORTED /var/lib/locales/supported.d/all
-    locale-gen
+if [[ "$(lsb_release -i -s)" == "Ubuntu" ]]; then
+    if [[ "$(lsb_release -r -s | cut -f 1 -d .)" -ge "16" ]]; then
+        # Ubuntu 16.04 or later
+        /usr/local/bin/apt-install locales-all
+    else
+        # Ubuntu pre 16.04 versions
+        ln -s /usr/share/i18n/SUPPORTED /var/lib/locales/supported.d/all
+        locale-gen
+    fi
 fi
 
 #######################################

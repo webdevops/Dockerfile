@@ -1,29 +1,31 @@
-#++++++++++++++++++++++++++++++++++++++
-# Alpine 3 Bootstrap Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/base:alpine-3
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/bootstrap:alpine-3
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
 
-ENV DOCKER_CONF_HOME  /opt/docker/
+ENV DOCKER_CONF_HOME /opt/docker/
+
+COPY conf/ /opt/docker/
 
 # Install services
-RUN /usr/local/bin/apk-install \
+RUN chmod +x /opt/docker/bin/* \
+    && /usr/local/bin/apk-install \
         supervisor \
         syslog-ng \
         logrotate \
         wget \
         curl \
-        sed
+        sed \
+    && /opt/docker/bin/provision-run.sh webdevops-base \
+    && /opt/docker/bin/bootstrap.sh
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-base \
-    && bash /opt/docker/bin/control.sh provision.role.finish.build webdevops-cleanup \
-    && bash /opt/docker/bin/bootstrap.sh
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
-CMD ["noop"]
+CMD ["supervisord"]

@@ -1,8 +1,10 @@
-#++++++++++++++++++++++++++++++++++++++
-# Debian 8 Bootstrap Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/bootstrap:debian-8
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM debian:8
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
@@ -12,7 +14,6 @@ LABEL io.webdevops.version=0.23.0
 ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
-# Add baselayout (from baselayout/)
 ADD baselayout.tar /
 
 # Init bootstrap (and install ansible)
@@ -22,15 +23,21 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && echo "export TERM=xterm" >> /root/.bashrc \
     # Enable non-free
     && sed -ri 's/(deb.*\/debian jessie main)/\1 contrib non-free /' -- /etc/apt/sources.list \
-    # System update
+    # System updatei
     && /usr/local/bin/apt-upgrade \
     # Base stuff
     && /usr/local/bin/apt-install \
         lsb-release \
         ca-certificates \
-    # Install ansible
+        locales \
+    # Generate base locale
+    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+    && locale-gen \
+    && /usr/local/bin/apt-install \
+        # Install ansible
         python-dev \
         python-setuptools \
         python-pip \
+    && pip install --upgrade pip \
+    && hash -r \
     && pip install ansible
-

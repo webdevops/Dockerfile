@@ -1,0 +1,11 @@
+{% import 'Dockerfile/provision' as provision %}
+
+{% macro ubuntu(role='') -%}
+# Install services
+RUN /usr/local/bin/apt-install \
+        dovecot-core \
+        dovecot-imapd \
+    && /opt/docker/bin/control.sh service.enable postfix \
+    && /opt/docker/bin/control.sh service.enable dovecot \
+    {{ provision.runRoleInline('mail-sandbox', role) }}
+{%- endmacro %}

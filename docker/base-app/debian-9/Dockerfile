@@ -1,8 +1,10 @@
-#++++++++++++++++++++++++++++++++++++++
-# Debian 9 Base Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/base-app:debian-9
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:debian-9
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
@@ -14,9 +16,10 @@ ENV APPLICATION_PATH  /app
 ENV APPLICATION_UID   1000
 ENV APPLICATION_GID   1000
 
+COPY conf/ /opt/docker/
+
 # Install services
-RUN sed -ri 's/(deb.*\/debian stretch main)/\1 contrib non-free /' -- /etc/apt/sources.list \
-    && /usr/local/bin/apt-install \
+RUN /usr/local/bin/apt-install \
         # Install services
         openssh-server \
         mysql-client \
@@ -38,12 +41,7 @@ RUN sed -ri 's/(deb.*\/debian stretch main)/\1 contrib non-free /' -- /etc/apt/s
         git \
         nano \
         vim \
-    && /usr/local/bin/generate-locales
+    && /usr/local/bin/generate-locales \
+    && /opt/docker/bin/provision-run.sh webdevops-base-app \
+    && /opt/docker/bin/bootstrap.sh
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-base-app \
-    && bash /opt/docker/bin/bootstrap.sh
-
-ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
-CMD ["noop"]
