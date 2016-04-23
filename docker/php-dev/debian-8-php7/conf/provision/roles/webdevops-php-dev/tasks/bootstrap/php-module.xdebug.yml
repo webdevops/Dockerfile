@@ -1,0 +1,8 @@
+---
+
+- name: Fix php xdebug module [Alpine family]
+  replace:
+    dest:    '/etc/php/conf.d/xdebug.ini'
+    regexp:  'extension=xdebug.so'
+    replace: 'zend_extension=xdebug.so'
+  when: ansible_distribution == 'Alpine'
