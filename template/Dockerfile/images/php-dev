@@ -20,7 +20,7 @@ RUN /usr/local/bin/yum-install \
 # Install tools
 RUN /usr/local/bin/apt-install \
         graphviz \
-    {{ provision.runRoleInline('nginx', role) }}
+    {{ provision.runRoleInline('php-dev', role) }}
 {%- endmacro %}
 
 
@@ -28,5 +28,5 @@ RUN /usr/local/bin/apt-install \
 # Install tools
 RUN /usr/local/bin/apt-install \
         graphviz \
-    {{ provision.runRoleInline('nginx', role) }}
+    {{ provision.runRoleInline('php-dev', role) }}
 {%- endmacro %}

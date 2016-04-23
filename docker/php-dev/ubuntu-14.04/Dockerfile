@@ -15,6 +15,6 @@ COPY conf/ /opt/docker/
 # Install tools
 RUN /usr/local/bin/apt-install \
         graphviz \
-    && /opt/docker/bin/provision-run.sh webdevops-nginx \
+    && /opt/docker/bin/provision-run.sh webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
 
