@@ -6,6 +6,6 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ php5.ubuntu16() }}
+{{ php7.ubuntu() }}
 
 {{ docker.expose('9000') }}
