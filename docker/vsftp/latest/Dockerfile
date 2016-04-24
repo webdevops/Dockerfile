@@ -10,7 +10,12 @@ LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
 
-<Macro 'environmentFtp'>
+ENV FTP_USER     application
+ENV FTP_PASSWORD application
+ENV FTP_UID      1000
+ENV FTP_GID      1000
+ENV FTP_PASSWORD dev
+ENV FTP_PATH     /data/ftp/
 
 COPY conf/ /opt/docker/
 
