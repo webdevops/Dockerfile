@@ -24,7 +24,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
-    && /opt/docker/bin/provision-run.sh webdevops-base \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh
 
 

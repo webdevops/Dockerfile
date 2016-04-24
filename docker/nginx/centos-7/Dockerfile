@@ -19,7 +19,7 @@ COPY conf/ /opt/docker/
 # Install tools
 RUN /usr/local/bin/yum-install \
         nginx \
-    && /opt/docker/bin/provision-run.sh webdevops-nginx \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-nginx \
     && /opt/docker/bin/bootstrap.sh
 
 

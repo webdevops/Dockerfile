@@ -28,7 +28,7 @@ RUN /usr/local/bin/apt-install \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions fastcgi ssl rewrite headers \
 	&& mkdir -p /var/lock/apache2 \
-    && /opt/docker/bin/provision-run.sh webdevops-apache webdevops-php-apache \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache \
     && /opt/docker/bin/bootstrap.sh
 
 

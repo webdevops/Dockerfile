@@ -13,7 +13,7 @@ LABEL io.webdevops.version=0.23.0
 COPY conf/ /opt/docker/
 
 RUN /opt/docker/bin/control.sh service.enable postfix \
-    && /opt/docker/bin/provision-run.sh webdevops-postfix \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-postfix \
     && /opt/docker/bin/bootstrap.sh
 
 

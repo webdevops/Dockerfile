@@ -14,13 +14,5 @@ ENV WEB_DOCUMENT_ROOT /app/web/
 
 COPY conf/ /opt/docker/
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN /opt/docker/bin/control.sh provision.role.entrypoint webdevops-typo3 \
-    && /opt/docker/bin/bootstrap.sh
-
 ONBUILD RUN composer create-project typo3/cms-base-distribution /app/
 ONBUILD VOLUME /app
-
-EXPOSE 80 443
-

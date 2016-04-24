@@ -38,7 +38,7 @@ RUN /usr/local/bin/apt-install \
         php7.0-bz2 \
         php-redis \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    && /opt/docker/bin/provision-run.sh webdevops-php \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh
 
 

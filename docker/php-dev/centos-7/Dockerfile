@@ -18,6 +18,6 @@ RUN /usr/local/bin/yum-install \
         graphviz \
         # Install php development stuff
         php-pecl-xdebug \
-    && /opt/docker/bin/provision-run.sh webdevops-php-dev \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
 
