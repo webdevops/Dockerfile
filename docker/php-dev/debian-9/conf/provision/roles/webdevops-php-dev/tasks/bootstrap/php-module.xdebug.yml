@@ -2,9 +2,9 @@
 
 # Ignored on php7
 - name: Fix php xdebug module [Alpine family]
-  replace:
-    dest:    '/etc/php/conf.d/xdebug.ini'
-    regexp:  'extension=xdebug.so'
-    replace: 'zend_extension=xdebug.so'
+  lineinfile:
+    dest:   '/etc/php/conf.d/xdebug.ini'
+    regexp: 'extension=xdebug.so'
+    line:   'zend_extension=xdebug.so'
   when: ansible_distribution == 'Alpine'
   ignore_errors: yes
