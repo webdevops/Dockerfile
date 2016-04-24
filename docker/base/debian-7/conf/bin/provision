@@ -7,9 +7,12 @@ import sys
 from string import Template
 from subprocess import call
 import tempfile
+import time
 
 STORAGE = '/opt/docker/etc/.registry/provision.json'
 PROVISION_DIR = '/opt/docker/provision/'
+
+PLAYBOOK_TAGS=['bootstrap', 'build', 'onbuild', 'entrypoint']
 
 PLAYBOOK = Template(
 """---
@@ -47,12 +50,24 @@ def buildRoleList(tags):
     json = readJson()
     roleList = {}
 
+    # fetch roles list
     for tag in tags:
         if tag in json:
             for role in json[tag]:
+                roleRow = json[tag][role]
                 if role not in roleList:
                     roleList[role] = {}
-                roleList[role][tag] = json[tag][role]
+
+                if 'tags' not in roleList[role]:
+                    roleList[role]['tags'] = {}
+
+                roleList[role]['role'] = role
+                roleList[role]['added'] = roleRow['added']
+                roleList[role]['tags'][tag] = tag
+
+
+    # sort list
+    roleList = sorted(roleList, key=lambda x: (roleList[x]['added']))
 
     return roleList
 
@@ -65,10 +80,11 @@ def buildPlaybook(tags):
     if roleList:
         roleContent = []
         ret = PLAYBOOK.substitute(
-            roles = "\n    - ".join(roleList.keys())
+            roles = "\n    - ".join(roleList)
         )
 
     return ret
+
 
 
 def actionRun(args):
@@ -137,6 +153,7 @@ def actionAdd(args):
 
             json[tag][role] = {
                 'name': role,
+                'added': int(time.time())
             }
 
     saveJson(json);
@@ -145,14 +162,14 @@ def actionAdd(args):
 
 
 def actionSummary(args):
-    json = readJson()
+    for tag in PLAYBOOK_TAGS:
+        roleList = buildRoleList([tag])
 
-    for tag in json:
-        print "Roles in " + tag + ":"
-        for role in json[tag]:
-            print " - " + role
-        print ""
-
+        if roleList:
+            print "Roles in " + tag + ":"
+            for role in roleList:
+                print " - " + role
+            print ""
 
 
 
@@ -186,7 +203,7 @@ if __name__ == '__main__':
     playbook.add_argument(
         '--tag',
         dest='tags',
-        choices=['bootstrap', 'build', 'onbuild', 'entrypoint'],
+        choices=PLAYBOOK_TAGS,
         required=True,
         action='append',
         help='Ansible tag'
@@ -204,7 +221,7 @@ if __name__ == '__main__':
     playbook.add_argument(
         '--tag',
         dest='tags',
-        choices=['bootstrap', 'build', 'onbuild', 'entrypoint'],
+        choices=PLAYBOOK_TAGS,
         required=True,
         action='append',
         help='Ansible tag'
@@ -216,7 +233,7 @@ if __name__ == '__main__':
     list.add_argument(
         '--tag',
         dest='tags',
-        choices=['bootstrap', 'build', 'onbuild', 'entrypoint'],
+        choices=PLAYBOOK_TAGS,
         required=True,
         action='append',
         help='Ansible tag'
@@ -228,7 +245,7 @@ if __name__ == '__main__':
     add.add_argument(
         '--tag',
         dest='tags',
-        choices=['bootstrap', 'build', 'onbuild', 'entrypoint'],
+        choices=PLAYBOOK_TAGS,
         required=True,
         action='append',
         help='Ansible tag'
