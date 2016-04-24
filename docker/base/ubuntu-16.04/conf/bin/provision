@@ -73,17 +73,26 @@ def buildRoleList(tags):
 
 
 
-def buildPlaybook(tags):
+def buildPlaybook(roleList):
     ret = False
-    roleList = buildRoleList(tags)
 
-    if roleList:
-        roleContent = []
-        ret = PLAYBOOK.substitute(
-            roles = "\n    - ".join(roleList)
-        )
+    ret = PLAYBOOK.substitute(
+        roles = "\n    - ".join(roleList)
+    )
 
     return ret
+
+
+def buildPlaylistFromArgs(args):
+    if args.roles:
+        roles = args.roles
+    else:
+        roles = buildRoleList(args.tags)
+
+    if roles:
+        return buildPlaybook(roles)
+    else:
+        return False
 
 
 
@@ -91,7 +100,7 @@ def actionRun(args):
     if args.playbook:
         playbook = args.playbook
     else:
-        playbookContent = buildPlaybook(args.tags)
+        playbookContent = buildPlaylistFromArgs(args)
 
         if playbookContent:
             f = tempfile.NamedTemporaryFile(dir=PROVISION_DIR, prefix='playbook.', suffix='.yml', delete=False)
@@ -107,8 +116,10 @@ def actionRun(args):
         playbook,
         '-i', 'localhost,',
         '--connection=local',
-        '--tags=' + ','.join(args.tags)
     ]
+
+    if args.tags:
+         '--tags=' + ','.join(args.tags)
 
     if args.args:
         cmd.extend(args.args)
@@ -123,7 +134,7 @@ def actionRun(args):
 
 
 def actionPlaybook(args):
-    playbook = buildPlaybook(args.tags)
+    playbook = buildPlaylistFromArgs(args)
 
     if playbook:
         print playbook
@@ -199,22 +210,27 @@ if __name__ == '__main__':
     summary = subparsers.add_parser('summary')
 
     ## RUN command
-    playbook = subparsers.add_parser('run')
-    playbook.add_argument(
+    run = subparsers.add_parser('run')
+    run.add_argument(
         '--tag',
         dest='tags',
         choices=PLAYBOOK_TAGS,
-        required=True,
         action='append',
         help='Ansible tag'
     )
-    playbook.add_argument(
+    run.add_argument(
         '--playbook',
         dest='playbook',
         help='Ansible playbook'
     )
+    run.add_argument(
+        '--role',
+        dest='roles',
+        action='append',
+        help='Ansible tag'
+    )
+    run.add_argument('args', nargs=argparse.REMAINDER)
 
-    playbook.add_argument('args', nargs=argparse.REMAINDER)
 
     ## PLAYBOOK command
     playbook = subparsers.add_parser('playbook')
@@ -222,7 +238,12 @@ if __name__ == '__main__':
         '--tag',
         dest='tags',
         choices=PLAYBOOK_TAGS,
-        required=True,
+        action='append',
+        help='Ansible tag'
+    )
+    playbook.add_argument(
+        '--role',
+        dest='roles',
         action='append',
         help='Ansible tag'
     )

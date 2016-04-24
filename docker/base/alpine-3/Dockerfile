@@ -23,7 +23,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         sed \
-    && /opt/docker/bin/provision add --tag bootstrap webdevops-base \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh
 
 

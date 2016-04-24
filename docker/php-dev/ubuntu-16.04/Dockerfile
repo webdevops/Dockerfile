@@ -18,6 +18,6 @@ RUN /usr/local/bin/apt-install \
         graphviz \
         # Install php development stuff
         php-xdebug \
-    && /opt/docker/bin/provision add --tag bootstrap webdevops-php-dev \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
 
