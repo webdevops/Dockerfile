@@ -27,4 +27,4 @@ ANSIBLE_TAG="$1"
 shift
 ANSIBLE_OPTS="$@"
 
-/opt/docker/bin/provision run --playbook "${ANSIBLE_PLAYBOOK}" --tag "${ANSIBLE_TAG}" $ANSIBLE_OPTS
+/opt/docker/bin/provision run --playbook "${ANSIBLE_PLAYBOOK}" --use-registry --tag "${ANSIBLE_TAG}" $ANSIBLE_OPTS

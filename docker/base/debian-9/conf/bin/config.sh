@@ -191,7 +191,7 @@ function buildProvisionRoleList() {
 function runDockerProvision() {
     ANSIBLE_TAG="$1"
 
-    /opt/docker/bin/provision run --tag "$ANSIBLE_TAG"
+    /opt/docker/bin/provision run --tag "$ANSIBLE_TAG" --use-registry
 }
 
 ###

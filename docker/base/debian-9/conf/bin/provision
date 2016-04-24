@@ -84,13 +84,17 @@ def buildPlaybook(roleList):
 
 
 def buildPlaylistFromArgs(args):
-    if args.roles:
-        roles = args.roles
-    else:
-        roles = buildRoleList(args.tags)
+    roleList = []
 
-    if roles:
-        return buildPlaybook(roles)
+    if args.useRegistry and args.tags:
+        roleList.extend(buildRoleList(args.tags))
+
+    if args.roles:
+        for role in args.roles:
+            roleList.extend(role.split(','))
+
+    if roleList:
+        return buildPlaybook(roleList)
     else:
         return False
 
@@ -215,6 +219,7 @@ if __name__ == '__main__':
         '--tag',
         dest='tags',
         choices=PLAYBOOK_TAGS,
+        required=True,
         action='append',
         help='Ansible tag'
     )
@@ -224,10 +229,16 @@ if __name__ == '__main__':
         help='Ansible playbook'
     )
     run.add_argument(
+        '--use-registry',
+        dest='useRegistry',
+        action='store_true',
+        help='Use registred roles'
+    )
+    run.add_argument(
         '--role',
         dest='roles',
         action='append',
-        help='Ansible tag'
+        help='Ansible role'
     )
     run.add_argument('args', nargs=argparse.REMAINDER)
 
@@ -238,8 +249,15 @@ if __name__ == '__main__':
         '--tag',
         dest='tags',
         choices=PLAYBOOK_TAGS,
+        required=True,
         action='append',
         help='Ansible tag'
+    )
+    playbook.add_argument(
+        '--use-registry',
+        dest='useRegistry',
+        action='store_true',
+        help='Use registred roles'
     )
     playbook.add_argument(
         '--role',
