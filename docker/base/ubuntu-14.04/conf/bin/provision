@@ -72,7 +72,7 @@ def buildRoleList(tags):
 
 
 def buildSortedRoleList(tags):
-    roleList = buildRoleList(buildSortedRoleList)
+    roleList = buildRoleList(tags)
 
     # sort list
     roleList = sorted(roleList, key=lambda x: (roleList[x]['priority'], roleList[x]['added']))
