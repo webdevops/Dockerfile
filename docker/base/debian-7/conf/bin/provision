@@ -29,9 +29,11 @@ PLAYBOOK = Template(
 def readJson():
     ret = {}
 
+    # create registry directory if it doesn't exists
     if not os.path.exists(os.path.dirname(STORAGE)):
         os.mkdir(os.path.dirname(STORAGE))
 
+    # try to read file
     if os.path.isfile(STORAGE):
         f=open(STORAGE).read()
         ret = json.loads(f)
@@ -63,11 +65,17 @@ def buildRoleList(tags):
 
                 roleList[role]['role'] = role
                 roleList[role]['added'] = roleRow['added']
+                roleList[role]['priority'] = roleRow['priority']
                 roleList[role]['tags'][tag] = tag
 
+    return roleList
+
+
+def buildSortedRoleList(tags):
+    roleList = buildRoleList(buildSortedRoleList)
 
     # sort list
-    roleList = sorted(roleList, key=lambda x: (roleList[x]['added']))
+    roleList = sorted(roleList, key=lambda x: (roleList[x]['priority'], roleList[x]['added']))
 
     return roleList
 
@@ -83,11 +91,11 @@ def buildPlaybook(roleList):
     return ret
 
 
-def buildPlaylistFromArgs(args):
+def buildPlaybookFromArgs(args):
     roleList = []
 
     if args.useRegistry and args.tags:
-        roleList.extend(buildRoleList(args.tags))
+        roleList.extend(buildSortedRoleList(args.tags))
 
     if args.roles:
         for role in args.roles:
@@ -104,7 +112,7 @@ def actionRun(args):
     if args.playbook:
         playbook = args.playbook
     else:
-        playbookContent = buildPlaylistFromArgs(args)
+        playbookContent = buildPlaybookFromArgs(args)
 
         if playbookContent:
             f = tempfile.NamedTemporaryFile(dir=PROVISION_DIR, prefix='playbook.', suffix='.yml', delete=False)
@@ -138,7 +146,7 @@ def actionRun(args):
 
 
 def actionPlaybook(args):
-    playbook = buildPlaylistFromArgs(args)
+    playbook = buildPlaybookFromArgs(args)
 
     if playbook:
         print playbook
@@ -168,23 +176,24 @@ def actionAdd(args):
 
             json[tag][role] = {
                 'name': role,
-                'added': int(time.time())
+                'added': int(time.time()),
+                'priority': args.priority
             }
 
     saveJson(json);
 
 
 
-
 def actionSummary(args):
     for tag in PLAYBOOK_TAGS:
         roleList = buildRoleList([tag])
-
         if roleList:
+            maxLength = len(max(roleList.keys(), key=len))
+
             print "Roles in " + tag + ":"
             for role in roleList:
-                print " - " + role
-            print ""
+                print ' - ' + role.ljust(maxLength, ' ') + '  [priority: ' + str(roleList[role]['priority']) + ']'
+            print ''
 
 
 
@@ -288,6 +297,13 @@ if __name__ == '__main__':
         required=True,
         action='append',
         help='Ansible tag'
+    )
+    add.add_argument(
+        '--priority',
+        type=int,
+        default=100,
+        dest='priority',
+        help='Priority for role [default 100, 1 is most important]'
     )
     add.add_argument('role', metavar='roles', nargs='+', help='Ansible roles')
 

@@ -26,22 +26,74 @@ case "$CONTROL_COMMAND" in
 
     "provision.role.bootstrap")
         deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag bootstrap [role]<< for adding provision roles"
-        /opt/docker/bin/provision add --tag bootstrap --tag entrypoint "$1"
+        /opt/docker/bin/provision add --tag bootstrap "$1"
         ;;
 
     "provision.role.build")
         deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag build [role]<< for adding provision roles"
-        /opt/docker/bin/provision add --tag build --tag entrypoint "$1"
+        /opt/docker/bin/provision add --tag build "$1"
         ;;
 
     "provision.role.onbuild")
         deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag onbuild [role]<< for adding provision roles"
-        /opt/docker/bin/provision add --tag onbuild --tag entrypoint "$1"
+        /opt/docker/bin/provision add --tag onbuild "$1"
         ;;
 
     "provision.role.entrypoint")
         deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag entrypoint [role]<< for adding provision roles"
-        /opt/docker/bin/provision add --tag entrypoint --tag entrypoint "$1"
+        /opt/docker/bin/provision add --tag entrypoint "$1"
+        ;;
+
+    ## startup roles
+    "provision.role.startup")
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag bootstrap --tag build --tag onbuild --priority 50 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag bootstrap --tag build --tag onbuild --tag entrypoint  --priority 50 "$1"
+        ;;
+
+    "provision.role.startup.bootstrap")
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag bootstrap --priority 50 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag bootstrap --priority 50 "$1"
+        ;;
+
+    "provision.role.startup.build")
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag build --priority 50 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag build --priority 50 "$1"
+        ;;
+
+    "provision.role.startup.onbuild")
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag onbuild --priority 50 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag onbuild --priority 50 "$1"
+        ;;
+
+    "provision.role.startup.entrypoint")
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag entrypoint --priority 50 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag entrypoint --priority 50 "$1"
+        ;;
+
+    ## finish roles
+    "provision.role.finish")
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag bootstrap --tag build --tag onbuild --priority 200 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag bootstrap --tag build --tag onbuild --tag entrypoint  --priority 200 "$1"
+        ;;
+
+    "provision.role.finish.bootstrap")
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag bootstrap --priority 200 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag bootstrap --priority 200 "$1"
+        ;;
+
+    "provision.role.finish.build")
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag build --priority 200 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag build --priority 200 "$1"
+        ;;
+
+    "provision.role.finish.onbuild")
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag onbuild --priority 200 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag onbuild --priority 200 "$1"
+        ;;
+
+    "provision.role.finish.entrypoint")
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag entrypoint --priority 200 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag entrypoint --priority 200 "$1"
         ;;
 
     ## ------------------------------------------
