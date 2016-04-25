@@ -159,7 +159,7 @@ RUN set -x \
 
 # Upload
 ADD database.yml    /app/config/database.yml
-ADD 502.html        /app/public/assets/502.html
+ADD web/            /app/public/assets/
 
 RUN rake assets:precompile \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-samson-deployment  \
