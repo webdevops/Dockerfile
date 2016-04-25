@@ -1,10 +1,15 @@
-FROM zendesk/samson
-# <Macro general:version>
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/samson-deployment:latest
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
+
+FROM zendesk/samson:latest
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
-# </Macro>
+
 
 ###############################################################################
 # Bootstrap
@@ -14,59 +19,69 @@ LABEL io.webdevops.version=0.23.0
 ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
-# Add baselayout (from baselayout/)
 ADD baselayout.tar /
-
-COPY conf/ /opt/docker/
 
 # Init bootstrap (and install ansible)
 RUN export DEBIAN_FRONTEND=noninteractive \
     && set -x \
     # Fix root terminal
     && echo "export TERM=xterm" >> /root/.bashrc \
-    # System update
+    # Enable non-free
+    && sed -ri 's/(deb.*\/debian jessie main)/\1 contrib non-free /' -- /etc/apt/sources.list \
+    # System updatei
     && /usr/local/bin/apt-upgrade \
     # Base stuff
     && /usr/local/bin/apt-install \
         lsb-release \
-        # Generate locales
-        locales-all \
-    # Install ansible
+        ca-certificates \
+        locales \
+    # Generate base locale
+    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+    && locale-gen \
+    && /usr/local/bin/apt-install \
+        # Install ansible
         python-dev \
+        python-setuptools \
         python-pip \
+    && pip install --upgrade pip \
+    && hash -r \
     && pip install ansible
 
 ###############################################################################
 # Base
 ###############################################################################
 
-ENV DOCKER_CONF_HOME  /opt/docker/
+ENV DOCKER_CONF_HOME /opt/docker/
+
+COPY conf/ /opt/docker/
 
 # Install packages
-RUN /usr/local/bin/apt-install \
-    supervisor \
-    syslog-ng \
-    syslog-ng-core \
-    logrotate \
-    cron \
-    wget \
-    curl \
-    net-tools \
-    && bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-base \
-    && bash /opt/docker/bin/control.sh provision.role.finish.build webdevops-cleanup \
-    && bash /opt/docker/bin/bootstrap.sh
+RUN chmod +x /opt/docker/bin/* \
+    && /usr/local/bin/apt-install \
+        supervisor \
+        syslog-ng \
+        syslog-ng-core \
+        logrotate \
+        cron \
+        wget \
+        curl \
+        net-tools \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
+    && /opt/docker/bin/bootstrap.sh
+
 
 ###############################################################################
 # Base-app
 ###############################################################################
+
 ENV APPLICATION_USER  application
 ENV APPLICATION_GROUP application
 ENV APPLICATION_PATH  /app
 ENV APPLICATION_UID   1000
 ENV APPLICATION_GID   1000
 
-RUN sed -ri 's/(deb.*\/debian jessie main)/\1 contrib non-free /' -- /etc/apt/sources.list \
-    && /usr/local/bin/apt-install \
+# Install services
+RUN /usr/local/bin/apt-install \
         # Install services
         openssh-server \
         mysql-client \
@@ -89,8 +104,9 @@ RUN sed -ri 's/(deb.*\/debian jessie main)/\1 contrib non-free /' -- /etc/apt/so
         nano \
         vim \
     && /usr/local/bin/generate-locales \
-    && bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-base-app \
-    && bash /opt/docker/bin/bootstrap.sh
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
+    && /opt/docker/bin/bootstrap.sh
+
 
 ###############################################################################
 # Samson
@@ -98,31 +114,28 @@ RUN sed -ri 's/(deb.*\/debian jessie main)/\1 contrib non-free /' -- /etc/apt/so
 
 ENV RAILS_ENV="production"
 
-# Ansible
-RUN /usr/local/bin/apt-install \
-        python-crypto \
-        python-httplib2 \
-        python-jinja2 \
-        python-markupsafe \
-        python-paramiko \
-        python-selinux \
-        python-yaml \
-        python-pip \
-        sshpass \
-        git \
-        rsync
+ENV SQLITE_CLEANUP_DAYS=0
 
 # NGINX reverse proxy
-RUN /usr/local/bin/apt-install \
-        nginx
-
-# Docker (client)
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
-    && echo deb https://apt.dockerproject.org/repo debian-jessie main > /etc/apt/sources.list.d/docker.list \
-    && apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D \
+       && echo deb https://apt.dockerproject.org/repo debian-jessie main > /etc/apt/sources.list.d/docker.list \
+       && apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D \
     && /usr/local/bin/apt-install \
+        # Install nginx
+        nginx \
+        # Install docker
         docker-engine \
-    && pip install docker-compose
+        # Install php
+        php5-cli \
+        php5-mysqlnd \
+        php5-mcrypt \
+        php5-curl \
+        php5-recode \
+        php5-json \
+        # Install java
+        openjdk-7-jre \
+    && pip install docker-compose \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
 # NPM stack
 RUN npm install -g npm \
@@ -131,20 +144,6 @@ RUN npm install -g npm \
     && npm install -g grunt-cli \
     && npm install -g bower \
     && npm install -g npm-cache
-
-# PHP stack
-RUN /usr/local/bin/apt-install \
-        php5-cli \
-        php5-mysqlnd \
-        php5-mcrypt \
-        php5-curl \
-        php5-recode \
-        php5-json \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
-
-# Add java
-RUN /usr/local/bin/apt-install \
-    openjdk-7-jre
 
 # Deployer stack
 RUN set -x \
@@ -158,15 +157,14 @@ RUN set -x \
     # Deployer: capistrano (http://capistranorb.com/)
     && gem install capistrano
 
-# Precompile assets
+# Upload
 ADD database.yml    /app/config/database.yml
+ADD 502.html        /app/public/assets/502.html
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-samson-deployment \
-    && bash /opt/docker/bin/bootstrap.sh
+RUN rake assets:precompile \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-samson-deployment  \
+    && /opt/docker/bin/bootstrap.sh
 
-RUN rake assets:precompile
 
 EXPOSE 80
 

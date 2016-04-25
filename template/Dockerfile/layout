@@ -1,21 +1,22 @@
 {% import 'Dockerfile/docker'    as docker %}
 {% import 'Dockerfile/provision' as provision %}
 
-{% import 'Dockerfile/images/bootstrap'    as bootstrap %}
-{% import 'Dockerfile/images/base'         as base %}
-{% import 'Dockerfile/images/baseapp'      as baseapp %}
-{% import 'Dockerfile/images/apache'       as apache %}
-{% import 'Dockerfile/images/nginx'        as nginx %}
-{% import 'Dockerfile/images/hhvm'         as hhvm %}
-{% import 'Dockerfile/images/postfix'      as postfix %}
-{% import 'Dockerfile/images/mail-sandbox' as mailsandbox %}
-{% import 'Dockerfile/images/php5'         as php5 %}
-{% import 'Dockerfile/images/php7'         as php7 %}
-{% import 'Dockerfile/images/php5-dev'     as php5dev %}
-{% import 'Dockerfile/images/php7-dev'     as php7dev %}
-{% import 'Dockerfile/images/sphinx'       as sphinx %}
-{% import 'Dockerfile/images/ssh'          as ssh %}
-{% import 'Dockerfile/images/vsftp'        as vsftp %}
+{% import 'Dockerfile/images/bootstrap'          as bootstrap %}
+{% import 'Dockerfile/images/base'               as base %}
+{% import 'Dockerfile/images/baseapp'            as baseapp %}
+{% import 'Dockerfile/images/apache'             as apache %}
+{% import 'Dockerfile/images/nginx'              as nginx %}
+{% import 'Dockerfile/images/hhvm'               as hhvm %}
+{% import 'Dockerfile/images/postfix'            as postfix %}
+{% import 'Dockerfile/images/mail-sandbox'       as mailsandbox %}
+{% import 'Dockerfile/images/php5'               as php5 %}
+{% import 'Dockerfile/images/php7'               as php7 %}
+{% import 'Dockerfile/images/php5-dev'           as php5dev %}
+{% import 'Dockerfile/images/php7-dev'           as php7dev %}
+{% import 'Dockerfile/images/sphinx'             as sphinx %}
+{% import 'Dockerfile/images/ssh'                as ssh %}
+{% import 'Dockerfile/images/vsftp'              as vsftp %}
+{% import 'Dockerfile/images/samson-deployment'  as samsonDeployment %}
 #+++++++++++++++++++++++++++++++++++++++
 # Dockerfile for webdevops/{{ Dockerfile.image }}:{{ Dockerfile.tag }}
 #    -- automatically generated  --
