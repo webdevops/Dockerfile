@@ -131,7 +131,9 @@ def actionRun(args):
     ]
 
     if args.tags:
-         '--tags=' + ','.join(args.tags)
+        cmd.extend([
+            '--tags=' + ','.join(args.tags)
+         ])
 
     if args.args:
         cmd.extend(args.args)
