@@ -52,7 +52,7 @@ def buildRoleList(tags):
     json = readJson()
     roleList = {}
 
-    # fetch roles list
+    # fetch roles list for each tag
     for tag in tags:
         if tag in json:
             for role in json[tag]:
@@ -82,8 +82,7 @@ def buildSortedRoleList(tags):
 
 
 def buildPlaybook(roleList):
-    ret = False
-
+    ## build playbook
     ret = PLAYBOOK.substitute(
         roles = "\n    - ".join(roleList)
     )
@@ -94,9 +93,11 @@ def buildPlaybook(roleList):
 def buildPlaybookFromArgs(args):
     roleList = []
 
+    ## add roles from tag (if use registry is active)
     if args.useRegistry and args.tags:
         roleList.extend(buildSortedRoleList(args.tags))
 
+    ## add roles from command arguments
     if args.roles:
         for role in args.roles:
             roleList.extend(role.split(','))
@@ -110,8 +111,10 @@ def buildPlaybookFromArgs(args):
 
 def actionRun(args):
     if args.playbook:
+        ## predefined playbook
         playbook = args.playbook
     else:
+        ## dynamic playbook
         playbookContent = buildPlaybookFromArgs(args)
 
         if playbookContent:
@@ -123,6 +126,7 @@ def actionRun(args):
             ## nothing to do
             sys.exit(0)
 
+    ## build ansible command with args
     cmd = [
         'ansible-playbook',
         playbook,
@@ -138,8 +142,10 @@ def actionRun(args):
     if args.args:
         cmd.extend(args.args)
 
+    ## run ansible
     retval = call(cmd)
 
+    ## cleanup dynamic playbook
     if not args.playbook:
         os.unlink(playbook)
 
@@ -187,6 +193,7 @@ def actionAdd(args):
 
 
 def actionSummary(args):
+    # list all roles in each possible tag
     for tag in PLAYBOOK_TAGS:
         roleList = buildRoleList([tag])
         if roleList:
@@ -221,9 +228,11 @@ if __name__ == '__main__':
         dest='action'
     )
 
+    ###################################
     ## SUMMARY command
     summary = subparsers.add_parser('summary')
 
+    ###################################
     ## RUN command
     run = subparsers.add_parser('run')
     run.add_argument(
@@ -253,7 +262,7 @@ if __name__ == '__main__':
     )
     run.add_argument('args', nargs=argparse.REMAINDER)
 
-
+    ###################################
     ## PLAYBOOK command
     playbook = subparsers.add_parser('playbook')
     playbook.add_argument(
@@ -278,6 +287,7 @@ if __name__ == '__main__':
     )
     playbook.add_argument('args', nargs=argparse.REMAINDER)
 
+    ###################################
     ## LIST command
     list = subparsers.add_parser('list')
     list.add_argument(
@@ -290,6 +300,7 @@ if __name__ == '__main__':
     )
     list.add_argument('args', nargs=argparse.REMAINDER)
 
+    ###################################
     ## ADD command
     add = subparsers.add_parser('add')
     add.add_argument(
