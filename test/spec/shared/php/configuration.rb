@@ -65,3 +65,15 @@ shared_examples 'php::cli::configuration' do
         end
     end
 end
+
+shared_examples 'php::cli::configuration::development' do
+    describe 'PHP config parameters' do
+        context  php_config('xdebug.remote_enable') do
+            its(:value) { should eq 1 }
+        end
+
+        context  php_config('xdebug.remote_connect_back') do
+            its(:value) { should eq 1 }
+        end
+    end
+end

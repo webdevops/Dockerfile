@@ -22,4 +22,5 @@ end
 shared_examples 'collection::php5::development' do
     include_examples 'collection::php5'
     include_examples 'php::modules::development'
+    include_examples 'php::cli::configuration::development'
 end
