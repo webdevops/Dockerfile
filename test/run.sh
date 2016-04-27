@@ -643,7 +643,11 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm) ]] && {
     setupTestEnvironment "hhvm"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    # OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
+
 
     waitForTestRun
 }
@@ -654,6 +658,9 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm-apache) ]] && {
     setupTestEnvironment "hhvm-apache"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    # OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     waitForTestRun
@@ -666,6 +673,9 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm-nginx) ]] && {
     setupTestEnvironment "hhvm-nginx"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    # OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     waitForTestRun
