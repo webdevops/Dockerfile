@@ -1,0 +1,12 @@
+{{ docker.from("base-app", "ubuntu-16.04") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentWeb() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ hhvm.ubuntu() }}
+
+{{ docker.expose('9000') }}
+
