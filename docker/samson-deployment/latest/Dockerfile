@@ -134,7 +134,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
         php5-json \
         # Install java
         openjdk-7-jre \
-    && pip install docker-compose \
+    && pip install -U \
+        docker-compose \
+        python-dotenv \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
 # NPM stack
