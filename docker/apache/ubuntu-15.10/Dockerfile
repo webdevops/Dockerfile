@@ -26,7 +26,7 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
-	&& a2enmod actions fastcgi ssl rewrite headers \
+	&& a2enmod actions fastcgi ssl rewrite headers expires \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache \
     && /opt/docker/bin/bootstrap.sh
 
