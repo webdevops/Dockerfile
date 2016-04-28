@@ -6,7 +6,7 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ hhvm.ubuntu() }}
+{{ hhvm.ubuntu16() }}
 
 {{ docker.expose('9000') }}
 
