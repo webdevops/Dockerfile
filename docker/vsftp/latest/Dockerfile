@@ -26,6 +26,7 @@ RUN /usr/local/bin/apt-install \
     && mkdir -p \
             /var/run/vsftpd/empty \
             /var/log/supervisor \
+    && /opt/docker/bin/provision add --tag entrypoint  webdevops-vsftp \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-vsftp \
     && /opt/docker/bin/bootstrap.sh
 
