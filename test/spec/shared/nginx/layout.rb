@@ -1,4 +1,80 @@
 shared_examples 'nginx::layout' do
+   #########################
+    ## Directories
+    #########################
+    [
+        "/opt/docker/etc/nginx",
+        "/opt/docker/etc/nginx/conf.d",
+        "/opt/docker/etc/nginx/vhost.common.d",
+    ].each do |file|
+        describe file("#{file}") do
+            # Type check
+            it { should be_directory }
+
+            # Owner test
+            it { should be_owned_by 'root' }
+            it { should be_grouped_into 'root' }
+
+            # Read test
+            it { should be_readable.by('owner') }
+            it { should be_readable.by('group') }
+            it { should be_readable.by('others') }
+
+            # Write test
+            it { should be_writable.by('owner') }
+            it { should_not be_writable.by('group') }
+            it { should_not be_writable.by('others') }
+
+            # Exectuable test
+            it { should be_executable.by('owner') }
+            it { should be_executable.by('group') }
+            it { should be_executable.by('others') }
+        end
+    end
+
+    #########################
+    ## Files
+    #########################
+    [
+        "/opt/docker/etc/nginx/global.conf",
+        "/opt/docker/etc/nginx/main.conf",
+        "/opt/docker/etc/nginx/php.conf",
+        "/opt/docker/etc/nginx/vhost.conf",
+        "/opt/docker/etc/nginx/vhost.ssl.conf",
+        "/opt/docker/etc/nginx/vhost.common.d/01-boilerplate.conf",
+    ].each do |file|
+        describe file("#{file}") do
+            # Type check
+            it { should be_file }
+
+            # Owner test
+            it { should be_owned_by 'root' }
+            it { should be_grouped_into 'root' }
+
+            # Owner test
+            it { should be_owned_by 'root' }
+            it { should be_grouped_into 'root' }
+
+            # Read test
+            it { should be_readable.by('owner') }
+            it { should be_readable.by('group') }
+            it { should be_readable.by('others') }
+
+            # Write test
+            it { should be_writable.by('owner') }
+            it { should_not be_writable.by('group') }
+            it { should_not be_writable.by('others') }
+
+            # Exectuable test
+            it { should_not be_executable.by('owner') }
+            it { should_not be_executable.by('group') }
+            it { should_not be_executable.by('others') }
+        end
+    end
+
+    #########################
+    ## SSL (special rights)
+    #########################
     describe file('/opt/docker/etc/nginx/ssl') do
         # owner test
         it { should be_owned_by 'root' }
