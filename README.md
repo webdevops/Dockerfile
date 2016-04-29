@@ -16,12 +16,12 @@ Dockerfile                                                | Description         
 [`hhvm-apache`](docker/hhvm-apache/README.md)             | HHVM (cli and fcgi) with Apache service containers                                      | [`webdevops/hhvm`](https://hub.docker.com/r/webdevops/hhvm/)                     |
 [`hhvm-nginx`](docker/hhvm-nginx/README.md)               | HHVM (cli and fcgi) with Nginx service containers                                       | [`webdevops/hhvm`](https://hub.docker.com/r/webdevops/hhvm/)                     |
 [`vsftp`](docker/vsftp/README.md)                         | VSFTP (ftp service) service container                                                   | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)              |
-[`storage`](docker/storage/README.md)                     | Storage (noop) container                                                                | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)              |
+[`storage`](docker/storage/latest/README.md)              | Storage (noop) container                                                                | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)              |
 [`ssh`](docker/ssh/README.md)                             | SSH service container                                                                   | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)              |
 [`postfix`](docker/postfix/README.md)                     | Postfix service container                                                               | [`webdevops/base:latest`](https://hub.docker.com/r/webdevops/base/)              |
 [`mail-sandbox`](docker/mail-sandbox/README.md)           | Mail catcher service container (catches all mails via SMTP and are accessable via IMAP) | [`webdevops/postfix:latest`](https://hub.docker.com/r/webdevops/postfix/)        |
 [`samson-deployment`](docker/samson-deployment/README.md) | [Samson](https://github.com/webdevops/samson-deployment) based deployment service       | [`zendesk/samson`](https://hub.docker.com/r/zendesk/samson/)                     |
-[`sphinx`](docker/sphinx/README.md)                       | Sphinx container                                                                        | [`webdevops/bootstrap:alpine-3`](https://hub.docker.com/r/webdevops/bootstrap/)  |
+[`sphinx`](docker/sphinx/latest/README.md)                | Sphinx container                                                                        | [`webdevops/bootstrap:alpine-3`](https://hub.docker.com/r/webdevops/bootstrap/)  |
 
 # Building
 
