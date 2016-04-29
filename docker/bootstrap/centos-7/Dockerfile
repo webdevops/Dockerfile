@@ -35,4 +35,5 @@ RUN set -x \
     && easy_install pip \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible
+    && pip install ansible \
+    && chmod 750 /usr/bin/ansible*

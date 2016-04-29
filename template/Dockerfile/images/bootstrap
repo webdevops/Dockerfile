@@ -19,10 +19,19 @@ RUN set -x \
         py-setuptools \
         py-crypto \
         py-pip \
+        py-cparser \
+        py-cryptography \
+        py-markupsafe \
+        py-cffi \
+        py-yaml \
+        py-jinja2 \
+        py-paramiko \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible
+    && pip install ansible \
+    && chmod 750 /usr/bin/ansible*
 {%- endmacro %}
+
 
 
 {% macro centos() -%}
@@ -45,7 +54,8 @@ RUN set -x \
     && easy_install pip \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible
+    && pip install ansible \
+    && chmod 750 /usr/bin/ansible*
 {%- endmacro %}
 
 
@@ -69,12 +79,24 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && locale-gen \
     && /usr/local/bin/apt-install \
         # Install ansible
-        python-dev \
+        python-minimal \
         python-setuptools \
         python-pip \
+        python-paramiko \
+        python-jinja2 \
+        python-dev \
+        libffi-dev \
+        libssl-dev \
+        build-essential \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible
+    && pip install ansible \
+    && chmod 750 /usr/local/bin/ansible* \
+    && apt-get purge -y -f --force-yes \
+        python-dev \
+        build-essential \
+        libssl-dev \
+        libffi-dev
 {%- endmacro %}
 
 
@@ -99,12 +121,24 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         lsb-release \
         ca-certificates \
         # Install ansible
-        python-dev \
+        python-minimal \
         python-setuptools \
         python-pip \
+        python-paramiko \
+        python-jinja2 \
+        python-dev \
+        libffi-dev \
+        libssl-dev \
+        build-essential \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible
+    && pip install ansible \
+    && chmod 750 /usr/local/bin/ansible* \
+    && apt-get purge -y -f --force-yes \
+        python-dev \
+        build-essential \
+        libssl-dev \
+        libffi-dev
 {%- endmacro %}
 
 
@@ -126,12 +160,23 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-add-repository multiverse \
     # Install ansible
     && /usr/local/bin/apt-install \
-        python-dev \
+        python-minimal \
         python-setuptools \
         python-pip \
+        python-paramiko \
+        python-jinja2 \
+        python-dev \
+        libffi-dev \
+       	libssl-dev \
+        build-essential \
     && pip install --upgrade pip \
     && hash -r \
     && pip install ansible \
-    ## workaround for missing executable rights
-    && chmod +x /usr/local/bin/ansible*
+    && chmod 750 /usr/local/bin/ansible* \
+    && apt-get purge -y -f --force-yes \
+        python-dev \
+        build-essential \
+        libssl-dev \
+        libffi-dev
 {%- endmacro %}
+

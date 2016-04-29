@@ -36,9 +36,21 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         lsb-release \
         ca-certificates \
         # Install ansible
-        python-dev \
+        python-minimal \
         python-setuptools \
         python-pip \
+        python-paramiko \
+        python-jinja2 \
+        python-dev \
+        libffi-dev \
+        libssl-dev \
+        build-essential \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible
+    && pip install ansible \
+    && chmod 750 /usr/local/bin/ansible* \
+    && apt-get purge -y -f --force-yes \
+        python-dev \
+        build-essential \
+        libssl-dev \
+        libffi-dev

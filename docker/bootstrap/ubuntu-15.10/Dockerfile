@@ -33,11 +33,21 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-add-repository multiverse \
     # Install ansible
     && /usr/local/bin/apt-install \
-        python-dev \
+        python-minimal \
         python-setuptools \
         python-pip \
+        python-paramiko \
+        python-jinja2 \
+        python-dev \
+        libffi-dev \
+       	libssl-dev \
+        build-essential \
     && pip install --upgrade pip \
     && hash -r \
     && pip install ansible \
-    ## workaround for missing executable rights
-    && chmod +x /usr/local/bin/ansible*
+    && chmod 750 /usr/local/bin/ansible* \
+    && apt-get purge -y -f --force-yes \
+        python-dev \
+        build-essential \
+        libssl-dev \
+        libffi-dev

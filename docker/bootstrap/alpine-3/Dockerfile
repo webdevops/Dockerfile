@@ -36,6 +36,14 @@ RUN set -x \
         py-setuptools \
         py-crypto \
         py-pip \
+        py-cparser \
+        py-cryptography \
+        py-markupsafe \
+        py-cffi \
+        py-yaml \
+        py-jinja2 \
+        py-paramiko \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible
+    && pip install ansible \
+    && chmod 750 /usr/bin/ansible*
