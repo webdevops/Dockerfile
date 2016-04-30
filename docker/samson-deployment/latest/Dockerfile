@@ -176,7 +176,7 @@ ADD database.yml    /app/config/database.yml
 ADD web/            /app/public/assets/
 
 RUN rake assets:precompile \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-samson-deployment  \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-samson-deployment \
     && /opt/docker/bin/bootstrap.sh
 
 
