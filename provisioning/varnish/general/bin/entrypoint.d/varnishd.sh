@@ -37,7 +37,7 @@ if [[ -n "$VARNISH_BACKEND_PORT" ]]; then
     rpl --quiet "<VARNISH_BACKEND_PORT>" "$VARNISH_BACKEND_PORT" "$VARNISH_CONFIG"
 fi
 
-exec varnishd -F \
+exec varnishd -j unix,user=varnish -F \
     -f "$VARNISH_CONFIG" \
     -s "$VARNISH_STORAGE" \
     $VARNISH_OPTS
