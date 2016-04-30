@@ -22,17 +22,41 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && set -x \
     # Fix root terminal
     && echo "export TERM=xterm" >> /root/.bashrc \
-    # System update
+    # Enable non-free
+    && sed -ri 's/(deb.*\/debian jessie main)/\1 contrib non-free /' -- /etc/apt/sources.list \
+    # System updatei
     && /usr/local/bin/apt-upgrade \
     # Base stuff
     && /usr/local/bin/apt-install \
         lsb-release \
-        # Generate locales
-        locales-all \
-    # Install ansible
-        python-dev \
+        ca-certificates \
+        locales \
+    # Generate base locale
+    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+    && locale-gen \
+    && /usr/local/bin/apt-install \
+        # Install ansible
+        python-minimal \
+        python-setuptools \
         python-pip \
-    && pip install ansible
+        python-paramiko \
+        python-jinja2 \
+        python-dev \
+        libffi-dev \
+        libssl-dev \
+        build-essential \
+    && pip install --upgrade pip \
+    && hash -r \
+    && pip install ansible \
+    && chmod 750 /usr/local/bin/ansible* \
+    # Cleanup
+    && apt-get purge -y -f --force-yes \
+        python-dev \
+        build-essential \
+        libssl-dev \
+        libffi-dev \
+    && apt-get autoremove -y -f \
+    && apt-get clean -y
 
 ###############################################################################
 # Base
