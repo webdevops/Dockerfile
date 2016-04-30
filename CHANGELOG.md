@@ -8,6 +8,7 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 - Improved provisioning system with new python wrapper
 - Modularized apache and nginx configuration
 - Dockerfile are now generated via jinja2 files
+- webdevops/storage is now using busybox
 ### Added
 - Added ubuntu 16.04 images (eg. php, hhvm)
 - Added webdevops/php-dev webdevops/php-apache-dev webdevops/php-nginx-dev (xdebug and disabled caching for webserver) 
