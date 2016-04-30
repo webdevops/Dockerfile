@@ -10,10 +10,11 @@ fi
 # Apache gets grumpy about PID files pre-existing
 rm -f /var/run/apache2/apache2*.pid
 
-rpl --quiet "<DOCUMENT_INDEX>" "$WEB_DOCUMENT_INDEX" /opt/docker/etc/httpd/*.conf /opt/docker/etc/httpd/conf.d/*.conf /opt/docker/etc/httpd/vhost.common.d/*.conf
-rpl --quiet "<DOCUMENT_ROOT>"  "$WEB_DOCUMENT_ROOT"  /opt/docker/etc/httpd/*.conf /opt/docker/etc/httpd/conf.d/*.conf /opt/docker/etc/httpd/vhost.common.d/*.conf
-rpl --quiet "<ALIAS_DOMAIN>"   "$WEB_ALIAS_DOMAIN"   /opt/docker/etc/httpd/*.conf /opt/docker/etc/httpd/conf.d/*.conf /opt/docker/etc/httpd/vhost.common.d/*.conf
-rpl --quiet "<SERVERNAME>"     "$HOSTNAME"           /opt/docker/etc/httpd/*.conf /opt/docker/etc/httpd/conf.d/*.conf /opt/docker/etc/httpd/vhost.common.d/*.conf
+
+find /opt/docker/etc/httpd/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<DOCUMENT_INDEX>" "$WEB_DOCUMENT_INDEX"
+find /opt/docker/etc/httpd/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<DOCUMENT_ROOT>"  "$WEB_DOCUMENT_ROOT"
+find /opt/docker/etc/httpd/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<ALIAS_DOMAIN>"   "$WEB_ALIAS_DOMAIN"
+find /opt/docker/etc/httpd/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<SERVERNAME>"     "$HOSTNAME"
 
 source /etc/apache2/envvars
 exec apache2 -DFOREGROUND -DAPACHE_LOCK_DIR
