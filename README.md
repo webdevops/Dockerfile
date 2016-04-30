@@ -22,6 +22,7 @@ Dockerfile                                                | Description         
 [`mail-sandbox`](docker/mail-sandbox/README.md)           | Mail catcher service container (catches all mails via SMTP and are accessable via IMAP) | [`webdevops/postfix:latest`](https://hub.docker.com/r/webdevops/postfix/)        |
 [`samson-deployment`](docker/samson-deployment/README.md) | [Samson](https://github.com/webdevops/samson-deployment) based deployment service       | [`zendesk/samson`](https://hub.docker.com/r/zendesk/samson/)                     |
 [`sphinx`](docker/sphinx/latest/README.md)                | Sphinx container                                                                        | [`webdevops/bootstrap:alpine-3`](https://hub.docker.com/r/webdevops/bootstrap/)  |
+[`varnish`](docker/varnish/latest/README.md)              | Varnish container                                                                       | [`webdevops/base:alpine-3`](https://hub.docker.com/r/webdevops/bootstrap/)       |
 
 # Building
 
