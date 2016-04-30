@@ -46,4 +46,6 @@ RUN set -x \
     && pip install --upgrade pip \
     && hash -r \
     && pip install ansible \
-    && chmod 750 /usr/bin/ansible*
+    && chmod 750 /usr/bin/ansible* \
+    # Cleanup
+    && apk del python-dev

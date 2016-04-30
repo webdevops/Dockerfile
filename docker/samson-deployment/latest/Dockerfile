@@ -53,11 +53,14 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && hash -r \
     && pip install ansible \
     && chmod 750 /usr/local/bin/ansible* \
+    # Cleanup
     && apt-get purge -y -f --force-yes \
         python-dev \
         build-essential \
         libssl-dev \
-        libffi-dev
+        libffi-dev \
+    && apt-get autoremove -y -f \
+    && apt-get clean -y
 
 ###############################################################################
 # Base
