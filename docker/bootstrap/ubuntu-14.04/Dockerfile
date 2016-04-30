@@ -21,6 +21,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && set -x \
     # Fix root terminal
     && echo "export TERM=xterm" >> /root/.bashrc \
+    # Generate base locale
+    && locale-gen en_US.UTF-8 \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Install base stuff
@@ -31,8 +33,25 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-add-repository multiverse \
     # Install ansible
     && /usr/local/bin/apt-install \
-        python-dev \
+        python-minimal \
         python-setuptools \
         python-pip \
-    && pip install ansible
+        python-paramiko \
+        python-jinja2 \
+        python-dev \
+        libffi-dev \
+       	libssl-dev \
+        build-essential \
+    && pip install --upgrade pip \
+    && hash -r \
+    && pip install ansible \
+    && chmod 750 /usr/local/bin/ansible* \
+    # Cleanup
+    && apt-get purge -y -f --force-yes \
+        python-dev \
+        build-essential \
+        libssl-dev \
+        libffi-dev \
+    && apt-get autoremove -y -f \
+    && apt-get clean -y
 
