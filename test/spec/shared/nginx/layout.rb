@@ -41,7 +41,7 @@ shared_examples 'nginx::layout' do
         "/opt/docker/etc/nginx/php.conf",
         "/opt/docker/etc/nginx/vhost.conf",
         "/opt/docker/etc/nginx/vhost.ssl.conf",
-        "/opt/docker/etc/nginx/vhost.common.d/01-boilerplate.conf",
+        "/opt/docker/etc/nginx/vhost.common.d/10-location-root.conf",
     ].each do |file|
         describe file("#{file}") do
             # Type check

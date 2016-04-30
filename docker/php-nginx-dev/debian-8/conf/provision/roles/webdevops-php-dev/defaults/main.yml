@@ -1,0 +1,6 @@
+---
+
+APPLICATION_USER:  "{{ lookup('env','APPLICATION_USER') }}"
+APPLICATION_GROUP: "{{ lookup('env','APPLICATION_GROUP') }}"
+APPLICATION_UID:   "{{ lookup('env','APPLICATION_UID') }}"
+APPLICATION_GID:   "{{ lookup('env','APPLICATION_GID') }}"

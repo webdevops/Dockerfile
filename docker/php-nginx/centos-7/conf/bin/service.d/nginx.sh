@@ -7,9 +7,9 @@ if [[ ! -e "$WEB_DOCUMENT_ROOT" ]]; then
     echo ""
 fi
 
-rpl --quiet "<DOCUMENT_INDEX>" "$WEB_DOCUMENT_INDEX" /opt/docker/etc/nginx/*.conf
-rpl --quiet "<DOCUMENT_ROOT>"  "$WEB_DOCUMENT_ROOT"  /opt/docker/etc/nginx/*.conf
-rpl --quiet "<ALIAS_DOMAIN>"   "$WEB_ALIAS_DOMAIN"   /opt/docker/etc/nginx/*.conf
-rpl --quiet "<SERVERNAME>"     "$HOSTNAME"           /opt/docker/etc/nginx/*.conf
+rpl --quiet "<DOCUMENT_INDEX>" "$WEB_DOCUMENT_INDEX" /opt/docker/etc/nginx/*.conf /opt/docker/etc/nginx/conf.d/*.conf /opt/docker/etc/nginx/vhost.common.d/*.conf
+rpl --quiet "<DOCUMENT_ROOT>"  "$WEB_DOCUMENT_ROOT"  /opt/docker/etc/nginx/*.conf /opt/docker/etc/nginx/conf.d/*.conf /opt/docker/etc/nginx/vhost.common.d/*.conf
+rpl --quiet "<ALIAS_DOMAIN>"   "$WEB_ALIAS_DOMAIN"   /opt/docker/etc/nginx/*.conf /opt/docker/etc/nginx/conf.d/*.conf /opt/docker/etc/nginx/vhost.common.d/*.conf
+rpl --quiet "<SERVERNAME>"     "$HOSTNAME"           /opt/docker/etc/nginx/*.conf /opt/docker/etc/nginx/conf.d/*.conf /opt/docker/etc/nginx/vhost.common.d/*.conf
 
 exec /usr/sbin/nginx

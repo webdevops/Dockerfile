@@ -317,6 +317,7 @@ function header() {
     deployConfiguration apache/centos       php-apache-dev  'centos-*'
     deployConfiguration apache/alpine       php-apache-dev  'alpine-*'
     deployConfiguration php-apache/general  php-apache-dev  '*'
+    deployConfiguration php-dev/general     php-apache-dev  '*'
 }
 
 ## Build php-nginx-dev
@@ -327,6 +328,7 @@ function header() {
     deployConfiguration nginx/centos       php-nginx-dev  'centos-*'
     deployConfiguration nginx/alpine       php-nginx-dev  'alpine-*'
     deployConfiguration php-nginx/general  php-nginx-dev  '*'
+    deployConfiguration php-dev/general    php-nginx-dev  '*'
 }
 
 ## Build postfix

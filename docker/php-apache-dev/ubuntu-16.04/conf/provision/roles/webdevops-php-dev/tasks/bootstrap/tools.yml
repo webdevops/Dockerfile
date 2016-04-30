@@ -1,0 +1,23 @@
+---
+
+- name: Downloading Tools
+  shell: curl -o "{{ item.dest }}" "{{ item.url }}" && chmod 755 "{{ item.dest }}"
+  with_items:
+    - { url: "https://phar.phpunit.de/phploc.phar", dest: /usr/local/bin/phploc }
+    - { url: "https://phar.phpunit.de/phpunit.phar", dest: /usr/local/bin/phpunit }
+    - { url: "http://static.pdepend.org/php/latest/pdepend.phar", dest: /usr/local/bin/pdepend }
+    - { url: "http://static.phpmd.org/php/latest/phpmd.phar", dest: /usr/local/bin/phpmd }
+    - { url: "https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar", dest: /usr/local/bin/phpcs }
+    - { url: "https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar", dest: /usr/local/bin/phpcbf }
+    - { url: "https://phar.phpunit.de/phpcpd.phar", dest: /usr/local/bin/phpcpd }
+    - { url: "https://phar.phpunit.de/phpdcd.phar", dest: /usr/local/bin/phpdcd }
+    - { url: "https://github.com/Halleck45/PhpMetrics/raw/master/build/phpmetrics.phar", dest: /usr/local/bin/phpmetrics }
+    - { url: "http://get.sensiolabs.org/php-cs-fixer.phar", dest: /usr/local/bin/php-cs-fixer }
+    - { url: "https://github.com/sensiolabs-de/deprecation-detector/releases/download/0.1.0-alpha4/deprecation-detector.phar", dest: /usr/local/bin/deprecation-detector }
+    - { url: "https://github.com/sensiolabs-de/deprecation-detector/releases/download/0.1.0-alpha4/deprecation-detector.phar", dest: /usr/local/bin/deprecation-detector }
+
+- name: Install Tools via composer
+  raw: COMPOSER_HOME="/usr/local/composer" COMPOSER_BIN_DIR="/usr/local/bin" composer global require "{{ item.package }}" "{{ item.version }}"
+  with_items:
+    - { package: "sstalle/php7cc" , version: "*" }
+    - { package: "phpspec/phpspec" , version: "~2.0" }

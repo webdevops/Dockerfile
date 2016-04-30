@@ -19,7 +19,7 @@ COPY conf/ /opt/docker/
 # Install nginx
 RUN /usr/local/bin/apk-install \
         nginx \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-nginx --role webdevops-php-nginx \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-nginx --role webdevops-php-nginx --role webdevops-php-nginx-dev \
     && /opt/docker/bin/bootstrap.sh
 
 
