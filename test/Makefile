@@ -66,5 +66,8 @@ mail-sandbox:
 ssh:
 	bash ./run.sh ssh
 
+varnish:
+	bash ./run.sh varnish
+
 sphinx:
 	bash ./run.sh sphinx

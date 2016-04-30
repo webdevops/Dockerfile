@@ -35,6 +35,8 @@ SCRIPT_DIR="$(dirname $($READLINK -f "$0"))"
 BASE_DIR="$(dirname "$SCRIPT_DIR")"
 COLUMNS="$(tput cols)"
 
+DOCKERFILE_EXTRA=""
+
 source "${BASE_DIR}/bin/functions.sh"
 
 cd "$SCRIPT_DIR"
@@ -90,6 +92,7 @@ function runTestForTag() {
 
     ## Build Dockerfile
     echo "FROM $DOCKER_IMAGE_WITH_TAG
+$DOCKERFILE_EXTRA
 COPY conf/ /
     " > $DOCKERFILE
 
@@ -164,6 +167,9 @@ function setupTestEnvironment() {
 
     ## Set default environment
     setEnvironmentOsFamily "ubuntu"
+
+    ## Reset custom docker environment settings
+    DOCKERFILE_CONF=""
 }
 
 function printRepeatedChar() {
@@ -726,12 +732,30 @@ initEnvironment
 }
 
 #######################################
+# webdevops/varnish
+#######################################
+
+[[ $(checkTestTarget varnish) ]] && {
+    setupTestEnvironment "varnish"
+
+    DOCKERFILE_EXTRA="
+ENV VARNISH_BACKEND_HOST \"google.com\"
+"
+
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "latest"
+
+    waitForTestRun
+}
+
+#######################################
 # webdevops/sphinx
 #######################################
 
 [[ $(checkTestTarget sphinx) ]] && {
     setupTestEnvironment "sphinx"
     setEnvironmentOsFamily "alpine"
+
     OS_VERSION="3" runTestForTag "latest"
 
     waitForTestRun

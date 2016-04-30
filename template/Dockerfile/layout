@@ -17,6 +17,7 @@
 {% import 'Dockerfile/images/ssh'                as ssh %}
 {% import 'Dockerfile/images/vsftp'              as vsftp %}
 {% import 'Dockerfile/images/samson-deployment'  as samsonDeployment %}
+{% import 'Dockerfile/images/varnish'            as varnish %}
 #+++++++++++++++++++++++++++++++++++++++
 # Dockerfile for webdevops/{{ Dockerfile.image }}:{{ Dockerfile.tag }}
 #    -- automatically generated  --

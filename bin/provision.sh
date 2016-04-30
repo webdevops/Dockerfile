@@ -109,7 +109,7 @@ function buildBaselayout() {
 
     cd "${BASELAYOUT_DIR}"
     rm -f baselayout.tar
-    $TAR -jmc --owner=0 --group=0 -f baselayout.tar *
+    $TAR -jc --owner=0 --group=0 -f baselayout.tar *
 }
 
 ###
@@ -364,6 +364,13 @@ function header() {
     header "piwik"
     clearConfiguration  piwik  '*'
     deployConfiguration piwik/general piwik '*'
+}
+
+## Build varnish
+[[ $(checkBuildTarget varnish) ]] && {
+    header "varnish"
+    clearConfiguration  varnish  '*'
+    deployConfiguration varnish/general varnish '*'
 }
 
 ## Build samson-deployment

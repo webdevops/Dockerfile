@@ -19,7 +19,7 @@ php:       webdevops/php webdevops/php-apache webdevops/php-nginx
 php-dev:   webdevops/php-dev webdevops/php-apache-dev webdevops/php-nginx-dev
 hhvm:      webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
-web:       webdevops/apache webdevops/nginx
+web:       webdevops/apache webdevops/nginx webdevops/varnish
 
 applications: webdevops/typo3 webdevops/piwik
 
@@ -140,3 +140,6 @@ webdevops/samson-deployment:
 
 webdevops/sphinx:
 	bash bin/build.sh sphinx "${DOCKER_REPOSITORY}/sphinx" "${DOCKER_TAG_LATEST}"
+
+webdevops/varnish:
+	bash bin/build.sh varnish "${DOCKER_REPOSITORY}/varnish" "${DOCKER_TAG_LATEST}"
