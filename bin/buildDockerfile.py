@@ -7,7 +7,7 @@ import argparse
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 
-templateHeader = '{% extends "Dockerfile/layout" %}\n{% block content %}'
+templateHeader = '{% extends "Dockerfile/layout.jinja2" %}\n{% block content %}'
 templateFooter = '{% endblock %}'
 
 def get_current_date():

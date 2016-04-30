@@ -1,4 +1,4 @@
-{% import 'Dockerfile/provision' as provision %}
+{% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro ubuntu14(role='') -%}
 # Install hhvm environment
