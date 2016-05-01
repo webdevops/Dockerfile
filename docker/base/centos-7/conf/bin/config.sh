@@ -194,11 +194,3 @@ function runDockerProvision() {
     /opt/docker/bin/provision run --tag "$ANSIBLE_TAG" --use-registry
 }
 
-###
- # Startup supervisord
- #
- ##
-function startSupervisord() {
-    cd /
-    exec /opt/docker/bin/service.d/supervisor.sh
-}
