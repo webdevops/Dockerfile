@@ -14,6 +14,10 @@ if [ -z "$FAST" ]; then
     FAST=1
 fi
 
+if [ -z "$DEBUG" ]; then
+    DEBUG=0
+fi
+
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
