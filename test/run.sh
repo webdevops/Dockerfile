@@ -93,8 +93,17 @@ function runTestForTag() {
     ## Build Dockerfile
     echo "FROM $DOCKER_IMAGE_WITH_TAG
 $DOCKERFILE_EXTRA
-COPY conf/ /
-    " > $DOCKERFILE
+COPY conf/ /" > $DOCKERFILE
+
+
+    if [ "${DEBUG}" -eq 1 ]; then
+        echo "DOCKERFILE:"
+        echo "-----------"
+        echo ">>>"
+        cat "$DOCKERFILE" | sed 's/^/     /'
+        echo ">>>"
+        echo ""
+    fi
 
     if [ "${FAST}" -eq 1 ]; then
         LOGFILE="$(mktemp /tmp/docker.test.XXXXXXXXXX)"
