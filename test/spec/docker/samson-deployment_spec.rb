@@ -10,5 +10,7 @@ describe "Dockerfile" do
 
     include_examples 'collection::bootstrap'
     include_examples 'collection::base-app'
+    include_examples 'collection::samson-deployment::php'
+    include_examples 'collection::samson-deployment'
 
 end
