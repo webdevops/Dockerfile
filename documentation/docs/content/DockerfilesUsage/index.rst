@@ -23,3 +23,10 @@ This section is not done yet!
    dockerfiles/hhvm
    dockerfiles/hhvm-apache
    dockerfiles/hhvm-nginx
+   dockerfiles/postfix
+   dockerfiles/mail-catcher
+   dockerfiles/samson-deployment
+   dockerfiles/sphinx
+   dockerfiles/ssh
+   dockerfiles/varnish
+   dockerfiles/vsftp
