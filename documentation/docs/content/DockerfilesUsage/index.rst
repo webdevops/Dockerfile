@@ -18,3 +18,6 @@ This section is not done yet!
    dockerfiles/php-dev
    dockerfiles/php-apache-dev
    dockerfiles/php-nginx-dev
+   dockerfiles/hhvm
+   dockerfiles/hhvm-apache
+   dockerfiles/hhvm-nginx

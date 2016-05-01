@@ -8,7 +8,7 @@ Docker image tags
 -----------------
 
 
-.. include:: include/php-tags.rst
+.. include:: include/image-tag-php.rst
 
 
 Environment variables
