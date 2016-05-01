@@ -1,5 +1,5 @@
 shared_examples 'samson-deployment::layout' do
-   #########################
+    #########################
     ## Directories
     #########################
     [
