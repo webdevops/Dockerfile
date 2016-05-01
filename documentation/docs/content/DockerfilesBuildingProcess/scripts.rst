@@ -1,5 +1,0 @@
-=======
-Scripts
-=======
-
-Example content!

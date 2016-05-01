@@ -1,5 +1,0 @@
-============
-Provisioning
-============
-
-Example content!

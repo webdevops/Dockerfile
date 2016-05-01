@@ -1,5 +1,0 @@
-===========
-Baselayouts
-===========
-
-Example content!

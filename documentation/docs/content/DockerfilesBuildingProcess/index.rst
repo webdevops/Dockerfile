@@ -8,8 +8,6 @@ This section is not done yet!
 .. toctree::
    :maxdepth: 1
 
-   dockerfiles
-   provisioning
-   jinjaTemplates
-   scripts
-   baselayouts
+   building
+   customizing
+   testing

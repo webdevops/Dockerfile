@@ -1,5 +1,0 @@
-===========
-Dockerfiles
-===========
-
-Example content!

@@ -1,5 +1,0 @@
-===============
-Jinja Templates
-===============
-
-Example content!
