@@ -761,6 +761,20 @@ ENV VARNISH_BACKEND_HOST \"google.com\"
     waitForTestRun
 }
 
+#######################################
+# webdevops/samson-deployment
+#######################################
+
+[[ $(checkTestTarget samson-deployment) ]] && {
+    setupTestEnvironment "samson-deployment"
+    setEnvironmentOsFamily "debian"
+
+    OS_VERSION="8" runTestForTag "latest"
+
+    waitForTestRun
+}
+
+
 echo ""
 echo " >>> finished, all tests PASSED <<<"
 echo ""
