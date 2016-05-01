@@ -1,5 +1,5 @@
 =======================
-Dockerfiles Description
+Docker images
 =======================
 
 This section is not done yet!
@@ -8,5 +8,6 @@ This section is not done yet!
 .. toctree::
    :maxdepth: 1
 
-   dockerfiles/container1
-   dockerfiles/container2
+   dockerfiles/bootstrap
+   dockerfiles/base
+   dockerfiles/base-app
