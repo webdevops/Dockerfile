@@ -12,6 +12,8 @@ This section is not done yet!
    dockerfiles/ansible
    dockerfiles/base
    dockerfiles/base-app
+   dockerfiles/apache
+   dockerfiles/nginx
    dockerfiles/php
    dockerfiles/php-apache
    dockerfiles/php-nginx
