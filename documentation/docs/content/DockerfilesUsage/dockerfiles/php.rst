@@ -1,0 +1,24 @@
+=============
+webdevops/php
+=============
+
+The php images are based on ``webdevops/base-app`` with PHP cli and PHP-FPM. PHP-FPM is running on port 9000.
+
+Docker image tags
+-----------------
+
+
+.. include:: include/php-tags.rst
+
+
+Docker image layout
+-------------------
+
+====================================================  ==================================================================
+File/Directory                                        Description
+----------------------------------------------------  ------------------------------------------------------------------
+``/opt/docker/etc/php/php.ini``                       WebDevOps php.ini file with basic settings
+``/opt/docker/etc/php/fpm/php-fpm.conf``              PHP-FPM configuration file
+``/opt/docker/etc/php/fpm/pool.d/application.conf``   PHP-FPM applocation pool configuration file
+``/opt/docker/etc/supervisor.d/php-fpm.conf``         Supervisord configuration file for PHP-FPM
+====================================================  ==================================================================

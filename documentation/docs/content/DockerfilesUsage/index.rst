@@ -1,6 +1,6 @@
-=======================
+=============
 Docker images
-=======================
+=============
 
 This section is not done yet!
 
@@ -9,5 +9,12 @@ This section is not done yet!
    :maxdepth: 1
 
    dockerfiles/bootstrap
+   dockerfiles/ansible
    dockerfiles/base
    dockerfiles/base-app
+   dockerfiles/php
+   dockerfiles/php-apache
+   dockerfiles/php-nginx
+   dockerfiles/php-dev
+   dockerfiles/php-apache-dev
+   dockerfiles/php-nginx-dev
