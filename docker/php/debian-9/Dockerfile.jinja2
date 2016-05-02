@@ -1,4 +1,4 @@
-{{ docker.from("base-app", "debian-8") }}
+{{ docker.from("base-app", "debian-9") }}
 
 {{ docker.version() }}
 
@@ -6,6 +6,6 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ php5.debian9() }}
+{{ php7.debian9() }}
 
 {{ docker.expose('9000') }}

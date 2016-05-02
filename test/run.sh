@@ -329,7 +329,6 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
-    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
@@ -347,7 +346,7 @@ initEnvironment
 
     setEnvironmentOsFamily "debian"
     OS_VERSION="8" runTestForTag "debian-8-php7"
-    OS_VERSION="testing" runTestForTag "debian-9-php7"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3-php7"
@@ -380,7 +379,6 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
-    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
@@ -398,7 +396,7 @@ initEnvironment
 
     setEnvironmentOsFamily "debian"
     OS_VERSION="8" runTestForTag "debian-8-php7"
-    OS_VERSION="testing" runTestForTag "debian-9-php7"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3-php7"
@@ -488,7 +486,6 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
-    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
@@ -505,7 +502,7 @@ initEnvironment
 
     setEnvironmentOsFamily "debian"
     OS_VERSION="8" runTestForTag "debian-8-php7"
-    OS_VERSION="testing" runTestForTag "debian-9-php7"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3-php7"
@@ -539,7 +536,6 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
-    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
@@ -556,7 +552,7 @@ initEnvironment
 
     setEnvironmentOsFamily "debian"
     OS_VERSION="8" runTestForTag "debian-8-php7"
-    OS_VERSION="testing" runTestForTag "debian-9-php7"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3-php7"
@@ -589,7 +585,6 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
-    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
@@ -608,7 +603,7 @@ initEnvironment
 
     setEnvironmentOsFamily "debian"
     OS_VERSION="8" runTestForTag "debian-8-php7"
-    OS_VERSION="testing" runTestForTag "debian-9-php7"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3-php7"
@@ -642,7 +637,6 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
-    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
@@ -659,7 +653,7 @@ initEnvironment
 
     setEnvironmentOsFamily "debian"
     OS_VERSION="8" runTestForTag "debian-8-php7"
-    OS_VERSION="testing" runTestForTag "debian-9-php7"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3-php7"

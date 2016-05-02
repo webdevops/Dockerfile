@@ -1,7 +1,0 @@
-{{ docker.from("php", "debian-9-php7") }}
-
-{{ docker.version() }}
-
-{{ docker.copy('conf/', '/opt/docker/') }}
-
-{{ php7dev.debian() }}

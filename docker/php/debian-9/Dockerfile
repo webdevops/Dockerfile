@@ -3,7 +3,7 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base-app:debian-8
+FROM webdevops/base-app:debian-9
 
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
@@ -22,29 +22,25 @@ RUN /usr/local/bin/apt-install \
         imagemagick \
         graphicsmagick \
         # Install php (cli/fpm)
-        php5-cli \
-        php5-fpm \
-        php5-json \
-        php5-intl \
-        php5-curl \
-        php5-mysqlnd \
-        php5-mcrypt \
-        php5-gd \
-        php5-sqlite \
-        php5-xmlrpc \
-        php5-xsl \
-        php5-geoip \
-        php5-ldap \
-        php5-memcache \
-        #php-memcached \
-        php5-imagick \
-        #php5-redis \
-        php-pear \
-    && pear channel-update pear.php.net \
-    && pear upgrade-all \
-    && pear config-set auto_discover 1 \
-    && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
-    && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
+        php7.0-cli \
+        php7.0-fpm \
+        php7.0-json \
+        php7.0-intl \
+        php7.0-curl \
+        php7.0-mysql \
+        php7.0-mcrypt \
+        php7.0-gd \
+        php7.0-sqlite3 \
+        php7.0-ldap \
+        php7.0-opcache \
+        php7.0-soap \
+        php7.0-zip \
+        php7.0-mbstring \
+        php7.0-bcmath \
+        php7.0-xmlrpc \
+        php7.0-xsl \
+        php7.0-bz2 \
+        php-redis \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh
