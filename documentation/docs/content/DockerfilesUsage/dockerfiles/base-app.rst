@@ -24,4 +24,6 @@ Packages:
 Because some applications are using locales for translations (eg. date formatting) all locales are generated inside
 this image.
 
-**Warning:** Alpine doesn't provide any locales so you have to find another method for using locales!
+For an example docker service
+
+.. attention:: Alpine doesn't provide any locales so you have to find another method for using locales!
