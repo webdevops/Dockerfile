@@ -4,4 +4,5 @@
 /test/.bundle/
 /test/*.test
 /test/docker.test.*.tar
+/BLACKLIST
 *.log
