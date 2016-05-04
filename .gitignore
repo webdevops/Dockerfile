@@ -3,4 +3,5 @@
 /test/vendor/
 /test/.bundle/
 /test/docker.test.*.tar
+/BLACKLIST
 *.log
