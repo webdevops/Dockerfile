@@ -68,12 +68,26 @@ end
 
 shared_examples 'php::cli::configuration::development' do
     describe 'PHP config parameters' do
+        ####################################
+        # XDEBUG
+        ####################################
         context  php_config('xdebug.remote_enable') do
             its(:value) { should eq 1 }
         end
 
         context  php_config('xdebug.remote_connect_back') do
             its(:value) { should eq 1 }
+        end
+
+        ####################################
+        # OPCODE CACHE
+        ####################################
+        context  php_config('opcache.validate_timestamps') do
+            its(:value) { should eq 1 }
+        end
+
+        context  php_config('opcache.revalidate_freq') do
+            its(:value) { should eq 0 }
         end
     end
 end

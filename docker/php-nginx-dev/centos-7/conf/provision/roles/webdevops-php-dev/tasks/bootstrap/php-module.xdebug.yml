@@ -11,7 +11,7 @@
 
 - name: Setup php.ini for development environment
   lineinfile:
-    dest:   '/opt/docker/etc/php/php.ini'
+    dest:   '/opt/docker/etc/php/php.webdevops.ini'
     regexp: '^[\s;]*{{ item.variable }}[\s]*='
     line:   '{{ item.variable }} = {{ item.value }}'
   with_items:

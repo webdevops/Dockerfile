@@ -2,3 +2,4 @@
 
 - include: bootstrap/tools.yml
 - include: bootstrap/php-module.xdebug.yml
+- include: bootstrap/php-module.opcache.yml
