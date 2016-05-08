@@ -10,7 +10,7 @@ fi
 # Apache gets grumpy about PID files pre-existing
 rm -f /var/run/apache2/apache2*.pid
 
-
+# Replace markers
 find /opt/docker/etc/httpd/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<DOCUMENT_INDEX>" "$WEB_DOCUMENT_INDEX"
 find /opt/docker/etc/httpd/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<DOCUMENT_ROOT>"  "$WEB_DOCUMENT_ROOT"
 find /opt/docker/etc/httpd/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<ALIAS_DOMAIN>"   "$WEB_ALIAS_DOMAIN"
