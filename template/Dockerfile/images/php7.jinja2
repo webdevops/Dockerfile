@@ -121,6 +121,8 @@ RUN /usr/local/bin/apt-install \
         php7.0-xsl \
         php7.0-bz2 \
         php-redis \
+        php-memcache \
+        php-memcached \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     {{ provision.runRoleInline('php', role) }}
 {%- endmacro %}
@@ -151,6 +153,7 @@ RUN /usr/local/bin/apt-install \
         php7.0-xsl \
         php7.0-bz2 \
         php-redis \
+        php-memcached \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     {{ provision.runRoleInline('php', role) }}
 {%- endmacro %}

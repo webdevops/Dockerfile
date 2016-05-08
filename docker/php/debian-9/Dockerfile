@@ -41,6 +41,8 @@ RUN /usr/local/bin/apt-install \
         php7.0-xsl \
         php7.0-bz2 \
         php-redis \
+        php-memcache \
+        php-memcached \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh
