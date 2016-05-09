@@ -8,7 +8,10 @@ describe "Dockerfile" do
         set :docker_image, @image.id
     end
 
-    include_examples 'collection::bootstrap'
+    include_examples 'bootstrap::layout'
+    include_examples 'bootstrap::distribution'
+    include_examples 'bootstrap::toolchain'
+
     include_examples 'collection::base-app'
     include_examples 'collection::samson-deployment::php'
     include_examples 'collection::samson-deployment'
