@@ -63,6 +63,9 @@ vsftp:
 mail-sandbox:
 	bash ./run.sh mail-sandbox
 
+samson-deployment:
+	bash ./run.sh samson-deployment
+
 ssh:
 	bash ./run.sh ssh
 
