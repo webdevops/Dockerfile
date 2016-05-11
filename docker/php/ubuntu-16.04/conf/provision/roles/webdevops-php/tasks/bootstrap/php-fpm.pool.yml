@@ -1,5 +1,17 @@
 ---
+- name: Get php version
+  command: "php -r 'echo phpversion();'"
+  changed_when: true
+  register: php_version_cmd
+  ignore_errors: true
 
+- name: Set php_version version
+  set_fact:
+     php_version: "{{php_version_cmd.stdout}}"
+
+- debug:
+    msg: "PHP-Version: {{php_version}}"
+    
 - name: Set php pool file
   set_fact:
      php_pool_conf: www.conf
