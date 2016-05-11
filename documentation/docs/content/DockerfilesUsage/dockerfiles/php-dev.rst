@@ -4,6 +4,8 @@ webdevops/php-dev
 
 These image extends ``webdevops/php`` with xdebug and development tools
 
+.. include:: include/info-php-development.rst
+
 Docker image tags
 -----------------
 

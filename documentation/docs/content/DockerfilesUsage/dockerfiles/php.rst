@@ -4,6 +4,8 @@ webdevops/php
 
 The php images are based on ``webdevops/base-app`` with PHP cli and PHP-FPM. PHP-FPM is running on port 9000.
 
+.. include:: include/info-php-production.rst
+
 Docker image tags
 -----------------
 
