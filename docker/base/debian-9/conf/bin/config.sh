@@ -63,10 +63,10 @@ function replaceTextInFile() {
 function deprecationNotice() {
     echo ""
     echo "###############################################################################"
-    echo "###      THIS CALL IS DEPRECATED AND WILL BE REMOVED IN THE FUTURE          ###"
-    echo ""
-    echo "$*"
-    echo ""
+    echo "###      THIS CALL IS DEPRECATED AND WILL BE REMOVED IN THE FUTURE"
+    echo "###"
+    echo "### $*"
+    echo "###"
     echo "###############################################################################"
     echo ""
 }
