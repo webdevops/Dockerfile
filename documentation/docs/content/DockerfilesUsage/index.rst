@@ -2,7 +2,11 @@
 Docker images
 =============
 
-This section is not done yet!
+.. figure:: /resources/images/docker-image-layout.png
+  :scale: 25 %
+  :target:  /_images/docker-image-layout.png
+
+  Docker image hierarchy
 
 
 .. toctree::
