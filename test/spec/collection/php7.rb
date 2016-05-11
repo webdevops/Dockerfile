@@ -16,6 +16,7 @@ end
 shared_examples 'collection::php7::production' do
     include_examples 'collection::php7'
     include_examples 'php::modules::production'
+    include_examples 'php::cli::configuration::production'
 end
 
 shared_examples 'collection::php7::development' do
