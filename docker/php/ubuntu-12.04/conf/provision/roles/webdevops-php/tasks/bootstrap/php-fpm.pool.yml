@@ -53,6 +53,7 @@
    - { key: 'slowlog',                     value: "/var/log/php5-fpm/slow.log" }
    - { key: 'php_admin_value[error_log]',  value: "/var/log/php5-fpm/error.log" }
    - { key: 'php_admin_value[log_errors]', value: "on" }
+   - { key: 'clear_env',                   value: "no" }
    - { key: 'user',                        value: "{{ APPLICATION_USER }}" }
    - { key: 'group',                       value: "{{ APPLICATION_GROUP }}" }
 
