@@ -6,7 +6,7 @@
     regexp: '^[\s;]*{{ item.variable }}[\s]*='
     line:   '{{ item.variable }} = {{ item.value }}'
   with_items:
-   - { variable: 'opcache.memory_consumption',      value: '128'  }
+   - { variable: 'opcache.memory_consumption',      value: '256'  }
    - { variable: 'opcache.validate_timestamps',     value: '1'    }
    - { variable: 'opcache.revalidate_freq',         value: '0'    }
    - { variable: 'opcache.interned_strings_buffer', value: '16'   }
