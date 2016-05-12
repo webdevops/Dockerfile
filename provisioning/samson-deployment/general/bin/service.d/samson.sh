@@ -19,7 +19,7 @@ if [[ -d "/storage/db/" ]]; then
         echo "Running VACUUM on $SQLITE_DATABSE"
         sqlite3 "$SQLITE_DATABSE" "VACUUM;" || echo " -> ERROR: VACUUM failed"
     done
-done
+fi
 
 sleep 1
 
