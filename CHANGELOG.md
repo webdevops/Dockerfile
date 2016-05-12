@@ -9,6 +9,8 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 - Modularized apache and nginx configuration
 - Dockerfile are now generated via jinja2 files
 - webdevops/storage is now using busybox
+- Latest tag is now ubuntu 16.04
+- Set clear_env to no for php-fpm (if possible)
 ### Added
 - Added ubuntu 16.04 images (eg. php, hhvm)
 - Added webdevops/php-dev webdevops/php-apache-dev webdevops/php-nginx-dev (xdebug and disabled caching for webserver) 
