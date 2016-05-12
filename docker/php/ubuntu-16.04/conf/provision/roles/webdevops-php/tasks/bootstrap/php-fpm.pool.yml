@@ -11,7 +11,7 @@
 
 - debug:
     msg: "PHP-Version: {{php_version}}"
-    
+
 - name: Set php pool file
   set_fact:
      php_pool_conf: www.conf
