@@ -7,7 +7,7 @@ import re
 from graphviz import Digraph
 
 PATH = os.path.dirname(os.path.abspath(__file__))
-FROM_REGEX = re.compile(ur'^FROM\s+(?P<image>[^:]+)(:(?P<tag>.+))?', re.MULTILINE)
+FROM_REGEX = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE)
 CONTAINERS = {}
 
 def get_current_date():
