@@ -23,6 +23,7 @@ Overview
 
 .. toctree::
    :caption: Documentation
+   :maxdepth: 2
 
    content/DockerfilesUsage/index
    content/DockerfilesBuildingProcess/index
