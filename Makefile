@@ -1,6 +1,6 @@
 ARGS = $(filter-out $@,$(MAKECMDGOALS))
 MAKEFLAGS += --silent
-.PHONY: test
+.PHONY: test documentation
 
 DOCKER_REPOSITORY=`cat DOCKER_REPOSITORY`
 DOCKER_TAG_LATEST=`cat DOCKER_TAG_LATEST`
@@ -69,7 +69,7 @@ rebuild:
 push:
 	BUILD_MODE=push make all
 
-doc-watch:
+documentation:
 	docker run -t -i --rm -p 8080:8000 -v "$$(pwd)/documentation/docs/:/opt/docs" webdevops/sphinx sphinx-autobuild --poll -H 0.0.0.0 /opt/docs html
 
 webdevops/bootstrap:
