@@ -5,36 +5,13 @@ import os
 import argparse
 import re
 from graphviz import Digraph
+import yaml
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 FROM_REGEX = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE)
 CONTAINERS = {}
-
-styles = {
-    'graph': {
-        'fontsize': '16',
-        'fontcolor': 'white',
-        'bgcolor': '#333333',
-        'rankdir': 'TP',
-    },
-    'nodes': {
-        'fontname': 'Helvetica',
-        'shape': 'box3d',
-        'fontcolor': 'white',
-        'color': 'white',
-        'style': 'filled',
-        'fillcolor': '#006699',
-    },
-    'edges': {
-        'style': 'dashed',
-        'color': 'white',
-        'arrowhead': 'open',
-        'fontname': 'Courier',
-        'fontsize': '12',
-        'fontcolor': 'white',
-    }
-}
-
+SUBGRAPH = {}
+EDGES = {}
 
 def get_current_date():
     import datetime
@@ -64,14 +41,49 @@ def apply_styles(graph, styles):
     )
     return graph
 
+def get_graph(conf,default_graph,name):
+
+    for group, group_attr in conf['diagram']['groups'].items():
+        if name in group_attr['docker']:
+            return SUBGRAPH[group]
+    return default_graph
+
+def build_graph():
+    stream = open(os.path.dirname(__file__)+"/diagram.yml", "r")
+    conf_diagram = yaml.safe_load(stream)
+    dia = Digraph('webdevops', filename='webdevops.gv')
+    dia = apply_styles(dia,conf_diagram['diagram']['styles'])
+    dia.body.append(r'label = "\n\nWebdevops Containers\n at :%s"' % get_current_date() )
+
+    # Create subgraph
+    for group, group_attr in conf_diagram['diagram']['groups'].items():
+        SUBGRAPH[group] = Digraph("cluster_"+group);
+        SUBGRAPH[group].body.append(r'label = "%s"' % group_attr['name'] )
+        SUBGRAPH[group] = apply_styles(SUBGRAPH[group],group_attr['styles'] )
+    for image, base in CONTAINERS.items():
+        graph_image = get_graph(conf_diagram, dia, image)
+        graph_base = get_graph(conf_diagram, dia, base)
+        if "webdevops" in base:
+            if graph_image == graph_base:
+                graph_image.edge(base, image)
+            else:
+                graph_image.node(image)
+                EDGES[image] = base
+        else:
+            graph_image.node(image)
+
+
+    for name, subgraph in SUBGRAPH.items():
+        dia.subgraph(subgraph)
+
+    for image, base in EDGES.items():
+        dia.edge(base, image)
+    print dia.source
+
+
 def main(args):
     dockerfilePath = os.path.abspath(args.dockerfile)
-    
-    u = Digraph('webdevops', filename='webdevops.gv')
-    u.body.append('size="10,10"')
-    u.body.append(r'label = "\n\nWebdevops Containers\n at :%s"' % get_current_date() )
-    u.node_attr.update(color='lightblue2', style='filled', shape='box')     
-    apply_styles(u,styles)
+
     # Parse Docker file
     for root, dirs, files in os.walk(dockerfilePath):
 
@@ -79,13 +91,7 @@ def main(args):
             if file.endswith("Dockerfile"):
                 processDockerfile(os.path.join(root, file))
 
-    # Build and render graph
-    for image, base in CONTAINERS.items():
-        if "webdevops" in base:
-            u.edge(base, image)
-        else:
-            u.node(image)
-    print u.source
+    build_graph()
 
 
 if __name__ == '__main__':
