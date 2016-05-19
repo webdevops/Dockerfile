@@ -149,6 +149,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
         php5-json \
         # Install java
         openjdk-7-jre \
+        # SQlite 3
+        sqlite3 \
     && pip install -U \
         docker-compose \
         python-dotenv \
@@ -180,7 +182,10 @@ RUN set -x \
 ADD database.yml    /app/config/database.yml
 ADD web/            /app/public/assets/
 
+ADD crontab         /etc/cron.d/samson-deployment
+
 RUN rake assets:precompile \
+    && /opt/docker/bin/control.sh service.enable cron \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-samson-deployment \
     && /opt/docker/bin/bootstrap.sh
 
