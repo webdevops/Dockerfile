@@ -48,10 +48,10 @@ def get_graph(conf,default_graph,name):
             return SUBGRAPH[group]
     return default_graph
 
-def build_graph():
+def build_graph(args):
     stream = open(os.path.dirname(__file__)+"/diagram.yml", "r")
     conf_diagram = yaml.safe_load(stream)
-    dia = Digraph('webdevops', filename='webdevops.gv')
+    dia = Digraph('webdevops', filename=args.filename, format=args.format, directory=args.path)
     dia = apply_styles(dia,conf_diagram['diagram']['styles'])
     dia.body.append(r'label = "\n\nWebdevops Containers\n at :%s"' % get_current_date() )
 
@@ -78,8 +78,7 @@ def build_graph():
 
     for image, base in EDGES.items():
         dia.edge(base, image)
-    print dia.source
-
+    return dia
 
 def main(args):
     dockerfilePath = os.path.abspath(args.dockerfile)
@@ -91,11 +90,17 @@ def main(args):
             if file.endswith("Dockerfile"):
                 processDockerfile(os.path.join(root, file))
 
-    build_graph()
+    dia = build_graph(args)
+    dia.render()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d','--dockerfile' ,help='',type=str)
+    parser.add_argument('-d','--dockerfile' ,help='path to the folder containing dockerfile analyze',type=str)
+    parser.add_argument('-f','--filename' ,help='file output (default: webdevops.gv)',default='webdevops.gv',type=str)
+    parser.add_argument('-F','--format' ,help='output format (default: png)',default='png',choices=('png','jpg','pdf','svg'))
+    parser.add_argument('-p','--path' ,help='path output',default=os.path.dirname(__file__)+"/../",type=str)
+
     args = parser.parse_args()
+
     main(args)
