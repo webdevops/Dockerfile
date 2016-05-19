@@ -182,7 +182,7 @@ RUN set -x \
 ADD database.yml    /app/config/database.yml
 ADD web/            /app/public/assets/
 
-ADD crontab         /etc/cron.d/samson-deployment
+ADD crontab         /etc/cron.d/webdevops-samson-deployment
 
 RUN rake assets:precompile \
     && /opt/docker/bin/control.sh service.enable cron \
