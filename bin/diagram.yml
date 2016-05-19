@@ -1,0 +1,112 @@
+---
+diagram:
+  styles:
+    graph: 
+      fontsize: "16"
+      fontcolor: black
+      bgcolor: white
+      rankdir: TP
+    nodes: 
+      fontname: Helvetica
+      shape: box
+      fontcolor: black
+      color: white
+      style: filled
+      fillcolor: "#E1E1E1"
+    edges: 
+      style: dashed
+      color: black
+      arrowhead: open
+      fontname: Courier
+      fontsize: "12"
+      fontcolor: white
+  groups:
+    common:
+      name: Base containers
+      styles:
+        graph:
+          style: filled
+          fillcolor: gray
+        nodes: 
+          fontname: Helvetica
+          shape: box
+          fontcolor: black
+          color: black
+          style: filled
+          fillcolor: "#e1e1e1"
+      docker:
+        - webdevops/boostrap
+        - webdevops/base
+        - webdevops/base-app
+    php:
+      name: php containers
+      styles:
+        graph:
+          style: filled
+          fillcolor: "#c0e5a8"
+        nodes: 
+          fontname: Helvetica
+          shape: box
+          fontcolor: black
+          color: black
+          style: filled
+          fillcolor: "#78c445"
+      docker:
+        - webdevops/php
+        - webdevops/php-apache
+        - webdevops/php-nginx
+        - webdevops/php-apache-dev
+        - webdevops/php-nginx-dev
+    hhvm:
+      name: hhvm containers
+      styles:
+        graph:
+          style: filled
+          fillcolor: "#c1c3f2"
+        nodes: 
+          fontname: Helvetica
+          shape: box
+          fontcolor: black
+          color: black
+          style: filled
+          fillcolor: "#7f84f1"
+      docker:
+        - webdevops/hhvm
+        - webdevops/hhvm-apache
+        - webdevops/hhvm-nginx
+    application:
+      name: application containers
+      styles:
+        graph:
+          style: filled
+          fillcolor: "#f2e3b5"
+        nodes: 
+          fontname: Helvetica
+          shape: box
+          fontcolor: black
+          color: black
+          style: filled
+          fillcolor: "#e5b931"
+      docker:
+        - webdevops/typo3
+        - webdevops/piwik
+    service:
+      name: service containers
+      styles:
+        graph:
+          style: filled
+          fillcolor: "#fbd3b5"
+        nodes: 
+          fontname: Helvetica
+          shape: box
+          fontcolor: black
+          color: black
+          style: filled
+          fillcolor: "#ffa35f"
+      docker:
+        - webdevops/apache
+        - webdevops/nginx
+        - webdevops/ssh
+        - webdevops/vsftp
+        - webdevops/postfix
+        - webdevops/mail-sandbox

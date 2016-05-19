@@ -1,0 +1,63 @@
+digraph webdevops {
+	graph [bgcolor=white fontcolor=black fontsize=16 rankdir=TP]
+	node [color=white fillcolor="#E1E1E1" fontcolor=black fontname=Helvetica shape=box style=filled]
+	edge [arrowhead=open color=black fontcolor=white fontname=Courier fontsize=12 style=dashed]
+	label = "\n\nWebdevops Containers\n at :19.05.2016"
+			"webdevops/bootstrap" -> "webdevops/sphinx"
+		"webdevops/storage"
+			"webdevops/bootstrap" -> "webdevops/ansible"
+		"webdevops/samson-deployment"
+		"webdevops/bootstrap"
+		subgraph cluster_application {
+			graph [fillcolor="#f2e3b5" style=filled]
+			node [color=black fillcolor="#e5b931" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "application containers"
+				"webdevops/typo3"
+				"webdevops/piwik"
+		}
+		subgraph cluster_hhvm {
+			graph [fillcolor="#c1c3f2" style=filled]
+			node [color=black fillcolor="#7f84f1" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "hhvm containers"
+				"webdevops/hhvm"
+					"webdevops/hhvm" -> "webdevops/hhvm-nginx"
+					"webdevops/hhvm" -> "webdevops/hhvm-apache"
+		}
+		subgraph cluster_php {
+			graph [fillcolor="#c0e5a8" style=filled]
+			node [color=black fillcolor="#78c445" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "php containers"
+				"webdevops/php"
+					"webdevops/php" -> "webdevops/php-apache"
+					"webdevops/php" -> "webdevops/php-nginx"
+		}
+		subgraph cluster_common {
+			graph [fillcolor=gray style=filled]
+			node [color=black fillcolor="#e1e1e1" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "Base containers"
+					"webdevops/base" -> "webdevops/base-app"
+				"webdevops/base"
+		}
+		subgraph cluster_service {
+			graph [fillcolor="#fbd3b5" style=filled]
+			node [color=black fillcolor="#ffa35f" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "service containers"
+				"webdevops/ssh"
+				"webdevops/postfix"
+				"webdevops/vsftp"
+					"webdevops/postfix" -> "webdevops/mail-sandbox"
+				"webdevops/apache"
+				"webdevops/nginx"
+		}
+			"webdevops/base-app" -> "webdevops/php"
+			"webdevops/base-app" -> "webdevops/ssh"
+			"webdevops/base-app" -> "webdevops/postfix"
+			"webdevops/base" -> "webdevops/apache"
+			"webdevops/base" -> "webdevops/storage"
+			"webdevops/base" -> "webdevops/nginx"
+			"webdevops/base" -> "webdevops/vsftp"
+			"webdevops/base-app" -> "webdevops/hhvm"
+			"webdevops/php-apache" -> "webdevops/typo3"
+			"webdevops/php-nginx" -> "webdevops/piwik"
+			"webdevops/bootstrap" -> "webdevops/base"
+}
