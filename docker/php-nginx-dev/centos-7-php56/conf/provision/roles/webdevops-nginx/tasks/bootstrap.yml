@@ -1,0 +1,48 @@
+---
+
+- name: Diable nginx demonize mode
+  lineinfile:
+    dest:   /etc/nginx/nginx.conf
+    regexp: '[\s;]*{{ item.key }}[\s]*'
+    line:   '{{ item.key }} {{ item.value }};'
+  with_items:
+   - { key: 'daemon', value: "off" }
+
+- name: Enable nginx main config
+  file:
+    src:  '/opt/docker/etc/nginx/main.conf'
+    dest: '/etc/nginx/conf.d/10-docker.conf'
+    state: link
+    force: yes
+
+- name: Remove default vhost
+  file:
+    path:  "/etc/nginx/sites-enabled/default"
+    state: absent
+
+- name: Replace default nginx.conf [RedHat/Alpine family]
+  file:
+    src:  '/opt/docker/etc/nginx/nginx.conf'
+    dest: '/etc/nginx/nginx.conf'
+    state: link
+    force: yes
+  when: ansible_os_family == 'RedHat' or ansible_os_family == 'Alpine'
+
+- name: Ensure document root is available
+  file:
+    path:    "{{ DOCUMENT_ROOT }}"
+    state:   directory
+    recurse: yes
+
+- name: Fix rights of ssl files
+  file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    mode:  "{{ item.mode }}"
+    owner: "root"
+    group: "root"
+  with_items:
+    - { path: '/opt/docker/etc/nginx/ssl',            state: 'directory', mode: '0750' }
+    - { path: '/opt/docker/etc/nginx/ssl/server.crt', state: 'file',      mode: '0640' }
+    - { path: '/opt/docker/etc/nginx/ssl/server.csr', state: 'file',      mode: '0640' }
+    - { path: '/opt/docker/etc/nginx/ssl/server.key', state: 'file',      mode: '0640' }
