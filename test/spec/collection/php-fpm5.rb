@@ -11,7 +11,6 @@ shared_examples 'collection::php-fpm5::public' do
     include_examples 'php-fpm::service::running'
 end
 
-
 shared_examples 'collection::php-fpm5::local-only' do
     # services
     include_examples 'php-fpm::listening::local-only'
@@ -21,10 +20,23 @@ shared_examples 'collection::php-fpm5::local-only' do
 end
 
 
-shared_examples 'collection::php-fpm5::webserver-test' do
+shared_examples 'collection::php-fpm5::webserver-test::development' do
     wait_retry 30 do
         include_examples 'php-fpm::modules'
         include_examples 'php-fpm5::modules'
+        include_examples 'php-fpm::modules::development'
+        include_examples 'php::fpm::test::sha1'
+        include_examples 'php::fpm::test::php_ini_scanned_files'
+        include_examples 'php::fpm::test::php_sapi_name'
+        include_examples 'php5::fpm::test::version'
+    end
+end
+
+shared_examples 'collection::php-fpm5::webserver-test::production' do
+    wait_retry 30 do
+        include_examples 'php-fpm::modules'
+        include_examples 'php-fpm5::modules'
+        include_examples 'php-fpm::modules::production'
         include_examples 'php::fpm::test::sha1'
         include_examples 'php::fpm::test::php_ini_scanned_files'
         include_examples 'php::fpm::test::php_sapi_name'

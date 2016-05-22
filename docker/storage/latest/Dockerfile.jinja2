@@ -1,0 +1,8 @@
+{{ docker.fromOfficial("busybox") }}
+
+{{ docker.version() }}
+
+RUN mkdir /storage/ \
+    && chmod 777 /storage/
+
+VOLUME "/storage"

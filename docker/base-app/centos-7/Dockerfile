@@ -1,8 +1,10 @@
-#++++++++++++++++++++++++++++++++++++++
-# CentOS 7 Base Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/base-app:centos-7
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:centos-7
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
@@ -14,35 +16,32 @@ ENV APPLICATION_PATH  /app
 ENV APPLICATION_UID   1000
 ENV APPLICATION_GID   1000
 
-RUN /usr/local/bin/yum-install \
-    # Install services
-    openssh-server \
-    mysql \
-    sqlite \
-    dnsmasq \
-    postfix \
-    # Install tools
-    sudo \
-    zip \
-    unzip \
-    bzip2 \
-    wget \
-    curl \
-    net-tools \
-    moreutils \
-    dnsutils \
-    bind-utils \
-    rsync \
-    git \
-    pygpgme \
-    nano \
-    vim \
-    && /usr/local/bin/generate-locales
-
-# Deploy scripts/configurations
 COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-base-app \
-    && bash /opt/docker/bin/bootstrap.sh
 
-ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
-CMD ["noop"]
+# Install services
+RUN /usr/local/bin/yum-install \
+        openssh-server \
+        mysql \
+        sqlite \
+        dnsmasq \
+        postfix \
+        # Install tools
+        sudo \
+        zip \
+        unzip \
+        bzip2 \
+        wget \
+        curl \
+        net-tools \
+        moreutils \
+        dnsutils \
+        bind-utils \
+        rsync \
+        git \
+        pygpgme \
+        nano \
+        vim \
+    && /usr/local/bin/generate-locales \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
+    && /opt/docker/bin/bootstrap.sh
+

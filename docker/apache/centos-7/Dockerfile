@@ -1,8 +1,10 @@
-#++++++++++++++++++++++++++++++++++++++
-# CentOS 7 Apache Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/apache:centos-7
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:centos-7
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
@@ -12,20 +14,18 @@ ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
-# Install tools
+COPY conf/ /opt/docker/
+
+# Install apache
 RUN /usr/local/bin/yum-install \
         httpd \
         mod_ssl \
 	&& sed -ri ' \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf
+		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache \
+    && /opt/docker/bin/bootstrap.sh
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-apache \
-    && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 80 443
-
-CMD ["supervisord"]

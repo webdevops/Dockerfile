@@ -13,3 +13,15 @@ shared_examples 'collection::php5' do
     include_examples 'misc::graphicsmagick'
     include_examples 'misc::imagemagick'
 end
+
+shared_examples 'collection::php5::production' do
+    include_examples 'collection::php5'
+    include_examples 'php::modules::production'
+    include_examples 'php::cli::configuration::production'
+end
+
+shared_examples 'collection::php5::development' do
+    include_examples 'collection::php5'
+    include_examples 'php::modules::development'
+    include_examples 'php::cli::configuration::development'
+end

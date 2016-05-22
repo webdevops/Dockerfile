@@ -1,0 +1,9 @@
+{{ docker.from("base-app") }}
+
+{{ docker.version() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ postfix.ubuntu() }}
+
+{{ docker.expose('25 465 587') }}

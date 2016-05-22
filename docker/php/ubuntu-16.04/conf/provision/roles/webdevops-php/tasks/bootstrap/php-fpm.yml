@@ -1,9 +1,18 @@
 ---
 
+- name: Symlink php-fpm binary [RedHat family]
+  file:
+    path: "/usr/sbin/php-fpm7.0"
+    src:  "/usr/sbin/php-fpm"
+    state: link
+    owner: "root"
+    group: "root"
+  when: ansible_os_family == 'RedHat'
+
 - name: Symlink php-fpm binary [Alpine family]
   file:
     path: "/usr/sbin/php-fpm"
-    src:  "/usr/bin/php-fpm"
+    src:  "/usr/sbin/php-fpm7"
     state: link
     owner: "root"
     group: "root"
@@ -12,7 +21,7 @@
 - name: Symlink php-fpm binary [Debian family]
   file:
     path: "/usr/sbin/php-fpm"
-    src:  "/usr/sbin/php5-fpm"
+    src:  "/usr/sbin/php-fpm7.0"
     state: link
     owner: "root"
     group: "root"
@@ -26,14 +35,14 @@
 
 - name: Create php-fpm log directory
   file:
-    path: "/var/log/php5-fpm/"
+    path: "/var/log/php7-fpm/"
     state: directory
     owner: "root"
     group: "root"
 
 - name: Create php-fpm log files
   file:
-    path: "/var/log/php5-fpm/{{ item }}"
+    path: "/var/log/php7-fpm/{{ item }}"
     state: touch
     owner: "root"
     group: "root"

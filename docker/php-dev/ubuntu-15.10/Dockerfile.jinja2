@@ -1,0 +1,7 @@
+{{ docker.from("php", "ubuntu-15.10") }}
+
+{{ docker.version() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ php5dev.ubuntu() }}

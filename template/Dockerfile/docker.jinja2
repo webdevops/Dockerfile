@@ -1,0 +1,79 @@
+{% macro from(image, tag="latest", user="webdevops") -%}
+FROM {{ user }}/{{ image }}:{{ tag }}
+{%- endmacro %}
+
+{% macro fromOfficial(image, tag="latest") -%}
+FROM {{ image }}:{{ tag }}
+{%- endmacro %}
+
+{% macro version() -%}
+MAINTAINER info@webdevops.io
+LABEL vendor=WebDevOps.io
+LABEL io.webdevops.layout=6
+LABEL io.webdevops.version=0.23.0
+{%- endmacro %}
+
+{% macro environmentLang() -%}
+# Ensure UTF-8
+ENV LANG       en_US.UTF-8
+ENV LC_ALL     en_US.UTF-8
+{%- endmacro %}
+
+{% macro environmentHomePath() -%}
+ENV DOCKER_CONF_HOME /opt/docker/
+{%- endmacro %}
+
+{% macro environmentMailbox() -%}
+ENV MAILBOX_USERNAME "sandbox"
+ENV MAILBOX_PASSWORD "mail"
+{%- endmacro %}
+
+{% macro environmentWeb() -%}
+ENV WEB_DOCUMENT_ROOT  /app
+ENV WEB_DOCUMENT_INDEX index.php
+ENV WEB_ALIAS_DOMAIN   *.vm
+{%- endmacro %}
+
+{% macro environmentFtp() -%}
+ENV FTP_USER     application
+ENV FTP_PASSWORD application
+ENV FTP_UID      1000
+ENV FTP_GID      1000
+ENV FTP_PASSWORD dev
+ENV FTP_PATH     /data/ftp/
+{%- endmacro %}
+
+
+{% macro environmentApp() -%}
+ENV APPLICATION_USER  application
+ENV APPLICATION_GROUP application
+ENV APPLICATION_PATH  /app
+ENV APPLICATION_UID   1000
+ENV APPLICATION_GID   1000
+{%- endmacro %}
+
+{%- macro add(source, target) -%}
+ADD {{ source }} {{ target }}
+{%- endmacro -%}
+
+{%- macro copy(source, target) -%}
+COPY {{ source }} {{ target }}
+{%- endmacro -%}
+
+{%- macro expose(port) -%}
+EXPOSE {{ port }}
+{%- endmacro -%}
+
+
+{%- macro volume(volume) -%}
+VOLUME {{ volume }}
+{%- endmacro -%}
+
+{%- macro entrypoint(command) -%}
+ENTRYPOINT ["{{ command }}"]
+{%- endmacro -%}
+
+
+{%- macro cmd(command) -%}
+CMD ["{{ command }}"]
+{%- endmacro -%}

@@ -1,8 +1,10 @@
-#++++++++++++++++++++++++++++++++++++++
-# Alpine 3 Bootstrap Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/bootstrap:alpine-3
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM alpine:3.3
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
@@ -12,7 +14,6 @@ LABEL io.webdevops.version=0.23.0
 ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
-# Add baselayout (from baselayout/)
 ADD baselayout.tar /
 
 # Init bootstrap (and install ansible)

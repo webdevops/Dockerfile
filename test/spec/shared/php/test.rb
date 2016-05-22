@@ -16,6 +16,7 @@ end
 shared_examples 'php::cli::test::php_ini_scanned_files' do
     describe command('php -r "echo php_ini_scanned_files();"') do
         its(:stdout) { should contain('-docker.ini') }
+        its(:stdout) { should contain('-webdevops.ini') }
 
         its(:exit_status) { should eq 0 }
     end
@@ -83,6 +84,7 @@ shared_examples 'php::fpm::test::php_ini_scanned_files' do
             its(:stderr) { should_not contain('Notice') }
             its(:stderr) { should_not contain('PHP Warning') }
             its(:stdout) { should contain('-docker.ini') }
+            its(:stdout) { should contain('-webdevops.ini') }
 
             its(:exit_status) { should eq 0 }
         end

@@ -24,6 +24,9 @@ base-app:
 php:
 	bash ./run.sh php
 
+php-dev:
+	bash ./run.sh php-dev
+
 apache:
 	bash ./run.sh apache
 
@@ -33,8 +36,14 @@ nginx:
 php-apache:
 	bash ./run.sh php-apache
 
+php-apache-dev:
+	bash ./run.sh php-apache-dev
+
 php-nginx:
 	bash ./run.sh php-nginx
+
+php-nginx-dev:
+	bash ./run.sh php-nginx-dev
 
 hhvm:
 	bash ./run.sh hhvm
@@ -54,5 +63,14 @@ vsftp:
 mail-sandbox:
 	bash ./run.sh mail-sandbox
 
+samson-deployment:
+	bash ./run.sh samson-deployment
+
 ssh:
 	bash ./run.sh ssh
+
+varnish:
+	bash ./run.sh varnish
+
+sphinx:
+	bash ./run.sh sphinx

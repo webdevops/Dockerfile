@@ -1,8 +1,10 @@
-#++++++++++++++++++++++++++++++++++++++
-# Ubuntu 15.10 Nginx Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/nginx:ubuntu-15.10
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:ubuntu-15.10
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
@@ -12,16 +14,13 @@ ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 
+COPY conf/ /opt/docker/
+
 # Install nginx
 RUN /usr/local/bin/apt-install \
         nginx \
-	&& ln -sf /opt/docker/etc/nginx/vhost.conf /etc/nginx/conf.d/10-docker.conf
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-nginx \
+    && /opt/docker/bin/bootstrap.sh
 
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-nginx \
-    && bash /opt/docker/bin/bootstrap.sh
 
 EXPOSE 80 443
-
-CMD ["supervisord"]

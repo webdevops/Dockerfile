@@ -1,0 +1,9 @@
+{{ docker.from("base", "alpine-3") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentApp() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ baseapp.alpine() }}

@@ -1,0 +1,13 @@
+{{ docker.from("base","alpine-3") }}
+
+{{ docker.version() }}
+
+{{ varnish.env() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ varnish.alpine() }}
+
+{{ docker.cmd("varnishd") }}
+
+{{ docker.expose('80') }}

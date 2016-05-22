@@ -1,0 +1,9 @@
+{{ docker.fromOfficial("debian", "stretch") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentLang() }}
+
+{{ docker.add('baselayout.tar', '/') }}
+
+{{ bootstrap.debian('stretch') }}

@@ -1,27 +1,33 @@
-#++++++++++++++++++++++++++++++++++++++
-# CentOS 7 PHP Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/php:centos-7
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base-app:centos-7
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
 
-# Install tools
+ENV WEB_DOCUMENT_ROOT  /app
+ENV WEB_DOCUMENT_INDEX index.php
+ENV WEB_ALIAS_DOMAIN   *.vm
+
+COPY conf/ /opt/docker/
+
+# Install php environment
 RUN /usr/local/bin/yum-install \
+        # Install tools
         ImageMagick \
-        GraphicsMagick
-    
-# Install php (cli/fpm)
-RUN /usr/local/bin/yum-install \
+        GraphicsMagick \
+        # Install php (cli/fpm)
         php-cli \
         php-fpm \
         php-json \
         php-intl \
         php-curl \
         php-mysqlnd \
-        php-xdebug \
         php-memcached \
         php-mcrypt \
         php-gd \
@@ -46,15 +52,9 @@ RUN /usr/local/bin/yum-install \
     && pear upgrade-all \
     && pear config-set auto_discover 1 \
     && pecl install imagick \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
-
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php \
-    && bash /opt/docker/bin/bootstrap.sh
-
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
+    && /opt/docker/bin/bootstrap.sh
 
 
 EXPOSE 9000
-
-CMD ["supervisord"]

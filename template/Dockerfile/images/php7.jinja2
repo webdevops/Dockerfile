@@ -1,0 +1,159 @@
+{% import 'Dockerfile/provision.jinja2' as provision %}
+
+{% macro alpine(role='') -%}
+# Install php environment
+RUN /usr/local/bin/apk-install \
+        # Install tools
+        imagemagick \
+        graphicsmagick \
+        # Install php (cli/fpm)
+        php7-fpm \
+        php7-json \
+        php7-intl \
+        php7-curl \
+        php7-mysqli \
+        php7-mysqlnd \
+        php7-pdo_mysql \
+        php7-pdo_sqlite \
+        php7-memcached \
+        php7-mcrypt \
+        #php7-gd \
+        #libwebp \
+        php7-bcmath \
+        php7-soap \
+        php7-sqlite3 \
+        php7-bz2 \
+        php7-calendar \
+        php7-ctype \
+        php7-pcntl \
+        php7-posix \
+        php7-sockets \
+        php7-sysvmsg \
+        php7-sysvsem \
+        php7-sysvshm \
+        php7-xmlreader \
+        php7-exif \
+        php7-ftp \
+        php7-gettext \
+        php7-iconv \
+        php7-zip \
+        php7-zlib \
+        php7-shmop \
+        php7-wddx \
+        sqlite \
+        php7-xmlrpc \
+        php7-xsl \
+        geoip \
+        php7-ldap \
+        #php7-memcache \
+        php7-redis \
+        php7-pear \
+        php7-phar \
+        php7-openssl \
+        php7-session \
+        php7-opcache \
+        php7-mbstring \
+        php7-iconv \
+    && ln -s /usr/bin/php7      /usr/bin/php \
+    && ln -s /usr/sbin/php-fpm7 /usr/sbin/php-fpm \
+    && pear channel-update pear.php.net \
+    && pear upgrade-all \
+    && pear config-set auto_discover 1 \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ provision.runRoleInline('php', role) }}
+{%- endmacro %}
+
+
+{% macro debianDotDeb(distribution,role='') -%}
+# Install php environment
+RUN echo "deb http://packages.dotdeb.org {{ distribution }} all" >> /etc/apt/sources.list \
+    && echo "deb-src http://packages.dotdeb.org {{ distribution }} all" >> /etc/apt/sources.list \
+    && wget -O- https://www.dotdeb.org/dotdeb.gpg | apt-key add  - \
+    && /usr/local/bin/apt-install \
+        # Install tools
+        imagemagick \
+        graphicsmagick \
+        # Install php (cli/fpm)
+        php7.0-cli \
+        php7.0-fpm \
+        php7.0-json \
+        php7.0-intl \
+        php7.0-curl \
+        php7.0-mysql \
+        php7.0-mcrypt \
+        php7.0-gd \
+        php7.0-sqlite3 \
+        php7.0-ldap \
+        php7.0-opcache \
+        php7.0-xmlrpc \
+        php7.0-xsl \
+        php7.0-bz2 \
+        php7.0-redis \
+        php7.0-memcached \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ provision.runRoleInline('php', role) }}
+{%- endmacro %}
+
+
+{% macro debian9(role='') -%}
+# Install php environment
+RUN /usr/local/bin/apt-install \
+        # Install tools
+        imagemagick \
+        graphicsmagick \
+        # Install php (cli/fpm)
+        php7.0-cli \
+        php7.0-fpm \
+        php7.0-json \
+        php7.0-intl \
+        php7.0-curl \
+        php7.0-mysql \
+        php7.0-mcrypt \
+        php7.0-gd \
+        php7.0-sqlite3 \
+        php7.0-ldap \
+        php7.0-opcache \
+        php7.0-soap \
+        php7.0-zip \
+        php7.0-mbstring \
+        php7.0-bcmath \
+        php7.0-xmlrpc \
+        php7.0-xsl \
+        php7.0-bz2 \
+        php-redis \
+        php-memcache \
+        php-memcached \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ provision.runRoleInline('php', role) }}
+{%- endmacro %}
+
+{% macro ubuntu(role='') -%}
+# Install php environment
+RUN /usr/local/bin/apt-install \
+        # Install tools
+        imagemagick \
+        graphicsmagick \
+        # Install php (cli/fpm)
+        php7.0-cli \
+        php7.0-fpm \
+        php7.0-json \
+        php7.0-intl \
+        php7.0-curl \
+        php7.0-mysql \
+        php7.0-mcrypt \
+        php7.0-gd \
+        php7.0-sqlite3 \
+        php7.0-ldap \
+        php7.0-opcache \
+        php7.0-soap \
+        php7.0-zip \
+        php7.0-mbstring \
+        php7.0-bcmath \
+        php7.0-xmlrpc \
+        php7.0-xsl \
+        php7.0-bz2 \
+        php-redis \
+        php-memcached \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ provision.runRoleInline('php', role) }}
+{%- endmacro %}

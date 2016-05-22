@@ -31,14 +31,15 @@ Directory                       | Description
 `/opt/docker/etc/nginx`         | Nginx configuration
 `/opt/docker/etc/nginx/ssl`     | Nginx ssl configuration with example server.crt, server.csr, server.key
 
-File                                      | Description
------------------------------------------ | ------------------------------------------------------------------------------
-`/opt/docker/etc/nginx/main.conf`         | Main include file (will include `global.conf`, `php.conf` and `vhost.conf`) 
-`/opt/docker/etc/nginx/global.conf`       | Global nginx configuration options
-`/opt/docker/etc/nginx/php.conf`          | PHP configuration (connection to FPM)
-`/opt/docker/etc/nginx/vhost.common.conf` | Vhost common stuff (placeholder)
-`/opt/docker/etc/nginx/vhost.conf`        | Default vhost
-`/opt/docker/etc/nginx/vhost.ssl.conf`    | Default ssl configuration for vhost
+File                                          | Description
+--------------------------------------------- | ------------------------------------------------------------------------------
+`/opt/docker/etc/nginx/main.conf`             | Main include file (will include `global.conf`, `php.conf` and `vhost.conf`) 
+`/opt/docker/etc/nginx/global.conf`           | Global nginx configuration options
+`/opt/docker/etc/nginx/conf.d/*.conf`         | Global apache configuration directory (will be included)
+`/opt/docker/etc/nginx/php.conf`              | PHP configuration (connection to FPM)
+`/opt/docker/etc/httpd/vhost.common.d/*.conf` | Vhost common directory (will be included)
+`/opt/docker/etc/nginx/vhost.conf`            | Default vhost
+`/opt/docker/etc/nginx/vhost.ssl.conf`        | Default ssl configuration for vhost
 
 
 ## Container info

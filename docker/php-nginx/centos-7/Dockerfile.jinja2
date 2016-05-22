@@ -1,0 +1,11 @@
+{{ docker.from("php", "centos-7") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentWeb() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ nginx.centos('php-nginx') }}
+
+{{ docker.expose('80 443') }}

@@ -1,0 +1,7 @@
+{{ docker.from("php", "debian-8") }}
+
+{{ docker.version() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ php5dev.debian() }}

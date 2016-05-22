@@ -1,19 +1,19 @@
-#++++++++++++++++++++++++++++++++++++++
-# Ubuntu 14.04 Bootstrap Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/bootstrap:ubuntu-14.04
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM ubuntu:14.04
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=6
 LABEL io.webdevops.version=0.23.0
 
 # Ensure UTF-8
-RUN locale-gen en_US.UTF-8
 ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
-# Add baselayout (from baselayout/)
 ADD baselayout.tar /
 
 # Init bootstrap (and install ansible)
@@ -54,4 +54,3 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         libffi-dev \
     && apt-get autoremove -y -f \
     && apt-get clean -y
-

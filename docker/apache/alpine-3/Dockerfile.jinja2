@@ -1,0 +1,11 @@
+{{ docker.from("base", "alpine-3") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentWeb() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ apache.alpine() }}
+
+{{ docker.expose('80 443') }}
