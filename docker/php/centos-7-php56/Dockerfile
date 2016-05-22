@@ -1,28 +1,32 @@
-#++++++++++++++++++++++++++++++++++++++
-# CentOS 7 PHP Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/php:centos-7-php56
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base-app:centos-7
-MAINTAINER guillaume.camus@gmail.com
-LABEL vendor=infogene \
-	version=1.0
 
-# Install tools
-RUN /usr/local/bin/yum-install \
+MAINTAINER info@webdevops.io
+LABEL vendor=WebDevOps.io
+LABEL io.webdevops.layout=6
+LABEL io.webdevops.version=0.23.0
+
+ENV WEB_DOCUMENT_ROOT  /app
+ENV WEB_DOCUMENT_INDEX index.php
+ENV WEB_ALIAS_DOMAIN   *.vm
+
+COPY conf/ /opt/docker/
+
+RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
+    && /usr/local/bin/yum-install \
+        # Install tools
         ImageMagick \
         GraphicsMagick \
-    && rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
-
-# Install php (cli/fpm)
-RUN /usr/local/bin/yum-install \
+        # Install php (cli/fpm)
         php56w-cli \
         php56w-fpm \
         php56w-common \
-        # php-json \ included in php56w-common
         php56w-intl \
-        # php-curl \ included in php56w-common
         php56w-mysqlnd \
-        php56w-pecl-xdebug \
         php56w-pecl-memcached \
         php56w-mcrypt \
         php56w-gd \
@@ -31,12 +35,9 @@ RUN /usr/local/bin/yum-install \
         php56w-soap \
         sqlite \
         php56w-xmlrpc \
-        # php-xsl \ replace by php56w-xml
         php56w-xml \
         geoip \
         php56w-ldap \
-        #php-memcache \
-        #php-pecl-redis \
         ImageMagick-devel \
         ImageMagick-perl \
         php56w-pear \
@@ -49,15 +50,9 @@ RUN /usr/local/bin/yum-install \
     && pear config-set auto_discover 1 \
     && pecl install imagick \
     && pecl install redis \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
-
-# Deploy scripts/configurations
-COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php \
-    && bash /opt/docker/bin/bootstrap.sh
-
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
+    && /opt/docker/bin/bootstrap.sh
 
 
 EXPOSE 9000
-
-CMD ["supervisord"]

@@ -1,13 +1,22 @@
 ---
 
-- name: Symlink php-fpm binary
+- name: Symlink php-fpm binary [Alpine family]
   file:
-    path: "/usr/sbin/php5-fpm"
-    src:  "/sbin/php-fpm"
+    path: "/usr/sbin/php-fpm"
+    src:  "/usr/bin/php-fpm"
     state: link
     owner: "root"
     group: "root"
-  when: ansible_os_family == 'RedHat'
+  when: ansible_os_family == 'Alpine'
+
+- name: Symlink php-fpm binary [Debian family]
+  file:
+    path: "/usr/sbin/php-fpm"
+    src:  "/usr/sbin/php5-fpm"
+    state: link
+    owner: "root"
+    group: "root"
+  when: ansible_os_family == 'Debian'
 
 - name: Remove default php-fpm logrotate
   file:
