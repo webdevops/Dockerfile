@@ -1,5 +1,18 @@
 ---
 
+- name: Get php version
+  command: "php -r 'echo phpversion();'"
+  changed_when: true
+  register: php_version_cmd
+  ignore_errors: true
+
+- name: Set php_version version
+  set_fact:
+     php_version: "{{php_version_cmd.stdout}}"
+
+- debug:
+    msg: "PHP-Version: {{php_version}}"
+
 - name: Set php pool file
   set_fact:
      php_pool_conf: www.conf
@@ -55,6 +68,18 @@
    - { key: 'php_admin_value[log_errors]', value: "on" }
    - { key: 'user',                        value: "{{ APPLICATION_USER }}" }
    - { key: 'group',                       value: "{{ APPLICATION_GROUP }}" }
+
+- name: Disable clear env in php-fpm pool
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: 'clear_env', value: "no" }
+  when: ( php_version | version_compare('5.4', 'eq') and php_version | version_compare('5.4.27', 'ge') ) or
+        ( php_version | version_compare('5.5', 'eq') and php_version | version_compare('5.5.11', 'ge') ) or
+        ( php_version | version_compare('5.6', 'ge') )
+
 
 - name: Disable php-fpm connection limit
   lineinfile:
