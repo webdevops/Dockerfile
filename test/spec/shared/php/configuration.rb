@@ -75,14 +75,6 @@ shared_examples 'php::cli::configuration::production' do
             its(:value) { should eq 256 }
         end
 
-        context php_config('opcache.revalidate_freq') do
-            its(:value) { should eq 0 }
-        end
-
-        context php_config('opcache.validate_timestamps') do
-            its(:value) { should eq 0 }
-        end
-
         context php_config('opcache.interned_strings_buffer') do
             its(:value) { should eq 16 }
         end
