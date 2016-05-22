@@ -1,0 +1,11 @@
+{{ docker.from("hhvm", "ubuntu-14.04") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentWeb() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ apache.ubuntu14(role='hhvm-apache') }}
+
+{{ docker.expose('80 443') }}

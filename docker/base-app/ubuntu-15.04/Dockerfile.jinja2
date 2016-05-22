@@ -1,0 +1,9 @@
+{{ docker.from("base", "ubuntu-15.04") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentApp() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ baseapp.ubuntu() }}

@@ -1,0 +1,25 @@
+---
+
+# Ignored on php7
+- name: Fix php xdebug module [Alpine family]
+  lineinfile:
+    dest:   '/etc/php/conf.d/xdebug.ini'
+    regexp: 'extension=xdebug.so'
+    line:   'zend_extension=xdebug.so'
+  when: ansible_distribution == 'Alpine'
+  ignore_errors: yes
+
+- name: Setup php.ini for development environment
+  lineinfile:
+    dest:   '/opt/docker/etc/php/php.webdevops.ini'
+    regexp: '^[\s;]*{{ item.variable }}[\s]*='
+    line:   '{{ item.variable }} = {{ item.value }}'
+  with_items:
+   - { variable: 'xdebug.remote_enable',           value: '1' }
+   - { variable: 'xdebug.remote_connect_back',     value: '1' }
+   - { variable: 'xdebug.idekey',                  value: 'docker' }
+   - { variable: 'xdebug.cli_color',               value: '1' }
+   - { variable: 'xdebug.max_nesting_level',       value: '1000' }
+   - { variable: 'xdebug.profiler_enable_trigger', value: '1000' }
+   - { variable: 'xdebug.profiler_output_dir',     value: '/tmp/debug/' }
+   - { variable: 'xhprof.output_dir',              value: '/tmp/debug/' }

@@ -23,6 +23,7 @@ shared_examples 'apache::modules' do
         its(:stdout) { should contain('setenvif_module') }
         its(:stdout) { should contain('ssl_module') }
         its(:stdout) { should contain('status_module') }
+        its(:stdout) { should contain('expires_module') }
 
         ## mpm module
         if (os[:family] == 'debian' and os[:version] == '7') or (os[:family] == 'ubuntu' and os[:version] == '12.04')

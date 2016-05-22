@@ -1,0 +1,11 @@
+{{ docker.from("php-dev", "alpine-3-php7") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentWeb() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ nginx.alpine('php-nginx php-nginx-dev') }}
+
+{{ docker.expose('80 443') }}

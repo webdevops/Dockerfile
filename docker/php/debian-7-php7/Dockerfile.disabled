@@ -3,9 +3,9 @@
 #++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base:debian-7
-MAINTAINER info@webdevops.io
+# <Macro general:version>
 
-ENV WEB_DOCUMENT_ROOT  /app
+# <Macro environment:web>
 
 # Install dotdeb
 RUN echo "deb http://packages.dotdeb.org wheezy all" >> /etc/apt/sources.list \

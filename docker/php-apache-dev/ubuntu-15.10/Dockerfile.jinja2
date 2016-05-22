@@ -1,0 +1,11 @@
+{{ docker.from("php-dev", "ubuntu-15.10") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentWeb() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ apache.ubuntu16('php-apache') }}
+
+{{ docker.expose('80 443') }}

@@ -1,0 +1,11 @@
+{{ docker.from("base-app", "debian-8") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentWeb() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ php7.debianDotDeb('jessie') }}
+
+{{ docker.expose('9000') }}

@@ -1,0 +1,10 @@
+{{ docker.from("php-apache", "ubuntu-14.04") }}
+
+{{ docker.version() }}
+
+ENV WEB_DOCUMENT_ROOT /app/web/
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+ONBUILD RUN composer create-project typo3/cms-base-distribution /app/
+ONBUILD VOLUME /app

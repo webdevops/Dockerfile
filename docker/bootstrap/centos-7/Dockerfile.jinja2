@@ -1,0 +1,9 @@
+{{ docker.fromOfficial("centos", "7") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentLang() }}
+
+{{ docker.add('baselayout.tar', '/') }}
+
+{{ bootstrap.centos() }}

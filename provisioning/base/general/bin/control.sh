@@ -20,74 +20,80 @@ case "$CONTROL_COMMAND" in
 
     ## main roles
     "provision.role")
-        provisionRoleAdd "provision.main.bootstrap"  "$1"
-        provisionRoleAdd "provision.main.build"      "$1"
-        provisionRoleAdd "provision.main.onbuild"    "$1"
-        provisionRoleAdd "provision.main.entrypoint" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag bootstrap --tag build --tag onbuild [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag bootstrap --tag build --tag onbuild --tag entrypoint "$1"
         ;;
 
     "provision.role.bootstrap")
-        provisionRoleAdd "provision.main.bootstrap" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag bootstrap [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag bootstrap "$1"
         ;;
 
     "provision.role.build")
-        provisionRoleAdd "provision.main.build" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag build [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag build "$1"
         ;;
 
     "provision.role.onbuild")
-        provisionRoleAdd "provision.main.onbuild" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag onbuild [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag onbuild "$1"
         ;;
 
     "provision.role.entrypoint")
-        provisionRoleAdd "provision.main.entrypoint" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag entrypoint [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag entrypoint "$1"
         ;;
 
     ## startup roles
     "provision.role.startup")
-        provisionRoleAdd "provision.startup.bootstrap"  "$1"
-        provisionRoleAdd "provision.startup.build"      "$1"
-        provisionRoleAdd "provision.startup.onbuild"    "$1"
-        provisionRoleAdd "provision.startup.entrypoint" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag bootstrap --tag build --tag onbuild --priority 50 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag bootstrap --tag build --tag onbuild --tag entrypoint  --priority 50 "$1"
         ;;
 
     "provision.role.startup.bootstrap")
-        provisionRoleAdd "provision.startup.bootstrap" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag bootstrap --priority 50 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag bootstrap --priority 50 "$1"
         ;;
 
     "provision.role.startup.build")
-        provisionRoleAdd "provision.startup.build" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag build --priority 50 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag build --priority 50 "$1"
         ;;
 
     "provision.role.startup.onbuild")
-        provisionRoleAdd "provision.startup.onbuild" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag onbuild --priority 50 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag onbuild --priority 50 "$1"
         ;;
 
     "provision.role.startup.entrypoint")
-        provisionRoleAdd "provision.startup.entrypoint" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag entrypoint --priority 50 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag entrypoint --priority 50 "$1"
         ;;
 
-    ## startup roles
+    ## finish roles
     "provision.role.finish")
-        provisionRoleAdd "provision.finish.bootstrap"  "$1"
-        provisionRoleAdd "provision.finish.build"      "$1"
-        provisionRoleAdd "provision.finish.onbuild"    "$1"
-        provisionRoleAdd "provision.finish.entrypoint" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag bootstrap --tag build --tag onbuild --priority 200 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag bootstrap --tag build --tag onbuild --tag entrypoint  --priority 200 "$1"
         ;;
 
     "provision.role.finish.bootstrap")
-        provisionRoleAdd "provision.finish.bootstrap" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag bootstrap --priority 200 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag bootstrap --priority 200 "$1"
         ;;
 
     "provision.role.finish.build")
-        provisionRoleAdd "provision.finish.build" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag build --priority 200 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag build --priority 200 "$1"
         ;;
 
     "provision.role.finish.onbuild")
-        provisionRoleAdd "provision.finish.onbuild" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag onbuild --priority 200 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag onbuild --priority 200 "$1"
         ;;
 
     "provision.role.finish.entrypoint")
-        provisionRoleAdd "provision.finish.entrypoint" "$1"
+        deprecationNotice " Please use >>/opt/docker/bin/proviation add --tag entrypoint --priority 200 [role]<< for adding provision roles"
+        /opt/docker/bin/provision add --tag entrypoint --priority 200 "$1"
         ;;
 
     ## ------------------------------------------

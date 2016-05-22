@@ -1,0 +1,12 @@
+---
+
+- name: Init ssh privilege separation directory
+  file:
+    path: "/var/run/sshd"
+    state: directory
+    mode:  0755
+    owner: "root"
+    group: "root"
+    recurse: yes
+
+
