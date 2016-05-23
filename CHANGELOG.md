@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
 ## [1.0.0] - upcoming
+
+## [0.50.0] - 2016-05-23
 ### Changed
 - Improve image sizes (backported to 0.23.0 due to build issues)
 - Improved provisioning system with new python wrapper
