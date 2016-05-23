@@ -5,5 +5,5 @@
 #############################################
 
 ## Start services
-startSupervisord
+exec /opt/docker/bin/service.d/supervisor.sh
 

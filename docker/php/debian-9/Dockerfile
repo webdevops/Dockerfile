@@ -1,51 +1,51 @@
-#++++++++++++++++++++++++++++++++++++++
-# Debian 9 PHP Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/php:debian-9
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/base-app:debian-9
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=6
-LABEL io.webdevops.version=0.23.0
+LABEL io.webdevops.layout=7
+LABEL io.webdevops.version=0.50.0
 
-# Install tools
-RUN /usr/local/bin/apt-install \
-        imagemagick \
-        graphicsmagick
+ENV WEB_DOCUMENT_ROOT  /app
+ENV WEB_DOCUMENT_INDEX index.php
+ENV WEB_ALIAS_DOMAIN   *.vm
 
-# Install php
-RUN /usr/local/bin/apt-install \
-        php5-cli \
-        php5-fpm \
-        php5-json \
-        php5-intl \
-        php5-curl \
-        php5-mysqlnd \
-        #php-xdebug \
-        php5-mcrypt \
-        php5-gd \
-        php5-sqlite \
-        php5-xmlrpc \
-        php5-xsl \
-        php5-geoip \
-        php5-ldap \
-        php5-memcache \
-        #php-memcached \
-        php5-imagick \
-        #php5-redis \
-        php-pear \
-    && pear channel-update pear.php.net \
-    && pear upgrade-all \
-    && pear config-set auto_discover 1 \
-    && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
-    && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
-
-# Deploy scripts/configurations
 COPY conf/ /opt/docker/
-RUN bash /opt/docker/bin/control.sh provision.role.bootstrap webdevops-php \
-    && bash /opt/docker/bin/bootstrap.sh
+
+# Install php environment
+RUN /usr/local/bin/apt-install \
+        # Install tools
+        imagemagick \
+        graphicsmagick \
+        # Install php (cli/fpm)
+        php7.0-cli \
+        php7.0-fpm \
+        php7.0-json \
+        php7.0-intl \
+        php7.0-curl \
+        php7.0-mysql \
+        php7.0-mcrypt \
+        php7.0-gd \
+        php7.0-sqlite3 \
+        php7.0-ldap \
+        php7.0-opcache \
+        php7.0-soap \
+        php7.0-zip \
+        php7.0-mbstring \
+        php7.0-bcmath \
+        php7.0-xmlrpc \
+        php7.0-xsl \
+        php7.0-bz2 \
+        php-redis \
+        php-memcache \
+        php-memcached \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
+    && /opt/docker/bin/bootstrap.sh
+
 
 EXPOSE 9000
-
-CMD ["supervisord"]

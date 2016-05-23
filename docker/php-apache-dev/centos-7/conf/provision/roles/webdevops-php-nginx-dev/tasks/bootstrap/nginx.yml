@@ -1,0 +1,9 @@
+---
+
+- name: Disable sendfile for nginx
+  lineinfile:
+    dest:   /etc/nginx/nginx.conf
+    regexp: '[\s;]*{{ item.key }}[\s]*'
+    line:   '{{ item.key }} {{ item.value }};'
+  with_items:
+   - { key: 'sendfile', value: "off" }

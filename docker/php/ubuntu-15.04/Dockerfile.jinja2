@@ -1,0 +1,11 @@
+{{ docker.from("base-app", "ubuntu-15.04") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentWeb() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ php5.ubuntu14() }}
+
+{{ docker.expose('9000') }}

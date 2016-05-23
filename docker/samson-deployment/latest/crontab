@@ -1,0 +1,8 @@
+# m h  dom mon dow  user  command
+
+# Self update packages
+15  5    *   *   *  root  composer self-update &> /dev/null
+20  5    *   *   *  root  dep self-update &> /dev/null
+
+# Maintenance and cleanup
+30  5    *   *   *  root  /opt/docker/bin/samson-cleanup-db.sh &> /dev/null

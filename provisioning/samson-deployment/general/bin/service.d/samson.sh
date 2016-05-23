@@ -9,10 +9,9 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 # Vacuum database
 #############################
 
-find /app/db/ -iname "*.sqlite3" | while read SQLITE_DATABSE; do
-    echo "Running VACUUM on $SQLITE_DATABSE"
-    sqlite3 "$SQLITE_DATABSE" "VACUUM;"
-done
+if [[ -x "/opt/docker/bin/samson-cleanup-db.sh" ]]; then
+    /opt/docker/bin/samson-cleanup-db.sh
+fi
 
 sleep 1
 

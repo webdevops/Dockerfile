@@ -16,6 +16,14 @@ $packageVersions = {}
 $packageVersions[:ansible]         = %r!ansible 2.([0-9]\.?)+!
 $packageVersions[:ansiblePlaybook] = %r!ansible-playbook 2.([0-9]\.?)+!
 
+$testConfiguration = {}
+
+if ['redhat', 'alpine'].include?(os[:family])
+    $testConfiguration[:ansiblePath] = "/usr/bin"
+else
+    $testConfiguration[:ansiblePath] = "/usr/local/bin"
+end
+
 
 def wait_retry(time, increment = 1, elapsed_time = 0, &block)
   begin

@@ -1,9 +1,11 @@
-#++++++++++++++++++++++++++++++++++++++
-# Ubuntu 14.04 Ansible Docker container
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/ansible:ubuntu-14.04
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
 
 FROM webdevops/bootstrap:ubuntu-14.04
+
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=6
-LABEL io.webdevops.version=0.23.0
+LABEL io.webdevops.layout=7
+LABEL io.webdevops.version=0.50.0

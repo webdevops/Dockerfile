@@ -1,0 +1,11 @@
+{{ docker.from("php-dev", "debian-9") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentWeb() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ apache.debian9('php-apache') }}
+
+{{ docker.expose('80 443') }}

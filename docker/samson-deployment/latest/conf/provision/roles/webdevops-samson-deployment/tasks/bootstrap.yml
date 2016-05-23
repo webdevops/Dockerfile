@@ -1,5 +1,5 @@
 ---
-- name: Fix rights
+- name: Fix permissions
   file:
     path: "/app"
     owner: "{{ APPLICATION_USER }}"
@@ -20,3 +20,11 @@
     dest: '/etc/nginx/sites-available/default'
     state: link
     force: yes
+
+- name: Fix permissions of public and asset files
+  file:
+    path: "/app/public"
+    owner: "{{ APPLICATION_USER }}"
+    group: "{{ APPLICATION_GROUP }}"
+    mode: u=rwX,g=rX,o=rX
+    recurse: yes

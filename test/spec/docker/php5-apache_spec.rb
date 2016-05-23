@@ -11,10 +11,10 @@ describe "Dockerfile" do
     include_examples 'collection::bootstrap'
     include_examples 'collection::base'
     include_examples 'collection::base-app'
-    include_examples 'collection::php5'
+    include_examples 'collection::php5::production'
     include_examples 'collection::php-fpm5'
     include_examples 'collection::php-fpm5::local-only'
     include_examples 'collection::apache'
-    include_examples 'collection::php-fpm5::webserver-test'
+    include_examples 'collection::php-fpm5::webserver-test::production'
 
 end

@@ -9,3 +9,10 @@ shared_examples 'misc::imagemagick' do
         expect(file("/usr/bin/convert")).to be_executable
     end
 end
+
+
+shared_examples 'misc::graphviz' do
+    it "should include graphviz" do
+        expect(file("/usr/bin/dot")).to be_executable
+    end
+end

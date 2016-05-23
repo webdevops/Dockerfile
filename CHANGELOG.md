@@ -2,6 +2,23 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.0.0] - upcoming
+
+## [0.50.0] - 2016-05-23
+### Changed
+- Improve image sizes (backported to 0.23.0 due to build issues)
+- Improved provisioning system with new python wrapper
+- Modularized apache and nginx configuration
+- Dockerfile are now generated via jinja2 files
+- webdevops/storage is now using busybox
+- Latest tag is now ubuntu 16.04
+- Set clear_env to no for php-fpm (if possible)
+### Added
+- Added ubuntu 16.04 images (eg. php, hhvm)
+- Added webdevops/php-dev webdevops/php-apache-dev webdevops/php-nginx-dev (xdebug and disabled caching for webserver) 
+- Added webdevops/varnish
+- Added mod_expire for webdevops/apache
+
 ## [0.23.0] - 2016-04-03
 ### Changed
 - Enabled alpine-3-php7 images

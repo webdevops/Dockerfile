@@ -1,6 +1,6 @@
 ARGS = $(filter-out $@,$(MAKECMDGOALS))
 MAKEFLAGS += --silent
-.PHONY: test
+.PHONY: test documentation
 
 DOCKER_REPOSITORY=`cat DOCKER_REPOSITORY`
 DOCKER_TAG_LATEST=`cat DOCKER_TAG_LATEST`
@@ -8,17 +8,18 @@ DOCKER_TAG_LATEST=`cat DOCKER_TAG_LATEST`
 list:
 	sh -c "echo; $(MAKE) -p no_targets__ | awk -F':' '/^[a-zA-Z0-9][^\$$#\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);for(i in A)print A[i]}' | grep -v '__\$$' | grep -v 'Makefile'| sort"
 
-all:       bootstrap base web php hhvm service misc applications
+all:       provision bootstrap base web php php-dev hhvm service misc applications
 build:     all
 
 bootstrap: webdevops/bootstrap webdevops/ansible
 base:      webdevops/base webdevops/base-app webdevops/storage
 service:   webdevops/ssh webdevops/vsftp webdevops/postfix
 
-php:       webdevops/php webdevops/php-apache webdevops/php-nginx
+php:       webdevops/php webdevops/php-apache webdevops/php-nginx 
+php-dev:   webdevops/php-dev webdevops/php-apache-dev webdevops/php-nginx-dev
 hhvm:      webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
-web:       webdevops/apache webdevops/nginx
+web:       webdevops/apache webdevops/nginx webdevops/varnish
 
 applications: webdevops/typo3 webdevops/piwik
 
@@ -31,6 +32,7 @@ test-hub-images:
 	DOCKER_PULL=1 make test
 
 provision:
+	python bin/buildDockerfile.py --template=template/ --dockerfile=docker/
 	bash bin/provision.sh
 
 publish:    dist-update rebuild test push
@@ -67,6 +69,9 @@ rebuild:
 push:
 	BUILD_MODE=push make all
 
+documentation:
+	docker run -t -i --rm -p 8080:8000 -v "$$(pwd)/documentation/docs/:/opt/docs" webdevops/sphinx sphinx-autobuild --poll -H 0.0.0.0 /opt/docs html
+
 webdevops/bootstrap:
 	bash bin/build.sh bootstrap "${DOCKER_REPOSITORY}/bootstrap" "${DOCKER_TAG_LATEST}"
 
@@ -82,6 +87,9 @@ webdevops/base-app:
 webdevops/php:
 	bash bin/build.sh php "${DOCKER_REPOSITORY}/php" "${DOCKER_TAG_LATEST}"
 
+webdevops/php-dev:
+	bash bin/build.sh php-dev "${DOCKER_REPOSITORY}/php-dev" "${DOCKER_TAG_LATEST}"
+
 webdevops/apache:
 	bash bin/build.sh apache "${DOCKER_REPOSITORY}/apache" "${DOCKER_TAG_LATEST}"
 
@@ -91,8 +99,14 @@ webdevops/nginx:
 webdevops/php-apache:
 	bash bin/build.sh php-apache "${DOCKER_REPOSITORY}/php-apache" "${DOCKER_TAG_LATEST}"
 
+webdevops/php-apache-dev:
+	bash bin/build.sh php-apache-dev "${DOCKER_REPOSITORY}/php-apache-dev" "${DOCKER_TAG_LATEST}"
+
 webdevops/php-nginx:
 	bash bin/build.sh php-nginx "${DOCKER_REPOSITORY}/php-nginx" "${DOCKER_TAG_LATEST}"
+
+webdevops/php-nginx-dev:
+	bash bin/build.sh php-nginx-dev "${DOCKER_REPOSITORY}/php-nginx-dev" "${DOCKER_TAG_LATEST}"
 
 webdevops/hhvm:
 	bash bin/build.sh hhvm "${DOCKER_REPOSITORY}/hhvm" "${DOCKER_TAG_LATEST}"
@@ -129,3 +143,6 @@ webdevops/samson-deployment:
 
 webdevops/sphinx:
 	bash bin/build.sh sphinx "${DOCKER_REPOSITORY}/sphinx" "${DOCKER_TAG_LATEST}"
+
+webdevops/varnish:
+	bash bin/build.sh varnish "${DOCKER_REPOSITORY}/varnish" "${DOCKER_TAG_LATEST}"

@@ -14,6 +14,10 @@ if [ -z "$FAST" ]; then
     FAST=1
 fi
 
+if [ -z "$DEBUG" ]; then
+    DEBUG=0
+fi
+
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
@@ -34,6 +38,8 @@ SLEEP_TIME=1
 SCRIPT_DIR="$(dirname $($READLINK -f "$0"))"
 BASE_DIR="$(dirname "$SCRIPT_DIR")"
 COLUMNS="$(tput cols)"
+
+DOCKERFILE_EXTRA=""
 
 source "${BASE_DIR}/bin/functions.sh"
 
@@ -90,11 +96,18 @@ function runTestForTag() {
 
     ## Build Dockerfile
     echo "FROM $DOCKER_IMAGE_WITH_TAG
-COPY conf/ /
-    " > $DOCKERFILE
+$DOCKERFILE_EXTRA
+COPY conf/ /" > $DOCKERFILE
 
-    # Check if docker image is available, but don't count as real test
-    OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "spec/image.rb" > /dev/null
+
+    if [ "${DEBUG}" -eq 1 ]; then
+        echo "DOCKERFILE:"
+        echo "-----------"
+        echo ">>>"
+        cat "$DOCKERFILE" | sed 's/^/     /'
+        echo ">>>"
+        echo ""
+    fi
 
     if [ "${FAST}" -eq 1 ]; then
         LOGFILE="$(mktemp /tmp/docker.test.XXXXXXXXXX)"
@@ -102,7 +115,7 @@ COPY conf/ /
         echo ">> Starting test of ${DOCKER_IMAGE_WITH_TAG}"
 
         # Run testsuite for docker image
-        DOCKERFILE="$DOCKERFILE" OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH" &> $LOGFILE &
+        DOCKERFILE="$DOCKERFILE" OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern " spec/image.rb,$SPEC_PATH" &> $LOGFILE &
 
         addBackgroundPidToList "Test '$DOCKER_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]" "$LOGFILE"
         sleep "$SLEEP_TIME"
@@ -110,7 +123,7 @@ COPY conf/ /
         echo ">> Testing '$DOCKER_TAG' with spec '$(basename "$SPEC_PATH" _spec.rb)' [family: $OS_FAMILY, version: $OS_VERSION]"
 
         # Run testsuite for docker image
-        DOCKERFILE="$DOCKERFILE" OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern "$SPEC_PATH"
+        DOCKERFILE="$DOCKERFILE" OS_FAMILY="$OS_FAMILY" OS_VERSION="$OS_VERSION" DOCKER_IMAGE="$DOCKER_IMAGE_WITH_TAG" bundle exec rspec --pattern " spec/image.rb,$SPEC_PATH"
     fi
 }
 
@@ -155,18 +168,21 @@ function setSpecTest() {
 function setupTestEnvironment() {
     echo ""
     printRepeatedChar "="
-    echo "=== Testing docker image webdevops/$1"
+    echo "=== Testing docker image $DOCKER_REPOSITORY/$1"
     printRepeatedChar "="
     echo ""
 
     ## Set docker image
-    DOCKER_IMAGE="webdevops/$1"
+    DOCKER_IMAGE="$DOCKER_REPOSITORY/$1"
 
     ## Set test spec path
     setSpecTest "$1"
 
     ## Set default environment
     setEnvironmentOsFamily "ubuntu"
+
+    ## Reset custom docker environment settings
+    DOCKERFILE_CONF=""
 }
 
 function printRepeatedChar() {
@@ -188,6 +204,7 @@ initEnvironment
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
     OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -215,6 +232,7 @@ initEnvironment
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
     OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -270,6 +288,7 @@ initEnvironment
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
     OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -302,7 +321,6 @@ initEnvironment
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
-    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -310,7 +328,6 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
-    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
@@ -321,20 +338,72 @@ initEnvironment
     # PHP 7
     ##########
 
-    setEnvironmentOsFamily "ubuntu"
     setSpecTest "php7"
-    OS_VERSION="16.04" runTestForTag "ubuntu-16.04-php7"
+
+    setEnvironmentOsFamily "ubuntu"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "debian"
-    setSpecTest "php7"
     OS_VERSION="8" runTestForTag "debian-8-php7"
-    OS_VERSION="testing" runTestForTag "debian-9-php7"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3-php7"
 
     waitForTestRun
 }
+
+#######################################
+# webdevops/php-dev
+#######################################
+
+[[ $(checkTestTarget php-dev) ]] && {
+    setupTestEnvironment "php-dev"
+
+    ##########
+    # PHP 5
+    ##########
+
+    setSpecTest "php5-dev"
+
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
+
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "alpine-3"
+
+    waitForTestRun
+
+    ##########
+    # PHP 7
+    ##########
+
+    setSpecTest "php7-dev"
+
+    setEnvironmentOsFamily "ubuntu"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
+    OS_VERSION="testing" runTestForTag "debian-9"
+
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "alpine-3-php7"
+
+    waitForTestRun
+}
+
 
 #######################################
 # webdevops/apache
@@ -348,6 +417,7 @@ initEnvironment
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
     OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -375,6 +445,7 @@ initEnvironment
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
     OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -407,7 +478,6 @@ initEnvironment
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
-    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -415,7 +485,6 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
-    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
@@ -428,12 +497,62 @@ initEnvironment
 
     setEnvironmentOsFamily "ubuntu"
     setSpecTest "php7-apache"
-    OS_VERSION="16.04" runTestForTag "ubuntu-16.04-php7"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "debian"
-    setSpecTest "php7-apache"
     OS_VERSION="8" runTestForTag "debian-8-php7"
-    OS_VERSION="testing" runTestForTag "debian-9-php7"
+    OS_VERSION="testing" runTestForTag "debian-9"
+
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "alpine-3-php7"
+
+    waitForTestRun
+}
+
+
+#######################################
+# webdevops/php-apache-dev
+#######################################
+
+[[ $(checkTestTarget php-apache-dev) ]] && {
+    setupTestEnvironment "php-apache-dev"
+
+    ##########
+    # PHP 5
+    ##########
+
+    setSpecTest "php5-apache-dev"
+
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
+
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "alpine-3"
+
+    waitForTestRun
+
+    ##########
+    # PHP 7
+    ##########
+    setSpecTest "php7-apache-dev"
+
+    setEnvironmentOsFamily "ubuntu"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3-php7"
@@ -458,7 +577,6 @@ initEnvironment
     OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
     OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
     OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
-    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
@@ -466,7 +584,6 @@ initEnvironment
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
     OS_VERSION="8" runTestForTag "debian-8"
-    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
@@ -477,14 +594,65 @@ initEnvironment
     # PHP 7
     ##########
 
-    setEnvironmentOsFamily "ubuntu"
     setSpecTest "php7-nginx"
-    OS_VERSION="16.04" runTestForTag "ubuntu-16.04-php7"
+
+    setEnvironmentOsFamily "ubuntu"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "debian"
-    setSpecTest "php7-nginx"
     OS_VERSION="8" runTestForTag "debian-8-php7"
-    OS_VERSION="testing" runTestForTag "debian-9-php7"
+    OS_VERSION="testing" runTestForTag "debian-9"
+
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "alpine-3-php7"
+
+    waitForTestRun
+}
+
+
+#######################################
+# webdevops/php-nginx-dev
+#######################################
+
+[[ $(checkTestTarget php-nginx-dev) ]] && {
+    setupTestEnvironment "php-nginx-dev"
+
+    ##########
+    # PHP 5
+    ##########
+
+    setSpecTest "php5-nginx-dev"
+
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
+
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "alpine-3"
+
+    waitForTestRun
+
+    ##########
+    # PHP 7
+    ##########
+    setSpecTest "php7-nginx-dev"
+    
+    setEnvironmentOsFamily "ubuntu"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
+    OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3-php7"
@@ -498,7 +666,11 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm) ]] && {
     setupTestEnvironment "hhvm"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
+
 
     waitForTestRun
 }
@@ -509,6 +681,9 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm-apache) ]] && {
     setupTestEnvironment "hhvm-apache"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     waitForTestRun
@@ -521,6 +696,9 @@ initEnvironment
 
 [[ $(checkTestTarget hhvm-nginx) ]] && {
     setupTestEnvironment "hhvm-nginx"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     waitForTestRun
@@ -571,16 +749,48 @@ initEnvironment
 }
 
 #######################################
+# webdevops/varnish
+#######################################
+
+[[ $(checkTestTarget varnish) ]] && {
+    setupTestEnvironment "varnish"
+
+    DOCKERFILE_EXTRA="
+ENV VARNISH_BACKEND_HOST \"google.com\"
+"
+
+    setEnvironmentOsFamily "alpine"
+    OS_VERSION="3" runTestForTag "latest"
+
+    waitForTestRun
+}
+
+#######################################
 # webdevops/sphinx
 #######################################
 
 [[ $(checkTestTarget sphinx) ]] && {
     setupTestEnvironment "sphinx"
     setEnvironmentOsFamily "alpine"
+
     OS_VERSION="3" runTestForTag "latest"
 
     waitForTestRun
 }
+
+#######################################
+# webdevops/samson-deployment
+#######################################
+
+[[ $(checkTestTarget samson-deployment) ]] && {
+    setupTestEnvironment "samson-deployment"
+    setEnvironmentOsFamily "debian"
+
+    OS_VERSION="8" runTestForTag "latest"
+
+    waitForTestRun
+}
+
 
 echo ""
 echo " >>> finished, all tests PASSED <<<"

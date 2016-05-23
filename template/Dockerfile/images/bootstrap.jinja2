@@ -1,0 +1,193 @@
+{% macro alpine() -%}
+# Init bootstrap (and install ansible)
+RUN set -x \
+    # Fix root terminal
+    && echo "export TERM=xterm" >> /root/.bashrc \
+    # Add testing
+    && echo http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
+    # System update
+    && /usr/local/bin/apk-upgrade \
+    # Install base stuff
+    && /usr/local/bin/apk-install \
+        bash \
+        shadow \
+        ca-certificates \
+    # Install ansible
+    && /usr/local/bin/apk-install \
+        python \
+        python-dev \
+        py-setuptools \
+        py-crypto \
+        py-pip \
+        py-cparser \
+        py-cryptography \
+        py-markupsafe \
+        py-cffi \
+        py-yaml \
+        py-jinja2 \
+        py-paramiko \
+    && pip install --upgrade pip \
+    && hash -r \
+    && pip install ansible \
+    && chmod 750 /usr/bin/ansible* \
+    # Cleanup
+    && apk del python-dev
+{%- endmacro %}
+
+
+
+{% macro centos() -%}
+# Init bootstrap (and install ansible)
+RUN set -x \
+    # Fix root terminal
+    && echo "export TERM=xterm" >> /root/.bashrc \
+    # System update
+    && /usr/local/bin/yum-upgrade \
+    # Install ansible
+    && /usr/local/bin/yum-install \
+        epel-release \
+        PyYAML \
+        python-jinja2 \
+        python-httplib2 \
+        python-keyczar \
+        python-paramiko \
+        python-setuptools \
+        python-setuptools-devel \
+    && easy_install pip \
+    && pip install --upgrade pip \
+    && hash -r \
+    && pip install ansible \
+    && chmod 750 /usr/bin/ansible*
+{%- endmacro %}
+
+
+{% macro debian(distribution) -%}
+# Init bootstrap (and install ansible)
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && set -x \
+    # Fix root terminal
+    && echo "export TERM=xterm" >> /root/.bashrc \
+    # Enable non-free
+    && sed -ri 's/(deb.*\/debian {{ distribution }} main)/\1 contrib non-free /' -- /etc/apt/sources.list \
+    # System updatei
+    && /usr/local/bin/apt-upgrade \
+    # Base stuff
+    && /usr/local/bin/apt-install \
+        lsb-release \
+        ca-certificates \
+        locales \
+    # Generate base locale
+    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+    && locale-gen \
+    && /usr/local/bin/apt-install \
+        # Install ansible
+        python-minimal \
+        python-setuptools \
+        python-pip \
+        python-paramiko \
+        python-jinja2 \
+        python-dev \
+        libffi-dev \
+        libssl-dev \
+        build-essential \
+    && pip install --upgrade pip \
+    && hash -r \
+    && pip install ansible \
+    && chmod 750 /usr/local/bin/ansible* \
+    # Cleanup
+    && apt-get purge -y -f --force-yes \
+        python-dev \
+        build-essential \
+        libssl-dev \
+        libffi-dev \
+    && apt-get autoremove -y -f \
+    && apt-get clean -y
+{%- endmacro %}
+
+
+{% macro ubuntu12() -%}
+# Init bootstrap (and install ansible)
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && set -x \
+    # Add multiverse
+    && echo "deb http://archive.ubuntu.com/ubuntu/ precise-security multiverse" >> /etc/apt/sources.list \
+    && echo "deb-src http://archive.ubuntu.com/ubuntu/ precise-security multiverse" >> /etc/apt/sources.list \
+    && echo "deb http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
+    && echo "deb-src http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
+    # Fix root terminal
+    && echo "export TERM=xterm" >> /root/.bashrc \
+    # Generate base locale
+    && locale-gen en_US.UTF-8 \
+    # System update
+    && /usr/local/bin/apt-upgrade \
+    # Install base stuff
+    && /usr/local/bin/apt-install \
+        python-software-properties \
+        lsb-release \
+        ca-certificates \
+        # Install ansible
+        python-minimal \
+        python-setuptools \
+        python-pip \
+        python-paramiko \
+        python-jinja2 \
+        python-dev \
+        libffi-dev \
+        libssl-dev \
+        build-essential \
+    && pip install --upgrade pip \
+    && hash -r \
+    && pip install ansible \
+    && chmod 750 /usr/local/bin/ansible* \
+    # Cleanup
+    && apt-get purge -y -f --force-yes \
+        python-dev \
+        build-essential \
+        libssl-dev \
+        libffi-dev \
+    && apt-get autoremove -y -f \
+    && apt-get clean -y
+{%- endmacro %}
+
+
+{% macro ubuntu() -%}
+# Init bootstrap (and install ansible)
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && set -x \
+    # Fix root terminal
+    && echo "export TERM=xterm" >> /root/.bashrc \
+    # Generate base locale
+    && locale-gen en_US.UTF-8 \
+    # System update
+    && /usr/local/bin/apt-upgrade \
+    # Install base stuff
+    && /usr/local/bin/apt-install \
+        software-properties-common \
+        lsb-release \
+        ca-certificates \
+    && apt-add-repository multiverse \
+    # Install ansible
+    && /usr/local/bin/apt-install \
+        python-minimal \
+        python-setuptools \
+        python-pip \
+        python-paramiko \
+        python-jinja2 \
+        python-dev \
+        libffi-dev \
+       	libssl-dev \
+        build-essential \
+    && pip install --upgrade pip \
+    && hash -r \
+    && pip install ansible \
+    && chmod 750 /usr/local/bin/ansible* \
+    # Cleanup
+    && apt-get purge -y -f --force-yes \
+        python-dev \
+        build-essential \
+        libssl-dev \
+        libffi-dev \
+    && apt-get autoremove -y -f \
+    && apt-get clean -y
+{%- endmacro %}
+

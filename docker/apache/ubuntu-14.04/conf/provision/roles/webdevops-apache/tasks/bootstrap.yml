@@ -65,12 +65,13 @@
     line:   '{{ item.prefix }}{{ item.line }}'
   with_items:
    - { line: 'LoadModule mpm_prefork_module modules/mod_mpm_prefork.so', prefix: "#" }
-   - { line: 'LoadModule mpm_event_module modules/mod_mpm_event.so',   prefix: "" }
-   - { line: 'LoadModule deflate_module modules/mod_deflate.so',   prefix: "" }
-   - { line: 'LoadModule rewrite_module modules/mod_rewrite.so',   prefix: "" }
-   - { line: 'LoadModule logio_module modules/mod_logio.so',   prefix: "" }
-   - { line: 'LoadModule slotmem_shm_module modules/mod_slotmem_shm.so',   prefix: "" }
-   - { line: 'LoadModule actions_module modules/mod_actions.so',   prefix: "" }
+   - { line: 'LoadModule mpm_event_module modules/mod_mpm_event.so',     prefix: "" }
+   - { line: 'LoadModule deflate_module modules/mod_deflate.so',         prefix: "" }
+   - { line: 'LoadModule rewrite_module modules/mod_rewrite.so',         prefix: "" }
+   - { line: 'LoadModule logio_module modules/mod_logio.so',             prefix: "" }
+   - { line: 'LoadModule slotmem_shm_module modules/mod_slotmem_shm.so', prefix: "" }
+   - { line: 'LoadModule actions_module modules/mod_actions.so',         prefix: "" }
+   - { line: 'LoadModule expires_module modules/mod_expires.so',         prefix: "" }
   when: ansible_os_family == 'Alpine'
 
 - name: Fix ssl support [Alpine family]

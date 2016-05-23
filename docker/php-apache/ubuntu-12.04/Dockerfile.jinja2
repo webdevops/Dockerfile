@@ -1,0 +1,11 @@
+{{ docker.from("php", "ubuntu-12.04") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentWeb() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ apache.ubuntu12('php-apache') }}
+
+{{ docker.expose('80 443') }}

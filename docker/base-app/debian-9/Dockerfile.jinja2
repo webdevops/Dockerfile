@@ -1,0 +1,9 @@
+{{ docker.from("base", "debian-9") }}
+
+{{ docker.version() }}
+
+{{ docker.environmentApp() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ baseapp.debian() }}
