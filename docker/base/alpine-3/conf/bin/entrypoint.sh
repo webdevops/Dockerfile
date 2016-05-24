@@ -13,14 +13,16 @@ TASK="$(echo $1| sed 's/[^-_a-zA-Z0-9]*//g')"
 
 source /opt/docker/bin/config.sh
 
-rootCheck
+if [ "$(/usr/bin/whoami)" == "root" ]; then
+    # Only run provision if user is root
 
-if [ "$TASK" == "supervisord" -o "$TASK" == "noop" ]; then
-    # Visible provisioning
-    runProvisionEntrypoint
-else
-    # Hidden provisioning
-    runProvisionEntrypoint  > /dev/null
+    if [ "$TASK" == "supervisord" -o "$TASK" == "noop" ]; then
+        # Visible provisioning
+        runProvisionEntrypoint
+    else
+        # Hidden provisioning
+        runProvisionEntrypoint  > /dev/null
+    fi
 fi
 
 #############################

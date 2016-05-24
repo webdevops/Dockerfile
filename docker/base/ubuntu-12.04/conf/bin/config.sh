@@ -12,7 +12,7 @@ PROVISION_REGISTRY_PATH="/opt/docker/etc/.registry"
 function rootCheck() {
     # Root check
     if [ "$(/usr/bin/whoami)" != "root" ]; then
-        echo "[ERROR] Must be run as root"
+        echo "[ERROR] $* must be run as root"
         exit 1
     fi
 }
