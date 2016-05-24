@@ -4,6 +4,12 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+
+## [0.50.1] - 2016-05-24
+### Changed
+- Fixed required root rights for entrypoint, provisioning is now only running when entrypoint is entered with root
+- Modularized service.d scripts (will include servide.d/$serv.d/*.sh before execution)
+
 ## [0.50.0] - 2016-05-23
 ### Changed
 - Improve image sizes (backported to 0.23.0 due to build issues)
