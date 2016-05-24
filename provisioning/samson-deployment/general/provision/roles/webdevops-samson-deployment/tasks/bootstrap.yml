@@ -1,4 +1,11 @@
 ---
+- name: Add application to docker group
+  user:
+    name:  "{{ APPLICATION_USER }}"
+    group: "{{ APPLICATION_GROUP }}"
+    groups: "docker"
+    append: yes
+
 - name: Fix permissions
   file:
     path: "/app"

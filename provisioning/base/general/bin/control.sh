@@ -7,7 +7,7 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 
 source /opt/docker/bin/config.sh
 
-rootCheck
+rootCheck "$0"
 
 CONTROL_COMMAND="$1"
 shift
