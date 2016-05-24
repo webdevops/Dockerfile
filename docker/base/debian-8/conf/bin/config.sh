@@ -2,9 +2,6 @@
 
 shopt -s nullglob
 
-PROVISION_REGISTRY_PATH="/opt/docker/etc/.registry"
-PROVISION_REGISTRY_PATH="/opt/docker/etc/.registry"
-
 ###
  # Check if current user is root
  #
@@ -57,6 +54,19 @@ function replaceTextInFile() {
 
 
 ###
+ # Include script directory text inside a file
+ #
+ # $1 -> path
+ #
+ ##
+function includeScriptDir() {
+    for FILE in "$1"/*.sh; do
+        # run custom scripts, only once
+        . "$FILE"
+    done
+}
+
+###
  # Show deprecation notice
  #
  ##
@@ -106,9 +116,6 @@ function runProvisionBootstrap() {
     done
 
     runDockerProvision bootstrap
-
-    ## Reset bootstrap provision list (prevent re-run)
-    rm -f ${PROVISION_REGISTRY_PATH}/provision.*.bootstrap
 }
 
 ###
@@ -128,10 +135,7 @@ function runProvisionBuild() {
  # Run "onbuild" provisioning
  ##
 function runProvisionOnBuild() {
-    for FILE in /opt/docker/provision/onbuild.d/*.sh; do
-        # run custom scripts
-        . "$FILE"
-    done
+    includeScriptDir "/opt/docker/provision/onbuild.d"
 
     runDockerProvision onbuild
 }
@@ -140,47 +144,11 @@ function runProvisionOnBuild() {
  # Run "entrypoint" provisioning
  ##
 function runProvisionEntrypoint() {
-    for FILE in /opt/docker/provision/entrypoint.d/*.sh; do
-        # run custom scripts
-        . "$FILE"
-    done
+    includeScriptDir "/opt/docker/provision/entrypoint.d"
 
     runDockerProvision entrypoint
 }
 
-###
- # Add role to provision registry
- #
- # $1 -> registry type (bootstrap, onbuild, entrypoint...)
- # $2 -> role
- #
- ##
-function provisionRoleAdd() {
-    PROVISION_FILE="${PROVISION_REGISTRY_PATH}/$1"
-    PROVISION_ROLE="$2"
-
-    mkdir -p -- "${PROVISION_REGISTRY_PATH}"
-    touch -- "${PROVISION_FILE}"
-
-    echo "${PROVISION_ROLE}" >> "${PROVISION_FILE}"
-}
-
-###
- # Build list of roles for this registry provision type (playbook building)
- #
- # $1 -> registry type (bootstrap, onbuild, entrypoint...)
- #
- ##
-function buildProvisionRoleList() {
-    PROVISION_FILE="${PROVISION_REGISTRY_PATH}/$1"
-
-    if [ -s "${PROVISION_FILE}" ]; then
-        # Add registered roles
-        for ROLE in $(cat "$PROVISION_FILE"); do
-            echo "    - { role: \"$ROLE\" }"
-        done
-    fi
-}
 
 ###
  # Run docker provisioning with dyniamic playbook generation
