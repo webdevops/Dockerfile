@@ -34,3 +34,36 @@ For customization just add your shell scripts into these directories for the sim
 
 Ansible provision
 -----------------
+
+For Ansible the provision events are available as tags. The roles are located inside ``/opt/docker/provision/roles/``
+and must be registred with the provision system:
+
+.. code-block:: bash
+
+    /opt/docker/bin/provision add --tag bootstrap my-own-role
+
+
+Multiple tags can be defined with multiple ``--tag`` options:
+
+.. code-block:: bash
+
+    /opt/docker/bin/provision add --tag bootstrap --tag build my-own-role
+
+There is a pritory system for roles in which order they should be executed, default priority is 100:
+
+.. code-block:: bash
+
+    ## run before
+    /opt/docker/bin/provision add --tag bootstrap --priority 40 my-own-role-first
+
+    ## run with normal priority
+    /opt/docker/bin/provision add --tag bootstrap my-own-role
+
+    ## run after
+    /opt/docker/bin/provision add --tag bootstrap --priority 200 my-own-role-last
+
+It's also possible to run one role with the provision command:
+
+.. code-block:: bash
+
+    /opt/docker/bin/provision run --tag bootstrap my-own-role
