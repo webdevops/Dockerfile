@@ -25,5 +25,6 @@ Overview
    :caption: Documentation
    :maxdepth: 2
 
-   content/DockerfilesUsage/index
-   content/DockerfilesBuildingProcess/index
+   content/DockerImages/index
+   content/Customization/index
+   content/BuildingProcess/index
