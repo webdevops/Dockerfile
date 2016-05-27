@@ -8,7 +8,7 @@ FROM webdevops/bootstrap:alpine-3
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.50.0
+LABEL io.webdevops.version=0.50.2
 
 RUN /usr/local/bin/apk-install \
     # General sphinx
