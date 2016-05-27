@@ -4,6 +4,10 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [0.50.2] - 2016-05-27
+### Changed
+- Fix /opt/docker/bin/service.d/php-fpm.sh using php.d instead of php-fpm.d
+- Restructured documentation, Added customization section
 
 ## [0.50.1] - 2016-05-24
 ### Changed

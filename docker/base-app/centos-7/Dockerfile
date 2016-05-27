@@ -8,7 +8,7 @@ FROM webdevops/base:centos-7
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.50.0
+LABEL io.webdevops.version=0.50.2
 
 ENV APPLICATION_USER  application
 ENV APPLICATION_GROUP application

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+	#!/usr/bin/env bash
 
 #
 # Example:
@@ -13,7 +13,7 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 
 . config.sh
 
-deprecationNotice " Please use >>/opt/docker/bin/proviation run --playbook playbook.yml --tag=bootstrap [args]<< for running provision"
+deprecationNotice " Please use >>/opt/docker/bin/provision run --playbook playbook.yml --tag=bootstrap [args]<< for running provision"
 
 
 if [ "$#" -lt 2 ]; then
