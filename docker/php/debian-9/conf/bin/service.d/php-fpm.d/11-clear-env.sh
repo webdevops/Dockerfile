@@ -16,8 +16,8 @@ for envVariable in $(printenv|cut -f1 -d=); do
                 ## get content of variable
                 envVariableContent="${!envVariable}"
 
+                ## php-fpm requires that env variable has to be filled with content
                 if [[ -n "$envVariableContent" ]]; then
-
                     ## quote quotes
                     envVariableContent=${envVariableContent//\"/\\\"}
 
@@ -29,5 +29,6 @@ for envVariable in $(printenv|cut -f1 -d=); do
 
 done
 
+# Replace ;#CLEAR_ENV_WORKAROUND# with environment variable list for all php-fpm pool files
 find /opt/docker/etc/php/fpm/pool.d/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet ";#CLEAR_ENV_WORKAROUND#" "$VARIABLE_LIST" > /dev/null
 
