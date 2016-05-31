@@ -40,30 +40,30 @@ and must be registred with the provision system:
 
 .. code-block:: bash
 
-    /opt/docker/bin/provision add --tag bootstrap my-own-role
+    /opt/docker/bin/provision add --tag bootstrap --role my-own-role
 
 
 Multiple tags can be defined with multiple ``--tag`` options:
 
 .. code-block:: bash
 
-    /opt/docker/bin/provision add --tag bootstrap --tag build my-own-role
+    /opt/docker/bin/provision add --tag bootstrap --tag build --role my-own-role
 
 There is a pritory system for roles in which order they should be executed, default priority is 100:
 
 .. code-block:: bash
 
     ## run before
-    /opt/docker/bin/provision add --tag bootstrap --priority 40 my-own-role-first
+    /opt/docker/bin/provision add --tag bootstrap --priority 40 --role my-own-role-first
 
     ## run with normal priority
-    /opt/docker/bin/provision add --tag bootstrap my-own-role
+    /opt/docker/bin/provision add --tag bootstrap --role my-own-role
 
     ## run after
-    /opt/docker/bin/provision add --tag bootstrap --priority 200 my-own-role-last
+    /opt/docker/bin/provision add --tag bootstrap --priority 200 --role my-own-role-last
 
 It's also possible to run one role with the provision command:
 
 .. code-block:: bash
 
-    /opt/docker/bin/provision run --tag bootstrap my-own-role
+    /opt/docker/bin/provision run --tag bootstrap --role my-own-role
