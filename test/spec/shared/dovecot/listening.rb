@@ -6,13 +6,4 @@ shared_examples 'dovecot::listening::public' do
              end
         end
     end
-
-    describe port(993) do
-        it "dovecot should be listening" do
-            wait_retry 30 do
-                should be_listening
-             end
-        end
-    end
-
 end
