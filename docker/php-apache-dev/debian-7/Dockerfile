@@ -13,6 +13,7 @@ LABEL io.webdevops.version=0.50.2
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
+ENV WEB_PHP_SOCKET  127.0.0.1:9000
 
 COPY conf/ /opt/docker/
 

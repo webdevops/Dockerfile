@@ -3,6 +3,7 @@
 {{ docker.version() }}
 
 {{ environment.web() }}
+{{ environment.webPhp() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 

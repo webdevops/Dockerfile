@@ -19,6 +19,10 @@ ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
 {%- endmacro %}
 
+{% macro webPhp() -%}
+ENV WEB_PHP_SOCKET  127.0.0.1:9000
+{%- endmacro %}
+
 {% macro ftp() -%}
 ENV FTP_USER     application
 ENV FTP_PASSWORD application
