@@ -1,4 +1,6 @@
 shared_examples 'collection::vsftp' do
+    include_examples 'vsftp::layout'
+
     # services
     include_examples 'vsftp::listening::public'
 

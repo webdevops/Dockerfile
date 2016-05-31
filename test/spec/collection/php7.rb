@@ -1,4 +1,5 @@
 shared_examples 'collection::php7' do
+    include_examples 'php::layout'
     include_examples 'php::cli'
     include_examples 'php7::cli::version'
     include_examples 'php::modules'
