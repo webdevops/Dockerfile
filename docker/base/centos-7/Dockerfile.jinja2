@@ -2,7 +2,7 @@
 
 {{ docker.version() }}
 
-{{ docker.environmentHomePath() }}
+{{ environment.homePath() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 

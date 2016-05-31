@@ -1,0 +1,37 @@
+{% macro lang() -%}
+# Ensure UTF-8
+ENV LANG       en_US.UTF-8
+ENV LC_ALL     en_US.UTF-8
+{%- endmacro %}
+
+{% macro homePath() -%}
+ENV DOCKER_CONF_HOME /opt/docker/
+{%- endmacro %}
+
+{% macro mailbox() -%}
+ENV MAILBOX_USERNAME "sandbox"
+ENV MAILBOX_PASSWORD "mail"
+{%- endmacro %}
+
+{% macro web() -%}
+ENV WEB_DOCUMENT_ROOT  /app
+ENV WEB_DOCUMENT_INDEX index.php
+ENV WEB_ALIAS_DOMAIN   *.vm
+{%- endmacro %}
+
+{% macro ftp() -%}
+ENV FTP_USER     application
+ENV FTP_PASSWORD application
+ENV FTP_UID      1000
+ENV FTP_GID      1000
+ENV FTP_PASSWORD dev
+ENV FTP_PATH     /data/ftp/
+{%- endmacro %}
+
+{% macro app() -%}
+ENV APPLICATION_USER  application
+ENV APPLICATION_GROUP application
+ENV APPLICATION_PATH  /app
+ENV APPLICATION_UID   1000
+ENV APPLICATION_GID   1000
+{%- endmacro %}
