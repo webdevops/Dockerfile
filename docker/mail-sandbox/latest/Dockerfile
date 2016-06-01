@@ -1,5 +1,5 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/mail-sandbox:ubuntu-14.04
+# Dockerfile for webdevops/mail-sandbox:latest
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
