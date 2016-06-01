@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ -n "$1" ]; then
+if [[ -n "$1" ]]; then
     BUILD_TARGET="$1"
 else
     BUILD_TARGET="all"
@@ -11,6 +11,17 @@ if [[ "$BUILD_MODE" == "push" ]]; then
     exit 0
 fi
 
+if [[ "$BASELAYOUT" -eq 1 ]]; then
+    BASELAYOUT=1
+else
+    BASELAYOUT=0
+fi
+
+if [[ "$PROVISION" -eq 1 ]]; then
+    PROVISION=1
+else
+    PROVISION=0
+fi
 
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
@@ -105,11 +116,13 @@ function listDirectoriesWithFilter() {
  #
  ##
 function buildBaselayout() {
-    echo " * Building localscripts"
+    if [[ "$BASELAYOUT" -eq 1 ]]; then
+        echo " * Building localscripts"
 
-    cd "${BASELAYOUT_DIR}"
-    rm -f baselayout.tar
-    $TAR -jc --owner=0 --group=0 -f baselayout.tar *
+        cd "${BASELAYOUT_DIR}"
+        rm -f baselayout.tar
+        $TAR -jc --owner=0 --group=0 -f baselayout.tar *
+    fi
 }
 
 ###
@@ -119,15 +132,17 @@ function buildBaselayout() {
  #
  ##
 function deployBaselayout() {
-    DOCKER_CONTAINER="$1"
-    DOCKER_FILTER="$2"
+    if [[ "$BASELAYOUT" -eq 1 ]]; then
+        DOCKER_CONTAINER="$1"
+        DOCKER_FILTER="$2"
 
-    listDirectoriesWithFilter "${DOCKER_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}"  | while read DOCKER_DIR; do
-        if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
-            echo "    - $(relativeDir $DOCKER_DIR)"
-            cp baselayout.tar "${DOCKER_DIR}/baselayout.tar"
-        fi
-    done
+        listDirectoriesWithFilter "${DOCKER_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}"  | while read DOCKER_DIR; do
+            if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
+                echo "    - $(relativeDir $DOCKER_DIR)"
+                cp baselayout.tar "${DOCKER_DIR}/baselayout.tar"
+            fi
+        done
+    fi
 }
 
 #######################################
@@ -144,16 +159,18 @@ function deployBaselayout() {
  #
  ##
 function clearConfiguration() {
-    DOCKER_CONTAINER="$1"
-    DOCKER_FILTER="$2"
+    if [[ "$PROVISION" -eq 1 ]]; then
+        DOCKER_CONTAINER="$1"
+        DOCKER_FILTER="$2"
 
-    echo " -> Clearing configuration"
-    listDirectoriesWithFilter "${DOCKER_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}" | while read DOCKER_DIR; do
-        if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
-            echo "    - $(relativeDir $DOCKER_DIR)"
-            rm -rf "${DOCKER_DIR}/conf/"
-        fi
-    done
+        echo " -> Clearing configuration"
+        listDirectoriesWithFilter "${DOCKER_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}" | while read DOCKER_DIR; do
+            if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
+                echo "    - $(relativeDir $DOCKER_DIR)"
+                rm -rf "${DOCKER_DIR}/conf/"
+            fi
+        done
+    fi
 }
 
 ###
@@ -167,22 +184,24 @@ function clearConfiguration() {
  #
  ##
 function deployConfiguration() {
-    PROVISION_SUB_DIR="$1"
-    DOCKER_CONTAINER="$2"
-    DOCKER_FILTER="$3"
+    if [[ "$PROVISION" -eq 1 ]]; then
+        PROVISION_SUB_DIR="$1"
+        DOCKER_CONTAINER="$2"
+        DOCKER_FILTER="$3"
 
-    if [ "$DOCKER_FILTER" == "*" ]; then
-        echo " -> Deploying configuration"
-    else
-        echo " -> Deploying configuration with filter '$DOCKER_FILTER'"
-    fi
-
-    listDirectoriesWithFilter "${DOCKER_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}" | while read DOCKER_DIR; do
-        if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
-            echo "    - $(relativeDir $DOCKER_DIR)"
-            cp -f -r "${PROVISION_DIR}/${PROVISION_SUB_DIR}/." "${DOCKER_DIR}/conf/"
+        if [ "$DOCKER_FILTER" == "*" ]; then
+            echo " -> Deploying configuration"
+        else
+            echo " -> Deploying configuration with filter '$DOCKER_FILTER'"
         fi
-    done
+
+        listDirectoriesWithFilter "${DOCKER_DIR}/${DOCKER_CONTAINER}" "${DOCKER_FILTER}" | while read DOCKER_DIR; do
+            if [ -f "${DOCKER_DIR}/Dockerfile" ]; then
+                echo "    - $(relativeDir $DOCKER_DIR)"
+                cp -f -r "${PROVISION_DIR}/${PROVISION_SUB_DIR}/." "${DOCKER_DIR}/conf/"
+            fi
+        done
+    fi
 }
 
 ###
