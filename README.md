@@ -35,6 +35,7 @@ Command                     | Description
 `DEBUG=1 make all`          | Show log of build process even if process is successfull
 `FORCE=1 make all`          | Force container build (`docker build --no-cache ...`)
 <br>                        |
+`make baselayout`           | Build and deploy baselayout.tar
 `make provision`            | Deploy all configuration files from [_provisioning/](_provisioning/README.md)
 `make dist-update`          | Update local distrubtion images (CentOS, Debian, Ubuntu)
 <br>                        |
