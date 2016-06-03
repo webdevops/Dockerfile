@@ -23,6 +23,10 @@ ENV WEB_ALIAS_DOMAIN   *.vm
 ENV WEB_PHP_SOCKET  127.0.0.1:9000
 {%- endmacro %}
 
+{% macro webDevelopment() -%}
+ENV WEB_NO_CACHE_PATTERN  "\.(css|js|gif|png|jpg|svg|json|xml)$"
+{%- endmacro %}
+
 {% macro ftp() -%}
 ENV FTP_USER     application
 ENV FTP_PASSWORD application
