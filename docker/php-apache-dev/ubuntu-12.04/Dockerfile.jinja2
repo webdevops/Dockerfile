@@ -8,6 +8,6 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ apache.ubuntu12('php-apache') }}
+{{ apache.ubuntu12('php-apache php-apache-dev') }}
 
 {{ docker.expose('80 443') }}
