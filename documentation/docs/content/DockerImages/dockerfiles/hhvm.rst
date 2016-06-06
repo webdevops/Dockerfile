@@ -14,11 +14,4 @@ Docker image tags
 Docker image layout
 -------------------
 
-====================================================  ==================================================================
-File/Directory                                        Description
-----------------------------------------------------  ------------------------------------------------------------------
-``/opt/docker/etc/php/php.ini``                       WebDevOps php.ini file with basic settings
-``/opt/docker/etc/php/fpm/php-fpm.conf``              PHP-FPM configuration file
-``/opt/docker/etc/php/fpm/pool.d/application.conf``   PHP-FPM applocation pool configuration file
-``/opt/docker/etc/supervisor.d/php-fpm.conf``         Supervisord configuration file for PHP-FPM
-====================================================  ==================================================================
+.. include:: include/layout-hhvm.rst

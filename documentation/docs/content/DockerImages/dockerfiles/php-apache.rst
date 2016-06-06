@@ -19,3 +19,6 @@ Environment variables
 
 Docker image layout
 -------------------
+
+.. include:: include/layout-apache.rst
+.. include:: include/layout-php.rst

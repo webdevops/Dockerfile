@@ -20,3 +20,5 @@ Environment variables
 Docker image layout
 -------------------
 
+.. include:: include/layout-nginx.rst
+.. include:: include/layout-php.rst
