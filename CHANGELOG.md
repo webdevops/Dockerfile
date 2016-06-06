@@ -4,6 +4,25 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [0.50.4] - 2016-06-06
+### Removed
+- Removed superfluous environment variables for PHP inside nginx
+### Changed
+- Added more layout sections to documentation
+
+
+## [0.50.3] - 2016-06-06
+### Added
+- Added `WEB_PHP_SOCKET` for apache and nginx images, this env variable specifies the host where php-fpm is listening
+- Added `WEB_NO_CACHE_PATTERN` to apache and nginx images (regexp of files which should not be cached by browser) for php*-dev images
+- Added `make baselayout` for building baselayout.tar (not always needed)
+- Added php-fpm clear_env workaround for php-fpm versions which doesn't support it
+### Changed
+- Set PHP-FPM ports to public on php*-dev images
+- Set mail-sandbox to latest tag (using Ubuntu 16.04)
+- Moved environment macros of jinja2 templates to environment.jinja2
+- Updated documentation
+
 ## [0.50.2] - 2016-05-27
 ### Changed
 - Fix /opt/docker/bin/service.d/php-fpm.sh using php.d instead of php-fpm.d
