@@ -8,7 +8,7 @@ FROM webdevops/php-dev:ubuntu-15.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.50.3
+LABEL io.webdevops.version=0.50.4
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
