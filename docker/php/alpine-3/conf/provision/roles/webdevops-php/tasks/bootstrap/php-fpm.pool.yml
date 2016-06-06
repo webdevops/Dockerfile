@@ -13,6 +13,15 @@
 - debug:
     msg: "PHP-Version: {{php_version}}"
 
+- set_fact:
+     php_clear_env_available: False
+
+- set_fact:
+     php_clear_env_available: True
+  when: ( php_version | version_compare('5.4', 'eq') and php_version | version_compare('5.4.27', 'ge') ) or
+        ( php_version | version_compare('5.5', 'eq') and php_version | version_compare('5.5.11', 'ge') ) or
+        ( php_version | version_compare('5.6', 'ge') )
+
 - name: Set php pool file
   set_fact:
      php_pool_conf: www.conf
@@ -76,10 +85,19 @@
     line:   '{{ item.key }} = {{ item.value }}'
   with_items:
    - { key: 'clear_env', value: "no" }
-  when: ( php_version | version_compare('5.4', 'eq') and php_version | version_compare('5.4.27', 'ge') ) or
-        ( php_version | version_compare('5.5', 'eq') and php_version | version_compare('5.5.11', 'ge') ) or
-        ( php_version | version_compare('5.6', 'ge') )
+  when: php_clear_env_available == True
 
+- name: Remove clear env workaround
+  file:
+    path: "/opt/docker/bin/service.d/php-fpm.d/11-clear-env.sh"
+    state: absent
+  when: php_clear_env_available == True
+
+- name: Append clear env workaround in php-fpm pool (old php-fpm versions)
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    line:   ';#CLEAR_ENV_WORKAROUND#'
+  when: php_clear_env_available == False
 
 - name: Disable php-fpm connection limit
   lineinfile:

@@ -1,4 +1,6 @@
 shared_examples 'collection::dovecot' do
+    include_examples 'dovecot::layout'
+
     # services
     include_examples 'dovecot::listening::public'
 

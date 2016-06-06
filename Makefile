@@ -1,6 +1,6 @@
 ARGS = $(filter-out $@,$(MAKECMDGOALS))
 MAKEFLAGS += --silent
-.PHONY: test documentation
+.PHONY: test documentation baselayout provision
 
 DOCKER_REPOSITORY=`cat DOCKER_REPOSITORY`
 DOCKER_TAG_LATEST=`cat DOCKER_TAG_LATEST`
@@ -31,9 +31,12 @@ test:
 test-hub-images:
 	DOCKER_PULL=1 make test
 
+baselayout:
+	BASELAYOUT=1 PROVISION=0 bash bin/provision.sh
+
 provision:
 	python bin/buildDockerfile.py --template=template/ --dockerfile=docker/
-	bash bin/provision.sh
+	BASELAYOUT=0 PROVISION=1 bash bin/provision.sh
 
 publish:    dist-update rebuild test push
 

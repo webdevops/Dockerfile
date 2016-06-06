@@ -7,7 +7,7 @@
 # Bootstrap
 ###############################################################################
 
-{{ docker.environmentLang() }}
+{{ environment.lang() }}
 
 {{ docker.add('baselayout.tar', '/') }}
 
@@ -17,7 +17,7 @@
 # Base
 ###############################################################################
 
-{{ docker.environmentHomePath() }}
+{{ environment.homePath() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
@@ -27,7 +27,7 @@
 # Base-app
 ###############################################################################
 
-{{ docker.environmentApp() }}
+{{ environment.app() }}
 
 {{ baseapp.debian() }}
 

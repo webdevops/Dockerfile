@@ -1,4 +1,6 @@
 shared_examples 'collection::postfix' do
+    include_examples 'postfix::layout'
+
     # services
     include_examples 'postfix::listening::public'
 

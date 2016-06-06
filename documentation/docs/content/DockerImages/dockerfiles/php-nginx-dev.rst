@@ -16,7 +16,7 @@ Docker image tags
 Environment variables
 ---------------------
 
-.. include:: include/environment-web.rst
+.. include:: include/environment-web-dev.rst
 
 
 Docker image layout

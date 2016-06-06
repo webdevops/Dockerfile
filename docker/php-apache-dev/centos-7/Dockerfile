@@ -8,11 +8,13 @@ FROM webdevops/php-dev:centos-7
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.50.2
+LABEL io.webdevops.version=0.50.3
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
+ENV WEB_PHP_SOCKET  127.0.0.1:9000
+ENV WEB_NO_CACHE_PATTERN  "\.(css|js|gif|png|jpg|svg|json|xml)$"
 
 COPY conf/ /opt/docker/
 
@@ -24,7 +26,7 @@ RUN /usr/local/bin/yum-install \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache --role webdevops-php-apache-dev \
     && /opt/docker/bin/bootstrap.sh
 
 

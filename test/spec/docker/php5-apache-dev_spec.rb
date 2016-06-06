@@ -13,7 +13,7 @@ describe "Dockerfile" do
     include_examples 'collection::base-app'
     include_examples 'collection::php5::development'
     include_examples 'collection::php-fpm5'
-    include_examples 'collection::php-fpm5::local-only'
+    include_examples 'collection::php-fpm5::public'
     include_examples 'collection::php-tools'
     include_examples 'collection::apache'
     include_examples 'collection::php-fpm5::webserver-test::development'
