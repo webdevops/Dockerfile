@@ -8,7 +8,7 @@ FROM webdevops/base:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.50.2
+LABEL io.webdevops.version=0.50.3
 
 ENV FTP_USER     application
 ENV FTP_PASSWORD application
