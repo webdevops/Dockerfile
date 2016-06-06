@@ -16,3 +16,4 @@ Docker image tags
 Docker image layout
 -------------------
 
+.. include:: include/layout-php.rst
