@@ -4,7 +4,7 @@ Docker images
 
 .. figure:: /resources/images/docker-image-layout.png
   :scale: 25 %
-  :target:  /_images/docker-image-layout.png
+  :target:  ../../_images/docker-image-layout.png
 
   Docker image hierarchy
 
