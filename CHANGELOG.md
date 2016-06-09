@@ -4,6 +4,10 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [next] - upcoming
+### Added
+- Added Magallanes deployer for samson-deployment
+
 ## [0.50.4] - 2016-06-06
 ### Removed
 - Removed superfluous environment variables for PHP inside nginx
