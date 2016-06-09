@@ -72,6 +72,9 @@ rebuild:
 push:
 	BUILD_MODE=push make all
 
+graph:
+	python ./bin/diagram.py  --dockerfile docker/ --filename documentation/docs/resources/images/docker-image-layout.gv
+
 documentation:
 	docker run -t -i --rm -p 8080:8000 -v "$$(pwd)/documentation/docs/:/opt/docs" webdevops/sphinx sphinx-autobuild --poll -H 0.0.0.0 /opt/docs html
 

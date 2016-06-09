@@ -1,19 +1,19 @@
 ---
 diagram:
   styles:
-    graph: 
+    graph:
       fontsize: "16"
       fontcolor: black
       bgcolor: white
       rankdir: TP
-    nodes: 
+    nodes:
       fontname: Helvetica
       shape: box
       fontcolor: black
       color: white
       style: filled
       fillcolor: "#E1E1E1"
-    edges: 
+    edges:
       style: dashed
       color: black
       arrowhead: open
@@ -22,12 +22,12 @@ diagram:
       fontcolor: white
   groups:
     common:
-      name: Base containers
+      name: Base images
       styles:
         graph:
           style: filled
           fillcolor: gray
-        nodes: 
+        nodes:
           fontname: Helvetica
           shape: box
           fontcolor: black
@@ -35,16 +35,18 @@ diagram:
           style: filled
           fillcolor: "#e1e1e1"
       docker:
-        - webdevops/boostrap
+        - webdevops/bootstrap
         - webdevops/base
         - webdevops/base-app
+        - webdevops/ansible
+        - webdevops/storage
     php:
-      name: php containers
+      name: PHP images
       styles:
         graph:
           style: filled
           fillcolor: "#c0e5a8"
-        nodes: 
+        nodes:
           fontname: Helvetica
           shape: box
           fontcolor: black
@@ -55,15 +57,30 @@ diagram:
         - webdevops/php
         - webdevops/php-apache
         - webdevops/php-nginx
+    php-dev:
+      name: PHP development images
+      styles:
+        graph:
+          style: filled
+          fillcolor: "#c0e5a8"
+        nodes:
+          fontname: Helvetica
+          shape: box
+          fontcolor: black
+          color: black
+          style: filled
+          fillcolor: "#78c445"
+      docker:
+        - webdevops/php-dev
         - webdevops/php-apache-dev
         - webdevops/php-nginx-dev
     hhvm:
-      name: hhvm containers
+      name: HHVM images
       styles:
         graph:
           style: filled
           fillcolor: "#c1c3f2"
-        nodes: 
+        nodes:
           fontname: Helvetica
           shape: box
           fontcolor: black
@@ -75,12 +92,12 @@ diagram:
         - webdevops/hhvm-apache
         - webdevops/hhvm-nginx
     application:
-      name: application containers
+      name: Application images
       styles:
         graph:
           style: filled
           fillcolor: "#f2e3b5"
-        nodes: 
+        nodes:
           fontname: Helvetica
           shape: box
           fontcolor: black
@@ -91,12 +108,12 @@ diagram:
         - webdevops/typo3
         - webdevops/piwik
     service:
-      name: service containers
+      name: Service images
       styles:
         graph:
           style: filled
           fillcolor: "#fbd3b5"
-        nodes: 
+        nodes:
           fontname: Helvetica
           shape: box
           fontcolor: black
@@ -110,3 +127,20 @@ diagram:
         - webdevops/vsftp
         - webdevops/postfix
         - webdevops/mail-sandbox
+        - webdevops/varnish
+        - webdevops/samson-deployment
+    tools:
+      name: Tools images
+      styles:
+        graph:
+          style: filled
+          fillcolor: "#c0e5a8"
+        nodes:
+          fontname: Helvetica
+          shape: box
+          fontcolor: black
+          color: black
+          style: filled
+          fillcolor: "#78c445"
+      docker:
+        - webdevops/sphinx

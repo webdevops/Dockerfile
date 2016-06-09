@@ -2,7 +2,7 @@
 
 Dockerfiles for various prebuilt docker containers
 
-[![Docker layout](documentation/webdevops.gv.png)](documentation/webdevops.gv.png)
+[![Docker layout](documentation/docs/resources/images/docker-image-layout.gv.png)](documentation/docs/resources/images/docker-image-layout.gv.png)
 
 Dockerfile                                                | Description                                                                             | Depends on                                                                       |
 --------------------------------------------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
