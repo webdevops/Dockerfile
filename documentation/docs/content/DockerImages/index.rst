@@ -34,3 +34,4 @@ Docker images
    dockerfiles/ssh
    dockerfiles/varnish
    dockerfiles/vsftp
+   dockerfiles/storage
