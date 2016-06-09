@@ -1,6 +1,6 @@
 # Samson deployment container layout
 
-[ZenDesk's](https://www.zendesk.com/) Deployment web ui with Ansible Ansistrano, Capistrano and PHP Deployer support
+[Zendesk](https://www.zendesk.com/) Deployment web ui with Ansible Ansistrano, Capistrano and PHP Deployer support
 
 [Samson Boilerplate is available at GitHub.](https://github.com/webdevops/samson-deployment)
 
