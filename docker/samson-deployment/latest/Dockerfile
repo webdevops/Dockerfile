@@ -176,7 +176,13 @@ RUN set -x \
     && wget --quiet -O/usr/local/bin/dep http://deployer.org/deployer.phar \
     && chmod +x /usr/local/bin/dep \
     # Deployer: capistrano (http://capistranorb.com/)
-    && gem install capistrano
+    && gem install capistrano \
+    # Deplyer: Magallanes
+    && wget http://download.magephp.com/magallanes.latest.tar.gz -O /tmp/magallanes.tar.gz \
+    && tar -xzf /tmp/magallanes.tar.gz -C /tmp/ \
+    && /tmp/magallanes/bin/mage install --installDir=/opt/magallanes \
+    && rm -rf /tmp/magallanes.tar.gz /tmp/magallanes/ \
+    && ln -s /opt/magallanes/latest/bin/mage /usr/bin/mage
 
 # Upload
 ADD database.yml    /app/config/database.yml

@@ -9,6 +9,7 @@ Installed packages:
 * [Ansible](https://www.ansible.com/) with [Ansistrano](https://github.com/ansistrano)
 * [Capistrano](http://capistranorb.com/)
 * [PHP Deployer](http://deployer.org/)
+* [Magallanes](http://magephp.com/)
 * git
 * rsync
 * docker & docker-compose (as client)
