@@ -18,7 +18,7 @@ Overview
 
 .. toctree::
 
-   Back to Project Overview <http://webdevops-documentation.readthedocs.org/en/latest/>
+   Back to Project Overview <http://webdevops-documentation.readthedocs.io/en/latest/>
    content/introduction
 
 .. toctree::
