@@ -2,9 +2,9 @@
 Docker images
 =============
 
-.. figure:: /resources/images/docker-image-layout.png
+.. figure:: /resources/images/docker-image-layout.gv.png
   :scale: 25 %
-  :target:  /_images/docker-image-layout.png
+  :target:  ../../_images/docker-image-layout.gv.png
 
   Docker image hierarchy
 
@@ -12,25 +12,26 @@ Docker images
 .. toctree::
    :maxdepth: 1
 
-   dockerfiles/bootstrap
-   dockerfiles/ansible
-   dockerfiles/base
-   dockerfiles/base-app
-   dockerfiles/apache
-   dockerfiles/nginx
-   dockerfiles/php
-   dockerfiles/php-apache
-   dockerfiles/php-nginx
-   dockerfiles/php-dev
-   dockerfiles/php-apache-dev
-   dockerfiles/php-nginx-dev
-   dockerfiles/hhvm
-   dockerfiles/hhvm-apache
-   dockerfiles/hhvm-nginx
-   dockerfiles/postfix
-   dockerfiles/mail-catcher
-   dockerfiles/samson-deployment
-   dockerfiles/sphinx
-   dockerfiles/ssh
-   dockerfiles/varnish
-   dockerfiles/vsftp
+    dockerfiles/ansible
+    dockerfiles/apache
+    dockerfiles/base
+    dockerfiles/base-app
+    dockerfiles/bootstrap
+    dockerfiles/hhvm
+    dockerfiles/hhvm-apache
+    dockerfiles/hhvm-nginx
+    dockerfiles/mail-catcher
+    dockerfiles/nginx
+    dockerfiles/php
+    dockerfiles/php-apache
+    dockerfiles/php-apache-dev
+    dockerfiles/php-dev
+    dockerfiles/php-nginx
+    dockerfiles/php-nginx-dev
+    dockerfiles/postfix
+    dockerfiles/samson-deployment
+    dockerfiles/sphinx
+    dockerfiles/ssh
+    dockerfiles/storage
+    dockerfiles/varnish
+    dockerfiles/vsftp

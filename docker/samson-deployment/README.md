@@ -1,6 +1,6 @@
 # Samson deployment container layout
 
-[ZenDesk's](https://www.zendesk.com/) Deployment web ui with Ansible Ansistrano, Capistrano and PHP Deployer support
+[Zendesk](https://www.zendesk.com/) Deployment web ui with Ansible Ansistrano, Capistrano and PHP Deployer support
 
 [Samson Boilerplate is available at GitHub.](https://github.com/webdevops/samson-deployment)
 
@@ -9,6 +9,7 @@ Installed packages:
 * [Ansible](https://www.ansible.com/) with [Ansistrano](https://github.com/ansistrano)
 * [Capistrano](http://capistranorb.com/)
 * [PHP Deployer](http://deployer.org/)
+* [Magallanes](http://magephp.com/)
 * git
 * rsync
 * docker & docker-compose (as client)

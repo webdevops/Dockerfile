@@ -8,7 +8,7 @@ FROM webdevops/bootstrap:debian-9
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.50.4
+LABEL io.webdevops.version=0.50.5
 
 ENV DOCKER_CONF_HOME /opt/docker/
 

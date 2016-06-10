@@ -1,0 +1,78 @@
+digraph webdevops {
+	graph [bgcolor=white fontcolor=black fontsize=16 rankdir=TP]
+	node [color=white fillcolor="#E1E1E1" fontcolor=black fontname=Helvetica shape=box style=filled]
+	edge [arrowhead=open color=black fontcolor=white fontname=Courier fontsize=12 style=dashed]
+	label = "\n\nWebdevops Containers\n at :09.06.2016"
+		subgraph cluster_php {
+			graph [fillcolor="#c0e5a8" style=filled]
+			node [color=black fillcolor="#78c445" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "PHP images"
+					"webdevops/php" -> "webdevops/php-nginx"
+				"webdevops/php"
+					"webdevops/php" -> "webdevops/php-apache"
+		}
+		subgraph cluster_service {
+			graph [fillcolor="#fbd3b5" style=filled]
+			node [color=black fillcolor="#ffa35f" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "Service images"
+				"webdevops/varnish"
+				"webdevops/nginx"
+				"webdevops/ssh"
+					"webdevops/postfix" -> "webdevops/mail-sandbox"
+				"webdevops/vsftp"
+				"webdevops/apache"
+				"webdevops/samson-deployment"
+				"webdevops/postfix"
+		}
+		subgraph cluster_application {
+			graph [fillcolor="#f2e3b5" style=filled]
+			node [color=black fillcolor="#e5b931" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "Application images"
+				"webdevops/typo3"
+				"webdevops/piwik"
+		}
+		subgraph cluster_common {
+			graph [fillcolor=gray style=filled]
+			node [color=black fillcolor="#e1e1e1" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "Base images"
+					"webdevops/bootstrap" -> "webdevops/ansible"
+				"webdevops/storage"
+					"webdevops/base" -> "webdevops/base-app"
+				"webdevops/bootstrap"
+					"webdevops/bootstrap" -> "webdevops/base"
+		}
+		subgraph cluster_hhvm {
+			graph [fillcolor="#c1c3f2" style=filled]
+			node [color=black fillcolor="#7f84f1" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "HHVM images"
+				"webdevops/hhvm"
+					"webdevops/hhvm" -> "webdevops/hhvm-nginx"
+					"webdevops/hhvm" -> "webdevops/hhvm-apache"
+		}
+		subgraph cluster_tools {
+			graph [fillcolor="#c0e5a8" style=filled]
+			node [color=black fillcolor="#78c445" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "Tools images"
+				"webdevops/sphinx"
+		}
+		subgraph "cluster_php-dev" {
+			graph [fillcolor="#c0e5a8" style=filled]
+			node [color=black fillcolor="#78c445" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "PHP development images"
+					"webdevops/php-dev" -> "webdevops/php-nginx-dev"
+					"webdevops/php-dev" -> "webdevops/php-apache-dev"
+				"webdevops/php-dev"
+		}
+			"webdevops/base-app" -> "webdevops/php"
+			"webdevops/php-apache" -> "webdevops/typo3"
+			"webdevops/base-app" -> "webdevops/ssh"
+			"webdevops/base-app" -> "webdevops/postfix"
+			"webdevops/base" -> "webdevops/apache"
+			"webdevops/base" -> "webdevops/nginx"
+			"webdevops/base" -> "webdevops/vsftp"
+			"webdevops/base-app" -> "webdevops/hhvm"
+			"webdevops/bootstrap" -> "webdevops/sphinx"
+			"webdevops/php-nginx" -> "webdevops/piwik"
+			"webdevops/base" -> "webdevops/varnish"
+			"webdevops/php" -> "webdevops/php-dev"
+}

@@ -10,6 +10,7 @@ The original image is only the webbased deployment system and is extended by:
 * Ansible_ with Ansistrano_
 * Capistrano_
 * PHP Deployer_
+* Magallanes_
 * git
 * rsync
 * docker & docker-compose (as client)
@@ -32,4 +33,5 @@ Docker image layout
 .. _Ansistrano: http://capistranorb.com
 .. _Capistrano: https://github.com/ansistrano/deploy
 .. _Deployer: http://deployer.org/
+.. _Magallanes: http://magephp.com/
 .. _composer: https://getcomposer.org/

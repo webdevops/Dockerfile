@@ -53,7 +53,7 @@ def build_graph(args):
     conf_diagram = yaml.safe_load(stream)
     dia = Digraph('webdevops', filename=args.filename, format=args.format, directory=args.path)
     dia = apply_styles(dia,conf_diagram['diagram']['styles'])
-    dia.body.append(r'label = "\n\nWebdevops Containers\n at :%s"' % get_current_date() )
+    dia.body.append(r'label = "\n\nWebdevops Images\n at :%s"' % get_current_date() )
 
     # Create subgraph
     for group, group_attr in conf_diagram['diagram']['groups'].items():
