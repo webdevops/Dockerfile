@@ -1,0 +1,10 @@
+---
+
+- name: Download nodejs
+  unarchive: src=https://nodejs.org/dist/v4.4.5/node-v4.4.5-linux-x64.tar.xz dest=/tmp owner=root group=root copy=no
+
+- name : Installing nodejs
+  raw: cp -rf /tmp/node-v4.4.5-linux-x64/* /usr
+
+- name: Remove sources
+  raw: rm -rf /tmp/node-v4.4.5-linux-x64/

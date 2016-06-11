@@ -1,0 +1,13 @@
+{{ docker.from("node", "latest") }}
+
+{{ docker.version() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ environment.phantomjs() }}
+
+{{ nodejs.phantomjs() }}
+
+{{ docker.expose('8065') }}
+
+{{ docker.cmd("supervisord") }}

@@ -74,3 +74,9 @@ varnish:
 
 sphinx:
 	bash ./run.sh sphinx
+
+node:
+	bash ./run.sh node
+
+phantomjs:
+	bash ./run.sh phantomjs

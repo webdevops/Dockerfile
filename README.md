@@ -23,6 +23,7 @@ Dockerfile                                                | Description         
 [`samson-deployment`](docker/samson-deployment/README.md) | [Samson](https://github.com/webdevops/samson-deployment) based deployment service       | [`zendesk/samson`](https://hub.docker.com/r/zendesk/samson/)                     |
 [`sphinx`](docker/sphinx/latest/README.md)                | Sphinx container                                                                        | [`webdevops/bootstrap:alpine-3`](https://hub.docker.com/r/webdevops/bootstrap/)  |
 [`varnish`](docker/varnish/latest/README.md)              | Varnish container                                                                       | [`webdevops/base:alpine-3`](https://hub.docker.com/r/webdevops/bootstrap/)       |
+[`nodejs`](docker/nodejs/README.md)                       | Node container                                                                          | [`webdevops/nodejs`](https://hub.docker.com/r/webdevops/nodejs/)       |
 
 # Building
 

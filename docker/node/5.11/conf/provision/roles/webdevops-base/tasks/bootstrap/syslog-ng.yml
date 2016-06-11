@@ -1,0 +1,23 @@
+---
+
+- name: Configure syslog-ng (default)
+  lineinfile:
+    dest:   /etc/default/syslog-ng
+    regexp: '^[\s]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }}="{{ item.value }}"'
+    create: yes
+  with_items:
+   - { key: 'SYSLOGNG_OPTS',  value: '--no-caps' }
+
+- name: Enable syslog-n config
+  file:
+    src:  '/opt/docker/etc/syslog-ng/syslog-ng.conf'
+    dest: '/etc/syslog-ng/syslog-ng.conf'
+    state: link
+    force: yes
+
+- name: Ensure /var/lib/syslog-ng exists
+  file:
+    path:    '/var/lib/syslog-ng'
+    state:   directory
+    recurse: yes

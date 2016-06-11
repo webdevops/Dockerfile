@@ -24,7 +24,7 @@ web:       webdevops/apache webdevops/apache-dev webdevops/nginx webdevops/nginx
 
 applications: webdevops/typo3 webdevops/piwik
 
-misc:      webdevops/mail-sandbox webdevops/sphinx
+misc:      webdevops/mail-sandbox webdevops/sphinx webdevops/node webdevops/phantomjs
 
 test:
 	cd "test/" && make all
@@ -159,3 +159,9 @@ webdevops/sphinx:
 
 webdevops/varnish:
 	bash bin/build.sh varnish "${DOCKER_REPOSITORY}/varnish" "${DOCKER_TAG_LATEST}"
+
+webdevops/node:
+	bash bin/build.sh node "${DOCKER_REPOSITORY}/node" "${DOCKER_TAG_LATEST}"
+
+webdevops/phantomjs:
+	bash bin/build.sh phantomjs "${DOCKER_REPOSITORY}/phantomjs" "${DOCKER_TAG_LATEST}"

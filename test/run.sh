@@ -894,6 +894,35 @@ ENV VARNISH_BACKEND_HOST \"google.com\"
     waitForTestRun
 }
 
+#######################################
+# webdevops/node
+#######################################
+
+[[ $(checkTestTarget node) ]] && {
+    setupTestEnvironment "node"
+    setEnvironmentOsFamily "debian"
+
+    OS_VERSION="8" runTestForTag "latest"
+    OS_VERSION="8" runTestForTag "5.11"
+    OS_VERSION="8" runTestForTag "4.4.5"
+
+    waitForTestRun
+}
+
+
+#######################################
+# webdevops/phantomjs
+#######################################
+
+[[ $(checkTestTarget phantomjs) ]] && {
+    setupTestEnvironment "phantomjs"
+    setEnvironmentOsFamily "debian"
+
+    OS_VERSION="8" runTestForTag "latest"
+
+    waitForTestRun
+}
+
 
 echo ""
 echo " >>> finished, all tests PASSED <<<"

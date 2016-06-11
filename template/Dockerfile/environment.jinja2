@@ -42,3 +42,10 @@ ENV APPLICATION_PATH  /app
 ENV APPLICATION_UID   1000
 ENV APPLICATION_GID   1000
 {%- endmacro %}
+
+
+{% macro phantomjs() -%}
+ENV PHANTOMJS_PORT				 8065
+ENV PHANTOMJS_IGNORE_SSL_ERRORS  true
+ENV PHANTOMJS_LOAD_IMAGES        true
+{%- endmacro %}

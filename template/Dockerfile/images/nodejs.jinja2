@@ -1,0 +1,9 @@
+{% import 'Dockerfile/provision.jinja2' as provision %}
+
+{% macro phantomjs(role='') -%}
+RUN /usr/local/bin/apt-install \
+        fontconfig \
+        libfreetype6 \
+        libfontconfig \
+    && npm install -g phantomjs
+{%- endmacro %}

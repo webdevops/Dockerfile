@@ -426,4 +426,25 @@ function header() {
     deployConfiguration samson-deployment/general        samson-deployment 'latest'
 }
 
+## Build nodejs
+[[ $(checkBuildTarget node) ]] && {
+    header "node"
+
+    # Bootstrap
+    buildBaselayout
+    deployBaselayout node  '*'
+    rm -f baselayout.tar
+
+    # Base
+    deployConfiguration base/general        node 'latest'
+    deployConfiguration base-app/general    node 'latest'
+}
+
+## Build phantomjs
+[[ $(checkBuildTarget phantomjs) ]] && {
+    header "phantomjs"
+    clearConfiguration  phantomjs  '*'
+    deployConfiguration nodejs/phantomjs phantomjs '*'
+}
+
 exit 0

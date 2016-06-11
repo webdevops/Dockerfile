@@ -1,0 +1,6 @@
+---
+
+- include: bootstrap/misc.yml
+- include: bootstrap/supervisor.yml
+- include: bootstrap/syslog-ng.yml
+- include: bootstrap/logrotate.yml
