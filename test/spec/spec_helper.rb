@@ -24,6 +24,11 @@ else
     $testConfiguration[:ansiblePath] = "/usr/local/bin"
 end
 
+$testConfiguration[:phpXdebug] = true
+
+if ENV['PHP_XDEBUG'] and ENV['PHP_XDEBUG'] == "0"
+    $testConfiguration[:phpXdebug] = false
+end
 
 def wait_retry(time, increment = 1, elapsed_time = 0, &block)
   begin
