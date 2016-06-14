@@ -17,9 +17,19 @@ ENV WEB_ALIAS_DOMAIN   *.vm
 COPY conf/ /opt/docker/
 
 # Install php environment
-RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list \
-    && echo "deb-src http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list \
-    && wget -O- https://www.dotdeb.org/dotdeb.gpg | apt-key add  - \
+RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
+    && echo "deb https://packages.sury.org/php/ jessie main" >> /etc/apt/sources.list \
+    && echo "deb http://ftp2.de.debian.org/debian/ testing main" >> /etc/apt/sources.list \
+    && echo "deb-src http://ftp2.de.debian.org/debian/ testing main" >> /etc/apt/sources.list \
+    && wget -O- https://packages.sury.org/php/apt.gpg | apt-key add - \
+    && echo "Package: *" > /etc/apt/preferences.d/debian_testing.pref \
+    && echo "Pin: origin ftp2.de.debian.org" >> /etc/apt/preferences.d/debian_testing.pref \
+    && echo "Pin-Priority: -10" >> /etc/apt/preferences.d/debian_testing.pref \
+    && echo "Package: libpcre3" > /etc/apt/preferences.d/libpcre.pref \
+    && echo "Pin: release a=testing" >> /etc/apt/preferences.d/libpcre.pref \
+    && echo "Pin-Priority: 995" >> /etc/apt/preferences.d/libpcre.pref \
+    && apt-get update \
+    && apt-get -t testing install -y -f libpcre3 \
     && /usr/local/bin/apt-install \
         # Install tools
         imagemagick \
