@@ -40,6 +40,7 @@ RUN /usr/local/bin/apt-install \
         php7.0-xmlrpc \
         php7.0-xsl \
         php7.0-bz2 \
+        php-imagick \
         php-redis \
         php-memcached \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
