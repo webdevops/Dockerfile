@@ -16,7 +16,6 @@ ENV WEB_ALIAS_DOMAIN   *.vm
 
 COPY conf/ /opt/docker/
 
-# Install php environment
 RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
     && echo "deb https://packages.sury.org/php/ jessie main" >> /etc/apt/sources.list \
     && echo "deb http://ftp2.de.debian.org/debian/ testing main" >> /etc/apt/sources.list \
@@ -51,6 +50,10 @@ RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
         php7.0-bz2 \
         php7.0-redis \
         php7.0-memcached \
+        php7.0-zip \
+        php7.0-soap \
+        php7.0-bcmath \
+        php7.0-mbstring \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh

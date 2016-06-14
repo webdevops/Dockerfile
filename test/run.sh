@@ -395,7 +395,7 @@ initEnvironment
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "debian"
-    OS_VERSION="8" runTestForTag "debian-8-php7"
+    PHP_XDEBUG=0 OS_VERSION="8" runTestForTag "debian-8-php7"
     OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
@@ -551,7 +551,7 @@ initEnvironment
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "debian"
-    OS_VERSION="8" runTestForTag "debian-8-php7"
+    PHP_XDEBUG=0 OS_VERSION="8" runTestForTag "debian-8-php7"
     OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
@@ -651,7 +651,7 @@ initEnvironment
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "debian"
-    OS_VERSION="8" runTestForTag "debian-8-php7"
+    PHP_XDEBUG=0 OS_VERSION="8" runTestForTag "debian-8-php7"
     OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"

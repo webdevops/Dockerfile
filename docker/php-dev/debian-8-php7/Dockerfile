@@ -17,7 +17,7 @@ RUN /usr/local/bin/apt-install \
         # Install tools
         graphviz \
         # Install php development stuff
-        php7.0-xdebug \
+        # php7.0-xdebug \ # Is currently not available
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
 

@@ -74,7 +74,9 @@ end
 
 shared_examples 'php::modules::development' do
     describe command('php -m') do
-        its(:stdout) { should contain('xdebug') }
+        if ( $testConfiguration[:phpXdebug] )
+            its(:stdout) { should contain('xdebug') }
+        end
 
         its(:exit_status) { should eq 0 }
     end
@@ -187,7 +189,10 @@ end
 
 shared_examples 'php-fpm::modules::development' do
     describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
-        its(:stdout) { should contain('xdebug') }
+
+        if ( $testConfiguration[:phpXdebug] )
+            its(:stdout) { should contain('xdebug') }
+        end
 
         its(:exit_status) { should eq 0 }
     end

@@ -32,6 +32,16 @@ RUN /usr/local/bin/apt-install \
     {{ provision.runRoleInline('php-dev', role) }}
 {%- endmacro %}
 
+{% macro debianDotDeb(role='') -%}
+# Install development environment
+RUN /usr/local/bin/apt-install \
+        # Install tools
+        graphviz \
+        # Install php development stuff
+        php7.0-xdebug \
+    {{ provision.runRoleInline('php-dev', role) }}
+{%- endmacro %}
+
 {% macro debianSury(role='') -%}
 # Install development environment
 RUN /usr/local/bin/apt-install \
