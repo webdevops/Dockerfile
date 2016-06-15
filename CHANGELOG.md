@@ -4,6 +4,10 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [0.50.7] - upcoming
+### Added
+- Added php module apcu
+
 ## [0.50.6] - 2016-06-14
 ### Changed
 - Switch from dotdeb to sury and install libpcre3 from testing

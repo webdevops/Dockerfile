@@ -65,6 +65,7 @@ RUN /usr/local/bin/apk-install \
         php-pear \
         php-phar \
         php-openssl \
+        php-apcu \
     && pear channel-update pear.php.net \
     && pear upgrade-all \
     && pear config-set auto_discover 1 \

@@ -40,6 +40,7 @@ RUN /usr/local/bin/apt-install \
         php7.0-xmlrpc \
         php7.0-xsl \
         php7.0-bz2 \
+        php-apcu \
         php-redis \
         php-memcache \
         php-memcached \

@@ -45,6 +45,7 @@ RUN /usr/local/bin/yum-install \
         ImageMagick-devel \
         ImageMagick-perl \
         php-pear \
+        php-pecl-apcu \
         php-devel \
         gcc \
         php-pear \

@@ -54,6 +54,7 @@ RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
         php7.0-soap \
         php7.0-bcmath \
         php7.0-mbstring \
+        php-apcu \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh

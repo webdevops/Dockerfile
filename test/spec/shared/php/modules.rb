@@ -4,8 +4,6 @@
 
 shared_examples 'php::modules' do
     describe command('php -m') do
-        its(:stdout) { should_not contain('apc') }
-
         its(:stdout) { should     contain('bcmath') }
         its(:stdout) { should     contain('bz2') }
         its(:stdout) { should     contain('calendar') }
@@ -58,6 +56,13 @@ shared_examples 'php::modules' do
 
         if ( os[:family] != 'alpine' )
             its(:stdout) { should     contain('gd') }
+        end
+
+        if !(
+                (os[:family] == 'ubuntu' and os[:version] == '12.04' ) or
+                (os[:family] == 'debian' and os[:version] == '7' )
+            )
+            its(:stdout) { should     contain('apcu') }
         end
 
         its(:exit_status) { should eq 0 }
@@ -119,8 +124,6 @@ end
 
 shared_examples 'php-fpm::modules' do
     describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
-        its(:stdout) { should_not contain('apc') }
-
         its(:stdout) { should     contain('bcmath') }
         its(:stdout) { should     contain('bz2') }
         its(:stdout) { should     contain('calendar') }
@@ -173,6 +176,13 @@ shared_examples 'php-fpm::modules' do
 
         if ( os[:family] != 'alpine' )
             its(:stdout) { should     contain('gd') }
+        end
+
+        if !(
+                (os[:family] == 'ubuntu' and os[:version] == '12.04' ) or
+                (os[:family] == 'debian' and os[:version] == '7' )
+            )
+            its(:stdout) { should     contain('apcu') }
         end
 
         its(:exit_status) { should eq 0 }

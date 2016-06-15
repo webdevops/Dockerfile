@@ -39,6 +39,7 @@ RUN /usr/local/bin/apt-install \
         php5-memcached \
         php5-imagick \
         php5-redis \
+        php5-apcu \
         php-pear \
     && pear channel-update pear.php.net \
     && pear upgrade-all \
