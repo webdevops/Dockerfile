@@ -1,5 +1,13 @@
 ---
 
+- name: Link aliases file to postfix aliases
+  file:
+    src:  '/etc/postfix/aliases'
+    dest: '/etc/aliases'
+    state: link
+    force: yes
+  when: ansible_os_family == 'Alpine'
+
 - name: Configure postfix
   lineinfile:
     dest:   /etc/postfix/main.cf
