@@ -8,7 +8,7 @@ FROM webdevops/base-app:alpine-3
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.50.6
+LABEL io.webdevops.version=0.51.0
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
@@ -49,7 +49,7 @@ RUN /usr/local/bin/apk-install \
         php7-xmlreader \
         php7-exif \
         php7-ftp \
-        php7-gettext \
+        php7-gemttext \
         php7-iconv \
         php7-zip \
         php7-zlib \
@@ -69,6 +69,7 @@ RUN /usr/local/bin/apk-install \
         php7-opcache \
         php7-mbstring \
         php7-iconv \
+        php7-apcu \
     && ln -s /usr/bin/php7      /usr/bin/php \
     && ln -s /usr/sbin/php-fpm7 /usr/sbin/php-fpm \
     && pear channel-update pear.php.net \

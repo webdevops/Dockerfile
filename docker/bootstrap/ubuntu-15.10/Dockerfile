@@ -8,7 +8,7 @@ FROM ubuntu:15.10
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.50.6
+LABEL io.webdevops.version=0.51.0
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8
@@ -30,6 +30,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         software-properties-common \
         lsb-release \
         ca-certificates \
+        apt-transport-https \
     && apt-add-repository multiverse \
     # Install ansible
     && /usr/local/bin/apt-install \

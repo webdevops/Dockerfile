@@ -4,6 +4,14 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [0.51.0] - 2016-06-16
+### Added
+- Added php module apcu
+- Added (disabled) php module blackfire to php-dev and inherit images
+- Added apt-transport-https for debian family images
+### Changed
+- Added link from /etc/aliases to /etc/postfix/alises for alpine
+
 ## [0.50.6] - 2016-06-14
 ### Changed
 - Switch from dotdeb to sury and install libpcre3 from testing

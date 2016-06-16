@@ -8,7 +8,7 @@ FROM debian:8
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.50.6
+LABEL io.webdevops.version=0.51.0
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8
@@ -30,6 +30,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         lsb-release \
         ca-certificates \
         locales \
+        apt-transport-https \
     # Generate base locale
     && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
     && locale-gen \

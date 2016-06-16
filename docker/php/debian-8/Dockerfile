@@ -8,7 +8,7 @@ FROM webdevops/base-app:debian-8
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.50.6
+LABEL io.webdevops.version=0.51.0
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
@@ -39,6 +39,7 @@ RUN /usr/local/bin/apt-install \
         php5-memcached \
         php5-imagick \
         php5-redis \
+        php5-apcu \
         php-pear \
     && pear channel-update pear.php.net \
     && pear upgrade-all \

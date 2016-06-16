@@ -8,7 +8,7 @@ FROM webdevops/base-app:ubuntu-16.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.50.6
+LABEL io.webdevops.version=0.51.0
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
@@ -40,6 +40,7 @@ RUN /usr/local/bin/apt-install \
         php7.0-xmlrpc \
         php7.0-xsl \
         php7.0-bz2 \
+        php-apcu \
         php-redis \
         php-memcached \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \

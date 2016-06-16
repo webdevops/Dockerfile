@@ -8,7 +8,7 @@ FROM ubuntu:12.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.50.6
+LABEL io.webdevops.version=0.51.0
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8
@@ -45,6 +45,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         libffi-dev \
         libssl-dev \
         build-essential \
+        apt-transport-https \
     && pip install --upgrade pip \
     && hash -r \
     && pip install ansible \
