@@ -49,7 +49,7 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && pear upgrade-all \
     && pear config-set auto_discover 1 \
     && pecl install imagick \
-    && pecl install redis \
+    # && pecl install redis \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh
