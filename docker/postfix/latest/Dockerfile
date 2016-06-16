@@ -8,7 +8,7 @@ FROM webdevops/base-app:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.50.6
+LABEL io.webdevops.version=0.51.0
 
 COPY conf/ /opt/docker/
 
