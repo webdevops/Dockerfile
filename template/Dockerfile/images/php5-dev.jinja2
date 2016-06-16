@@ -13,32 +13,40 @@ RUN /usr/local/bin/apk-install \
 
 {% macro centos(role='') -%}
 # Install development environment
-RUN /usr/local/bin/yum-install \
+RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/yum.repos.d/blackfire.repo \
+    && /usr/local/bin/yum-install \
         # Install tools
         graphviz \
         # Install php development stuff
         php-pecl-xdebug \
+        blackfire-php \
     {{ provision.runRoleInline('php-dev', role) }}
 {%- endmacro %}
 
 
 {% macro debian(role='') -%}
 # Install development environment
-RUN /usr/local/bin/apt-install \
+RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
+    && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
+    && /usr/local/bin/apt-install \
         # Install tools
         graphviz \
         # Install php development stuff
         php5-xdebug \
+        blackfire-php \
     {{ provision.runRoleInline('php-dev', role) }}
 {%- endmacro %}
 
 
 {% macro ubuntu(role='') -%}
 # Install development environment
-RUN /usr/local/bin/apt-install \
+RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
+    && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
+    && /usr/local/bin/apt-install \
         # Install tools
         graphviz \
         # Install php development stuff
         php5-xdebug \
+        blackfire-php \
     {{ provision.runRoleInline('php-dev', role) }}
 {%- endmacro %}

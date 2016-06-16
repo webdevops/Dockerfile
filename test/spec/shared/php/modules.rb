@@ -72,6 +72,7 @@ end
 shared_examples 'php::modules::production' do
     describe command('php -m') do
         its(:stdout) { should_not contain('xdebug') }
+        its(:stdout) { should_not contain('blackfire') }
 
         its(:exit_status) { should eq 0 }
     end
@@ -82,6 +83,9 @@ shared_examples 'php::modules::development' do
         if ( $testConfiguration[:phpXdebug] )
             its(:stdout) { should contain('xdebug') }
         end
+
+        # disabled by default
+        its(:stdout) { should_not contain('blackfire') }
 
         its(:exit_status) { should eq 0 }
     end
@@ -192,6 +196,7 @@ end
 shared_examples 'php-fpm::modules::production' do
     describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
         its(:stdout) { should_not contain('xdebug') }
+        its(:stdout) { should_not contain('blackfire') }
 
         its(:exit_status) { should eq 0 }
     end
@@ -203,6 +208,9 @@ shared_examples 'php-fpm::modules::development' do
         if ( $testConfiguration[:phpXdebug] )
             its(:stdout) { should contain('xdebug') }
         end
+
+        # disabled by default
+        its(:stdout) { should_not contain('blackfire') }
 
         its(:exit_status) { should eq 0 }
     end

@@ -13,11 +13,14 @@ LABEL io.webdevops.version=0.50.6
 COPY conf/ /opt/docker/
 
 # Install development environment
-RUN /usr/local/bin/apt-install \
+RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
+    && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
+    && /usr/local/bin/apt-install \
         # Install tools
         graphviz \
         # Install php development stuff
         php-xdebug \
+        blackfire-php \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
 
