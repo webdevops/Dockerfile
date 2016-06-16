@@ -7,8 +7,8 @@ FROM webdevops/php:centos-7-php56
 
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=6
-LABEL io.webdevops.version=0.23.0
+LABEL io.webdevops.layout=7
+LABEL io.webdevops.version=0.51.0
 
 COPY conf/ /opt/docker/
 
@@ -19,3 +19,4 @@ RUN /usr/local/bin/yum-install \
         php56w-pecl-xdebug \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
+

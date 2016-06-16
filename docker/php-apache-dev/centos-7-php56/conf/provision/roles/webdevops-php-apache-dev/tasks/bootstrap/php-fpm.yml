@@ -1,0 +1,9 @@
+---
+
+- name: Open php-fpm for external connections (eg. debuggers)
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: 'listen', value: "0.0.0.0:9000" }

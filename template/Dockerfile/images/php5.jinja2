@@ -101,7 +101,7 @@ RUN /usr/local/bin/yum-install \
     {{ provision.runRoleInline('php', role) }}
 {%- endmacro %}
 
-{% macro webtatic(role='') -%}
+{% macro centosWebtatic(role='') -%}
 RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && /usr/local/bin/yum-install \
         # Install tools

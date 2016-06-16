@@ -7,12 +7,13 @@ FROM webdevops/php:centos-7-php56
 
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=6
-LABEL io.webdevops.version=0.23.0
+LABEL io.webdevops.layout=7
+LABEL io.webdevops.version=0.51.0
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
 ENV WEB_ALIAS_DOMAIN   *.vm
+ENV WEB_PHP_SOCKET  127.0.0.1:9000
 
 COPY conf/ /opt/docker/
 

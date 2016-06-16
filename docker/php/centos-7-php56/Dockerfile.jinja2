@@ -2,10 +2,10 @@
 
 {{ docker.version() }}
 
-{{ docker.environmentWeb() }}
+{{ environment.web() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ php5.webtatic() }}
+{{ php5.centosWebtatic() }}
 
 {{ docker.expose('9000') }}
