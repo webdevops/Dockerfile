@@ -324,6 +324,7 @@ initEnvironment
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7-php56"
 
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
@@ -374,6 +375,7 @@ initEnvironment
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7-php56"
 
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
@@ -481,6 +483,7 @@ initEnvironment
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7-php56"
 
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
@@ -531,6 +534,7 @@ initEnvironment
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7-php56"
 
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
@@ -580,6 +584,7 @@ initEnvironment
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7-php56"
 
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"
@@ -631,6 +636,7 @@ initEnvironment
 
     setEnvironmentOsFamily "redhat"
     OS_VERSION="7" runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7-php56"
 
     setEnvironmentOsFamily "debian"
     OS_VERSION="7" runTestForTag "debian-7"

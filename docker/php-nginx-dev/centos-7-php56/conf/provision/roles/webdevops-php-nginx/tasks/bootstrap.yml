@@ -1,0 +1,9 @@
+---
+
+- name: Restrict php-fpm to local connection
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: 'listen', value: "127.0.0.1:9000" }
