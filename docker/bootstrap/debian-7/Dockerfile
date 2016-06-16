@@ -30,6 +30,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         lsb-release \
         ca-certificates \
         locales \
+        apt-transport-https \
     # Generate base locale
     && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
     && locale-gen \

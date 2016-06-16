@@ -30,6 +30,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         software-properties-common \
         lsb-release \
         ca-certificates \
+        apt-transport-https \
     && apt-add-repository multiverse \
     # Install ansible
     && /usr/local/bin/apt-install \

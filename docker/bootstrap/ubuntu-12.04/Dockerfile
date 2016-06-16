@@ -45,6 +45,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         libffi-dev \
         libssl-dev \
         build-essential \
+        apt-transport-https \
     && pip install --upgrade pip \
     && hash -r \
     && pip install ansible \
