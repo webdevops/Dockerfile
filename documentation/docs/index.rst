@@ -28,3 +28,4 @@ Overview
    content/DockerImages/index
    content/Customization/index
    content/BuildingProcess/index
+   content/KnownIssues/index
