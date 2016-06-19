@@ -31,7 +31,7 @@ RUN /usr/local/bin/apk-install \
         php-mysqli \
         php-pdo_mysql \
         php-pdo_sqlite \
-        php-memcached \
+        php5-memcached \
         php-mcrypt \
         php-gd \
         php-bcmath \
@@ -61,7 +61,7 @@ RUN /usr/local/bin/apk-install \
         geoip \
         php-ldap \
         php-memcache \
-        php-redis \
+        php5-redis \
         php-pear \
         php-phar \
         php-openssl \
