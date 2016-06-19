@@ -92,6 +92,8 @@ function runTestForTag() {
         docker pull "$DOCKER_IMAGE_WITH_TAG"
     fi
 
+    setupDockerTagEnvironment "$DOCKER_TAG"
+
     DOCKERFILE="Dockerfile.${DOCKER_IMAGE//\//-}-${DOCKER_TAG}.test"
 
     ## Build Dockerfile
@@ -188,6 +190,45 @@ function setupTestEnvironment() {
 function printRepeatedChar() {
     printf "${1}%.0s" $(seq 1 50)
     echo
+}
+
+###
+ # Switch environment variables for test
+ #
+ # $1     -> Docker tag
+ #
+ ##
+function setupDockerTagEnvironment() {
+    unset PHP_REDIS
+    unset PHP_APCU
+    unset PHP_XDEBUG
+    unset PHP_MHASH
+
+    case "$1" in
+        ubuntu-12.04)
+            export PHP_REDIS=0
+            export PHP_APCU=0
+            ;;
+
+        debian-7)
+            export PHP_REDIS=0
+            export PHP_APCU=0
+            ;;
+            
+        debian-8-php7)
+            export PHP_XDEBUG=0
+            ;;
+
+        centos-7-php56)
+            export PHP_APCU=0
+            export PHP_REDIS=0
+            ;;
+
+        alpine-3)
+            export PHP_REDIS=0
+            export PHP_MHASH=0
+            ;;
+    esac
 }
 
 initEnvironment
@@ -397,7 +438,7 @@ initEnvironment
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "debian"
-    PHP_XDEBUG=0 OS_VERSION="8" runTestForTag "debian-8-php7"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
     OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
@@ -555,7 +596,7 @@ initEnvironment
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "debian"
-    PHP_XDEBUG=0 OS_VERSION="8" runTestForTag "debian-8-php7"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
     OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
@@ -657,7 +698,7 @@ initEnvironment
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
     setEnvironmentOsFamily "debian"
-    PHP_XDEBUG=0 OS_VERSION="8" runTestForTag "debian-8-php7"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
     OS_VERSION="testing" runTestForTag "debian-9"
 
     setEnvironmentOsFamily "alpine"
