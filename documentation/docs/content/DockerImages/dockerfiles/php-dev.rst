@@ -16,6 +16,7 @@ Environment variables
 ---------------------
 
 .. include:: include/environment-base-app.rst
+.. include:: include/environment-web-dev.rst
 
 
 Docker image layout
