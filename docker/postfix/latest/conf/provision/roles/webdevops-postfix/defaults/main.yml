@@ -1,8 +1,2 @@
 ---
 
-POSTFIX_VARS:
-  - variable: mynetworks
-    value:    "{{ lookup('env','POSTFIX_MYNETWORKS') }}"
-
-  - variable: relayhost
-    value:    "{{ lookup('env','POSTFIX_RELAYHOST') }}"

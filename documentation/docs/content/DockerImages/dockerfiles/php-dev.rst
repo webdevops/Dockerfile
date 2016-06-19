@@ -12,6 +12,11 @@ Docker image tags
 
 .. include:: include/image-tag-php.rst
 
+Environment variables
+---------------------
+
+.. include:: include/environment-base-app.rst
+
 
 Docker image layout
 -------------------
