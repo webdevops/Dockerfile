@@ -45,7 +45,7 @@ RUN set -x \
         py-paramiko \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible \
+    && pip install ansible pysed \
     && chmod 750 /usr/bin/ansible* \
     # Cleanup
     && apk del python-dev

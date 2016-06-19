@@ -32,8 +32,13 @@ RUN set -x \
         python-paramiko \
         python-setuptools \
         python-setuptools-devel \
+        libffi \
+        python-devel \
+        libffi-devel \
     && easy_install pip \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible \
-    && chmod 750 /usr/bin/ansible*
+    && pip install ansible pysed \
+    && chmod 750 /usr/bin/ansible* \
+    && yum erase -y python-devel \
+    && yum clean all

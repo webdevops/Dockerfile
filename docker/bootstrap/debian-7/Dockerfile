@@ -47,7 +47,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         build-essential \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible \
+    && pip install ansible pysed \
     && chmod 750 /usr/local/bin/ansible* \
     # Cleanup
     && apt-get purge -y -f --force-yes \
