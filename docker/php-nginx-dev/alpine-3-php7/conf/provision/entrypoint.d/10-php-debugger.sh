@@ -19,6 +19,8 @@ function phpModuleDisable() {
 }
 
 PHP_XDEBUG_FILES="
+/etc/php5/conf.d/xdebug.ini
+/etc/php7/conf.d/xdebug.ini
 /etc/php.d/xdebug.ini
 /etc/php5/mods-available/xdebug.ini
 /etc/php5/cli/conf.d/20-xdebug.ini
