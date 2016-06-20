@@ -14,7 +14,6 @@ ENV FTP_USER     application
 ENV FTP_PASSWORD application
 ENV FTP_UID      1000
 ENV FTP_GID      1000
-ENV FTP_PASSWORD dev
 ENV FTP_PATH     /data/ftp/
 
 COPY conf/ /opt/docker/
