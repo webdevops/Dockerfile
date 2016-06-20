@@ -28,7 +28,7 @@ RUN set -x \
         py-paramiko \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible \
+    && pip install ansible pysed \
     && chmod 750 /usr/bin/ansible* \
     # Cleanup
     && apk del python-dev
@@ -53,11 +53,16 @@ RUN set -x \
         python-paramiko \
         python-setuptools \
         python-setuptools-devel \
+        libffi \
+        python-devel \
+        libffi-devel \
     && easy_install pip \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible \
-    && chmod 750 /usr/bin/ansible*
+    && pip install ansible pysed \
+    && chmod 750 /usr/bin/ansible* \
+    && yum erase -y python-devel \
+    && yum clean all
 {%- endmacro %}
 
 
@@ -93,7 +98,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         build-essential \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible \
+    && pip install ansible pysed \
     && chmod 750 /usr/local/bin/ansible* \
     # Cleanup
     && apt-get purge -y -f --force-yes \
@@ -139,7 +144,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         apt-transport-https \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible \
+    && pip install ansible pysed \
     && chmod 750 /usr/local/bin/ansible* \
     # Cleanup
     && apt-get purge -y -f --force-yes \
@@ -176,13 +181,14 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         python-pip \
         python-paramiko \
         python-jinja2 \
+        python-cffi \
         python-dev \
         libffi-dev \
        	libssl-dev \
         build-essential \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible \
+    && pip install ansible pysed \
     && chmod 750 /usr/local/bin/ansible* \
     # Cleanup
     && apt-get purge -y -f --force-yes \

@@ -7,10 +7,5 @@ These image extends ``webdevops/base`` with a postfix daemon which is running on
 Environment variables
 ---------------------
 
-====================== ============================= =============
-Environment variable   Description                   Default
-====================== ============================= =============
-``POSTFIX_MYNETWORKS`` Postfix mynetworks address    *empty*
-``POSTFIX_RELAYHOST``  Postfix upstream relay server *empty*
-====================== ============================= =============
+.. include:: include/environment-base-app.rst
 

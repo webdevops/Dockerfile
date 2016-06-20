@@ -27,3 +27,8 @@ this image.
 For an example docker service
 
 .. attention:: Alpine doesn't provide any locales so you have to find another method for using locales!
+
+Environment variables
+---------------------
+
+.. include:: include/environment-base-app.rst

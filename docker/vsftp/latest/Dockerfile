@@ -7,14 +7,13 @@ FROM webdevops/base:latest
 
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.51.0
+LABEL io.webdevops.layout=8
+LABEL io.webdevops.version=0.52.0
 
 ENV FTP_USER     application
 ENV FTP_PASSWORD application
 ENV FTP_UID      1000
 ENV FTP_GID      1000
-ENV FTP_PASSWORD dev
 ENV FTP_PATH     /data/ftp/
 
 COPY conf/ /opt/docker/

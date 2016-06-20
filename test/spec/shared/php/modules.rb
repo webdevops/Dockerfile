@@ -53,16 +53,12 @@ shared_examples 'php::modules' do
         its(:stdout) { should     contain('xsl') }
         its(:stdout) { should     contain('zip') }
         its(:stdout) { should     contain('zlib') }
+        its(:stdout) { should     contain('gd') }
 
-        if ( os[:family] != 'alpine' )
-            its(:stdout) { should     contain('gd') }
-        end
-
-        if !(
-                (os[:family] == 'ubuntu' and os[:version] == '12.04' ) or
-                (os[:family] == 'debian' and os[:version] == '7' )
-            )
+        if ( $testConfiguration[:phpApcu] )
             its(:stdout) { should     contain('apcu') }
+        else
+            its(:stdout) { should_not contain('apcu') }
         end
 
         its(:exit_status) { should eq 0 }
@@ -95,18 +91,18 @@ shared_examples 'php5::modules' do
     describe command('php -m') do
         its(:stdout) { should     contain('shmop') }
 
-        if ( os[:family] != 'alpine' )
+        if ( $testConfiguration[:phpMhash] )
             its(:stdout) { should     contain('mhash') }
+        else
+            its(:stdout) { should_not contain('mhash') }
         end
 
         its(:stdout) { should     contain('wddx') }
 
-        if (os[:family] == 'ubuntu' and (os[:version] == '12.04' or os[:version] == '16.04') ) or
-           (os[:family] == 'debian' and os[:version] == '7' ) or
-           (os[:family] == 'debian' and os[:version] == 'testing' )
-            its(:stdout) { should_not contain('redis') }
-        else
+        if ( $testConfiguration[:phpRedis] )
             its(:stdout) { should     contain('redis') }
+        else
+            its(:stdout) { should_not contain('redis') }
         end
 
         its(:exit_status) { should eq 0 }
@@ -116,7 +112,10 @@ end
 shared_examples 'php7::modules' do
     describe command('php -m') do
         its(:stdout) { should     contain('Zend OPcache') }
-        its(:stdout) { should     contain('redis') }
+
+        if ( $testConfiguration[:phpRedis] )
+            its(:stdout) { should     contain('redis') }
+        end
 
         its(:exit_status) { should eq 0 }
     end
@@ -177,16 +176,12 @@ shared_examples 'php-fpm::modules' do
         its(:stdout) { should     contain('xsl') }
         its(:stdout) { should     contain('zip') }
         its(:stdout) { should     contain('zlib') }
+        its(:stdout) { should     contain('gd') }
 
-        if ( os[:family] != 'alpine' )
-            its(:stdout) { should     contain('gd') }
-        end
-
-        if !(
-                (os[:family] == 'ubuntu' and os[:version] == '12.04' ) or
-                (os[:family] == 'debian' and os[:version] == '7' )
-            )
+        if ( $testConfiguration[:phpApcu] )
             its(:stdout) { should     contain('apcu') }
+        else
+            its(:stdout) { should_not contain('apcu') }
         end
 
         its(:exit_status) { should eq 0 }
@@ -220,18 +215,18 @@ shared_examples 'php-fpm5::modules' do
     describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
         its(:stdout) { should     contain('shmop') }
 
-        if ( os[:family] != 'alpine' )
+        if ( $testConfiguration[:phpMhash] )
             its(:stdout) { should     contain('mhash') }
+        else
+            its(:stdout) { should_not contain('mhash') }
         end
 
         its(:stdout) { should     contain('wddx') }
 
-        if (os[:family] == 'ubuntu' and (os[:version] == '12.04' or os[:version] == '16.04') ) or
-           (os[:family] == 'debian' and os[:version] == '7' ) or
-           (os[:family] == 'debian' and os[:version] == 'testing' )
-            its(:stdout) { should_not contain('redis') }
-        else
+        if ( $testConfiguration[:phpRedis] )
             its(:stdout) { should     contain('redis') }
+        else
+            its(:stdout) { should_not contain('redis') }
         end
 
         its(:exit_status) { should eq 0 }
@@ -241,7 +236,12 @@ end
 shared_examples 'php-fpm7::modules' do
     describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
         its(:stdout) { should     contain('Zend OPcache') }
-        its(:stdout) { should     contain('redis') }
+
+        if ( $testConfiguration[:phpRedis] )
+            its(:stdout) { should     contain('redis') }
+        else
+            its(:stdout) { should_not contain('redis') }
+        end
 
         its(:exit_status) { should eq 0 }
     end

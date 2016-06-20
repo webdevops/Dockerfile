@@ -7,8 +7,8 @@ FROM debian:8
 
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.51.0
+LABEL io.webdevops.layout=8
+LABEL io.webdevops.version=0.52.0
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8
@@ -47,7 +47,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         build-essential \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible \
+    && pip install ansible pysed \
     && chmod 750 /usr/local/bin/ansible* \
     # Cleanup
     && apt-get purge -y -f --force-yes \

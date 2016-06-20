@@ -25,9 +25,24 @@ else
 end
 
 $testConfiguration[:phpXdebug] = true
+$testConfiguration[:phpApcu] = true
+$testConfiguration[:phpRedis] = true
+$testConfiguration[:phpMhash] = true
 
 if ENV['PHP_XDEBUG'] and ENV['PHP_XDEBUG'] == "0"
     $testConfiguration[:phpXdebug] = false
+end
+
+if ENV['PHP_APCU'] and ENV['PHP_APCU'] == "0"
+    $testConfiguration[:phpApcu] = false
+end
+
+if ENV['PHP_REDIS'] and ENV['PHP_REDIS'] == "0"
+    $testConfiguration[:phpRedis] = false
+end
+
+if ENV['PHP_MHASH'] and ENV['PHP_MHASH'] == "0"
+    $testConfiguration[:phpMhash] = false
 end
 
 def wait_retry(time, increment = 1, elapsed_time = 0, &block)

@@ -8,4 +8,6 @@ Environment variable       Description                  Default
 ``WEB_NO_CACHE_PATTERN``   RegExp of files which should ``\.(css|js|gif|png|jpg|svg|json|xml)$``
                            be delivered by webserver as
                            non cacheable to browser
+``PHP_DEBUGGER``           Specifies which php debugger *empty* (eg. ``xdebug``, ``blackfire`` or
+                           should be active             ``none``)
 ========================== ============================ ==============================================

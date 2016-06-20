@@ -1,0 +1,17 @@
+---
+
+- name: Configure php-fpm pool user (www.conf)
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: "access.format", value: '"%R - %u %t \"%m %r%Q%q\" %s %f cpu:%C%% mem:%{megabytes}M reqTime:%d"' }
+
+- name: Open php-fpm for external connections (eg. debuggers)
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: 'listen', value: "0.0.0.0:9000" }
