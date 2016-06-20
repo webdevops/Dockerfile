@@ -219,6 +219,10 @@ function setupDockerTagEnvironment() {
             export PHP_XDEBUG=0
             ;;
 
+        alpine-3)
+            export PHP_MHASH=0
+            ;;
+
         centos-7-php56)
             export PHP_APCU=0
             export PHP_REDIS=0
