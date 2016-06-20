@@ -7,8 +7,8 @@ FROM ubuntu:16.04
 
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=7
-LABEL io.webdevops.version=0.51.0
+LABEL io.webdevops.layout=8
+LABEL io.webdevops.version=0.52.0
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8
