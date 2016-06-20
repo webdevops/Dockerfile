@@ -6,7 +6,7 @@ RUN /usr/local/bin/apk-install \
         # Install tools
         graphviz \
         # Install php development stuff
-        php-xdebug \
+        php5-xdebug \
     {{ provision.runRoleInline('php-dev', role) }}
 {%- endmacro %}
 

@@ -17,7 +17,7 @@ RUN /usr/local/bin/apk-install \
         # Install tools
         graphviz \
         # Install php development stuff
-        php-xdebug \
+        php5-xdebug \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
 

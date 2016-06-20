@@ -223,11 +223,6 @@ function setupDockerTagEnvironment() {
             export PHP_APCU=0
             export PHP_REDIS=0
             ;;
-
-        alpine-3)
-            export PHP_REDIS=0
-            export PHP_MHASH=0
-            ;;
     esac
 }
 
