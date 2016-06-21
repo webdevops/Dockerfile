@@ -1,4 +1,6 @@
-# WebDevOps Dockerfiles
+![Dockerfile](https://static.webdevops.io/dockerfile.svg)
+
+Automated build on [WebDevOps Build server](https://build.webdevops.io/) sponsored by ![infogene](https://static.webdevops.io/sponsor-infogene.png | width=100)
 
 Dockerfiles for various prebuilt docker containers
 
