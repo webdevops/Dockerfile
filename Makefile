@@ -8,8 +8,9 @@ DOCKER_TAG_LATEST=`cat DOCKER_TAG_LATEST`
 list:
 	sh -c "echo; $(MAKE) -p no_targets__ | awk -F':' '/^[a-zA-Z0-9][^\$$#\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);for(i in A)print A[i]}' | grep -v '__\$$' | grep -v 'Makefile'| sort"
 
-all:       provision bootstrap base web php php-dev hhvm service misc applications
-build:     all
+full:      provision build
+all:       build
+build:     bootstrap base web php php-dev hhvm service misc applications
 
 bootstrap: webdevops/bootstrap webdevops/ansible
 base:      webdevops/base webdevops/base-app webdevops/storage

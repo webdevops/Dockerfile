@@ -38,6 +38,7 @@ Command                     | Description
 `make baselayout`           | Build and deploy baselayout.tar
 `make provision`            | Deploy all configuration files from [_provisioning/](_provisioning/README.md)
 `make dist-update`          | Update local distrubtion images (CentOS, Debian, Ubuntu)
+`make full`                 | Run provision and build all images
 <br>                        |
 `make test`                 | Run testsuite (use currently available docker images on your docker host)
 `make test-hub-images`      | Run testsuite but pull newest docker images from docker hub first
