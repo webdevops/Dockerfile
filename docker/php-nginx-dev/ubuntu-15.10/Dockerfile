@@ -21,7 +21,7 @@ COPY conf/ /opt/docker/
 # Install nginx
 RUN /usr/local/bin/apt-install \
         nginx \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-nginx --role webdevops-php-nginx --role webdevops-php-nginx-dev \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-nginx --role webdevops-php-nginx --role webdevops-nginx-dev \
     && /opt/docker/bin/bootstrap.sh
 
 

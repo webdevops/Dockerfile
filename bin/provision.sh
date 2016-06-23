@@ -254,6 +254,13 @@ function header() {
     deployConfiguration apache/alpine   apache  'alpine-*'
 }
 
+## Build apache-dev
+[[ $(checkBuildTarget apache-dev) ]] && {
+    header "apache-dev"
+    clearConfiguration  apache-dev '*'
+    deployConfiguration apache-dev/general  apache-dev  '*'
+}
+
 ## Build nginx
 [[ $(checkBuildTarget nginx) ]] && {
     header "nginx"
@@ -261,6 +268,13 @@ function header() {
     deployConfiguration nginx/general  nginx  '*'
     deployConfiguration nginx/centos   nginx  'centos-*'
     deployConfiguration nginx/alpine   nginx  'alpine-*'
+}
+
+## Build nginx-dev
+[[ $(checkBuildTarget nginx) ]] && {
+    header "nginx-dev"
+    clearConfiguration  nginx-dev '*'
+    deployConfiguration nginx-dev/general  nginx-dev  '*'
 }
 
 ## Build hhvm
@@ -338,6 +352,7 @@ function header() {
     deployConfiguration apache/alpine       php-apache-dev  'alpine-*'
     deployConfiguration php-apache/general  php-apache-dev  '*'
     deployConfiguration php-dev/general     php-apache-dev  '*'
+    deployConfiguration apache-dev/general  php-apache-dev  '*'
 }
 
 ## Build php-nginx-dev
@@ -349,6 +364,7 @@ function header() {
     deployConfiguration nginx/alpine       php-nginx-dev  'alpine-*'
     deployConfiguration php-nginx/general  php-nginx-dev  '*'
     deployConfiguration php-dev/general    php-nginx-dev  '*'
+    deployConfiguration nginx-dev/general  php-nginx-dev '*'
 }
 
 ## Build postfix
