@@ -4,6 +4,15 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [0.53.0] - 2016-06-23
+- Added apache-dev and nginx-dev
+- Restructed php-*dev provision
+- Removed whoami call
+- Removed provision from `make all` and `make build` 
+- Removed --force from apk-install
+- Fixed pecl for alpine images
+- Updated documentation and tests 
+
 ## [0.52.0] - 2016-06-20
 - Added tag centos-7-php56 for php images
 - Added POSTFIX_MYNETWORKS and POSTFIX_RELAYHOST environment variables

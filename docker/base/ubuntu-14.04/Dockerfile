@@ -8,7 +8,7 @@ FROM webdevops/bootstrap:ubuntu-14.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.52.0
+LABEL io.webdevops.version=0.53.0
 
 ENV DOCKER_CONF_HOME /opt/docker/
 
