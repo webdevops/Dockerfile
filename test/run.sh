@@ -373,7 +373,7 @@ initEnvironment
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
 
-    waitForTestRun
+    #waitForTestRun
 
     ##########
     # PHP 7
@@ -424,7 +424,7 @@ initEnvironment
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
 
-    waitForTestRun
+    #waitForTestRun
 
     ##########
     # PHP 7
@@ -532,7 +532,7 @@ initEnvironment
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
 
-    waitForTestRun
+    #waitForTestRun
 
     ##########
     # PHP 7
@@ -583,7 +583,7 @@ initEnvironment
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
 
-    waitForTestRun
+    #waitForTestRun
 
     ##########
     # PHP 7
@@ -633,7 +633,7 @@ initEnvironment
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
 
-    waitForTestRun
+    #waitForTestRun
 
     ##########
     # PHP 7
@@ -685,7 +685,7 @@ initEnvironment
     setEnvironmentOsFamily "alpine"
     OS_VERSION="3" runTestForTag "alpine-3"
 
-    waitForTestRun
+    #waitForTestRun
 
     ##########
     # PHP 7
