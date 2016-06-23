@@ -20,7 +20,7 @@ Docker images
    dockerfiles/hhvm
    dockerfiles/hhvm-apache
    dockerfiles/hhvm-nginx
-   dockerfiles/mail-catcher
+   dockerfiles/mail-sandbox
    dockerfiles/nginx
    dockerfiles/php
    dockerfiles/php-apache
