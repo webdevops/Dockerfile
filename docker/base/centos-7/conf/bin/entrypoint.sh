@@ -13,7 +13,7 @@ TASK="$(echo $1| sed 's/[^-_a-zA-Z0-9]*//g')"
 
 source /opt/docker/bin/config.sh
 
-if [ "$(/usr/bin/whoami)" == "root" ]; then
+if [[ "$UID" -eq 0 ]]; then
     # Only run provision if user is root
 
     if [ "$TASK" == "supervisord" -o "$TASK" == "noop" ]; then
