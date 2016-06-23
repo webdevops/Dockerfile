@@ -8,7 +8,7 @@ FROM webdevops/php-dev:alpine-3
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.52.0
+LABEL io.webdevops.version=0.53.0
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
@@ -21,7 +21,7 @@ COPY conf/ /opt/docker/
 # Install nginx
 RUN /usr/local/bin/apk-install \
         nginx \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-nginx --role webdevops-php-nginx --role webdevops-php-nginx-dev \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-nginx --role webdevops-php-nginx --role webdevops-nginx-dev \
     && /opt/docker/bin/bootstrap.sh
 
 

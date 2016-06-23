@@ -8,7 +8,7 @@ FROM webdevops/php-dev:ubuntu-14.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.52.0
+LABEL io.webdevops.version=0.53.0
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
@@ -30,7 +30,7 @@ RUN /usr/local/bin/apt-install \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions fastcgi ssl rewrite headers expires \
 	&& mkdir -p /var/lock/apache2 \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache --role webdevops-php-apache-dev \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache --role webdevops-apache-dev \
     && /opt/docker/bin/bootstrap.sh
 
 

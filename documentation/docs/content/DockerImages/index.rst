@@ -14,14 +14,16 @@ Docker images
 
    dockerfiles/ansible
    dockerfiles/apache
+   dockerfiles/apache-dev
    dockerfiles/base
    dockerfiles/base-app
    dockerfiles/bootstrap
    dockerfiles/hhvm
    dockerfiles/hhvm-apache
    dockerfiles/hhvm-nginx
-   dockerfiles/mail-catcher
+   dockerfiles/mail-sandbox
    dockerfiles/nginx
+   dockerfiles/nginx-dev
    dockerfiles/php
    dockerfiles/php-apache
    dockerfiles/php-apache-dev

@@ -11,4 +11,5 @@ Tag                    Distribution name          PHP Version
 ``debian-8-php7``      jessie with dotdeb         PHP 7.x (via sury)
 ``debian-9``           stretch                    PHP 7.0
 ``centos-7``                                      PHP 5.4
+``centos-7-php56``                                PHP 5.6
 ====================== ========================== ===============

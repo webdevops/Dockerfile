@@ -7,7 +7,6 @@ These image extends ``webdevops/php`` with a apache daemon which is running on p
 Docker image tags
 -----------------
 
-
 .. include:: include/image-tag-php.rst
 
 

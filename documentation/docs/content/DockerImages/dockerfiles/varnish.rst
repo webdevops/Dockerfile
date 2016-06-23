@@ -5,6 +5,16 @@ webdevops/varnish
 These image extends ``webdevops/base`` and provides a standalone varnish server running on port 80.
 
 
+Docker image tags
+-----------------
+
+====================== ==========================
+Tag                    Distribution name
+====================== ==========================
+``latest``             Alpine 3
+====================== ==========================
+
+
 Environment variables
 ---------------------
 

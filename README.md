@@ -1,6 +1,6 @@
-# WebDevOps Dockerfiles
+![Dockerfile](https://static.webdevops.io/dockerfile.svg)
 
-Dockerfiles for various prebuilt docker containers
+Automated built and tested on [WebDevOps Build server](https://build.webdevops.io/) sponsored by [<img src="https://static.webdevops.io/sponsor-infogene.png" width="100">](http://infogene.fr/)
 
 [![Docker layout](documentation/docs/resources/images/docker-image-layout.gv.png)](documentation/docs/resources/images/docker-image-layout.gv.png)
 
@@ -38,6 +38,7 @@ Command                     | Description
 `make baselayout`           | Build and deploy baselayout.tar
 `make provision`            | Deploy all configuration files from [_provisioning/](_provisioning/README.md)
 `make dist-update`          | Update local distrubtion images (CentOS, Debian, Ubuntu)
+`make full`                 | Run provision and build all images
 <br>                        |
 `make test`                 | Run testsuite (use currently available docker images on your docker host)
 `make test-hub-images`      | Run testsuite but pull newest docker images from docker hub first

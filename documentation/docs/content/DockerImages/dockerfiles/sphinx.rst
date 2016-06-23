@@ -4,6 +4,15 @@ webdevops/sphinx
 
 These image extends ``webdevops/bootstrap`` and provides a sphinx build system.
 
+Docker image tags
+-----------------
+
+====================== ==========================
+Tag                    Distribution name
+====================== ==========================
+``latest``             Alpine 3
+====================== ==========================
+
 
 Usage
 -----

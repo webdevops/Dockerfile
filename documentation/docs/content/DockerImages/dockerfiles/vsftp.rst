@@ -4,6 +4,16 @@ webdevops/vsftp
 
 These image extends ``webdevops/base`` and provides a standalone vsftp server running on port 20 and 21.
 
+Docker image tags
+-----------------
+
+====================== ==========================
+Tag                    Distribution name
+====================== ==========================
+``latest``             Ubuntu 16.04 xenial (LTS)
+====================== ==========================
+
+
 Environment variables
 ---------------------
 

@@ -1,4 +1,0 @@
----
-
-- include: bootstrap/nginx.yml
-- include: bootstrap/php-fpm.yml

@@ -29,3 +29,4 @@ Overview
    content/Customization/index
    content/BuildingProcess/index
    content/KnownIssues/index
+   content/FAQ/index

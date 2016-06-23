@@ -8,8 +8,9 @@ DOCKER_TAG_LATEST=`cat DOCKER_TAG_LATEST`
 list:
 	sh -c "echo; $(MAKE) -p no_targets__ | awk -F':' '/^[a-zA-Z0-9][^\$$#\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);for(i in A)print A[i]}' | grep -v '__\$$' | grep -v 'Makefile'| sort"
 
-all:       provision bootstrap base web php php-dev hhvm service misc applications
-build:     all
+full:      provision build
+all:       build
+build:     bootstrap base web php php-dev hhvm service misc applications
 
 bootstrap: webdevops/bootstrap webdevops/ansible
 base:      webdevops/base webdevops/base-app webdevops/storage
@@ -19,7 +20,7 @@ php:       webdevops/php webdevops/php-apache webdevops/php-nginx
 php-dev:   webdevops/php-dev webdevops/php-apache-dev webdevops/php-nginx-dev
 hhvm:      webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
-web:       webdevops/apache webdevops/nginx webdevops/varnish
+web:       webdevops/apache webdevops/apache-dev webdevops/nginx webdevops/nginx-dev webdevops/varnish
 
 applications: webdevops/typo3 webdevops/piwik
 
@@ -99,8 +100,14 @@ webdevops/php-dev:
 webdevops/apache:
 	bash bin/build.sh apache "${DOCKER_REPOSITORY}/apache" "${DOCKER_TAG_LATEST}"
 
+webdevops/apache-dev:
+	bash bin/build.sh apache-dev "${DOCKER_REPOSITORY}/apache-dev" "${DOCKER_TAG_LATEST}"
+
 webdevops/nginx:
 	bash bin/build.sh nginx "${DOCKER_REPOSITORY}/nginx" "${DOCKER_TAG_LATEST}"
+
+webdevops/nginx-dev:
+	bash bin/build.sh nginx-dev "${DOCKER_REPOSITORY}/nginx-dev" "${DOCKER_TAG_LATEST}"
 
 webdevops/php-apache:
 	bash bin/build.sh php-apache "${DOCKER_REPOSITORY}/php-apache" "${DOCKER_TAG_LATEST}"

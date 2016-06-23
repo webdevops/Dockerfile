@@ -8,7 +8,7 @@ FROM webdevops/base-app:alpine-3
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.52.0
+LABEL io.webdevops.version=0.53.0
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
@@ -70,6 +70,8 @@ RUN /usr/local/bin/apk-install \
     && pear upgrade-all \
     && pear config-set auto_discover 1 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    # PECL workaround, see webdevops/Dockerfile#78
+    && sed -i "s/ -n / /" $(which pecl) \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh
 
