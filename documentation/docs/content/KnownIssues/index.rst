@@ -36,6 +36,6 @@ webdevops/php...-dev:alpine-3
 - missing blackfire (not supported)
 
 webdevops/php...-dev:debian-8-php7
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - missing xdebug

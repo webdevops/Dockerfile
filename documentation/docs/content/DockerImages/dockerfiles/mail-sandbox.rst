@@ -9,6 +9,11 @@ This images catches all emails sent to it and stores them locally. These mails a
 Docker image tags
 -----------------
 
+====================== ==========================
+Tag                    Distribution name
+====================== ==========================
+``latest``             Ubuntu 16.04 xenial (LTS)
+====================== ==========================
 
 
 Environment variables

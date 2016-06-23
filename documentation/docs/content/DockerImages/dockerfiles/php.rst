@@ -7,7 +7,6 @@ The php images are based on ``webdevops/base-app`` with PHP cli and PHP-FPM. PHP
 Docker image tags
 -----------------
 
-
 .. include:: include/image-tag-php.rst
 
 Environment variables

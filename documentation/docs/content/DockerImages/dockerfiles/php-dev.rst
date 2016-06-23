@@ -9,14 +9,14 @@ These image extends ``webdevops/php`` with xdebug and development tools
 Docker image tags
 -----------------
 
-
 .. include:: include/image-tag-php.rst
+
 
 Environment variables
 ---------------------
 
 .. include:: include/environment-base-app.rst
-.. include:: include/environment-web-dev.rst
+.. include:: include/environment-php-dev.rst
 
 
 Docker image layout

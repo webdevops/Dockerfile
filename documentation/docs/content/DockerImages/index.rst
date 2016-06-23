@@ -14,6 +14,7 @@ Docker images
 
    dockerfiles/ansible
    dockerfiles/apache
+   dockerfiles/apache-dev
    dockerfiles/base
    dockerfiles/base-app
    dockerfiles/bootstrap
@@ -22,6 +23,7 @@ Docker images
    dockerfiles/hhvm-nginx
    dockerfiles/mail-sandbox
    dockerfiles/nginx
+   dockerfiles/nginx-dev
    dockerfiles/php
    dockerfiles/php-apache
    dockerfiles/php-apache-dev

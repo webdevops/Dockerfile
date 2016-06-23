@@ -7,8 +7,7 @@ These image extends ``webdevops/base`` with a nginx daemon which is running on p
 Docker image tags
 -----------------
 
-
-
+.. include:: include/image-tag-base.rst
 
 
 Environment variables

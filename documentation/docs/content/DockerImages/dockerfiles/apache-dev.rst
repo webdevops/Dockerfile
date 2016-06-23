@@ -1,24 +1,25 @@
 ====================
-webdevops/php-apache
+webdevops/apache-dev
 ====================
 
-These image extends ``webdevops/php`` with a apache daemon which is running on port 80 and 443
+These image extends ``webdevops/base`` with a apache daemon which is running on port 80 and 443
+
+.. include:: include/info-web-development.rst
 
 Docker image tags
 -----------------
 
-.. include:: include/image-tag-php.rst
+.. include:: include/image-tag-base.rst
 
 
 Environment variables
 ---------------------
 
 .. include:: include/environment-base-app.rst
-.. include:: include/environment-web.rst
+.. include:: include/environment-web-dev.rst
 
 
 Docker image layout
 -------------------
 
 .. include:: include/layout-apache.rst
-.. include:: include/layout-php.rst
