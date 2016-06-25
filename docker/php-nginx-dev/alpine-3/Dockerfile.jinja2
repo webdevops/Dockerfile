@@ -8,6 +8,6 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ nginx.alpine('php-nginx nginx-dev') }}
+{{ nginx.alpine('php-nginx nginx-dev php-dev') }}
 
 {{ docker.expose('80 443') }}
