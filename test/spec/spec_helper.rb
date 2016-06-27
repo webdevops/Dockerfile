@@ -28,6 +28,7 @@ $testConfiguration[:phpXdebug] = true
 $testConfiguration[:phpApcu] = true
 $testConfiguration[:phpRedis] = true
 $testConfiguration[:phpMhash] = true
+$testConfiguration[:phpBlackfire] = false
 
 if ENV['PHP_XDEBUG'] and ENV['PHP_XDEBUG'] == "0"
     $testConfiguration[:phpXdebug] = false
@@ -43,6 +44,11 @@ end
 
 if ENV['PHP_MHASH'] and ENV['PHP_MHASH'] == "0"
     $testConfiguration[:phpMhash] = false
+end
+
+if ENV['PHP_BLACKFIRE'] and ENV['PHP_BLACKFIRE'] == "1"
+    $testConfiguration[:phpBlackfire] = true
+    $testConfiguration[:phpXdebug] = false
 end
 
 def wait_retry(time, increment = 1, elapsed_time = 0, &block)

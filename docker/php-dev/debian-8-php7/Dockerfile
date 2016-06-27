@@ -8,7 +8,7 @@ FROM webdevops/php:debian-8-php7
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.53.1
+LABEL io.webdevops.version=0.53.2
 
 COPY conf/ /opt/docker/
 
@@ -20,6 +20,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         graphviz \
         # Install php development stuff
         # php7.0-xdebug \ # Is currently not available
+        blackfire-php \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
 
