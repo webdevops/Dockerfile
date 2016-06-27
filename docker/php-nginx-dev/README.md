@@ -25,6 +25,7 @@ Variable              | Description
 `WEB_DOCUMENT_ROOT`   | Document root for Nginx
 `WEB_DOCUMENT_INDEX`  | Document index (eg. `index.php`) for Nginx
 `WEB_ALIAS_DOMAIN`    | Alias domains (eg. `*.vm`) for Nginx
+`PHP_DEBUGGER`        | Either `xdebug`, `blackfire` or `none`. Default is `xdebug`.
 
 ## Filesystem layout
 
