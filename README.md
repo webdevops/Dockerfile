@@ -1,6 +1,6 @@
 ![Dockerfile](https://static.webdevops.io/dockerfile.svg)
 
-Automated built and tested on [WebDevOps Build server](https://build.webdevops.io/) sponsored by [<img src="https://static.webdevops.io/sponsor-infogene.png" width="100">](http://infogene.fr/)
+Automated built and tested on [WebDevOps Build server](https://build.webdevops.io/) sponsored by [<img src="https://static.webdevops.io/sponsor-infogene.png" width="100">](http://infogene.eu/)
 
 [![Docker layout](documentation/docs/resources/images/docker-image-layout.gv.png)](documentation/docs/resources/images/docker-image-layout.gv.png)
 
