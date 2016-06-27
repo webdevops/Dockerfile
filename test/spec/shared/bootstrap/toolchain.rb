@@ -16,10 +16,6 @@ shared_examples 'bootstrap::toolchain' do
         its(:exit_status) { should eq 0 }
     end
 
-    describe command('pysed --version') do
-        its(:exit_status) { should eq 0 }
-    end
-
     describe command('rpl --version') do
         its(:exit_status) { should eq 0 }
     end
