@@ -23,3 +23,9 @@ Container                                 | Distribution name        | PHP Versi
 - [PHP Coding Standards Fixer](http://cs.sensiolabs.org/) 
 - [SensioLabs DeprecationDetector](https://github.com/sensiolabs-de/deprecation-detector)
 - [PHP 7 Compatibility Checker](https://github.com/sstalle/php7cc)
+
+## Environment variables
+
+Variable              | Description
+--------------------- |  ------------------------------------------------------------------------------
+`PHP_DEBUGGER`        | Either `xdebug`, `blackfire` or `none`. Default is `xdebug`.
