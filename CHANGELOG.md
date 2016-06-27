@@ -4,6 +4,9 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [0.53.1] - 2016-06-27
+- Fixed and improved `PHP_DEBUGGER` for php-dev
+
 ## [0.53.0] - 2016-06-23
 - Added apache-dev and nginx-dev
 - Restructed php-*dev provision
