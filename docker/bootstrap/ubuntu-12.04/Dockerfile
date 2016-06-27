@@ -48,7 +48,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         apt-transport-https \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install ansible pysed \
+    && pip install ansible \
     && chmod 750 /usr/local/bin/ansible* \
     # Cleanup
     && apt-get purge -y -f --force-yes \
