@@ -8,7 +8,7 @@ FROM busybox:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.53.1
+LABEL io.webdevops.version=0.53.2
 
 RUN mkdir /storage/ \
     && chmod 777 /storage/
