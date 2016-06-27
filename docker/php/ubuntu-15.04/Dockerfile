@@ -8,7 +8,7 @@ FROM webdevops/base-app:ubuntu-15.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.53.0
+LABEL io.webdevops.version=0.53.1
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
