@@ -8,7 +8,7 @@ FROM debian:7
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.53.1
+LABEL io.webdevops.version=0.53.2
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8
