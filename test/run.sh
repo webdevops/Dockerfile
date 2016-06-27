@@ -838,6 +838,9 @@ ENV PHP_DEBUGGER \"blackfire\"
     OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
     OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
 
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7-php7"
+
     setEnvironmentOsFamily "debian"
     OS_VERSION="8" runTestForTag "debian-8-php7"
     OS_VERSION="testing" runTestForTag "debian-9"
