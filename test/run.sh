@@ -402,6 +402,10 @@ initEnvironment
 [[ $(checkTestTarget php-dev) ]] && {
     setupTestEnvironment "php-dev"
 
+    #############################
+    # XDEBUG
+    #############################
+
     ##########
     # PHP 5
     ##########
@@ -444,6 +448,71 @@ initEnvironment
     OS_VERSION="3" runTestForTag "alpine-3-php7"
 
     waitForTestRun
+}
+
+[[ $(checkTestTarget php-dev-blackfire) ]] && {
+    setupTestEnvironment "php-dev"
+
+    #############################
+    # BLACKFIRE
+    #############################
+
+    export PHP_BLACKFIRE=1
+
+    ##########
+    # PHP 5
+    ##########
+
+    setSpecTest "php5-dev"
+
+    DOCKERFILE_EXTRA="
+ENV PHP_DEBUGGER \"blackfire\"
+"
+
+    OS_VERSION="12.04" runTestForTag "ubuntu-12.04"
+    OS_VERSION="14.04" runTestForTag "ubuntu-14.04"
+    OS_VERSION="15.04" runTestForTag "ubuntu-15.04"
+    OS_VERSION="15.10" runTestForTag "ubuntu-15.10"
+
+    setEnvironmentOsFamily "redhat"
+    OS_VERSION="7" runTestForTag "centos-7"
+    OS_VERSION="7" runTestForTag "centos-7-php56"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="7" runTestForTag "debian-7"
+    OS_VERSION="8" runTestForTag "debian-8"
+
+    # blackfire not supported on alpine
+    #setEnvironmentOsFamily "alpine"
+    #OS_VERSION="3" runTestForTag "alpine-3"
+
+    waitForTestRun
+
+    ##########
+    # PHP 7
+    ##########
+
+    setSpecTest "php7-dev"
+
+    DOCKERFILE_EXTRA="
+ENV PHP_DEBUGGER \"blackfire\"
+"
+
+    setEnvironmentOsFamily "ubuntu"
+    OS_VERSION="16.04" runTestForTag "ubuntu-16.04"
+    OS_VERSION="$DOCKER_TAG_LATEST" runTestForTag "latest"
+
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="8" runTestForTag "debian-8-php7"
+    OS_VERSION="testing" runTestForTag "debian-9"
+
+    # blackfire not supported on alpine
+    #setEnvironmentOsFamily "alpine"
+    #OS_VERSION="3" runTestForTag "alpine-3-php7"
+
+    waitForTestRun
+
+    export PHP_BLACKFIRE=0
 }
 
 

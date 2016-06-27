@@ -77,11 +77,16 @@ end
 shared_examples 'php::modules::development' do
     describe command('php -m') do
         if ( $testConfiguration[:phpXdebug] )
-            its(:stdout) { should contain('xdebug') }
+            its(:stdout) { should     contain('xdebug') }
+        else
+            its(:stdout) { should_not contain('xdebug') }
         end
 
-        # disabled by default
-        its(:stdout) { should_not contain('blackfire') }
+        if ( $testConfiguration[:phpBlackfire] )
+            its(:stdout) { should     contain('blackfire') }
+        else
+            its(:stdout) { should_not contain('blackfire') }
+        end
 
         its(:exit_status) { should eq 0 }
     end

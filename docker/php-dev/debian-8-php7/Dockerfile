@@ -20,6 +20,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         graphviz \
         # Install php development stuff
         # php7.0-xdebug \ # Is currently not available
+        blackfire-php \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
 
