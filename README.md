@@ -34,6 +34,7 @@ Command                     | Description
 `FAST=0 make all`           | Build all containers *slow mode* (serial building)
 `DEBUG=1 make all`          | Show log of build process even if process is successfull
 `FORCE=1 make all`          | Force container build (`docker build --no-cache ...`)
+`WHITELIST="alpine-3 centos-7" make all`          | Build all container with tag alpine-3 or centos-7
 <br>                        |
 `make baselayout`           | Build and deploy baselayout.tar
 `make provision`            | Deploy all configuration files from [_provisioning/](_provisioning/README.md)
