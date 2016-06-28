@@ -185,6 +185,7 @@ function setupTestEnvironment() {
 
     ## Reset custom docker environment settings
     DOCKERFILE_CONF=""
+    DOCKERFILE_EXTRA=""
 }
 
 function printRepeatedChar() {
