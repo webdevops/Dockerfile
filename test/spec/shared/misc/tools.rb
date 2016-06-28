@@ -10,9 +10,17 @@ shared_examples 'misc::imagemagick' do
     end
 end
 
-
 shared_examples 'misc::graphviz' do
     it "should include graphviz" do
         expect(file("/usr/bin/dot")).to be_executable
+    end
+end
+
+shared_examples 'misc::letsencrypt' do
+    it "should include letsencrypt" do
+        expect(file("/usr/bin/letsencrypt")).to be_executable
+    end
+    it "should include certbot" do
+        expect(file("/usr/bin/certbot")).to be_executable
     end
 end

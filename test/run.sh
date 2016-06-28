@@ -964,6 +964,20 @@ ENV VARNISH_BACKEND_HOST \"google.com\"
     waitForTestRun
 }
 
+#######################################
+# webdevops/certbot
+#######################################
+
+[[ $(checkTestTarget certbot) ]] && {
+    setupTestEnvironment "certbot"
+
+    # setSpecTest "base"
+    setEnvironmentOsFamily "alpine"
+
+    OS_VERSION="3" runTestForTag "latest"
+
+    waitForTestRun
+}
 
 echo ""
 echo " >>> finished, all tests PASSED <<<"

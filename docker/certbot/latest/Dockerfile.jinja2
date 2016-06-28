@@ -1,0 +1,8 @@
+{{ docker.from("bootstrap","alpine-3") }}
+
+{{ docker.version() }}
+
+{{ docker.volume('/etc/letsencrypt') }}
+{{ docker.volume('/var/www') }}
+
+{{ certbot.alpine() }}
