@@ -3,7 +3,7 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM alpine:3.3
+FROM alpine:3.4
 
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
