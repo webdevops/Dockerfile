@@ -20,6 +20,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         # Install php development stuff
         php-pecl-xdebug \
         blackfire-php \
+        blackfire-agent \
     {{ provision.runRoleInline('php-dev', role) }}
 {%- endmacro %}
 
@@ -31,6 +32,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         # Install php development stuff
         php56w-pecl-xdebug \
         blackfire-php \
+        blackfire-agent \
     {{ provision.runRoleInline('php-dev', role) }}
 {%- endmacro %}
 
@@ -44,6 +46,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         # Install php development stuff
         php5-xdebug \
         blackfire-php \
+        blackfire-agent \
     {{ provision.runRoleInline('php-dev', role) }}
 {%- endmacro %}
 
@@ -58,5 +61,6 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         # Install php development stuff
         php5-xdebug \
         blackfire-php \
+        blackfire-agent \
     {{ provision.runRoleInline('php-dev', role) }}
 {%- endmacro %}
