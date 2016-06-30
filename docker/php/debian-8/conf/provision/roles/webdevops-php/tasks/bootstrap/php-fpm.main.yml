@@ -12,12 +12,7 @@
 
 - name: Set php main file
   set_fact:
-     php_main_conf: /etc/php/php-fpm.conf
-  when: ansible_os_family == 'Alpine'
-
-- name: Set php main file
-  set_fact:
-     php_main_conf: /etc/php/php-fpm.conf
+     php_main_conf: /etc/php5/php-fpm.conf
   when: ansible_os_family == 'Alpine'
 
 - name: Move php-fpm main file to /opt/docker/etc/php/fpm/

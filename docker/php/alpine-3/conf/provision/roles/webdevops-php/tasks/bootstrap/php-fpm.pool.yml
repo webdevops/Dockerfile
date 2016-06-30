@@ -37,7 +37,7 @@
 - name: Set php pool file
   set_fact:
      php_pool_conf: www.conf
-     php_pool_dir: /etc/php/fpm.d
+     php_pool_dir: /etc/php5/fpm.d
   when: ansible_os_family == 'Alpine'
 
 - name: Move php-fpm pool directory file to /opt/docker/etc/php/

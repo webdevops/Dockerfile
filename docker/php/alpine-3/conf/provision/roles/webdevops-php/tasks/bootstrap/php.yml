@@ -53,7 +53,7 @@
 - name: Create link for additional php.ini [Alpine family]
   file:
     src:  '/opt/docker/etc/php/{{ item.file }}'
-    dest: '/etc/php/conf.d/{{ item.target }}'
+    dest: '/etc/php5/conf.d/{{ item.target }}'
     state: link
     force: yes
   with_items:
