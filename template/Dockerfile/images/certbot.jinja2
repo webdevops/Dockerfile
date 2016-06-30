@@ -1,0 +1,11 @@
+{% import 'Dockerfile/provision.jinja2' as provision %}
+
+{% macro env() -%}
+ENV CERTBOT_EMAIL  ""
+ENV CERTBOT_DOMAIN  ""
+{%- endmacro %}
+
+{% macro alpine() -%}
+RUN /usr/local/bin/apk-install \
+        certbot
+{%- endmacro %}

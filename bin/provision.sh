@@ -426,4 +426,10 @@ function header() {
     deployConfiguration samson-deployment/general        samson-deployment 'latest'
 }
 
+## Build cerbot
+[[ $(checkBuildTarget certbot) ]] && {
+    header "certbot"
+}
+
+
 exit 0

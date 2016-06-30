@@ -74,3 +74,6 @@ varnish:
 
 sphinx:
 	bash ./run.sh sphinx
+
+certbot:
+	bash ./run.sh certbot

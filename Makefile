@@ -20,7 +20,7 @@ php:       webdevops/php webdevops/php-apache webdevops/php-nginx
 php-dev:   webdevops/php-dev webdevops/php-apache-dev webdevops/php-nginx-dev
 hhvm:      webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
-web:       webdevops/apache webdevops/apache-dev webdevops/nginx webdevops/nginx-dev webdevops/varnish
+web:       webdevops/apache webdevops/apache-dev webdevops/nginx webdevops/nginx-dev webdevops/varnish webdevops/certbot
 
 applications: webdevops/typo3 webdevops/piwik
 
@@ -165,3 +165,6 @@ webdevops/sphinx:
 
 webdevops/varnish:
 	bash bin/build.sh varnish "${DOCKER_REPOSITORY}/varnish" "${DOCKER_TAG_LATEST}"
+
+webdevops/certbot:
+	bash bin/build.sh certbot "${DOCKER_REPOSITORY}/certbot" "${DOCKER_TAG_LATEST}"
