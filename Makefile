@@ -73,6 +73,9 @@ rebuild:
 push:
 	BUILD_MODE=push make all
 
+setup:
+	pip install --upgrade -I -r ./requirements.txt
+
 graph:
 	python ./bin/diagram.py  --dockerfile docker/ --filename documentation/docs/resources/images/docker-image-layout.gv
 
