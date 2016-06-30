@@ -10,6 +10,7 @@ import yaml
 PATH = os.path.dirname(os.path.abspath(__file__))
 FROM_REGEX = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE)
 CONTAINERS = {}
+TAGS = {}
 SUBGRAPH = {}
 EDGES = {}
 
@@ -27,7 +28,14 @@ def processDockerfile(inputFile):
     with open(inputFile, 'r') as fileInput:
         DockerfileContent = fileInput.read()
         data = ([m.groupdict() for m in FROM_REGEX.finditer(DockerfileContent)])[0]
-        CONTAINERS["webdevops/%s"%dockerImage] = data.get('image')
+        key="webdevops/%s"%dockerImage
+        CONTAINERS[key] = data.get('image')
+        appendTag(key, data.get('tag'))
+
+def appendTag(dockerImage, tag):
+    if False == TAGS.has_key(dockerImage):
+        TAGS[dockerImage] = {}
+    TAGS[dockerImage][tag] = tag
 
 def apply_styles(graph, styles):
     graph.graph_attr.update(
@@ -69,9 +77,10 @@ def build_graph(args):
             else:
                 graph_image.node(image)
                 EDGES[image] = base
+            if args.all :
+                attach_tag(graph_image, image)
         else:
             graph_image.node(image)
-
 
     for name, subgraph in SUBGRAPH.items():
         dia.subgraph(subgraph)
@@ -79,6 +88,12 @@ def build_graph(args):
     for image, base in EDGES.items():
         dia.edge(base, image)
     return dia
+
+def attach_tag(graph, image):
+    for tag in TAGS[image]:
+        node_name = "%s-%s"%(image,tag)
+        node = graph.node(node_name, label=tag, fillcolor='#eeeeee', shape='folder' )
+        edge = graph.edge(image, node_name )
 
 def main(args):
     dockerfilePath = os.path.abspath(args.dockerfile)
@@ -92,6 +107,7 @@ def main(args):
 
     dia = build_graph(args)
     dia.render()
+    print " render to: %s"%args.filename
 
 
 if __name__ == '__main__':
@@ -100,6 +116,8 @@ if __name__ == '__main__':
     parser.add_argument('-f','--filename' ,help='file output (default: webdevops.gv)',default='webdevops.gv',type=str)
     parser.add_argument('-F','--format' ,help='output format (default: png)',default='png',choices=('png','jpg','pdf','svg'))
     parser.add_argument('-p','--path' ,help='path output',default=os.path.dirname(__file__)+"/../",type=str)
+    parser.add_argument('--all' ,help='show all info',dest='all' ,action='store_true')
+    parser.set_defaults(all=False)
 
     args = parser.parse_args()
 

@@ -210,7 +210,11 @@ shared_examples 'php-fpm::modules::development' do
         end
 
         # disabled by default
-        its(:stdout) { should_not contain('blackfire') }
+        if ( $testConfiguration[:phpBlackfire] )
+            its(:stdout) { should     contain('blackfire') }
+        else
+            its(:stdout) { should_not contain('blackfire') }
+        end
 
         its(:exit_status) { should eq 0 }
     end

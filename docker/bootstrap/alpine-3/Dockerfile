@@ -3,12 +3,12 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM alpine:3.3
+FROM alpine:3.4
 
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.53.2
+LABEL io.webdevops.version=0.54.0
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8

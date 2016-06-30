@@ -12,6 +12,10 @@ if [ -z "$FORCE" ]; then
     FORCE=0
 fi
 
+if [ -z "$WHITELIST" ]; then
+    WHITELIST=""
+fi
+
 if [ -z "${BUILD_MODE}" ]; then
     BUILD_MODE="build"
 fi
@@ -220,8 +224,9 @@ foreachDockerfileInPath "docker/${TARGET}" "buildTarget"
 waitForBuildStep
 
 ## Build docker tag latest
-foreachDockerfileInPath "docker/${TARGET}" "buildTargetLatest" "${LATEST}"
-
+if [ -z "$WHITELIST" ]; then
+    foreachDockerfileInPath "docker/${TARGET}" "buildTargetLatest" "${LATEST}"
+fi
 # wait for final build
 waitForBuild
 
@@ -232,7 +237,9 @@ case "$BUILD_MODE" in
     build)
         echo ">> Checking built images"
         foreachDockerfileInPath "docker/${TARGET}" "checkBuild"
-        foreachDockerfileInPath "docker/${TARGET}" "checkBuildLatest" "${LATEST}"
+        if [ -z "$WHITELIST" ]; then
+            foreachDockerfileInPath "docker/${TARGET}" "checkBuildLatest" "${LATEST}"
+        fi
         ;;
 esac
 

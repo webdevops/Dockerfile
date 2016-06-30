@@ -1,0 +1,398 @@
+digraph webdevops {
+	graph [bgcolor=white fontcolor=black fontsize=16 rankdir=TP]
+	node [color=white fillcolor="#E1E1E1" fontcolor=black fontname=Helvetica shape=box style=filled]
+	edge [arrowhead=open color=black fontcolor=white fontname=Courier fontsize=12 style=dashed]
+	label = "\n\nWebdevops Images\n at :30.06.2016"
+		subgraph cluster_php {
+			graph [fillcolor="#c0e5a8" style=filled]
+			node [color=black fillcolor="#78c445" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "PHP images"
+					"webdevops/php" -> "webdevops/php-nginx"
+				"webdevops/php-nginx-debian-7" [label="debian-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx" -> "webdevops/php-nginx-debian-7"
+				"webdevops/php-nginx-debian-8" [label="debian-8" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx" -> "webdevops/php-nginx-debian-8"
+				"webdevops/php-nginx-debian-9" [label="debian-9" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx" -> "webdevops/php-nginx-debian-9"
+				"webdevops/php-nginx-ubuntu-12.04" [label="ubuntu-12.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx" -> "webdevops/php-nginx-ubuntu-12.04"
+				"webdevops/php-nginx-ubuntu-15.10" [label="ubuntu-15.10" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx" -> "webdevops/php-nginx-ubuntu-15.10"
+				"webdevops/php-nginx-ubuntu-15.04" [label="ubuntu-15.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx" -> "webdevops/php-nginx-ubuntu-15.04"
+				"webdevops/php-nginx-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx" -> "webdevops/php-nginx-ubuntu-16.04"
+				"webdevops/php-nginx-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx" -> "webdevops/php-nginx-ubuntu-14.04"
+				"webdevops/php-nginx-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx" -> "webdevops/php-nginx-alpine-3"
+				"webdevops/php-nginx-centos-7-php56" [label="centos-7-php56" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx" -> "webdevops/php-nginx-centos-7-php56"
+				"webdevops/php-nginx-centos-7" [label="centos-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx" -> "webdevops/php-nginx-centos-7"
+				"webdevops/php-nginx-debian-8-php7" [label="debian-8-php7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx" -> "webdevops/php-nginx-debian-8-php7"
+				"webdevops/php-nginx-alpine-3-php7" [label="alpine-3-php7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx" -> "webdevops/php-nginx-alpine-3-php7"
+				"webdevops/php"
+				"webdevops/php-debian-7" [label="debian-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php" -> "webdevops/php-debian-7"
+				"webdevops/php-debian-8" [label="debian-8" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php" -> "webdevops/php-debian-8"
+				"webdevops/php-debian-9" [label="debian-9" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php" -> "webdevops/php-debian-9"
+				"webdevops/php-ubuntu-12.04" [label="ubuntu-12.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php" -> "webdevops/php-ubuntu-12.04"
+				"webdevops/php-ubuntu-15.10" [label="ubuntu-15.10" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php" -> "webdevops/php-ubuntu-15.10"
+				"webdevops/php-ubuntu-15.04" [label="ubuntu-15.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php" -> "webdevops/php-ubuntu-15.04"
+				"webdevops/php-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php" -> "webdevops/php-ubuntu-16.04"
+				"webdevops/php-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php" -> "webdevops/php-ubuntu-14.04"
+				"webdevops/php-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php" -> "webdevops/php-alpine-3"
+				"webdevops/php-centos-7" [label="centos-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php" -> "webdevops/php-centos-7"
+					"webdevops/php" -> "webdevops/php-apache"
+				"webdevops/php-apache-debian-7" [label="debian-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache" -> "webdevops/php-apache-debian-7"
+				"webdevops/php-apache-debian-8" [label="debian-8" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache" -> "webdevops/php-apache-debian-8"
+				"webdevops/php-apache-debian-9" [label="debian-9" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache" -> "webdevops/php-apache-debian-9"
+				"webdevops/php-apache-ubuntu-12.04" [label="ubuntu-12.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache" -> "webdevops/php-apache-ubuntu-12.04"
+				"webdevops/php-apache-ubuntu-15.10" [label="ubuntu-15.10" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache" -> "webdevops/php-apache-ubuntu-15.10"
+				"webdevops/php-apache-ubuntu-15.04" [label="ubuntu-15.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache" -> "webdevops/php-apache-ubuntu-15.04"
+				"webdevops/php-apache-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache" -> "webdevops/php-apache-ubuntu-16.04"
+				"webdevops/php-apache-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache" -> "webdevops/php-apache-ubuntu-14.04"
+				"webdevops/php-apache-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache" -> "webdevops/php-apache-alpine-3"
+				"webdevops/php-apache-centos-7-php56" [label="centos-7-php56" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache" -> "webdevops/php-apache-centos-7-php56"
+				"webdevops/php-apache-centos-7" [label="centos-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache" -> "webdevops/php-apache-centos-7"
+				"webdevops/php-apache-debian-8-php7" [label="debian-8-php7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache" -> "webdevops/php-apache-debian-8-php7"
+				"webdevops/php-apache-alpine-3-php7" [label="alpine-3-php7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache" -> "webdevops/php-apache-alpine-3-php7"
+		}
+		subgraph cluster_service {
+			graph [fillcolor="#fbd3b5" style=filled]
+			node [color=black fillcolor="#ffa35f" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "Service images"
+				"webdevops/varnish"
+				"webdevops/varnish-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/varnish" -> "webdevops/varnish-alpine-3"
+				"webdevops/nginx"
+				"webdevops/nginx-debian-7" [label="debian-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx" -> "webdevops/nginx-debian-7"
+				"webdevops/nginx-debian-8" [label="debian-8" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx" -> "webdevops/nginx-debian-8"
+				"webdevops/nginx-debian-9" [label="debian-9" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx" -> "webdevops/nginx-debian-9"
+				"webdevops/nginx-ubuntu-12.04" [label="ubuntu-12.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx" -> "webdevops/nginx-ubuntu-12.04"
+				"webdevops/nginx-ubuntu-15.10" [label="ubuntu-15.10" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx" -> "webdevops/nginx-ubuntu-15.10"
+				"webdevops/nginx-ubuntu-15.04" [label="ubuntu-15.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx" -> "webdevops/nginx-ubuntu-15.04"
+				"webdevops/nginx-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx" -> "webdevops/nginx-ubuntu-16.04"
+				"webdevops/nginx-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx" -> "webdevops/nginx-ubuntu-14.04"
+				"webdevops/nginx-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx" -> "webdevops/nginx-alpine-3"
+				"webdevops/nginx-centos-7" [label="centos-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx" -> "webdevops/nginx-centos-7"
+					"webdevops/nginx" -> "webdevops/nginx-dev"
+				"webdevops/nginx-dev-debian-7" [label="debian-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx-dev" -> "webdevops/nginx-dev-debian-7"
+				"webdevops/nginx-dev-debian-8" [label="debian-8" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx-dev" -> "webdevops/nginx-dev-debian-8"
+				"webdevops/nginx-dev-debian-9" [label="debian-9" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx-dev" -> "webdevops/nginx-dev-debian-9"
+				"webdevops/nginx-dev-ubuntu-12.04" [label="ubuntu-12.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx-dev" -> "webdevops/nginx-dev-ubuntu-12.04"
+				"webdevops/nginx-dev-ubuntu-15.10" [label="ubuntu-15.10" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx-dev" -> "webdevops/nginx-dev-ubuntu-15.10"
+				"webdevops/nginx-dev-ubuntu-15.04" [label="ubuntu-15.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx-dev" -> "webdevops/nginx-dev-ubuntu-15.04"
+				"webdevops/nginx-dev-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx-dev" -> "webdevops/nginx-dev-ubuntu-16.04"
+				"webdevops/nginx-dev-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx-dev" -> "webdevops/nginx-dev-ubuntu-14.04"
+				"webdevops/nginx-dev-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx-dev" -> "webdevops/nginx-dev-alpine-3"
+				"webdevops/nginx-dev-centos-7" [label="centos-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/nginx-dev" -> "webdevops/nginx-dev-centos-7"
+				"webdevops/ssh"
+				"webdevops/ssh-latest" [label=latest fillcolor="#eeeeee" shape=folder]
+					"webdevops/ssh" -> "webdevops/ssh-latest"
+					"webdevops/postfix" -> "webdevops/mail-sandbox"
+				"webdevops/mail-sandbox-latest" [label=latest fillcolor="#eeeeee" shape=folder]
+					"webdevops/mail-sandbox" -> "webdevops/mail-sandbox-latest"
+				"webdevops/apache"
+				"webdevops/apache-debian-7" [label="debian-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache" -> "webdevops/apache-debian-7"
+				"webdevops/apache-debian-8" [label="debian-8" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache" -> "webdevops/apache-debian-8"
+				"webdevops/apache-debian-9" [label="debian-9" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache" -> "webdevops/apache-debian-9"
+				"webdevops/apache-ubuntu-12.04" [label="ubuntu-12.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache" -> "webdevops/apache-ubuntu-12.04"
+				"webdevops/apache-ubuntu-15.10" [label="ubuntu-15.10" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache" -> "webdevops/apache-ubuntu-15.10"
+				"webdevops/apache-ubuntu-15.04" [label="ubuntu-15.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache" -> "webdevops/apache-ubuntu-15.04"
+				"webdevops/apache-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache" -> "webdevops/apache-ubuntu-16.04"
+				"webdevops/apache-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache" -> "webdevops/apache-ubuntu-14.04"
+				"webdevops/apache-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache" -> "webdevops/apache-alpine-3"
+				"webdevops/apache-centos-7" [label="centos-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache" -> "webdevops/apache-centos-7"
+				"webdevops/vsftp"
+				"webdevops/vsftp-latest" [label=latest fillcolor="#eeeeee" shape=folder]
+					"webdevops/vsftp" -> "webdevops/vsftp-latest"
+				"webdevops/samson-deployment"
+					"webdevops/apache" -> "webdevops/apache-dev"
+				"webdevops/apache-dev-debian-7" [label="debian-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache-dev" -> "webdevops/apache-dev-debian-7"
+				"webdevops/apache-dev-debian-8" [label="debian-8" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache-dev" -> "webdevops/apache-dev-debian-8"
+				"webdevops/apache-dev-debian-9" [label="debian-9" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache-dev" -> "webdevops/apache-dev-debian-9"
+				"webdevops/apache-dev-ubuntu-12.04" [label="ubuntu-12.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache-dev" -> "webdevops/apache-dev-ubuntu-12.04"
+				"webdevops/apache-dev-ubuntu-15.10" [label="ubuntu-15.10" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache-dev" -> "webdevops/apache-dev-ubuntu-15.10"
+				"webdevops/apache-dev-ubuntu-15.04" [label="ubuntu-15.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache-dev" -> "webdevops/apache-dev-ubuntu-15.04"
+				"webdevops/apache-dev-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache-dev" -> "webdevops/apache-dev-ubuntu-16.04"
+				"webdevops/apache-dev-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache-dev" -> "webdevops/apache-dev-ubuntu-14.04"
+				"webdevops/apache-dev-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache-dev" -> "webdevops/apache-dev-alpine-3"
+				"webdevops/apache-dev-centos-7" [label="centos-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/apache-dev" -> "webdevops/apache-dev-centos-7"
+				"webdevops/postfix"
+				"webdevops/postfix-latest" [label=latest fillcolor="#eeeeee" shape=folder]
+					"webdevops/postfix" -> "webdevops/postfix-latest"
+		}
+		subgraph cluster_application {
+			graph [fillcolor="#f2e3b5" style=filled]
+			node [color=black fillcolor="#e5b931" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "Application images"
+				"webdevops/typo3"
+				"webdevops/typo3-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/typo3" -> "webdevops/typo3-ubuntu-14.04"
+				"webdevops/piwik"
+				"webdevops/piwik-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/piwik" -> "webdevops/piwik-ubuntu-14.04"
+		}
+		subgraph cluster_common {
+			graph [fillcolor=gray style=filled]
+			node [color=black fillcolor="#e1e1e1" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "Base images"
+					"webdevops/bootstrap" -> "webdevops/ansible"
+				"webdevops/ansible-debian-7" [label="debian-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/ansible" -> "webdevops/ansible-debian-7"
+				"webdevops/ansible-debian-8" [label="debian-8" fillcolor="#eeeeee" shape=folder]
+					"webdevops/ansible" -> "webdevops/ansible-debian-8"
+				"webdevops/ansible-debian-9" [label="debian-9" fillcolor="#eeeeee" shape=folder]
+					"webdevops/ansible" -> "webdevops/ansible-debian-9"
+				"webdevops/ansible-ubuntu-12.04" [label="ubuntu-12.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/ansible" -> "webdevops/ansible-ubuntu-12.04"
+				"webdevops/ansible-ubuntu-15.10" [label="ubuntu-15.10" fillcolor="#eeeeee" shape=folder]
+					"webdevops/ansible" -> "webdevops/ansible-ubuntu-15.10"
+				"webdevops/ansible-ubuntu-15.04" [label="ubuntu-15.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/ansible" -> "webdevops/ansible-ubuntu-15.04"
+				"webdevops/ansible-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/ansible" -> "webdevops/ansible-ubuntu-16.04"
+				"webdevops/ansible-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/ansible" -> "webdevops/ansible-ubuntu-14.04"
+				"webdevops/ansible-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/ansible" -> "webdevops/ansible-alpine-3"
+				"webdevops/ansible-centos-7" [label="centos-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/ansible" -> "webdevops/ansible-centos-7"
+				"webdevops/storage"
+					"webdevops/base" -> "webdevops/base-app"
+				"webdevops/base-app-debian-7" [label="debian-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base-app" -> "webdevops/base-app-debian-7"
+				"webdevops/base-app-debian-8" [label="debian-8" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base-app" -> "webdevops/base-app-debian-8"
+				"webdevops/base-app-debian-9" [label="debian-9" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base-app" -> "webdevops/base-app-debian-9"
+				"webdevops/base-app-ubuntu-12.04" [label="ubuntu-12.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base-app" -> "webdevops/base-app-ubuntu-12.04"
+				"webdevops/base-app-ubuntu-15.10" [label="ubuntu-15.10" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base-app" -> "webdevops/base-app-ubuntu-15.10"
+				"webdevops/base-app-ubuntu-15.04" [label="ubuntu-15.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base-app" -> "webdevops/base-app-ubuntu-15.04"
+				"webdevops/base-app-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base-app" -> "webdevops/base-app-ubuntu-16.04"
+				"webdevops/base-app-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base-app" -> "webdevops/base-app-ubuntu-14.04"
+				"webdevops/base-app-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base-app" -> "webdevops/base-app-alpine-3"
+				"webdevops/base-app-centos-7" [label="centos-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base-app" -> "webdevops/base-app-centos-7"
+				"webdevops/bootstrap"
+					"webdevops/bootstrap" -> "webdevops/base"
+				"webdevops/base-debian-7" [label="debian-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base" -> "webdevops/base-debian-7"
+				"webdevops/base-debian-8" [label="debian-8" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base" -> "webdevops/base-debian-8"
+				"webdevops/base-debian-9" [label="debian-9" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base" -> "webdevops/base-debian-9"
+				"webdevops/base-ubuntu-12.04" [label="ubuntu-12.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base" -> "webdevops/base-ubuntu-12.04"
+				"webdevops/base-ubuntu-15.10" [label="ubuntu-15.10" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base" -> "webdevops/base-ubuntu-15.10"
+				"webdevops/base-ubuntu-15.04" [label="ubuntu-15.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base" -> "webdevops/base-ubuntu-15.04"
+				"webdevops/base-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base" -> "webdevops/base-ubuntu-16.04"
+				"webdevops/base-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base" -> "webdevops/base-ubuntu-14.04"
+				"webdevops/base-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base" -> "webdevops/base-alpine-3"
+				"webdevops/base-centos-7" [label="centos-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/base" -> "webdevops/base-centos-7"
+		}
+		subgraph cluster_hhvm {
+			graph [fillcolor="#c1c3f2" style=filled]
+			node [color=black fillcolor="#7f84f1" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "HHVM images"
+					"webdevops/hhvm" -> "webdevops/hhvm-nginx"
+				"webdevops/hhvm-nginx-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/hhvm-nginx" -> "webdevops/hhvm-nginx-ubuntu-14.04"
+				"webdevops/hhvm-nginx-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/hhvm-nginx" -> "webdevops/hhvm-nginx-ubuntu-16.04"
+					"webdevops/hhvm" -> "webdevops/hhvm-apache"
+				"webdevops/hhvm-apache-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/hhvm-apache" -> "webdevops/hhvm-apache-ubuntu-14.04"
+				"webdevops/hhvm-apache-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/hhvm-apache" -> "webdevops/hhvm-apache-ubuntu-16.04"
+				"webdevops/hhvm"
+				"webdevops/hhvm-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/hhvm" -> "webdevops/hhvm-ubuntu-14.04"
+				"webdevops/hhvm-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/hhvm" -> "webdevops/hhvm-ubuntu-16.04"
+		}
+		subgraph cluster_tools {
+			graph [fillcolor="#c0e5a8" style=filled]
+			node [color=black fillcolor="#78c445" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "Tools images"
+				"webdevops/sphinx"
+				"webdevops/sphinx-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/sphinx" -> "webdevops/sphinx-alpine-3"
+		}
+		subgraph "cluster_php-dev" {
+			graph [fillcolor="#c0e5a8" style=filled]
+			node [color=black fillcolor="#78c445" fontcolor=black fontname=Helvetica shape=box style=filled]
+			label = "PHP development images"
+					"webdevops/php-dev" -> "webdevops/php-nginx-dev"
+				"webdevops/php-nginx-dev-debian-7" [label="debian-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx-dev" -> "webdevops/php-nginx-dev-debian-7"
+				"webdevops/php-nginx-dev-debian-8" [label="debian-8" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx-dev" -> "webdevops/php-nginx-dev-debian-8"
+				"webdevops/php-nginx-dev-debian-9" [label="debian-9" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx-dev" -> "webdevops/php-nginx-dev-debian-9"
+				"webdevops/php-nginx-dev-ubuntu-12.04" [label="ubuntu-12.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx-dev" -> "webdevops/php-nginx-dev-ubuntu-12.04"
+				"webdevops/php-nginx-dev-ubuntu-15.10" [label="ubuntu-15.10" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx-dev" -> "webdevops/php-nginx-dev-ubuntu-15.10"
+				"webdevops/php-nginx-dev-ubuntu-15.04" [label="ubuntu-15.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx-dev" -> "webdevops/php-nginx-dev-ubuntu-15.04"
+				"webdevops/php-nginx-dev-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx-dev" -> "webdevops/php-nginx-dev-ubuntu-16.04"
+				"webdevops/php-nginx-dev-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx-dev" -> "webdevops/php-nginx-dev-ubuntu-14.04"
+				"webdevops/php-nginx-dev-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx-dev" -> "webdevops/php-nginx-dev-alpine-3"
+				"webdevops/php-nginx-dev-centos-7-php56" [label="centos-7-php56" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx-dev" -> "webdevops/php-nginx-dev-centos-7-php56"
+				"webdevops/php-nginx-dev-centos-7" [label="centos-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx-dev" -> "webdevops/php-nginx-dev-centos-7"
+				"webdevops/php-nginx-dev-debian-8-php7" [label="debian-8-php7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx-dev" -> "webdevops/php-nginx-dev-debian-8-php7"
+				"webdevops/php-nginx-dev-alpine-3-php7" [label="alpine-3-php7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-nginx-dev" -> "webdevops/php-nginx-dev-alpine-3-php7"
+					"webdevops/php-dev" -> "webdevops/php-apache-dev"
+				"webdevops/php-apache-dev-debian-7" [label="debian-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache-dev" -> "webdevops/php-apache-dev-debian-7"
+				"webdevops/php-apache-dev-debian-8" [label="debian-8" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache-dev" -> "webdevops/php-apache-dev-debian-8"
+				"webdevops/php-apache-dev-debian-9" [label="debian-9" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache-dev" -> "webdevops/php-apache-dev-debian-9"
+				"webdevops/php-apache-dev-ubuntu-12.04" [label="ubuntu-12.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache-dev" -> "webdevops/php-apache-dev-ubuntu-12.04"
+				"webdevops/php-apache-dev-ubuntu-15.10" [label="ubuntu-15.10" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache-dev" -> "webdevops/php-apache-dev-ubuntu-15.10"
+				"webdevops/php-apache-dev-ubuntu-15.04" [label="ubuntu-15.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache-dev" -> "webdevops/php-apache-dev-ubuntu-15.04"
+				"webdevops/php-apache-dev-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache-dev" -> "webdevops/php-apache-dev-ubuntu-16.04"
+				"webdevops/php-apache-dev-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache-dev" -> "webdevops/php-apache-dev-ubuntu-14.04"
+				"webdevops/php-apache-dev-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache-dev" -> "webdevops/php-apache-dev-alpine-3"
+				"webdevops/php-apache-dev-centos-7-php56" [label="centos-7-php56" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache-dev" -> "webdevops/php-apache-dev-centos-7-php56"
+				"webdevops/php-apache-dev-centos-7" [label="centos-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache-dev" -> "webdevops/php-apache-dev-centos-7"
+				"webdevops/php-apache-dev-debian-8-php7" [label="debian-8-php7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache-dev" -> "webdevops/php-apache-dev-debian-8-php7"
+				"webdevops/php-apache-dev-alpine-3-php7" [label="alpine-3-php7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-apache-dev" -> "webdevops/php-apache-dev-alpine-3-php7"
+				"webdevops/php-dev"
+				"webdevops/php-dev-debian-7" [label="debian-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-dev" -> "webdevops/php-dev-debian-7"
+				"webdevops/php-dev-debian-8" [label="debian-8" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-dev" -> "webdevops/php-dev-debian-8"
+				"webdevops/php-dev-debian-9" [label="debian-9" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-dev" -> "webdevops/php-dev-debian-9"
+				"webdevops/php-dev-ubuntu-12.04" [label="ubuntu-12.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-dev" -> "webdevops/php-dev-ubuntu-12.04"
+				"webdevops/php-dev-ubuntu-15.10" [label="ubuntu-15.10" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-dev" -> "webdevops/php-dev-ubuntu-15.10"
+				"webdevops/php-dev-ubuntu-15.04" [label="ubuntu-15.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-dev" -> "webdevops/php-dev-ubuntu-15.04"
+				"webdevops/php-dev-ubuntu-16.04" [label="ubuntu-16.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-dev" -> "webdevops/php-dev-ubuntu-16.04"
+				"webdevops/php-dev-ubuntu-14.04" [label="ubuntu-14.04" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-dev" -> "webdevops/php-dev-ubuntu-14.04"
+				"webdevops/php-dev-alpine-3" [label="alpine-3" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-dev" -> "webdevops/php-dev-alpine-3"
+				"webdevops/php-dev-centos-7-php56" [label="centos-7-php56" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-dev" -> "webdevops/php-dev-centos-7-php56"
+				"webdevops/php-dev-centos-7" [label="centos-7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-dev" -> "webdevops/php-dev-centos-7"
+				"webdevops/php-dev-debian-8-php7" [label="debian-8-php7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-dev" -> "webdevops/php-dev-debian-8-php7"
+				"webdevops/php-dev-alpine-3-php7" [label="alpine-3-php7" fillcolor="#eeeeee" shape=folder]
+					"webdevops/php-dev" -> "webdevops/php-dev-alpine-3-php7"
+		}
+			"webdevops/base-app" -> "webdevops/php"
+			"webdevops/php-apache" -> "webdevops/typo3"
+			"webdevops/base-app" -> "webdevops/ssh"
+			"webdevops/base-app" -> "webdevops/postfix"
+			"webdevops/base" -> "webdevops/vsftp"
+			"webdevops/base" -> "webdevops/nginx"
+			"webdevops/base" -> "webdevops/apache"
+			"webdevops/base-app" -> "webdevops/hhvm"
+			"webdevops/bootstrap" -> "webdevops/sphinx"
+			"webdevops/php-nginx" -> "webdevops/piwik"
+			"webdevops/base" -> "webdevops/varnish"
+			"webdevops/php" -> "webdevops/php-dev"
+}

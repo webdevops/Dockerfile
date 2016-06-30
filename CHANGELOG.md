@@ -4,6 +4,14 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [0.54.0] - 2016-06-30
+- Update alpine-3 to 3.4
+- Fixed webdevops/php:alpine-3
+- Fixed webdevops/php:alpine-3-php7
+- Added webdevops/cerbot for let's encrypt
+- Improved docker graph (image build)
+- Added WHITELIST for image building
+
 ## [0.53.2] - 2016-06-27
 - Added test for `PHP_DEBUGGER` blackfire
 

@@ -279,21 +279,32 @@ function checkBlacklist() {
 function foreachDockerfileInPath() {
    DOCKER_BASE_PATH="$1"
    CALLBACK="$2"
-   FILTER="*"
+   FILTER=".*"
 
     if [ "$#" -ge 3 ]; then
         FILTER="$3"
     fi
 
+    if [ -n "${WHITELIST}" ]; then
+        for WTAG in $WHITELIST; do
+            if [ "${FILTER}" = ".*" ]; then
+                FILTER="${WTAG}"
+            else
+                FILTER="${FILTER}\|${WTAG}"
+            fi
+        done
+    fi
+
     # build each subfolder as tag
-    for DOCKERFILE_PATH in $(find "${DOCKER_BASE_PATH}" -mindepth 1 -maxdepth 1 -type d -name "$FILTER"); do
+    for DOCKERFILE_PATH in $(find ${DOCKER_BASE_PATH} -mindepth 1 -maxdepth 1 -type d -regex ".*\(${FILTER}\).*"); do
         # check if there is a Dockerfile
+
         if [ -f "${DOCKERFILE_PATH}/Dockerfile" ]; then
             DOCKERFILE="${DOCKERFILE_PATH}/Dockerfile"
             TAGNAME=$(basename "${DOCKERFILE_PATH}")
 
             if [[ -n "$(checkBlacklist "${BASENAME}:${TAGNAME}")" ]]; then
-                ${CALLBACK}
+               ${CALLBACK}
             fi
         fi
     done

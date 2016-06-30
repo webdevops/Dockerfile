@@ -20,7 +20,7 @@ php:       webdevops/php webdevops/php-apache webdevops/php-nginx
 php-dev:   webdevops/php-dev webdevops/php-apache-dev webdevops/php-nginx-dev
 hhvm:      webdevops/hhvm webdevops/hhvm-apache webdevops/hhvm-nginx
 
-web:       webdevops/apache webdevops/apache-dev webdevops/nginx webdevops/nginx-dev webdevops/varnish
+web:       webdevops/apache webdevops/apache-dev webdevops/nginx webdevops/nginx-dev webdevops/varnish webdevops/certbot
 
 applications: webdevops/typo3 webdevops/piwik
 
@@ -73,8 +73,14 @@ rebuild:
 push:
 	BUILD_MODE=push make all
 
+setup:
+	pip install --upgrade -I -r ./requirements.txt
+
 graph:
 	python ./bin/diagram.py  --dockerfile docker/ --filename documentation/docs/resources/images/docker-image-layout.gv
+
+graph-full:
+	python ./bin/diagram.py  --all --dockerfile docker/ --filename documentation/docs/resources/images/docker-image-full-layout.gv
 
 documentation:
 	docker run -t -i --rm -p 8080:8000 -v "$$(pwd)/documentation/docs/:/opt/docs" webdevops/sphinx sphinx-autobuild --poll -H 0.0.0.0 /opt/docs html
@@ -159,3 +165,6 @@ webdevops/sphinx:
 
 webdevops/varnish:
 	bash bin/build.sh varnish "${DOCKER_REPOSITORY}/varnish" "${DOCKER_TAG_LATEST}"
+
+webdevops/certbot:
+	bash bin/build.sh certbot "${DOCKER_REPOSITORY}/certbot" "${DOCKER_TAG_LATEST}"

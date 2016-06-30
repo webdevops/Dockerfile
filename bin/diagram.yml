@@ -122,7 +122,9 @@ diagram:
           fillcolor: "#ffa35f"
       docker:
         - webdevops/apache
+        - webdevops/apache-dev
         - webdevops/nginx
+        - webdevops/nginx-dev
         - webdevops/ssh
         - webdevops/vsftp
         - webdevops/postfix
