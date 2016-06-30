@@ -22,50 +22,50 @@ RUN /usr/local/bin/apk-install \
         imagemagick \
         graphicsmagick \
         # Install php (cli/fpm)
-        php-cli \
-        php-fpm \
-        php-json \
-        php-intl \
-        php-curl \
-        php-mysql \
-        php-mysqli \
-        php-pdo_mysql \
-        php-pdo_sqlite \
+        php5-cli \
+        php5-fpm \
+        php5-json \
+        php5-intl \
+        php5-curl \
+        php5-mysql \
+        php5-mysqli \
+        php5-pdo_mysql \
+        php5-pdo_sqlite \
         php5-memcached \
-        php-mcrypt \
-        php-gd \
-        php-bcmath \
-        php-soap \
-        php-sqlite3 \
-        php-bz2 \
-        php-calendar \
-        php-ctype \
-        php-pcntl \
-        php-posix \
-        php-sockets \
-        php-sysvmsg \
-        php-sysvsem \
-        php-sysvshm \
-        php-xmlreader \
-        php-exif \
-        php-ftp \
-        php-gettext \
-        php-iconv \
-        php-zip \
-        php-zlib \
-        php-shmop \
-        php-wddx \
+        php5-mcrypt \
+        php5-gd \
+        php5-bcmath \
+        php5-soap \
+        php5-sqlite3 \
+        php5-bz2 \
+        php5-calendar \
+        php5-ctype \
+        php5-pcntl \
+        php5-posix \
+        php5-sockets \
+        php5-sysvmsg \
+        php5-sysvsem \
+        php5-sysvshm \
+        php5-xmlreader \
+        php5-exif \
+        php5-ftp \
+        php5-gettext \
+        php5-iconv \
+        php5-zip \
+        php5-zlib \
+        php5-shmop \
+        php5-wddx \
         sqlite \
-        php-xmlrpc \
-        php-xsl \
+        php5-xmlrpc \
+        php5-xsl \
         geoip \
-        php-ldap \
-        php-memcache \
+        php5-ldap \
+        php5-memcache \
         php5-redis \
-        php-pear \
-        php-phar \
-        php-openssl \
-        php-apcu \
+        php5-pear \
+        php5-phar \
+        php5-openssl \
+        php5-apcu \
     && pear channel-update pear.php.net \
     && pear upgrade-all \
     && pear config-set auto_discover 1 \
