@@ -2,7 +2,7 @@ digraph webdevops {
 	graph [bgcolor=white fontcolor=black fontsize=16 rankdir=TP]
 	node [color=white fillcolor="#E1E1E1" fontcolor=black fontname=Helvetica shape=box style=filled]
 	edge [arrowhead=open color=black fontcolor=white fontname=Courier fontsize=12 style=dashed]
-	label = "\n\nWebdevops Containers\n at :09.06.2016"
+	label = "\n\nWebdevops Images\n at :30.06.2016"
 		subgraph cluster_php {
 			graph [fillcolor="#c0e5a8" style=filled]
 			node [color=black fillcolor="#78c445" fontcolor=black fontname=Helvetica shape=box style=filled]
@@ -17,11 +17,13 @@ digraph webdevops {
 			label = "Service images"
 				"webdevops/varnish"
 				"webdevops/nginx"
+					"webdevops/nginx" -> "webdevops/nginx-dev"
 				"webdevops/ssh"
 					"webdevops/postfix" -> "webdevops/mail-sandbox"
-				"webdevops/vsftp"
 				"webdevops/apache"
+				"webdevops/vsftp"
 				"webdevops/samson-deployment"
+					"webdevops/apache" -> "webdevops/apache-dev"
 				"webdevops/postfix"
 		}
 		subgraph cluster_application {
@@ -45,9 +47,9 @@ digraph webdevops {
 			graph [fillcolor="#c1c3f2" style=filled]
 			node [color=black fillcolor="#7f84f1" fontcolor=black fontname=Helvetica shape=box style=filled]
 			label = "HHVM images"
-				"webdevops/hhvm"
 					"webdevops/hhvm" -> "webdevops/hhvm-nginx"
 					"webdevops/hhvm" -> "webdevops/hhvm-apache"
+				"webdevops/hhvm"
 		}
 		subgraph cluster_tools {
 			graph [fillcolor="#c0e5a8" style=filled]
@@ -67,9 +69,9 @@ digraph webdevops {
 			"webdevops/php-apache" -> "webdevops/typo3"
 			"webdevops/base-app" -> "webdevops/ssh"
 			"webdevops/base-app" -> "webdevops/postfix"
-			"webdevops/base" -> "webdevops/apache"
-			"webdevops/base" -> "webdevops/nginx"
 			"webdevops/base" -> "webdevops/vsftp"
+			"webdevops/base" -> "webdevops/nginx"
+			"webdevops/base" -> "webdevops/apache"
 			"webdevops/base-app" -> "webdevops/hhvm"
 			"webdevops/bootstrap" -> "webdevops/sphinx"
 			"webdevops/php-nginx" -> "webdevops/piwik"
