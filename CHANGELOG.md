@@ -4,6 +4,10 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [0.55.0] - 2016-07-01
+- Add docker env vars for XDEBUG and BLACKFIRE
+- Added blackfire-agent for php-dev
+
 ## [0.54.0] - 2016-06-30
 - Update alpine-3 to 3.4
 - Fixed webdevops/php:alpine-3

@@ -18,6 +18,7 @@ Docker images
    dockerfiles/base
    dockerfiles/base-app
    dockerfiles/bootstrap
+   dockerfiles/certbot
    dockerfiles/hhvm
    dockerfiles/hhvm-apache
    dockerfiles/hhvm-nginx

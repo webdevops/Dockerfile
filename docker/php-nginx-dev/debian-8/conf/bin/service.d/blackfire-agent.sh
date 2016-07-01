@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -e
+
+source /opt/docker/bin/config.sh
+
+BLACKFIRE_ARGS=""
+
+includeScriptDir "/opt/docker/bin/service.d/syslog-ng.d/"
+
+# blackfire.server_id
+if [[ -n "${BLACKFIRE_SERVER_ID+x}" ]]; then
+    BLACKFIRE_ARGS="$BLACKFIRE_ARGS --server-id=\"${BLACKFIRE_SERVER_ID}\""
+fi
+
+# blackfire.server_token
+if [[ -n "${BLACKFIRE_SERVER_TOKEN+x}" ]]; then
+    BLACKFIRE_ARGS="$BLACKFIRE_ARGS --server-token=\"${BLACKFIRE_SERVER_TOKEN}\""
+fi
+
+exec blackfire-agent $BLACKFIRE_ARGS
