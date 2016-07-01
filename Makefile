@@ -51,7 +51,7 @@ dist-update:
 	docker pull debian:7
 	docker pull debian:8
 	docker pull debian:stretch
-	docker pull alpine:3.3
+	docker pull alpine:3.4
 
 rebuild:
 	# Rebuild all containers but use caching for duplicates
