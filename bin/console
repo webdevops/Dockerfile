@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+#see : http://sametmax.com/les-docstrings/
+
+from command.build_dockerfile_command import BuildDockerfileCommand
+from command.graph_command import GraphCommand
+from command.provision_command import ProvisionCommand
+from cleo import Application
+
+application = Application()
+application.add(BuildDockerfileCommand())
+application.add(GraphCommand())
+application.add(ProvisionCommand())
+
+if __name__ == '__main__':
+    application.run()

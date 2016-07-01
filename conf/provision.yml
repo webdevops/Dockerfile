@@ -1,0 +1,104 @@
+---
+provision:
+  bootstrap:
+    header: boostrap
+  base:
+    configuration:
+      base/general: '*'
+      base/centos: centos-*
+      base/alpine: alpine-*
+  base-app:
+    configuration:
+      base-app/general: '*'
+  apache:
+    configuration:
+      apache/general    : '*'
+      apache/centos     : centos-*
+      apache/alpine     : alpine-*
+  apache-dev:
+    configuration:
+      apache-dev/general: '*'
+  nginx:
+    configuration:
+      nginx/general     : '*'
+      nginx/centos      : centos-*
+      nginx/alpine      : alpine-*
+  nginx-dev:
+    configuration:
+      nginx-dev/general : '*'
+  hhvm:
+    configuration:
+      hhvm/general      : '*'
+  hhmv-apache:
+    configuration:
+      apache/general      : '*'
+      hhvm-apache/general : '*'
+  hhvm-nginx:
+    configuration:
+      nginx/general     : '*'
+      nginx/centos      : centos-*
+      hhvm-nginx/general: '*'
+  php:
+    configuration:
+      php/general       : '*'
+      php/ubuntu-12.04  : ubuntu-12.04
+      php/alpine        : alpine-*'
+      # deploy php7 configuration to *-php7 containers
+      php/php7          :
+        - '*-php7'
+        - debian-9
+        - ubuntu-16.04
+  php-apache:
+    configuration:
+      apache/general    : '*'
+      apache/centos     : centos-*
+      apache/alpine     : alpine-*
+      php-apache/general: '*'
+  php-nginx:
+    configuration:
+      nginx/general     : '*'
+      nginx/centos      : centos-*
+      nginx/alpine      : alpine-*
+      php-nginx/general : '*'
+  php-dev:
+    configuration:
+      php-dev/general   : '*'
+  php-apache-dev:
+    configuration:
+      apache/general    : '*'
+      apache/centos     : centos-*
+      apache/alpine     : alpine-*
+      php-apache/general: '*'
+      php-dev/general   : '*'
+      apache-dev/general: '*'
+  php-nginx-dev:
+    configuration:
+      nginx/general     : '*'
+      nginx/centos      : centos-*
+      nginx/alpine      : alpine-*
+      php-nginx/general : '*'
+      php-dev/general   : '*'
+      nginx-dev/general : '*'
+  postfix:
+    configuration:
+      postfix/general   : '*'
+  mail-sandbox:
+    configuration:
+      mail-sandbox/general: '*'
+  vsftp:
+    configuration:
+      vsftp/general     : '*'
+  typo3:
+    configuration:
+      typo3/general     : '*'
+  piwik:
+    configuration:
+      piwik/general     : '*'
+  varnish:
+    configuration:
+      varnish/general   : '*'
+  samson-deployment:
+    configuration:
+      base/general      : latest
+      base-app/general  : latest
+      samson-deployment/general: latest

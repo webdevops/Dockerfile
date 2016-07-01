@@ -6,3 +6,4 @@
 /test/docker.test.*.tar
 /BLACKLIST
 *.log
+*.pyc
