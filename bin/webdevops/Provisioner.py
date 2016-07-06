@@ -7,6 +7,8 @@ import os
 from distutils.dir_util import copy_tree, remove_tree
 from threading import Thread
 import Queue
+import shutil
+
 
 class Provisioner(Thread):
     """
@@ -47,11 +49,18 @@ class Provisioner(Thread):
         self.output = output
 
     def __get_item(self):
+        """ Get a item in the Queue """
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
             self.line('<comment>Looking for the next item</comment>')
-        item = self.queue.get(True, 0.05)
+        item = self.queue.get(True, 5.0)
         self.image_name = item['image_name']
         self.image_config = item['image_config']
+
+    def __done_item(self):
+        """ Set current item of the Queue to done """
+        self.queue.task_done()
+        self.image_name = ''
+        self.image_config = {}
 
     def run(self):
         while True:
@@ -62,9 +71,11 @@ class Provisioner(Thread):
                         '<fg=blue;options=bold>Building configuration for </>webdevops/%s' % self.image_name
                     )
                 self.__clear_configuration()
+                if 'baselayout' in self.image_config:
+                    self.__deploy_base_layout()
                 if 'configuration' in self.image_config:
                     self.__deploy_configuration()
-                self.queue.task_done()
+                self.__done_item()
             except Queue.Empty:
                 if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
                     self.line("<fg=magenta>End</>")
@@ -87,7 +98,7 @@ class Provisioner(Thread):
 
     def __deploy_configuration(self):
         """
-        Deploy the configuration to the image
+        Deploy the configuration to the container
         """
         for src, tag in self.image_config['configuration'].iteritems():
             if Output.VERBOSITY_NORMAL <= self.output.get_verbosity():
@@ -101,9 +112,23 @@ class Provisioner(Thread):
             dockerfiles = [os.path.dirname(image_path) for image_path in dockerfiles]
             self.__copy_configuration(dockerfiles, src)
 
+    def __deploy_base_layout(self):
+        """
+        Deploy localscripts
+
+        copy tar to various containers
+        """
+        if os.path.exists('baselayout.tar') and self.image_config['baselayout']:
+            dockerfiles = Dockerfile.find_by_image(self.dockerfile, "Dockerfile", [self.image_name])
+            dockerfiles = [os.path.dirname(image_path) for image_path in dockerfiles]
+            for target_path in dockerfiles:
+                if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
+                    self.line('<comment>copy baselayout to </comment> %s ' % target_path)
+                shutil.copy2('baselayout.tar', target_path)
+
     def __copy_configuration(self, dockerfiles, src):
         """
-        Copy the different configs to the images
+        Copy the different configs to the container
 
         :param dockerfiles: List of path's images to provisioning
         :type dockerfiles: list
@@ -125,4 +150,6 @@ class Provisioner(Thread):
             copy_tree(src, dest, 1, 1, 0, 0, 0)
 
     def line(self, msg):
-        self.output. writeln('<fg=magenta>(%s) </><fg=cyan>[%s]</> %s' % (self.name, self.image_name ,msg))
+        self.output.writeln(
+            '<fg=magenta>({0:^8}) </><fg=cyan>[{1:.<20}]</> {2}'.format(self.name, self.image_name, msg)
+        )
