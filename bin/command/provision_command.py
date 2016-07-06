@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from cleo import Command, Output
-from webdevops import Dockerfile
+from webdevops import Provisioner
 import os
 import yaml
 import yamlordereddictloader
-from distutils.dir_util import copy_tree, remove_tree
+import time
+import Queue
+
 from pprint import pprint
 
 
@@ -19,26 +21,50 @@ class ProvisionCommand(Command):
         {--d|dockerfile=./docker : path to the folder containing dockerfile analyze}
         {--image=?* : filter on images name }
         {--bootstrap : Provision the bootstrap}
+        {--t|thread=3 (integer): Number of threads to run }
     """
 
     conf = ''
 
+    __threads = []
+
+    __queue = ''
+
     def handle(self):
+        start = time.time()
+        self.__queue = Queue.Queue()
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
             self.line('<info>provision :</info> %s' % self.option('provision'))
             self.line('<info>dockerfile :</info> %s' % self.option('dockerfile'))
+            self.line('<info>thread :</info> %d' % self.option('thread'))
             if 0 < len(self.option('image')):
-                self.line('<info>-> </info><comment>images </comment> :')
+                self.line('<info>images </info> :')
                 for crit in self.option('image'):
                     self.line("\t * %s" % crit)
         self.__load_configuration()
+        self.__create_thread()
         for image_name in self.conf['provision']:
             if 0 == len(self.option('image')) or image_name in self.option('image'):
-                if Output.VERBOSITY_NORMAL <= self.output.get_verbosity():
-                    self.line('<info>-> </info><comment>Building configuration for </comment>webdevops/%s' % image_name)
-                self.__clear_configuration(image_name)
-                if 'configuration' in self.conf['provision'][image_name]:
-                    self.__deploy_configuration(image_name, self.conf['provision'][image_name]['configuration'])
+                self.__queue.put({'image_name': image_name, 'image_config': self.conf['provision'][image_name]})
+        self.__queue.join()
+        end = time.time()
+        print("elapsed time : %d second" % (end - start))
+
+    def __create_thread(self):
+        for i in range(self.option('thread')):
+            thread_name = "Pixie_%d" % i
+            if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
+                self.line("<info>*</info> -> Create thread <fg=magenta>%s</>" % thread_name)
+            provisioner = Provisioner.Provisioner(
+                self.option('dockerfile'),
+                self.option('provision'),
+                self.__queue,
+                self.output
+            )
+            provisioner.setDaemon(True)
+            provisioner.setName(thread_name)
+            provisioner.start()
+            # self.__threads.append(provisioner)
 
     def __load_configuration(self):
         """
@@ -47,68 +73,5 @@ class ProvisionCommand(Command):
         stream = open(os.path.dirname(__file__) + "/../../conf/provision.yml", "r")
         self.conf = yaml.load(stream, Loader=yamlordereddictloader.Loader )
 
-    def __clear_configuration(self, image_name):
-        """
-        Remove the old configuration
 
-        :param image_name: the name of the image
-        :type image_name: str
-        """
-        dockerfiles = Dockerfile.find_by_image_and_tag(self.option('dockerfile'), image_name, '*')
-        dockerfiles = [os.path.dirname(image_path) for image_path in dockerfiles]
-        for dest in dockerfiles:
-            dest = os.path.abspath(os.path.join(dest,'conf/'))
-            if os.path.exists(dest):
-                if Output.VERBOSITY_VERY_VERBOSE <= self.output.get_verbosity():
-                    self.line('\t\t<info>*</info> <comment>delete configuration :</comment> %s' % dest)
-                remove_tree(dest, 0)
-            else:
-                self.line('<error>Warning</error> : file not exist %s' % dest)
-
-    def __deploy_configuration(self, image_name, configuration):
-        """ Deploy the configuration to the image
-
-        Clear and copy provisionning to the image
-
-        :param image_name: the name of the image
-        :type image_name: str
-
-        :param configuration: list of configuration to applied in the image
-        :type configuration: list
-        """
-        for src, tag in configuration.iteritems():
-            if Output.VERBOSITY_NORMAL <= self.output.get_verbosity():
-                self.line("\t * %s <info>=></info> %s:%s" % (src, image_name, tag))
-
-            if isinstance(tag, list):
-                dockerfiles= []
-                for t in tag:
-                    dockerfiles.extend(Dockerfile.find_by_image_and_tag(self.option('dockerfile'), image_name, t))
-            else:
-                dockerfiles = Dockerfile.find_by_image_and_tag(self.option('dockerfile'), image_name, tag)
-            dockerfiles = [os.path.dirname(image_path) for image_path in dockerfiles]
-            self.__copy_configuration(dockerfiles, src)
-
-    def __copy_configuration(self, dockerfiles, src):
-        """
-        Copy the different configs to the images
-
-        :param dockerfiles: List of path's images to provisioning
-        :type dockerfiles: list
-
-        :param src: sub-path of the provisioning directory
-        :type src: str
-        """
-        src = os.path.abspath(os.path.join(self.option('provision'), src))+"/."
-        if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
-                self.line('\t\t<info>*</info> <comment>src :</comment> %s' % src)
-        for dest in dockerfiles:
-            dest = os.path.abspath(os.path.join(dest,'conf/'))
-            if not os.path.exists(dest):
-                if Output.VERBOSITY_DEBUG <= self.output.get_verbosity():
-                    self.line('\t\t<comment> -> create : %s</comment>' % dest)
-                os.mkdir(dest)
-            if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
-                self.line('\t\t<info>*</info> <comment>dest :</comment> %s' % dest)
-            copy_tree(src, dest, 1, 1, 0, 0, 0)
 
