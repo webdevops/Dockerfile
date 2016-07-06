@@ -42,7 +42,7 @@ provision:
     configuration:
       php/general       : '*'
       php/ubuntu-12.04  : ubuntu-12.04
-      php/alpine        : alpine-*'
+      php/alpine        : alpine-*
       # deploy php7 configuration to *-php7 containers
       php/php7          :
         - '*-php7'

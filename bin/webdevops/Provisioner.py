@@ -91,10 +91,8 @@ class Provisioner(Thread):
             dest = os.path.abspath(os.path.join(dest, 'conf/'))
             if os.path.exists(dest):
                 if Output.VERBOSITY_VERY_VERBOSE <= self.output.get_verbosity():
-                    self.line('<comment>delete configuration :</comment> %s' % dest)
+                    self.line('<fg=red>delete configuration :</> %s' % dest)
                 remove_tree(dest, 0)
-            else:
-                self.line('<error>Warning</error> : file not exist %s' % dest)
 
     def __deploy_configuration(self):
         """
