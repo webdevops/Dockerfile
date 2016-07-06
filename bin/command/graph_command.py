@@ -16,10 +16,10 @@ class GraphCommand(Command):
 
     webdevops:graph
         {--a|all : Show all informations}
-        {--p|path= : path output}
+        {--p|path=./documentation/docs/resources/images/ : path output}
         {--F|format=png (choice) : output format }
-        {--d|dockerfile= : path to the folder containing dockerfile analyze}
-        {--f|filename=webdevops.gv :  file output}
+        {--d|dockerfile=./docker : path to the folder containing dockerfile analyze}
+        {--f|filename=docker-image-layout.gv :  file output}
     """
 
     validation = {

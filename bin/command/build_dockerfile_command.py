@@ -12,8 +12,8 @@ class BuildDockerfileCommand(Command):
     Build Dockerfile containers
 
     webdevops:build:dockerfile
-        {--t|template=  :  path to the folder containing template }
-        {--d|dockerfile= : path to the folder containing dockerfile analyze}
+        {--t|template=./template  :  path to the folder containing template }
+        {--d|dockerfile=./docker : path to the folder containing dockerfile analyze}
         {--filter=?* : tags or images name }
     """
 

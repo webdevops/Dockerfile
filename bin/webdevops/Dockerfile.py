@@ -74,7 +74,7 @@ def find_by_image_and_tag(dockerfile_path, image, tag):
     if "*" == tag:
         filter = ["/docker/%s/" % image]
     else:
-        filter = ["/docker/%s/%s" % (image, tag.replace('*','.+'))]
+        filter = ["/docker/%s/%s" % (image, tag.replace('*', '.+'))]
     return finder(dockerfile_path, "Dockerfile", filter)
 
 

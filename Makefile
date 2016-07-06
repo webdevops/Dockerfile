@@ -33,11 +33,11 @@ test-hub-images:
 	DOCKER_PULL=1 make test
 
 baselayout:
-	BASELAYOUT=1 PROVISION=0 bash bin/provision.sh
+	python bin/console webdevops:provision --provision=provisioning/ --dockerfile=docker/ -t 1 --baselayout
 
 provision:
-	python bin/buildDockerfile.py --template=template/ --dockerfile=docker/
-	BASELAYOUT=0 PROVISION=1 bash bin/provision.sh
+	python bin/console webdevops:build:dockerfile --template=template/ --dockerfile=docker/
+	python bin/console webdevops:provision --provision=provisioning/ --dockerfile=docker/ -t 1
 
 publish:    dist-update rebuild test push
 
@@ -77,10 +77,10 @@ setup:
 	pip install --upgrade -I -r ./requirements.txt
 
 graph:
-	python ./bin/diagram.py  --dockerfile docker/ --filename documentation/docs/resources/images/docker-image-layout.gv
+	python ./bin/console webdevops:graph
 
 graph-full:
-	python ./bin/diagram.py  --all --dockerfile docker/ --filename documentation/docs/resources/images/docker-image-full-layout.gv
+	python ./bin/console webdevops:graph --all --filename docker-image-full-layout.gv
 
 documentation:
 	docker run -t -i --rm -p 8080:8000 -v "$$(pwd)/documentation/docs/:/opt/docs" webdevops/sphinx sphinx-autobuild --poll -H 0.0.0.0 /opt/docs html
