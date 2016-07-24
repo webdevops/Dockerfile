@@ -17,4 +17,7 @@ if [[ -n "${BLACKFIRE_SERVER_TOKEN+x}" ]]; then
     BLACKFIRE_ARGS="$BLACKFIRE_ARGS --server-token=\"${BLACKFIRE_SERVER_TOKEN}\""
 fi
 
+# create directory for unix socket
+mkdir -p /var/run/blackfire
+
 eval exec blackfire-agent $BLACKFIRE_ARGS
