@@ -1,0 +1,39 @@
+---
+
+- name: Maxmind directory
+  file:
+    path:  /usr/share/GeoIP/
+    mode:  0755
+    owner: root
+    state: directory
+
+- name: Fetch Maxmind db
+  get_url:
+    url:  '{{ item.url }}'
+    dest: '/usr/share/GeoIP/{{ item.dest }}'
+    mode: 0444
+  with_items:
+  # GeoLite
+   - { url: 'https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz',                   dest: 'GeoLite2-City.mmdb.gz' }
+   - { url: 'https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz',                dest: 'GeoLite2-Country.mmdb.gz' }
+  # Legacy
+   - { url: 'https://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz',             dest: 'GeoIP.dat.gz' }
+   - { url: 'https://geolite.maxmind.com/download/geoip/database/GeoIPv6.dat.gz',                          dest: 'GeoIPv6.dat.gz' }
+   - { url: 'https://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz',                      dest: 'GeoLiteCity.dat.gz' }
+   - { url: 'https://geolite.maxmind.com/download/geoip/database/GeoLiteCityv6-beta/GeoLiteCityv6.dat.gz', dest: 'GeoLiteCityv6.dat.gz' }
+   - { url: 'https://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum.dat.gz',                dest: 'GeoIPASNum.dat.gz' }
+   - { url: 'https://download.maxmind.com/download/geoip/database/asnum/GeoIPASNumv6.dat.gz',              dest: 'GeoIPASNumv6.dat.gz' }
+
+- name: Extract Maxmind db
+  command: gunzip -f /usr/share/GeoIP/{{ item }}.gz
+  with_items:
+    # GeoLite
+    - GeoLite2-City.mmdb
+    - GeoLite2-Country.mmdb
+    # Legacy
+    - GeoIP.dat
+    - GeoIPv6.dat
+    - GeoLiteCity.dat
+    - GeoLiteCityv6.dat
+    - GeoIPASNum.dat
+    - GeoIPASNumv6.dat
