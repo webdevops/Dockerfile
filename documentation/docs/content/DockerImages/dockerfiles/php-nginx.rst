@@ -17,6 +17,13 @@ Environment variables
 .. include:: include/environment-web.rst
 
 
+Customization
+-------------
+
+.. include:: include/customization-php.rst
+.. include:: include/customization-nginx.rst
+
+
 Docker image layout
 -------------------
 

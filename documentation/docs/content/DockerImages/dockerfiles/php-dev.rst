@@ -19,6 +19,12 @@ Environment variables
 .. include:: include/environment-php-dev.rst
 
 
+Customization
+-------------
+
+.. include:: include/customization-php.rst
+
+
 Docker image layout
 -------------------
 
