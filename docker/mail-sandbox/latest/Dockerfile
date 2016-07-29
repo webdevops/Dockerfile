@@ -8,7 +8,7 @@ FROM webdevops/postfix:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.55.0
+LABEL io.webdevops.version=0.55.1
 
 ENV MAILBOX_USERNAME "sandbox"
 ENV MAILBOX_PASSWORD "mail"

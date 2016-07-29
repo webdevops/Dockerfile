@@ -8,7 +8,7 @@ FROM webdevops/php-dev:debian-8-php7
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.55.0
+LABEL io.webdevops.version=0.55.1
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
