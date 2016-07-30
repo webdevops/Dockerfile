@@ -8,7 +8,7 @@ FROM webdevops/php:ubuntu-14.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.55.1
+LABEL io.webdevops.version=0.55.2
 
 COPY conf/ /opt/docker/
 
@@ -18,6 +18,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
     && /usr/local/bin/apt-install \
         # Install tools
         graphviz \
+        gnupg \
         # Install php development stuff
         php5-xdebug \
         blackfire-php \

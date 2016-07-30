@@ -5,6 +5,7 @@
 RUN /usr/local/bin/apk-install \
         # Install tools
         graphviz \
+        gnupg \
         # Install php development stuff
         php5-xdebug \
     {{ provision.runRoleInline('php-dev', role) }}
@@ -17,6 +18,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
     && /usr/local/bin/yum-install \
         # Install tools
         graphviz \
+        gnupg2 \
         # Install php development stuff
         php-pecl-xdebug \
         blackfire-php \
@@ -29,6 +31,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
     && /usr/local/bin/yum-install \
         # Install tools
         graphviz \
+        gnupg \
         # Install php development stuff
         php56w-pecl-xdebug \
         blackfire-php \
@@ -43,6 +46,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
     && /usr/local/bin/apt-install \
         # Install tools
         graphviz \
+        gnupg \
         # Install php development stuff
         php5-xdebug \
         blackfire-php \
@@ -58,6 +62,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
     && /usr/local/bin/apt-install \
         # Install tools
         graphviz \
+        gnupg \
         # Install php development stuff
         php5-xdebug \
         blackfire-php \

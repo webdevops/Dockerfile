@@ -8,7 +8,7 @@ FROM webdevops/php:alpine-3-php7
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.55.1
+LABEL io.webdevops.version=0.55.2
 
 COPY conf/ /opt/docker/
 
@@ -16,6 +16,7 @@ COPY conf/ /opt/docker/
 RUN /usr/local/bin/apk-install \
         # Install tools
         graphviz \
+        gnupg \
         # Install php development stuff
         php7-xdebug \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php-dev \
