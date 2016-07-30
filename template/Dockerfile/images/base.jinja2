@@ -10,6 +10,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         sed \
+        gnupg \
     {{ provision.runRoleInline('base', role) }}
 {%- endmacro %}
 
@@ -25,6 +26,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
+        gnupg2 \
     {{ provision.runRoleInline('base', role) }}
 {%- endmacro %}
 
@@ -41,6 +43,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
+        gnupg \
     {{ provision.runRoleInline('base', role) }}
 {%- endmacro %}
 
@@ -57,5 +60,6 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
+        gnupg \
     {{ provision.runRoleInline('base', role) }}
 {%- endmacro %}
