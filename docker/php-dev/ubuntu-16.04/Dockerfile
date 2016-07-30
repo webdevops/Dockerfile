@@ -18,6 +18,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
     && /usr/local/bin/apt-install \
         # Install tools
         graphviz \
+        gnupg \
         # Install php development stuff
         php-xdebug \
         blackfire-php \

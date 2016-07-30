@@ -16,6 +16,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
     && /usr/local/bin/yum-install \
         # Install tools
         graphviz \
+        gnupg \
         # Install php development stuff
         php56w-pecl-xdebug \
         blackfire-php \

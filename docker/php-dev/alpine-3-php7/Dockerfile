@@ -16,6 +16,7 @@ COPY conf/ /opt/docker/
 RUN /usr/local/bin/apk-install \
         # Install tools
         graphviz \
+        gnupg \
         # Install php development stuff
         php7-xdebug \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php-dev \
