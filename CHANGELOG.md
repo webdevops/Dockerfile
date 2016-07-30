@@ -4,6 +4,9 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [0.55.3] - 2016-07-30
+- Moved gpg to base 
+
 ## [0.55.2] - 2016-07-30
 - Add gpg for php-dev (required by blackfire installation) 
 
