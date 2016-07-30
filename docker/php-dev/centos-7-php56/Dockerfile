@@ -8,7 +8,7 @@ FROM webdevops/php:centos-7-php56
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.55.2
+LABEL io.webdevops.version=0.55.3
 
 COPY conf/ /opt/docker/
 
@@ -16,7 +16,6 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
     && /usr/local/bin/yum-install \
         # Install tools
         graphviz \
-        gnupg \
         # Install php development stuff
         php56w-pecl-xdebug \
         blackfire-php \

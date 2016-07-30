@@ -8,7 +8,7 @@ FROM zendesk/samson:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.55.2
+LABEL io.webdevops.version=0.55.3
 
 
 ###############################################################################
@@ -82,6 +82,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
+        gnupg \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh
 
