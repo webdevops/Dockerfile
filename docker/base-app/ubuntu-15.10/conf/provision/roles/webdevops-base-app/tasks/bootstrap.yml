@@ -5,3 +5,4 @@
 - include: bootstrap/dnsmasq.yml
 - include: bootstrap/postfix.yml
 - include: bootstrap/ssh.yml
+- include: bootstrap/geoip.yml
