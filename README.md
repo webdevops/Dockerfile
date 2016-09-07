@@ -26,7 +26,7 @@ Dockerfile                                                | Description         
 
 # Building
 
-Lokal building of containers can be done with `make` and `Makefile`:
+Local building of containers can be done with `make` and `Makefile`:
 
 Command                     | Description                                                                       
 --------------------------- | ----------------------------------------------------------------------------------
