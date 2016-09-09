@@ -16,6 +16,12 @@ shared_examples 'misc::graphviz' do
     end
 end
 
+shared_examples 'misc::pdflatex' do
+    it "should include pdflatex" do
+        expect(file("/usr/bin/pdflatex")).to be_executable
+    end
+end
+
 shared_examples 'misc::letsencrypt' do
     it "should include letsencrypt" do
         expect(file("/usr/bin/letsencrypt")).to be_executable

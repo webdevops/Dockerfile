@@ -85,6 +85,9 @@ graph-full:
 documentation:
 	docker run -t -i --rm -p 8080:8000 -v "$$(pwd)/documentation/docs/:/opt/docs" webdevops/sphinx sphinx-autobuild --poll -H 0.0.0.0 /opt/docs html
 
+documentation-pdf:
+	docker run -t -i --rm -p 8080:8000 -v "$$(pwd)/documentation/docs/:/opt/docs" -w /opt/docs webdevops/sphinx:tex make latexpdf
+
 webdevops/bootstrap:
 	bash bin/build.sh bootstrap "${DOCKER_REPOSITORY}/bootstrap" "${DOCKER_TAG_LATEST}"
 

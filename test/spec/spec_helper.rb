@@ -30,6 +30,8 @@ $testConfiguration[:phpRedis] = true
 $testConfiguration[:phpMhash] = true
 $testConfiguration[:phpBlackfire] = false
 
+$testConfiguration[:pdflatex] =  false
+
 if ENV['PHP_XDEBUG'] and ENV['PHP_XDEBUG'] == "0"
     $testConfiguration[:phpXdebug] = false
 end
@@ -49,6 +51,10 @@ end
 if ENV['PHP_BLACKFIRE'] and ENV['PHP_BLACKFIRE'] == "1"
     $testConfiguration[:phpBlackfire] = true
     $testConfiguration[:phpXdebug] = false
+end
+
+if ENV['DOCKER_IMAGE'] == "webdevops/sphinx:tex"
+     $testConfiguration[:pdflatex] =  true
 end
 
 def wait_retry(time, increment = 1, elapsed_time = 0, &block)

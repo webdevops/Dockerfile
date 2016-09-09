@@ -948,6 +948,9 @@ ENV VARNISH_BACKEND_HOST \"google.com\"
 
     OS_VERSION="3" runTestForTag "latest"
 
+    setEnvironmentOsFamily "debian"
+    OS_VERSION="testing" runTestForTag "tex"
+
     waitForTestRun
 }
 

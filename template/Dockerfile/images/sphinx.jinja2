@@ -22,3 +22,29 @@ RUN /usr/local/bin/apk-install \
     && pip install t3tablerows \
     && pip install t3targets
 {%- endmacro %}
+
+{% macro debian() -%}
+RUN /usr/local/bin/apt-install \
+    # General sphinx
+    python-pil \
+    python-yaml \
+    python-sphinx \
+    python-sphinx-rtd-theme \
+    # GRAPHVIZ
+    graphviz \
+    ttf-dejavu \
+    texlive-full \
+    texlive-latex-extra \
+    make \
+    && pip install --upgrade sphinxcontrib-googlechart \
+    && pip install --upgrade sphinxcontrib-googlemaps \
+    && pip install --upgrade sphinxcontrib-httpdomain \
+    && pip install --upgrade sphinxcontrib-slide \
+    && pip install --upgrade sphinx-autobuild \
+    && pip install --upgrade recommonmark \
+    # TYPO3 stuff
+    && pip install t3SphinxThemeRtd \
+    && pip install t3fieldlisttable \
+    && pip install t3tablerows \
+    && pip install t3targets
+{%- endmacro %}
