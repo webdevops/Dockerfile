@@ -4,6 +4,12 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [0.56.0] - 2016-09-11
+- Fix non caching resource files not be passed to document root in `php-nginx-dev`
+- Added update of geoip database for applications (currently testing only)
+- Added graphviz and ttf-dejavu for `sphinx`
+- Added setting `VIRTUAL_HOST` to internal loopback address via dnsmasq
+
 ## [0.55.3] - 2016-07-30
 - Moved gpg to base 
 
