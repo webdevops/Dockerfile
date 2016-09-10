@@ -8,7 +8,7 @@ FROM webdevops/nginx:centos-7
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.55.3
+LABEL io.webdevops.version=0.56.0
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php

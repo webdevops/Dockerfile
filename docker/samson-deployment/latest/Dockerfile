@@ -8,7 +8,7 @@ FROM zendesk/samson:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.55.3
+LABEL io.webdevops.version=0.56.0
 
 
 ###############################################################################

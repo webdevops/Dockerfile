@@ -8,7 +8,7 @@ FROM webdevops/bootstrap:alpine-3
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.55.3
+LABEL io.webdevops.version=0.56.0
 
 RUN /usr/local/bin/apk-install \
     # General sphinx
@@ -16,6 +16,9 @@ RUN /usr/local/bin/apk-install \
     py-yaml \
     py-sphinx \
     py-sphinx_rtd_theme \
+    # GRAPHVIZ
+    graphviz \
+    ttf-dejavu \
     && pip install --upgrade sphinxcontrib-googlechart \
     && pip install --upgrade sphinxcontrib-googlemaps \
     && pip install --upgrade sphinxcontrib-httpdomain \
