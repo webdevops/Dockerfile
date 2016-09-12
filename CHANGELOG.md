@@ -4,6 +4,9 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [0.56.1] - 2016-09-12
+- Removed geoip database
+
 ## [0.56.0] - 2016-09-11
 - Fix non caching resource files not be passed to document root in `php-nginx-dev`
 - Added update of geoip database for applications (currently testing only)
