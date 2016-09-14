@@ -1,0 +1,8 @@
+{% import 'Dockerfile/provision.jinja2' as provision %}
+
+{% macro alpine(role='') -%}
+RUN /usr/local/bin/apk-install \
+        openjdk8-jre \
+    {{ provision.runRoleInline('logstash', role) }}
+{%- endmacro %}
+

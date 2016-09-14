@@ -24,7 +24,7 @@ web:       webdevops/apache webdevops/apache-dev webdevops/nginx webdevops/nginx
 
 applications: webdevops/typo3 webdevops/piwik
 
-misc:      webdevops/mail-sandbox webdevops/sphinx webdevops/liquibase
+misc:      webdevops/mail-sandbox webdevops/sphinx webdevops/liquibase webdevops/logstash
 
 test:
 	cd "test/" && make all
@@ -171,3 +171,6 @@ webdevops/certbot:
 
 webdevops/liquibase:
 	bash bin/build.sh liquibase "${DOCKER_REPOSITORY}/liquibase" "${DOCKER_TAG_LATEST}"
+
+webdevops/logstash:
+	bash bin/build.sh logstash "${DOCKER_REPOSITORY}/logstash" "${DOCKER_TAG_LATEST}"

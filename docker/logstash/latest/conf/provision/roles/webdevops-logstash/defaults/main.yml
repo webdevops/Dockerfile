@@ -1,0 +1,15 @@
+---
+
+LOGSTASH_VERSION:  "{{ lookup('env','LOGSTASH_VERSION') }}"
+LOGSTASH_USER:  "{{ lookup('env','LOGSTASH_USER') }}"
+LOGSTASH_GROUP: "{{ lookup('env','LOGSTASH_GROUP') }}"
+LOGSTASH_PATH:  "{{ lookup('env','LOGSTASH_PATH') }}"
+LOGSTASH_UID:   "{{ lookup('env','LOGSTASH_UID') }}"
+LOGSTASH_GID:   "{{ lookup('env','LOGSTASH_GID') }}"
+LOGSTASH_PLUGINS:
+  - logstash-output-redmine
+  - logstash-output-influxdb
+  - logstash-output-mongodb
+  - logstash-filter-aggregate
+  - logstash-filter-alter
+  - logstash-filter-prune

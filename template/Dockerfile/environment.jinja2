@@ -54,3 +54,12 @@ ENV LIQUIBASE_CHANGELOG "/liquibase/changelog.xml"
 ENV LIQUIBASE_CONTEXTS  ""
 ENV LIQUIBASE_OPTS      ""
 {%- endmacro %}
+
+{% macro logstash() -%}
+ENV LOGSTASH_VERSION=2.4.0
+ENV LOGSTASH_USER  logstash
+ENV LOGSTASH_GROUP logstash
+ENV LOGSTASH_PATH  /var/lib/logstash
+ENV LOGSTASH_UID   2000
+ENV LOGSTASH_GID   2000
+{%- endmacro %}

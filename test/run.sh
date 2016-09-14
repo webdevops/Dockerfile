@@ -979,6 +979,7 @@ ENV VARNISH_BACKEND_HOST \"google.com\"
     waitForTestRun
 }
 
+
 #######################################
 # webdevops/liquibase
 #######################################
@@ -993,6 +994,21 @@ ENV VARNISH_BACKEND_HOST \"google.com\"
 #
 #    waitForTestRun
 #}
+
+#######################################
+# webdevops/logstash
+#######################################
+
+[[ $(checkTestTarget logstash) ]] && {
+    setupTestEnvironment "logstash"
+
+    # setSpecTest "base"
+    setEnvironmentOsFamily "alpine"
+
+    OS_VERSION="3" runTestForTag "latest"
+
+    waitForTestRun
+}
 
 echo ""
 echo " >>> finished, all tests PASSED <<<"

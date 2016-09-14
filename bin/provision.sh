@@ -431,5 +431,11 @@ function header() {
     header "certbot"
 }
 
+## Build logstash
+[[ $(checkBuildTarget logstash) ]] && {
+    header "logstash"
+    clearConfiguration  logstash  '*'
+    deployConfiguration logstash/general logstash '*'
+}
 
 exit 0
