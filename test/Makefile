@@ -77,3 +77,6 @@ sphinx:
 
 certbot:
 	bash ./run.sh certbot
+
+logstash:
+	bash ./run.sh logstash

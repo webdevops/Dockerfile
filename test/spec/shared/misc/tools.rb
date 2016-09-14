@@ -24,3 +24,12 @@ shared_examples 'misc::letsencrypt' do
         expect(file("/usr/bin/certbot")).to be_executable
     end
 end
+
+shared_examples 'misc::logstash' do
+    it "should include logstash" do
+        expect(file("/usr/local/logstash/bin/logstash")).to be_executable
+    end
+    it "should include certbot" do
+        expect(file("/usr/local/logstash/bin/logstash-plugin")).to be_executable
+    end
+end

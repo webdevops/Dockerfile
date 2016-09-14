@@ -1,0 +1,17 @@
+---
+- name: Create /usr/local/logstash/logstash.d exists
+  file:
+    path:    '/usr/local/logstash/logstash.d'
+    state:   directory
+    recurse: yes
+
+- name: Enable logstash default config
+  file:
+    src:  '/opt/docker/etc/logstash/{{item}}'
+    dest: '/usr/local/logstash/logstash.d/{{item}}'
+    state: link
+    force: yes
+  with_items:
+    - 10-inputs.conf
+    - 50-filters.conf
+    - 99-outputs.conf

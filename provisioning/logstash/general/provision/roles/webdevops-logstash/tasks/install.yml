@@ -1,0 +1,53 @@
+---
+
+- name: Create /var/lib/logstash exists
+  file:
+    path:    '{{ LOGSTASH_PATH }}'
+    state:   directory
+    recurse: yes
+
+- name: Create logstash group
+  group:
+    name:  "{{ LOGSTASH_GROUP}}"
+    gid:   "{{ LOGSTASH_GID }}"
+
+- name: Create logstash user
+  user:
+    name:  "{{ LOGSTASH_USER }}"
+    uid:   "{{ LOGSTASH_UID }}"
+    group: "{{ LOGSTASH_GROUP }}"
+    shell: "/sbin/nologin"
+    home:  "/var/lib/logstash"
+
+- name: Ensure /var/lib/logstash exists
+  file:
+    path:    '{{ LOGSTASH_PATH }}'
+    state:   directory
+    owner: "{{ LOGSTASH_USER }}"
+    group: "{{ LOGSTASH_GROUP }}"
+    recurse: yes
+
+- name: Fetch logstash
+  get_url:
+    url:  'https://download.elastic.co/logstash/logstash/logstash-{{ LOGSTASH_VERSION }}.tar.gz'
+    dest: '/usr/local/'
+    mode: 0444
+
+- name: Unarchives logstash
+  raw: 'tar -xzf /usr/local/logstash-{{ LOGSTASH_VERSION }}.tar.gz -C /usr/local/'
+
+- name: Remove archives logstash
+  raw: 'rm -rf /usr/local/logstash-{{ LOGSTASH_VERSION }}.tar.gz'
+
+- name: Create /usr/local/logstash
+  file:
+    src:  '/usr/local/logstash-{{ LOGSTASH_VERSION }}'
+    dest: '/usr/local/logstash'
+    state: link
+    force: yes
+
+- name: remove *.bat
+  raw: rm -fr /usr/local/logstash/bin/*.bat
+
+- name: Installing logstash plugin
+  raw: "/usr/local/logstash/bin/logstash-plugin install {{ LOGSTASH_PLUGINS | join(' ') }}"
