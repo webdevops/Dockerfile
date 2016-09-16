@@ -136,13 +136,15 @@ diagram:
       styles:
         graph:
           style: filled
-          fillcolor: "#c0e5a8"
+          fillcolor: "#fac0fa"
         nodes:
           fontname: Helvetica
           shape: box
           fontcolor: black
           color: black
           style: filled
-          fillcolor: "#78c445"
+          fillcolor: "#f833e8"
       docker:
         - webdevops/sphinx
+        - webdevops/certbot
+        - webdevops/logstash

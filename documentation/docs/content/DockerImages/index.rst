@@ -9,6 +9,7 @@ Docker images
   Docker image hierarchy
 
 
+
 .. toctree::
    :maxdepth: 1
 
@@ -23,6 +24,7 @@ Docker images
    dockerfiles/hhvm-apache
    dockerfiles/hhvm-nginx
    dockerfiles/liquibase
+   dockerfiles/logstash
    dockerfiles/mail-sandbox
    dockerfiles/nginx
    dockerfiles/nginx-dev
