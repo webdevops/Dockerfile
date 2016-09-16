@@ -33,7 +33,6 @@ RUN /usr/local/bin/apk-install \
         wget \
         curl \
         net-tools \
-        moreutils \
         drill \
         ldns \
         openssh-client \
