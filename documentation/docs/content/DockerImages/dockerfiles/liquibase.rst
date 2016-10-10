@@ -2,7 +2,7 @@
 webdevops/liquibase
 ===================
 
-The certbot images are based on ``java`` with liquibase and mysql driver
+The liquibase images are based on ``java`` with liquibase and mysql driver
 
 Docker image tags
 -----------------
