@@ -30,3 +30,8 @@ Environment variable       Description                  Default
 ``LIQUIBASE_OPTS``         Additional options           *empty*
 ========================== ============================ ==============================================
 
+Usage
+-----
+
+Expecting the ``changelog.xml`` is inside the current directory the update process can be started with:
+``docker run --rm -v $(pwd):/liquibase/ -e "LIQUIBASE_URL=jdbc:mysql://host/app" -e "LIQUIBASE_USERNAME=root" -e "LIQUIBASE_PASSWORD=root" liquibase update``
