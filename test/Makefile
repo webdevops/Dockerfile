@@ -77,3 +77,6 @@ sphinx:
 
 certbot:
 	bash ./run.sh certbot
+
+liquibase:
+	bash ./run.sh liquibase

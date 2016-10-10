@@ -979,6 +979,21 @@ ENV VARNISH_BACKEND_HOST \"google.com\"
     waitForTestRun
 }
 
+#######################################
+# webdevops/liquibase
+#######################################
+
+#[[ $(checkTestTarget liquibase) ]] && {
+#    setupTestEnvironment "liquibase"
+#
+#    # setSpecTest "base"
+#    setEnvironmentOsFamily "debian"
+#
+#    OS_VERSION="3" runTestForTag "latest"
+#
+#    waitForTestRun
+#}
+
 echo ""
 echo " >>> finished, all tests PASSED <<<"
 echo ""
