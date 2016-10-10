@@ -24,7 +24,7 @@ web:       webdevops/apache webdevops/apache-dev webdevops/nginx webdevops/nginx
 
 applications: webdevops/typo3 webdevops/piwik
 
-misc:      webdevops/mail-sandbox webdevops/sphinx
+misc:      webdevops/mail-sandbox webdevops/sphinx webdevops/liquibase
 
 test:
 	cd "test/" && make all
@@ -168,3 +168,6 @@ webdevops/varnish:
 
 webdevops/certbot:
 	bash bin/build.sh certbot "${DOCKER_REPOSITORY}/certbot" "${DOCKER_TAG_LATEST}"
+
+webdevops/liquibase:
+	bash bin/build.sh liquibase "${DOCKER_REPOSITORY}/liquibase" "${DOCKER_TAG_LATEST}"

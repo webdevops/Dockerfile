@@ -1,0 +1,12 @@
+{{ docker.fromOfficial("java") }}
+
+{{ docker.version() }}
+
+{{ environment.liquibase('3.5.1') }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ liquibase.default() }}
+
+{{ docker.entrypoint("/opt/docker/bin/entrypoint.sh") }}
+

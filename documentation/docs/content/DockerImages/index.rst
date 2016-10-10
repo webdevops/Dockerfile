@@ -22,6 +22,7 @@ Docker images
    dockerfiles/hhvm
    dockerfiles/hhvm-apache
    dockerfiles/hhvm-nginx
+   dockerfiles/liquibase
    dockerfiles/mail-sandbox
    dockerfiles/nginx
    dockerfiles/nginx-dev

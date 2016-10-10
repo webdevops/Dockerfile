@@ -4,6 +4,10 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [0.57.0] - 2016-10-10
+- Removed version numbers in php configuration in apache
+- Added liquibase image
+
 ## [0.56.1] - 2016-09-12
 - Removed geoip database
 
