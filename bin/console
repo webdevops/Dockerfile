@@ -2,12 +2,15 @@
 # -*- coding: utf-8 -*-
 
 from command.build_dockerfile_command import BuildDockerfileCommand
+from command.build_image_command import BuildImageCommand
 from command.graph_command import GraphCommand
 from command.provision_command import ProvisionCommand
+
 from cleo import Application
 
 application = Application()
 application.add(BuildDockerfileCommand())
+application.add(BuildImageCommand())
 application.add(GraphCommand())
 application.add(ProvisionCommand())
 
