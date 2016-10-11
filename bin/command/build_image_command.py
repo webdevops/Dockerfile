@@ -20,7 +20,7 @@ DOCKER_FROM_REGEX = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.
 
 class BuildImageCommand(Command):
     """
-    Build Dockerfile containers
+    Build images
 
     webdevops:build:image
         {--dry-run               : show only which images will be build}
@@ -28,7 +28,8 @@ class BuildImageCommand(Command):
         {--pull                  : allow docker image pull}
         {--t|threads=1           : threads}
         {--verbosity=1           : verbosity}
-        {--filter=?* : tags or images name }
+        {--whitelist=?*          : image/tag whitelist (TODO) }
+        {--blacklist=?*          : image/tag blacklist (TODO) }
     """
 
     def handle(self):
