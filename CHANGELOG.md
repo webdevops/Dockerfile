@@ -4,6 +4,10 @@ This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/D
 
 ## [1.0.0] - upcoming
 
+## [0.57.1] - 2016-10-11
+- Added webdevops/liquibase:mysql (same as latest) with mysql support
+- Added webdevops/liquibase:postgres with postgres support
+
 ## [0.57.0] - 2016-10-10
 - Removed version numbers in php configuration in apache
 - Added liquibase image
