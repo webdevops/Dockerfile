@@ -48,7 +48,7 @@ class BuildImageCommand(Command):
             buildConfiguration['verbosity'] = 2
 
         if buildConfiguration['threads'] > 1:
-            doitArgs.extend(['-n', buildConfiguration['threads']])
+            doitArgs.extend(['-n', buildConfiguration['threads'], '-P' 'thread'])
 
         sys.exit(DoitMain(DockerTaskLoader(buildConfiguration)).run(doitArgs))
 
