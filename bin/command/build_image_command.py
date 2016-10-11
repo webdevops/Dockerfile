@@ -93,7 +93,7 @@ class DockerTaskLoader(TaskLoader):
             with open(path, 'r') as fileInput:
                 DockerfileContent = fileInput.read()
                 data = ([m.groupdict() for m in DOCKER_FROM_REGEX.finditer(DockerfileContent)])[0]
-                ret = '%s/%s' % (DOCKER_REPOSITORY, data['image'])
+                ret = data['image']
 
                 if data['tag']:
                     ret += ':%s' % data['tag']
@@ -152,6 +152,7 @@ class DockerTaskLoader(TaskLoader):
         if buildConfiguration['dryRun']:
             print '      from: %s' % task['image']['from']
             print '      path: %s' % task['path']
+            print '  task_dep: %s' % task['dependency']
             print ''
             return
 
