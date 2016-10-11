@@ -431,5 +431,12 @@ function header() {
     header "certbot"
 }
 
+## Build liquibase
+[[ $(checkBuildTarget liquibase) ]] && {
+    header "liquibase"
+    clearConfiguration  liquibase  '*'
+    deployConfiguration liquibase/general liquibase '*'
+}
+
 
 exit 0

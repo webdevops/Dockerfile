@@ -43,10 +43,10 @@ ENV APPLICATION_UID   1000
 ENV APPLICATION_GID   1000
 {%- endmacro %}
 
-{% macro liquibase(version) -%}
+{% macro liquibase(version, driver, classpath) -%}
 ENV LIQUIBASE_VERSION   "{{ version }}"
-ENV LIQUIBASE_DRIVER    "com.mysql.jdbc.Driver"
-ENV LIQUIBASE_CLASSPATH "/usr/share/java/mysql.jar"
+ENV LIQUIBASE_DRIVER    "{{ driver }}"
+ENV LIQUIBASE_CLASSPATH "{{ classpath }}"
 ENV LIQUIBASE_URL       ""
 ENV LIQUIBASE_USERNAME  ""
 ENV LIQUIBASE_PASSWORD  ""
