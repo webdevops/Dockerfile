@@ -99,7 +99,7 @@ class DockerBuildTaskLoader(TaskLoader):
         """
         config = {'verbosity': self.configuration.verbosity}
 
-        dockerfileList = DockerfileUtility.DockerfileUtility.findDockerfilesInPath(
+        dockerfileList = DockerfileUtility.findDockerfilesInPath(
             basePath=self.configuration.basePath,
             pathRegexp=self.configuration.docker.pathRegexp,
             imagePrefix=self.configuration.docker.imagePrefix
