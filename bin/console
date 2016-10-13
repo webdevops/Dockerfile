@@ -6,13 +6,27 @@ from command.build_image_command import BuildImageCommand
 from command.graph_command import GraphCommand
 from command.provision_command import ProvisionCommand
 
+import os
 from cleo import Application
 
+configuration = {
+    'basePath': os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'docker')),
+
+    'dockerBuild': {},
+    'dockerPush': {},
+
+    'docker': {
+        'imagePrefix': 'webdevops',
+        'autoLatestTag': 'ubuntu-16.04',
+        'pathRegexp': '/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'
+    },
+}
+
 application = Application()
-application.add(BuildDockerfileCommand())
-application.add(BuildImageCommand())
-application.add(GraphCommand())
-application.add(ProvisionCommand())
+application.add(BuildDockerfileCommand(configuration=configuration))
+application.add(BuildImageCommand(configuration=configuration))
+application.add(GraphCommand(configuration=configuration))
+application.add(ProvisionCommand(configuration=configuration))
 
 if __name__ == '__main__':
     application.run()

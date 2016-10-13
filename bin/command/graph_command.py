@@ -55,6 +55,12 @@ class GraphCommand(Command):
 
     conf = ''
 
+    configuration = False
+
+    def __init__(self, configuration):
+        Command.__init__(self)
+        self.configuration = configuration
+
     def handle(self):
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
             self.line('<info>ALL :</info> %s' % self.option('all'))

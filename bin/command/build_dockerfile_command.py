@@ -40,6 +40,12 @@ class BuildDockerfileCommand(Command):
     template_header = '{% extends "Dockerfile/layout.jinja2" %}\n{% block content %}'
     template_footer = '{% endblock %}'
 
+    configuration = False
+
+    def __init__(self, configuration):
+        Command.__init__(self)
+        self.configuration = configuration
+
     def handle(self):
         template_path = os.path.abspath(self.option('template'))
         dockerfile_path = os.path.abspath(self.option('dockerfile'))

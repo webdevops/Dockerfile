@@ -40,36 +40,21 @@ class BuildImageCommand(Command):
         {--blacklist=?*          : image/tag blacklist (TODO) }
     """
 
+    configuration = False
+
+    def __init__(self, configuration):
+        Command.__init__(self)
+        self.configuration = configuration
+
     def handle(self):
         doitOpts = []
 
-        configuration = {
-            'basePath': './docker',
-            'basePathWithRepository': False,
-
-            'docker': {
-                'imagePrefix'  : 'webdevops',
-                'autoLatestTag': 'ubuntu-16.04',
-                'pathRegexp'   : '/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'
-            },
-
-            'dockerBuild': {
-                'enabled'      : True,
-                'noCache'      : self.option('no-cache'),
-                'dryRun'       : self.option('dry-run'),
-            },
-
-            'dockerPush': {
-                'enabled'      : self.option('push'),
-            },
-
-            'filter': {
-                'whitelist': False,
-                'blacklist': False,
-            },
-
-            'threads':   max(1, self.option('threads')),
-        }
+        configuration = self.configuration
+        configuration['dockerBuild']['enabled'] = True
+        configuration['dockerBuild']['noCache'] = self.option('no-cache')
+        configuration['dockerBuild']['dryRun'] = self.option('dry-run')
+        configuration['dockerPush']['enabled'] = self.option('push')
+        configuration['threads'] = max(1, self.option('threads'))
 
         if self.option('dry-run'):
             configuration['threads'] = 1

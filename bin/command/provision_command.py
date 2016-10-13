@@ -49,6 +49,12 @@ class ProvisionCommand(Command):
 
     __queue = ''
 
+    configuration = False
+
+    def __init__(self, configuration):
+        Command.__init__(self)
+        self.configuration = configuration
+
     def handle(self):
         start = time.time()
         self.__queue = Queue.Queue()
