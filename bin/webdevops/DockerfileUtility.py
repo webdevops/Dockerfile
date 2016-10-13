@@ -24,7 +24,11 @@ import re
 DOCKERFILE_STATEMENT_FROM_RE = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE)
 
 
-def findDockerfilesInPath(basePath, pathRegexp, imagePrefix):
+def findDockerfilesInPath(basePath, pathRegexp, imagePrefix, whitelist=False, blacklist=False):
+    """
+    Find all Dockerfiles in path (and even in symlinks and build dependencies)
+    """
+
     def parseDockerInfoFromPath(path, pathRe, imagePrefix):
         imageNameInfo = ([m.groupdict() for m in pathRe.finditer(os.path.abspath(path))])[0]
 
@@ -63,10 +67,46 @@ def findDockerfilesInPath(basePath, pathRegexp, imagePrefix):
                 'image': parseDockerInfoFromPath(path, pathRe, imagePrefix)
             }
             dockerfileList.append(dockerfile)
+
+    if whitelist or blacklist:
+        dockerfileList = filterDockerfiles(
+            dockerfileList=dockerfileList,
+            whitelist=whitelist,
+            blacklist = blacklist
+        )
+
+    return dockerfileList
+
+
+def filterDockerfiles(dockerfileList, whitelist=False, blacklist=False):
+    """
+    Filter Dockerfiles by white- and blacklist
+    """
+
+    if whitelist:
+        tmp = []
+        for dockerfile in dockerfileList:
+            for whitelistTerm in whitelist:
+                if whitelistTerm in dockerfile['image']['fullname']:
+                    tmp.append(dockerfile)
+        dockerfileList = tmp
+
+    if blacklist:
+        tmp = []
+        for dockerfile in dockerfileList:
+            for blacklistTerm in blacklist:
+                if not blacklistTerm in dockerfile['image']['fullname']:
+                    tmp.append(dockerfile)
+        dockerfileList = tmp
+
     return dockerfileList
 
 
 def recursiveDockerfileListInPath(basePath):
+    """
+    Find all Dockerfiles paths recursive in path
+    """
+
     dockerfileList = []
     for root, subFolders, files in os.walk(basePath, followlinks=True):
         for file in files:

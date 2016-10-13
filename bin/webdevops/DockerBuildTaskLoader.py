@@ -102,7 +102,9 @@ class DockerBuildTaskLoader(TaskLoader):
         dockerfileList = DockerfileUtility.findDockerfilesInPath(
             basePath=self.configuration.basePath,
             pathRegexp=self.configuration.docker.pathRegexp,
-            imagePrefix=self.configuration.docker.imagePrefix
+            imagePrefix=self.configuration.docker.imagePrefix,
+            whitelist=self.configuration.whitelist,
+            blacklist=self.configuration.blacklist,
         )
         dockerfileList = self.prepareDockerfileList(dockerfileList)
 

@@ -36,8 +36,8 @@ class BuildImageCommand(Command):
         {--no-cache              : build without caching}
         {--t|threads=1           : threads}
         {--push                  : Push Dockerfiles }
-        {--whitelist=?*          : image/tag whitelist (TODO) }
-        {--blacklist=?*          : image/tag blacklist (TODO) }
+        {--whitelist=?*          : image/tag whitelist }
+        {--blacklist=?*          : image/tag blacklist }
     """
 
     configuration = False
@@ -50,11 +50,17 @@ class BuildImageCommand(Command):
         doitOpts = []
 
         configuration = self.configuration
+
         configuration['dockerBuild']['enabled'] = True
         configuration['dockerBuild']['noCache'] = self.option('no-cache')
         configuration['dockerBuild']['dryRun'] = self.option('dry-run')
+
         configuration['dockerPush']['enabled'] = self.option('push')
+
         configuration['threads'] = max(1, self.option('threads'))
+
+        configuration['whitelist'] = self.option('whitelist')
+        configuration['blacklist'] = self.option('blacklist')
 
         if self.option('dry-run'):
             configuration['threads'] = 1
