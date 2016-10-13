@@ -31,12 +31,10 @@ class BuildImageCommand(Command):
     """
     Build images
 
-    webdevops:build:image
+    docker:build
         {--dry-run               : show only which images will be build}
         {--no-cache              : build without caching}
         {--t|threads=1           : threads}
-        {--verbosity=1           : verbosity}
-        {--build                 : Build Dockerfiles }
         {--push                  : Push Dockerfiles }
         {--whitelist=?*          : image/tag whitelist (TODO) }
         {--blacklist=?*          : image/tag blacklist (TODO) }
@@ -56,7 +54,7 @@ class BuildImageCommand(Command):
             },
 
             'dockerBuild': {
-                'enabled'      : self.option('build'),
+                'enabled'      : True,
                 'noCache'      : self.option('no-cache'),
                 'dryRun'       : self.option('dry-run'),
             },
@@ -70,13 +68,8 @@ class BuildImageCommand(Command):
                 'blacklist': False,
             },
 
-            'verbosity': min(2, max(0, abs(int(self.option('verbosity'))))),
             'threads':   max(1, self.option('threads')),
         }
-
-        if not configuration['dockerBuild']['enabled'] and not configuration['dockerPush']['enabled']:
-                print ' [ERROR] Neither --build or --push was specified'
-                sys.exit(1)
 
         if self.option('dry-run'):
             configuration['threads'] = 1

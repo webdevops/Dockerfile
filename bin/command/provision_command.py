@@ -17,7 +17,7 @@ class ProvisionCommand(Command):
     """
     Provisionning docker images
 
-    webdevops:provision
+    generate:provision
         {--p|provision=./provisioning : path output}
         {--d|dockerfile=./docker : path to the folder containing dockerfile analyze}
         {--image=?* : filter on images name }

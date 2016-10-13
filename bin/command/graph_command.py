@@ -14,7 +14,7 @@ class GraphCommand(Command):
     """
     Generate a diagram of container
 
-    webdevops:graph
+    generate:graph
         {--a|all : Show all informations}
         {--p|path=./documentation/docs/resources/images/ : path output}
         {--F|format=png (choice) : output format }
