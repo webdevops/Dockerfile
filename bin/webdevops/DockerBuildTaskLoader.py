@@ -106,6 +106,8 @@ class DockerBuildTaskLoader(TaskLoader):
         )
         dockerfileList = self.prepareDockerfileList(dockerfileList)
 
+        # print json.dumps(dockerfileList, sort_keys=True, indent = 4, separators = (',', ': '));sys.exit(0);
+
         taskList = []
         if self.configuration.dockerBuild.enabled:
             taskList.extend(self.generatDockerBuildTasks(dockerfileList))
