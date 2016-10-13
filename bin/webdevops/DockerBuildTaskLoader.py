@@ -1,5 +1,22 @@
 #!/usr/bin/env/python
 # -*- coding: utf-8 -*-
+#
+# (c) 2016 WebDevOps.io
+#
+# This file is part of Dockerfile Repository.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+# documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+# to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions
+# of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+# THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+# OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+# OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
 import docker
@@ -8,6 +25,7 @@ import time
 import sys
 import re
 import copy
+from webdevops import DockerfileUtility
 from bunch import bunchify
 from doit.task import dict_to_task
 from doit.cmd_base import TaskLoader
@@ -18,18 +36,17 @@ class DockerBuildTaskLoader(TaskLoader):
 
     defaultConfiguration = {
         'basePath': False,
-        'basePathWithRepository': False,
 
         'docker': {
             'imagePrefix': '',
             'autoLatestTag': False,
             'fromRegExp': re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE),
+            'pathRegexp': False,
         },
 
         'dockerBuild': {
             'enabled': False,
             'noCache': False,
-            'allowPull': False,  # only for non-depenency images?!
             'dryRun': False,
         },
 
@@ -82,12 +99,12 @@ class DockerBuildTaskLoader(TaskLoader):
         """
         config = {'verbosity': self.configuration.verbosity}
 
-        if self.configuration.basePathWithRepository:
-            dockerfileList = self.findDockerfileWithRepository(self.configuration.docker.imagePrefix, self.configuration.basePath)
-        else:
-            dockerfileList = self.findDockerfileByRepository(self.configuration.docker.imagePrefix, self.configuration.basePath)
-
-        #print json.dumps(dockerfileList, sort_keys=True, indent = 4, separators = (',', ': '));sys.exit(0);
+        dockerfileList = DockerfileUtility.DockerfileUtility.findDockerfilesInPath(
+            basePath=self.configuration.basePath,
+            pathRegexp=self.configuration.docker.pathRegexp,
+            imagePrefix=self.configuration.docker.imagePrefix
+        )
+        dockerfileList = self.prepareDockerfileList(dockerfileList)
 
         taskList = []
         if self.configuration.dockerBuild.enabled:
@@ -97,6 +114,55 @@ class DockerBuildTaskLoader(TaskLoader):
             taskList.extend(self.generatDockerPushTasks(dockerfileList))
 
         return taskList, config
+
+    def prepareDockerfileList(self, dockerfileList):
+        """
+        Prepare dockerfile list with dependency and also add "auto latest tag" images
+        """
+
+        def generateImageNameLatest(imageName):
+            """
+            Generate image name with latest tag
+            """
+            if re.search(':[^:]+$', imageName):
+                imageName = re.sub('(:[^:]+)$', ':latest', imageName)
+            else:
+                imageName = '%s:latest' % imageName
+            return imageName
+
+        imageList = [x['image']['fullname'] for x in dockerfileList if x['image']['fullname']]
+
+        autoLatestTagImageList = []
+
+        for dockerfile in dockerfileList:
+            """
+            Calculate dependency
+            """
+            dockerfile['dependency'] = False
+            if dockerfile['image']['from'] and dockerfile['image']['from'] in imageList:
+                dockerfile['dependency'] = dockerfile['image']['from']
+
+            """
+            Process auto latest tag
+            """
+            if self.configuration.docker.autoLatestTag and dockerfile['image']['tag'] == self.configuration.docker.autoLatestTag:
+                imageNameLatest = generateImageNameLatest(dockerfile['image']['fullname'])
+                if imageNameLatest not in imageList:
+                    autoLatestTagImage = copy.deepcopy(dockerfile)
+                    autoLatestTagImage['image']['fullname'] = imageNameLatest
+                    autoLatestTagImage['image']['tag'] = 'latest'
+                    autoLatestTagImage['dependency'] = dockerfile['image']['fullname']
+                    autoLatestTagImageList.append(autoLatestTagImage)
+
+        """
+        Add auto latest tag images to dockerfile list
+        """
+        dockerfileList.extend(autoLatestTagImageList)
+
+        return dockerfileList
+
+
+
 
     def generatDockerBuildTasks(self, dockerfileList):
         """
@@ -156,102 +222,6 @@ class DockerBuildTaskLoader(TaskLoader):
 
         return taskList
 
-    def getDockerfileFrom(self, path):
-        """
-        Extract image name from Dockerfile FROM statement or from symlink
-        """
-        basePath = os.path.dirname(path)
-
-        if os.path.islink(basePath):
-            """
-            Dockerfile path is a symlink -> extract destination and
-            """
-            linkedPath = os.path.realpath(basePath)
-
-            imageRepository = ''
-
-            if self.configuration.basePathWithRepository:
-                imageRepository = os.path.basename(os.path.dirname(os.path.dirname(linkedPath)))
-
-            imageTag = os.path.basename(linkedPath);
-            imageName = os.path.basename(os.path.dirname(linkedPath))
-            ret = '%s%s/%s:%s' % (self.configuration.docker.imagePrefix, imageRepository, imageName, imageTag)
-        else:
-            """
-            Extract docker image name from FROM statement
-            """
-            with open(path, 'r') as fileInput:
-                DockerfileContent = fileInput.read()
-                data = ([m.groupdict() for m in self.configuration.docker.fromRegExp.finditer(DockerfileContent)])[0]
-                ret = data['image']
-
-                if data['tag']:
-                    ret += ':%s' % data['tag']
-        return ret
-
-    def findDockerfileWithRepository(self, dockerPrefix, basePath):
-        """
-        Find Dockerfiles in basePath/imageRepository/imageName/imageTag structrue
-        """
-        ret = []
-        for imageRepository in os.listdir(basePath):
-            if os.path.isdir(os.path.join(basePath, imageRepository)):
-                ret = ret.extend(
-                    self.findDockerfileByRepository( dockerPrefix + imageRepository, os.path.join(basePath, imageRepository))
-                )
-        return ret
-
-    def findDockerfileByRepository(self, repository, basePath):
-        """
-        Find Dockerfiles in basePath/imageName/imageTag structrue
-        """
-        ret = []
-
-        for imageName in os.listdir(basePath):
-            latestTagFound = False
-            autoLatestDefinition = False
-
-            for imageTag in os.listdir(os.path.join(basePath, imageName)):
-                dockerImagePath = os.path.join(basePath, imageName, imageTag)
-                dockerfilePath = os.path.join(dockerImagePath, 'Dockerfile')
-                if os.path.isfile(dockerfilePath):
-                    dockerImageFrom = self.getDockerfileFrom(dockerfilePath)
-
-                    if imageTag == 'latest':
-                        latestTagFound = True
-
-                    dockerDefinition = {
-                        'dockerfile': dockerfilePath,
-                        'path': dockerImagePath,
-                        'image': {
-                            'fullname': repository + '/' + imageName + ':' + imageTag,
-                            'name': repository + '/' + imageName,
-                            'tag':  imageTag,
-                            'repository': repository,
-                            'from': dockerImageFrom,
-                        },
-                        'dependency': dockerImageFrom
-                    }
-
-                    if self.configuration.docker.autoLatestTag and imageTag == self.configuration.docker.autoLatestTag:
-                        autoLatestDefinition = copy.deepcopy(dockerDefinition)
-                        autoLatestDefinition['image']['fullname'] = repository + '/' + imageName + ':latest'
-                        autoLatestDefinition['image']['tag'] = 'latest'
-                        autoLatestDefinition['dependency'] = repository + '/' + imageName + ':' + self.configuration.docker.autoLatestTag
-
-                    ret.append(dockerDefinition)
-
-            if not latestTagFound and autoLatestDefinition:
-                ret.append(autoLatestDefinition);
-
-        ## remove not available dependencies
-        imageList = [x['image']['fullname'] for x in ret if x['image']['fullname']]
-        for i, row in enumerate(ret):
-            if row['dependency'] and row['dependency'] not in imageList:
-                row['dependency'] = False
-
-        return ret
-
     @staticmethod
     def actionDockerBuild(dockerClient, dockerfile, configuration, task):
         """
@@ -292,12 +262,21 @@ class DockerBuildTaskLoader(TaskLoader):
 
         response = dockerClient.push(
             dockerfile['image']['fullname'],
-            stream=True
+            stream=True,
+            decode=True
         )
 
         for line in response:
-            if 'stream' in line:
-                sys.stdout.write(line['stream'])
+            """
+            Keys
+              - status, progressDetail, id
+              - progressDetail | aux [ tag, digest, size ]
+            """
+            if 'status' in line:
+                message = line['status']
+                if 'id' in line:
+                    message += ' ' + line['id']
+                sys.stdout.write(message + '\n')
         return True
 
     @staticmethod
@@ -344,3 +323,4 @@ class DockerBuildTaskLoader(TaskLoader):
         Push task title function
         """
         return "Docker push %s" % (DockerBuildTaskLoader.humanTaskName(task.name))
+0
