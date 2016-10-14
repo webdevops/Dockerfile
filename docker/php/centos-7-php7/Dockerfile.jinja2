@@ -1,0 +1,11 @@
+{{ docker.from("base-app", "centos-7") }}
+
+{{ docker.version() }}
+
+{{ environment.web() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ php7.centosWebtatic() }}
+
+{{ docker.expose('9000') }}
