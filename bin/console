@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from command.build_dockerfile_command import BuildDockerfileCommand
-from command.build_image_command import BuildImageCommand
+from command.docker_image_build_command import DockerImageBuildCommand
+from command.docker_image_push_command import DockerImagePushCommand
 from command.graph_command import GraphCommand
 from command.provision_command import ProvisionCommand
 
@@ -24,7 +25,8 @@ configuration = {
 
 application = Application()
 application.add(BuildDockerfileCommand(configuration=configuration))
-application.add(BuildImageCommand(configuration=configuration))
+application.add(DockerImageBuildCommand(configuration=configuration))
+application.add(DockerImagePushCommand(configuration=configuration))
 application.add(GraphCommand(configuration=configuration))
 application.add(ProvisionCommand(configuration=configuration))
 

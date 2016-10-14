@@ -231,7 +231,7 @@ class DockerBuildTaskLoader(TaskLoader):
         """
         Build one Dockerfile
         """
-        if configuration.dockerBuild.dryRun:
+        if configuration.dryRun:
             print '      from: %s' % dockerfile['image']['from']
             print '      path: %s' % dockerfile['path']
             print '       dep: %s' % (DockerBuildTaskLoader.humanTaskNameList(task.task_dep) if task.task_dep else 'none')
@@ -259,7 +259,7 @@ class DockerBuildTaskLoader(TaskLoader):
         """
         Push one Docker image to registry
         """
-        if configuration.dockerBuild.dryRun:
+        if configuration.dryRun:
             print '       dep: %s' % (DockerBuildTaskLoader.humanTaskNameList(task.task_dep) if task.task_dep else 'none')
             print ''
             return

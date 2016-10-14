@@ -27,7 +27,7 @@ from doit.doit_cmd import DoitMain
 
 import sys
 
-class BuildImageCommand(Command):
+class DockerImageBuildCommand(Command):
     """
     Build images
 
@@ -53,7 +53,7 @@ class BuildImageCommand(Command):
 
         configuration['dockerBuild']['enabled'] = True
         configuration['dockerBuild']['noCache'] = self.option('no-cache')
-        configuration['dockerBuild']['dryRun'] = self.option('dry-run')
+
 
         configuration['dockerPush']['enabled'] = self.option('push')
 
@@ -61,6 +61,8 @@ class BuildImageCommand(Command):
 
         configuration['whitelist'] = self.option('whitelist')
         configuration['blacklist'] = self.option('blacklist')
+
+        configuration['dryRun'] = self.option('dry-run')
 
         if self.option('dry-run'):
             configuration['threads'] = 1
