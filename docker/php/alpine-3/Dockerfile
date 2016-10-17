@@ -51,6 +51,7 @@ RUN /usr/local/bin/apk-install \
         php5-ftp \
         php5-gettext \
         php5-iconv \
+        php5-imagick \
         php5-zip \
         php5-zlib \
         php5-shmop \

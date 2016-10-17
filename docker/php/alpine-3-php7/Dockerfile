@@ -66,6 +66,7 @@ RUN /usr/local/bin/apk-install \
         php7-openssl \
         php7-session \
         php7-opcache \
+        php7-imagick \
         php7-mbstring \
         php7-iconv \
         php7-apcu \

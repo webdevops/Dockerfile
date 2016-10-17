@@ -48,6 +48,7 @@ RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
         php7.0-xmlrpc \
         php7.0-xsl \
         php7.0-bz2 \
+        php7.0-imagick \
         php7.0-redis \
         php7.0-memcached \
         php7.0-zip \

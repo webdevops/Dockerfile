@@ -51,6 +51,7 @@ RUN /usr/local/bin/apk-install \
         php7-openssl \
         php7-session \
         php7-opcache \
+        php7-imagick \
         php7-mbstring \
         php7-iconv \
         php7-apcu \
@@ -84,6 +85,7 @@ RUN echo "deb http://packages.dotdeb.org {{ distribution }} all" >> /etc/apt/sou
         php7.0-mcrypt \
         php7.0-gd \
         php7.0-sqlite3 \
+        php7.0-imagick \
         php7.0-ldap \
         php7.0-opcache \
         php7.0-xmlrpc \
@@ -129,6 +131,7 @@ RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
         php7.0-xmlrpc \
         php7.0-xsl \
         php7.0-bz2 \
+        php7.0-imagick \
         php7.0-redis \
         php7.0-memcached \
         php7.0-zip \
@@ -161,6 +164,7 @@ RUN /usr/local/bin/apt-install \
         php7.0-soap \
         php7.0-zip \
         php7.0-mbstring \
+        php7.0-imagick \
         php7.0-bcmath \
         php7.0-xmlrpc \
         php7.0-xsl \
@@ -194,6 +198,7 @@ RUN /usr/local/bin/apt-install \
         php7.0-soap \
         php7.0-zip \
         php7.0-mbstring \
+        php7.0-imagick \
         php7.0-bcmath \
         php7.0-xmlrpc \
         php7.0-xsl \

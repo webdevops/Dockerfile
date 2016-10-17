@@ -36,6 +36,7 @@ RUN /usr/local/bin/apt-install \
         php7.0-soap \
         php7.0-zip \
         php7.0-mbstring \
+        php7.0-imagick \
         php7.0-bcmath \
         php7.0-xmlrpc \
         php7.0-xsl \
