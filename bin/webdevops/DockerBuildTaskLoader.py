@@ -254,7 +254,7 @@ class DockerBuildTaskLoader(TaskLoader):
 
         print ' -> Building image %s ' % dockerfile['image']['fullname']
         response = dockerClient.build(
-            path=dockerfile['path'],
+            path=os.path.dirname(dockerfile['path']),
             tag=dockerfile['image']['fullname'],
             pull=allowPullFromHub,
             nocache=configuration.dockerBuild.noCache,
