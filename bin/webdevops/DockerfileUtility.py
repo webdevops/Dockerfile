@@ -138,3 +138,26 @@ def generateImageNameLatest(imageName):
     else:
         imageName = '%s:latest' % imageName
     return imageName
+
+def checkIfParentImageShouldBePulled(dockerfile, configuration):
+    ret = False
+    baseImage = dockerfile['image']['from']
+
+    if configuration.docker.autoPull:
+        if configuration.docker.autoPullWhitelist and configuration.docker.autoPullWhitelist.search(baseImage):
+            """
+            Matched whitelist
+            """
+            ret = True
+        else:
+            """
+            No whitelist, we need to pull every image
+            """
+            ret = True
+
+        if configuration.docker.autoPullBlacklist and configuration.docker.autoPullBlacklist.match(baseImage):
+            """
+            Matched blacklist
+            """
+            ret = False
+    return ret

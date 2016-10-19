@@ -21,6 +21,8 @@ configuration = {
         'imagePrefix': 'webdevops',
         'autoLatestTag': 'ubuntu-16.04',
         'pathRegex': re.compile('/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'),
+        'autoPull': True,
+        'autoPullBlacklist': re.compile(r'^webdevops/.*'),
     },
 }
 

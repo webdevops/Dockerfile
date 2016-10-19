@@ -42,6 +42,9 @@ class DockerBuildTaskLoader(TaskLoader):
             'autoLatestTag': False,
             'fromRegExp': re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE),
             'pathRegex': False,
+            'autoPull': False,
+            'autoPullWhitelist': False,
+            'autoPullBlacklist': False,
         },
 
         'dockerBuild': {
@@ -231,8 +234,11 @@ class DockerBuildTaskLoader(TaskLoader):
         """
         Build one Dockerfile
         """
+
+        pullParentImage = DockerfileUtility.checkIfParentImageShouldBePulled(dockerfile, configuration)
+
         if configuration.dryRun:
-            print '      from: %s' % dockerfile['image']['from']
+            print '      from: %s (pull: %s)' % (dockerfile['image']['from'], ('yes' if pullParentImage else 'no'))
             print '      path: %s' % dockerfile['path']
             print '       dep: %s' % (DockerBuildTaskLoader.humanTaskNameList(task.task_dep) if task.task_dep else 'none')
             print ''
@@ -241,6 +247,12 @@ class DockerBuildTaskLoader(TaskLoader):
 
         allowPullFromHub = (True if dockerfile['dependency'] else False)
 
+        if pullParentImage:
+            print ' -> Pull base image %s ' % dockerfile['image']['from']
+            response = dockerClient.pull(dockerfile['image']['from'], stream=True, decode=True)
+            DockerBuildTaskLoader.dockerClientOutput(response)
+
+        print ' -> Building image %s ' % dockerfile['image']['fullname']
         response = dockerClient.build(
             path=dockerfile['path'],
             tag=dockerfile['image']['fullname'],
@@ -249,10 +261,7 @@ class DockerBuildTaskLoader(TaskLoader):
             quiet=False,
             decode=True
         )
-
-        for line in response:
-            if 'stream' in line:
-                sys.stdout.write(line['stream'])
+        DockerBuildTaskLoader.dockerClientOutput(response)
         return True
 
     @staticmethod
@@ -270,8 +279,15 @@ class DockerBuildTaskLoader(TaskLoader):
             stream=True,
             decode=True
         )
+        DockerBuildTaskLoader.dockerClientOutput(response)
 
+        return True
+
+    @staticmethod
+    def dockerClientOutput(response):
         for line in response:
+            if 'stream' in line:
+                sys.stdout.write(line['stream'])
             """
             Keys
               - status, progressDetail, id
@@ -282,7 +298,7 @@ class DockerBuildTaskLoader(TaskLoader):
                 if 'id' in line:
                     message += ' ' + line['id']
                 sys.stdout.write(message + '\n')
-        return True
+        print ''
 
     @staticmethod
     def humanTaskName(name):
