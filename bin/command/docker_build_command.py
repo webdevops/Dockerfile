@@ -27,7 +27,7 @@ from doit.doit_cmd import DoitMain
 
 import sys
 
-class DockerImageBuildCommand(Command):
+class DockerBuildCommand(Command):
     """
     Build images
 

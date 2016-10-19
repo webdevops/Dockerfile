@@ -31,7 +31,7 @@ import shutil
 from pprint import pprint
 
 
-class ProvisionCommand(Command):
+class GenerateProvisionCommand(Command):
     """
     Provisionning docker images
 

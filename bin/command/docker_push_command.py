@@ -27,7 +27,7 @@ from doit.doit_cmd import DoitMain
 
 import sys
 
-class DockerImagePushCommand(Command):
+class DockerPushCommand(Command):
     """
     Push images to registry/hub
 

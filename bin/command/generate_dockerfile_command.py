@@ -25,7 +25,7 @@ from webdevops import Dockerfile
 import os
 
 
-class BuildDockerfileCommand(Command):
+class GenerateDockerfileCommand(Command):
     """
     Build Dockerfile containers
 

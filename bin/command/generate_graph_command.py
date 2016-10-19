@@ -27,7 +27,7 @@ import yaml
 from datetime import date
 
 
-class GraphCommand(Command):
+class GenerateGraphCommand(Command):
     """
     Generate a diagram of container
 

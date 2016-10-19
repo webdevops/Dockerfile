@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from command.build_dockerfile_command import BuildDockerfileCommand
-from command.docker_image_build_command import DockerImageBuildCommand
-from command.docker_image_push_command import DockerImagePushCommand
-from command.graph_command import GraphCommand
-from command.provision_command import ProvisionCommand
+from command.docker_build_command import DockerBuildCommand
+from command.docker_push_command import DockerPushCommand
+from command.generate_dockerfile_command import GenerateDockerfileCommand
+from command.generate_graph_command import GenerateGraphCommand
+from command.generate_provision_command import GenerateProvisionCommand
 
 import os
 import re
@@ -27,11 +27,11 @@ configuration = {
 }
 
 application = Application()
-application.add(BuildDockerfileCommand(configuration=configuration))
-application.add(DockerImageBuildCommand(configuration=configuration))
-application.add(DockerImagePushCommand(configuration=configuration))
-application.add(GraphCommand(configuration=configuration))
-application.add(ProvisionCommand(configuration=configuration))
+application.add(DockerBuildCommand(configuration=configuration))
+application.add(DockerPushCommand(configuration=configuration))
+application.add(GenerateDockerfileCommand(configuration=configuration))
+application.add(GenerateGraphCommand(configuration=configuration))
+application.add(GenerateProvisionCommand(configuration=configuration))
 
 if __name__ == '__main__':
     application.run()
