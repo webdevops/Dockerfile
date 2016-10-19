@@ -146,3 +146,5 @@ diagram:
           fillcolor: "#78c445"
       docker:
         - webdevops/sphinx
+        - webdevops/certbot
+        - webdevops/liquibase

@@ -22,6 +22,7 @@ from cleo import Command, Output
 from cleo.validators import Enum
 import os
 import re
+from webdevops import DockerfileUtility
 from graphviz import Digraph
 import yaml
 from datetime import date
@@ -68,18 +69,20 @@ class GenerateGraphCommand(Command):
             self.line('<info>basePath :</info> %s' % self.configuration['basePath'])
             self.line('<info>filename :</info> %s' % self.option('filename'))
         self.__load_configuration()
-        files_list = os.path.abspath(self.configuration['basePath'])
-        # Parse Docker Path
-        for root, dirs, files in os.walk(files_list):
-            for file in files:
-                if file.endswith("Dockerfile"):
-                    dockerfile_full_path = os.path.join(root, file)
-                    self.__process_dockerfile(dockerfile_full_path)
+
+        dockerfileList = DockerfileUtility.findDockerfilesInPath(
+            basePath=self.configuration['basePath'],
+            pathRegex=self.configuration['docker']['pathRegex'],
+            imagePrefix=self.configuration['docker']['imagePrefix'],
+        )
+
+        for dockerfile in dockerfileList:
+            self.__process_dockerfile(dockerfile)
 
         dia = self.build_graph()
         dia.render()
 
-    def __process_dockerfile(self, dockerfile_full_path):
+    def __process_dockerfile(self, dockerfile):
         """
 
         :param dockerfile_full_path:
@@ -88,21 +91,17 @@ class GenerateGraphCommand(Command):
         :return: self
         :rtype: self
         """
-        output_file = os.path.splitext(dockerfile_full_path)
-        output_file = os.path.join(os.path.dirname(output_file[0]), os.path.basename(output_file[0]))
-
-        docker_image = os.path.basename(os.path.dirname(os.path.dirname(output_file)))
-        docker_tag = os.path.basename(os.path.dirname(output_file))
 
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
-            self.line('<info>-> Processing: </info>%s' % dockerfile_full_path)
+            self.line('<info>-> Processing: </info>%s' % dockerfile['image']['fullname'])
 
-        with open(dockerfile_full_path, 'r') as fileInput:
-            dockerfile_content = fileInput.read()
-            data = ([m.groupdict() for m in self.from_regex.finditer(dockerfile_content)])[0]
-            key = "webdevops/%s" % docker_image
-            self.containers[key] = data.get('image')
-            self.__append_tag(key, data.get('tag'))
+        docker_image = dockerfile['image']['name']
+        parent_image_name = DockerfileUtility.getImageNameWithoutTag(dockerfile['image']['from'])
+        parent_image_tag  = DockerfileUtility.getTagFromImageName(dockerfile['image']['from'])
+
+        self.containers[docker_image] = parent_image_name
+        self.__append_tag(docker_image, parent_image_tag)
+
         return self
 
     def __append_tag(self, docker_image, tag):

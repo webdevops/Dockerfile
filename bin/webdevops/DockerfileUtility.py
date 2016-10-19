@@ -165,6 +165,24 @@ def generateImageNameLatest(imageName):
         imageName = '%s:latest' % imageName
     return imageName
 
+def getImageNameWithoutTag(imageName):
+    """
+    Get image name without tag
+    """
+    if re.search(':[^:]+$', imageName):
+        imageName = re.sub('(:[^:]+)$', '', imageName)
+    return imageName
+
+def getTagFromImageName(imageName):
+    """
+    Get tag from image name
+    """
+    if re.search('^(.*):', imageName):
+        imageTag = re.sub('^(.*):', '', imageName)
+    else:
+        imageTag = 'latest'
+    return imageTag
+
 def checkIfParentImageShouldBePulled(dockerfile, configuration):
     ret = False
     baseImage = dockerfile['image']['from']
