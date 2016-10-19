@@ -8,6 +8,7 @@ from command.graph_command import GraphCommand
 from command.provision_command import ProvisionCommand
 
 import os
+import re
 from cleo import Application
 
 configuration = {
@@ -19,7 +20,7 @@ configuration = {
     'docker': {
         'imagePrefix': 'webdevops',
         'autoLatestTag': 'ubuntu-16.04',
-        'pathRegexp': '/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'
+        'pathRegex': re.compile('/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'),
     },
 }
 

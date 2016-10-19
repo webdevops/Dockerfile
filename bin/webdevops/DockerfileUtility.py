@@ -24,20 +24,20 @@ import re
 DOCKERFILE_STATEMENT_FROM_RE = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE)
 
 
-def findDockerfilesInPath(basePath, pathRegexp, imagePrefix, whitelist=False, blacklist=False):
+def findDockerfilesInPath(basePath, pathRegex, imagePrefix, whitelist=False, blacklist=False):
     """
     Find all Dockerfiles in path (and even in symlinks and build dependencies)
     """
 
-    def parseDockerInfoFromPath(path, pathRe, imagePrefix):
-        imageNameInfo = ([m.groupdict() for m in pathRe.finditer(os.path.abspath(path))])[0]
+    def parseDockerInfoFromPath(path, pathRegex, imagePrefix):
+        imageNameInfo = ([m.groupdict() for m in pathRegex.finditer(os.path.abspath(path))])[0]
 
         imageRepository = (imageNameInfo['repository'] if 'repository' in imageNameInfo else '')
         imageName = (imageNameInfo['image'] if 'image' in imageNameInfo else '')
         imageTag = (imageNameInfo['tag'] if 'tag' in imageNameInfo else '')
 
         if os.path.islink(os.path.dirname(path)):
-            linkedImageNameInfo = ([m.groupdict() for m in pathRe.finditer(os.path.realpath(path))])[0]
+            linkedImageNameInfo = ([m.groupdict() for m in pathRegex.finditer(os.path.realpath(path))])[0]
 
             linkedImageRepository = (linkedImageNameInfo['repository'] if 'repository' in linkedImageNameInfo else '')
             linkedImageName = (linkedImageNameInfo['image'] if 'image' in linkedImageNameInfo else '')
@@ -57,14 +57,13 @@ def findDockerfilesInPath(basePath, pathRegexp, imagePrefix, whitelist=False, bl
         return imageInfo
 
     dockerfileList = []
-    pathRe = re.compile(pathRegexp)
 
     for path in recursiveDockerfileListInPath(basePath):
         if os.path.isfile(path) and os.path.basename(path) == 'Dockerfile':
             dockerfile = {
                 'path': path,
                 'abspath': os.path.abspath(path),
-                'image': parseDockerInfoFromPath(path, pathRe, imagePrefix)
+                'image': parseDockerInfoFromPath(path, pathRegex, imagePrefix)
             }
             dockerfileList.append(dockerfile)
 

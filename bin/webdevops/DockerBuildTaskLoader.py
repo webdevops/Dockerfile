@@ -41,7 +41,7 @@ class DockerBuildTaskLoader(TaskLoader):
             'imagePrefix': '',
             'autoLatestTag': False,
             'fromRegExp': re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE),
-            'pathRegexp': False,
+            'pathRegex': False,
         },
 
         'dockerBuild': {
@@ -101,7 +101,7 @@ class DockerBuildTaskLoader(TaskLoader):
 
         dockerfileList = DockerfileUtility.findDockerfilesInPath(
             basePath=self.configuration.basePath,
-            pathRegexp=self.configuration.docker.pathRegexp,
+            pathRegex=self.configuration.docker.pathRegex,
             imagePrefix=self.configuration.docker.imagePrefix,
             whitelist=self.configuration.whitelist,
             blacklist=self.configuration.blacklist,
@@ -237,6 +237,7 @@ class DockerBuildTaskLoader(TaskLoader):
             print '       dep: %s' % (DockerBuildTaskLoader.humanTaskNameList(task.task_dep) if task.task_dep else 'none')
             print ''
             return
+
 
         allowPullFromHub = (True if dockerfile['dependency'] else False)
 
