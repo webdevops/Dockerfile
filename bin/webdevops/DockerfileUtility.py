@@ -23,6 +23,32 @@ import re
 
 DOCKERFILE_STATEMENT_FROM_RE = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE)
 
+def findFileInPath(dockerfile_path, filename="Dockerfile", filter=[]):
+    """
+    Search all file un dockerfile_path with filename ends with "filename"
+    And match filter
+
+    :param dockerfile_path: path where to search file
+    :type dockerfile_path: str
+
+    :param filename: pattern which the file must be validate
+    :type filename: str
+
+    :param filter: list of term must be match in path
+    :type filter: list
+
+    :return: list of path
+    :rtype: list
+    """
+    fileList = []
+    filter_regex = re.compile(ur'.*(%s).*' % "|".join(filter), re.IGNORECASE)
+    # pprint(filter_regex.pattern)
+    for root, dirs, files in os.walk(dockerfile_path):
+        for file in files:
+            if file.endswith(filename):
+                if filter_regex.match(root):
+                    fileList.append(os.path.join(root, file))
+    return fileList
 
 def findDockerfilesInPath(basePath, pathRegex, imagePrefix, whitelist=False, blacklist=False):
     """

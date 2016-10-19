@@ -13,6 +13,7 @@ from cleo import Application
 
 configuration = {
     'basePath': os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'docker')),
+    'templatePath': os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'template')),
 
     'dockerBuild': {},
     'dockerPush': {},

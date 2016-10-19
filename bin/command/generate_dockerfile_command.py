@@ -21,7 +21,7 @@
 
 from cleo import Command, Output
 from jinja2 import Environment, FileSystemLoader
-from webdevops import Dockerfile
+from webdevops import DockerfileUtility
 import os
 
 
@@ -30,8 +30,6 @@ class GenerateDockerfileCommand(Command):
     Build Dockerfile containers
 
     generate:dockerfile
-        {--t|template=./template  :  path to the folder containing template }
-        {--d|dockerfile=./docker : path to the folder containing dockerfile analyze}
         {--filter=?* : tags or images name }
     """
 
@@ -47,8 +45,8 @@ class GenerateDockerfileCommand(Command):
         self.configuration = configuration
 
     def handle(self):
-        template_path = os.path.abspath(self.option('template'))
-        dockerfile_path = os.path.abspath(self.option('dockerfile'))
+        template_path = self.configuration['templatePath']
+        dockerfile_path = self.configuration['basePath']
         filters = self.option('filter')
 
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
@@ -66,7 +64,7 @@ class GenerateDockerfileCommand(Command):
             trim_blocks=False
         )
 
-        for file in Dockerfile.finder(dockerfile_path, "Dockerfile.jinja2", filters):
+        for file in DockerfileUtility.findFileInPath(dockerfile_path, "Dockerfile.jinja2", filters):
                 self.process_dockerfile(file)
 
     def process_dockerfile(self, input_file):
