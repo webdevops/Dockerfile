@@ -49,6 +49,7 @@ class DockerImageBuildCommand(Command):
     def handle(self):
         doitOpts = []
 
+
         configuration = self.configuration
 
         configuration['dockerBuild']['enabled'] = True
@@ -63,6 +64,9 @@ class DockerImageBuildCommand(Command):
         configuration['blacklist'] = self.option('blacklist')
 
         configuration['dryRun'] = self.option('dry-run')
+
+        if self.output.is_verbose():
+            configuration['verbosity'] = 2
 
         if self.option('dry-run'):
             configuration['threads'] = 1

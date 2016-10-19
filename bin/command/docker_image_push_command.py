@@ -58,6 +58,9 @@ class DockerImagePushCommand(Command):
 
         configuration['dryRun'] = self.option('dry-run')
 
+        if self.output.is_verbose():
+            configuration['verbosity'] = 2
+
         if self.option('dry-run'):
             configuration['threads'] = 1
             configuration['verbosity'] = 2
