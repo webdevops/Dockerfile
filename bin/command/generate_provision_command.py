@@ -36,11 +36,9 @@ class GenerateProvisionCommand(Command):
     Provisionning docker images
 
     generate:provision
-        {--p|provision=./provisioning : path output}
-        {--d|dockerfile=./docker : path to the folder containing dockerfile analyze}
         {--image=?* : filter on images name }
         {--baselayout : Build the baselayout}
-        {--t|thread=3 (integer): Number of threads to run }
+        {--t|thread=1 (integer): Number of threads to run }
     """
 
     conf = ''
@@ -59,8 +57,8 @@ class GenerateProvisionCommand(Command):
         start = time.time()
         self.__queue = Queue.Queue()
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
-            self.line('<info>provision :</info> %s' % self.option('provision'))
-            self.line('<info>dockerfile :</info> %s' % self.option('dockerfile'))
+            self.line('<info>provision :</info> %s' % self.configuration['provisionPath'])
+            self.line('<info>dockerfile :</info> %s' % self.configuration['basePath'])
             self.line('<info>baselayout :</info> %s' % self.option('baselayout'))
             self.line('<info>thread :</info> %d' % self.option('thread'))
             if 0 < len(self.option('image')):
@@ -85,8 +83,8 @@ class GenerateProvisionCommand(Command):
             if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
                 self.line("<info>*</info> -> Create thread <fg=magenta>%s</>" % thread_name)
             provisioner = Provisioner.Provisioner(
-                self.option('dockerfile'),
-                self.option('provision'),
+                self.configuration['basePath'],
+                self.configuration['provisionPath'],
                 self.__queue,
                 self.output
             )

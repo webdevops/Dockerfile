@@ -35,7 +35,6 @@ class GenerateGraphCommand(Command):
         {--a|all : Show all informations}
         {--p|path=./documentation/docs/resources/images/ : path output}
         {--F|format=png (choice) : output format }
-        {--d|dockerfile=./docker : path to the folder containing dockerfile analyze}
         {--f|filename=docker-image-layout.gv :  file output}
     """
 
@@ -66,10 +65,10 @@ class GenerateGraphCommand(Command):
             self.line('<info>ALL :</info> %s' % self.option('all'))
             self.line('<info>path :</info> %s' % self.option('path'))
             self.line('<info>format :</info> %s' % self.option('format'))
-            self.line('<info>dockerfile :</info> %s' % self.option('dockerfile'))
+            self.line('<info>basePath :</info> %s' % self.configuration['basePath'])
             self.line('<info>filename :</info> %s' % self.option('filename'))
         self.__load_configuration()
-        files_list = os.path.abspath(self.option('dockerfile'))
+        files_list = os.path.abspath(self.configuration['basePath'])
         # Parse Docker Path
         for root, dirs, files in os.walk(files_list):
             for file in files:
