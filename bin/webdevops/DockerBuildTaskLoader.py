@@ -249,7 +249,16 @@ class DockerBuildTaskLoader(TaskLoader):
 
         if pullParentImage:
             print ' -> Pull base image %s ' % dockerfile['image']['from']
-            response = dockerClient.pull(dockerfile['image']['from'], stream=True, decode=True)
+
+            pullImageName = DockerfileUtility.getImageNameWithoutTag(dockerfile['image']['from'])
+            pullImageTag = DockerfileUtility.getTagFromImageName(dockerfile['image']['from'])
+
+            response = dockerClient.pull(
+                repository=pullImageName,
+                tag=pullImageTag,
+                stream=True,
+                decode=True
+            )
             DockerBuildTaskLoader.dockerClientOutput(response)
 
         print ' -> Building image %s ' % dockerfile['image']['fullname']
