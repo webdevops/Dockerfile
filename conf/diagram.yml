@@ -25,7 +25,7 @@ diagram:
       name: Official images (Docker hub)
       styles:
         graph:
-          style: filled
+          style: dashed
           fillcolor: gray
         nodes:
           fontname: Helvetica
@@ -40,7 +40,7 @@ diagram:
       name: Upstream images (Docker hub)
       styles:
         graph:
-          style: filled
+          style: dashed
           fillcolor: gray
         nodes:
           fontname: Helvetica

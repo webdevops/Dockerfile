@@ -194,6 +194,7 @@ class GenerateGraphCommand(Command):
             self.subgraph[group] = Digraph('cluster_%s' % group)
             self.subgraph[group].body.append(r'label = "%s"' % group_attr['name'])
             self.subgraph[group] = self.__apply_styles(self.subgraph[group], group_attr['styles'])
+
         for image, base in self.containers.items():
             graph_image = self.__get_graph(dia, image)
             graph_base = self.__get_graph(dia, base)
@@ -213,6 +214,7 @@ class GenerateGraphCommand(Command):
 
         for image, base in self.edges.items():
             dia.edge(base, image)
+
         return dia
 
     def __attach_tag(self, graph, image):
