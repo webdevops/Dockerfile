@@ -21,6 +21,36 @@ diagram:
       fontsize: "12"
       fontcolor: white
   groups:
+    official:
+      name: Official images (Docker hub)
+      styles:
+        graph:
+          style: filled
+          fillcolor: gray
+        nodes:
+          fontname: Helvetica
+          shape: box
+          fontcolor: black
+          color: black
+          style: filled
+          fillcolor: "#e1e1e1"
+      docker:
+        - "^[^/]+$"
+    upstream:
+      name: Upstream images (Docker hub)
+      styles:
+        graph:
+          style: filled
+          fillcolor: gray
+        nodes:
+          fontname: Helvetica
+          shape: box
+          fontcolor: black
+          color: black
+          style: filled
+          fillcolor: "#e1e1e1"
+      docker:
+        - "^(?!webdevops)[^/]+/[^/]+"
     common:
       name: Base images
       styles:
@@ -36,8 +66,7 @@ diagram:
           fillcolor: "#e1e1e1"
       docker:
         - webdevops/bootstrap
-        - webdevops/base
-        - webdevops/base-app
+        - webdevops/base.*
         - webdevops/ansible
         - webdevops/storage
     php:
@@ -71,9 +100,7 @@ diagram:
           style: filled
           fillcolor: "#78c445"
       docker:
-        - webdevops/php-dev
-        - webdevops/php-apache-dev
-        - webdevops/php-nginx-dev
+        - webdevops/php.*-dev
     hhvm:
       name: HHVM images
       styles:
@@ -88,9 +115,7 @@ diagram:
           style: filled
           fillcolor: "#7f84f1"
       docker:
-        - webdevops/hhvm
-        - webdevops/hhvm-apache
-        - webdevops/hhvm-nginx
+        - webdevops/hhvm.*
     application:
       name: Application images
       styles:
@@ -121,10 +146,8 @@ diagram:
           style: filled
           fillcolor: "#ffa35f"
       docker:
-        - webdevops/apache
-        - webdevops/apache-dev
-        - webdevops/nginx
-        - webdevops/nginx-dev
+        - webdevops/apache.*
+        - webdevops/nginx.*
         - webdevops/ssh
         - webdevops/vsftp
         - webdevops/postfix

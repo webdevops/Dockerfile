@@ -34,7 +34,7 @@ class GenerateGraphCommand(Command):
 
     generate:graph
         {--a|all : Show all informations}
-        {--p|path=./documentation/docs/resources/images/ : path output}
+        {--o|output= : path output}
         {--F|format=png (choice) : output format }
         {--f|filename=docker-image-layout.gv :  file output}
     """
@@ -62,9 +62,12 @@ class GenerateGraphCommand(Command):
         self.configuration = configuration
 
     def handle(self):
+        if self.option('output'):
+            self.configuration['imagePath'] = self.option('output')
+
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
             self.line('<info>ALL :</info> %s' % self.option('all'))
-            self.line('<info>path :</info> %s' % self.option('path'))
+            self.line('<info>output :</info> %s' % self.configuration['imagePath'])
             self.line('<info>format :</info> %s' % self.option('format'))
             self.line('<info>basePath :</info> %s' % self.configuration['basePath'])
             self.line('<info>filename :</info> %s' % self.option('filename'))
@@ -98,6 +101,9 @@ class GenerateGraphCommand(Command):
         docker_image = dockerfile['image']['name']
         parent_image_name = DockerfileUtility.getImageNameWithoutTag(dockerfile['image']['from'])
         parent_image_tag  = DockerfileUtility.getTagFromImageName(dockerfile['image']['from'])
+
+        self.containers[parent_image_name] = 'scratch'
+        self.__append_tag(parent_image_name, 'latest')
 
         self.containers[docker_image] = parent_image_name
         self.__append_tag(docker_image, parent_image_tag)
@@ -133,12 +139,15 @@ class GenerateGraphCommand(Command):
         :rtype: Digraph
         """
         for group, group_attr in self.conf['diagram']['groups'].items():
-            if name in group_attr['docker']:
-                return self.subgraph[group]
+            for dockerRegex in group_attr['docker']:
+                if re.match(dockerRegex, name):
+                    return self.subgraph[group]
         return default_graph
 
     def __load_configuration(self):
-        stream = open(os.path.dirname(__file__) + "/../../conf/diagram.yml", "r")
+        conf_file_path = os.path.join(self.configuration['confPath'], 'diagram.yml')
+
+        stream = open(conf_file_path, 'r')
         self.conf = yaml.safe_load(stream)
 
     def __apply_styles(self, graph, styles):
@@ -173,19 +182,22 @@ class GenerateGraphCommand(Command):
         dia = Digraph('webdevops',
                       filename=self.option('filename'),
                       format=self.option('format'),
-                      directory=self.option('path'))
+                      directory=self.configuration['imagePath'])
         dia = self.__apply_styles(dia, self.conf['diagram']['styles'])
-        dia.body.append(r'label = "\n\nWebdevops Images\n at :%s"' % date.today().strftime("%d.%m.%Y"))
+
+        label = r'label = "\n\n%s"' % self.configuration['graph']['label']
+
+        dia.body.append(label % date.today().strftime("%Y-%m-%d"))
 
         # Create subgraph
         for group, group_attr in self.conf['diagram']['groups'].items():
-            self.subgraph[group] = Digraph("cluster_" + group)
+            self.subgraph[group] = Digraph('cluster_%s' % group)
             self.subgraph[group].body.append(r'label = "%s"' % group_attr['name'])
             self.subgraph[group] = self.__apply_styles(self.subgraph[group], group_attr['styles'])
         for image, base in self.containers.items():
             graph_image = self.__get_graph(dia, image)
             graph_base = self.__get_graph(dia, base)
-            if "webdevops" in base:
+            if not "scratch" in base:
                 if graph_image == graph_base:
                     graph_image.edge(base, image)
                 else:

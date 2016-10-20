@@ -11,29 +11,39 @@ import os
 import re
 from cleo import Application
 
-configuration = {
-    'basePath': os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'docker')),
-    'templatePath': os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'template')),
-    'provisionPath': os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'provisioning')),
-
-    'dockerBuild': {},
-    'dockerPush': {},
-
-    'docker': {
-        'imagePrefix': 'webdevops',
-        'autoLatestTag': 'ubuntu-16.04',
-        'pathRegex': re.compile('/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'),
-        'autoPull': True,
-        'autoPullBlacklist': re.compile(r'^webdevops/.*'),
-    },
-}
-
-application = Application()
-application.add(DockerBuildCommand(configuration=configuration))
-application.add(DockerPushCommand(configuration=configuration))
-application.add(GenerateDockerfileCommand(configuration=configuration))
-application.add(GenerateGraphCommand(configuration=configuration))
-application.add(GenerateProvisionCommand(configuration=configuration))
-
 if __name__ == '__main__':
+    def generatePath(path):
+        scriptPath = os.path.dirname(os.path.dirname(__file__))
+        return os.path.abspath(os.path.join(scriptPath, (path)))
+
+    configuration = {
+        'basePath': generatePath('docker'),
+        'templatePath': generatePath('template'),
+        'provisionPath': generatePath('provisioning'),
+        'imagePath': generatePath('documentation/docs/resources/images/'),
+        'confPath': generatePath('conf'),
+
+        'dockerBuild': {},
+        'dockerPush': {},
+
+        'docker': {
+            'imagePrefix': 'webdevops',
+            'autoLatestTag': 'ubuntu-16.04',
+            'pathRegex': re.compile('/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'),
+            'autoPull': True,
+            'autoPullBlacklist': re.compile(r'^webdevops/.*'),
+        },
+
+        'graph': {
+            'label': 'Webdevops Images\n%s',
+        },
+    }
+
+    application = Application()
+    application.add(DockerBuildCommand(configuration=configuration))
+    application.add(DockerPushCommand(configuration=configuration))
+    application.add(GenerateDockerfileCommand(configuration=configuration))
+    application.add(GenerateGraphCommand(configuration=configuration))
+    application.add(GenerateProvisionCommand(configuration=configuration))
+
     application.run()
