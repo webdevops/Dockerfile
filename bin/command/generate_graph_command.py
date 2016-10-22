@@ -102,8 +102,9 @@ class GenerateGraphCommand(Command):
         parent_image_name = DockerfileUtility.getImageNameWithoutTag(dockerfile['image']['from'])
         parent_image_tag  = DockerfileUtility.getTagFromImageName(dockerfile['image']['from'])
 
-        self.containers[parent_image_name] = 'scratch'
-        self.__append_tag(parent_image_name, 'latest')
+        if not parent_image_name in self.containers:
+            self.containers[parent_image_name] = 'scratch'
+            self.__append_tag(parent_image_name, 'latest')
 
         self.containers[docker_image] = parent_image_name
         self.__append_tag(docker_image, parent_image_tag)
@@ -141,8 +142,8 @@ class GenerateGraphCommand(Command):
         for group, group_attr in self.conf['diagram']['groups'].items():
             for dockerRegex in group_attr['docker']:
                 if re.match(dockerRegex, name):
-                    return self.subgraph[group]
-        return default_graph
+                    return group, self.subgraph[group]
+        return '__root__', default_graph
 
     def __load_configuration(self):
         conf_file_path = os.path.join(self.configuration['confPath'], 'diagram.yml')
@@ -188,6 +189,10 @@ class GenerateGraphCommand(Command):
         label = r'label = "\n\n%s"' % self.configuration['graph']['label']
 
         dia.body.append(label % date.today().strftime("%Y-%m-%d"))
+        dia.body.append('newrank=true;')
+
+        rank_image_list = {}
+        rank_group_list = {}
 
         # Create subgraph
         for group, group_attr in self.conf['diagram']['groups'].items():
@@ -195,9 +200,13 @@ class GenerateGraphCommand(Command):
             self.subgraph[group].body.append(r'label = "%s"' % group_attr['name'])
             self.subgraph[group] = self.__apply_styles(self.subgraph[group], group_attr['styles'])
 
+            if 'rank' in group_attr:
+                rank_group_list[group] = group_attr['rank']
+
+
         for image, base in self.containers.items():
-            graph_image = self.__get_graph(dia, image)
-            graph_base = self.__get_graph(dia, base)
+            group_image, graph_image = self.__get_graph(dia, image)
+            group_base, graph_base = self.__get_graph(dia, base)
             if not "scratch" in base:
                 if graph_image == graph_base:
                     graph_image.edge(base, image)
@@ -209,11 +218,29 @@ class GenerateGraphCommand(Command):
             else:
                 graph_image.node(image)
 
+            if group_image in rank_group_list:
+                image_rank = rank_group_list[group_image]
+
+                if not image_rank in rank_image_list:
+                    rank_image_list[image_rank] = []
+
+                rank_image_list[image_rank].append(image)
+
         for name, subgraph in self.subgraph.items():
             dia.subgraph(subgraph)
 
         for image, base in self.edges.items():
             dia.edge(base, image)
+
+        for rank, imagelist in rank_image_list.items():
+            rank_next = rank + 1
+
+            if rank_next in rank_image_list:
+                imagelist_next = rank_image_list[rank_next]
+
+                for image in imagelist:
+                    for image_next in imagelist_next:
+                        dia.body.append('{ "%s" -> "%s" [style=invis] }' % (image, image_next))
 
         return dia
 

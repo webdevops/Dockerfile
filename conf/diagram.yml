@@ -23,6 +23,7 @@ diagram:
   groups:
     official:
       name: Official images (Docker hub)
+      rank: 1
       styles:
         graph:
           style: dashed
@@ -38,6 +39,7 @@ diagram:
         - "^[^/]+$"
     upstream:
       name: Upstream images (Docker hub)
+      rank: 1
       styles:
         graph:
           style: dashed
@@ -51,8 +53,9 @@ diagram:
           fillcolor: "#e1e1e1"
       docker:
         - "^(?!webdevops)[^/]+/[^/]+"
-    common:
+    base:
       name: Base images
+      rank: 2
       styles:
         graph:
           style: filled
@@ -71,6 +74,7 @@ diagram:
         - webdevops/storage
     php:
       name: PHP images
+      rank: 3
       styles:
         graph:
           style: filled
@@ -88,6 +92,7 @@ diagram:
         - webdevops/php-nginx
     php-dev:
       name: PHP development images
+      rank: 4
       styles:
         graph:
           style: filled
@@ -103,6 +108,7 @@ diagram:
         - webdevops/php.*-dev
     hhvm:
       name: HHVM images
+      rank: 3
       styles:
         graph:
           style: filled
@@ -118,6 +124,7 @@ diagram:
         - webdevops/hhvm.*
     application:
       name: Application images
+      rank: 3
       styles:
         graph:
           style: filled
@@ -134,6 +141,7 @@ diagram:
         - webdevops/piwik
     service:
       name: Service images
+      rank: 3
       styles:
         graph:
           style: filled
@@ -156,6 +164,7 @@ diagram:
         - webdevops/samson-deployment
     tools:
       name: Tools images
+      rank: 3
       styles:
         graph:
           style: filled
