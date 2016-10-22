@@ -259,7 +259,8 @@ class DockerBuildTaskLoader(TaskLoader):
                 stream=True,
                 decode=True
             )
-            DockerBuildTaskLoader.dockerClientOutput(response)
+            if not DockerBuildTaskLoader.processDockerResponse(response):
+                return False
 
         print ' -> Building image %s ' % dockerfile['image']['fullname']
         response = dockerClient.build(
@@ -270,8 +271,7 @@ class DockerBuildTaskLoader(TaskLoader):
             quiet=False,
             decode=True
         )
-        DockerBuildTaskLoader.dockerClientOutput(response)
-        return True
+        return DockerBuildTaskLoader.processDockerResponse(response)
 
     @staticmethod
     def actionDockerPush(dockerClient, dockerfile, configuration, task):
@@ -288,17 +288,22 @@ class DockerBuildTaskLoader(TaskLoader):
             stream=True,
             decode=True
         )
-        DockerBuildTaskLoader.dockerClientOutput(response)
-
-        return True
+        return DockerBuildTaskLoader.processDockerResponse(response)
 
     @staticmethod
-    def dockerClientOutput(response):
+    def processDockerResponse(response):
+        ret = True
         for line in response:
+            if 'error' in line:
+                sys.stdout.write(line['error'])
+                ret = False
+
             if 'stream' in line:
                 sys.stdout.write(line['stream'])
             """
             Keys
+              - error
+              - stream
               - status, progressDetail, id
               - progressDetail | aux [ tag, digest, size ]
             """
@@ -308,6 +313,7 @@ class DockerBuildTaskLoader(TaskLoader):
                     message += ' ' + line['id']
                 sys.stdout.write(message + '\n')
         print ''
+        return ret
 
     @staticmethod
     def humanTaskName(name):
