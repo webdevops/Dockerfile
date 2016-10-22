@@ -62,6 +62,8 @@ def findDockerfilesInPath(basePath, pathRegex, imagePrefix, whitelist=False, bla
         imageName = (imageNameInfo['image'] if 'image' in imageNameInfo else '')
         imageTag = (imageNameInfo['tag'] if 'tag' in imageNameInfo else '')
 
+        #
+        #
         if os.path.islink(os.path.dirname(path)):
             linkedImageNameInfo = ([m.groupdict() for m in pathRegex.finditer(os.path.realpath(path))])[0]
 
@@ -82,14 +84,30 @@ def findDockerfilesInPath(basePath, pathRegex, imagePrefix, whitelist=False, bla
         }
         return imageInfo
 
-    dockerfileList = []
+    def parseDockerTestFromPath(path):
+        ret = False
 
+        base_path = os.path.dirname(path)
+        test_file_path = os.path.join(base_path, 'Dockerfile.test.py')
+
+        if os.path.isfile(test_file_path):
+            ret = {
+                'path': test_file_path,
+                'basePath': base_path,
+            }
+        return ret
+
+
+    dockerfileList = []
     for path in recursiveDockerfileListInPath(basePath):
+        base_path = os.path.dirname(path)
         if os.path.isfile(path) and os.path.basename(path) == 'Dockerfile':
             dockerfile = {
                 'path': path,
+                'basePath': base_path,
                 'abspath': os.path.abspath(path),
-                'image': parseDockerInfoFromPath(path, pathRegex, imagePrefix)
+                'image': parseDockerInfoFromPath(path, pathRegex, imagePrefix),
+                'test': parseDockerTestFromPath(path),
             }
             dockerfileList.append(dockerfile)
 
