@@ -23,7 +23,7 @@ import re
 
 DOCKERFILE_STATEMENT_FROM_RE = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE)
 
-def find_file_in_path(dockerfile_path, filename="Dockerfile", filter=[]):
+def find_file_in_path(dockerfile_path, filename="Dockerfile", whitelist=False, blacklist=False):
     """
     Search all file un dockerfile_path with filename ends with "filename"
     And match filter
@@ -34,20 +34,41 @@ def find_file_in_path(dockerfile_path, filename="Dockerfile", filter=[]):
     :param filename: pattern which the file must be validate
     :type filename: str
 
-    :param filter: list of term must be match in path
-    :type filter: list
+    :param whitelist: list of term must be match in path
+    :type whitelist: list
+
+    :param blacklist: list of term must not be match in path
+    :type blacklist: list
 
     :return: list of path
     :rtype: list
     """
     file_list = []
-    filter_regex = re.compile(ur'.*(%s).*' % "|".join(filter), re.IGNORECASE)
-    # pprint(filter_regex.pattern)
+
+    # build list of files
     for root, dirs, files in os.walk(dockerfile_path):
         for file in files:
             if file.endswith(filename):
-                if filter_regex.match(root):
-                    file_list.append(os.path.join(root, file))
+                file_list.append(os.path.join(root, file))
+
+    # filter by whitelist
+    if whitelist:
+        tmp = []
+        for file in file_list:
+            for whitelistTerm in whitelist:
+                if whitelistTerm in file:
+                    tmp.append(file)
+                file_list = tmp
+
+    # filter by blacklist
+    if blacklist:
+        tmp = []
+        for file in file_list:
+            for blacklistTerm in blacklist:
+                if not blacklistTerm in file:
+                    tmp.append(file)
+                file_list = tmp
+
     return file_list
 
 def find_dockerfiles_in_path(base_path, path_regex, image_prefix, whitelist=False, blacklist=False):

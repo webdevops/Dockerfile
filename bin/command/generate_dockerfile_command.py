@@ -30,7 +30,8 @@ class GenerateDockerfileCommand(Command):
     Build Dockerfile containers
 
     generate:dockerfile
-        {--filter=?* : tags or images name }
+        {--whitelist=?*          : image/tag whitelist }
+        {--blacklist=?*          : image/tag blacklist }
     """
 
     template = ''
@@ -47,15 +48,21 @@ class GenerateDockerfileCommand(Command):
     def handle(self):
         template_path = self.configuration['templatePath']
         dockerfile_path = self.configuration['basePath']
-        filters = self.option('filter')
+        whitelist = self.option('whitelist')
+        blacklist = self.option('blacklist')
 
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
             self.line('<info>-> </info><comment>docker path</comment> : %s' % dockerfile_path)
             self.line('<info>-> </info><comment>template path </comment> : %s' % template_path)
-            self.option('filter')
-            if 0 < len(filters):
-                self.line('<info>-> </info><comment>filters </comment> :')
-                for crit in filters:
+
+            if whitelist:
+                self.line('<info>-> </info><comment>whitelist </comment> :')
+                for crit in whitelist:
+                    self.line("\t * %s" % crit)
+
+            if blacklist:
+                self.line('<info>-> </info><comment>blacklist </comment> :')
+                for crit in blacklist:
                     self.line("\t * %s" % crit)
 
         self.template = Environment(
@@ -64,7 +71,7 @@ class GenerateDockerfileCommand(Command):
             trim_blocks=False
         )
 
-        for file in DockerfileUtility.find_file_in_path(dockerfile_path, "Dockerfile.jinja2", filters):
+        for file in DockerfileUtility.find_file_in_path(dockerfile_path=dockerfile_path, filename="Dockerfile.jinja2", whitelist=whitelist, blacklist=blacklist):
                 self.process_dockerfile(file)
 
     def process_dockerfile(self, input_file):
