@@ -22,6 +22,7 @@ if __name__ == '__main__':
         'provisionPath': generatePath('provisioning'),
         'imagePath': generatePath('documentation/docs/resources/images/'),
         'confPath': generatePath('conf'),
+        'baselayoutPath': generatePath('baselayout'),
 
         'dockerBuild': {},
         'dockerPush': {},

@@ -97,7 +97,8 @@ class GenerateProvisionCommand(Command):
         """
         Load the configuration for provisioning image
         """
-        stream = open(os.path.dirname(__file__) + "/../../conf/provision.yml", "r")
+        configuration_file = os.path.join(self.configuration['confPath'], 'provision.yml')
+        stream = open(configuration_file, "r")
         self.conf = yaml.load(stream, Loader=yamlordereddictloader.Loader)
 
     def __build_base_layout(self):
@@ -107,7 +108,7 @@ class GenerateProvisionCommand(Command):
         if self.option('baselayout'):
             if Output.VERBOSITY_NORMAL <= self.output.get_verbosity():
                 self.line('<info>* </info> Building localscipts')
-            base_path = os.path.abspath(os.path.dirname(__file__) +"/../../baselayout/")
+            base_path = os.path.join(self.configuration['baselayoutPath'], 'baselayout')
             shutil.make_archive('baselayout', 'bztar', base_path)
             os.rename('baselayout.tar.bz2', 'baselayout.tar')
 

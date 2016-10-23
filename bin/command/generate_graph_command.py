@@ -203,7 +203,6 @@ class GenerateGraphCommand(Command):
             if 'rank' in group_attr:
                 rank_group_list[group] = group_attr['rank']
 
-
         for image, base in self.containers.items():
             group_image, graph_image = self.__get_graph(dia, image)
             group_base, graph_base = self.__get_graph(dia, base)
@@ -226,12 +225,15 @@ class GenerateGraphCommand(Command):
 
                 rank_image_list[image_rank].append(image)
 
+        # add repositories (subgraph/cluster)
         for name, subgraph in self.subgraph.items():
             dia.subgraph(subgraph)
 
+        # add images (node)
         for image, base in self.edges.items():
             dia.edge(base, image)
 
+        # add invisible constraints to add ranked groups
         for rank, imagelist in rank_image_list.items():
             rank_next = rank + 1
 
