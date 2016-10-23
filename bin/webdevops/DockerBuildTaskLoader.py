@@ -36,7 +36,7 @@ from doit.doit_cmd import DoitMain
 
 class DockerBuildTaskLoader(TaskLoader):
 
-    defaultConfiguration = {
+    configuration_default = {
         'basePath': False,
 
         'docker': {
@@ -80,7 +80,7 @@ class DockerBuildTaskLoader(TaskLoader):
         """
         Constrcutor
         """
-        def mergeDict(original, update):
+        def dictmerge(original, update):
             """
             Recursively update a dict.
             Subdict's won't be overwritten but also updated.
@@ -89,13 +89,13 @@ class DockerBuildTaskLoader(TaskLoader):
                 if key not in update:
                     update[key] = value
                 elif isinstance(value, dict):
-                    mergeDict(value, update[key])
+                    dictmerge(value, update[key])
             return update
 
         """
         Build configuration as namespace object
         """
-        self.configuration = bunchify(mergeDict(self.defaultConfiguration, configuration))
+        self.configuration = bunchify(dictmerge(self.configuration_default, configuration))
 
         """
         Init docker client
@@ -108,79 +108,67 @@ class DockerBuildTaskLoader(TaskLoader):
         """
         config = {'verbosity': self.configuration.verbosity}
 
-        dockerfileList = DockerfileUtility.findDockerfilesInPath(
-            basePath=self.configuration.basePath,
-            pathRegex=self.configuration.docker.pathRegex,
-            imagePrefix=self.configuration.docker.imagePrefix,
+        dockerfile_list = DockerfileUtility.find_dockerfiles_in_path(
+            base_path=self.configuration.basePath,
+            path_regex=self.configuration.docker.pathRegex,
+            image_prefix=self.configuration.docker.imagePrefix,
             whitelist=self.configuration.whitelist,
             blacklist=self.configuration.blacklist,
         )
-        dockerfileList = self.prepareDockerfileList(dockerfileList)
+        dockerfile_list = self.process_dockerfile_list(dockerfile_list)
 
-        # print json.dumps(dockerfileList, sort_keys=True, indent = 4, separators = (',', ': '));sys.exit(0);
+        # print json.dumps(dockerfile_list, sort_keys=True, indent = 4, separators = (',', ': '));sys.exit(0);
 
         taskList = []
+
+        # Tasks: Docker build
         if self.configuration.dockerBuild.enabled:
-            taskList.extend(self.generatDockerBuildTasks(dockerfileList))
+            taskList.extend(self.generate_tasks_docker_build(dockerfile_list))
 
+        # Tasks: Docker test
         if self.configuration.dockerTest.enabled:
-            taskList.extend(self.generatDockerTestTasks(dockerfileList))
+            taskList.extend(self.generate_tasks_docker_test(dockerfile_list))
 
+        # Tasks: Docker push
         if self.configuration.dockerPush.enabled:
-            taskList.extend(self.generatDockerPushTasks(dockerfileList))
+            taskList.extend(self.generate_tasks_docker_push(dockerfile_list))
 
         return taskList, config
 
-    def prepareDockerfileList(self, dockerfileList):
+    def process_dockerfile_list(self, dockerfile_list):
         """
         Prepare dockerfile list with dependency and also add "auto latest tag" images
         """
 
-        def generateImageNameLatest(imageName):
-            """
-            Generate image name with latest tag
-            """
-            if re.search(':[^:]+$', imageName):
-                imageName = re.sub('(:[^:]+)$', ':latest', imageName)
-            else:
-                imageName = '%s:latest' % imageName
-            return imageName
-
-        imageList = [x['image']['fullname'] for x in dockerfileList if x['image']['fullname']]
+        image_list = [x['image']['fullname'] for x in dockerfile_list if x['image']['fullname']]
 
         autoLatestTagImageList = []
 
-        for dockerfile in dockerfileList:
-            """
-            Calculate dependency
-            """
+        for dockerfile in dockerfile_list:
+            # Calculate dependency
             dockerfile['dependency'] = False
-            if dockerfile['image']['from'] and dockerfile['image']['from'] in imageList:
+            if dockerfile['image']['from'] and dockerfile['image']['from'] in image_list:
                 dockerfile['dependency'] = dockerfile['image']['from']
 
-            """
-            Process auto latest tag
-            """
+            # Process auto latest tag
             if self.configuration.docker.autoLatestTag and dockerfile['image']['tag'] == self.configuration.docker.autoLatestTag:
-                imageNameLatest = generateImageNameLatest(dockerfile['image']['fullname'])
-                if imageNameLatest not in imageList:
+                imageNameLatest = DockerfileUtility.generate_image_name_with_tag_latest(dockerfile['image']['fullname'])
+                if imageNameLatest not in image_list:
                     autoLatestTagImage = copy.deepcopy(dockerfile)
                     autoLatestTagImage['image']['fullname'] = imageNameLatest
                     autoLatestTagImage['image']['tag'] = 'latest'
                     autoLatestTagImage['dependency'] = dockerfile['image']['fullname']
                     autoLatestTagImageList.append(autoLatestTagImage)
 
-        """
-        Add auto latest tag images to dockerfile list
-        """
-        dockerfileList.extend(autoLatestTagImageList)
+        # Add auto latest tag images to dockerfile list
+        dockerfile_list.extend(autoLatestTagImageList)
 
-        return dockerfileList
+        return dockerfile_list
 
 
 
 
-    def generatDockerBuildTasks(self, dockerfileList):
+    def generate_tasks_docker_build(self, dockerfileList):
         """
         Generate task list for docker build
         """
@@ -188,8 +176,8 @@ class DockerBuildTaskLoader(TaskLoader):
         for dockerfile in dockerfileList:
             task = {
                 'name': 'DockerBuild|%s' % dockerfile['image']['fullname'],
-                'title': DockerBuildTaskLoader.taskTitleBuild,
-                'actions': [(DockerBuildTaskLoader.actionDockerBuild, [self.dockerClient, dockerfile, self.configuration])],
+                'title': DockerBuildTaskLoader.task_title_build,
+                'actions': [(DockerBuildTaskLoader.action_docker_build, [self.dockerClient, dockerfile, self.configuration])],
                 'task_dep': []
             }
 
@@ -200,27 +188,27 @@ class DockerBuildTaskLoader(TaskLoader):
 
         task = {
             'name': 'FinishChain|DockerBuild',
-            'title': DockerBuildTaskLoader.taskTitleFinish,
-            'actions': [(DockerBuildTaskLoader.actionFinishChain, ['docker build'])],
+            'title': DockerBuildTaskLoader.task_title_finish,
+            'actions': [(DockerBuildTaskLoader.action_chain_finish, ['docker build'])],
             'task_dep': [task.name for task in taskList]
         }
         taskList.append(dict_to_task(task))
 
         return taskList
 
-    def generatDockerTestTasks(self, dockerfileList):
+    def generate_tasks_docker_test(self, dockerfile_list):
         """
         Generate task list for docker test
         """
         taskList = []
 
 
-        for dockerfile in dockerfileList:
+        for dockerfile in dockerfile_list:
             if dockerfile['test']:
                 task = {
                     'name': 'DockerTest|%s' % dockerfile['image']['fullname'],
-                    'title': DockerBuildTaskLoader.taskTitleTest,
-                    'actions': [(DockerBuildTaskLoader.actionDockerTest, [self.dockerClient, dockerfile, self.configuration])],
+                    'title': DockerBuildTaskLoader.task_title_test,
+                    'actions': [(DockerBuildTaskLoader.action_docker_test, [self.dockerClient, dockerfile, self.configuration])],
                     'task_dep': []
                 }
 
@@ -231,26 +219,26 @@ class DockerBuildTaskLoader(TaskLoader):
 
         task = {
             'name': 'FinishChain|DockerTest',
-            'title': DockerBuildTaskLoader.taskTitleFinish,
-            'actions': [(DockerBuildTaskLoader.actionFinishChain, ['docker test'])],
+            'title': DockerBuildTaskLoader.task_title_finish,
+            'actions': [(DockerBuildTaskLoader.action_chain_finish, ['docker test'])],
             'task_dep': [task.name for task in taskList]
         }
         taskList.append(dict_to_task(task))
 
         return taskList
 
-    def generatDockerPushTasks(self, dockerfileList):
+    def generate_tasks_docker_push(self, dockerfile_list):
         """
         Generate task list for docker push
         """
         taskList = []
 
 
-        for dockerfile in dockerfileList:
+        for dockerfile in dockerfile_list:
             task = {
                 'name': 'DockerPush|%s' % dockerfile['image']['fullname'],
-                'title': DockerBuildTaskLoader.taskTitlePush,
-                'actions': [(DockerBuildTaskLoader.actionDockerPush, [self.dockerClient, dockerfile, self.configuration])],
+                'title': DockerBuildTaskLoader.task_title_push,
+                'actions': [(DockerBuildTaskLoader.action_docker_push, [self.dockerClient, dockerfile, self.configuration])],
                 'task_dep': []
             }
 
@@ -261,8 +249,8 @@ class DockerBuildTaskLoader(TaskLoader):
 
         task = {
             'name': 'FinishChain|DockerPush',
-            'title': DockerBuildTaskLoader.taskTitleFinish,
-            'actions': [(DockerBuildTaskLoader.actionFinishChain, ['docker push'])],
+            'title': DockerBuildTaskLoader.task_title_finish,
+            'actions': [(DockerBuildTaskLoader.action_chain_finish, ['docker push'])],
             'task_dep': [task.name for task in taskList]
         }
         taskList.append(dict_to_task(task))
@@ -270,51 +258,50 @@ class DockerBuildTaskLoader(TaskLoader):
         return taskList
 
     @staticmethod
-    def actionDockerBuild(dockerClient, dockerfile, configuration, task):
+    def action_docker_build(docker_client, dockerfile, configuration, task):
         """
         Build one Dockerfile
         """
 
-        pullParentImage = DockerfileUtility.checkIfParentImageShouldBePulled(dockerfile, configuration)
+        pull_parent_image = DockerfileUtility.check_if_base_image_needs_pull(dockerfile, configuration)
 
         if configuration.dryRun:
-            print '      from: %s (pull: %s)' % (dockerfile['image']['from'], ('yes' if pullParentImage else 'no'))
+            print '      from: %s (pull: %s)' % (dockerfile['image']['from'], ('yes' if pull_parent_image else 'no'))
             print '      path: %s' % dockerfile['path']
-            print '       dep: %s' % (DockerBuildTaskLoader.humanTaskNameList(task.task_dep) if task.task_dep else 'none')
+            print '       dep: %s' % (DockerBuildTaskLoader.human_task_name_list(task.task_dep) if task.task_dep else 'none')
             print ''
             return
 
-
-        allowPullFromHub = (True if dockerfile['dependency'] else False)
-
-        if pullParentImage:
+        # Pull base image (FROM: xxx) first
+        if pull_parent_image:
             print ' -> Pull base image %s ' % dockerfile['image']['from']
 
-            pullImageName = DockerfileUtility.getImageNameWithoutTag(dockerfile['image']['from'])
-            pullImageTag = DockerfileUtility.getTagFromImageName(dockerfile['image']['from'])
+            pull_image_name = DockerfileUtility.image_basename(dockerfile['image']['from'])
+            pull_image_tag = DockerfileUtility.extract_image_name_tag(dockerfile['image']['from'])
 
-            response = dockerClient.pull(
-                repository=pullImageName,
-                tag=pullImageTag,
+            response = docker_client.pull(
+                repository=pull_image_name,
+                tag=pull_image_tag,
                 stream=True,
                 decode=True
             )
-            if not DockerBuildTaskLoader.processDockerResponse(response):
+            if not DockerBuildTaskLoader.process_docker_client_response(response):
                 return False
 
+        ## Build image
         print ' -> Building image %s ' % dockerfile['image']['fullname']
-        response = dockerClient.build(
+        response = docker_client.build(
             path=os.path.dirname(dockerfile['path']),
             tag=dockerfile['image']['fullname'],
-            pull=allowPullFromHub,
+            pull=False,
             nocache=configuration.dockerBuild.noCache,
             quiet=False,
             decode=True
         )
-        return DockerBuildTaskLoader.processDockerResponse(response)
+        return DockerBuildTaskLoader.process_docker_client_response(response)
 
     @staticmethod
-    def actionDockerTest(dockerClient, dockerfile, configuration, task):
+    def action_docker_test(docker_client, dockerfile, configuration, task):
         if dockerfile['test']:
             if configuration.dryRun:
                 print '      from: %s' % dockerfile['image']['from']
@@ -325,39 +312,36 @@ class DockerBuildTaskLoader(TaskLoader):
         return True
 
     @staticmethod
-    def actionDockerPush(dockerClient, dockerfile, configuration, task):
+    def action_docker_push(docker_client, dockerfile, configuration, task):
         """
         Push one Docker image to registry
         """
         if configuration.dryRun:
-            print '       dep: %s' % (DockerBuildTaskLoader.humanTaskNameList(task.task_dep) if task.task_dep else 'none')
+            print '       dep: %s' % (DockerBuildTaskLoader.human_task_name_list(task.task_dep) if task.task_dep else 'none')
             print ''
             return
 
-        response = dockerClient.push(
+        response = docker_client.push(
             dockerfile['image']['fullname'],
             stream=True,
             decode=True
         )
-        return DockerBuildTaskLoader.processDockerResponse(response)
+        return DockerBuildTaskLoader.process_docker_client_response(response)
 
     @staticmethod
-    def processDockerResponse(response):
+    def process_docker_client_response(response):
         ret = True
         for line in response:
+            # Keys
+            #   - error
+            #   - stream
+            #   - status, progressDetail, id
+            #   - progressDetail | aux [ tag, digest, size ]
             if 'error' in line:
                 sys.stdout.write(line['error'])
                 ret = False
-
             if 'stream' in line:
                 sys.stdout.write(line['stream'])
-            """
-            Keys
-              - error
-              - stream
-              - status, progressDetail, id
-              - progressDetail | aux [ tag, digest, size ]
-            """
             if 'status' in line:
                 message = line['status']
                 if 'id' in line:
@@ -367,54 +351,54 @@ class DockerBuildTaskLoader(TaskLoader):
         return ret
 
     @staticmethod
-    def humanTaskName(name):
+    def human_task_name(name):
         """
         Translate internal task name to human readable name
         """
         return re.search('^.*\|(.*)', name).group(1)
 
     @staticmethod
-    def humanTaskNameList(nameList):
+    def human_task_name_list(list):
         """
         Translate list of internal task names to human readable names
         """
         ret = []
-        for name in nameList:
-            ret.append(DockerBuildTaskLoader.humanTaskName(name))
+        for name in list:
+            ret.append(DockerBuildTaskLoader.human_task_name(name))
         return ', '.join(ret)
 
     @staticmethod
-    def actionFinishChain(title):
+    def action_chain_finish(title):
         """
         Action of finish chain
         """
         print ''
 
     @staticmethod
-    def taskTitleFinish(task):
+    def task_title_finish(task):
         """
         Finish task title function
         """
-        return "Finished chain %s" % (DockerBuildTaskLoader.humanTaskName(task.name))
+        return "Finished chain %s" % (DockerBuildTaskLoader.human_task_name(task.name))
 
     @staticmethod
-    def taskTitleBuild(task):
+    def task_title_build(task):
         """
         Build task title function
         """
-        return "Docker build %s" % (DockerBuildTaskLoader.humanTaskName(task.name))
+        return "Docker build %s" % (DockerBuildTaskLoader.human_task_name(task.name))
 
     @staticmethod
-    def taskTitleTest(task):
+    def task_title_test(task):
         """
         Build task title function
         """
-        return "Docker test %s" % (DockerBuildTaskLoader.humanTaskName(task.name))
+        return "Docker test %s" % (DockerBuildTaskLoader.human_task_name(task.name))
 
     @staticmethod
-    def taskTitlePush(task):
+    def task_title_push(task):
         """
         Push task title function
         """
-        return "Docker push %s" % (DockerBuildTaskLoader.humanTaskName(task.name))
+        return "Docker push %s" % (DockerBuildTaskLoader.human_task_name(task.name))
 0

@@ -73,10 +73,10 @@ class GenerateGraphCommand(Command):
             self.line('<info>filename :</info> %s' % self.option('filename'))
         self.__load_configuration()
 
-        dockerfileList = DockerfileUtility.findDockerfilesInPath(
-            basePath=self.configuration['basePath'],
-            pathRegex=self.configuration['docker']['pathRegex'],
-            imagePrefix=self.configuration['docker']['imagePrefix'],
+        dockerfileList = DockerfileUtility.find_dockerfiles_in_path(
+            base_path=self.configuration['basePath'],
+            path_regex=self.configuration['docker']['pathRegex'],
+            image_prefix=self.configuration['docker']['imagePrefix'],
         )
 
         for dockerfile in dockerfileList:
@@ -99,8 +99,8 @@ class GenerateGraphCommand(Command):
             self.line('<info>-> Processing: </info>%s' % dockerfile['image']['fullname'])
 
         docker_image = dockerfile['image']['name']
-        parent_image_name = DockerfileUtility.getImageNameWithoutTag(dockerfile['image']['from'])
-        parent_image_tag  = DockerfileUtility.getTagFromImageName(dockerfile['image']['from'])
+        parent_image_name = DockerfileUtility.image_basename(dockerfile['image']['from'])
+        parent_image_tag  = DockerfileUtility.extract_image_name_tag(dockerfile['image']['from'])
 
         if not parent_image_name in self.containers:
             self.containers[parent_image_name] = 'scratch'

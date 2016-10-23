@@ -64,7 +64,7 @@ class GenerateDockerfileCommand(Command):
             trim_blocks=False
         )
 
-        for file in DockerfileUtility.findFileInPath(dockerfile_path, "Dockerfile.jinja2", filters):
+        for file in DockerfileUtility.find_file_in_path(dockerfile_path, "Dockerfile.jinja2", filters):
                 self.process_dockerfile(file)
 
     def process_dockerfile(self, input_file):

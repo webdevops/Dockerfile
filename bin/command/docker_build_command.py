@@ -52,10 +52,11 @@ class DockerBuildCommand(Command):
 
         configuration = self.configuration
 
+        # Enable docker build
         configuration['dockerBuild']['enabled'] = True
         configuration['dockerBuild']['noCache'] = self.option('no-cache')
 
-
+        # Enable docker push if --push is added
         configuration['dockerPush']['enabled'] = self.option('push')
 
         configuration['threads'] = max(1, self.option('threads'))

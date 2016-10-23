@@ -23,7 +23,7 @@ import re
 
 DOCKERFILE_STATEMENT_FROM_RE = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE)
 
-def findFileInPath(dockerfile_path, filename="Dockerfile", filter=[]):
+def find_file_in_path(dockerfile_path, filename="Dockerfile", filter=[]):
     """
     Search all file un dockerfile_path with filename ends with "filename"
     And match filter
@@ -40,51 +40,51 @@ def findFileInPath(dockerfile_path, filename="Dockerfile", filter=[]):
     :return: list of path
     :rtype: list
     """
-    fileList = []
+    file_list = []
     filter_regex = re.compile(ur'.*(%s).*' % "|".join(filter), re.IGNORECASE)
     # pprint(filter_regex.pattern)
     for root, dirs, files in os.walk(dockerfile_path):
         for file in files:
             if file.endswith(filename):
                 if filter_regex.match(root):
-                    fileList.append(os.path.join(root, file))
-    return fileList
+                    file_list.append(os.path.join(root, file))
+    return file_list
 
-def findDockerfilesInPath(basePath, pathRegex, imagePrefix, whitelist=False, blacklist=False):
+def find_dockerfiles_in_path(base_path, path_regex, image_prefix, whitelist=False, blacklist=False):
     """
     Find all Dockerfiles in path (and even in symlinks and build dependencies)
     """
 
-    def parseDockerInfoFromPath(path, pathRegex, imagePrefix):
-        imageNameInfo = ([m.groupdict() for m in pathRegex.finditer(os.path.abspath(path))])[0]
+    def parse_docker_info_from_path(path):
+        image_name_info = ([m.groupdict() for m in path_regex.finditer(os.path.abspath(path))])[0]
 
-        imageRepository = (imageNameInfo['repository'] if 'repository' in imageNameInfo else '')
-        imageName = (imageNameInfo['image'] if 'image' in imageNameInfo else '')
-        imageTag = (imageNameInfo['tag'] if 'tag' in imageNameInfo else '')
+        image_repository = (image_name_info['repository'] if 'repository' in image_name_info else '')
+        image_name = (image_name_info['image'] if 'image' in image_name_info else '')
+        image_tag = (image_name_info['tag'] if 'tag' in image_name_info else '')
 
         #
         #
         if os.path.islink(os.path.dirname(path)):
-            linkedImageNameInfo = ([m.groupdict() for m in pathRegex.finditer(os.path.realpath(path))])[0]
+            linked_image_name_info = ([m.groupdict() for m in path_regex.finditer(os.path.realpath(path))])[0]
 
-            linkedImageRepository = (linkedImageNameInfo['repository'] if 'repository' in linkedImageNameInfo else '')
-            linkedImageName = (linkedImageNameInfo['image'] if 'image' in linkedImageNameInfo else '')
-            linkedImageTag = (linkedImageNameInfo['tag'] if 'tag' in linkedImageNameInfo else '')
+            linked_image_repository = (linked_image_name_info['repository'] if 'repository' in linked_image_name_info else '')
+            linked_image_name = (linked_image_name_info['image'] if 'image' in linked_image_name_info else '')
+            linked_image_tag = (linked_image_name_info['tag'] if 'tag' in linked_image_name_info else '')
 
-            imageFrom = imagePrefix + linkedImageRepository + '/' + linkedImageName + ':' + linkedImageTag
+            image_from = image_prefix + linked_image_repository + '/' + linked_image_name + ':' + linked_image_tag
         else:
-            imageFrom = getDockerfileFrom(path)
+            image_from = parse_dockerfile_from_statement(path)
 
         imageInfo = {
-            'fullname': imagePrefix + imageRepository + '/' + imageName + ':' + imageTag,
-            'name': imagePrefix + imageRepository + '/' + imageName,
-            'tag': imageTag,
-            'repository': imagePrefix + imageRepository,
-            'from': imageFrom
+            'fullname': image_prefix + image_repository + '/' + image_name + ':' + image_tag,
+            'name': image_prefix + image_repository + '/' + image_name,
+            'tag': image_tag,
+            'repository': image_prefix + image_repository,
+            'from': image_from
         }
         return imageInfo
 
-    def parseDockerTestFromPath(path):
+    def parse_docker_test_from_path(path):
         ret = False
 
         base_path = os.path.dirname(path)
@@ -98,67 +98,67 @@ def findDockerfilesInPath(basePath, pathRegex, imagePrefix, whitelist=False, bla
         return ret
 
 
-    dockerfileList = []
-    for path in recursiveDockerfileListInPath(basePath):
+    ret = []
+    for path in find_dockerfile_in_path_recursive(base_path):
         base_path = os.path.dirname(path)
         if os.path.isfile(path) and os.path.basename(path) == 'Dockerfile':
             dockerfile = {
                 'path': path,
                 'basePath': base_path,
                 'abspath': os.path.abspath(path),
-                'image': parseDockerInfoFromPath(path, pathRegex, imagePrefix),
-                'test': parseDockerTestFromPath(path),
+                'image': parse_docker_info_from_path(path),
+                'test': parse_docker_test_from_path(path),
             }
-            dockerfileList.append(dockerfile)
+            ret.append(dockerfile)
 
     if whitelist or blacklist:
-        dockerfileList = filterDockerfiles(
-            dockerfileList=dockerfileList,
+        ret = filter_dockerfile(
+            dockerfile_list=dockerfile_list,
             whitelist=whitelist,
             blacklist = blacklist
         )
 
-    return dockerfileList
+    return ret
 
 
-def filterDockerfiles(dockerfileList, whitelist=False, blacklist=False):
+def filter_dockerfile(dockerfile_list, whitelist=False, blacklist=False):
     """
     Filter Dockerfiles by white- and blacklist
     """
 
     if whitelist:
         tmp = []
-        for dockerfile in dockerfileList:
+        for dockerfile in dockerfile_list:
             for whitelistTerm in whitelist:
                 if whitelistTerm in dockerfile['image']['fullname']:
                     tmp.append(dockerfile)
-        dockerfileList = tmp
+            dockerfile_list = tmp
 
     if blacklist:
         tmp = []
-        for dockerfile in dockerfileList:
+        for dockerfile in dockerfile_list:
             for blacklistTerm in blacklist:
                 if not blacklistTerm in dockerfile['image']['fullname']:
                     tmp.append(dockerfile)
-        dockerfileList = tmp
+                dockerfile_list = tmp
 
-    return dockerfileList
+    return dockerfile_list
 
 
-def recursiveDockerfileListInPath(basePath):
+def find_dockerfile_in_path_recursive(basePath):
     """
     Find all Dockerfiles paths recursive in path
     """
 
-    dockerfileList = []
+    ret = []
     for root, subFolders, files in os.walk(basePath, followlinks=True):
         for file in files:
             if os.path.basename(file) == 'Dockerfile':
-                dockerfileList.append(os.path.join(root, file))
-    return dockerfileList
+                ret.append(os.path.join(root, file))
+    return ret
 
 
-def getDockerfileFrom(path):
+def parse_dockerfile_from_statement(path):
     """
     Extract docker image name from FROM statement
     """
@@ -173,40 +173,40 @@ def getDockerfileFrom(path):
     return ret
 
 
-def generateImageNameLatest(imageName):
+def generate_image_name_with_tag_latest(image_name):
     """
     Prepare dockerfile list with dependency and also add "auto latest tag" images
     """
-    if re.search(':[^:]+$', imageName):
-        imageName = re.sub('(:[^:]+)$', ':latest', imageName)
+    if re.search(':[^:]+$', image_name):
+        ret = re.sub('(:[^:]+)$', ':latest', image_name)
     else:
-        imageName = '%s:latest' % imageName
-    return imageName
+        ret = '%s:latest' % image_name
+    return ret
 
-def getImageNameWithoutTag(imageName):
+def image_basename(image_name):
     """
     Get image name without tag
     """
-    if re.search(':[^:]+$', imageName):
-        imageName = re.sub('(:[^:]+)$', '', imageName)
-    return imageName
+    if re.search(':[^:]+$', image_name):
+        image_name = re.sub('(:[^:]+)$', '', image_name)
+    return image_name
 
-def getTagFromImageName(imageName):
+def extract_image_name_tag(image_name):
     """
     Get tag from image name
     """
-    if re.search('^(.*):', imageName):
-        imageTag = re.sub('^(.*):', '', imageName)
+    if re.search('^(.*):', image_name):
+        ret = re.sub('^(.*):', '', image_name)
     else:
-        imageTag = 'latest'
-    return imageTag
+        ret = 'latest'
+    return ret
 
-def checkIfParentImageShouldBePulled(dockerfile, configuration):
+def check_if_base_image_needs_pull(dockerfile, configuration):
     ret = False
-    baseImage = dockerfile['image']['from']
+    base_image = dockerfile['image']['from']
 
     if configuration.docker.autoPull:
-        if configuration.docker.autoPullWhitelist and configuration.docker.autoPullWhitelist.search(baseImage):
+        if configuration.docker.autoPullWhitelist and configuration.docker.autoPullWhitelist.search(base_image):
             """
             Matched whitelist
             """
@@ -217,7 +217,7 @@ def checkIfParentImageShouldBePulled(dockerfile, configuration):
             """
             ret = True
 
-        if configuration.docker.autoPullBlacklist and configuration.docker.autoPullBlacklist.match(baseImage):
+        if configuration.docker.autoPullBlacklist and configuration.docker.autoPullBlacklist.match(base_image):
             """
             Matched blacklist
             """
