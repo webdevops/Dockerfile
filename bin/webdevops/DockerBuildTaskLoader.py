@@ -53,10 +53,12 @@ class DockerBuildTaskLoader(TaskLoader):
             'enabled': False,
             'noCache': False,
             'dryRun': False,
+            'retry': 1
         },
 
         'dockerPush': {
             'enabled': False,
+            'retry': 1
         },
 
         'dockerTest': {
@@ -165,9 +167,6 @@ class DockerBuildTaskLoader(TaskLoader):
 
         return dockerfile_list
 
-
-
-
     def generate_tasks_docker_build(self, dockerfileList):
         """
         Generate task list for docker build
@@ -201,7 +200,6 @@ class DockerBuildTaskLoader(TaskLoader):
         Generate task list for docker test
         """
         taskList = []
-
 
         for dockerfile in dockerfile_list:
             if dockerfile['test']:
@@ -279,26 +277,48 @@ class DockerBuildTaskLoader(TaskLoader):
             pull_image_name = DockerfileUtility.image_basename(dockerfile['image']['from'])
             pull_image_tag = DockerfileUtility.extract_image_name_tag(dockerfile['image']['from'])
 
-            response = docker_client.pull(
-                repository=pull_image_name,
-                tag=pull_image_tag,
-                stream=True,
-                decode=True
-            )
-            if not DockerBuildTaskLoader.process_docker_client_response(response):
-                return False
+            pull_status = False
+            for retry_count in range(0, configuration.dockerBuild.retry):
+                response = docker_client.pull(
+                    repository=pull_image_name,
+                    tag=pull_image_tag,
+                    stream=True,
+                    decode=True
+                )
+
+                if DockerBuildTaskLoader.process_docker_client_response(response):
+                    pull_status = True
+                    break
+                elif retry_count < (configuration.dockerBuild.retry - 1):
+                    print '    failed, retrying... (try %s)' % (retry_count+1)
+                else:
+                    print '    failed, giving up'
+
+        if not pull_status:
+            return False
 
         ## Build image
         print ' -> Building image %s ' % dockerfile['image']['fullname']
-        response = docker_client.build(
-            path=os.path.dirname(dockerfile['path']),
-            tag=dockerfile['image']['fullname'],
-            pull=False,
-            nocache=configuration.dockerBuild.noCache,
-            quiet=False,
-            decode=True
-        )
-        return DockerBuildTaskLoader.process_docker_client_response(response)
+        build_status = False
+        for retry_count in range(0, configuration.dockerBuild.retry):
+            response = docker_client.build(
+                path=os.path.dirname(dockerfile['path']),
+                tag=dockerfile['image']['fullname'],
+                pull=False,
+                nocache=configuration.dockerBuild.noCache,
+                quiet=False,
+                decode=True
+            )
+
+            if DockerBuildTaskLoader.process_docker_client_response(response):
+                build_status = True
+                break
+            elif retry_count < (configuration.dockerBuild.retry-1):
+                print '    failed, retrying... (try %s)' % (retry_count+1)
+            else:
+                print '    failed, giving up'
+
+        return build_status
 
     @staticmethod
     def action_docker_test(docker_client, dockerfile, configuration, task):
@@ -321,16 +341,46 @@ class DockerBuildTaskLoader(TaskLoader):
             print ''
             return
 
-        response = docker_client.push(
-            dockerfile['image']['fullname'],
-            stream=True,
-            decode=True
-        )
-        return DockerBuildTaskLoader.process_docker_client_response(response)
+        push_status = False
+        for retry_count in range(0, configuration.dockerPush.retry):
+            response = docker_client.push(
+                dockerfile['image']['fullname'],
+                stream=True,
+                decode=True
+            )
+            if DockerBuildTaskLoader.process_docker_client_response(response):
+                push_status = True
+                break
+            elif retry_count < (configuration.dockerBuild.retry - 1):
+                print '    failed, retrying... (try %s)' % (retry_count+1)
+            else:
+                print '    failed, giving up'
+
+        return push_status
 
     @staticmethod
     def process_docker_client_response(response):
         ret = True
+        last_message = False
+
+        def output_message(message, prevent_repeat=False):
+            if 'last_message' not in output_message.__dict__:
+                output_message.last_message = False
+
+            # Prevent repeating messages
+            if prevent_repeat:
+                if output_message.last_message and output_message.last_message == message:
+                    return
+                output_message.last_message = message
+            else:
+                output_message.last_message = False
+
+            sys.stdout.write(message.strip(' \t\n\r') + '\n')
+
+
+        if not response:
+            return False
+
         for line in response:
             # Keys
             #   - error
@@ -338,15 +388,15 @@ class DockerBuildTaskLoader(TaskLoader):
             #   - status, progressDetail, id
             #   - progressDetail | aux [ tag, digest, size ]
             if 'error' in line:
-                sys.stdout.write(line['error'])
+                output_message(line['error'])
                 ret = False
             if 'stream' in line:
-                sys.stdout.write(line['stream'])
+                output_message(line['stream'], prevent_repeat=True)
             if 'status' in line:
                 message = line['status']
                 if 'id' in line:
                     message += ' ' + line['id']
-                sys.stdout.write(message + '\n')
+                output_message(message)
         print ''
         return ret
 
