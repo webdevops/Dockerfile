@@ -11,4 +11,4 @@ apk update
 apk upgrade --force
 
 # Clear files (reduce snapshot size)
-rm -rf var/cache/apk/*
+rm -rf /var/cache/apk/*

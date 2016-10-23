@@ -10,4 +10,4 @@ apk update
 apk add --upgrade $*
 
 # Clear files (reduce snapshot size)
-rm -rf var/cache/apk/*
+rm -rf /var/cache/apk/*
