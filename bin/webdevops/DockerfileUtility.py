@@ -113,7 +113,7 @@ def find_dockerfiles_in_path(base_path, path_regex, image_prefix, whitelist=Fals
 
     if whitelist or blacklist:
         ret = filter_dockerfile(
-            dockerfile_list=dockerfile_list,
+            dockerfile_list=ret,
             whitelist=whitelist,
             blacklist = blacklist
         )
