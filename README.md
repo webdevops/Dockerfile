@@ -30,6 +30,7 @@ Local building of containers can be done with `make` and `Makefile`:
 
 Command                     | Description                                                                       
 --------------------------- | ----------------------------------------------------------------------------------
+`sudo make setup`           | To Install dependancies of build chain tools 
 `make all`                  | Build all containers *fast mode* (parallel building, `FAST=1`)
 `FAST=0 make all`           | Build all containers *slow mode* (serial building)
 `DEBUG=1 make all`          | Show log of build process even if process is successfull
