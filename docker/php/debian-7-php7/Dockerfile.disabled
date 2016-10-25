@@ -15,7 +15,8 @@ RUN echo "deb http://packages.dotdeb.org wheezy all" >> /etc/apt/sources.list \
 # Install tools
 RUN /usr/local/bin/apt-install \
         imagemagick \
-        graphicsmagick
+        graphicsmagick \
+        ghostscript
 
 # Install php
 RUN /usr/local/bin/apt-install \

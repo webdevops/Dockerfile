@@ -13,6 +13,7 @@ shared_examples 'collection::php5' do
 
     include_examples 'misc::graphicsmagick'
     include_examples 'misc::imagemagick'
+    include_examples 'misc::ghostscript'
 end
 
 shared_examples 'collection::php5::production' do
