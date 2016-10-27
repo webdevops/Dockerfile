@@ -10,6 +10,12 @@ shared_examples 'misc::imagemagick' do
     end
 end
 
+shared_examples 'misc::ghostscript' do
+    it "should include ghostscript" do
+        expect(file("/usr/bin/gs")).to be_executable
+    end
+end
+
 shared_examples 'misc::graphviz' do
     it "should include graphviz" do
         expect(file("/usr/bin/dot")).to be_executable
