@@ -21,6 +21,7 @@ RUN /usr/local/bin/apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
+        ghostscript \
         # Install php (cli/fpm)
         php5-cli \
         php5-fpm \

@@ -17,10 +17,12 @@ ENV WEB_ALIAS_DOMAIN   *.vm
 COPY conf/ /opt/docker/
 
 # Install php environment
-RUN /usr/local/bin/apk-install \
+RUN /usr/local/bin/apk-install-edge libressl2.4-libcrypto \
+    && /usr/local/bin/apk-install \
         # Install tools
         imagemagick \
         graphicsmagick \
+        ghostscript \
         # Install php (cli/fpm)
         php7-fpm \
         php7-json \
