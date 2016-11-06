@@ -105,20 +105,6 @@ def find_dockerfiles_in_path(base_path, path_regex, image_prefix, whitelist=Fals
         }
         return imageInfo
 
-    def parse_docker_test_from_path(path):
-        ret = False
-
-        base_path = os.path.dirname(path)
-        test_file_path = os.path.join(base_path, 'Dockerfile.test.py')
-
-        if os.path.isfile(test_file_path):
-            ret = {
-                'path': test_file_path,
-                'basePath': base_path,
-            }
-        return ret
-
-
     ret = []
     for path in find_dockerfile_in_path_recursive(base_path):
         base_path = os.path.dirname(path)
@@ -128,7 +114,6 @@ def find_dockerfiles_in_path(base_path, path_regex, image_prefix, whitelist=Fals
                 'basePath': base_path,
                 'abspath': os.path.abspath(path),
                 'image': parse_docker_info_from_path(path),
-                'test': parse_docker_test_from_path(path),
             }
             ret.append(dockerfile)
 

@@ -3,6 +3,7 @@
 
 from command.docker_build_command import DockerBuildCommand
 from command.docker_push_command import DockerPushCommand
+from command.docker_test_command import DockerTestCommand
 from command.generate_dockerfile_command import GenerateDockerfileCommand
 from command.generate_graph_command import GenerateGraphCommand
 from command.generate_provision_command import GenerateProvisionCommand
@@ -43,6 +44,7 @@ if __name__ == '__main__':
     application = Application()
     application.add(DockerBuildCommand(configuration=configuration))
     application.add(DockerPushCommand(configuration=configuration))
+    application.add(DockerTestCommand(configuration=configuration))
     application.add(GenerateDockerfileCommand(configuration=configuration))
     application.add(GenerateGraphCommand(configuration=configuration))
     application.add(GenerateProvisionCommand(configuration=configuration))

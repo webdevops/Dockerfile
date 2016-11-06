@@ -25,8 +25,6 @@ import time
 import sys
 import re
 import copy
-import pytest
-import testinfra
 from webdevops import DockerfileUtility
 from bunch import bunchify
 from doit.task import dict_to_task
@@ -59,10 +57,6 @@ class DockerBuildTaskLoader(TaskLoader):
         'dockerPush': {
             'enabled': False,
             'retry': 1
-        },
-
-        'dockerTest': {
-            'enabled': False,
         },
 
         'filter': {
@@ -126,10 +120,6 @@ class DockerBuildTaskLoader(TaskLoader):
         # Tasks: Docker build
         if self.configuration.dockerBuild.enabled:
             taskList.extend(self.generate_tasks_docker_build(dockerfile_list))
-
-        # Tasks: Docker test
-        if self.configuration.dockerTest.enabled:
-            taskList.extend(self.generate_tasks_docker_test(dockerfile_list))
 
         # Tasks: Docker push
         if self.configuration.dockerPush.enabled:
@@ -195,35 +185,6 @@ class DockerBuildTaskLoader(TaskLoader):
 
         return taskList
 
-    def generate_tasks_docker_test(self, dockerfile_list):
-        """
-        Generate task list for docker test
-        """
-        taskList = []
-
-        for dockerfile in dockerfile_list:
-            if dockerfile['test']:
-                task = {
-                    'name': 'DockerTest|%s' % dockerfile['image']['fullname'],
-                    'title': DockerBuildTaskLoader.task_title_test,
-                    'actions': [(DockerBuildTaskLoader.action_docker_test, [self.dockerClient, dockerfile, self.configuration])],
-                    'task_dep': []
-                }
-
-                if self.configuration.dockerBuild.enabled:
-                    task['task_dep'].append('FinishChain|DockerBuild')
-
-                taskList.append(dict_to_task(task))
-
-        task = {
-            'name': 'FinishChain|DockerTest',
-            'title': DockerBuildTaskLoader.task_title_finish,
-            'actions': [(DockerBuildTaskLoader.action_chain_finish, ['docker test'])],
-            'task_dep': [task.name for task in taskList]
-        }
-        taskList.append(dict_to_task(task))
-
-        return taskList
 
     def generate_tasks_docker_push(self, dockerfile_list):
         """
@@ -319,17 +280,6 @@ class DockerBuildTaskLoader(TaskLoader):
                 print '    failed, giving up'
 
         return build_status
-
-    @staticmethod
-    def action_docker_test(docker_client, dockerfile, configuration, task):
-        if dockerfile['test']:
-            if configuration.dryRun:
-                print '      from: %s' % dockerfile['image']['from']
-                print '      path: %s' % dockerfile['test']['path']
-                print ''
-                return
-
-        return True
 
     @staticmethod
     def action_docker_push(docker_client, dockerfile, configuration, task):
@@ -437,13 +387,6 @@ class DockerBuildTaskLoader(TaskLoader):
         Build task title function
         """
         return "Docker build %s" % (DockerBuildTaskLoader.human_task_name(task.name))
-
-    @staticmethod
-    def task_title_test(task):
-        """
-        Build task title function
-        """
-        return "Docker test %s" % (DockerBuildTaskLoader.human_task_name(task.name))
 
     @staticmethod
     def task_title_push(task):
