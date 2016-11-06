@@ -24,6 +24,7 @@ if __name__ == '__main__':
         'imagePath': generatePath('documentation/docs/resources/images/'),
         'confPath': generatePath('conf'),
         'baselayoutPath': generatePath('baselayout'),
+        'testPath': generatePath('tests'),
 
         'blacklistFile': generatePath('BLACKLIST'),
 

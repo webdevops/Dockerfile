@@ -42,7 +42,7 @@ class DockerTestCommand(BaseCommand):
     """
 
     def handle(self):
-        testOpts = ['-x', self.configuration['basePath']]
+        testOpts = ['-x', self.configuration['testPath']]
 
         configuration = self.get_configuration()
 
