@@ -97,6 +97,9 @@ provision:
   varnish:
     configuration:
       varnish/general   : '*'
+  liquibase:
+    configuration:
+      liquibase/general   : '*'
   samson-deployment:
     baselayout: on
     configuration:
