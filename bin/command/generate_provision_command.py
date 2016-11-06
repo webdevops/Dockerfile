@@ -19,7 +19,8 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from cleo import Command, Output
+from cleo import Output
+from webdevops import BaseCommand
 from webdevops import Provisioner
 import os
 import yaml
@@ -31,7 +32,7 @@ import shutil
 from pprint import pprint
 
 
-class GenerateProvisionCommand(Command):
+class GenerateProvisionCommand(BaseCommand):
     """
     Provisionning docker images
 
@@ -46,12 +47,6 @@ class GenerateProvisionCommand(Command):
     __threads = []
 
     __queue = ''
-
-    configuration = False
-
-    def __init__(self, configuration):
-        Command.__init__(self)
-        self.configuration = configuration
 
     def handle(self):
         start = time.time()

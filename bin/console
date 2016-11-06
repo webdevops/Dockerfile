@@ -25,6 +25,8 @@ if __name__ == '__main__':
         'confPath': generatePath('conf'),
         'baselayoutPath': generatePath('baselayout'),
 
+        'blacklistFile': generatePath('BLACKLIST'),
+
         'dockerBuild': {},
         'dockerPush': {},
 

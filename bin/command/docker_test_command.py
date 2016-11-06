@@ -18,8 +18,9 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from cleo import Command, Output
+from cleo import Output
 from jinja2 import Environment, FileSystemLoader
+from webdevops import BaseCommand
 from webdevops import Dockerfile
 from webdevops import DockerBuildTaskLoader
 from webdevops import DockerfileUtility
@@ -29,7 +30,7 @@ import pytest
 
 import sys
 
-class DockerTestCommand(Command):
+class DockerTestCommand(BaseCommand):
     """
     Tests images
 
@@ -40,21 +41,15 @@ class DockerTestCommand(Command):
         {--blacklist=?*          : image/tag blacklist }
     """
 
-    configuration = False
-
-    def __init__(self, configuration):
-        Command.__init__(self)
-        self.configuration = configuration
-
     def handle(self):
         testOpts = ['-x', self.configuration['basePath']]
 
-        configuration = self.configuration
+        configuration = self.get_configuration()
 
         configuration['threads'] = max(1, int(self.option('threads')))
 
-        configuration['whitelist'] = self.option('whitelist')
-        configuration['blacklist'] = self.option('blacklist')
+        configuration['whitelist'] = self.get_whitelist()
+        configuration['blacklist'] = self.get_blacklist()
 
         configuration['dryRun'] = self.option('dry-run')
 

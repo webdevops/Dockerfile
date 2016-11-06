@@ -18,8 +18,9 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from cleo import Command, Output
+from cleo import Output
 from jinja2 import Environment, FileSystemLoader
+from webdevops import BaseCommand
 from webdevops import Dockerfile
 from webdevops import DockerBuildTaskLoader
 from webdevops import DockerfileUtility
@@ -27,7 +28,7 @@ from doit.doit_cmd import DoitMain
 
 import sys
 
-class DockerPushCommand(Command):
+class DockerPushCommand(BaseCommand):
     """
     Push images to registry/hub
 
@@ -38,23 +39,17 @@ class DockerPushCommand(Command):
         {--blacklist=?*          : image/tag blacklist }
     """
 
-    configuration = False
-
-    def __init__(self, configuration):
-        Command.__init__(self)
-        self.configuration = configuration
-
     def handle(self):
         doitOpts = []
 
-        configuration = self.configuration
+        configuration = self.get_configuration()
 
         configuration['dockerPush']['enabled'] = True
 
         configuration['threads'] = max(1, int(self.option('threads')))
 
-        configuration['whitelist'] = self.option('whitelist')
-        configuration['blacklist'] = self.option('blacklist')
+        configuration['whitelist'] = self.get_whitelist()
+        configuration['blacklist'] = self.get_blacklist()
 
         configuration['dryRun'] = self.option('dry-run')
 

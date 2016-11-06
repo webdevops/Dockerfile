@@ -19,13 +19,14 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from cleo import Command, Output
+from cleo import Output
 from jinja2 import Environment, FileSystemLoader
+from webdevops import BaseCommand
 from webdevops import DockerfileUtility
 import os
 
 
-class GenerateDockerfileCommand(Command):
+class GenerateDockerfileCommand(BaseCommand):
     """
     Build Dockerfile containers
 
@@ -39,17 +40,11 @@ class GenerateDockerfileCommand(Command):
     template_header = '{% extends "Dockerfile/layout.jinja2" %}\n{% block content %}'
     template_footer = '{% endblock %}'
 
-    configuration = False
-
-    def __init__(self, configuration):
-        Command.__init__(self)
-        self.configuration = configuration
-
     def handle(self):
         template_path = self.configuration['templatePath']
         dockerfile_path = self.configuration['basePath']
-        whitelist = self.option('whitelist')
-        blacklist = self.option('blacklist')
+        whitelist = self.get_whitelist()
+        blacklist = self.get_blacklist()
 
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
             self.line('<info>-> </info><comment>docker path</comment> : %s' % dockerfile_path)

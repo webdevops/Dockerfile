@@ -18,7 +18,8 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from cleo import Command, Output
+from cleo import Output
+from webdevops import BaseCommand
 from cleo.validators import Enum
 import os
 import re
@@ -28,7 +29,7 @@ import yaml
 from datetime import date
 
 
-class GenerateGraphCommand(Command):
+class GenerateGraphCommand(BaseCommand):
     """
     Generate a diagram of container
 
@@ -54,12 +55,6 @@ class GenerateGraphCommand(Command):
     edges = {}
 
     conf = ''
-
-    configuration = False
-
-    def __init__(self, configuration):
-        Command.__init__(self)
-        self.configuration = configuration
 
     def handle(self):
         if self.option('output'):
