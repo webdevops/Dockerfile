@@ -51,7 +51,7 @@ class DockerPushCommand(Command):
 
         configuration['dockerPush']['enabled'] = True
 
-        configuration['threads'] = max(1, self.option('threads'))
+        configuration['threads'] = max(1, int(self.option('threads')))
 
         configuration['whitelist'] = self.option('whitelist')
         configuration['blacklist'] = self.option('blacklist')

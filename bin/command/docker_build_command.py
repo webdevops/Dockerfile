@@ -59,7 +59,7 @@ class DockerBuildCommand(Command):
         # Enable docker push if --push is added
         configuration['dockerPush']['enabled'] = self.option('push')
 
-        configuration['threads'] = max(1, self.option('threads'))
+        configuration['threads'] = max(1, int(self.option('threads')))
 
         configuration['whitelist'] = self.option('whitelist')
         configuration['blacklist'] = self.option('blacklist')
