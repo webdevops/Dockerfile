@@ -23,11 +23,9 @@ from jinja2 import Environment, FileSystemLoader
 from webdevops import Dockerfile
 from webdevops import DockerBuildTaskLoader
 from webdevops import DockerfileUtility
+from webdevops import TestinfraDockerPlugin
 from doit.doit_cmd import DoitMain
-import testinfra
 import pytest
-import os
-import re
 
 import sys
 
@@ -73,64 +71,5 @@ class DockerTestCommand(Command):
         if 'verbosity' in configuration and configuration['verbosity'] > 1:
             testOpts.extend(['-v'])
 
-        class DockerPlugin:
-            docker_image_list = []
-            configuration = False
-
-            def __init__(self, configuration):
-                self.configuration = configuration
-                self.init_docker_image_list()
-
-            def init_docker_image_list(self):
-                dockerfile_list = DockerfileUtility.find_dockerfiles_in_path(
-                    base_path=self.configuration['basePath'],
-                    path_regex=self.configuration['docker']['pathRegex'],
-                    image_prefix=self.configuration['docker']['imagePrefix'],
-                    whitelist=self.configuration['whitelist'],
-                    blacklist=self.configuration['blacklist'],
-                )
-
-                for image in dockerfile_list:
-                    self.docker_image_list.append(image['image']['fullname'])
-
-            def get_image_list_by_regexp(self, filter_regexp):
-                ret = []
-
-                filter_regexp = re.compile(filter_regexp)
-
-                for image_name in self.docker_image_list:
-                    if filter_regexp.match(image_name):
-                        ret.append(image_name)
-
-                return ret
-
-            def pytest_sessionstart(self):
-                print("\n*** test run reporting starting")
-
-            def pytest_sessionfinish(self):
-                print("\n*** test run reporting finishing")
-
-            def pytest_generate_tests(self, metafunc):
-                if "TestinfraBackend" in metafunc.fixturenames:
-                    images = []
-
-                    # Lookup "docker_images" marker
-                    marker = getattr(metafunc.function, "docker_images", None)
-                    if marker is not None:
-                        for marker_image_name in marker.args:
-                            images.extend(self.get_image_list_by_regexp(marker_image_name))
-                    print images
-
-                    # If the test has a destructive marker, we scope TestinfraBackend
-                    # at function level (i.e. executing for each test). If not we scope
-                    # at session level (i.e. all tests will share the same container)
-                    if getattr(metafunc.function, "destructive", None) is not None:
-                        scope = "function"
-                    else:
-                        scope = "session"
-
-                    metafunc.parametrize(
-                        "TestinfraBackend", images, indirect=True, scope=scope)
-
-        sys.exit(pytest.main(testOpts, plugins = [DockerPlugin(configuration)]))
+        sys.exit(pytest.main(testOpts, plugins = [TestinfraDockerPlugin.TestinfraDockerPlugin(configuration)]))
 
