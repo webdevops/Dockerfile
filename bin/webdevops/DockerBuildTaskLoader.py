@@ -255,8 +255,8 @@ class DockerBuildTaskLoader(TaskLoader):
                 else:
                     print '    failed, giving up'
 
-        if not pull_status:
-            return False
+            if not pull_status:
+                return False
 
         ## Build image
         print ' -> Building image %s ' % dockerfile['image']['fullname']
