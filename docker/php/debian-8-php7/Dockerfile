@@ -33,7 +33,6 @@ RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
         # Install tools
         imagemagick \
         graphicsmagick \
-        ghostscript \
         # Install php (cli/fpm)
         php7.0-cli \
         php7.0-fpm \

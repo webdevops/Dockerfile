@@ -21,7 +21,6 @@ RUN /usr/local/bin/apt-install \
         hhvm \
         imagemagick \
         graphicsmagick \
-        ghostscript \
     && /usr/bin/update-alternatives --install /usr/bin/php php /usr/bin/hhvm 60 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-hhvm \

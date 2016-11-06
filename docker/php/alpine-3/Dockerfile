@@ -21,7 +21,6 @@ RUN /usr/local/bin/apk-install \
         # Install tools
         imagemagick \
         graphicsmagick \
-        ghostscript \
         # Install php (cli/fpm)
         php5-cli \
         php5-fpm \

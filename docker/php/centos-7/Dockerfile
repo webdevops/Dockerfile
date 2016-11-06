@@ -21,7 +21,6 @@ RUN /usr/local/bin/yum-install \
         # Install tools
         ImageMagick \
         GraphicsMagick \
-        ghostscript \
         # Install php (cli/fpm)
         php-cli \
         php-fpm \
