@@ -18,7 +18,8 @@ ENV APPLICATION_GID   1000
 
 COPY conf/ /opt/docker/
 
-RUN /usr/local/bin/apk-install \
+RUN /usr/local/bin/apk-install-edge shadow \
+    && /usr/local/bin/apk-install \
         # Install services
         openssh \
         mysql-client \

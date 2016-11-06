@@ -1,7 +1,8 @@
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro alpine(role='') -%}
-RUN /usr/local/bin/apk-install \
+RUN /usr/local/bin/apk-install-edge shadow \
+    && /usr/local/bin/apk-install \
         # Install services
         openssh \
         mysql-client \
