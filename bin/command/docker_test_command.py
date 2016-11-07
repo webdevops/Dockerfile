@@ -22,7 +22,7 @@ from cleo import Output
 from jinja2 import Environment, FileSystemLoader
 from webdevops import BaseCommand
 from webdevops import Dockerfile
-from webdevops import DockerBuildTaskLoader
+from webdevops import DockerTestTaskLoader
 from webdevops import DockerfileUtility
 from webdevops import TestinfraDockerPlugin
 from doit.doit_cmd import DoitMain
@@ -42,8 +42,6 @@ class DockerTestCommand(BaseCommand):
     """
 
     def handle(self):
-        testOpts = ['-x', self.configuration['testPath']]
-
         configuration = self.get_configuration()
 
         configuration['threads'] = self.get_threads()
@@ -61,10 +59,14 @@ class DockerTestCommand(BaseCommand):
             configuration['verbosity'] = 2
 
         if configuration['threads'] > 1:
-            testOpts.extend(['-n', str(configuration['threads'])])
+            doitOpts = []
+            doitOpts.extend(['-n', str(configuration['threads']), '-P' 'thread'])
+            exitcode = DoitMain(DockerTestTaskLoader(configuration)).run(doitOpts)
+        else:
+            testOpts = ['-x', self.configuration['testPath']]
 
-        if 'verbosity' in configuration and configuration['verbosity'] > 1:
-            testOpts.extend(['-v'])
+            if self.output.is_verbose():
+                testOpts.extend(['-v'])
 
-        sys.exit(pytest.main(testOpts, plugins = [TestinfraDockerPlugin.TestinfraDockerPlugin(configuration)]))
-
+            exitcode = pytest.main(testOpts, plugins = [TestinfraDockerPlugin.TestinfraDockerPlugin(configuration)])
+        sys.exit(exitcode)

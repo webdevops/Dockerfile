@@ -1,4 +1,3 @@
-import testinfra
 import pytest
 import re
 from webdevops import DockerfileUtility
