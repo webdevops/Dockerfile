@@ -6,4 +6,3 @@ testinfra>=1.4.2
 bunch>=1.0.1
 doit>=0.29.0
 pytest-xdist>=1.15.0
-c
