@@ -10,7 +10,7 @@ LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
 LABEL io.webdevops.version=0.57.1
 
-ENV LIQUIBASE_VERSION   "3.5.1"
+ENV LIQUIBASE_VERSION   "3.5.3"
 ENV LIQUIBASE_DRIVER    "com.mysql.jdbc.Driver"
 ENV LIQUIBASE_CLASSPATH "/usr/share/java/mysql.jar"
 ENV LIQUIBASE_URL       ""
