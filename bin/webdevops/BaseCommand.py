@@ -1,6 +1,7 @@
 from cleo import Command, Output
 import os
 import sys
+import multiprocessing
 
 class BaseCommand(Command):
     configuration = False
@@ -38,3 +39,14 @@ class BaseCommand(Command):
                     ret.append(line)
 
         return ret
+
+    def get_threads(self):
+        """
+        Get processing thread count
+        """
+        if self.option('threads') == 'auto':
+            ret = multiprocessing.cpu_count()
+        else:
+            ret = max(1, int(self.option('threads')))
+
+        return int(ret)

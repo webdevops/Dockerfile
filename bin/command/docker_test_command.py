@@ -46,7 +46,7 @@ class DockerTestCommand(BaseCommand):
 
         configuration = self.get_configuration()
 
-        configuration['threads'] = max(1, int(self.option('threads')))
+        configuration['threads'] = self.get_threads()
 
         configuration['whitelist'] = self.get_whitelist()
         configuration['blacklist'] = self.get_blacklist()
@@ -61,7 +61,7 @@ class DockerTestCommand(BaseCommand):
             configuration['verbosity'] = 2
 
         if configuration['threads'] > 1:
-            testOpts.extend(['-n', configuration['threads']])
+            testOpts.extend(['-n', str(configuration['threads'])])
 
         if 'verbosity' in configuration and configuration['verbosity'] > 1:
             testOpts.extend(['-v'])

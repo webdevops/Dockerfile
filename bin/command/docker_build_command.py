@@ -53,7 +53,7 @@ class DockerBuildCommand(BaseCommand):
         # Enable docker push if --push is added
         configuration['dockerPush']['enabled'] = self.option('push')
 
-        configuration['threads'] = max(1, int(self.option('threads')))
+        configuration['threads'] = self.get_threads()
 
         configuration['whitelist'] = self.get_whitelist()
         configuration['blacklist'] = self.get_blacklist()
@@ -68,7 +68,7 @@ class DockerBuildCommand(BaseCommand):
             configuration['verbosity'] = 2
 
         if configuration['threads'] > 1:
-            doitOpts.extend(['-n', configuration['threads'], '-P' 'thread'])
+            doitOpts.extend(['-n', str(configuration['threads']), '-P' 'thread'])
 
         sys.exit(DoitMain(DockerBuildTaskLoader.DockerBuildTaskLoader(configuration)).run(doitOpts))
 
