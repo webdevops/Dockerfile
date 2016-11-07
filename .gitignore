@@ -1,4 +1,5 @@
-.idea
+/.idea
+/.cache
 /test/Dockerfile
 /test/vendor/
 /test/.bundle/
