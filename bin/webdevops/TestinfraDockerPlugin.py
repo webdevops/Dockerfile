@@ -8,10 +8,16 @@ class TestinfraDockerPlugin:
     configuration = False
 
     def __init__(self, configuration):
+        """
+        Constructor
+        """
         self.configuration = configuration
         self.init_docker_image_list()
 
     def init_docker_image_list(self):
+        """
+        Init and build list of available docker images
+        """
         dockerfile_list = DockerfileUtility.find_dockerfiles_in_path(
             base_path=self.configuration['basePath'],
             path_regex=self.configuration['docker']['pathRegex'],
@@ -24,23 +30,23 @@ class TestinfraDockerPlugin:
             self.docker_image_list.append(image['image']['fullname'])
 
     def get_image_list_by_regexp(self, filter_regexp):
+        """
+        Get image list by filtering via filter regexp
+        """
         ret = []
 
-        filter_regexp = re.compile(filter_regexp)
+        filter_regexp = re.compile(filter_regexp, re.IGNORECASE)
 
         for image_name in self.docker_image_list:
-            if filter_regexp.match(image_name):
+            if filter_regexp.search(image_name):
                 ret.append(image_name)
 
         return ret
 
-    def pytest_sessionstart(self):
-        print("\n*** test run reporting starting")
-
-    def pytest_sessionfinish(self):
-        print("\n*** test run reporting finishing")
-
     def pytest_generate_tests(self, metafunc):
+        """
+        Generate tests
+        """
         if "TestinfraBackend" in metafunc.fixturenames:
             images = []
 
