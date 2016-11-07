@@ -70,7 +70,7 @@ class DockerBuildCommand(BaseCommand):
         if configuration['threads'] > 1:
             doitOpts.extend(['-n', str(configuration['threads']), '-P' 'thread'])
 
-        sys.exit(DoitMain(DockerBuildTaskLoader.DockerBuildTaskLoader(configuration)).run(doitOpts))
+        sys.exit(DoitMain(DockerBuildTaskLoader(configuration)).run(doitOpts))
 
 
 
