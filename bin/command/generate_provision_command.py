@@ -37,9 +37,9 @@ class GenerateProvisionCommand(BaseCommand):
     Provisionning docker images
 
     generate:provision
-        {--image=?* : filter on images name }
-        {--baselayout : Build the baselayout}
-        {--t|threads=1 (integer): Number of threads to run }
+        {--image=?*              : filter on images name }
+        {--baselayout            : Build the baselayout }
+        {--t|threads:0 (integer) : Number of threads to run }
     """
 
     conf = ''

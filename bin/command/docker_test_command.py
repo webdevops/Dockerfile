@@ -36,7 +36,7 @@ class DockerTestCommand(BaseCommand):
 
     docker:test
         {--dry-run               : show only which images will be build}
-        {--t|threads=1           : threads}
+        {--t|threads=0 (integer) : threads}
         {--whitelist=?*          : image/tag whitelist }
         {--blacklist=?*          : image/tag blacklist }
     """

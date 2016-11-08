@@ -32,7 +32,7 @@ class DockerBuildCommand(BaseCommand):
     docker:build
         {--dry-run               : show only which images will be build}
         {--no-cache              : build without caching}
-        {--t|threads=1           : threads}
+        {--t|threads=0 (integer) : threads}
         {--push                  : Push Dockerfiles }
         {--whitelist=?*          : image/tag whitelist }
         {--blacklist=?*          : image/tag blacklist }

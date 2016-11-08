@@ -63,7 +63,9 @@ class BaseCommand(Command):
         """
         Get processing thread count
         """
-        if self.option('threads') == 'auto':
+        threads = os.getenv('THREADS', self.option('threads'))
+
+        if threads == 'auto':
             ret = multiprocessing.cpu_count()
         else:
             ret = max(1, int(self.option('threads')))
