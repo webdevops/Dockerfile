@@ -36,7 +36,7 @@ class DockerTestCommand(BaseCommand):
 
     docker:test
         {--dry-run               : show only which images will be build}
-        {--t|threads=0 (integer) : threads}
+        {--t|threads=0           : threads}
         {--whitelist=?*          : image/tag whitelist }
         {--blacklist=?*          : image/tag blacklist }
     """
@@ -50,20 +50,22 @@ class DockerTestCommand(BaseCommand):
         configuration['whitelist'] = self.get_whitelist()
         configuration['blacklist'] = self.get_blacklist()
 
-        configuration['dryRun'] = self.option('dry-run')
+        configuration['dryRun'] = self.get_dry_run()
 
         if self.output.is_verbose():
             configuration['verbosity'] = 2
 
-        if self.option('dry-run'):
-            configuration['threads'] = 1
-            configuration['verbosity'] = 2
-
         if configuration['threads'] > 1:
+            # Run with doit
+            if configuration['dryRun']:
+                configuration['threads'] = 1
+                configuration['verbosity'] = 2
+
             doitOpts = []
             doitOpts.extend(['-n', str(configuration['threads']), '-P' 'thread'])
             exitcode = DoitMain(DockerTestTaskLoader(configuration)).run(doitOpts)
         else:
+            # Run directly
             if configuration['dryRun']:
                 print 'pytest directory: %s' % (self.configuration['testPath'])
                 print ''

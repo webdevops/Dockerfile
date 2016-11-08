@@ -71,3 +71,6 @@ class BaseCommand(Command):
             ret = max(1, int(self.option('threads')))
 
         return int(ret)
+
+    def get_dry_run(self):
+        return self.option('dry-run')

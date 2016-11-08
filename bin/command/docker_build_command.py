@@ -32,7 +32,7 @@ class DockerBuildCommand(BaseCommand):
     docker:build
         {--dry-run               : show only which images will be build}
         {--no-cache              : build without caching}
-        {--t|threads=0 (integer) : threads}
+        {--t|threads=0           : threads}
         {--push                  : Push Dockerfiles }
         {--whitelist=?*          : image/tag whitelist }
         {--blacklist=?*          : image/tag blacklist }
@@ -55,12 +55,12 @@ class DockerBuildCommand(BaseCommand):
         configuration['whitelist'] = self.get_whitelist()
         configuration['blacklist'] = self.get_blacklist()
 
-        configuration['dryRun'] = self.option('dry-run')
+        configuration['dryRun'] = self.get_dry_run()
 
         if self.output.is_verbose():
             configuration['verbosity'] = 2
 
-        if self.option('dry-run'):
+        if configuration['dryRun']:
             configuration['threads'] = 1
             configuration['verbosity'] = 2
 
