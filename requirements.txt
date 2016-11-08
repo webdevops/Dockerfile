@@ -3,6 +3,4 @@ graphviz>=0.4.10
 cleo>=0.5.0
 yamlordereddictloader>=0.1.0
 testinfra>=1.4.2
-bunch>=1.0.1
 doit>=0.29.0
-pytest-xdist>=1.15.0

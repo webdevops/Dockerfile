@@ -19,21 +19,13 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
-import docker
-import json
-import time
-import sys
 import re
-import copy
-from webdevops import DockerfileUtility
+from webdevops.BaseTaskLoader import BaseTaskLoader
 from webdevops import TestinfraDockerPlugin
-from bunch import bunchify
 from doit.task import dict_to_task
-from doit.cmd_base import TaskLoader
-from doit.doit_cmd import DoitMain
 import pytest
 
-class DockerTestTaskLoader(TaskLoader):
+class DockerTestTaskLoader(BaseTaskLoader):
 
     configuration_default = {
         'basePath': False,
@@ -61,34 +53,11 @@ class DockerTestTaskLoader(TaskLoader):
         'threads': 1,
     }
 
-    configuration = False
-
-    def __init__(self, configuration):
-        """
-        Constrcutor
-        """
-        def dictmerge(original, update):
-            """
-            Recursively update a dict.
-            Subdict's won't be overwritten but also updated.
-            """
-            for key, value in original.iteritems():
-                if key not in update:
-                    update[key] = value
-                elif isinstance(value, dict):
-                    dictmerge(value, update[key])
-            return update
-
-        """
-        Build configuration as namespace object
-        """
-        self.configuration = bunchify(dictmerge(self.configuration_default, configuration))
-
     def get_testfile_list(self):
         ret = []
-        filter_regexp = re.compile(self.configuration.dockerTest.fileFilter)
+        filter_regexp = re.compile(self.configuration['dockerTest']['fileFilter'])
 
-        for root, dirs, files in os.walk(self.configuration.testPath):
+        for root, dirs, files in os.walk(self.configuration['testPath']):
             for file in files:
                 if filter_regexp.search(file):
                     ret.append(os.path.relpath(os.path.join(root, file)))
@@ -98,7 +67,7 @@ class DockerTestTaskLoader(TaskLoader):
         """
         DOIT task list generator
         """
-        config = {'verbosity': self.configuration.verbosity}
+        config = {'verbosity': self.configuration['verbosity']}
 
         taskList = []
 
@@ -121,7 +90,7 @@ class DockerTestTaskLoader(TaskLoader):
         """
         testOpts = []
 
-        if configuration.verbosity > 1:
+        if configuration['verbosity'] > 1:
             testOpts.extend(['-v'])
 
         testOpts.append(testfile)
@@ -134,40 +103,9 @@ class DockerTestTaskLoader(TaskLoader):
             return False
 
     @staticmethod
-    def human_task_name(name):
-        """
-        Translate internal task name to human readable name
-        """
-        return re.search('^.*\|(.*)', name).group(1)
-
-    @staticmethod
-    def human_task_name_list(list):
-        """
-        Translate list of internal task names to human readable names
-        """
-        ret = []
-        for name in list:
-            ret.append(DockerTestTaskLoader.human_task_name(name))
-        return ', '.join(ret)
-
-    @staticmethod
-    def action_chain_finish(title):
-        """
-        Action of finish chain
-        """
-        print ''
-
-    @staticmethod
-    def task_title_finish(task):
-        """
-        Finish task title function
-        """
-        return "Finished chain %s" % (DockerTestTaskLoader.human_task_name(task.name))
-
-    @staticmethod
     def task_title_test(task):
         """
         Build task title function
         """
-        return "Run pytest %s" % (DockerTestTaskLoader.human_task_name(task.name))
+        return "Run pytest %s" % (BaseTaskLoader.human_task_name(task.name))
 

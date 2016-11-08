@@ -20,10 +20,7 @@
 
 from cleo import Output
 from jinja2 import Environment, FileSystemLoader
-from webdevops import BaseCommand
-from webdevops import Dockerfile
-from webdevops import DockerBuildTaskLoader
-from webdevops import DockerfileUtility
+from webdevops import BaseCommand, Dockerfile, DockerBuildTaskLoader
 from doit.doit_cmd import DoitMain
 
 import sys

@@ -211,8 +211,8 @@ def check_if_base_image_needs_pull(dockerfile, configuration):
     ret = False
     base_image = dockerfile['image']['from']
 
-    if configuration.docker.autoPull:
-        if configuration.docker.autoPullWhitelist and configuration.docker.autoPullWhitelist.search(base_image):
+    if configuration['docker']['autoPull']:
+        if configuration['docker']['autoPullWhitelist'] and configuration['docker']['autoPullWhitelist'].search(base_image):
             """
             Matched whitelist
             """
@@ -223,7 +223,7 @@ def check_if_base_image_needs_pull(dockerfile, configuration):
             """
             ret = True
 
-        if configuration.docker.autoPullBlacklist and configuration.docker.autoPullBlacklist.match(base_image):
+        if configuration['docker']['autoPullBlacklist'] and configuration['docker']['autoPullBlacklist'].match(base_image):
             """
             Matched blacklist
             """

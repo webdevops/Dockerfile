@@ -39,7 +39,7 @@ class GenerateProvisionCommand(BaseCommand):
     generate:provision
         {--image=?* : filter on images name }
         {--baselayout : Build the baselayout}
-        {--t|thread=1 (integer): Number of threads to run }
+        {--t|threads=1 (integer): Number of threads to run }
     """
 
     conf = ''
@@ -73,7 +73,7 @@ class GenerateProvisionCommand(BaseCommand):
         print("elapsed time : %d second" % (end - start))
 
     def __create_thread(self):
-        for i in range(self.option('thread')):
+        for i in range(self.get_threads()):
             thread_name = "Pixie_%d" % i
             if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
                 self.line("<info>*</info> -> Create thread <fg=magenta>%s</>" % thread_name)

@@ -63,10 +63,12 @@ class DockerTestCommand(BaseCommand):
             doitOpts.extend(['-n', str(configuration['threads']), '-P' 'thread'])
             exitcode = DoitMain(DockerTestTaskLoader(configuration)).run(doitOpts)
         else:
-            testOpts = ['-x', self.configuration['testPath']]
+            testOpts = []
+
+            testOpts.extend(['-x', self.configuration['testPath']])
 
             if self.output.is_verbose():
                 testOpts.extend(['-v'])
 
-            exitcode = pytest.main(testOpts, plugins = [TestinfraDockerPlugin.TestinfraDockerPlugin(configuration)])
+            exitcode = pytest.main(testOpts, plugins = [TestinfraDockerPlugin(configuration)])
         sys.exit(exitcode)

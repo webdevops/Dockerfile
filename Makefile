@@ -27,17 +27,17 @@ applications: webdevops/typo3 webdevops/piwik
 misc:      webdevops/mail-sandbox webdevops/sphinx webdevops/liquibase
 
 test:
-	cd "test/" && make all
+	python bin/console docker:test
 
 test-hub-images:
 	DOCKER_PULL=1 make test
 
 baselayout:
-	python bin/console generate:provision --provision=provisioning/ --dockerfile=docker/ -t 1 --baselayout
+	python bin/console generate:provision --provision=provisioning/ --dockerfile=docker/ --baselayout
 
 provision:
 	python bin/console generate:dockerfile --template=template/ --dockerfile=docker/
-	python bin/console generate:provision --provision=provisioning/ --dockerfile=docker/ -t 1
+	python bin/console generate:provision --provision=provisioning/ --dockerfile=docker/
 
 publish:    dist-update rebuild test push
 
