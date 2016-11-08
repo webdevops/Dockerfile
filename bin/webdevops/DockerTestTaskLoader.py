@@ -88,6 +88,12 @@ class DockerTestTaskLoader(BaseTaskLoader):
         """
         Run test
         """
+
+        if configuration['dryRun']:
+            print '      testfile: %s' % (testfile)
+            print ''
+            return
+
         testOpts = []
 
         if configuration['verbosity'] > 1:

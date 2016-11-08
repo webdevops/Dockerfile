@@ -42,6 +42,7 @@ class DockerTestCommand(BaseCommand):
     """
 
     def handle(self):
+        exitcode = 0
         configuration = self.get_configuration()
 
         configuration['threads'] = self.get_threads()
@@ -63,12 +64,16 @@ class DockerTestCommand(BaseCommand):
             doitOpts.extend(['-n', str(configuration['threads']), '-P' 'thread'])
             exitcode = DoitMain(DockerTestTaskLoader(configuration)).run(doitOpts)
         else:
-            testOpts = []
+            if configuration['dryRun']:
+                print 'pytest directory: %s' % (self.configuration['testPath'])
+                print ''
+            else :
+                testOpts = []
 
-            testOpts.extend(['-x', self.configuration['testPath']])
+                testOpts.extend(['-x', self.configuration['testPath']])
 
-            if self.output.is_verbose():
-                testOpts.extend(['-v'])
+                if self.output.is_verbose():
+                    testOpts.extend(['-v'])
 
-            exitcode = pytest.main(testOpts, plugins = [TestinfraDockerPlugin(configuration)])
+                exitcode = pytest.main(testOpts, plugins = [TestinfraDockerPlugin(configuration)])
         sys.exit(exitcode)
