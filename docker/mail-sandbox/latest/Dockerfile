@@ -10,8 +10,8 @@ LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
 LABEL io.webdevops.version=0.57.1
 
-ENV MAILBOX_USERNAME "sandbox"
-ENV MAILBOX_PASSWORD "mail"
+ENV MAILBOX_USERNAME "dev"
+ENV MAILBOX_PASSWORD "dev"
 
 COPY conf/ /opt/docker/
 

@@ -2,14 +2,14 @@
 
 Automated build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
 
-Mail sandbox which catches all mails and delivers them to a local user and is accessable via IMAP.
+Mail sandbox which catches all mails and delivers them to a local user and is accessable via IMAP and via Web (roundcube)
 
 ## Environment variables
 
 Variable             | Description
 -------------------- | ------------------------------------------------------------------------------
-`MAILBOX_USERNAME`   | Username for mailbox (Default `sandbox`)
-`MAILBOX_PASSWORD`   | Password for mailbox (Default `mail`)
+`MAILBOX_USERNAME`   | Username for mailbox (Default `dev`)
+`MAILBOX_PASSWORD`   | Password for mailbox (Default `dev`)
 
 ## Container info
 
