@@ -39,7 +39,7 @@ class GenerateProvisionCommand(BaseCommand):
     generate:provision
         {--image=?*              : filter on images name }
         {--baselayout            : Build the baselayout }
-        {--t|threads:0 (integer) : Number of threads to run }
+        {--t|threads=0           : threads}
     """
 
     conf = ''
