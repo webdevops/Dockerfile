@@ -33,11 +33,11 @@ test-hub-images:
 	DOCKER_PULL=1 make test
 
 baselayout:
-	python bin/console generate:provision --provision=provisioning/ --dockerfile=docker/ --baselayout
+	python bin/console generate:provision --baselayout
 
 provision:
-	python bin/console generate:dockerfile --template=template/ --dockerfile=docker/
-	python bin/console generate:provision --provision=provisioning/ --dockerfile=docker/
+	python bin/console generate:dockerfile
+	python bin/console generate:provision
 
 publish:    dist-update rebuild test push
 
