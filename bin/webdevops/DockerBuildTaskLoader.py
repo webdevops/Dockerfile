@@ -243,7 +243,7 @@ class DockerBuildTaskLoader(BaseTaskLoader):
                 path=os.path.dirname(dockerfile['path']),
                 tag=dockerfile['image']['fullname'],
                 pull=False,
-                nocache=configuration.dockerBuild.noCache,
+                nocache=configuration['dockerBuild']['noCache'],
                 quiet=False,
                 decode=True
             )
