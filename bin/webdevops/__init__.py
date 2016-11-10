@@ -20,14 +20,18 @@
 
 from BaseCommand import BaseCommand
 from DockerBuildTaskLoader import DockerBuildTaskLoader
+from DockerPushTaskLoader import DockerPushTaskLoader
 from DockerTestTaskLoader import DockerTestTaskLoader
 from TestinfraDockerPlugin import TestinfraDockerPlugin
 from BaseTaskLoader import BaseTaskLoader
+from BaseDockerTaskLoader import BaseDockerTaskLoader
 
 __all__ = [
     'BaseCommand',
     'DockerBuildTaskLoader',
+    'DockerPushTaskLoader',
     'DockerTestTaskLoader',
     'TestinfraDockerPlugin',
     'BaseTaskLoader',
+    'BaseDockerTaskLoader',
 ]

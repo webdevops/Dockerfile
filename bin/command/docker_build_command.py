@@ -33,7 +33,6 @@ class DockerBuildCommand(BaseCommand):
         {--dry-run               : show only which images will be build}
         {--no-cache              : build without caching}
         {--t|threads=0           : threads}
-        {--push                  : Push Dockerfiles }
         {--whitelist=?*          : image/tag whitelist }
         {--blacklist=?*          : image/tag blacklist }
     """
@@ -46,9 +45,6 @@ class DockerBuildCommand(BaseCommand):
         # Enable docker build
         configuration['dockerBuild']['enabled'] = True
         configuration['dockerBuild']['noCache'] = self.option('no-cache')
-
-        # Enable docker push if --push is added
-        configuration['dockerPush']['enabled'] = self.option('push')
 
         configuration['threads'] = self.get_threads()
 
