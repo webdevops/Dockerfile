@@ -34,6 +34,7 @@ RUN cd /app \
     && rm -f roundcubemail-1.2.2-complete.tar.gz \
     && ls -l  \
     && rm -rf .git installer \
+    && ln -s /opt/docker/etc/roundcube/plugins/webdevops_autologin/ plugins/webdevops_autologin \
     && ln -s /opt/docker/etc/roundcube/config.php config/config.inc.php
 
 EXPOSE 25 465 587 143 993

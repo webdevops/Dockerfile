@@ -15,4 +15,4 @@ $config['smtp_port'] = 25;
 $config['smtp_user'] = '%u';
 $config['smtp_pass'] = '%p';
 
-if(getenv('ROUNDCUBE_USER_FILE')) $config['plugins'][] = 'password';
+$config['plugins'][] = 'webdevops_autologin';
