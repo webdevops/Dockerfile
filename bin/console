@@ -11,6 +11,7 @@ from cleo import Application
 from webdevops.docker.DockerBaseClient import DockerBaseClient
 from webdevops.docker.DockerPyClient import DockerPyClient
 from webdevops.docker.DockerCliClient import DockerCliClient
+from webdevops.doit.DoitReporter import DoitReporter
 from command.docker_build_command import DockerBuildCommand
 from command.docker_push_command import DockerPushCommand
 from command.docker_pull_command import DockerPullCommand
@@ -41,7 +42,7 @@ if __name__ == '__main__':
 
         'doitConfig': {
             'GLOBAL': {
-                #'reporter': Reporter,
+                #'reporter': DoitReporter,
                'verbosity': '0',
            }
        },
