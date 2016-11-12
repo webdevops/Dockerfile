@@ -42,8 +42,6 @@ class DockerBuildCommand(BaseCommand):
 
         configuration = self.get_configuration()
 
-        # Enable docker build
-        configuration['dockerBuild']['enabled'] = True
         configuration['dockerBuild']['noCache'] = self.option('no-cache')
 
         configuration['threads'] = self.get_threads()

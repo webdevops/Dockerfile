@@ -41,8 +41,6 @@ class DockerPushCommand(BaseCommand):
 
         configuration = self.get_configuration()
 
-        configuration['dockerPush']['enabled'] = True
-
         configuration['threads'] = self.get_threads()
 
         configuration['whitelist'] = self.get_whitelist()
