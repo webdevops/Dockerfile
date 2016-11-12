@@ -62,6 +62,16 @@ class TestinfraDockerPlugin:
 
         return ret
 
+    def filter_list_by_term(self, list, term):
+        """
+        Filter list by using blacklist term
+        """
+        tmp = []
+        for item in list:
+            if not term in item:
+                tmp.append(item)
+        return tmp
+
     def pytest_generate_tests(self, metafunc):
         """
         Generate tests
@@ -74,7 +84,15 @@ class TestinfraDockerPlugin:
             if marker is not None:
                 for marker_image_name in marker.args:
                     images.extend(self.get_image_list_by_regexp(marker_image_name))
-            print images
+
+            # Lookup "docker_images.blacklist" marker
+            marker = getattr(metafunc.function, "docker_images_blacklist", None)
+            if marker is not None:
+                for blacklist_term in marker.args:
+                    images = self.filter_list_by_term(
+                        list=images,
+                        term=blacklist_term
+                    )
 
             # If the test has a destructive marker, we scope TestinfraBackend
             # at function level (i.e. executing for each test). If not we scope
