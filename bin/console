@@ -13,6 +13,7 @@ from webdevops.docker.DockerPyClient import DockerPyClient
 from webdevops.docker.DockerCliClient import DockerCliClient
 from command.docker_build_command import DockerBuildCommand
 from command.docker_push_command import DockerPushCommand
+from command.docker_pull_command import DockerPullCommand
 from command.docker_test_command import DockerTestCommand
 from command.generate_dockerfile_command import GenerateDockerfileCommand
 from command.generate_graph_command import GenerateGraphCommand
@@ -64,6 +65,7 @@ if __name__ == '__main__':
     application = Application()
     application.add(DockerBuildCommand(configuration=configuration))
     application.add(DockerPushCommand(configuration=configuration))
+    application.add(DockerPullCommand(configuration=configuration))
     application.add(DockerTestCommand(configuration=configuration))
     application.add(GenerateDockerfileCommand(configuration=configuration))
     application.add(GenerateGraphCommand(configuration=configuration))

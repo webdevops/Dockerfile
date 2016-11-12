@@ -22,10 +22,12 @@ from BaseTaskLoader import BaseTaskLoader
 from BaseDockerTaskLoader import BaseDockerTaskLoader
 from DockerBuildTaskLoader import DockerBuildTaskLoader
 from DockerPushTaskLoader import DockerPushTaskLoader
+from DockerPullTaskLoader import DockerPullTaskLoader
 
 __all__ = [
     'BaseTaskLoader',
     'DockerBuildTaskLoader',
     'DockerPushTaskLoader',
     'DockerTestTaskLoader',
+    'DockerPullTaskLoader',
 ]
