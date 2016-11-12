@@ -18,16 +18,14 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from cleo import Output
-from webdevops import BaseCommand
-from cleo.validators import Enum
 import os
 import re
-from webdevops import DockerfileUtility
-from graphviz import Digraph
 import yaml
 from datetime import date
-
+from graphviz import Digraph
+from cleo import Output
+from webdevops import BaseCommand, DockerfileUtility
+from cleo.validators import Enum
 
 class GenerateGraphCommand(BaseCommand):
     """

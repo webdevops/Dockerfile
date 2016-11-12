@@ -18,19 +18,14 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-from cleo import Output
-from webdevops import BaseCommand
-from webdevops import Provisioner
 import os
 import yaml
 import yamlordereddictloader
 import time
 import Queue
 import shutil
-
-from pprint import pprint
-
+from cleo import Output
+from webdevops import BaseCommand, Provisioner
 
 class GenerateProvisionCommand(BaseCommand):
     """
@@ -77,7 +72,7 @@ class GenerateProvisionCommand(BaseCommand):
             thread_name = "Pixie_%d" % i
             if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
                 self.line("<info>*</info> -> Create thread <fg=magenta>%s</>" % thread_name)
-            provisioner = Provisioner.Provisioner(
+            provisioner = Provisioner(
                 self.configuration['basePath'],
                 self.configuration['provisionPath'],
                 self.__queue,

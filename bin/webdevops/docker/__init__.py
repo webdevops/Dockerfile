@@ -18,10 +18,12 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from BaseCommand import BaseCommand
-from Provisioner import Provisioner
+from DockerBaseClient import DockerBaseClient
+from DockerPyClient import DockerPyClient
+from DockerCliClient import DockerCliClient
 
 __all__ = [
-    'BaseCommand',
-    'Provisioner',
+    'DockerBaseClient',
+    'DockerPyClient',
+    'DockerCliClient',
 ]

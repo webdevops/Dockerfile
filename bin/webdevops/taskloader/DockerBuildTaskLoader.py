@@ -19,12 +19,11 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
-import docker
 import sys
 import re
 import copy
-from webdevops.BaseTaskLoader import BaseTaskLoader
-from webdevops.BaseDockerTaskLoader import BaseDockerTaskLoader
+from .BaseTaskLoader import BaseTaskLoader
+from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from webdevops import DockerfileUtility
 from doit.task import dict_to_task
 
@@ -40,7 +39,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
             task = {
                 'name': 'DockerBuild|%s' % dockerfile['image']['fullname'],
                 'title': DockerBuildTaskLoader.task_title_build,
-                'actions': [(DockerBuildTaskLoader.action_docker_build, [self.dockerClient, dockerfile, self.configuration])],
+                'actions': [(DockerBuildTaskLoader.action_docker_build, [self.docker_client, dockerfile, self.configuration])],
                 'task_dep': []
             }
 
@@ -83,15 +82,12 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
 
             pull_status = False
             for retry_count in range(0, configuration['dockerBuild']['retry']):
-                response = docker_client.pull(
-                    repository=pull_image_name,
+                pull_status = docker_client.pull_image(
+                    name=pull_image_name,
                     tag=pull_image_tag,
-                    stream=True,
-                    decode=True
                 )
 
-                if DockerBuildTaskLoader.process_docker_client_response(response):
-                    pull_status = True
+                if pull_status:
                     break
                 elif retry_count < (configuration['dockerBuild']['retry'] - 1):
                     print '    failed, retrying... (try %s)' % (retry_count+1)
@@ -105,17 +101,13 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         print ' -> Building image %s ' % dockerfile['image']['fullname']
         build_status = False
         for retry_count in range(0, configuration['dockerBuild']['retry']):
-            response = docker_client.build(
-                path=os.path.dirname(dockerfile['path']),
-                tag=dockerfile['image']['fullname'],
-                pull=False,
+            build_status = docker_client.build_dockerfile(
+                path=dockerfile['path'],
+                name=dockerfile['image']['fullname'],
                 nocache=configuration['dockerBuild']['noCache'],
-                quiet=False,
-                decode=True
             )
 
-            if DockerBuildTaskLoader.process_docker_client_response(response):
-                build_status = True
+            if build_status:
                 break
             elif retry_count < (configuration['dockerBuild']['retry']-1):
                 print '    failed, retrying... (try %s)' % (retry_count+1)

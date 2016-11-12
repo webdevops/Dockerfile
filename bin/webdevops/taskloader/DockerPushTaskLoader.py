@@ -19,12 +19,11 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
-import docker
 import sys
 import re
 import copy
-from webdevops.BaseTaskLoader import BaseTaskLoader
-from webdevops.BaseDockerTaskLoader import BaseDockerTaskLoader
+from .BaseTaskLoader import BaseTaskLoader
+from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from webdevops import DockerfileUtility
 from doit.task import dict_to_task
 
@@ -42,7 +41,7 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
             task = {
                 'name': 'DockerPush|%s' % dockerfile['image']['fullname'],
                 'title': DockerPushTaskLoader.task_title_push,
-                'actions': [(DockerPushTaskLoader.action_docker_push, [self.dockerClient, dockerfile, self.configuration])],
+                'actions': [(DockerPushTaskLoader.action_docker_push, [self.docker_client, dockerfile, self.configuration])],
                 'task_dep': []
             }
 
@@ -70,13 +69,11 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
 
         push_status = False
         for retry_count in range(0, configuration['dockerPush']['retry']):
-            response = docker_client.push(
-                dockerfile['image']['fullname'],
-                stream=True,
-                decode=True
+            push_status = docker_client.push_image(
+                name=dockerfile['image']['fullname'],
             )
-            if DockerPushTaskLoader.process_docker_client_response(response):
-                push_status = True
+
+            if push_status:
                 break
             elif retry_count < (configuration['dockerBuild']['retry'] - 1):
                 print '    failed, retrying... (try %s)' % (retry_count+1)

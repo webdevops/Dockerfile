@@ -18,10 +18,14 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from BaseCommand import BaseCommand
-from Provisioner import Provisioner
+from BaseTaskLoader import BaseTaskLoader
+from BaseDockerTaskLoader import BaseDockerTaskLoader
+from DockerBuildTaskLoader import DockerBuildTaskLoader
+from DockerPushTaskLoader import DockerPushTaskLoader
 
 __all__ = [
-    'BaseCommand',
-    'Provisioner',
+    'BaseTaskLoader',
+    'DockerBuildTaskLoader',
+    'DockerPushTaskLoader',
+    'DockerTestTaskLoader',
 ]

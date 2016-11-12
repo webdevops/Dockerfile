@@ -20,8 +20,8 @@
 
 import os
 import re
-from webdevops.BaseTaskLoader import BaseTaskLoader
-from webdevops import TestinfraDockerPlugin
+from .BaseTaskLoader import BaseTaskLoader
+from webdevops.testinfra import TestinfraDockerPlugin
 from doit.task import dict_to_task
 import pytest
 

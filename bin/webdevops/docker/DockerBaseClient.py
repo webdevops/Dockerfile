@@ -18,10 +18,30 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from BaseCommand import BaseCommand
-from Provisioner import Provisioner
+class DockerBaseClient:
 
-__all__ = [
-    'BaseCommand',
-    'Provisioner',
-]
+    def __init__(self):
+        """
+        Constructor
+        """
+
+    def pull_image(self, name, tag):
+        """
+        Build dockerfile
+        """
+        print 'Pull image %s:%s' % (name, tag)
+        return True
+
+    def build_dockerfile(self, path, name, nocache=False):
+        """
+        Build dockerfile
+        """
+        print 'Build Dockerfile %s with name %s' % (path, name)
+        return True
+
+    def push_image(self, name):
+        """
+        Push one Docker image to registry
+        """
+        print 'Build image %s' % (name)
+        return True

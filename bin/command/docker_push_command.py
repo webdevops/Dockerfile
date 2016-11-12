@@ -18,12 +18,12 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import sys
 from cleo import Output
 from jinja2 import Environment, FileSystemLoader
-from webdevops import BaseCommand, DockerPushTaskLoader
+from webdevops import BaseCommand
+from webdevops.taskloader import DockerPushTaskLoader
 from doit.doit_cmd import DoitMain
-
-import sys
 
 class DockerPushCommand(BaseCommand):
     """
@@ -60,7 +60,12 @@ class DockerPushCommand(BaseCommand):
         if configuration['threads'] > 1:
             doitOpts.extend(['-n', str(configuration['threads']), '-P' 'thread'])
 
-        sys.exit(DoitMain(DockerPushTaskLoader(configuration)).run(doitOpts))
+        sys.exit(
+            DoitMain(
+                task_loader=DockerPushTaskLoader(configuration),
+                extra_config=configuration['doitConfig']
+            ).run(doitOpts)
+        )
 
 
 

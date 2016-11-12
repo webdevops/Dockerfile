@@ -19,11 +19,10 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
-import docker
 import sys
 import re
 import copy
-from webdevops.BaseTaskLoader import BaseTaskLoader
+from .BaseTaskLoader import BaseTaskLoader
 from webdevops import DockerfileUtility
 from doit.task import dict_to_task
 
@@ -62,7 +61,7 @@ class BaseDockerTaskLoader(BaseTaskLoader):
         'threads': 1,
     }
 
-    dockerClient = False
+    docker_client = False
 
     def __init__(self, configuration):
         """
@@ -71,7 +70,7 @@ class BaseDockerTaskLoader(BaseTaskLoader):
         BaseTaskLoader.__init__(self, configuration)
 
         # Init docker client
-        self.dockerClient = docker.from_env(assert_hostname=False)
+        self.docker_client = configuration['dockerClient']
 
     def load_tasks(self, cmd, opt_values, pos_args):
         """
@@ -129,44 +128,3 @@ class BaseDockerTaskLoader(BaseTaskLoader):
     def generate_task_list(self, dockerfile_list):
         return []
 
-    @staticmethod
-    def process_docker_client_response(response):
-        ret = True
-        last_message = False
-
-        def output_message(message, prevent_repeat=False):
-            if 'last_message' not in output_message.__dict__:
-                output_message.last_message = False
-
-            # Prevent repeating messages
-            if prevent_repeat:
-                if output_message.last_message and output_message.last_message == message:
-                    return
-                output_message.last_message = message
-            else:
-                output_message.last_message = False
-
-            sys.stdout.write(message.strip(' \t\n\r') + '\n')
-
-
-        if not response:
-            return False
-
-        for line in response:
-            # Keys
-            #   - error
-            #   - stream
-            #   - status, progressDetail, id
-            #   - progressDetail | aux [ tag, digest, size ]
-            if 'error' in line:
-                output_message(line['error'])
-                ret = False
-            if 'stream' in line:
-                output_message(line['stream'], prevent_repeat=True)
-            if 'status' in line:
-                message = line['status']
-                if 'id' in line:
-                    message += ' ' + line['id']
-                output_message(message)
-        print ''
-        return ret

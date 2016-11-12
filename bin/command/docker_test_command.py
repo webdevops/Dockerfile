@@ -18,17 +18,15 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import pytest
+import sys
 from cleo import Output
 from jinja2 import Environment, FileSystemLoader
-from webdevops import BaseCommand
-from webdevops import Dockerfile
-from webdevops import DockerTestTaskLoader
-from webdevops import DockerfileUtility
-from webdevops import TestinfraDockerPlugin
+from webdevops import BaseCommand, Dockerfile, DockerfileUtility
+from webdevops.testinfra import TestinfraDockerPlugin
+from webdevops.taskloader import DockerTestTaskLoader
 from doit.doit_cmd import DoitMain
-import pytest
 
-import sys
 
 class DockerTestCommand(BaseCommand):
     """
@@ -63,7 +61,11 @@ class DockerTestCommand(BaseCommand):
 
             doitOpts = []
             doitOpts.extend(['-n', str(configuration['threads']), '-P' 'thread'])
-            exitcode = DoitMain(DockerTestTaskLoader(configuration)).run(doitOpts)
+
+            exitcode = DoitMain(
+                task_loader=DockerTestTaskLoader(configuration),
+                extra_config=configuration['doitConfig']
+            ).run(doitOpts)
         else:
             # Run directly
             if configuration['dryRun']:
