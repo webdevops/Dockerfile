@@ -19,6 +19,7 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import subprocess
+import os
 from .DockerBaseClient import DockerBaseClient
 
 
@@ -35,7 +36,7 @@ class DockerCliClient(DockerBaseClient):
         """
         Build dockerfile
         """
-        cmd = ['docker', 'build', path, '--tag', name]
+        cmd = ['docker', 'build', os.path.dirname(path), '--tag', name]
 
         if nocache:
             cmd.append('--no-cache')
@@ -53,6 +54,7 @@ class DockerCliClient(DockerBaseClient):
         """
         Execute cmd and output stdout/stderr
         """
+
         proc = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
@@ -69,6 +71,7 @@ class DockerCliClient(DockerBaseClient):
         for line in proc.stderr.read().split('\n'):
             if line:
                 print line
+
         if proc.returncode == 0:
             return True
         else:
