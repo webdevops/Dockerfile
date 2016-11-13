@@ -23,6 +23,7 @@ from BaseDockerTaskLoader import BaseDockerTaskLoader
 from DockerBuildTaskLoader import DockerBuildTaskLoader
 from DockerPushTaskLoader import DockerPushTaskLoader
 from DockerPullTaskLoader import DockerPullTaskLoader
+from DockerTestTaskLoader import DockerTestTaskLoader
 
 __all__ = [
     'BaseTaskLoader',

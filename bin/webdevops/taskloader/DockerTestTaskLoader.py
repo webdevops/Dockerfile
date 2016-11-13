@@ -101,7 +101,7 @@ class DockerTestTaskLoader(BaseTaskLoader):
 
         testOpts.append(testfile)
 
-        exitcode = pytest.main(testOpts, plugins=[TestinfraDockerPlugin.TestinfraDockerPlugin(configuration)])
+        exitcode = pytest.main(testOpts, plugins=[TestinfraDockerPlugin(configuration)])
 
         if exitcode == 0:
             return True
