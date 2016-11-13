@@ -27,32 +27,6 @@ import pytest
 
 class DockerTestTaskLoader(BaseTaskLoader):
 
-    configuration_default = {
-        'basePath': False,
-
-        'docker': {
-            'imagePrefix': '',
-            'autoLatestTag': False,
-            'fromRegExp': re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE),
-            'pathRegex': False,
-            'autoPull': False,
-            'autoPullWhitelist': False,
-            'autoPullBlacklist': False,
-        },
-
-        'dockerTest': {
-            'fileFilter': 'test_.*.py$'
-        },
-
-        'filter': {
-            'whitelist': False,
-            'blacklist': False,
-        },
-
-        'verbosity': 1,
-        'threads': 1,
-    }
-
     def get_testfile_list(self):
         ret = []
         filter_regexp = re.compile(self.configuration['dockerTest']['fileFilter'])

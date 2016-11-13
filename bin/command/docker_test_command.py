@@ -54,11 +54,6 @@ class DockerTestCommand(BaseCommand):
             configuration['verbosity'] = 2
 
         if configuration['threads'] > 1:
-            # Run with doit
-            if configuration['dryRun']:
-                configuration['threads'] = 1
-                configuration['verbosity'] = 2
-
             doitOpts = []
             doitOpts.extend(['-n', str(configuration['threads']), '-P' 'thread'])
 

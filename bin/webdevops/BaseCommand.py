@@ -21,6 +21,7 @@
 from cleo import Command
 import os
 import multiprocessing
+from webdevops import Configuration
 
 class BaseCommand(Command):
     configuration = False
@@ -30,7 +31,7 @@ class BaseCommand(Command):
         Constructor
         """
         Command.__init__(self)
-        self.configuration = configuration
+        self.configuration = Configuration.merge(configuration)
 
     def get_configuration(self):
         """

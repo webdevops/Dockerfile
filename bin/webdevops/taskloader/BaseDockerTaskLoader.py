@@ -29,38 +29,6 @@ from doit.task import dict_to_task
 
 class BaseDockerTaskLoader(BaseTaskLoader):
 
-    configuration_default = {
-        'basePath': False,
-
-        'docker': {
-            'imagePrefix': '',
-            'autoLatestTag': False,
-            'fromRegExp': re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE),
-            'pathRegex': False,
-            'autoPull': False,
-            'autoPullWhitelist': False,
-            'autoPullBlacklist': False,
-        },
-
-        'dockerBuild': {
-            'noCache': False,
-            'dryRun': False,
-            'retry': 1
-        },
-
-        'dockerPush': {
-            'retry': 1
-        },
-
-        'filter': {
-            'whitelist': False,
-            'blacklist': False,
-        },
-
-        'verbosity': 1,
-        'threads': 1,
-    }
-
     docker_client = False
 
     def __init__(self, configuration):

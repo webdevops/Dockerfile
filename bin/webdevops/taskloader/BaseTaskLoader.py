@@ -23,28 +23,14 @@ from webdevops import DockerfileUtility
 from doit.cmd_base import TaskLoader
 
 class BaseTaskLoader(TaskLoader):
-    configuration_default = {}
-
     configuration = False
 
     def __init__(self, configuration):
         """
         Constrcutor
         """
-        def dictmerge(original, update):
-            """
-            Recursively update a dict.
-            Subdict's won't be overwritten but also updated.
-            """
-            for key, value in original.iteritems():
-                if key not in update:
-                    update[key] = value
-                elif isinstance(value, dict):
-                    dictmerge(value, update[key])
-            return update
-
         # Build configuration as namespace object
-        self.configuration = dictmerge(self.configuration_default, configuration)
+        self.configuration = configuration
 
 
     @staticmethod
