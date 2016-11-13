@@ -51,9 +51,9 @@ class TaskResult(object):
         """
         self._finished_on = time.time()
         self.result = result
-        line_sep = "\n<------------------------------------------------>\n"
-        self.out = unicode(line_sep).join([a.out for a in self.task.actions if a.out])
-        self.err = unicode(line_sep).join([a.err for a in self.task.actions if a.err])
+        line_sep = ""
+        self.out = line_sep.join([a.out for a in self.task.actions if a.out])
+        self.err = line_sep.join([a.err for a in self.task.actions if a.err])
         self.error = error
 
     def to_dict(self):
