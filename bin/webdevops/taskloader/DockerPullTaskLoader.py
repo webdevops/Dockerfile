@@ -64,7 +64,7 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
         """
         if configuration['dryRun']:
             print ''
-            return
+            return True
 
         pull_status = False
         for retry_count in range(0, configuration['dockerPush']['retry']):

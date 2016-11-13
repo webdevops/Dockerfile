@@ -71,7 +71,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
             print '      path: %s' % dockerfile['path']
             print '       dep: %s' % (DockerBuildTaskLoader.human_task_name_list(task.task_dep) if task.task_dep else 'none')
             print ''
-            return
+            return True
 
         # Pull base image (FROM: xxx) first
         if pull_parent_image:

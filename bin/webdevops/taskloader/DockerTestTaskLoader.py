@@ -88,11 +88,10 @@ class DockerTestTaskLoader(BaseTaskLoader):
         """
         Run test
         """
-
         if configuration['dryRun']:
             print '      testfile: %s' % (testfile)
             print ''
-            return
+            return True
 
         testOpts = []
 

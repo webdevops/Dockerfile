@@ -65,7 +65,7 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
         if configuration['dryRun']:
             print '       dep: %s' % (DockerPushTaskLoader.human_task_name_list(task.task_dep) if task.task_dep else 'none')
             print ''
-            return
+            return True
 
         push_status = False
         for retry_count in range(0, configuration['dockerPush']['retry']):
