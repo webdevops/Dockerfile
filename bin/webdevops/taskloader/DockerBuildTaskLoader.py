@@ -22,11 +22,11 @@ import os
 import sys
 import re
 import copy
+import time
 from .BaseTaskLoader import BaseTaskLoader
 from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from webdevops import DockerfileUtility
 from doit.task import dict_to_task
-
 
 class DockerBuildTaskLoader(BaseDockerTaskLoader):
 
@@ -39,7 +39,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
             task = {
                 'name': 'DockerBuild|%s' % dockerfile['image']['fullname'],
                 'title': DockerBuildTaskLoader.task_title_build,
-                'actions': [(DockerBuildTaskLoader.action_docker_build, [self.docker_client, dockerfile, self.configuration])],
+                'actions': [(BaseTaskLoader.task_runner, [DockerBuildTaskLoader.action_docker_build, [self.docker_client, dockerfile, self.configuration]])],
                 'task_dep': []
             }
 

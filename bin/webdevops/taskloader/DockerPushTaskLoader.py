@@ -41,7 +41,7 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
             task = {
                 'name': 'DockerPush|%s' % dockerfile['image']['fullname'],
                 'title': DockerPushTaskLoader.task_title_push,
-                'actions': [(DockerPushTaskLoader.action_docker_push, [self.docker_client, dockerfile, self.configuration])],
+                'actions': [(BaseTaskLoader.task_runner, [DockerPushTaskLoader.action_docker_push, [self.docker_client, dockerfile, self.configuration]])],
                 'task_dep': []
             }
 

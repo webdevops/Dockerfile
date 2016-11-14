@@ -18,7 +18,9 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import sys
 import re
+import StringIO
 from webdevops import DockerfileUtility
 from doit.cmd_base import TaskLoader
 
@@ -66,3 +68,25 @@ class BaseTaskLoader(TaskLoader):
         Finish task title function
         """
         return "Finished chain %s" % (BaseTaskLoader.human_task_name(task.name))
+
+    @staticmethod
+    def task_runner(func, args, task):
+        """
+        Wrapper for task runner
+
+        Will return the stdout if task fails as exception
+        """
+        backup = sys.stdout
+        sys.stdout = StringIO.StringIO()
+        result = False
+        result = func(task=task, *args)
+        out = sys.stdout.getvalue()
+        sys.stdout.close()
+        sys.stdout = backup
+
+        if not result:
+            raise Exception(out)
+        else:
+            print out
+
+        return result

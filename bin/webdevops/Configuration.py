@@ -38,7 +38,6 @@ default = {
     'doitConfig': {
         'GLOBAL': {
             'reporter': DoitReporter,
-            'verbosity': '2',
         }
     },
 

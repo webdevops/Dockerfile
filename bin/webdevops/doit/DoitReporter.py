@@ -19,9 +19,12 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import sys
+import os
 import time
 import datetime
 import StringIO
+import termcolor
+from termcolor import colored
 
 class TaskResult(object):
     """
@@ -51,9 +54,9 @@ class TaskResult(object):
         """
         self._finished_on = time.time()
         self.result = result
-        line_sep = ""
-        self.out = line_sep.join([a.out for a in self.task.actions if a.out])
-        self.err = line_sep.join([a.err for a in self.task.actions if a.err])
+
+        self.out = ''.join([a.out for a in self.task.actions if a.out])
+        self.err = ''.join([a.err for a in self.task.actions if a.err])
         self.error = error
 
     def to_dict(self):
@@ -90,6 +93,7 @@ class DoitReporter(object):
     def __init__(self, outstream, options=None): #pylint: disable=W0613
         # result is sent to stdout when doit finishes running
         self.t_results = {}
+        self.failures = []
         # when using this reporter output can not contain any other output
         # than the data. so anything that is sent to stdout/err needs to
         # be captured.
@@ -116,9 +120,6 @@ class DoitReporter(object):
         """
         self.t_results[task.name].start()
 
-        if task.actions and (task.name[0] != '_'):
-            self.write('.  %s started\n' % task.title())
-
     def add_failure(self, task, exception):
         """
         called when excution finishes with a failure
@@ -126,7 +127,8 @@ class DoitReporter(object):
         self.t_results[task.name].set_result('fail', exception.get_msg())
 
         if task.actions and (task.name[0] != '_'):
-            self.write('.  %s FAILED\n' % task.title())
+            self.write(colored('.  %s FAILED\n' % task.title(), 'red'))
+        self.failures.append({'task': task, 'exception': exception})
 
     def add_success(self, task):
         """
@@ -135,7 +137,7 @@ class DoitReporter(object):
         self.t_results[task.name].set_result('success')
 
         if task.actions and (task.name[0] != '_'):
-            self.write('.  %s finished\n' % task.title())
+            self.write(colored('.  %s finished\n' % task.title(), 'green'))
 
     def skip_uptodate(self, task):
         """
@@ -177,6 +179,7 @@ class DoitReporter(object):
         log_err = sys.stderr.getvalue()
         sys.stderr = self._old_err
 
+
         # add errors together with stderr output
         if self.errors:
             log_err += "\n".join(self.errors)
@@ -184,32 +187,81 @@ class DoitReporter(object):
         task_result_list = [
             tr.to_dict() for tr in self.t_results.values()]
 
-        print ''
-        print '-> finished all tasks'
-        print ''
+        self.writeln('')
+        self.writeln('-> finished all tasks')
+        self.writeln('')
 
         for task in task_result_list:
-            title = 'Task %s (duration: %s):' % (task['name'], self.duration(task['elapsed']))
+            # verbosity == 2 or if task has error
+            if not self.show_out or task['result'] == 'fail':
+                self.task_stdout(
+                    title=task['name'],
+                    duration=task['elapsed'],
+                    stdout=task['out'],
+                    stderr=task['err'],
+                    error=task['error']
+                )
 
-            if self.show_out:
-                print title
-                print '=' * len(title)
-                print '%s' % task['out']
-                print ''
-                print ''
-            else:
-                if self.show_err and task['err']:
-                    print title
-                    print '=' * len(title)
-                    print '%s' % task['err']
-                    print ''
-                    print ''
+            # print dir(task['task'])
+            # for foo in task['task'].actions:
+            #     print foo.err
+
+        if self.errors:
+            self.writeln("#" * 40 + "\n")
+            self.writeln("Execution aborted.\n")
+            self.writeln("\n".join(self.errors))
+            self.writeln("\n")
+
+    def task_stdout(self, title, duration=False, stdout=False, stderr=False, error=False, exception=False):
+        """
+        Show task output
+        """
+
+        text_duration = ''
+        if duration:
+            text_duration = ' (duration: % s)' % self.duration(duration)
+
+        title = 'Task %s%s:' % (title, text_duration)
+
+        self.writeln(title)
+        self.writeln('~' * len(title))
+
+        if stdout:
+            self.writeln('')
+            self.writeln('%s' % stdout)
+
+        if stderr:
+            self.writeln()
+            self.writeln(colored('-- STDERR OUTPUT --', 'red'))
+            self.write('%s' % stderr)
+            self.writeln('')
+
+        if error:
+            self.writeln()
+            self.writeln(colored('-- ERROR OUTPUT --', 'red'))
+            self.write('%s' % error)
+            self.writeln('')
+
+        if exception:
+            self.writeln()
+            self.writeln(colored('-- EXCEPTION --', 'red'))
+            self.write('%s' % exception.get_msg())
+
+            self.writeln()
+
+        print ''
 
     def duration(self, seconds):
         """
         Humanized duration
         """
         return str(datetime.timedelta(seconds=int(seconds)))
+
+    def writeln(self, text=''):
+        """
+        Output
+        """
+        self.outstream.write('%s\n' % text)
 
     def write(self, text):
         """

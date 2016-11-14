@@ -20,6 +20,7 @@
 
 import subprocess
 import os
+import tempfile
 from .DockerBaseClient import DockerBaseClient
 
 
@@ -55,24 +56,26 @@ class DockerCliClient(DockerBaseClient):
         Execute cmd and output stdout/stderr
         """
 
+        print 'Run Docker CLI: %s' % ' '.join(cmd)
+
+        file_stdout = tempfile.NamedTemporaryFile()
+
         proc = subprocess.Popen(
             cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stdout=file_stdout,
+            stderr=file_stdout,
             bufsize=-1,
         )
+
         while proc.poll() is None:
-            line = proc.stdout.readline()
-            if line:
-                print line
-        for line in proc.stdout.read().split('\n'):
-            if line:
-                print line
-        for line in proc.stderr.read().split('\n'):
-            if line:
-                print line
+            pass
+
+        with open(file_stdout.name, 'r') as f:
+            for line in f:
+                print line.rstrip('\n')
 
         if proc.returncode == 0:
             return True
         else:
+            print '>> failed command with return code %s' % proc.returncode
             return False

@@ -41,7 +41,7 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
             task = {
                 'name': 'DockerPull|%s' % dockerfile['image']['fullname'],
                 'title': DockerPullTaskLoader.task_title_pull,
-                'actions': [(DockerPullTaskLoader.action_docker_pull, [self.docker_client, dockerfile, self.configuration])],
+                'actions': [(BaseTaskLoader.task_runner, [DockerPullTaskLoader.action_docker_pull, [self.docker_client, dockerfile, self.configuration]])],
                 'task_dep': []
             }
 

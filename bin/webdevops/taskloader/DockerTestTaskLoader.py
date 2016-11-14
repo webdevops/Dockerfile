@@ -49,7 +49,7 @@ class DockerTestTaskLoader(BaseTaskLoader):
             task = {
                 'name': 'DockerTest|%s' % testfile,
                 'title': DockerTestTaskLoader.task_title_test,
-                'actions': [(DockerTestTaskLoader.action_run_test, [testfile, self.configuration])],
+                'actions': [(BaseTaskLoader.task_runner, [DockerTestTaskLoader.action_run_test, [testfile, self.configuration]])],
                 'task_dep': []
             }
 

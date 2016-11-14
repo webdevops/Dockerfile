@@ -56,10 +56,9 @@ class DockerBuildCommand(BaseCommand):
 
         if configuration['dryRun']:
             configuration['threads'] = 1
-            configuration['verbosity'] = 2
 
         if configuration['threads'] > 1:
-            doitOpts.extend(['-n', str(configuration['threads']), '-P' 'thread'])
+            doitOpts.extend(['-n', str(configuration['threads'])])
 
         sys.exit(
             DoitMain(

@@ -55,7 +55,7 @@ class DockerTestCommand(BaseCommand):
 
         if configuration['threads'] > 1:
             doitOpts = []
-            doitOpts.extend(['-n', str(configuration['threads']), '-P' 'thread'])
+            doitOpts.extend(['-n', str(configuration['threads'])])
 
             exitcode = DoitMain(
                 task_loader=DockerTestTaskLoader(configuration),
