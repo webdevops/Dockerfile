@@ -26,6 +26,9 @@ applications: webdevops/typo3 webdevops/piwik
 
 misc:      webdevops/mail-sandbox webdevops/sphinx webdevops/liquibase
 
+requirements:
+	pip install -r ./requirements.txt
+
 test:
 	python bin/console docker:test
 
