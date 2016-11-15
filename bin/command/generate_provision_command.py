@@ -25,7 +25,8 @@ import time
 import Queue
 import shutil
 from cleo import Output
-from webdevops import BaseCommand, Provisioner
+from webdevops import Provisioner
+from webdevops.command import BaseCommand
 
 class GenerateProvisionCommand(BaseCommand):
     """

@@ -191,7 +191,15 @@ class DoitReporter(object):
         self.writeln('-> finished all tasks')
         self.writeln('')
 
+        # sort task list by task name
+        task_result_list = sorted(task_result_list, key=lambda task: task['name'])
+
         for task in task_result_list:
+
+            # Skip finish chain task (no content, just finish tasks)
+            if 'FinishChain|' in task['name']:
+                continue
+
             # verbosity == 2 or if task has error
             if not self.show_out or task['result'] == 'fail':
                 self.task_stdout(
@@ -201,10 +209,6 @@ class DoitReporter(object):
                     stderr=task['err'],
                     error=task['error']
                 )
-
-            # print dir(task['task'])
-            # for foo in task['task'].actions:
-            #     print foo.err
 
         if self.errors:
             self.writeln("#" * 40 + "\n")
@@ -219,7 +223,7 @@ class DoitReporter(object):
 
         text_duration = ''
         if duration:
-            text_duration = ' (duration: % s)' % self.duration(duration)
+            text_duration = ' (duration: % s)' % str(datetime.timedelta(seconds=int(duration)))
 
         title = 'Task %s%s:' % (title, text_duration)
 
@@ -227,35 +231,25 @@ class DoitReporter(object):
         self.writeln('~' * len(title))
 
         if stdout:
-            self.writeln('')
+            self.writeln()
             self.writeln('%s' % stdout)
 
         if stderr:
             self.writeln()
             self.writeln(colored('-- STDERR OUTPUT --', 'red'))
             self.write('%s' % stderr)
-            self.writeln('')
 
         if error:
             self.writeln()
             self.writeln(colored('-- ERROR OUTPUT --', 'red'))
             self.write('%s' % error)
-            self.writeln('')
 
         if exception:
             self.writeln()
             self.writeln(colored('-- EXCEPTION --', 'red'))
             self.write('%s' % exception.get_msg())
 
-            self.writeln()
-
-        print ''
-
-    def duration(self, seconds):
-        """
-        Humanized duration
-        """
-        return str(datetime.timedelta(seconds=int(seconds)))
+        self.writeln()
 
     def writeln(self, text=''):
         """

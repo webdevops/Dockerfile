@@ -18,8 +18,26 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from Provisioner import Provisioner
+import sys
+from .BaseCommand import BaseCommand
+from doit.doit_cmd import DoitMain
 
-__all__ = [
-    'Provisioner',
-]
+class DoitCommand(BaseCommand):
+    foo = False
+
+    def run_doit(self, task_loader, configuration):
+        arguments = []
+        extra_configuration = {}
+
+        if 'threads' in configuration and configuration['threads'] > 1:
+            arguments.extend(['-n', str(configuration['threads'])])
+
+        if 'doitConfig' in configuration:
+            extra_configuration = configuration['doitConfig']
+
+        sys.exit(
+            DoitMain(
+                task_loader=task_loader,
+                extra_config=extra_configuration
+            ).run(arguments)
+        )

@@ -21,11 +21,10 @@
 import sys
 from cleo import Output
 from jinja2 import Environment, FileSystemLoader
-from webdevops import BaseCommand
+from webdevops.command import DoitCommand
 from webdevops.taskloader import DockerPushTaskLoader
-from doit.doit_cmd import DoitMain
 
-class DockerPushCommand(BaseCommand):
+class DockerPushCommand(DoitCommand):
     """
     Push images to registry/hub
 
@@ -37,8 +36,6 @@ class DockerPushCommand(BaseCommand):
     """
 
     def handle(self):
-        doitOpts = []
-
         configuration = self.get_configuration()
 
         configuration['threads'] = self.get_threads()
@@ -54,15 +51,11 @@ class DockerPushCommand(BaseCommand):
         if configuration['dryRun']:
             configuration['threads'] = 1
 
-        if configuration['threads'] > 1:
-            doitOpts.extend(['-n', str(configuration['threads'])])
-
-        sys.exit(
-            DoitMain(
-                task_loader=DockerPushTaskLoader(configuration),
-                extra_config=configuration['doitConfig']
-            ).run(doitOpts)
+        self.run_doit(
+            task_loader=DockerPushTaskLoader(configuration),
+            configuration=configuration
         )
+
 
 
 

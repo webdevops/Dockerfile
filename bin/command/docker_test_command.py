@@ -22,13 +22,12 @@ import pytest
 import sys
 from cleo import Output
 from jinja2 import Environment, FileSystemLoader
-from webdevops import BaseCommand, Dockerfile, DockerfileUtility
+from webdevops import Dockerfile, DockerfileUtility
+from webdevops.command import DoitCommand
 from webdevops.testinfra import TestinfraDockerPlugin
 from webdevops.taskloader import DockerTestTaskLoader
-from doit.doit_cmd import DoitMain
 
-
-class DockerTestCommand(BaseCommand):
+class DockerTestCommand(DoitCommand):
     """
     Tests images
 
@@ -54,13 +53,10 @@ class DockerTestCommand(BaseCommand):
             configuration['verbosity'] = 2
 
         if configuration['threads'] > 1:
-            doitOpts = []
-            doitOpts.extend(['-n', str(configuration['threads'])])
-
-            exitcode = DoitMain(
+            self.run_doit(
                 task_loader=DockerTestTaskLoader(configuration),
-                extra_config=configuration['doitConfig']
-            ).run(doitOpts)
+                configuration=configuration
+            )
         else:
             # Run directly
             if configuration['dryRun']:

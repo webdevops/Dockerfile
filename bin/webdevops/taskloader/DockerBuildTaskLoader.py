@@ -26,7 +26,6 @@ import time
 from .BaseTaskLoader import BaseTaskLoader
 from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from webdevops import DockerfileUtility
-from doit.task import dict_to_task
 
 class DockerBuildTaskLoader(BaseDockerTaskLoader):
 
@@ -34,7 +33,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         """
         Generate task list for docker build
         """
-        taskList = []
+        tasklist = []
         for dockerfile in dockerfileList:
             task = {
                 'name': 'DockerBuild|%s' % dockerfile['image']['fullname'],
@@ -46,17 +45,17 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
             if dockerfile['dependency']:
                 task['task_dep'].append('DockerBuild|%s' % dockerfile['dependency']);
 
-            taskList.append(dict_to_task(task))
+            tasklist.append(task)
 
-        task = {
-            'name': 'FinishChain|DockerBuild',
-            'title': DockerBuildTaskLoader.task_title_finish,
-            'actions': [(DockerBuildTaskLoader.action_chain_finish, ['docker build'])],
-            'task_dep': [task.name for task in taskList]
-        }
-        taskList.append(dict_to_task(task))
+        # task = {
+        #     'name': 'FinishChain|DockerBuild',
+        #     'title': DockerBuildTaskLoader.task_title_finish,
+        #     'actions': [(DockerBuildTaskLoader.action_chain_finish, ['docker build'])],
+        #     'task_dep': [task.name for task in taskList]
+        # }
+        # tasklist.append(task)
 
-        return taskList
+        return tasklist
 
     @staticmethod
     def action_docker_build(docker_client, dockerfile, configuration, task):
@@ -70,7 +69,6 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
             print '      from: %s (pull: %s)' % (dockerfile['image']['from'], ('yes' if pull_parent_image else 'no'))
             print '      path: %s' % dockerfile['path']
             print '       dep: %s' % (DockerBuildTaskLoader.human_task_name_list(task.task_dep) if task.task_dep else 'none')
-            print ''
             return True
 
         # Pull base image (FROM: xxx) first

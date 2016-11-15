@@ -43,7 +43,7 @@ class DockerTestTaskLoader(BaseTaskLoader):
         """
         config = {'verbosity': self.configuration['verbosity']}
 
-        taskList = []
+        tasklist = []
 
         for testfile in self.get_testfile_list():
             task = {
@@ -52,10 +52,11 @@ class DockerTestTaskLoader(BaseTaskLoader):
                 'actions': [(BaseTaskLoader.task_runner, [DockerTestTaskLoader.action_run_test, [testfile, self.configuration]])],
                 'task_dep': []
             }
+            tasklist.append(task)
 
-            taskList.append(dict_to_task(task))
+        tasklist = self.process_tasklist(tasklist)
 
-        return taskList, config
+        return tasklist, config
 
     @staticmethod
     def action_run_test(testfile, configuration, task):
@@ -64,17 +65,16 @@ class DockerTestTaskLoader(BaseTaskLoader):
         """
         if configuration['dryRun']:
             print '      testfile: %s' % (testfile)
-            print ''
             return True
 
-        testOpts = []
+        test_opts = []
 
         if configuration['verbosity'] > 1:
-            testOpts.extend(['-v'])
+            test_opts.extend(['-v'])
 
-        testOpts.append(testfile)
+            test_opts.append(testfile)
 
-        exitcode = pytest.main(testOpts, plugins=[TestinfraDockerPlugin(configuration)])
+        exitcode = pytest.main(test_opts, plugins=[TestinfraDockerPlugin(configuration)])
 
         if exitcode == 0:
             return True

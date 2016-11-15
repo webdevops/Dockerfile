@@ -21,11 +21,11 @@
 import sys
 from cleo import Output
 from jinja2 import Environment, FileSystemLoader
-from webdevops import BaseCommand, Dockerfile
+from webdevops import Dockerfile
+from webdevops.command import DoitCommand
 from webdevops.taskloader import DockerBuildTaskLoader
-from doit.doit_cmd import DoitMain
 
-class DockerBuildCommand(BaseCommand):
+class DockerBuildCommand(DoitCommand):
     """
     Build images
 
@@ -38,8 +38,6 @@ class DockerBuildCommand(BaseCommand):
     """
 
     def handle(self):
-        doitOpts = []
-
         configuration = self.get_configuration()
 
         configuration['dockerBuild']['noCache'] = self.option('no-cache')
@@ -57,14 +55,9 @@ class DockerBuildCommand(BaseCommand):
         if configuration['dryRun']:
             configuration['threads'] = 1
 
-        if configuration['threads'] > 1:
-            doitOpts.extend(['-n', str(configuration['threads'])])
-
-        sys.exit(
-            DoitMain(
-                task_loader=DockerBuildTaskLoader(configuration),
-                extra_config=configuration['doitConfig']
-            ).run(doitOpts)
+        self.run_doit(
+            task_loader=DockerBuildTaskLoader(configuration),
+            configuration=configuration
         )
 
 

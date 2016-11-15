@@ -21,11 +21,10 @@
 import sys
 from cleo import Output
 from jinja2 import Environment, FileSystemLoader
-from webdevops import BaseCommand
+from webdevops.command import DoitCommand
 from webdevops.taskloader import DockerPullTaskLoader
-from doit.doit_cmd import DoitMain
 
-class DockerPullCommand(BaseCommand):
+class DockerPullCommand(DoitCommand):
     """
     Pull all built images from registry/hub
 
@@ -37,8 +36,6 @@ class DockerPullCommand(BaseCommand):
     """
 
     def handle(self):
-        doitOpts = []
-
         configuration = self.get_configuration()
 
         configuration['threads'] = self.get_threads()
@@ -54,14 +51,9 @@ class DockerPullCommand(BaseCommand):
         if configuration['dryRun']:
             configuration['threads'] = 1
 
-        if configuration['threads'] > 1:
-            doitOpts.extend(['-n', str(configuration['threads'])])
-
-        sys.exit(
-            DoitMain(
-                task_loader=DockerPullTaskLoader(configuration),
-                extra_config=configuration['doitConfig']
-            ).run(doitOpts)
+        self.run_doit(
+            task_loader=DockerPullTaskLoader(configuration),
+            configuration=configuration
         )
 
 

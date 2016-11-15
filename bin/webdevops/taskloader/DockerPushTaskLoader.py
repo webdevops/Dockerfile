@@ -25,8 +25,6 @@ import copy
 from .BaseTaskLoader import BaseTaskLoader
 from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from webdevops import DockerfileUtility
-from doit.task import dict_to_task
-
 
 class DockerPushTaskLoader(BaseDockerTaskLoader):
 
@@ -34,8 +32,7 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
         """
         Generate task list for docker push
         """
-        taskList = []
-
+        tasklist = []
 
         for dockerfile in dockerfile_list:
             task = {
@@ -44,18 +41,17 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
                 'actions': [(BaseTaskLoader.task_runner, [DockerPushTaskLoader.action_docker_push, [self.docker_client, dockerfile, self.configuration]])],
                 'task_dep': []
             }
+            tasklist.append(task)
 
-            taskList.append(dict_to_task(task))
+        # task = {
+        #     'name': 'FinishChain|DockerPush',
+        #     'title': DockerPushTaskLoader.task_title_finish,
+        #     'actions': [(DockerPushTaskLoader.action_chain_finish, ['docker push'])],
+        #     'task_dep': [task.name for task in taskList]
+        # }
+        # tasklist.append(task)
 
-        task = {
-            'name': 'FinishChain|DockerPush',
-            'title': DockerPushTaskLoader.task_title_finish,
-            'actions': [(DockerPushTaskLoader.action_chain_finish, ['docker push'])],
-            'task_dep': [task.name for task in taskList]
-        }
-        taskList.append(dict_to_task(task))
-
-        return taskList
+        return tasklist
 
     @staticmethod
     def action_docker_push(docker_client, dockerfile, configuration, task):
@@ -63,8 +59,7 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
         Push one Docker image to registry
         """
         if configuration['dryRun']:
-            print '       dep: %s' % (DockerPushTaskLoader.human_task_name_list(task.task_dep) if task.task_dep else 'none')
-            print ''
+            print '      push: %s' % (dockerfile['image']['fullname'])
             return True
 
         push_status = False

@@ -20,9 +20,11 @@
 
 import sys
 import re
+import time
 import StringIO
 from webdevops import DockerfileUtility
 from doit.cmd_base import TaskLoader
+from doit.task import dict_to_task
 
 class BaseTaskLoader(TaskLoader):
     configuration = False
@@ -33,6 +35,16 @@ class BaseTaskLoader(TaskLoader):
         """
         # Build configuration as namespace object
         self.configuration = configuration
+
+
+    def process_tasklist(self, tasklist):
+        """
+        Process task list and create task objects
+        """
+        ret = []
+        for task in tasklist:
+            ret.append(dict_to_task(task))
+        return ret
 
 
     @staticmethod
@@ -59,7 +71,7 @@ class BaseTaskLoader(TaskLoader):
         """
         Action of finish chain
         """
-        print ''
+        return
 
 
     @staticmethod

@@ -57,9 +57,10 @@ class BaseDockerTaskLoader(BaseTaskLoader):
 
         # print json.dumps(dockerfile_list, sort_keys=True, indent = 4, separators = (',', ': '));sys.exit(0);
 
-        taskList = self.generate_task_list(dockerfile_list)
+        tasklist = self.generate_task_list(dockerfile_list)
+        tasklist = self.process_tasklist(tasklist)
 
-        return taskList, config
+        return tasklist, config
 
     def process_dockerfile_list(self, dockerfile_list):
         """

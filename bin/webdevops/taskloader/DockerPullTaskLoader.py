@@ -25,8 +25,6 @@ import copy
 from .BaseTaskLoader import BaseTaskLoader
 from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from webdevops import DockerfileUtility
-from doit.task import dict_to_task
-
 
 class DockerPullTaskLoader(BaseDockerTaskLoader):
 
@@ -34,8 +32,7 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
         """
         Generate task list for docker pull
         """
-        taskList = []
-
+        tasklist = []
 
         for dockerfile in dockerfile_list:
             task = {
@@ -44,18 +41,17 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
                 'actions': [(BaseTaskLoader.task_runner, [DockerPullTaskLoader.action_docker_pull, [self.docker_client, dockerfile, self.configuration]])],
                 'task_dep': []
             }
+            tasklist.append(task)
 
-            taskList.append(dict_to_task(task))
+        # task = {
+        #     'name': 'FinishChain|DockerPush',
+        #     'title': DockerPullTaskLoader.task_title_finish,
+        #     'actions': [(DockerPullTaskLoader.action_chain_finish, ['docker push'])],
+        #     'task_dep': [task.name for task in taskList]
+        # }
+        # tasklist.append(task)
 
-        task = {
-            'name': 'FinishChain|DockerPush',
-            'title': DockerPullTaskLoader.task_title_finish,
-            'actions': [(DockerPullTaskLoader.action_chain_finish, ['docker push'])],
-            'task_dep': [task.name for task in taskList]
-        }
-        taskList.append(dict_to_task(task))
-
-        return taskList
+        return tasklist
 
     @staticmethod
     def action_docker_pull(docker_client, dockerfile, configuration, task):
@@ -63,7 +59,7 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
         Pull one Docker image from registry
         """
         if configuration['dryRun']:
-            print ''
+            print '      pull: %s' % (dockerfile['image']['fullname'])
             return True
 
         pull_status = False

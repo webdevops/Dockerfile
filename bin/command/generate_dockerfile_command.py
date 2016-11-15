@@ -21,7 +21,8 @@
 import os
 from cleo import Output
 from jinja2 import Environment, FileSystemLoader
-from webdevops import BaseCommand, DockerfileUtility
+from webdevops import DockerfileUtility
+from webdevops.command import BaseCommand
 
 class GenerateDockerfileCommand(BaseCommand):
     """

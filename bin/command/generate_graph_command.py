@@ -24,7 +24,8 @@ import yaml
 from datetime import date
 from graphviz import Digraph
 from cleo import Output
-from webdevops import BaseCommand, DockerfileUtility
+from webdevops import DockerfileUtility
+from webdevops.command import BaseCommand
 from cleo.validators import Enum
 
 class GenerateGraphCommand(BaseCommand):
