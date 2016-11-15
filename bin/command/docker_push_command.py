@@ -38,19 +38,6 @@ class DockerPushCommand(DoitCommand):
     def handle(self):
         configuration = self.get_configuration()
 
-        configuration['threads'] = self.get_threads()
-
-        configuration['whitelist'] = self.get_whitelist()
-        configuration['blacklist'] = self.get_blacklist()
-
-        configuration['dryRun'] = self.get_dry_run()
-
-        if self.output.is_verbose():
-            configuration['verbosity'] = 2
-
-        if configuration['dryRun']:
-            configuration['threads'] = 1
-
         self.run_doit(
             task_loader=DockerPushTaskLoader(configuration),
             configuration=configuration

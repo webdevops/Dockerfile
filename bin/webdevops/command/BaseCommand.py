@@ -37,8 +37,37 @@ class BaseCommand(Command):
         """
         Get configuration
         """
-        return self.configuration
+        configuration = self.configuration
 
+        # threads
+        try:
+            configuration['threads'] = self.get_threads()
+        except (Exception):
+            pass
+
+        # whitelist
+        try:
+            configuration['whitelist'] = self.get_whitelist()
+        except (Exception):
+            pass
+
+        # blacklist
+        try:
+            configuration['blacklist'] = self.get_blacklist()
+        except (Exception):
+            pass
+
+        # dryrun
+        try:
+            configuration['dryRun'] = self.get_dry_run()
+        except (Exception):
+            pass
+
+        # verbosity
+        if self.output.is_verbose():
+            configuration['verbosity'] = 2
+
+        return configuration
 
     def get_whitelist(self):
         """
