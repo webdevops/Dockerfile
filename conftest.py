@@ -18,10 +18,20 @@ def TestinfraBackend(request):
     # Override the TestinfraBackend fixture,
     # all testinfra fixtures (i.e. modules) depend on it.
 
+    docker_command = ''
+    docker_image = request.param
+
+    # Check for custom command in docker image name
+    if "#" in docker_image:
+        docker_image, docker_command = docker_image.split("#", 2)
+
+        if docker_command == "loop":
+            docker_command = 'tail -f /dev/null'
+
     docker_id = check_output(
-        "docker run -d -v \"%s:/app:ro\" %s tail -f /dev/null",
+        "docker run -d -v \"%s:/app:ro\" %s " + docker_command,
         test_conf_app_path,
-        request.param
+        docker_image
     )
 
     def teardown():

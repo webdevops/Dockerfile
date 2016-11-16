@@ -2,12 +2,7 @@ import pytest
 import stat
 import re
 
-@pytest.fixture()
-def Liquibase(Command):
-    def f(arg):
-        return Command.check_output("liquibase %s", arg)
-    return f
-
+@pytest.mark.docker_loop()
 @pytest.mark.docker_images('webdevops/liquibase')
 def test_liquibase_cmd(Command, File):
     assert File('/usr/local/bin/liquibase').exists

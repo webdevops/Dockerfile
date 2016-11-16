@@ -94,6 +94,11 @@ class TestinfraDockerPlugin:
                         term=blacklist_term
                     )
 
+            # Check for infinite loop
+            marker = getattr(metafunc.function, "docker_loop", None)
+            if marker is not None:
+                images = ['{}#loop'.format(item) for item in images]
+
             # If the test has a destructive marker, we scope TestinfraBackend
             # at function level (i.e. executing for each test). If not we scope
             # at session level (i.e. all tests will share the same container)
