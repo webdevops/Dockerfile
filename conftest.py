@@ -42,7 +42,7 @@ def TestinfraBackend(request):
     request.addfinalizer(teardown)
 
     # wait for getting the image up
-    if docker_sleeptime > 0:
+    if docker_sleeptime:
         time.sleep(docker_sleeptime)
 
     # Return a dynamic created backend
