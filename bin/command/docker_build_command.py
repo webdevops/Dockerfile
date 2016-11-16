@@ -37,12 +37,10 @@ class DockerBuildCommand(DoitCommand):
         {--blacklist=?*          : image/tag blacklist }
     """
 
-    def handle(self):
-        configuration = self.get_configuration()
-
+    def run_task(self, configuration):
         configuration['dockerBuild']['noCache'] = self.option('no-cache')
 
-        self.run_doit(
+        return self.run_doit(
             task_loader=DockerBuildTaskLoader(configuration),
             configuration=configuration
         )

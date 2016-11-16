@@ -35,10 +35,8 @@ class DockerPullCommand(DoitCommand):
         {--blacklist=?*          : image/tag blacklist }
     """
 
-    def handle(self):
-        configuration = self.get_configuration()
-
-        self.run_doit(
+    def run_task(self, configuration):
+        return self.run_doit(
             task_loader=DockerPullTaskLoader(configuration),
             configuration=configuration
         )

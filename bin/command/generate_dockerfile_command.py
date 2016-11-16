@@ -38,7 +38,7 @@ class GenerateDockerfileCommand(BaseCommand):
     template_header = '{% extends "Dockerfile/layout.jinja2" %}\n{% block content %}'
     template_footer = '{% endblock %}'
 
-    def handle(self):
+    def run_task(self, configuration):
         template_path = self.configuration['templatePath']
         dockerfile_path = self.configuration['basePath']
         whitelist = self.get_whitelist()

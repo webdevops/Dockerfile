@@ -38,15 +38,9 @@ class DockerTestCommand(DoitCommand):
         {--blacklist=?*          : image/tag blacklist }
     """
 
-    def handle(self):
-        exitcode = 0
-        configuration = self.get_configuration()
-
-        if self.output.is_verbose():
-            configuration['verbosity'] = 2
-
+    def run_task(self, configuration):
         if configuration['threads'] > 1:
-            self.run_doit(
+            return self.run_doit(
                 task_loader=DockerTestTaskLoader(configuration),
                 configuration=configuration
             )
@@ -63,5 +57,5 @@ class DockerTestCommand(DoitCommand):
                 if self.output.is_verbose():
                     testOpts.extend(['-v'])
 
-                exitcode = pytest.main(testOpts, plugins = [TestinfraDockerPlugin(configuration)])
-        sys.exit(exitcode)
+                return pytest.main(testOpts, plugins = [TestinfraDockerPlugin(configuration)])
+

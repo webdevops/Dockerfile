@@ -55,7 +55,7 @@ class GenerateGraphCommand(BaseCommand):
 
     conf = ''
 
-    def handle(self):
+    def run_task(self, configuration):
         if self.option('output'):
             self.configuration['imagePath'] = self.option('output')
 

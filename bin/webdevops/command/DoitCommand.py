@@ -35,9 +35,9 @@ class DoitCommand(BaseCommand):
         if 'doitConfig' in configuration:
             extra_configuration = configuration['doitConfig']
 
-        sys.exit(
-            DoitMain(
-                task_loader=task_loader,
-                extra_config=extra_configuration
-            ).run(arguments)
-        )
+
+        exitcode = DoitMain(
+            task_loader=task_loader,
+            extra_config=extra_configuration
+        ).run(arguments)
+        self.shutdown(exitcode=exitcode)

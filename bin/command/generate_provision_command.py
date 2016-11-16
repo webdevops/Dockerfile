@@ -44,8 +44,7 @@ class GenerateProvisionCommand(BaseCommand):
 
     __queue = ''
 
-    def handle(self):
-        start = time.time()
+    def run_task(self, configuration):
         self.__queue = Queue.Queue()
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
             self.line('<info>provision :</info> %s' % self.configuration['provisionPath'])
@@ -65,8 +64,6 @@ class GenerateProvisionCommand(BaseCommand):
         self.__queue.join()
         if os.path.exists('baselayout.tar'):
             os.remove('baselayout.tar')
-        end = time.time()
-        print("elapsed time : %d second" % (end - start))
 
     def __create_thread(self):
         for i in range(self.get_threads()):
