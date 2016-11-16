@@ -41,14 +41,14 @@ COLUMNS="$(tput cols)"
 
 DOCKERFILE_EXTRA=""
 
-source "${BASE_DIR}/bin/functions.sh"
+source "${SCRIPT_DIR}/functions.sh"
 
 cd "$SCRIPT_DIR"
 
 OS_VERSION=""
 
-DOCKER_REPOSITORY="$(cat "$BASE_DIR/DOCKER_REPOSITORY")"
-DOCKER_TAG_LATEST="$(cat "$BASE_DIR/DOCKER_TAG_LATEST")"
+DOCKER_REPOSITORY="$(cat "$SCRIPT_DIR/DOCKER_REPOSITORY")"
+DOCKER_TAG_LATEST="$(cat "$SCRIPT_DIR/DOCKER_TAG_LATEST")"
 
 ###
  # Relative dir
@@ -96,10 +96,12 @@ function runTestForTag() {
 
     DOCKERFILE="Dockerfile.${DOCKER_IMAGE//\//-}-${DOCKER_TAG}.test"
 
+    rm -f "$DOCKERFILE"
+
     ## Build Dockerfile
     echo "FROM $DOCKER_IMAGE_WITH_TAG
 $DOCKERFILE_EXTRA
-COPY conf/ /" > $DOCKERFILE
+COPY conf/ /" > "$DOCKERFILE"
 
 
     if [ "${DEBUG}" -eq 1 ]; then
