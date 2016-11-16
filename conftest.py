@@ -1,6 +1,5 @@
-import os
-import pytest
-import testinfra
+import os, time
+import pytest, testinfra
 
 conftest_path = os.path.dirname(os.path.realpath(__file__))
 test_path = os.path.join(conftest_path, 'tests')
@@ -20,6 +19,7 @@ def TestinfraBackend(request):
 
     docker_command = ''
     docker_image = request.param
+    docker_sleeptime = 5
 
     # Check for custom command in docker image name
     if "#" in docker_image:
@@ -27,6 +27,7 @@ def TestinfraBackend(request):
 
         if docker_command == "loop":
             docker_command = 'tail -f /dev/null'
+            docker_sleeptime = 0
 
     docker_id = check_output(
         "docker run -d -v \"%s:/app:ro\" %s " + docker_command,
@@ -39,6 +40,10 @@ def TestinfraBackend(request):
 
     # Destroy the container at the end of the fixture life
     request.addfinalizer(teardown)
+
+    # wait for getting the image up
+    if docker_sleeptime > 0:
+        time.sleep(docker_sleeptime)
 
     # Return a dynamic created backend
     return testinfra.get_backend("docker://" + docker_id)
