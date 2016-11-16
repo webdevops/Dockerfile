@@ -5,3 +5,5 @@ yamlordereddictloader>=0.1.0
 testinfra>=1.4.2
 doit>=0.29.0
 termcolor>=1.1.0
+pytest-timeout>=1.0.0
+pytest-rerunfailures>=1.0.0
