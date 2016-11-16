@@ -103,4 +103,5 @@ class TestinfraDockerPlugin:
                 scope = "session"
 
             metafunc.parametrize(
-                "TestinfraBackend", images, indirect=True, scope=scope)
+                "TestinfraBackend", images, indirect=True, scope=scope
+            )

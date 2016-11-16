@@ -1,5 +1,11 @@
+import os
 import pytest
 import testinfra
+
+conftest_path = os.path.dirname(os.path.realpath(__file__))
+test_path = os.path.join(conftest_path, 'tests')
+test_conf_path = os.path.join(test_path, 'conf')
+test_conf_app_path = os.path.join(test_conf_path, 'app')
 
 # Use testinfra to get a handy function to run commands locally
 check_output = testinfra.get_backend(
@@ -13,7 +19,9 @@ def TestinfraBackend(request):
     # all testinfra fixtures (i.e. modules) depend on it.
 
     docker_id = check_output(
-        "docker run -d %s tail -f /dev/null", request.param
+        "docker run -d -v \"%s:/app:ro\" %s tail -f /dev/null",
+        test_conf_app_path,
+        request.param
     )
 
     def teardown():
