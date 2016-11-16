@@ -38,9 +38,9 @@ class BaseCommand(Command):
         self.configuration = Configuration.merge(configuration)
 
     def handle(self):
-        self.startup()
-
         self.build_configuration()
+
+        self.startup()
         exitcode = self.run_task(configuration=self.configuration)
 
         if exitcode == False:
@@ -56,11 +56,17 @@ class BaseCommand(Command):
         return
 
     def startup(self):
+        """
+        Show startup message
+        """
         self.time_startup = time.time()
         print 'Executing %s (threads: %s)' % (self.name, self.configuration['threads'])
         print ''
 
     def shutdown(self, exitcode=0):
+        """
+        Show shutdown message
+        """
         self.time_finish = time.time()
 
         duration = self.time_finish - self.time_startup
@@ -68,7 +74,7 @@ class BaseCommand(Command):
 
         print ''
         if exitcode == 0:
-            print '> finished execution in %s' % (duration)
+            print '> finished execution in %s successfully' % (duration)
         else:
             print '> finished execution in %s with errors (exitcode %s)' % (duration, exitcode)
         sys.exit(exitcode)
