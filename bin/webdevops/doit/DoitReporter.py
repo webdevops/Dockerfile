@@ -59,14 +59,23 @@ class TaskResult(object):
         self.err = ''.join([a.err for a in self.task.actions if a.err])
         self.error = error
 
+        self.calculate_elapsed()
+
+    def calculate_elapsed(self):
+        """
+        calculate elapsed time
+        """
+        if self._started_on is not None and self.elapsed is None:
+            started = datetime.datetime.utcfromtimestamp(self._started_on)
+            self.started = str(started)
+            self.elapsed = self._finished_on - self._started_on
+
     def to_dict(self):
         """
         convert result data to dictionary
         """
-        if self._started_on is not None:
-            started = datetime.datetime.utcfromtimestamp(self._started_on)
-            self.started = str(started)
-            self.elapsed = self._finished_on - self._started_on
+
+        self.calculate_elapsed()
 
         ret = {
             'name': self.task.name,
@@ -127,7 +136,8 @@ class DoitReporter(object):
         self.t_results[task.name].set_result('fail', exception.get_msg())
 
         if task.actions and (task.name[0] != '_'):
-            self.write(colored('.  %s FAILED\n' % task.title(), 'red'))
+            duration = self.duration(self.t_results[task.name].elapsed)
+            self.write(colored('.  %s FAILED (%s)\n' % (task.title(), duration), 'red'))
         self.failures.append({'task': task, 'exception': exception})
 
     def add_success(self, task):
@@ -137,7 +147,8 @@ class DoitReporter(object):
         self.t_results[task.name].set_result('success')
 
         if task.actions and (task.name[0] != '_'):
-            self.write(colored('.  %s finished\n' % task.title(), 'green'))
+            duration = self.duration(self.t_results[task.name].elapsed)
+            self.write(colored('.  %s finished (%s)\n' % (task.title(), duration), 'green'))
 
     def skip_uptodate(self, task):
         """
@@ -223,7 +234,7 @@ class DoitReporter(object):
 
         text_duration = ''
         if duration:
-            text_duration = ' (duration: % s)' % str(datetime.timedelta(seconds=int(duration)))
+            text_duration = ' (%s)' % self.duration(duration)
 
         title = 'Task %s%s:' % (title, text_duration)
 
@@ -250,6 +261,9 @@ class DoitReporter(object):
             self.write('%s' % exception.get_msg())
 
         self.writeln()
+
+    def duration(self, duration):
+        return 'duration: %s' % str(datetime.timedelta(seconds=int(duration)))
 
     def writeln(self, text=''):
         """
