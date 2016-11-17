@@ -32,8 +32,9 @@ requirements:
 test:
 	python bin/console docker:test
 
-test-hub-images:
-	DOCKER_PULL=1 make test
+old-test:
+	test/run.sh
+
 
 baselayout:
 	python bin/console generate:provision --baselayout
