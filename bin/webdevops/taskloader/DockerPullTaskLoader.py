@@ -37,8 +37,8 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
         for dockerfile in dockerfile_list:
             task = {
                 'name': 'DockerPull|%s' % dockerfile['image']['fullname'],
-                'title': DockerPullTaskLoader.task_title_pull,
-                'actions': [(BaseTaskLoader.task_runner, [DockerPullTaskLoader.action_docker_pull, [self.docker_client, dockerfile, self.configuration]])],
+                'title': DockerPullTaskLoader.task_title,
+                'actions': [(BaseTaskLoader.task_runner, [DockerPullTaskLoader.task_run, [self.docker_client, dockerfile, self.configuration]])],
                 'task_dep': []
             }
             tasklist.append(task)
@@ -54,7 +54,7 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
         return tasklist
 
     @staticmethod
-    def action_docker_pull(docker_client, dockerfile, configuration, task):
+    def task_run(docker_client, dockerfile, configuration, task):
         """
         Pull one Docker image from registry
         """
@@ -79,7 +79,7 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
         return pull_status
 
     @staticmethod
-    def task_title_pull(task):
+    def task_title(task):
         """
         Pull task title function
         """

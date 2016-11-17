@@ -37,8 +37,8 @@ class DockerTestTaskLoader(BaseDockerTaskLoader):
         for dockerfile in dockerfile_list:
             task = {
                 'name': 'DockerTest|%s' % dockerfile['image']['fullname'],
-                'title': DockerTestTaskLoader.task_title_test,
-                'actions': [(BaseTaskLoader.task_runner, [DockerTestTaskLoader.action_run_test, [dockerfile, self.configuration]])],
+                'title': DockerTestTaskLoader.task_title,
+                'actions': [(BaseTaskLoader.task_runner, [DockerTestTaskLoader.task_run, [dockerfile, self.configuration]])],
                 'task_dep': []
             }
             tasklist.append(task)
@@ -54,7 +54,7 @@ class DockerTestTaskLoader(BaseDockerTaskLoader):
         return tasklist
 
     @staticmethod
-    def action_run_test(dockerfile, configuration, task):
+    def task_run(dockerfile, configuration, task):
         """
         Run test
         """
@@ -79,7 +79,7 @@ class DockerTestTaskLoader(BaseDockerTaskLoader):
             return False
 
     @staticmethod
-    def task_title_test(task):
+    def task_title(task):
         """
         Build task title function
         """

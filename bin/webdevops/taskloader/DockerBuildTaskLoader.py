@@ -37,8 +37,8 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         for dockerfile in dockerfileList:
             task = {
                 'name': 'DockerBuild|%s' % dockerfile['image']['fullname'],
-                'title': DockerBuildTaskLoader.task_title_build,
-                'actions': [(BaseTaskLoader.task_runner, [DockerBuildTaskLoader.action_docker_build, [self.docker_client, dockerfile, self.configuration]])],
+                'title': DockerBuildTaskLoader.task_title,
+                'actions': [(BaseTaskLoader.task_runner, [DockerBuildTaskLoader.task_run, [self.docker_client, dockerfile, self.configuration]])],
                 'task_dep': []
             }
 
@@ -58,7 +58,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         return tasklist
 
     @staticmethod
-    def action_docker_build(docker_client, dockerfile, configuration, task):
+    def task_run(docker_client, dockerfile, configuration, task):
         """
         Build one Dockerfile
         """
@@ -115,7 +115,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         return build_status
 
     @staticmethod
-    def task_title_build(task):
+    def task_title(task):
         """
         Build task title function
         """

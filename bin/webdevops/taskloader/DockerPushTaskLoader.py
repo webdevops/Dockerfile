@@ -37,8 +37,8 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
         for dockerfile in dockerfile_list:
             task = {
                 'name': 'DockerPush|%s' % dockerfile['image']['fullname'],
-                'title': DockerPushTaskLoader.task_title_push,
-                'actions': [(BaseTaskLoader.task_runner, [DockerPushTaskLoader.action_docker_push, [self.docker_client, dockerfile, self.configuration]])],
+                'title': DockerPushTaskLoader.task_title,
+                'actions': [(BaseTaskLoader.task_runner, [DockerPushTaskLoader.task_run, [self.docker_client, dockerfile, self.configuration]])],
                 'task_dep': []
             }
             tasklist.append(task)
@@ -54,7 +54,7 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
         return tasklist
 
     @staticmethod
-    def action_docker_push(docker_client, dockerfile, configuration, task):
+    def task_run(docker_client, dockerfile, configuration, task):
         """
         Push one Docker image to registry
         """
@@ -78,7 +78,7 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
         return push_status
 
     @staticmethod
-    def task_title_push(task):
+    def task_title(task):
         """
         Push task title function
         """
