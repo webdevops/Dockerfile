@@ -26,27 +26,30 @@ class TestinfraDockerPlugin:
     docker_image_list = []
     configuration = False
 
-    def __init__(self, configuration):
+    def __init__(self, configuration, docker_image=False):
         """
         Constructor
         """
         self.configuration = configuration
-        self.init_docker_image_list()
+        self.init_docker_image_list(docker_image)
 
-    def init_docker_image_list(self):
+    def init_docker_image_list(self, docker_image=False):
         """
         Init and build list of available docker images
         """
-        dockerfile_list = DockerfileUtility.find_dockerfiles_in_path(
-            base_path=self.configuration['basePath'],
-            path_regex=self.configuration['docker']['pathRegex'],
-            image_prefix=self.configuration['docker']['imagePrefix'],
-            whitelist=self.configuration['whitelist'],
-            blacklist=self.configuration['blacklist'],
-        )
+        if docker_image:
+            self.docker_image_list.append(docker_image)
+        else:
+            dockerfile_list = DockerfileUtility.find_dockerfiles_in_path(
+                base_path=self.configuration['basePath'],
+                path_regex=self.configuration['docker']['pathRegex'],
+                image_prefix=self.configuration['docker']['imagePrefix'],
+                whitelist=self.configuration['whitelist'],
+                blacklist=self.configuration['blacklist'],
+            )
 
-        for image in dockerfile_list:
-            self.docker_image_list.append(image['image']['fullname'])
+            for image in dockerfile_list:
+                self.docker_image_list.append(image['image']['fullname'])
 
     def get_image_list_by_regexp(self, filter_regexp):
         """

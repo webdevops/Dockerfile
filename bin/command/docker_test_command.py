@@ -50,12 +50,12 @@ class DockerTestCommand(DoitCommand):
                 print 'pytest directory: %s' % (self.configuration['testPath'])
                 print ''
             else :
-                testOpts = []
+                test_opts = []
 
-                testOpts.extend(['-x', self.configuration['testPath']])
+                test_opts.extend(['-x', self.configuration['testPath']])
 
                 if self.output.is_verbose():
-                    testOpts.extend(['-v'])
+                    test_opts.extend(['-v'])
 
-                return pytest.main(testOpts, plugins = [TestinfraDockerPlugin(configuration)])
+                return pytest.main(test_opts, plugins = [TestinfraDockerPlugin(configuration)])
 

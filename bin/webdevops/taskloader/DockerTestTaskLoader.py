@@ -20,61 +20,58 @@
 
 import os
 import re
+from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from .BaseTaskLoader import BaseTaskLoader
 from webdevops.testinfra import TestinfraDockerPlugin
 from doit.task import dict_to_task
 import pytest
 
-class DockerTestTaskLoader(BaseTaskLoader):
+class DockerTestTaskLoader(BaseDockerTaskLoader):
 
-    def get_testfile_list(self):
-        ret = []
-        filter_regexp = re.compile(self.configuration['dockerTest']['fileFilter'])
-
-        for root, dirs, files in os.walk(self.configuration['testPath']):
-            for file in files:
-                if filter_regexp.search(file):
-                    ret.append(os.path.relpath(os.path.join(root, file)))
-        return ret
-
-    def load_tasks(self, cmd, opt_values, pos_args):
+    def generate_task_list(self, dockerfile_list):
         """
-        DOIT task list generator
+        Generate task list for docker push
         """
-        config = {'verbosity': self.configuration['verbosity']}
-
         tasklist = []
 
-        for testfile in self.get_testfile_list():
+        for dockerfile in dockerfile_list:
             task = {
-                'name': 'DockerTest|%s' % testfile,
+                'name': 'DockerTest|%s' % dockerfile['image']['fullname'],
                 'title': DockerTestTaskLoader.task_title_test,
-                'actions': [(BaseTaskLoader.task_runner, [DockerTestTaskLoader.action_run_test, [testfile, self.configuration]])],
+                'actions': [(BaseTaskLoader.task_runner, [DockerTestTaskLoader.action_run_test, [dockerfile, self.configuration]])],
                 'task_dep': []
             }
             tasklist.append(task)
 
-        tasklist = self.process_tasklist(tasklist)
+        # task = {
+        #     'name': 'FinishChain|DockerTest',
+        #     'title': DockerTestTaskLoader.task_title_finish,
+        #     'actions': [(DockerTestTaskLoader.action_chain_finish, ['docker test'])],
+        #     'task_dep': [task.name for task in taskList]
+        # }
+        # tasklist.append(task)
 
-        return tasklist, config
+        return tasklist
 
     @staticmethod
-    def action_run_test(testfile, configuration, task):
+    def action_run_test(dockerfile, configuration, task):
         """
         Run test
         """
-        if configuration['dryRun']:
-            print '      testfile: %s' % (testfile)
-            return True
 
         test_opts = []
+
+        test_opts.extend(['-x', configuration['testPath']])
 
         if configuration['verbosity'] > 1:
             test_opts.extend(['-v'])
 
-            test_opts.append(testfile)
+        if configuration['dryRun']:
+            print '         image: %s' % (dockerfile['image']['fullname'])
+            print '          args: %s' % (' '.join(test_opts))
+            return True
 
-        exitcode = pytest.main(test_opts, plugins=[TestinfraDockerPlugin(configuration)])
+        exitcode = pytest.main(test_opts, plugins=[TestinfraDockerPlugin(configuration=configuration, docker_image=dockerfile['image']['fullname'])])
 
         if exitcode == 0:
             return True
@@ -87,4 +84,3 @@ class DockerTestTaskLoader(BaseTaskLoader):
         Build task title function
         """
         return "Run pytest %s" % (BaseTaskLoader.human_task_name(task.name))
-
