@@ -38,6 +38,9 @@ class BaseCommand(Command):
         self.configuration = Configuration.merge(configuration)
 
     def handle(self):
+        """
+        Main command method which will be called by Cleo
+        """
         self.build_configuration()
 
         self.startup()
@@ -53,6 +56,9 @@ class BaseCommand(Command):
         self.shutdown(exitcode=exitcode)
 
     def run_task(self, configuration):
+        """
+        Run task
+        """
         return
 
     def startup(self):
