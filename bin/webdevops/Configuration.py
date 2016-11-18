@@ -58,11 +58,11 @@ default = {
     'dockerBuild': {
         'noCache': False,
         'dryRun': False,
-        'retry': 1
+        'retry': 5
     },
 
     'dockerPush': {
-        'retry': 1
+        'retry': 5
     },
 
     'filter': {
