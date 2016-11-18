@@ -46,12 +46,10 @@ class BaseCommand(Command):
         self.startup()
         exitcode = self.run_task(configuration=self.configuration)
 
-        if exitcode == False:
+        if exitcode == True or exitcode == 0 or exitcode == '' or exitcode is None:
+            exitcode = 0
+        elif exitcode == False:
             exitcode = 255
-        elif exitcode == '':
-            exitcode = 0
-        elif exitcode == None:
-            exitcode = 0
 
         self.shutdown(exitcode=exitcode)
 
@@ -66,8 +64,34 @@ class BaseCommand(Command):
         Show startup message
         """
         self.time_startup = time.time()
-        print 'Executing %s (threads: %s)' % (self.name, self.configuration['threads'])
+
+        options = []
+
+        options.append('%s threads' % self.configuration['threads'])
+
+        if 'retry' in self.configuration:
+            options.append('%s retries' % self.configuration['retry'])
+
+        if 'dryRun' in self.configuration and self.configuration['dryRun'] == True:
+            options.append('dry-run')
+
+        print 'Executing %s (%s)' % (self.name, ', '.join(options))
         print ''
+
+        if self.output.is_verbose():
+            whitelist = self.get_whitelist()
+            if whitelist:
+                print 'WHITELIST active:'
+                for item in whitelist:
+                    print ' - %s' % item
+                print ''
+
+            blacklist = self.get_blacklist()
+            if blacklist:
+                print 'BLACKLIST active:'
+                for item in blacklist:
+                    print ' - %s' % item
+                print ''
 
     def shutdown(self, exitcode=0):
         """
@@ -95,7 +119,7 @@ class BaseCommand(Command):
         try:
             configuration['threads'] = self.get_threads()
         except (Exception):
-            pass
+            configuration['threads'] = 1
 
         # whitelist
         try:
@@ -114,6 +138,12 @@ class BaseCommand(Command):
             configuration['dryRun'] = self.get_dry_run()
         except (Exception):
             pass
+
+        # retry
+        try:
+            configuration['retry'] = self.get_retry()
+        except (Exception):
+            del configuration['retry']
 
         # verbosity
         if self.output.is_verbose():
@@ -153,6 +183,10 @@ class BaseCommand(Command):
         """
         threads = os.getenv('THREADS', self.option('threads'))
 
+        if threads == '0' or threads == '' or threads is None:
+            # use configuration value
+            threads = self.configuration['threads']
+
         if threads == 'auto':
             ret = multiprocessing.cpu_count()
         else:
@@ -161,4 +195,24 @@ class BaseCommand(Command):
         return int(ret)
 
     def get_dry_run(self):
-        return self.option('dry-run')
+        """
+        Get if dry run is enabled
+        """
+        return bool(self.option('dry-run'))
+
+    def get_retry(self):
+        """
+        Get number of retries
+        """
+        default = 1
+        retry = max(0, int(self.option('retry')))
+
+        if retry > 0:
+            # user value
+            return retry
+        elif 'retry' in self.configuration:
+            # configuration value
+            return self.configuration['retry']
+        else:
+            # defaults
+            return default

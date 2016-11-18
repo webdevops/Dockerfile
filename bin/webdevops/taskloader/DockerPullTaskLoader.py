@@ -63,7 +63,7 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
             return True
 
         pull_status = False
-        for retry_count in range(0, configuration['dockerPush']['retry']):
+        for retry_count in range(0, configuration['retry']):
             pull_status = docker_client.pull_image(
                 name=dockerfile['image']['name'],
                 tag=dockerfile['image']['tag']
@@ -71,7 +71,7 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
 
             if pull_status:
                 break
-            elif retry_count < (configuration['dockerBuild']['retry'] - 1):
+            elif retry_count < (configuration['retry'] - 1):
                 print '    failed, retrying... (try %s)' % (retry_count+1)
             else:
                 print '    failed, giving up'

@@ -57,12 +57,9 @@ default = {
 
     'dockerBuild': {
         'noCache': False,
-        'dryRun': False,
-        'retry': 5
     },
 
     'dockerPush': {
-        'retry': 5
     },
 
     'filter': {
@@ -72,6 +69,8 @@ default = {
 
     'verbosity': 0,
     'threads': 1,
+    'retry': 5,
+    'dryRun': False,
 }
 
 def merge(configuration):

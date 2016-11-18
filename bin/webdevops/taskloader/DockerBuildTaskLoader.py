@@ -79,7 +79,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
             pull_image_tag = DockerfileUtility.extract_image_name_tag(dockerfile['image']['from'])
 
             pull_status = False
-            for retry_count in range(0, configuration['dockerBuild']['retry']):
+            for retry_count in range(0, configuration['retry']):
                 pull_status = docker_client.pull_image(
                     name=pull_image_name,
                     tag=pull_image_tag,
@@ -87,7 +87,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
 
                 if pull_status:
                     break
-                elif retry_count < (configuration['dockerBuild']['retry'] - 1):
+                elif retry_count < (configuration['retry'] - 1):
                     print '    failed, retrying... (try %s)' % (retry_count+1)
                 else:
                     print '    failed, giving up'
@@ -98,7 +98,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         ## Build image
         print ' -> Building image %s ' % dockerfile['image']['fullname']
         build_status = False
-        for retry_count in range(0, configuration['dockerBuild']['retry']):
+        for retry_count in range(0, configuration['retry']):
             build_status = docker_client.build_dockerfile(
                 path=dockerfile['path'],
                 name=dockerfile['image']['fullname'],
@@ -107,7 +107,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
 
             if build_status:
                 break
-            elif retry_count < (configuration['dockerBuild']['retry']-1):
+            elif retry_count < (configuration['retry']-1):
                 print '    failed, retrying... (try %s)' % (retry_count+1)
             else:
                 print '    failed, giving up'

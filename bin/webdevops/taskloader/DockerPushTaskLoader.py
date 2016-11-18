@@ -63,14 +63,14 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
             return True
 
         push_status = False
-        for retry_count in range(0, configuration['dockerPush']['retry']):
+        for retry_count in range(0, configuration['retry']):
             push_status = docker_client.push_image(
                 name=dockerfile['image']['fullname'],
             )
 
             if push_status:
                 break
-            elif retry_count < (configuration['dockerBuild']['retry'] - 1):
+            elif retry_count < (configuration['retry'] - 1):
                 print '    failed, retrying... (try %s)' % (retry_count+1)
             else:
                 print '    failed, giving up'

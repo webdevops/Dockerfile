@@ -33,6 +33,7 @@ class DockerBuildCommand(DoitCommand):
         {--dry-run               : show only which images will be build}
         {--no-cache              : build without caching}
         {--t|threads=0           : threads}
+        {--r|retry=0             : retry}
         {--whitelist=?*          : image/tag whitelist }
         {--blacklist=?*          : image/tag blacklist }
     """
