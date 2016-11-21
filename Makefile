@@ -9,8 +9,11 @@ list:
 	sh -c "echo; $(MAKE) -p no_targets__ | awk -F':' '/^[a-zA-Z0-9][^\$$#\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);for(i in A)print A[i]}' | grep -v '__\$$' | grep -v 'Makefile'| sort"
 
 full:      provision build
-all:       python ./bin/console docker:build --threads=auto
-build:     python ./bin/console docker:build --threads=auto
+
+all:       build
+
+build:
+	python ./bin/console docker:build --threads=auto
 
 bootstrap: webdevops/bootstrap webdevops/ansible
 base:      webdevops/base webdevops/base-app webdevops/storage
