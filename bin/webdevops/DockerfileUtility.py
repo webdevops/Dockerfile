@@ -60,14 +60,9 @@ def find_file_in_path(dockerfile_path, filename="Dockerfile", whitelist=False, b
                     tmp.append(file)
                 file_list = tmp
 
-    # filter by blacklist
     if blacklist:
-        tmp = []
-        for file in file_list:
-            for blacklistTerm in blacklist:
-                if not blacklistTerm in file:
-                    tmp.append(file)
-                file_list = tmp
+        for blacklistTerm in blacklist:
+            file_list = filter(lambda x: blacklistTerm not in x, file_list)
 
     return file_list
 
@@ -142,13 +137,8 @@ def filter_dockerfile(dockerfile_list, whitelist=False, blacklist=False):
             dockerfile_list = tmp
 
     if blacklist:
-        tmp = []
-        for dockerfile in dockerfile_list:
-            for blacklistTerm in blacklist:
-                if not blacklistTerm in dockerfile['image']['fullname']:
-                    tmp.append(dockerfile)
-                    break
-                dockerfile_list = tmp
+        for blacklistTerm in blacklist:
+            dockerfile_list = filter(lambda x: blacklistTerm not in x['image']['fullname'], dockerfile_list)
 
     return dockerfile_list
 
