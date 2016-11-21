@@ -2,9 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import os
+
+# prevent bytecode
 sys.dont_write_bytecode = True
 
-import os
+unbuffered = os.fdopen(sys.stdout.fileno(), 'w', 0)
+unbuffered.write('test')
+sys.stdout = unbuffered
+
 import re
 from cleo import Application
 
