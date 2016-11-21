@@ -37,7 +37,7 @@ class DockerCliClient(DockerBaseClient):
         """
         Build dockerfile
         """
-        cmd = ['docker', 'build', os.path.dirname(path), '--tag', name]
+        cmd = ['docker', 'build', '--tag', name, os.path.dirname(path)]
 
         if nocache:
             cmd.append('--no-cache')
