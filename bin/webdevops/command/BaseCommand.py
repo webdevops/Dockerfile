@@ -161,19 +161,21 @@ class BaseCommand(Command):
         """
         Get whitelist
         """
-        return self.option('whitelist')
+        return list(self.option('whitelist'))
 
     def get_blacklist(self):
         """
         Get blacklist
         """
-        ret = self.option('blacklist')
+        ret = list(self.option('blacklist'))
 
         # static BLACKLIST file
         if os.path.isfile(self.configuration['blacklistFile']):
-            with open(self.configuration['blacklistFile'], 'r') as ins:
-                for line in ins:
-                    ret.append(line)
+            lines = [line.rstrip('\n').lstrip('\n') for line in open(self.configuration['blacklistFile'])]
+            lines = filter(bool, lines)
+
+            if lines:
+                ret.extend(lines)
 
         return ret
 

@@ -138,6 +138,7 @@ def filter_dockerfile(dockerfile_list, whitelist=False, blacklist=False):
             for whitelistTerm in whitelist:
                 if whitelistTerm in dockerfile['image']['fullname']:
                     tmp.append(dockerfile)
+                    break
             dockerfile_list = tmp
 
     if blacklist:
@@ -146,6 +147,7 @@ def filter_dockerfile(dockerfile_list, whitelist=False, blacklist=False):
             for blacklistTerm in blacklist:
                 if not blacklistTerm in dockerfile['image']['fullname']:
                     tmp.append(dockerfile)
+                    break
                 dockerfile_list = tmp
 
     return dockerfile_list

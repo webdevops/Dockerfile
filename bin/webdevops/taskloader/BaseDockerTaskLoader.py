@@ -55,7 +55,7 @@ class BaseDockerTaskLoader(BaseTaskLoader):
         )
         dockerfile_list = self.process_dockerfile_list(dockerfile_list)
 
-        # print json.dumps(dockerfile_list, sort_keys=True, indent = 4, separators = (',', ': '));sys.exit(0);
+        #import json,sys;print json.dumps(dockerfile_list, sort_keys=True, indent = 4, separators = (',', ': '));sys.exit(0);
 
         tasklist = self.generate_task_list(dockerfile_list)
         tasklist = self.process_tasklist(tasklist)
