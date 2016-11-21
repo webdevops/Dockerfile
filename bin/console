@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import sys
+sys.dont_write_bytecode = True
+
+import os
+import re
+from cleo import Application
+
+from webdevops.docker.DockerBaseClient import DockerBaseClient
+from webdevops.docker.DockerPyClient import DockerPyClient
+from webdevops.docker.DockerCliClient import DockerCliClient
+from command.docker_build_command import DockerBuildCommand
+from command.docker_push_command import DockerPushCommand
+from command.docker_pull_command import DockerPullCommand
+from command.docker_test_command import DockerTestCommand
+from command.generate_dockerfile_command import GenerateDockerfileCommand
+from command.generate_graph_command import GenerateGraphCommand
+from command.generate_provision_command import GenerateProvisionCommand
+
+if __name__ == '__main__':
+    def generatePath(path):
+        scriptPath = os.path.dirname(os.path.dirname(__file__))
+        return os.path.abspath(os.path.join(scriptPath, (path)))
+
+    configuration = {
+        'basePath': generatePath('docker'),
+        'templatePath': generatePath('template'),
+        'provisionPath': generatePath('provisioning'),
+        'imagePath': generatePath('documentation/docs/resources/images/'),
+        'confPath': generatePath('conf'),
+        'baselayoutPath': generatePath('baselayout'),
+        'testPath': generatePath('tests'),
+
+        #'dockerClient': DockerPyClient(),
+        #'dockerClient': DockerCliClient(),
+        #'dockerClient': DockerBaseClient(),
+
+        'blacklistFile': generatePath('BLACKLIST'),
+
+        'docker': {
+            'imagePrefix': 'webdevops',
+            'autoLatestTag': 'ubuntu-16.04',
+            'pathRegex': re.compile('/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'),
+            'autoPull': True,
+            'autoPullBlacklist': re.compile(r'^webdevops/.*'),
+        },
+
+        'graph': {
+            'label': 'Webdevops Images\n%s',
+        },
+    }
+
+    application = Application()
+    application.add(DockerBuildCommand(configuration=configuration))
+    application.add(DockerPushCommand(configuration=configuration))
+    application.add(DockerPullCommand(configuration=configuration))
+    application.add(DockerTestCommand(configuration=configuration))
+    application.add(GenerateDockerfileCommand(configuration=configuration))
+    application.add(GenerateGraphCommand(configuration=configuration))
+    application.add(GenerateProvisionCommand(configuration=configuration))
+
+    application.run()
