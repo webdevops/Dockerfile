@@ -7,9 +7,9 @@ import os
 # prevent bytecode
 sys.dont_write_bytecode = True
 
-unbuffered = os.fdopen(sys.stdout.fileno(), 'w', 0)
-unbuffered.write('test')
-sys.stdout = unbuffered
+# unbuffered stdout / stderr
+sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+sys.stderr = os.fdopen(sys.stderr.fileno(), 'w', 0)
 
 import re
 from cleo import Application
