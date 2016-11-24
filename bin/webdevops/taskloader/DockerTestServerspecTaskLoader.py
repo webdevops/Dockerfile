@@ -37,7 +37,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         for dockerfile in dockerfile_list:
             task = {
-                'name': 'DockerTest|%s' % dockerfile['image']['fullname'],
+                'name': 'DockerTestServerspec|%s' % dockerfile['image']['fullname'],
                 'title': DockerTestServerspecTaskLoader.task_title,
                 'actions': [(BaseTaskLoader.task_runner, [DockerTestServerspecTaskLoader.task_run, [dockerfile, self.configuration]])],
                 'task_dep': []
@@ -45,7 +45,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
             tasklist.append(task)
 
         # task = {
-        #     'name': 'FinishChain|DockerTest',
+        #     'name': 'FinishChain|DockerTestServerspec',
         #     'title': DockerTestTestinfraTaskLoader.task_title_finish,
         #     'actions': [(DockerTestTestinfraTaskLoader.action_chain_finish, ['docker test'])],
         #     'task_dep': [task.name for task in taskList]
@@ -59,33 +59,46 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         """
         Run test
         """
-        is_toolimage = False
 
+        # Check if current image is a toolimage (no daemon)
+        is_toolimage = False
         if 'serverspec' in configuration and 'toolImages' in configuration['serverspec']:
             for term in configuration['serverspec']['toolImages']:
                 if term in dockerfile['image']['fullname']:
                     is_toolimage = True
 
-
-        serverspec_opts = []
-
+        # rspec spec file settings
         spec_file = '%s_spec.rb' % dockerfile['image']['imageName']
         spec_path = os.path.join('spec', 'docker', spec_file)
+        spec_abs_path = os.path.join(configuration['serverspecPath'], spec_path)
 
+        # serverspec options
+        serverspec_opts = []
         serverspec_opts.extend(['--pattern', spec_path])
 
+        # DryRun
         if configuration['dryRun']:
+            if not os.path.isfile(spec_abs_path):
+                print '                no tests found'
+
             print '         image: %s' % (dockerfile['image']['fullname'])
             print '          path: %s' % (spec_path)
             print '          args: %s' % (' '.join(serverspec_opts))
             return True
 
+        # check if we have any tests
+        if not os.path.isfile(spec_abs_path):
+            print '         no tests defined (%s)' % (spec_path)
+            return True
+
+        # build rspec/serverspec command
         cmd = ['bundle', 'exec', 'rspec']
         cmd.extend(serverspec_opts)
 
         # create dockerfile
         test_dockerfile = tempfile.NamedTemporaryFile(prefix='Dockerfile.', dir=configuration['serverspecPath'])
 
+        # create Dockerfile
         with open(test_dockerfile.name, 'w') as f:
             f.write('FROM %s\n' % dockerfile['image']['fullname'])
             f.write('COPY conf/ /\n')
@@ -104,6 +117,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
             env['DOCKER_IMAGE'] = dockerfile['image']['fullname']
             env['DOCKERFILE'] = os.path.basename(test_dockerfile.name)
 
+            # Execute test
             ret = GeneralUtility.cmd_execute(cmd, cwd=configuration['serverspecPath'], env=env)
 
         return ret

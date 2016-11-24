@@ -36,7 +36,7 @@ class DockerTestTestinfraTaskLoader(BaseDockerTaskLoader):
 
         for dockerfile in dockerfile_list:
             task = {
-                'name': 'DockerTest|%s' % dockerfile['image']['fullname'],
+                'name': 'DockerTestTestinfra|%s' % dockerfile['image']['fullname'],
                 'title': DockerTestTestinfraTaskLoader.task_title,
                 'actions': [(BaseTaskLoader.task_runner, [DockerTestTestinfraTaskLoader.task_run, [dockerfile, self.configuration]])],
                 'task_dep': []
