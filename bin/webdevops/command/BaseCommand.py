@@ -18,7 +18,7 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import os, sys
+import os, sys, re
 import time, datetime
 import multiprocessing
 from cleo import Command
@@ -189,8 +189,22 @@ class BaseCommand(Command):
             # use configuration value
             threads = self.configuration['threads']
 
-        if threads == 'auto':
+        match = re.match('auto(([-*+/])([0-9]+))?', threads)
+        if match is not None:
             ret = multiprocessing.cpu_count()
+
+            if match.group(2) and match.group(3):
+                math_sign = match.group(2)
+                math_value = int(match.group(3))
+
+                if math_sign == "*":
+                    ret = int(ret * math_value)
+                elif math_sign == "/":
+                    ret = int(ret / math_value)
+                elif math_sign == "+":
+                    ret = int(ret + math_value)
+                elif math_sign == "-":
+                    ret = int(ret - math_value)
         else:
             ret = max(1, int(self.option('threads')))
 
