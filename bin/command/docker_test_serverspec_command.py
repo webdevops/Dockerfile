@@ -18,8 +18,7 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import pytest
-import sys
+import sys, os, glob
 from cleo import Output
 from jinja2 import Environment, FileSystemLoader
 from webdevops import Dockerfile, DockerfileUtility
@@ -37,9 +36,25 @@ class DockerTestServerspecCommand(DoitCommand):
         {--blacklist=?*          : image/tag blacklist }
     """
 
+    serverspec_path = False
+
     def run_task(self, configuration):
+        self.serverspec_path = configuration['serverspecPath']
+
+        self.cleanup_dockerfiles()
+
         return self.run_doit(
             task_loader=DockerTestServerspecTaskLoader(configuration),
             configuration=configuration
         )
+
+    def cleanup_dockerfiles(self):
+        """
+        Cleanup old dockerfiles in test directory
+        """
+        for file in glob.glob(os.path.join(self.serverspec_path, 'Dockerfile.*.tmp')):
+            os.remove(file)
+
+    def teardown(self, exitcode):
+        self.cleanup_dockerfiles()
 

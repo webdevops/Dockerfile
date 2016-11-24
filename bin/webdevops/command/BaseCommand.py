@@ -93,10 +93,16 @@ class BaseCommand(Command):
                     print ' - %s' % item
                 print ''
 
+    def teardown(self,exitcode):
+        pass
+
     def shutdown(self, exitcode=0):
         """
         Show shutdown message
         """
+
+        self.teardown(exitcode)
+
         self.time_finish = time.time()
 
         duration = self.time_finish - self.time_startup
