@@ -31,6 +31,7 @@ misc:      webdevops/mail-sandbox webdevops/sphinx webdevops/liquibase
 
 requirements:
 	pip install -r ./requirements.txt
+	cd tests/serverspec && bundle install --path=vendor
 
 test:
 	python bin/console docker:test
