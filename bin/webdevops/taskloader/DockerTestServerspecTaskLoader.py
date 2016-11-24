@@ -96,7 +96,17 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         cmd.extend(serverspec_opts)
 
         # create dockerfile
-        test_dockerfile = tempfile.NamedTemporaryFile(prefix='Dockerfile.', dir=configuration['serverspecPath'])
+        tmp_suffix = '.%s_%s_%s.tmp' % (dockerfile['image']['repository'], dockerfile['image']['imageName'], dockerfile['image']['tag'])
+        test_dockerfile = tempfile.NamedTemporaryFile(prefix='Dockerfile.', suffix=tmp_suffix, dir=configuration['serverspecPath'], bufsize=0, delete=False)
+
+        # Set environment variables
+        env = os.environ.copy()
+        if 'serverspec' in configuration and 'env' in configuration['serverspec']:
+            for term in configuration['serverspec']['env']:
+                if term in dockerfile['image']['fullname']:
+                    env.update(configuration['serverspec']['env'][term])
+        env['DOCKER_IMAGE'] = dockerfile['image']['fullname']
+        env['DOCKERFILE'] = os.path.basename(test_dockerfile.name)
 
         # create Dockerfile
         with open(test_dockerfile.name, 'w') as f:
@@ -108,17 +118,14 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
                 f.write('ENTRYPOINT /loop-entrypoint.sh\n')
             f.close()
 
-            # Set environment variables
-            env = os.environ.copy()
-            if 'serverspec' in configuration and 'env' in configuration['serverspec']:
-                for term in configuration['serverspec']['env']:
-                    if term in dockerfile['image']['fullname']:
-                        env.update(configuration['serverspec']['env'][term])
-            env['DOCKER_IMAGE'] = dockerfile['image']['fullname']
-            env['DOCKERFILE'] = os.path.basename(test_dockerfile.name)
-
+        try:
             # Execute test
             ret = GeneralUtility.cmd_execute(cmd, cwd=configuration['serverspecPath'], env=env)
+        except Exception as e:
+            os.remove(test_dockerfile.name)
+            raise e
+
+        os.remove(test_dockerfile.name)
 
         return ret
 
