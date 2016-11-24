@@ -78,8 +78,7 @@ def find_dockerfiles_in_path(base_path, path_regex, image_prefix, whitelist=Fals
         image_name = (image_name_info['image'] if 'image' in image_name_info else '')
         image_tag = (image_name_info['tag'] if 'tag' in image_name_info else '')
 
-        #
-        #
+        # check if path is linked
         if os.path.islink(os.path.dirname(path)):
             linked_image_name_info = ([m.groupdict() for m in path_regex.finditer(os.path.realpath(path))])[0]
 
@@ -96,6 +95,7 @@ def find_dockerfiles_in_path(base_path, path_regex, image_prefix, whitelist=Fals
             'name': image_prefix + image_repository + '/' + image_name,
             'tag': image_tag,
             'repository': image_prefix + image_repository,
+            'imageName': image_name,
             'from': image_from
         }
         return imageInfo

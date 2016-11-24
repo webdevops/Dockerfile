@@ -1,10 +1,8 @@
 /.idea
 /.cache
-/test/Dockerfile
-/test/vendor/
-/test/.bundle/
-/test/*.test
-/test/docker.test.*.tar
+/tests/serverspec/vendor
+/tests/serverspec/.bundle/
+/tests/serverspec/Dockerfile*
 /BLACKLIST
 *.log
 *.pyc

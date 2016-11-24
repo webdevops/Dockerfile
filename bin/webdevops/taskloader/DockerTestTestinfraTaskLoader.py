@@ -26,7 +26,7 @@ from webdevops.testinfra import TestinfraDockerPlugin
 from doit.task import dict_to_task
 import pytest
 
-class DockerTestTaskLoader(BaseDockerTaskLoader):
+class DockerTestTestinfraTaskLoader(BaseDockerTaskLoader):
 
     def generate_task_list(self, dockerfile_list):
         """
@@ -37,16 +37,16 @@ class DockerTestTaskLoader(BaseDockerTaskLoader):
         for dockerfile in dockerfile_list:
             task = {
                 'name': 'DockerTest|%s' % dockerfile['image']['fullname'],
-                'title': DockerTestTaskLoader.task_title,
-                'actions': [(BaseTaskLoader.task_runner, [DockerTestTaskLoader.task_run, [dockerfile, self.configuration]])],
+                'title': DockerTestTestinfraTaskLoader.task_title,
+                'actions': [(BaseTaskLoader.task_runner, [DockerTestTestinfraTaskLoader.task_run, [dockerfile, self.configuration]])],
                 'task_dep': []
             }
             tasklist.append(task)
 
         # task = {
         #     'name': 'FinishChain|DockerTest',
-        #     'title': DockerTestTaskLoader.task_title_finish,
-        #     'actions': [(DockerTestTaskLoader.action_chain_finish, ['docker test'])],
+        #     'title': DockerTestTestinfraTaskLoader.task_title_finish,
+        #     'actions': [(DockerTestTestinfraTaskLoader.action_chain_finish, ['docker test'])],
         #     'task_dep': [task.name for task in taskList]
         # }
         # tasklist.append(task)
@@ -61,7 +61,7 @@ class DockerTestTaskLoader(BaseDockerTaskLoader):
 
         test_opts = []
 
-        test_opts.extend(['-x', configuration['testPath']])
+        test_opts.extend(['-x', configuration['testinfraPath']])
 
         if configuration['verbosity'] > 1:
             test_opts.extend(['-v'])
@@ -83,4 +83,4 @@ class DockerTestTaskLoader(BaseDockerTaskLoader):
         """
         Build task title function
         """
-        return "Run pytest %s" % (BaseTaskLoader.human_task_name(task.name))
+        return "Run pytest for %s" % (BaseTaskLoader.human_task_name(task.name))

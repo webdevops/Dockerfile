@@ -21,33 +21,40 @@
 import subprocess
 import os
 import tempfile
-from .DockerBaseClient import DockerBaseClient
-from webdevops import GeneralUtility
 
+def cmd_execute(cmd, cwd=False, env=None):
+    """
+    Execute cmd and output stdout/stderr
+    """
 
-class DockerCliClient(DockerBaseClient):
+    print 'Execute: %s' % ' '.join(cmd)
 
-    def pull_image(self, name, tag):
-        """
-        Build dockerfile
-        """
-        cmd = ['docker', 'pull', '%s:%s' % (name, tag)]
-        return GeneralUtility.cmd_execute(cmd)
+    if cwd:
+        path_current = os.getcwd()
+        os.chdir(cwd)
 
-    def build_dockerfile(self, path, name, nocache=False):
-        """
-        Build dockerfile
-        """
-        cmd = ['docker', 'build', '--tag', name, os.path.dirname(path)]
+    file_stdout = tempfile.NamedTemporaryFile()
 
-        if nocache:
-            cmd.append('--no-cache')
+    proc = subprocess.Popen(
+        cmd,
+        stdout=file_stdout,
+        stderr=file_stdout,
+        bufsize=-1,
+        env=env
+    )
 
-        return GeneralUtility.cmd_execute(cmd)
+    while proc.poll() is None:
+        pass
 
-    def push_image(self, name):
-        """
-        Push one Docker image to registry
-        """
-        cmd = ['docker', 'push', name]
-        return GeneralUtility.cmd_execute(cmd)
+    with open(file_stdout.name, 'r') as f:
+        for line in f:
+            print line.rstrip('\n')
+
+    if cwd:
+        os.chdir(path_current)
+
+    if proc.returncode == 0:
+        return True
+    else:
+        print '>> failed command with return code %s' % proc.returncode
+        return False

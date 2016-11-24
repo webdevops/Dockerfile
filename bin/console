@@ -20,7 +20,8 @@ from webdevops.docker.DockerCliClient import DockerCliClient
 from command.docker_build_command import DockerBuildCommand
 from command.docker_push_command import DockerPushCommand
 from command.docker_pull_command import DockerPullCommand
-from command.docker_test_command import DockerTestCommand
+from command.docker_test_testinfra_command import DockerTestTestinfraCommand
+from command.docker_test_serverspec_command import DockerTestServerspecCommand
 from command.generate_dockerfile_command import GenerateDockerfileCommand
 from command.generate_graph_command import GenerateGraphCommand
 from command.generate_provision_command import GenerateProvisionCommand
@@ -37,11 +38,72 @@ if __name__ == '__main__':
         'imagePath': generatePath('documentation/docs/resources/images/'),
         'confPath': generatePath('conf'),
         'baselayoutPath': generatePath('baselayout'),
-        'testPath': generatePath('tests'),
+        'testinfraPath': generatePath('tests/testinfra'),
+        'serverspecPath': generatePath('tests/serverspec'),
+
+        'serverspec': {
+            'toolImages': {
+                '/bootstrap',
+                '/ansible',
+                '/liquibase',
+                '/certbot',
+            },
+            'env': {
+                ':alpine': {
+                    'OS_FAMILY': 'alpine',
+                    'OS_VERSION': '3',
+                },
+                ':ubuntu-12.04': {
+                    'OS_FAMILY': 'ubuntu',
+                    'OS_VERSION': '12.04',
+                },
+                ':ubuntu-14.04': {
+                    'OS_FAMILY': 'ubuntu',
+                    'OS_VERSION': '14.04',
+                },
+                ':ubuntu-15.04': {
+                    'OS_FAMILY': 'ubuntu',
+                    'OS_VERSION': '15.04',
+                },
+                ':ubuntu-15.10': {
+                    'OS_FAMILY': 'ubuntu',
+                    'OS_VERSION': '15.10',
+                },
+                ':ubuntu-16.04': {
+                    'OS_FAMILY': 'ubuntu',
+                    'OS_VERSION': '16.04',
+                },
+                ':debian-7': {
+                    'OS_FAMILY': 'debian',
+                    'OS_VERSION': '7',
+                },
+                ':debian-8': {
+                    'OS_FAMILY': 'debian',
+                    'OS_VERSION': '8',
+                },
+                ':debian-9': {
+                    'OS_FAMILY': 'debian',
+                    'OS_VERSION': 'testing',
+                },
+                ':centos-7': {
+                    'OS_FAMILY': 'redhat',
+                    'OS_VERSION': '7',
+                },
+                '/liquibase': {
+                    'OS_FAMILY': 'alpine',
+                    'OS_VERSION': '3',
+                },
+                '/certbot': {
+                    'OS_FAMILY': 'alpine',
+                    'OS_VERSION': '3',
+                },
+            },
+        },
 
         #'dockerClient': DockerPyClient(),
         #'dockerClient': DockerCliClient(),
         #'dockerClient': DockerBaseClient(),
+
 
         'blacklistFile': generatePath('BLACKLIST'),
 
@@ -62,7 +124,8 @@ if __name__ == '__main__':
     application.add(DockerBuildCommand(configuration=configuration))
     application.add(DockerPushCommand(configuration=configuration))
     application.add(DockerPullCommand(configuration=configuration))
-    application.add(DockerTestCommand(configuration=configuration))
+    application.add(DockerTestTestinfraCommand(configuration=configuration))
+    application.add(DockerTestServerspecCommand(configuration=configuration))
     application.add(GenerateDockerfileCommand(configuration=configuration))
     application.add(GenerateGraphCommand(configuration=configuration))
     application.add(GenerateProvisionCommand(configuration=configuration))
