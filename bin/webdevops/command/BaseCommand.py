@@ -101,12 +101,12 @@ class BaseCommand(Command):
         Show shutdown message
         """
 
-        self.teardown(exitcode)
-
         self.time_finish = time.time()
 
         duration = self.time_finish - self.time_startup
         duration = str(datetime.timedelta(seconds=int(duration)))
+
+        self.teardown(exitcode)
 
         print ''
         if exitcode == 0:
