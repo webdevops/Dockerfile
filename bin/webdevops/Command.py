@@ -28,7 +28,7 @@ def execute(cmd, cwd=False, env=None):
     print 'Execute: %s' % ' '.join(cmd)
 
     # remove _ from env (prevent errors)
-    if '_' in env:
+    if env is not None and '_' in env:
         del env['_']
 
     # set current working directory
