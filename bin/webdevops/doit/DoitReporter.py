@@ -208,14 +208,28 @@ class DoitReporter(object):
         # sort task list by task name
         task_result_list = sorted(task_result_list, key=lambda task: task['name'])
 
-        for task in task_result_list:
+        # show tasks if verbosity == 2
+        if not self.show_out:
+            for task in task_result_list:
+                # Skip finish chain task (no content, just finish tasks)
+                if 'FinishChain|' in task['name']:
+                    continue
 
+                self.task_stdout(
+                    title=task['name'],
+                    duration=task['elapsed'],
+                    stdout=task['out'],
+                    stderr=task['err'],
+                    error=task['error']
+                )
+
+        # show failed tasks (at the end)
+        for task in task_result_list:
             # Skip finish chain task (no content, just finish tasks)
             if 'FinishChain|' in task['name']:
                 continue
 
-            # verbosity == 2 or if task has error
-            if not self.show_out or task['result'] == 'fail':
+            if task['result'] == 'fail':
                 self.task_stdout(
                     title=task['name'],
                     duration=task['elapsed'],
@@ -239,10 +253,10 @@ class DoitReporter(object):
         if duration:
             text_duration = ' (%s)' % self.duration(duration)
 
-        title = 'Task %s%s:' % (title, text_duration)
+        title_full = 'Task %s%s:' % (title, text_duration)
 
-        self.writeln(title)
-        self.writeln('~' * len(title))
+        self.writeln(title_full)
+        self.writeln('~' * len(title_full))
 
         if stdout:
             self.writeln()
@@ -263,6 +277,8 @@ class DoitReporter(object):
             self.writeln(colored('-- EXCEPTION --', 'red'))
             self.write('%s' % exception.get_msg())
 
+        self.writeln()
+        self.writeln(':: end of output "%s"' % title)
         self.writeln()
 
     def duration(self, duration):
