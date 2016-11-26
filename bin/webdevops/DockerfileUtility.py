@@ -53,16 +53,12 @@ def find_file_in_path(dockerfile_path, filename="Dockerfile", whitelist=False, b
 
     # filter by whitelist
     if whitelist:
-        tmp = []
-        for file in file_list:
-            for whitelistTerm in whitelist:
-                if whitelistTerm in file:
-                    tmp.append(file)
-                file_list = tmp
+        for term in whitelist:
+            file_list = filter(lambda x: term in x, file_list)
 
     if blacklist:
-        for blacklistTerm in blacklist:
-            file_list = filter(lambda x: blacklistTerm not in x, file_list)
+        for term in blacklist:
+            file_list = filter(lambda x: term not in x, file_list)
 
     return file_list
 
@@ -126,19 +122,13 @@ def filter_dockerfile(dockerfile_list, whitelist=False, blacklist=False):
     """
     Filter Dockerfiles by white- and blacklist
     """
-
     if whitelist:
-        tmp = []
-        for dockerfile in dockerfile_list:
-            for whitelistTerm in whitelist:
-                if whitelistTerm in dockerfile['image']['fullname']:
-                    tmp.append(dockerfile)
-                    break
-            dockerfile_list = tmp
+        for term in whitelist:
+            dockerfile_list = filter(lambda x: term in x['image']['fullname'], dockerfile_list)
 
     if blacklist:
-        for blacklistTerm in blacklist:
-            dockerfile_list = filter(lambda x: blacklistTerm not in x['image']['fullname'], dockerfile_list)
+        for term in blacklist:
+            dockerfile_list = filter(lambda x: term not in x['image']['fullname'], dockerfile_list)
 
     return dockerfile_list
 
