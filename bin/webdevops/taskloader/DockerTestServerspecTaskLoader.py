@@ -128,7 +128,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
             ret = GeneralUtility.cmd_execute(cmd, cwd=configuration.get('serverspecPath'), env=env)
         except Exception as e:
             os.remove(test_dockerfile.name)
-            raise e
+            raise
 
         os.remove(test_dockerfile.name)
 
