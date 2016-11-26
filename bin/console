@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
-import os
+import os, sys
 
 # prevent bytecode
 sys.dont_write_bytecode = True
@@ -11,7 +10,7 @@ sys.dont_write_bytecode = True
 sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 sys.stderr = os.fdopen(sys.stderr.fileno(), 'w', 0)
 
-import re
+import re, yaml
 from cleo import Application
 
 from webdevops.docker.DockerBaseClient import DockerBaseClient
@@ -27,99 +26,60 @@ from command.generate_graph_command import GenerateGraphCommand
 from command.generate_provision_command import GenerateProvisionCommand
 
 if __name__ == '__main__':
+    # Generate common paths
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    root_path = os.path.dirname(script_path)
+    conf_path = os.path.join(root_path, 'conf')
+
+
     def generatePath(path):
-        scriptPath = os.path.dirname(os.path.dirname(__file__))
-        return os.path.abspath(os.path.join(scriptPath, (path)))
+        """
+        Generate full path based on root path
+        """
+        return os.path.abspath(os.path.join(root_path, (path)))
 
-    configuration = {
-        'basePath': generatePath('docker'),
-        'templatePath': generatePath('template'),
-        'provisionPath': generatePath('provisioning'),
-        'imagePath': generatePath('documentation/docs/resources/images/'),
-        'confPath': generatePath('conf'),
-        'baselayoutPath': generatePath('baselayout'),
-        'testinfraPath': generatePath('tests/testinfra'),
-        'serverspecPath': generatePath('tests/serverspec'),
+    # Read console.yml for configuration
+    with open(os.path.join(conf_path, 'console.yml'), 'r') as stream:
+        try:
+            configuration = yaml.load(stream)
+            configuration['confPath'] = conf_path
+        except yaml.YAMLError as e:
+            configuration = None
+            print ' !!! Exception while loading configuration from %s:' % conf_path
+            print ''
+            print e
+            print ''
+            sys.exit(1)
 
-        'serverspec': {
-            'toolImages': {
-                '/bootstrap',
-                '/ansible',
-                '/liquibase',
-                '/certbot',
-            },
-            'env': {
-                ':alpine': {
-                    'OS_FAMILY': 'alpine',
-                    'OS_VERSION': '3',
-                },
-                ':ubuntu-12.04': {
-                    'OS_FAMILY': 'ubuntu',
-                    'OS_VERSION': '12.04',
-                },
-                ':ubuntu-14.04': {
-                    'OS_FAMILY': 'ubuntu',
-                    'OS_VERSION': '14.04',
-                },
-                ':ubuntu-15.04': {
-                    'OS_FAMILY': 'ubuntu',
-                    'OS_VERSION': '15.04',
-                },
-                ':ubuntu-15.10': {
-                    'OS_FAMILY': 'ubuntu',
-                    'OS_VERSION': '15.10',
-                },
-                ':ubuntu-16.04': {
-                    'OS_FAMILY': 'ubuntu',
-                    'OS_VERSION': '16.04',
-                },
-                ':debian-7': {
-                    'OS_FAMILY': 'debian',
-                    'OS_VERSION': '7',
-                },
-                ':debian-8': {
-                    'OS_FAMILY': 'debian',
-                    'OS_VERSION': '8',
-                },
-                ':debian-9': {
-                    'OS_FAMILY': 'debian',
-                    'OS_VERSION': 'testing',
-                },
-                ':centos-7': {
-                    'OS_FAMILY': 'redhat',
-                    'OS_VERSION': '7',
-                },
-                '/liquibase': {
-                    'OS_FAMILY': 'alpine',
-                    'OS_VERSION': '3',
-                },
-                '/certbot': {
-                    'OS_FAMILY': 'alpine',
-                    'OS_VERSION': '3',
-                },
-            },
-        },
+    # Check if configuration is valid
+    if configuration is None:
+        print ' !!! Configuration not found'
+        sys.exit(1)
 
-        #'dockerClient': DockerPyClient(),
-        #'dockerClient': DockerCliClient(),
-        #'dockerClient': DockerBaseClient(),
+    # generate full paths
+    path_entries = [
+        'basePath',
+        'templatePath',
+        'provisionPath',
+        'imagePath',
+        'baselayoutPath',
+        'testinfraPath',
+        'serverspecPath',
+        'blacklistFile',
+    ]
+    for key in path_entries:
+        if key in configuration:
+            configuration[key] = generatePath(configuration[key])
 
+    # Translate regexp
+    if 'docker' in configuration:
+        if 'pathRegex' in configuration['docker']:
+            configuration['docker']['pathRegex'] = re.compile(configuration['docker']['pathRegex'])
 
-        'blacklistFile': generatePath('BLACKLIST'),
+        if 'pathRegex' in configuration['docker']:
+            configuration['docker']['autoPullBlacklist'] = re.compile(configuration['docker']['autoPullBlacklist'])
 
-        'docker': {
-            'imagePrefix': 'webdevops',
-            'autoLatestTag': 'ubuntu-16.04',
-            'pathRegex': re.compile('/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'),
-            'autoPull': True,
-            'autoPullBlacklist': re.compile(r'^webdevops/.*'),
-        },
-
-        'graph': {
-            'label': 'Webdevops Images\n%s',
-        },
-    }
-
+    # Init application
     application = Application()
     application.add(DockerBuildCommand(configuration=configuration))
     application.add(DockerPushCommand(configuration=configuration))
