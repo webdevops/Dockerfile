@@ -97,3 +97,7 @@ dockerTest:
     '/sphinx':
       OS_FAMILY: 'alpine'
       OS_VERSION: '3'
+    '/varnish':
+      OS_FAMILY: 'alpine'
+      OS_VERSION: '3'
+      VARNISH_BACKEND_HOST: 'webdevops.io'
