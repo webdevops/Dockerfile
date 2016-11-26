@@ -109,13 +109,14 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         env['DOCKERFILE'] = os.path.basename(test_dockerfile.name)
 
         # create Dockerfile
-        with open(test_dockerfile.name, 'w') as f:
+        with open(test_dockerfile.name, mode='w', buffering=0) as f:
             f.write('FROM %s\n' % dockerfile['image']['fullname'])
             f.write('COPY conf/ /\n')
 
             if is_toolimage:
                 f.write('RUN chmod +x /loop-entrypoint.sh\n')
                 f.write('ENTRYPOINT /loop-entrypoint.sh\n')
+            f.flush()
             f.close()
 
         try:
@@ -124,7 +125,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         except Exception as e:
             os.remove(test_dockerfile.name)
             raise e
-
+o
         os.remove(test_dockerfile.name)
 
         return ret
