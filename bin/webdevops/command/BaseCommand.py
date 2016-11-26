@@ -18,7 +18,7 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import os, sys, re
+import os, sys, re, traceback
 import time, datetime
 import multiprocessing
 from cleo import Command
@@ -47,11 +47,13 @@ class BaseCommand(Command):
 
         try:
             exitcode = self.run_task(configuration=self.configuration)
-        except KeyboardInterrupt:
+        except KeyboardInterrupt as e:
             print ' !!! Execution aborted by user'
             exitcode = 1
-        except SystemExit:
+        except SystemExit as e:
             print ' !!! Execution aborted by SystemExit'
+            print ''
+            traceback.print_exc(file=sys.stdout)
             exitcode = 1
 
         if exitcode == True or exitcode == 0 or exitcode == '' or exitcode is None:
@@ -60,6 +62,7 @@ class BaseCommand(Command):
             exitcode = 255
 
         self.shutdown(exitcode=exitcode)
+        sys.exit(exitcode)
 
     def run_task(self, configuration):
         """
@@ -121,7 +124,6 @@ class BaseCommand(Command):
             print '> finished execution in %s successfully' % (duration)
         else:
             print '> finished execution in %s with errors (exitcode %s)' % (duration, exitcode)
-        sys.exit(exitcode)
 
     def build_configuration(self):
         """
