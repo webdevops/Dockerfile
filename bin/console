@@ -13,6 +13,7 @@ sys.stderr = os.fdopen(sys.stderr.fileno(), 'w', 0)
 import re, yaml
 from cleo import Application
 
+from webdevops import Configuration
 from webdevops.docker.DockerBaseClient import DockerBaseClient
 from webdevops.docker.DockerPyClient import DockerPyClient
 from webdevops.docker.DockerCliClient import DockerCliClient
@@ -78,6 +79,9 @@ if __name__ == '__main__':
 
         if 'pathRegex' in configuration['docker']:
             configuration['docker']['autoPullBlacklist'] = re.compile(configuration['docker']['autoPullBlacklist'])
+
+    configuration = Configuration.merge(configuration)
+    configuration = Configuration.dotdictify(configuration)
 
     # Init application
     application = Application()

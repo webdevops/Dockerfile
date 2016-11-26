@@ -35,7 +35,7 @@ class BaseCommand(Command):
         Constructor
         """
         Command.__init__(self)
-        self.configuration = Configuration.merge(configuration)
+        self.configuration = configuration
 
     def handle(self):
         """
