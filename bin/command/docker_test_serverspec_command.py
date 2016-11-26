@@ -31,6 +31,7 @@ class DockerTestServerspecCommand(DoitCommand):
     docker:test:serverspec
         {--dry-run               : show only which images will be build}
         {--t|threads=0           : threads}
+        {--r|retry=0             : retry}
         {--whitelist=?*          : image/tag whitelist }
         {--blacklist=?*          : image/tag blacklist }
     """

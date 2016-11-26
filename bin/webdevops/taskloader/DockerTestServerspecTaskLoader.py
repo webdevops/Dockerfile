@@ -139,16 +139,22 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
             f.flush()
             f.close()
 
-        try:
-            # Execute test
-            ret = Command.execute(cmd, cwd=configuration.get('serverspecPath'), env=env)
-        except Exception as e:
-            os.remove(test_dockerfile.name)
-            raise
+        test_status = False
+        for retry_count in range(0, configuration.get('retry')):
+            try:
+                test_status = Command.execute(cmd, cwd=configuration.get('serverspecPath'), env=env)
+            except Exception:
+                pass
+
+            if test_status:
+                break
+            elif retry_count < (configuration.get('retry') - 1):
+                print '    failed, retrying... (try %s)' % (retry_count + 1)
+            else:
+                print '    failed, giving up'
 
         os.remove(test_dockerfile.name)
-
-        return ret
+        return test_status
 
     @staticmethod
     def task_title(task):
