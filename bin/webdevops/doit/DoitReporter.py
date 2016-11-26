@@ -67,6 +67,10 @@ class TaskResult(object):
         """
         if self._started_on is not None and self.elapsed is None:
             started = datetime.datetime.utcfromtimestamp(self._started_on)
+
+            if self._finished_on is None:
+                self._finished_on = time.time()
+
             self.started = str(started)
             self.elapsed = self._finished_on - self._started_on
 
@@ -190,14 +194,13 @@ class DoitReporter(object):
         log_err = sys.stderr.getvalue()
         sys.stderr = self._old_err
 
-
         # add errors together with stderr output
         if self.errors:
             log_err += "\n".join(self.errors)
 
         task_result_list = [
             tr.to_dict() for tr in self.t_results.values()]
-
+        
         self.writeln('')
         self.writeln('-> finished all tasks')
         self.writeln('')
@@ -263,6 +266,9 @@ class DoitReporter(object):
         self.writeln()
 
     def duration(self, duration):
+        """
+        Calculate duration (seconds) to human readable time
+        """
         return 'duration: %s' % str(datetime.timedelta(seconds=int(duration)))
 
     def writeln(self, text=''):

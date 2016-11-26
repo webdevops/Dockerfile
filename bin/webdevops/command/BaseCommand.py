@@ -44,7 +44,15 @@ class BaseCommand(Command):
         self.build_configuration()
 
         self.startup()
-        exitcode = self.run_task(configuration=self.configuration)
+
+        try:
+            exitcode = self.run_task(configuration=self.configuration)
+        except KeyboardInterrupt:
+            print ' !!! Execution aborted by user'
+            exitcode = 1
+        except SystemExit:
+            print ' !!! Execution aborted by SystemExit'
+            exitcode = 1
 
         if exitcode == True or exitcode == 0 or exitcode == '' or exitcode is None:
             exitcode = 0
