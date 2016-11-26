@@ -18,9 +18,7 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import os
-import re
-import tempfile
+import os, re, tempfile, json
 from webdevops import GeneralUtility
 from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from .BaseTaskLoader import BaseTaskLoader
@@ -72,9 +70,23 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         spec_path = os.path.join('spec', 'docker', spec_file)
         spec_abs_path = os.path.join(configuration['serverspecPath'], spec_path)
 
+        # create dockerfile
+        tmp_suffix = '.%s_%s_%s.tmp' % (dockerfile['image']['repository'], dockerfile['image']['imageName'], dockerfile['image']['tag'])
+        test_dockerfile = tempfile.NamedTemporaryFile(prefix='Dockerfile.', suffix=tmp_suffix, dir=configuration['serverspecPath'], bufsize=0, delete=False)
+
         # serverspec options
         serverspec_opts = []
         serverspec_opts.extend(['--pattern', spec_path])
+
+        # serverspec env
+        serverspec_env = {}
+        if 'serverspec' in configuration and 'env' in configuration['serverspec']:
+            for term in configuration['serverspec']['env']:
+                if term in dockerfile['image']['fullname']:
+                    for key in configuration['serverspec']['env'][term]:
+                        serverspec_env[key] = configuration['serverspec']['env'][term][key]
+        serverspec_env['DOCKER_IMAGE'] = dockerfile['image']['fullname']
+        serverspec_env['DOCKERFILE'] = os.path.basename(test_dockerfile.name)
 
         # DryRun
         if configuration['dryRun']:
@@ -84,6 +96,10 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
             print '         image: %s' % (dockerfile['image']['fullname'])
             print '          path: %s' % (spec_path)
             print '          args: %s' % (' '.join(serverspec_opts))
+            print '   environment:'
+            print json.dumps(serverspec_env, indent=4, sort_keys=True)
+
+            os.remove(test_dockerfile.name)
             return True
 
         # check if we have any tests
@@ -95,18 +111,9 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         cmd = ['bundle', 'exec', 'rspec']
         cmd.extend(serverspec_opts)
 
-        # create dockerfile
-        tmp_suffix = '.%s_%s_%s.tmp' % (dockerfile['image']['repository'], dockerfile['image']['imageName'], dockerfile['image']['tag'])
-        test_dockerfile = tempfile.NamedTemporaryFile(prefix='Dockerfile.', suffix=tmp_suffix, dir=configuration['serverspecPath'], bufsize=0, delete=False)
-
         # Set environment variables
         env = os.environ.copy()
-        if 'serverspec' in configuration and 'env' in configuration['serverspec']:
-            for term in configuration['serverspec']['env']:
-                if term in dockerfile['image']['fullname']:
-                    env.update(configuration['serverspec']['env'][term])
-        env['DOCKER_IMAGE'] = dockerfile['image']['fullname']
-        env['DOCKERFILE'] = os.path.basename(test_dockerfile.name)
+        env.update(serverspec_env)
 
         # create Dockerfile
         with open(test_dockerfile.name, mode='w', buffering=0) as f:
