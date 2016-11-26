@@ -19,7 +19,7 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os, re, tempfile, json
-from webdevops import GeneralUtility
+from webdevops import Command
 from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from .BaseTaskLoader import BaseTaskLoader
 from doit.task import dict_to_task
@@ -77,10 +77,11 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         # serverspec env
         serverspec_env = {}
-        for term in configuration.get('dockerTest.env', {}):
+        dockertest_env_condition_list = configuration.get('dockerTest.env', {}).to_dict()
+        for term in dockertest_env_condition_list:
             if term in dockerfile['image']['fullname']:
-                for key in configuration.get('dockerTest.env.%s' % term):
-                    serverspec_env[key] = configuration.get('dockerTest.env.%s.%s' % (term, key))
+                for key in dockertest_env_condition_list[term]:
+                    serverspec_env[key] = str(dockertest_env_condition_list[term][key])
         serverspec_env['DOCKER_IMAGE'] = dockerfile['image']['fullname']
         serverspec_env['DOCKER_TAG'] = dockerfile['image']['tag']
         serverspec_env['DOCKERFILE'] = os.path.basename(test_dockerfile.name)
@@ -125,7 +126,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         try:
             # Execute test
-            ret = GeneralUtility.cmd_execute(cmd, cwd=configuration.get('serverspecPath'), env=env)
+            ret = Command.execute(cmd, cwd=configuration.get('serverspecPath'), env=env)
         except Exception as e:
             os.remove(test_dockerfile.name)
             raise

@@ -18,23 +18,29 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import subprocess
-import os
-import tempfile
+import os, subprocess, tempfile
 
-def cmd_execute(cmd, cwd=False, env=None):
+def execute(cmd, cwd=False, env=None):
     """
     Execute cmd and output stdout/stderr
     """
 
     print 'Execute: %s' % ' '.join(cmd)
 
+    # remove _ from env (prevent errors)
+    if '_' in env:
+        del env['_']
+
+    # set current working directory
+    path_current = os.getcwd()
     if cwd:
-        path_current = os.getcwd()
         os.chdir(cwd)
 
+    # stdout file
+    # (stdout and stderr will be redirected to it, pieping both isn't possible)
     file_stdout = tempfile.NamedTemporaryFile()
 
+    # create subprocess
     proc = subprocess.Popen(
         cmd,
         stdout=file_stdout,
@@ -43,15 +49,17 @@ def cmd_execute(cmd, cwd=False, env=None):
         env=env
     )
 
+    # wait for process end
     while proc.poll() is None:
         pass
 
+    # output stdout
     with open(file_stdout.name, 'r') as f:
         for line in f:
             print line.rstrip('\n')
 
-    if cwd:
-        os.chdir(path_current)
+    # restore current work directory
+    os.chdir(path_current)
 
     if proc.returncode == 0:
         return True

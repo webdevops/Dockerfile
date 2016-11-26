@@ -22,7 +22,7 @@ import subprocess
 import os
 import tempfile
 from .DockerBaseClient import DockerBaseClient
-from webdevops import GeneralUtility
+from webdevops import Command
 
 
 class DockerCliClient(DockerBaseClient):
@@ -32,7 +32,7 @@ class DockerCliClient(DockerBaseClient):
         Build dockerfile
         """
         cmd = ['docker', 'pull', '%s:%s' % (name, tag)]
-        return GeneralUtility.cmd_execute(cmd)
+        return Command.execute(cmd)
 
     def build_dockerfile(self, path, name, nocache=False):
         """
@@ -43,11 +43,11 @@ class DockerCliClient(DockerBaseClient):
         if nocache:
             cmd.append('--no-cache')
 
-        return GeneralUtility.cmd_execute(cmd)
+        return Command.execute(cmd)
 
     def push_image(self, name):
         """
         Push one Docker image to registry
         """
         cmd = ['docker', 'push', name]
-        return GeneralUtility.cmd_execute(cmd)
+        return Command.execute(cmd)
