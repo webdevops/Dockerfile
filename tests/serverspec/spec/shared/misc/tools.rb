@@ -26,4 +26,9 @@ shared_examples 'misc::letsencrypt' do
     it "should include certbot" do
         expect(file("/usr/bin/certbot")).to be_executable
     end
+
+    describe command('/usr/bin/certbot --version') do
+        its(:stderr) { should match %r!certbot! }
+        its(:exit_status) { should eq 0 }
+    end
 end
