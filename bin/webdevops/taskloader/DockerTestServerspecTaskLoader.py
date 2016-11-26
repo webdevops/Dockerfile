@@ -57,7 +57,6 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         """
         Run test
         """
-
         # Check if current image is a toolimage (no daemon)
         is_toolimage = False
         if 'dockerTest' in configuration and 'toolImages' in configuration['dockerTest']:
@@ -66,8 +65,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
                     is_toolimage = True
 
         # rspec spec file settings
-        spec_file = '%s_spec.rb' % dockerfile['image']['imageName']
-        spec_path = os.path.join('spec', 'docker', spec_file)
+        spec_path = configuration['dockerTest']['serverspec']['specPath'] % dockerfile['image']['imageName']
         spec_abs_path = os.path.join(configuration['serverspecPath'], spec_path)
 
         # create dockerfile

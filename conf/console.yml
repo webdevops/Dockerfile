@@ -28,6 +28,9 @@ dockerTest:
     - '/liquibase'
     - '/certbot'
 
+  serverspec:
+    specPath: 'spec/docker/%s_spec.rb'
+
   env:
     ':alpine':
       OS_FAMILY: 'alpine'
