@@ -9,8 +9,14 @@ set :backend, :docker
 set :docker_container, ENV['DOCKER_IMAGE']
 set :os, :family => ENV['OS_FAMILY'], :version => ENV['OS_VERSION'], :arch => 'x86_64'
 
+
 Excon.defaults[:write_timeout] = 1000
 Excon.defaults[:read_timeout] = 1000
+
+$dockerInfo = {}
+$dockerInfo[:image] = ENV['DOCKER_IMAGE']
+$dockerInfo[:tag] = ENV['DOCKER_TAG']
+$dockerInfo[:dockerfile] = ENV['DOCKERFILE']
 
 $packageVersions = {}
 $packageVersions[:ansible]         = %r!ansible 2.([0-9]\.?)+!
@@ -24,11 +30,29 @@ else
     $testConfiguration[:ansiblePath] = "/usr/local/bin"
 end
 
+$testConfiguration[:php] = 7
 $testConfiguration[:phpXdebug] = true
 $testConfiguration[:phpApcu] = true
 $testConfiguration[:phpRedis] = true
 $testConfiguration[:phpMhash] = true
 $testConfiguration[:phpBlackfire] = false
+
+if ((os[:family] == 'ubuntu' and os[:version] == '12.04') or
+    (os[:family] == 'ubuntu' and os[:version] == '14.04') or
+    (os[:family] == 'ubuntu' and os[:version] == '15.04') or
+    (os[:family] == 'ubuntu' and os[:version] == '15.10') or
+    (os[:family] == 'redhat' and os[:version] == '7') or
+    (os[:family] == 'debian' and os[:version] == '7') or
+    (os[:family] == 'debian' and os[:version] == '8') or
+    (os[:family] == 'alpine' and os[:version] == '8') or
+    ($dockerInfo[:tag].match('php5')))
+    $testConfiguration[:php] = 5
+end
+
+if ($dockerInfo[:tag].match('php7'))
+    $testConfiguration[:php] = 7
+end
+
 
 if ENV['PHP_XDEBUG'] and ENV['PHP_XDEBUG'] == "0"
     $testConfiguration[:phpXdebug] = false

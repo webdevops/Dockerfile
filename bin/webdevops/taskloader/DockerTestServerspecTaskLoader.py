@@ -82,6 +82,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
                 for key in configuration.get('dockerTest.env.%s' % term):
                     serverspec_env[key] = configuration.get('dockerTest.env.%s.%s' % (term, key))
         serverspec_env['DOCKER_IMAGE'] = dockerfile['image']['fullname']
+        serverspec_env['DOCKER_TAG'] = dockerfile['image']['tag']
         serverspec_env['DOCKERFILE'] = os.path.basename(test_dockerfile.name)
 
         # DryRun

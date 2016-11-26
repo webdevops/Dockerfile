@@ -52,7 +52,11 @@ default = {
     },
 
     'dockerTest': {
-        'fileFilter': 'test_.*.py$'
+        'toolImages': {},
+        'serverspec': {
+        },
+
+        'env': {},
     },
 
     'dockerBuild': {
