@@ -78,32 +78,38 @@ class BaseCommand(Command):
 
         options = []
 
-        options.append('%s threads' % self.configuration['threads'])
+        if 'threads' in self.configuration:
+            options.append('%s threads' % self.configuration.get('threads'))
 
         if 'retry' in self.configuration:
-            options.append('%s retries' % self.configuration['retry'])
+            options.append('%s retries' % self.configuration.get('retry', 1))
 
-        if 'dryRun' in self.configuration and self.configuration['dryRun'] == True:
+        if 'dryRun' in self.configuration and self.configuration.get('dryRun'):
             options.append('dry-run')
 
         print 'Executing %s (%s)' % (self.name, ', '.join(options))
         print ''
 
         if self.output.is_verbose():
-            whitelist = self.get_whitelist()
-            if whitelist:
-                print 'WHITELIST active:'
-                for item in whitelist:
-                    print ' - %s' % item
-                print ''
+            try:
+                whitelist = self.get_whitelist()
+                if whitelist:
+                    print 'WHITELIST active:'
+                    for item in whitelist:
+                        print ' - %s' % item
+                    print ''
+            except:
+                pass
 
-            blacklist = self.get_blacklist()
-            if blacklist:
-                print 'BLACKLIST active:'
-                for item in blacklist:
-                    print ' - %s' % item
-                print ''
-
+            try:
+                blacklist = self.get_blacklist()
+                if blacklist:
+                    print 'BLACKLIST active:'
+                    for item in blacklist:
+                        print ' - %s' % item
+                    print ''
+            except:
+                pass
     def teardown(self,exitcode):
         pass
 
@@ -133,37 +139,37 @@ class BaseCommand(Command):
 
         # threads
         try:
-            configuration['threads'] = self.get_threads()
+            configuration.set('threads', self.get_threads())
         except (Exception):
-            configuration['threads'] = 1
+            configuration.set('threads', 1)
 
         # whitelist
         try:
-            configuration['whitelist'] = self.get_whitelist()
+            configuration.set('whitelist', self.get_whitelist())
         except (Exception):
             pass
 
         # blacklist
         try:
-            configuration['blacklist'] = self.get_blacklist()
+            configuration.set('blacklist', self.get_blacklist())
         except (Exception):
             pass
 
         # dryrun
         try:
-            configuration['dryRun'] = self.get_dry_run()
+            configuration.set('dryRun', self.get_dry_run())
         except (Exception):
             pass
 
         # retry
         try:
-            configuration['retry'] = self.get_retry()
+            configuration.set('retry', self.get_retry())
         except (Exception):
-            del configuration['retry']
+            configuration.set('retry', 1)
 
         # verbosity
         if self.output.is_verbose():
-            configuration['verbosity'] = 2
+            configuration.set('verbosity', 2)
 
         self.configuration = configuration
 
@@ -186,8 +192,8 @@ class BaseCommand(Command):
         ret = list(self.option('blacklist'))
 
         # static BLACKLIST file
-        if os.path.isfile(self.configuration['blacklistFile']):
-            lines = [line.rstrip('\n').lstrip('\n') for line in open(self.configuration['blacklistFile'])]
+        if os.path.isfile(self.configuration.get('blacklistFile')):
+            lines = [line.rstrip('\n').lstrip('\n') for line in open(self.configuration.get('blacklistFile'))]
             lines = filter(bool, lines)
 
             if lines:
@@ -203,9 +209,9 @@ class BaseCommand(Command):
 
         if threads == '0' or threads == '' or threads is None:
             # use configuration value
-            threads = self.configuration['threads']
+            threads = self.configuration.get('threads')
 
-        match = re.match('auto(([-*+/])([0-9]+))?', threads)
+        match = re.match('auto(([-*+/])([0-9]+))?', str(threads))
         if match is not None:
             ret = multiprocessing.cpu_count()
 
@@ -244,7 +250,7 @@ class BaseCommand(Command):
             return retry
         elif 'retry' in self.configuration:
             # configuration value
-            return self.configuration['retry']
+            return self.configuration.get('retry')
         else:
             # defaults
             return default

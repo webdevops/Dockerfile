@@ -38,20 +38,20 @@ class BaseDockerTaskLoader(BaseTaskLoader):
         BaseTaskLoader.__init__(self, configuration)
 
         # Init docker client
-        self.docker_client = configuration['dockerClient']
+        self.docker_client = configuration.get('dockerClient')
 
     def load_tasks(self, cmd, opt_values, pos_args):
         """
         DOIT task list generator
         """
-        config = {'verbosity': self.configuration['verbosity']}
+        config = {'verbosity': self.configuration.get('verbosity')}
 
         dockerfile_list = DockerfileUtility.find_dockerfiles_in_path(
-            base_path=self.configuration['basePath'],
-            path_regex=self.configuration['docker']['pathRegex'],
-            image_prefix=self.configuration['docker']['imagePrefix'],
-            whitelist=self.configuration['whitelist'],
-            blacklist=self.configuration['blacklist'],
+            base_path=self.configuration.get('basePath'),
+            path_regex=self.configuration.get('docker.pathRegex'),
+            image_prefix=self.configuration.get('docker.imagePrefix'),
+            whitelist=self.configuration.get('whitelist'),
+            blacklist=self.configuration.get('blacklist'),
         )
         dockerfile_list = self.process_dockerfile_list(dockerfile_list)
 
@@ -78,9 +78,7 @@ class BaseDockerTaskLoader(BaseTaskLoader):
                 dockerfile['dependency'] = dockerfile['image']['from']
 
             # Process auto latest tag
-            if self.configuration['docker']['autoLatestTag'] and dockerfile['image']['tag'] == \
-                self.configuration['docker'][
-                    'autoLatestTag']:
+            if self.configuration.get('docker.autoLatestTag') and dockerfile['image']['tag'] == self.configuration.get('docker.autoLatestTag'):
                 imageNameLatest = DockerfileUtility.generate_image_name_with_tag_latest(dockerfile['image']['fullname'])
                 if imageNameLatest not in image_list:
                     autoLatestTagImage = copy.deepcopy(dockerfile)

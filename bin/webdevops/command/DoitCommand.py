@@ -29,11 +29,11 @@ class DoitCommand(BaseCommand):
         arguments = []
         extra_configuration = {}
 
-        if 'threads' in configuration and configuration['threads'] > 1:
-            arguments.extend(['-n', str(configuration['threads'])])
+        if 'threads' in configuration and configuration.get('threads') > 1:
+            arguments.extend(['-n', str(configuration.get('threads'))])
 
         if 'doitConfig' in configuration:
-            extra_configuration = configuration['doitConfig']
+            extra_configuration = configuration.get('doitConfig')
 
         return DoitMain(
             task_loader=task_loader,

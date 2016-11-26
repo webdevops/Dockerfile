@@ -61,12 +61,12 @@ class DockerTestTestinfraTaskLoader(BaseDockerTaskLoader):
 
         test_opts = []
 
-        test_opts.extend(['-x', configuration['testinfraPath']])
+        test_opts.extend(['-x', configuration.get('testinfraPath')])
 
-        if configuration['verbosity'] > 1:
+        if configuration.get('verbosity') > 1:
             test_opts.extend(['-v'])
 
-        if configuration['dryRun']:
+        if configuration.get('dryRun'):
             print '         image: %s' % (dockerfile['image']['fullname'])
             print '          args: %s' % (' '.join(test_opts))
             return True

@@ -37,7 +37,7 @@ class DockerBuildCommand(DoitCommand):
     """
 
     def run_task(self, configuration):
-        configuration['dockerBuild']['noCache'] = self.option('no-cache')
+        configuration.set('dockerBuild.noCache', self.option('no-cache'))
 
         return self.run_doit(
             task_loader=DockerBuildTaskLoader(configuration),

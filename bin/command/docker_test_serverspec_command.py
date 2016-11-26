@@ -38,7 +38,7 @@ class DockerTestServerspecCommand(DoitCommand):
     serverspec_path = False
 
     def run_task(self, configuration):
-        self.serverspec_path = configuration['serverspecPath']
+        self.serverspec_path = configuration.get('serverspecPath')
 
         self.cleanup_dockerfiles()
 

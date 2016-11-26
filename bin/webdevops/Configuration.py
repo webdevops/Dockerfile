@@ -141,5 +141,9 @@ class dotdictify(dict):
             return dotdictify.__getitem__(self, k)
         return d
 
+    def set(self, key, value):
+        self[key] = value
+        return self[key]
+
     __setattr__ = __setitem__
     __getattr__ = __getitem__

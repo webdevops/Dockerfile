@@ -59,18 +59,17 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         """
         # Check if current image is a toolimage (no daemon)
         is_toolimage = False
-        if 'dockerTest' in configuration and 'toolImages' in configuration['dockerTest']:
-            for term in configuration['dockerTest']['toolImages']:
-                if term in dockerfile['image']['fullname']:
-                    is_toolimage = True
+        for term in configuration.get('dockerTest.toolImages', {}):
+            if term in dockerfile['image']['fullname']:
+                is_toolimage = True
 
         # rspec spec file settings
-        spec_path = configuration['dockerTest']['serverspec']['specPath'] % dockerfile['image']['imageName']
-        spec_abs_path = os.path.join(configuration['serverspecPath'], spec_path)
+        spec_path = configuration.get('dockerTest.serverspec.specPath') % dockerfile['image']['imageName']
+        spec_abs_path = os.path.join(configuration.get('serverspecPath'), spec_path)
 
         # create dockerfile
         tmp_suffix = '.%s_%s_%s.tmp' % (dockerfile['image']['repository'], dockerfile['image']['imageName'], dockerfile['image']['tag'])
-        test_dockerfile = tempfile.NamedTemporaryFile(prefix='Dockerfile.', suffix=tmp_suffix, dir=configuration['serverspecPath'], bufsize=0, delete=False)
+        test_dockerfile = tempfile.NamedTemporaryFile(prefix='Dockerfile.', suffix=tmp_suffix, dir=configuration.get('serverspecPath'), bufsize=0, delete=False)
 
         # serverspec options
         serverspec_opts = []
@@ -78,16 +77,15 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         # serverspec env
         serverspec_env = {}
-        if 'dockerTest' in configuration and 'env' in configuration['dockerTest']:
-            for term in configuration['dockerTest']['env']:
-                if term in dockerfile['image']['fullname']:
-                    for key in configuration['dockerTest']['env'][term]:
-                        serverspec_env[key] = configuration['dockerTest']['env'][term][key]
+        for term in configuration.get('dockerTest.env', {}):
+            if term in dockerfile['image']['fullname']:
+                for key in configuration.get('dockerTest.env.%s' % term):
+                    serverspec_env[key] = configuration.get('dockerTest.env.%s.%s' % (term, key))
         serverspec_env['DOCKER_IMAGE'] = dockerfile['image']['fullname']
         serverspec_env['DOCKERFILE'] = os.path.basename(test_dockerfile.name)
 
         # DryRun
-        if configuration['dryRun']:
+        if configuration.get('dryRun'):
             if not os.path.isfile(spec_abs_path):
                 print '                no tests found'
 
@@ -126,7 +124,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         try:
             # Execute test
-            ret = GeneralUtility.cmd_execute(cmd, cwd=configuration['serverspecPath'], env=env)
+            ret = GeneralUtility.cmd_execute(cmd, cwd=configuration.get('serverspecPath'), env=env)
         except Exception as e:
             os.remove(test_dockerfile.name)
             raise e
