@@ -21,7 +21,7 @@ graph:
     label: 'Webdevops Images\n%s'
 
 
-serverspec:
+dockerTest:
   toolImages:
     - '/bootstrap'
     - '/ansible'
@@ -30,38 +30,38 @@ serverspec:
 
   env:
     ':alpine':
-      'OS_FAMILY': 'alpine'
-      'OS_VERSION': '3'
+      OS_FAMILY: 'alpine'
+      OS_VERSION: '3'
     ':ubuntu-12.04':
-      'OS_FAMILY': 'ubuntu'
-      'OS_VERSION': '12.04'
+      OS_FAMILY: 'ubuntu'
+      OS_VERSION: '12.04'
     ':ubuntu-14.04':
-      'OS_FAMILY': 'ubuntu'
-      'OS_VERSION': '14.04'
+      OS_FAMILY: 'ubuntu'
+      OS_VERSION: '14.04'
     ':ubuntu-15.04':
-      'OS_FAMILY': 'ubuntu'
-      'OS_VERSION': '15.04'
+      OS_FAMILY: 'ubuntu'
+      OS_VERSION: '15.04'
     ':ubuntu-15.10':
-      'OS_FAMILY': 'ubuntu'
-      'OS_VERSION': '15.10'
+      OS_FAMILY: 'ubuntu'
+      OS_VERSION: '15.10'
     ':ubuntu-16.04':
-      'OS_FAMILY': 'ubuntu'
-      'OS_VERSION': '16.04'
+      OS_FAMILY: 'ubuntu'
+      OS_VERSION: '16.04'
     ':debian-7':
-      'OS_FAMILY': 'debian'
-      'OS_VERSION': '7'
+      OS_FAMILY: 'debian'
+      OS_VERSION: '7'
     ':debian-8':
-      'OS_FAMILY': 'debian'
-      'OS_VERSION': '8'
+      OS_FAMILY: 'debian'
+      OS_VERSION: '8'
     ':debian-9':
-      'OS_FAMILY': 'debian'
-      'OS_VERSION': 'testing'
+      OS_FAMILY: 'debian'
+      OS_VERSION: 'testing'
     ':centos-7':
-      'OS_FAMILY': 'redhat'
-      'OS_VERSION': '7'
+      OS_FAMILY: 'redhat'
+      OS_VERSION: '7'
     '/liquibase':
-      'OS_FAMILY': 'alpine'
-      'OS_VERSION': '3'
+      OS_FAMILY: 'alpine'
+      OS_VERSION: '3'
     '/certbot':
-      'OS_FAMILY': 'alpine'
-      'OS_VERSION': '3'
+      OS_FAMILY: 'alpine'
+      OS_VERSION: '3'

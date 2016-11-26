@@ -60,8 +60,8 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         # Check if current image is a toolimage (no daemon)
         is_toolimage = False
-        if 'serverspec' in configuration and 'toolImages' in configuration['serverspec']:
-            for term in configuration['serverspec']['toolImages']:
+        if 'dockerTest' in configuration and 'toolImages' in configuration['dockerTest']:
+            for term in configuration['dockerTest']['toolImages']:
                 if term in dockerfile['image']['fullname']:
                     is_toolimage = True
 
@@ -80,11 +80,11 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         # serverspec env
         serverspec_env = {}
-        if 'serverspec' in configuration and 'env' in configuration['serverspec']:
-            for term in configuration['serverspec']['env']:
+        if 'dockerTest' in configuration and 'env' in configuration['dockerTest']:
+            for term in configuration['dockerTest']['env']:
                 if term in dockerfile['image']['fullname']:
-                    for key in configuration['serverspec']['env'][term]:
-                        serverspec_env[key] = configuration['serverspec']['env'][term][key]
+                    for key in configuration['dockerTest']['env'][term]:
+                        serverspec_env[key] = configuration['dockerTest']['env'][term][key]
         serverspec_env['DOCKER_IMAGE'] = dockerfile['image']['fullname']
         serverspec_env['DOCKERFILE'] = os.path.basename(test_dockerfile.name)
 
