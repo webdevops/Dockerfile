@@ -125,7 +125,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         except Exception as e:
             os.remove(test_dockerfile.name)
             raise e
-o
+
         os.remove(test_dockerfile.name)
 
         return ret
