@@ -41,7 +41,7 @@ class TestinfraDockerPlugin:
             self.docker_image_list.append(docker_image)
         else:
             dockerfile_list = DockerfileUtility.find_dockerfiles_in_path(
-                base_path=self.configuration.get('basePath'),
+                base_path=self.configuration.get('dockerPath'),
                 path_regex=self.configuration.get('docker.pathRegex'),
                 image_prefix=self.configuration.get('docker.imagePrefix'),
                 whitelist=self.configuration.get('whitelist'),

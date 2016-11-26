@@ -63,12 +63,12 @@ class GenerateGraphCommand(BaseCommand):
             self.line('<info>ALL :</info> %s' % self.option('all'))
             self.line('<info>output :</info> %s' % configuration.get('imagePath'))
             self.line('<info>format :</info> %s' % self.option('format'))
-            self.line('<info>basePath :</info> %s' % configuration.get('basePath'))
+            self.line('<info>dockerPath :</info> %s' % configuration.get('dockerPath'))
             self.line('<info>filename :</info> %s' % self.option('filename'))
         self.__load_configuration()
 
         dockerfileList = DockerfileUtility.find_dockerfiles_in_path(
-            base_path=configuration.get('basePath'),
+            base_path=configuration.get('dockerPath'),
             path_regex=configuration.get('docker.pathRegex'),
             image_prefix=configuration.get('docker.imagePrefix'),
         )

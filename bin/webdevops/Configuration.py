@@ -23,7 +23,7 @@ from webdevops.doit.DoitReporter import DoitReporter
 from webdevops.docker.DockerCliClient import DockerCliClient
 
 default = {
-    'basePath': False,
+    'dockerPath': False,
     'templatePath': False,
     'provisionPath': False,
     'imagePath': False,

@@ -40,7 +40,7 @@ class GenerateDockerfileCommand(BaseCommand):
 
     def run_task(self, configuration):
         template_path = configuration.get('templatePath')
-        dockerfile_path = configuration.get('basePath')
+        dockerfile_path = configuration.get('dockerPath')
         whitelist = self.get_whitelist()
         blacklist = self.get_blacklist()
 

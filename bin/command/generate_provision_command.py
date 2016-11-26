@@ -48,7 +48,7 @@ class GenerateProvisionCommand(BaseCommand):
         self.__queue = Queue.Queue()
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
             self.line('<info>provision :</info> %s' % configuration.get('provisionPath'))
-            self.line('<info>dockerfile :</info> %s' % configuration.get('basePath'))
+            self.line('<info>dockerfile :</info> %s' % configuration.get('dockerPath'))
             self.line('<info>baselayout :</info> %s' % self.option('baselayout'))
             if 0 < len(self.option('image')):
                 self.line('<info>images </info> :')
@@ -70,7 +70,7 @@ class GenerateProvisionCommand(BaseCommand):
             if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
                 self.line("<info>*</info> -> Create thread <fg=magenta>%s</>" % thread_name)
             provisioner = Provisioner(
-                self.configuration.get('basePath'),
+                self.configuration.get('dockerPath'),
                 self.configuration.get('provisionPath'),
                 self.__queue,
                 self.output

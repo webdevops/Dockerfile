@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     # generate full paths
     path_entries = [
-        'basePath',
+        'dockerPath',
         'templatePath',
         'provisionPath',
         'imagePath',

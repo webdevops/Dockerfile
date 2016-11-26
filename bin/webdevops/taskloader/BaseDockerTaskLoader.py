@@ -47,7 +47,7 @@ class BaseDockerTaskLoader(BaseTaskLoader):
         config = {'verbosity': self.configuration.get('verbosity')}
 
         dockerfile_list = DockerfileUtility.find_dockerfiles_in_path(
-            base_path=self.configuration.get('basePath'),
+            base_path=self.configuration.get('dockerPath'),
             path_regex=self.configuration.get('docker.pathRegex'),
             image_prefix=self.configuration.get('docker.imagePrefix'),
             whitelist=self.configuration.get('whitelist'),

@@ -1,6 +1,6 @@
 ---
 
-basePath: 'docker'
+dockerPath: 'docker'
 templatePath: 'template'
 provisionPath: 'provisioning'
 imagePath: 'documentation/docs/resources/images/'
