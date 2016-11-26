@@ -23,9 +23,6 @@ shared_examples 'misc::graphviz' do
 end
 
 shared_examples 'misc::letsencrypt' do
-    it "should include letsencrypt" do
-        expect(file("/usr/bin/letsencrypt")).to be_executable
-    end
     it "should include certbot" do
         expect(file("/usr/bin/certbot")).to be_executable
     end
