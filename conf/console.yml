@@ -31,6 +31,9 @@ dockerTest:
   serverspec:
     specPath: 'spec/docker/%s_spec.rb'
 
+  dockerfile:
+    '/varnish':
+      - 'ENV VARNISH_BACKEND_HOST webdevops.io'
   env:
     ':alpine':
       OS_FAMILY: 'alpine'
@@ -100,4 +103,3 @@ dockerTest:
     '/varnish':
       OS_FAMILY: 'alpine'
       OS_VERSION: '3'
-      VARNISH_BACKEND_HOST: 'webdevops.io'

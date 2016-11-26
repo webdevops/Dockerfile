@@ -86,6 +86,20 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         serverspec_env['DOCKER_TAG'] = dockerfile['image']['tag']
         serverspec_env['DOCKERFILE'] = os.path.basename(test_dockerfile.name)
 
+        # dockerfile content
+        dockerfile_content = []
+        dockerfile_content.append('FROM %s' % dockerfile['image']['fullname'])
+        dockerfile_content.append('COPY conf/ /')
+
+        if is_toolimage:
+            dockerfile_content.append('RUN chmod +x /loop-entrypoint.sh')
+            dockerfile_content.append('ENTRYPOINT /loop-entrypoint.sh')
+
+        for term in configuration.get('dockerTest.dockerfile', {}):
+            if term in dockerfile['image']['fullname']:
+                dockerfile_content.extend( configuration.get('dockerTest.dockerfile').get(term))
+        print '\n'.join(dockerfile_content)
+
         # DryRun
         if configuration.get('dryRun'):
             if not os.path.isfile(spec_abs_path):
@@ -94,8 +108,14 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
             print '         image: %s' % (dockerfile['image']['fullname'])
             print '          path: %s' % (spec_path)
             print '          args: %s' % (' '.join(serverspec_opts))
-            print '   environment:'
+            print ''
+            print 'environment:'
+            print '------------'
             print json.dumps(serverspec_env, indent=4, sort_keys=True)
+            print ''
+            print 'Dockerfile:'
+            print '-----------'
+            print '\n'.join(dockerfile_content)
 
             os.remove(test_dockerfile.name)
             return True
@@ -115,12 +135,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         # create Dockerfile
         with open(test_dockerfile.name, mode='w', buffering=0) as f:
-            f.write('FROM %s\n' % dockerfile['image']['fullname'])
-            f.write('COPY conf/ /\n')
-
-            if is_toolimage:
-                f.write('RUN chmod +x /loop-entrypoint.sh\n')
-                f.write('ENTRYPOINT /loop-entrypoint.sh\n')
+            f.write('\n'.join(dockerfile_content))
             f.flush()
             f.close()
 
