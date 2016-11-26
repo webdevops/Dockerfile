@@ -18,24 +18,51 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import sys
-from .BaseCommand import BaseCommand
-from doit.doit_cmd import DoitMain
+import os, subprocess, tempfile
 
-class DoitCommand(BaseCommand):
-    foo = False
+def execute(cmd, cwd=False, env=None):
+    """
+    Execute cmd and output stdout/stderr
+    """
 
-    def run_doit(self, task_loader, configuration):
-        arguments = []
-        extra_configuration = {}
+    print 'Execute: %s' % ' '.join(cmd)
 
-        if 'threads' in configuration and configuration.get('threads') > 1:
-            arguments.extend(['-n', str(configuration.get('threads'))])
+    # remove _ from env (prevent errors)
+    if env is not None and '_' in env:
+        del env['_']
 
-        if 'doitConfig' in configuration:
-            extra_configuration = configuration.get('doitConfig')
+    # set current working directory
+    path_current = os.getcwd()
+    if cwd:
+        os.chdir(cwd)
 
-        return DoitMain(
-            task_loader=task_loader,
-            extra_config=extra_configuration
-        ).run(arguments)
+    # stdout file
+    # (stdout and stderr will be redirected to it, pieping both isn't possible)
+    file_stdout = tempfile.NamedTemporaryFile()
+
+    # create subprocess
+    proc = subprocess.Popen(
+        cmd,
+        stdout=file_stdout,
+        stderr=file_stdout,
+        bufsize=-1,
+        env=env
+    )
+
+    # wait for process end
+    while proc.poll() is None:
+        pass
+
+    # output stdout
+    with open(file_stdout.name, 'r') as f:
+        for line in f:
+            print line.rstrip('\n')
+
+    # restore current work directory
+    os.chdir(path_current)
+
+    if proc.returncode == 0:
+        return True
+    else:
+        print '>> failed command with return code %s' % proc.returncode
+        return False

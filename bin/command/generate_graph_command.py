@@ -57,20 +57,20 @@ class GenerateGraphCommand(BaseCommand):
 
     def run_task(self, configuration):
         if self.option('output'):
-            self.configuration['imagePath'] = self.option('output')
+            configuration.set('imagePath', self.option('output'))
 
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
             self.line('<info>ALL :</info> %s' % self.option('all'))
-            self.line('<info>output :</info> %s' % self.configuration['imagePath'])
+            self.line('<info>output :</info> %s' % configuration.get('imagePath'))
             self.line('<info>format :</info> %s' % self.option('format'))
-            self.line('<info>basePath :</info> %s' % self.configuration['basePath'])
+            self.line('<info>dockerPath :</info> %s' % configuration.get('dockerPath'))
             self.line('<info>filename :</info> %s' % self.option('filename'))
         self.__load_configuration()
 
         dockerfileList = DockerfileUtility.find_dockerfiles_in_path(
-            base_path=self.configuration['basePath'],
-            path_regex=self.configuration['docker']['pathRegex'],
-            image_prefix=self.configuration['docker']['imagePrefix'],
+            base_path=configuration.get('dockerPath'),
+            path_regex=configuration.get('docker.pathRegex'),
+            image_prefix=configuration.get('docker.imagePrefix'),
         )
 
         for dockerfile in dockerfileList:
@@ -140,7 +140,7 @@ class GenerateGraphCommand(BaseCommand):
         return '__root__', default_graph
 
     def __load_configuration(self):
-        conf_file_path = os.path.join(self.configuration['confPath'], 'diagram.yml')
+        conf_file_path = os.path.join(self.configuration.get('confPath'), 'diagram.yml')
 
         stream = open(conf_file_path, 'r')
         self.conf = yaml.safe_load(stream)
@@ -177,10 +177,11 @@ class GenerateGraphCommand(BaseCommand):
         dia = Digraph('webdevops',
                       filename=self.option('filename'),
                       format=self.option('format'),
-                      directory=self.configuration['imagePath'])
+                      directory=self.configuration.get('imagePath')
+                    )
         dia = self.__apply_styles(dia, self.conf['diagram']['styles'])
 
-        label = r'label = "\n\n%s"' % self.configuration['graph']['label']
+        label = r'label = "\n\n%s"' % self.configuration.get('graph.label')
 
         dia.body.append(label % date.today().strftime("%Y-%m-%d"))
         dia.body.append('newrank=true;')

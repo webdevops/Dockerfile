@@ -47,10 +47,9 @@ class GenerateProvisionCommand(BaseCommand):
     def run_task(self, configuration):
         self.__queue = Queue.Queue()
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
-            self.line('<info>provision :</info> %s' % self.configuration['provisionPath'])
-            self.line('<info>dockerfile :</info> %s' % self.configuration['basePath'])
+            self.line('<info>provision :</info> %s' % configuration.get('provisionPath'))
+            self.line('<info>dockerfile :</info> %s' % configuration.get('dockerPath'))
             self.line('<info>baselayout :</info> %s' % self.option('baselayout'))
-            self.line('<info>thread :</info> %d' % self.option('thread'))
             if 0 < len(self.option('image')):
                 self.line('<info>images </info> :')
                 for crit in self.option('image'):
@@ -71,8 +70,8 @@ class GenerateProvisionCommand(BaseCommand):
             if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
                 self.line("<info>*</info> -> Create thread <fg=magenta>%s</>" % thread_name)
             provisioner = Provisioner(
-                self.configuration['basePath'],
-                self.configuration['provisionPath'],
+                self.configuration.get('dockerPath'),
+                self.configuration.get('provisionPath'),
                 self.__queue,
                 self.output
             )
@@ -85,7 +84,7 @@ class GenerateProvisionCommand(BaseCommand):
         """
         Load the configuration for provisioning image
         """
-        configuration_file = os.path.join(self.configuration['confPath'], 'provision.yml')
+        configuration_file = os.path.join(self.configuration.get('confPath'), 'provision.yml')
         stream = open(configuration_file, "r")
         self.conf = yaml.load(stream, Loader=yamlordereddictloader.Loader)
 
@@ -96,7 +95,7 @@ class GenerateProvisionCommand(BaseCommand):
         if self.option('baselayout'):
             if Output.VERBOSITY_NORMAL <= self.output.get_verbosity():
                 self.line('<info>* </info> Building localscipts')
-            base_path = os.path.join(self.configuration['baselayoutPath'], 'baselayout')
+            base_path = os.path.join(self.configuration.get('baselayoutPath'), 'baselayout')
             shutil.make_archive('baselayout', 'bztar', base_path)
             os.rename('baselayout.tar.bz2', 'baselayout.tar')
 

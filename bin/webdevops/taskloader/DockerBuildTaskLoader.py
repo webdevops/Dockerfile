@@ -65,7 +65,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
 
         pull_parent_image = DockerfileUtility.check_if_base_image_needs_pull(dockerfile, configuration)
 
-        if configuration['dryRun']:
+        if configuration.get('dryRun'):
             print '      from: %s (pull: %s)' % (dockerfile['image']['from'], ('yes' if pull_parent_image else 'no'))
             print '      path: %s' % dockerfile['path']
             print '       dep: %s' % (DockerBuildTaskLoader.human_task_name_list(task.task_dep) if task.task_dep else 'none')
@@ -79,7 +79,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
             pull_image_tag = DockerfileUtility.extract_image_name_tag(dockerfile['image']['from'])
 
             pull_status = False
-            for retry_count in range(0, configuration['retry']):
+            for retry_count in range(0, configuration.get('retry')):
                 pull_status = docker_client.pull_image(
                     name=pull_image_name,
                     tag=pull_image_tag,
@@ -87,7 +87,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
 
                 if pull_status:
                     break
-                elif retry_count < (configuration['retry'] - 1):
+                elif retry_count < (configuration.get('retry') - 1):
                     print '    failed, retrying... (try %s)' % (retry_count+1)
                 else:
                     print '    failed, giving up'
@@ -98,16 +98,16 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         ## Build image
         print ' -> Building image %s ' % dockerfile['image']['fullname']
         build_status = False
-        for retry_count in range(0, configuration['retry']):
+        for retry_count in range(0, configuration.get('retry')):
             build_status = docker_client.build_dockerfile(
                 path=dockerfile['path'],
                 name=dockerfile['image']['fullname'],
-                nocache=configuration['dockerBuild']['noCache'],
+                nocache=configuration.get('dockerBuild.noCache'),
             )
 
             if build_status:
                 break
-            elif retry_count < (configuration['retry']-1):
+            elif retry_count < (configuration.get('retry')-1):
                 print '    failed, retrying... (try %s)' % (retry_count+1)
             else:
                 print '    failed, giving up'

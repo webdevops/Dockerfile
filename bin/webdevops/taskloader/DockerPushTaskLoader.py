@@ -58,19 +58,19 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
         """
         Push one Docker image to registry
         """
-        if configuration['dryRun']:
+        if configuration.get('dryRun'):
             print '      push: %s' % (dockerfile['image']['fullname'])
             return True
 
         push_status = False
-        for retry_count in range(0, configuration['retry']):
+        for retry_count in range(0, configuration.get('retry')):
             push_status = docker_client.push_image(
                 name=dockerfile['image']['fullname'],
             )
 
             if push_status:
                 break
-            elif retry_count < (configuration['retry'] - 1):
+            elif retry_count < (configuration.get('retry') - 1):
                 print '    failed, retrying... (try %s)' % (retry_count+1)
             else:
                 print '    failed, giving up'

@@ -23,7 +23,7 @@ from webdevops.doit.DoitReporter import DoitReporter
 from webdevops.docker.DockerCliClient import DockerCliClient
 
 default = {
-    'basePath': False,
+    'dockerPath': False,
     'templatePath': False,
     'provisionPath': False,
     'imagePath': False,
@@ -52,7 +52,11 @@ default = {
     },
 
     'dockerTest': {
-        'fileFilter': 'test_.*.py$'
+        'toolImages': {},
+        'serverspec': {
+        },
+
+        'env': {},
     },
 
     'dockerBuild': {
@@ -88,3 +92,93 @@ def merge(configuration):
 
     return dictmerge(default, configuration)
 
+
+class dotdictify(dict):
+    def __init__(self, value=None):
+        if value is None:
+            pass
+        elif isinstance(value, dict):
+            for key in value:
+                self.__setitem_internal__(key, value[key])
+        else:
+            raise TypeError, 'expected dict'
+
+    def __setitem_internal__(self, key, value):
+        """
+        Set dict as raw value (preserv key with dots)
+        """
+        if isinstance(value, dict) and not isinstance(value, dotdictify):
+            value = dotdictify(value)
+        dict.__setitem__(self, key, value)
+
+    def __setitem__(self, key, value):
+        if key is not None and '.' in key:
+            myKey, restOfKey = key.split('.', 1)
+            target = self.setdefault(myKey, dotdictify())
+            if not isinstance(target, dotdictify):
+                raise KeyError, 'cannot set "%s" in "%s" (%s)' % (restOfKey, myKey, repr(target))
+            target[restOfKey] = value
+        else:
+            if isinstance(value, dict) and not isinstance(value, dotdictify):
+                value = dotdictify(value)
+            dict.__setitem__(self, key, value)
+
+    def __getitem__(self, key, raw=False):
+        if key is None or '.' not in key or raw:
+            return dict.get(self, key, None)
+        myKey, restOfKey = key.split('.', 1)
+        target = dict.get(self, myKey, None)
+        if not isinstance(target, dotdictify):
+            raise KeyError, 'cannot get "%s" in "%s" (%s)' % (restOfKey, myKey, repr(target))
+        return target[restOfKey]
+
+    def __contains__(self, key):
+        """
+        Check if element is contained in tree
+        """
+        if key is None or '.' not in key:
+            return dict.__contains__(self, key)
+        myKey, restOfKey = key.split('.', 1)
+        if not dict.__contains__(self, myKey):
+            return False
+        target = dict.__getitem__(self, myKey)
+        if not isinstance(target, dotdictify):
+            return False
+        return restOfKey in target
+
+    def setdefault(self, key, default):
+        """
+        Set default value by using dotted notation
+        """
+        if key not in self:
+            self[key] = default
+        return self[key]
+
+    def to_dict(self):
+        """
+        Convert to dict
+        :return: dict
+        """
+        ret = {}
+        for key in self:
+            if key is not None:
+                ret[key] = self.__getitem__(key, True)
+        return ret
+
+    def get(self, k, d=None):
+        """
+        Get element by using dotted notation
+        """
+        if dotdictify.__contains__(self, k):
+            return dotdictify.__getitem__(self, k)
+        return d
+
+    def set(self, key, value):
+        """
+        Set value by using dotted notation
+        """
+        self[key] = value
+        return self[key]
+
+    __setattr__ = __setitem__
+    __getattr__ = __getitem__

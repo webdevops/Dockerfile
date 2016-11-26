@@ -53,16 +53,12 @@ def find_file_in_path(dockerfile_path, filename="Dockerfile", whitelist=False, b
 
     # filter by whitelist
     if whitelist:
-        tmp = []
-        for file in file_list:
-            for whitelistTerm in whitelist:
-                if whitelistTerm in file:
-                    tmp.append(file)
-                file_list = tmp
+        for term in whitelist:
+            file_list = filter(lambda x: term in x, file_list)
 
     if blacklist:
-        for blacklistTerm in blacklist:
-            file_list = filter(lambda x: blacklistTerm not in x, file_list)
+        for term in blacklist:
+            file_list = filter(lambda x: term not in x, file_list)
 
     return file_list
 
@@ -78,8 +74,7 @@ def find_dockerfiles_in_path(base_path, path_regex, image_prefix, whitelist=Fals
         image_name = (image_name_info['image'] if 'image' in image_name_info else '')
         image_tag = (image_name_info['tag'] if 'tag' in image_name_info else '')
 
-        #
-        #
+        # check if path is linked
         if os.path.islink(os.path.dirname(path)):
             linked_image_name_info = ([m.groupdict() for m in path_regex.finditer(os.path.realpath(path))])[0]
 
@@ -96,6 +91,7 @@ def find_dockerfiles_in_path(base_path, path_regex, image_prefix, whitelist=Fals
             'name': image_prefix + image_repository + '/' + image_name,
             'tag': image_tag,
             'repository': image_prefix + image_repository,
+            'imageName': image_name,
             'from': image_from
         }
         return imageInfo
@@ -126,19 +122,13 @@ def filter_dockerfile(dockerfile_list, whitelist=False, blacklist=False):
     """
     Filter Dockerfiles by white- and blacklist
     """
-
     if whitelist:
-        tmp = []
-        for dockerfile in dockerfile_list:
-            for whitelistTerm in whitelist:
-                if whitelistTerm in dockerfile['image']['fullname']:
-                    tmp.append(dockerfile)
-                    break
-            dockerfile_list = tmp
+        for term in whitelist:
+            dockerfile_list = filter(lambda x: term in x['image']['fullname'], dockerfile_list)
 
     if blacklist:
-        for blacklistTerm in blacklist:
-            dockerfile_list = filter(lambda x: blacklistTerm not in x['image']['fullname'], dockerfile_list)
+        for term in blacklist:
+            dockerfile_list = filter(lambda x: term not in x['image']['fullname'], dockerfile_list)
 
     return dockerfile_list
 
@@ -203,8 +193,8 @@ def check_if_base_image_needs_pull(dockerfile, configuration):
     ret = False
     base_image = dockerfile['image']['from']
 
-    if configuration['docker']['autoPull']:
-        if configuration['docker']['autoPullWhitelist'] and configuration['docker']['autoPullWhitelist'].search(base_image):
+    if configuration.get('docker.autoPull'):
+        if configuration.get('docker.autoPullWhitelist') and configuration.get('docker.autoPullWhitelist').search(base_image):
             """
             Matched whitelist
             """
@@ -215,7 +205,7 @@ def check_if_base_image_needs_pull(dockerfile, configuration):
             """
             ret = True
 
-        if configuration['docker']['autoPullBlacklist'] and configuration['docker']['autoPullBlacklist'].match(base_image):
+        if configuration.get('docker.autoPullBlacklist') and configuration.get('docker.autoPullBlacklist').match(base_image):
             """
             Matched blacklist
             """

@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
-import os
+import os, sys
 
 # prevent bytecode
 sys.dont_write_bytecode = True
@@ -11,58 +10,86 @@ sys.dont_write_bytecode = True
 sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 sys.stderr = os.fdopen(sys.stderr.fileno(), 'w', 0)
 
-import re
+import re, yaml
 from cleo import Application
 
+from webdevops import Configuration
 from webdevops.docker.DockerBaseClient import DockerBaseClient
 from webdevops.docker.DockerPyClient import DockerPyClient
 from webdevops.docker.DockerCliClient import DockerCliClient
 from command.docker_build_command import DockerBuildCommand
 from command.docker_push_command import DockerPushCommand
 from command.docker_pull_command import DockerPullCommand
-from command.docker_test_command import DockerTestCommand
+from command.docker_test_testinfra_command import DockerTestTestinfraCommand
+from command.docker_test_serverspec_command import DockerTestServerspecCommand
 from command.generate_dockerfile_command import GenerateDockerfileCommand
 from command.generate_graph_command import GenerateGraphCommand
 from command.generate_provision_command import GenerateProvisionCommand
 
 if __name__ == '__main__':
+    # Generate common paths
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    root_path = os.path.dirname(script_path)
+    conf_path = os.path.join(root_path, 'conf')
+
+
     def generatePath(path):
-        scriptPath = os.path.dirname(os.path.dirname(__file__))
-        return os.path.abspath(os.path.join(scriptPath, (path)))
+        """
+        Generate full path based on root path
+        """
+        return os.path.abspath(os.path.join(root_path, (path)))
 
-    configuration = {
-        'basePath': generatePath('docker'),
-        'templatePath': generatePath('template'),
-        'provisionPath': generatePath('provisioning'),
-        'imagePath': generatePath('documentation/docs/resources/images/'),
-        'confPath': generatePath('conf'),
-        'baselayoutPath': generatePath('baselayout'),
-        'testPath': generatePath('tests'),
+    # Read console.yml for configuration
+    with open(os.path.join(conf_path, 'console.yml'), 'r') as stream:
+        try:
+            configuration = yaml.load(stream)
+            configuration['confPath'] = conf_path
+        except yaml.YAMLError as e:
+            configuration = None
+            print ' !!! Exception while loading configuration from %s:' % conf_path
+            print ''
+            print e
+            print ''
+            sys.exit(1)
 
-        #'dockerClient': DockerPyClient(),
-        #'dockerClient': DockerCliClient(),
-        #'dockerClient': DockerBaseClient(),
+    # Check if configuration is valid
+    if configuration is None:
+        print ' !!! Configuration not found'
+        sys.exit(1)
 
-        'blacklistFile': generatePath('BLACKLIST'),
+    # generate full paths
+    path_entries = [
+        'dockerPath',
+        'templatePath',
+        'provisionPath',
+        'imagePath',
+        'baselayoutPath',
+        'testinfraPath',
+        'serverspecPath',
+        'blacklistFile',
+    ]
+    for key in path_entries:
+        if key in configuration:
+            configuration[key] = generatePath(configuration[key])
 
-        'docker': {
-            'imagePrefix': 'webdevops',
-            'autoLatestTag': 'ubuntu-16.04',
-            'pathRegex': re.compile('/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'),
-            'autoPull': True,
-            'autoPullBlacklist': re.compile(r'^webdevops/.*'),
-        },
+    # Translate regexp
+    if 'docker' in configuration:
+        if 'pathRegex' in configuration['docker']:
+            configuration['docker']['pathRegex'] = re.compile(configuration['docker']['pathRegex'])
 
-        'graph': {
-            'label': 'Webdevops Images\n%s',
-        },
-    }
+        if 'pathRegex' in configuration['docker']:
+            configuration['docker']['autoPullBlacklist'] = re.compile(configuration['docker']['autoPullBlacklist'])
 
+    configuration = Configuration.merge(configuration)
+    configuration = Configuration.dotdictify(configuration)
+
+    # Init application
     application = Application()
     application.add(DockerBuildCommand(configuration=configuration))
     application.add(DockerPushCommand(configuration=configuration))
     application.add(DockerPullCommand(configuration=configuration))
-    application.add(DockerTestCommand(configuration=configuration))
+    application.add(DockerTestTestinfraCommand(configuration=configuration))
+    application.add(DockerTestServerspecCommand(configuration=configuration))
     application.add(GenerateDockerfileCommand(configuration=configuration))
     application.add(GenerateGraphCommand(configuration=configuration))
     application.add(GenerateProvisionCommand(configuration=configuration))

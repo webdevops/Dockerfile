@@ -39,8 +39,8 @@ class GenerateDockerfileCommand(BaseCommand):
     template_footer = '{% endblock %}'
 
     def run_task(self, configuration):
-        template_path = self.configuration['templatePath']
-        dockerfile_path = self.configuration['basePath']
+        template_path = configuration.get('templatePath')
+        dockerfile_path = configuration.get('dockerPath')
         whitelist = self.get_whitelist()
         blacklist = self.get_blacklist()
 

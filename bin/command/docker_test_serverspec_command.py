@@ -18,28 +18,42 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import os, glob
 from cleo import Output
+from webdevops import Dockerfile, DockerfileUtility
 from webdevops.command import DoitCommand
-from webdevops.taskloader import DockerPushTaskLoader
+from webdevops.taskloader import DockerTestServerspecTaskLoader
 
-class DockerPushCommand(DoitCommand):
+class DockerTestServerspecCommand(DoitCommand):
     """
-    Push images to registry/hub
+    Test docker images with Serverspec
 
-    docker:push
+    docker:test:serverspec
         {--dry-run               : show only which images will be build}
         {--t|threads=0           : threads}
-        {--r|retry=0             : retry}
         {--whitelist=?*          : image/tag whitelist }
         {--blacklist=?*          : image/tag blacklist }
     """
 
+    serverspec_path = False
+
     def run_task(self, configuration):
+        self.serverspec_path = configuration.get('serverspecPath')
+
+        self.cleanup_dockerfiles()
+
         return self.run_doit(
-            task_loader=DockerPushTaskLoader(configuration),
+            task_loader=DockerTestServerspecTaskLoader(configuration),
             configuration=configuration
         )
 
+    def cleanup_dockerfiles(self):
+        """
+        Cleanup old dockerfiles in test directory
+        """
+        for file in glob.glob(os.path.join(self.serverspec_path, 'Dockerfile.*.tmp')):
+            os.remove(file)
 
-
+    def teardown(self, exitcode):
+        self.cleanup_dockerfiles()
 

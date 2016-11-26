@@ -18,20 +18,15 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import pytest
-import sys
 from cleo import Output
-from jinja2 import Environment, FileSystemLoader
-from webdevops import Dockerfile, DockerfileUtility
 from webdevops.command import DoitCommand
-from webdevops.testinfra import TestinfraDockerPlugin
-from webdevops.taskloader import DockerTestTaskLoader
+from webdevops.taskloader import DockerTestTestinfraTaskLoader
 
-class DockerTestCommand(DoitCommand):
+class DockerTestTestinfraCommand(DoitCommand):
     """
-    Tests images
+    Test docker images with Testinfra
 
-    docker:test
+    docker:test:testinfra
         {--dry-run               : show only which images will be build}
         {--t|threads=0           : threads}
         {--whitelist=?*          : image/tag whitelist }
@@ -39,23 +34,8 @@ class DockerTestCommand(DoitCommand):
     """
 
     def run_task(self, configuration):
-        if configuration['threads'] > 1:
-            return self.run_doit(
-                task_loader=DockerTestTaskLoader(configuration),
-                configuration=configuration
-            )
-        else:
-            # Run directly
-            if configuration['dryRun']:
-                print 'pytest directory: %s' % (self.configuration['testPath'])
-                print ''
-            else :
-                test_opts = []
-
-                test_opts.extend(['-x', self.configuration['testPath']])
-
-                if self.output.is_verbose():
-                    test_opts.extend(['-v'])
-
-                return pytest.main(test_opts, plugins = [TestinfraDockerPlugin(configuration)])
+        return self.run_doit(
+            task_loader=DockerTestTestinfraTaskLoader(configuration),
+            configuration=configuration
+        )
 

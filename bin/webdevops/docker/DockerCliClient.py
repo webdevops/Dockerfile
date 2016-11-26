@@ -22,6 +22,7 @@ import subprocess
 import os
 import tempfile
 from .DockerBaseClient import DockerBaseClient
+from webdevops import Command
 
 
 class DockerCliClient(DockerBaseClient):
@@ -31,7 +32,7 @@ class DockerCliClient(DockerBaseClient):
         Build dockerfile
         """
         cmd = ['docker', 'pull', '%s:%s' % (name, tag)]
-        return self.cmd_execute(cmd)
+        return Command.execute(cmd)
 
     def build_dockerfile(self, path, name, nocache=False):
         """
@@ -42,40 +43,11 @@ class DockerCliClient(DockerBaseClient):
         if nocache:
             cmd.append('--no-cache')
 
-        return self.cmd_execute(cmd)
+        return Command.execute(cmd)
 
     def push_image(self, name):
         """
         Push one Docker image to registry
         """
         cmd = ['docker', 'push', name]
-        return self.cmd_execute(cmd)
-
-    def cmd_execute(self, cmd):
-        """
-        Execute cmd and output stdout/stderr
-        """
-
-        print 'Run Docker CLI: %s' % ' '.join(cmd)
-
-        file_stdout = tempfile.NamedTemporaryFile()
-
-        proc = subprocess.Popen(
-            cmd,
-            stdout=file_stdout,
-            stderr=file_stdout,
-            bufsize=-1,
-        )
-
-        while proc.poll() is None:
-            pass
-
-        with open(file_stdout.name, 'r') as f:
-            for line in f:
-                print line.rstrip('\n')
-
-        if proc.returncode == 0:
-            return True
-        else:
-            print '>> failed command with return code %s' % proc.returncode
-            return False
+        return Command.execute(cmd)
