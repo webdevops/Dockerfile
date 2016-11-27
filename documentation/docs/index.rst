@@ -26,7 +26,7 @@ Overview
    :maxdepth: 2
 
    content/DockerImages/index
-   content/Customization/index
+   content/Commands/index
    content/BuildingProcess/index
    content/KnownIssues/index
    content/FAQ/index
