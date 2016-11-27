@@ -24,11 +24,11 @@ from webdevops import Dockerfile, DockerfileUtility
 from webdevops.command import DoitCommand
 from webdevops.taskloader import DockerTestServerspecTaskLoader
 
-class DockerTestServerspecCommand(DoitCommand):
+class TestServerspecCommand(DoitCommand):
     """
     Test docker images with Serverspec
 
-    docker:test:serverspec
+    test:serverspec
         {--dry-run               : show only which images will be build}
         {--t|threads=0           : threads}
         {--r|retry=0             : retry}

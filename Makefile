@@ -34,7 +34,7 @@ requirements:
 	cd tests/serverspec && bundle install --path=vendor
 
 test:
-	python bin/console docker:test:serverspec --threads=auto/2 -v
+	python bin/console test:serverspec --threads=auto/2 -v
 
 baselayout:
 	python bin/console generate:provision --baselayout

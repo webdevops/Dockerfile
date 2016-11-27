@@ -22,11 +22,11 @@ from cleo import Output
 from webdevops.command import DoitCommand
 from webdevops.taskloader import DockerTestTestinfraTaskLoader
 
-class DockerTestTestinfraCommand(DoitCommand):
+class TestTestinfraCommand(DoitCommand):
     """
     Test docker images with Testinfra
 
-    docker:test:testinfra
+    test:testinfra
         {--dry-run               : show only which images will be build}
         {--t|threads=0           : threads}
         {--whitelist=?*          : image/tag whitelist }

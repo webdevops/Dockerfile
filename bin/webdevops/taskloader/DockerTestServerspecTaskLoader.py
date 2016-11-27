@@ -98,7 +98,6 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         for term in configuration.get('dockerTest.dockerfile', {}):
             if term in dockerfile['image']['fullname']:
                 dockerfile_content.extend( configuration.get('dockerTest.dockerfile').get(term))
-        print '\n'.join(dockerfile_content)
 
         # DryRun
         if configuration.get('dryRun'):
