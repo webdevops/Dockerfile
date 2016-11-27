@@ -90,8 +90,8 @@ Option                                 Description                              
 --blacklist=term                       Don't build Docker images with *term* in name                                     *string value*
 =====================================  ================================================================================= ===============================================
 
-bin/console test:testinfra
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+bin/console test:serverspec
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Test built images with serverspec_ (python module), spec files are inside ``tests/serverspec``
 
