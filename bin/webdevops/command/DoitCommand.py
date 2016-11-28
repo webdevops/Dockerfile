@@ -23,8 +23,6 @@ from .BaseCommand import BaseCommand
 from doit.doit_cmd import DoitMain
 
 class DoitCommand(BaseCommand):
-    foo = False
-
     def run_doit(self, task_loader, configuration):
         arguments = []
         extra_configuration = {}
