@@ -198,11 +198,10 @@ class DoitReporter(object):
         if self.errors:
             log_err += "\n".join(self.errors)
 
-        task_result_list = [
-            tr.to_dict() for tr in self.t_results.values()]
+        task_result_list = [tr.to_dict() for tr in self.t_results.values()]
         
         self.writeln('')
-        self.writeln('-> finished all tasks')
+        self.writeln('-> finished %s tasks' % (len(task_result_list)))
         self.writeln('')
 
         # sort task list by task name
