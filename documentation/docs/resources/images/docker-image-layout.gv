@@ -2,8 +2,7 @@ digraph webdevops {
 	graph [bgcolor=white fontcolor=black fontsize=16 rankdir=TP]
 	node [color=white fillcolor="#E1E1E1" fontcolor=black fontname=Helvetica shape=box style=filled]
 	edge [arrowhead=open color=black fontcolor=white fontname=Courier fontsize=12 style=dashed]
-	label = "\n\nWebdevops Images
-2016-10-23"
+	label = "\n\nWebdevops Images\n2016-11-28"
 	newrank=true;
 		subgraph cluster_php {
 			graph [fillcolor="#c0e5a8" style=filled]
@@ -23,7 +22,7 @@ digraph webdevops {
 				"webdevops/varnish"
 					"webdevops/nginx" -> "webdevops/nginx-dev"
 				"webdevops/ssh"
-					"webdevops/postfix" -> "webdevops/mail-sandbox"
+				"webdevops/mail-sandbox"
 				"webdevops/vsftp"
 				"webdevops/nginx"
 				"webdevops/apache"
@@ -37,6 +36,7 @@ digraph webdevops {
 			label = "Official images (Docker hub)"
 				busybox
 				centos
+				java
 				ubuntu
 				debian
 				alpine
@@ -77,6 +77,7 @@ digraph webdevops {
 			node [color=black fillcolor="#78c445" fontcolor=black fontname=Helvetica shape=box style=filled]
 			label = "Tools images"
 				"webdevops/sphinx"
+				"webdevops/liquibase"
 				"webdevops/certbot"
 		}
 		subgraph "cluster_php-dev" {
@@ -87,11 +88,13 @@ digraph webdevops {
 			"webdevops/base-app" -> "webdevops/php"
 			"webdevops/php-apache" -> "webdevops/typo3"
 			"webdevops/base-app" -> "webdevops/ssh"
+			"webdevops/php-nginx" -> "webdevops/mail-sandbox"
 			"webdevops/base-app" -> "webdevops/postfix"
 			"webdevops/base" -> "webdevops/apache"
 			busybox -> "webdevops/storage"
 			"webdevops/base" -> "webdevops/nginx"
 			"webdevops/base" -> "webdevops/vsftp"
+			java -> "webdevops/liquibase"
 			ubuntu -> "webdevops/bootstrap"
 			"webdevops/bootstrap" -> "webdevops/sphinx"
 			"webdevops/php-nginx" -> "webdevops/piwik"
@@ -114,6 +117,11 @@ digraph webdevops {
 	{ "zendesk/samson" -> "webdevops/storage" [style=invis] }
 	{ "zendesk/samson" -> "webdevops/bootstrap" [style=invis] }
 	{ "zendesk/samson" -> "webdevops/base" [style=invis] }
+	{ "java" -> "webdevops/ansible" [style=invis] }
+	{ "java" -> "webdevops/base-app" [style=invis] }
+	{ "java" -> "webdevops/storage" [style=invis] }
+	{ "java" -> "webdevops/bootstrap" [style=invis] }
+	{ "java" -> "webdevops/base" [style=invis] }
 	{ "ubuntu" -> "webdevops/ansible" [style=invis] }
 	{ "ubuntu" -> "webdevops/base-app" [style=invis] }
 	{ "ubuntu" -> "webdevops/storage" [style=invis] }
@@ -150,6 +158,7 @@ digraph webdevops {
 	{ "webdevops/ansible" -> "webdevops/apache-dev" [style=invis] }
 	{ "webdevops/ansible" -> "webdevops/hhvm-apache" [style=invis] }
 	{ "webdevops/ansible" -> "webdevops/postfix" [style=invis] }
+	{ "webdevops/ansible" -> "webdevops/liquibase" [style=invis] }
 	{ "webdevops/ansible" -> "webdevops/hhvm" [style=invis] }
 	{ "webdevops/ansible" -> "webdevops/certbot" [style=invis] }
 	{ "webdevops/base-app" -> "webdevops/typo3" [style=invis] }
@@ -173,6 +182,7 @@ digraph webdevops {
 	{ "webdevops/base-app" -> "webdevops/apache-dev" [style=invis] }
 	{ "webdevops/base-app" -> "webdevops/hhvm-apache" [style=invis] }
 	{ "webdevops/base-app" -> "webdevops/postfix" [style=invis] }
+	{ "webdevops/base-app" -> "webdevops/liquibase" [style=invis] }
 	{ "webdevops/base-app" -> "webdevops/hhvm" [style=invis] }
 	{ "webdevops/base-app" -> "webdevops/certbot" [style=invis] }
 	{ "webdevops/storage" -> "webdevops/typo3" [style=invis] }
@@ -196,6 +206,7 @@ digraph webdevops {
 	{ "webdevops/storage" -> "webdevops/apache-dev" [style=invis] }
 	{ "webdevops/storage" -> "webdevops/hhvm-apache" [style=invis] }
 	{ "webdevops/storage" -> "webdevops/postfix" [style=invis] }
+	{ "webdevops/storage" -> "webdevops/liquibase" [style=invis] }
 	{ "webdevops/storage" -> "webdevops/hhvm" [style=invis] }
 	{ "webdevops/storage" -> "webdevops/certbot" [style=invis] }
 	{ "webdevops/bootstrap" -> "webdevops/typo3" [style=invis] }
@@ -219,6 +230,7 @@ digraph webdevops {
 	{ "webdevops/bootstrap" -> "webdevops/apache-dev" [style=invis] }
 	{ "webdevops/bootstrap" -> "webdevops/hhvm-apache" [style=invis] }
 	{ "webdevops/bootstrap" -> "webdevops/postfix" [style=invis] }
+	{ "webdevops/bootstrap" -> "webdevops/liquibase" [style=invis] }
 	{ "webdevops/bootstrap" -> "webdevops/hhvm" [style=invis] }
 	{ "webdevops/bootstrap" -> "webdevops/certbot" [style=invis] }
 	{ "webdevops/base" -> "webdevops/typo3" [style=invis] }
@@ -242,6 +254,7 @@ digraph webdevops {
 	{ "webdevops/base" -> "webdevops/apache-dev" [style=invis] }
 	{ "webdevops/base" -> "webdevops/hhvm-apache" [style=invis] }
 	{ "webdevops/base" -> "webdevops/postfix" [style=invis] }
+	{ "webdevops/base" -> "webdevops/liquibase" [style=invis] }
 	{ "webdevops/base" -> "webdevops/hhvm" [style=invis] }
 	{ "webdevops/base" -> "webdevops/certbot" [style=invis] }
 }
