@@ -30,6 +30,7 @@ class TestinfraDockerPlugin:
         """
         Constructor
         """
+        self.docker_image_list = []
         self.configuration = configuration
         self.init_docker_image_list(docker_image)
 
