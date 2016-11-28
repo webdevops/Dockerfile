@@ -25,7 +25,7 @@ describe "Dockerfile" do
     include_examples 'collection::nginx'
 
     if ($testConfiguration[:php] == 5)
-        include_examples 'collection::php-fpm7::webserver-test::production'
+        include_examples 'collection::php-fpm5::webserver-test::production'
     else
         include_examples 'collection::php-fpm7::webserver-test::production'
     end
