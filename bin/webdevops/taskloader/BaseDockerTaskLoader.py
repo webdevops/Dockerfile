@@ -58,6 +58,10 @@ class BaseDockerTaskLoader(BaseTaskLoader):
         #import json,sys;print json.dumps(dockerfile_list, sort_keys=True, indent = 4, separators = (',', ': '));sys.exit(0);
 
         tasklist = self.generate_task_list(dockerfile_list)
+
+        if not tasklist or len(tasklist) == 0:
+            raise Exception('No tasks found')
+
         tasklist = self.process_tasklist(tasklist)
 
         return tasklist, config
