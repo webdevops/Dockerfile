@@ -1,4 +1,4 @@
-{{ docker.from("postfix") }}
+{{ docker.from("php-nginx") }}
 
 {{ docker.version() }}
 
@@ -7,5 +7,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 {{ mailsandbox.ubuntu() }}
+
+{{ mailsandbox.roundcube() }}
 
 {{ docker.expose('25 465 587 143 993') }}

@@ -9,8 +9,11 @@ list:
 	sh -c "echo; $(MAKE) -p no_targets__ | awk -F':' '/^[a-zA-Z0-9][^\$$#\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);for(i in A)print A[i]}' | grep -v '__\$$' | grep -v 'Makefile'| sort"
 
 full:      provision build
+
 all:       build
-build:     bootstrap base web php php-dev hhvm service misc applications
+
+build:
+	python ./bin/console docker:build --threads=auto
 
 bootstrap: webdevops/bootstrap webdevops/ansible
 base:      webdevops/base webdevops/base-app webdevops/storage
@@ -26,20 +29,21 @@ applications: webdevops/typo3 webdevops/piwik
 
 misc:      webdevops/mail-sandbox webdevops/sphinx webdevops/liquibase
 
-test:
-	cd "test/" && make all
+requirements:
+	pip install -r ./requirements.txt
+	cd tests/serverspec && bundle install --path=vendor
 
-test-hub-images:
-	DOCKER_PULL=1 make test
+test:
+	python bin/console test:serverspec --threads=auto/2 -v
 
 baselayout:
-	BASELAYOUT=1 PROVISION=0 bash bin/provision.sh
+	python bin/console generate:provision --baselayout
 
 provision:
-	python bin/buildDockerfile.py --template=template/ --dockerfile=docker/
-	BASELAYOUT=0 PROVISION=1 bash bin/provision.sh
+	python bin/console generate:dockerfile
+	python bin/console generate:provision
 
-publish:    dist-update rebuild test push
+publish:    dist-update rebuild test old-test push
 
 dist-update:
 	docker pull centos:7
@@ -53,121 +57,104 @@ dist-update:
 	docker pull debian:stretch
 	docker pull alpine:3.4
 
-rebuild:
-	# Rebuild all containers but use caching for duplicates
-	# Bootstrap
-	FORCE=1 make webdevops/bootstrap
-	FORCE=0 make webdevops/ansible
-	# Base
-	FORCE=1 make webdevops/base
-	FORCE=1 make webdevops/base-app
-	FORCE=0 make webdevops/storage
-	# Other containers
-	FORCE=1 make web
-	FORCE=1 make php
-	FORCE=1 make hhvm
-	FORCE=1 make service
-	FORCE=1 make misc
-	FORCE=1 make applications
-
 push:
-	BUILD_MODE=push make all
+	python ./bin/console docker:push --threads=auto
 
 setup:
 	pip install --upgrade -I -r ./requirements.txt
 
 graph:
-	python ./bin/diagram.py  --dockerfile docker/ --filename documentation/docs/resources/images/docker-image-layout.gv
+	python ./bin/console generate:graph
 
 graph-full:
-	python ./bin/diagram.py  --all --dockerfile docker/ --filename documentation/docs/resources/images/docker-image-full-layout.gv
+	python ./bin/console generate:graph --all --filename docker-image-full-layout.gv
 
 documentation:
-	docker run -t -i --rm -p 8080:8000 -v "$$(pwd)/documentation/docs/:/opt/docs" webdevops/sphinx sphinx-autobuild --poll -H 0.0.0.0 /opt/docs html
+	docker run -t -i --rm -p 8080:8000 -v "$$(pwd)/documentation/docs/:/opt/docs" -e "VIRTUAL_HOST=documentation.docker" -e "VIRTUAL_PORT=8000" webdevops/sphinx sphinx-autobuild --poll -H 0.0.0.0 /opt/docs html
 
 webdevops/bootstrap:
-	bash bin/build.sh bootstrap "${DOCKER_REPOSITORY}/bootstrap" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/bootstrap
 
 webdevops/ansible:
-	bash bin/build.sh bootstrap "${DOCKER_REPOSITORY}/ansible" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/bootstrap
 
 webdevops/base:
-	bash bin/build.sh base "${DOCKER_REPOSITORY}/base" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/base
 
 webdevops/base-app:
-	bash bin/build.sh base-app "${DOCKER_REPOSITORY}/base-app" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/base-app
 
 webdevops/php:
-	bash bin/build.sh php "${DOCKER_REPOSITORY}/php" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/php
 
 webdevops/php-dev:
-	bash bin/build.sh php-dev "${DOCKER_REPOSITORY}/php-dev" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/php-dev
 
 webdevops/apache:
-	bash bin/build.sh apache "${DOCKER_REPOSITORY}/apache" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/apache
 
 webdevops/apache-dev:
-	bash bin/build.sh apache-dev "${DOCKER_REPOSITORY}/apache-dev" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/apache-dev
 
 webdevops/nginx:
-	bash bin/build.sh nginx "${DOCKER_REPOSITORY}/nginx" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/nginx
 
 webdevops/nginx-dev:
-	bash bin/build.sh nginx-dev "${DOCKER_REPOSITORY}/nginx-dev" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/nginx-dev
 
 webdevops/php-apache:
-	bash bin/build.sh php-apache "${DOCKER_REPOSITORY}/php-apache" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/php-apache
 
 webdevops/php-apache-dev:
-	bash bin/build.sh php-apache-dev "${DOCKER_REPOSITORY}/php-apache-dev" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/php-apache-dev
 
 webdevops/php-nginx:
-	bash bin/build.sh php-nginx "${DOCKER_REPOSITORY}/php-nginx" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/php-nginx
 
 webdevops/php-nginx-dev:
-	bash bin/build.sh php-nginx-dev "${DOCKER_REPOSITORY}/php-nginx-dev" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/php-nginx-dev
 
 webdevops/hhvm:
-	bash bin/build.sh hhvm "${DOCKER_REPOSITORY}/hhvm" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/hhvm
 
 webdevops/hhvm-apache:
-	bash bin/build.sh hhvm-apache "${DOCKER_REPOSITORY}/hhvm-apache" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/hhvm-apache
 
 webdevops/hhvm-nginx:
-	bash bin/build.sh hhvm-nginx "${DOCKER_REPOSITORY}/hhvm-nginx" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/hhvm-nginx
 
 webdevops/ssh:
-	bash bin/build.sh ssh "${DOCKER_REPOSITORY}/ssh" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/ssh
 
 webdevops/storage:
-	bash bin/build.sh storage "${DOCKER_REPOSITORY}/storage" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/storage
 
 webdevops/vsftp:
-	bash bin/build.sh vsftp "${DOCKER_REPOSITORY}/vsftp" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/vsftp
 
 webdevops/postfix:
-	bash bin/build.sh postfix "${DOCKER_REPOSITORY}/postfix" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/postfix
 
 webdevops/mail-sandbox:
-	bash bin/build.sh mail-sandbox "${DOCKER_REPOSITORY}/mail-sandbox" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/mail-sandbox
 
 webdevops/typo3:
-	bash bin/build.sh typo3 "${DOCKER_REPOSITORY}/typo3" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/typo3
 
 webdevops/piwik:
-	bash bin/build.sh piwik "${DOCKER_REPOSITORY}/piwik" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/piwik
 
 webdevops/samson-deployment:
-	bash bin/build.sh samson-deployment "${DOCKER_REPOSITORY}/samson-deployment" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/samson-deployment
 
 webdevops/sphinx:
-	bash bin/build.sh sphinx "${DOCKER_REPOSITORY}/sphinx" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/sphinx
 
 webdevops/varnish:
-	bash bin/build.sh varnish "${DOCKER_REPOSITORY}/varnish" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/varnish
 
 webdevops/certbot:
-	bash bin/build.sh certbot "${DOCKER_REPOSITORY}/certbot" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/certbot
 
 webdevops/liquibase:
-	bash bin/build.sh liquibase "${DOCKER_REPOSITORY}/liquibase" "${DOCKER_TAG_LATEST}"
+	python ./bin/console docker:build --threads=auto --whitelist=webdevops/liquibase

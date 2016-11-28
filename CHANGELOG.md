@@ -2,7 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
-## [1.0.0] - upcoming
+## [1.0.0] - 2016-11-28
+- Introduced python based processing script
+- Introduced testinfra test suite
+- Updated documentation
+- Added roundcube to `webdevops/mail-sandbox`
+- Update liquibase to 3.5.3
 
 ## [0.57.1] - 2016-10-11
 - Added webdevops/liquibase:mysql (same as latest) with mysql support

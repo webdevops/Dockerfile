@@ -8,7 +8,7 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 apk update
 
 # Install packages
-apk upgrade --force
+apk upgrade --no-cache --force
 
 # Clear files (reduce snapshot size)
-rm -rf var/cache/apk/*
+rm -rf /var/cache/apk/*

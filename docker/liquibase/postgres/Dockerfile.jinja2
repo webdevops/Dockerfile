@@ -2,7 +2,7 @@
 
 {{ docker.version() }}
 
-{{ environment.liquibase('3.5.1', 'org.postgresql.Driver', '/usr/share/java/postgresql.jar') }}
+{{ environment.liquibase('3.5.3', 'org.postgresql.Driver', '/usr/share/java/postgresql.jar') }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 

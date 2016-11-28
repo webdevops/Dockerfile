@@ -14,4 +14,5 @@ VOLUME /etc/letsencrypt
 VOLUME /var/www
 
 RUN /usr/local/bin/apk-install \
-        certbot
+        certbot \
+    && pip install pyRFC3339 configobj ConfigArgParse

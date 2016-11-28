@@ -21,6 +21,7 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
         # Install tools
         ImageMagick \
         GraphicsMagick \
+        ghostscript \
         # Install php (cli/fpm)
         php56w-cli \
         php56w-fpm \

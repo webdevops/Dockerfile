@@ -2,7 +2,7 @@
 
 {{ docker.version() }}
 
-{{ environment.liquibase('3.5.1', 'com.mysql.jdbc.Driver', '/usr/share/java/mysql.jar') }}
+{{ environment.liquibase('3.5.3', 'com.mysql.jdbc.Driver', '/usr/share/java/mysql.jar') }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
