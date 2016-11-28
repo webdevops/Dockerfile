@@ -149,6 +149,9 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
     @staticmethod
     def generate_serverspec_environment(path, dockerfile, configuration, is_toolimage=False):
+        """
+        Generate serverspec environment dict
+        """
         ret = {}
 
         # add default vars
@@ -176,6 +179,9 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
     @staticmethod
     def generate_dockerfile(dockerfile, configuration, is_toolimage=False):
+        """
+        Generate Dockerfile content
+        """
         ret = []
 
         ret.append('FROM %s' % dockerfile['image']['fullname'])
