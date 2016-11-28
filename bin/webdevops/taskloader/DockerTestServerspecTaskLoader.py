@@ -76,28 +76,19 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         serverspec_opts.extend(['--pattern', spec_path])
 
         # serverspec env
-        serverspec_env = {}
-        dockertest_env_condition_list = configuration.get('dockerTest.env', {}).to_dict()
-        for term in dockertest_env_condition_list:
-            if term in dockerfile['image']['fullname']:
-                for key in dockertest_env_condition_list[term]:
-                    serverspec_env[key] = str(dockertest_env_condition_list[term][key])
-        serverspec_env['DOCKER_IMAGE'] = dockerfile['image']['fullname']
-        serverspec_env['DOCKER_TAG'] = dockerfile['image']['tag']
-        serverspec_env['DOCKERFILE'] = os.path.basename(test_dockerfile.name)
+        serverspec_env = DockerTestServerspecTaskLoader.generate_serverspec_environment(
+            path=os.path.basename(test_dockerfile.name),
+            dockerfile=dockerfile,
+            configuration=configuration,
+            is_toolimage=is_toolimage
+        )
 
         # dockerfile content
-        dockerfile_content = []
-        dockerfile_content.append('FROM %s' % dockerfile['image']['fullname'])
-        dockerfile_content.append('COPY conf/ /')
-
-        if is_toolimage:
-            dockerfile_content.append('RUN chmod +x /loop-entrypoint.sh')
-            dockerfile_content.append('ENTRYPOINT /loop-entrypoint.sh')
-
-        for term in configuration.get('dockerTest.dockerfile', {}):
-            if term in dockerfile['image']['fullname']:
-                dockerfile_content.extend( configuration.get('dockerTest.dockerfile').get(term))
+        dockerfile_content = DockerTestServerspecTaskLoader.generate_dockerfile(
+            dockerfile=dockerfile,
+            configuration=configuration,
+            is_toolimage=is_toolimage
+        )
 
         # DryRun
         if configuration.get('dryRun'):
@@ -114,7 +105,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
             print ''
             print 'Dockerfile:'
             print '-----------'
-            print '\n'.join(dockerfile_content)
+            print dockerfile_content
 
             os.remove(test_dockerfile.name)
             return True
@@ -134,7 +125,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         # create Dockerfile
         with open(test_dockerfile.name, mode='w', buffering=0) as f:
-            f.write('\n'.join(dockerfile_content))
+            f.write(dockerfile_content)
             f.flush()
             f.close()
 
@@ -142,7 +133,8 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         for retry_count in range(0, configuration.get('retry')):
             try:
                 test_status = Command.execute(cmd, cwd=configuration.get('serverspecPath'), env=env)
-            except Exception:
+            except Exception as e:
+                print e
                 pass
 
             if test_status:
@@ -154,6 +146,49 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         os.remove(test_dockerfile.name)
         return test_status
+
+    @staticmethod
+    def generate_serverspec_environment(path, dockerfile, configuration, is_toolimage=False):
+        ret = {}
+
+        # add default vars
+        default_env_list = configuration.get('dockerTest.environment.default', False)
+        if default_env_list:
+            ret = default_env_list.to_dict()
+
+        # add docker image specific vars
+        image_env_list = configuration.get('dockerTest.environment.image')
+        if image_env_list:
+            image_env_list = image_env_list.to_dict()
+            for term in image_env_list:
+                if term in dockerfile['image']['fullname']:
+                    for key in image_env_list[term]:
+                        ret[key] = str(image_env_list[term][key])
+
+        # add spec specific vars
+        ret['DOCKER_IMAGE'] = dockerfile['image']['fullname']
+        ret['DOCKER_TAG'] = dockerfile['image']['tag']
+        ret['DOCKERFILE'] = path
+        ret['DOCKER_IS_TOOLIMAGE'] = str(int(is_toolimage))
+
+        return ret
+
+
+    @staticmethod
+    def generate_dockerfile(dockerfile, configuration, is_toolimage=False):
+        ret = []
+
+        ret.append('FROM %s' % dockerfile['image']['fullname'])
+        ret.append('COPY conf/ /')
+
+        if is_toolimage:
+            ret.append('RUN chmod +x /loop-entrypoint.sh')
+            ret.append('ENTRYPOINT /loop-entrypoint.sh')
+
+        for term in configuration.get('dockerTest.dockerfile', {}):
+            if term in dockerfile['image']['fullname']:
+                ret.extend( configuration.get('dockerTest.dockerfile').get(term))
+        return '\n'.join(ret)
 
     @staticmethod
     def task_title(task):
