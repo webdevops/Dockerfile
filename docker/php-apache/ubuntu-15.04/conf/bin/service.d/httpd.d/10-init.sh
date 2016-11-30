@@ -15,5 +15,5 @@ if [[ -n "${WEB_PHP_SOCKET+x}" ]]; then
     find /opt/docker/etc/httpd/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<PHP_SOCKET>" "$WEB_PHP_SOCKET"
 else
     ## WEB_PHP_SOCKET is not set, remove PHP files
-    rm /opt/docker/etc/httpd/conf.d/10-php.conf
+    rm -f -- /opt/docker/etc/httpd/conf.d/10-php.conf
 fi
