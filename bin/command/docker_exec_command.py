@@ -62,6 +62,7 @@ class DockerExecCommand(DoitCommand):
                     'docker',
                     'run',
                     '-ti',
+                    '--rm',
                     dockerfile['image']['fullname']
                 ]
                 cmd.extend(docker_command)
