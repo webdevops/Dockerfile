@@ -20,6 +20,7 @@ from webdevops.docker.DockerCliClient import DockerCliClient
 from command.docker_build_command import DockerBuildCommand
 from command.docker_push_command import DockerPushCommand
 from command.docker_pull_command import DockerPullCommand
+from command.docker_exec_command import DockerExecCommand
 from command.test_testinfra_command import TestTestinfraCommand
 from command.test_serverspec_command import TestServerspecCommand
 from command.generate_dockerfile_command import GenerateDockerfileCommand
@@ -88,6 +89,7 @@ if __name__ == '__main__':
     application.add(DockerBuildCommand(configuration=configuration))
     application.add(DockerPushCommand(configuration=configuration))
     application.add(DockerPullCommand(configuration=configuration))
+    application.add(DockerExecCommand(configuration=configuration))
     application.add(TestTestinfraCommand(configuration=configuration))
     application.add(TestServerspecCommand(configuration=configuration))
     application.add(GenerateDockerfileCommand(configuration=configuration))
