@@ -61,7 +61,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         libssl-dev \
         libffi-dev \
     && apt-get autoremove -y -f \
-    && apt-get clean -y
+    && apt-get clean -y \
+    && find /var/log/ -mindepth 1 -delete
 
 ###############################################################################
 # Base
