@@ -49,5 +49,5 @@
     regexp: '^[\s;]*{{ item.key }}[\s]*='
     line:   '{{ item.key }} = {{ item.value }}'
   with_items:
-   - { key: 'error_log',                   value: "/var/log/php7-fpm/fpm.log" }
-   - { key: 'pid',                         value: "/var/run/php7-fpm.pid" }
+   - { key: 'error_log',                   value: "syslog" }
+   - { key: 'pid',                         value: "/var/run/php-fpm.pid" }
