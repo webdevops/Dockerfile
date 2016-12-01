@@ -1,6 +1,5 @@
 shared_examples 'collection::hhvm' do
     include_examples 'hhvm::layout'
-    include_examples 'php::cli'
     include_examples 'hhvm::cli::version'
     include_examples 'php::cli::test::sha1'
     include_examples 'php::composer'
