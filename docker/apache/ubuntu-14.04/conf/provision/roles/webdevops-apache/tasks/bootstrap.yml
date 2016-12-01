@@ -2,16 +2,19 @@
 
 - name: Set apache vhost file [RedHat family]
   set_fact:
+     apache_main_path:    /etc/httpd/
      apache_docker_vhost: /etc/httpd/conf.d/docker.conf
   when: ansible_os_family == 'RedHat'
 
 - name: Set apache vhost file [Debian family]
   set_fact:
+     apache_main_path:    /etc/apache2/
      apache_docker_vhost: /etc/apache2/sites-enabled/10-docker.conf
   when: ansible_os_family == 'Debian'
 
 - name: Set apache vhost file [Alpine family]
   set_fact:
+     apache_main_path:    /etc/apache2/
      apache_docker_vhost: /etc/apache2/conf.d/docker.conf
   when: ansible_os_family == 'Alpine'
 
@@ -40,6 +43,31 @@
     state:   directory
     recurse: yes
   when: ansible_os_family == 'Alpine'
+
+- name: Find apache2 files
+  shell: "find '{{ apache_main_path }}' -type f -iname '*.conf' -o -iname 'default*' -o -iname '*log'"
+  register: apache2_conf_files
+
+- name: Change CustomLog to Docker stdout
+  replace:
+    dest:  '{{ item }}'
+    regexp: '^[\s]*CustomLog ([^\s]+)(.*)'
+    replace: 'CustomLog /docker.stdout \2'
+  with_items: "{{ apache2_conf_files.stdout_lines }}"
+
+- name: Change CustomLog to Docker stdout
+  replace:
+    dest:  '{{ item }}'
+    regexp: '^[\s]*ErrorLog ([^\s]+)(.*)'
+    replace: 'ErrorLog /docker.stdout \2'
+  with_items: "{{ apache2_conf_files.stdout_lines }}"
+
+- name: Change TransferLog to Docker stdout
+  replace:
+    dest:  '{{ item }}'
+    regexp: '^[\s]*TransferLog ([^\s]+)(.*)'
+    replace: 'TransferLog /docker.stdout \2'
+  with_items: "{{ apache2_conf_files.stdout_lines }}"
 
 - name: Switch MPM to worker [RedHat family]
   lineinfile:

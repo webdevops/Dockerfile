@@ -49,4 +49,5 @@ RUN set -x \
     && pip install ansible \
     && chmod 750 /usr/bin/ansible* \
     # Cleanup
-    && apk del python-dev
+    && apk del python-dev \
+    && find /var/log/ -mindepth 1 -delete

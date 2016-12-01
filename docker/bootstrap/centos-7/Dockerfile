@@ -41,4 +41,5 @@ RUN set -x \
     && pip install ansible \
     && chmod 750 /usr/bin/ansible* \
     && yum erase -y python-devel \
-    && yum clean all
+    && yum clean all \
+    && find /var/log/ -mindepth 1 -delete

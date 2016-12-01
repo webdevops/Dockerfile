@@ -29,7 +29,7 @@ provision:
   hhvm:
     configuration:
       hhvm/general      : '*'
-  hhmv-apache:
+  hhvm-apache:
     configuration:
       apache/general      : '*'
       hhvm-apache/general : '*'
