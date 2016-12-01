@@ -124,4 +124,23 @@ shared_examples 'base::layout' do
             it { should be_executable.by('others') }
         end
     end
+
+    #########################
+    ## cronjobs which should not exists
+    #########################
+    [
+        "/etc/cron.daily/logrotate",
+        "/etc/cron.daily/apt-compat",
+        "/etc/cron.daily/dpkg",
+        "/etc/cron.daily/passwd",
+        "/etc/cron.daily/0yum-daily.cron",
+        "/etc/cron.daily/logrotate",
+        "/etc/cron.hourly/0yum-hourly.cron",
+        "/etc/periodic/daily/logrotate",
+    ].each do |file|
+        describe file("#{file}") do
+            # Type check
+            it { should_not be_file }
+        end
+    end
 end
