@@ -63,9 +63,11 @@ class DockerExecCommand(DoitCommand):
                     'run',
                     '-ti',
                     '--rm',
-                    dockerfile['image']['fullname']
+                    dockerfile['image']['fullname'],
+                    'sh',
+                    '-c',
+                    '%s' % (' '.join(docker_command))
                 ]
-                cmd.extend(docker_command)
 
                 status = Command.execute(cmd)
 
