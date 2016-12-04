@@ -44,7 +44,7 @@ if ((os[:family] == 'ubuntu' and os[:version] == '12.04') or
     (os[:family] == 'redhat' and os[:version] == '7') or
     (os[:family] == 'debian' and os[:version] == '7') or
     (os[:family] == 'debian' and os[:version] == '8') or
-    (os[:family] == 'alpine' and os[:version] == '8') or
+    (os[:family] == 'alpine' and os[:version] == '3') or
     ($dockerInfo[:tag].match('php5')))
     $testConfiguration[:php] = 5
 end
