@@ -3,10 +3,13 @@
 # Ignored on php7
 - name: Fix php xdebug module [Alpine family]
   lineinfile:
-    dest:   '/etc/php/conf.d/xdebug.ini'
+    dest:   '{{ item }}'
     regexp: 'extension=xdebug.so'
     line:   'zend_extension=xdebug.so'
   when: ansible_distribution == 'Alpine'
+  with_items:
+    - /etc/php5/conf.d/xdebug.ini
+    - /etc/php7/conf.d/xdebug.ini
   ignore_errors: yes
 
 - name: Setup php.ini for development environment
