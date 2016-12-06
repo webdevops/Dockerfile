@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     diff-lcs (1.2.5)
-    docker-api (1.32.1)
+    docker-api (1.33.0)
       excon (>= 0.38.0)
       json
     excon (0.54.0)
@@ -35,7 +35,7 @@ GEM
       rspec-its
       specinfra (~> 2.53)
     sfl (2.3)
-    specinfra (2.66.0)
+    specinfra (2.66.1)
       net-scp
       net-ssh (>= 2.7, < 4.0)
       net-telnet
