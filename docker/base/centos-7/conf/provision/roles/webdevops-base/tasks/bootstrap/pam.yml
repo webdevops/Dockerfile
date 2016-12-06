@@ -1,0 +1,8 @@
+---
+
+- name: Ensure su execution [Alpine family]
+  lineinfile:
+    dest: "/etc/pam.d/su"
+    line: "auth       sufficient pam_rootok.so"
+    create: yes
+  when: ansible_os_family == "Alpine"
