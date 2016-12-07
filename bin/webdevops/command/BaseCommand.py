@@ -221,13 +221,13 @@ class BaseCommand(Command):
             # use configuration value
             threads = self.configuration.get('threads')
 
-        match = re.match('auto(([-*+/])([0-9]+))?', str(threads))
+        match = re.match('auto(([-*+/])([0-9]+\.?[0-9]?))?', str(threads))
         if match is not None:
             ret = multiprocessing.cpu_count()
 
             if match.group(2) and match.group(3):
                 math_sign = match.group(2)
-                math_value = int(match.group(3))
+                math_value = float(match.group(3))
 
                 if math_sign == "*":
                     ret = int(ret * math_value)
