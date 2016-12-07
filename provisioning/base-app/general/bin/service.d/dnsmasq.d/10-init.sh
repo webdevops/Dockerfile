@@ -1,3 +1,6 @@
+# Create dnsmasq.d directory if not exists
+mkdir -p -- /etc/dnsmasq.d/
+
 ## clear dns file
 echo > /etc/dnsmasq.d/webdevops
 
@@ -10,6 +13,7 @@ if [ ! -f /etc/resolv.conf.original ]; then
     ## set dnsmasq to main nameserver
     echo "nameserver 127.0.0.1" > /etc/resolv.conf
 fi
+
 
 # Add own VIRTUAL_HOST as loopback
 if [[ -n "${VIRTUAL_HOST+x}" ]]; then
