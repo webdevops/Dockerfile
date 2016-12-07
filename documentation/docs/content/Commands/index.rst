@@ -75,6 +75,25 @@ Option                                 Description                              
 --blacklist=term                       Don't build Docker images with *term* in name                                     *string value*
 =====================================  ================================================================================= ===============================================
 
+bin/console docker:exec
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Execute argument as command inside all docker images.
+
+eg. ``bin/console docker:exec --whitelist php -- 'php -v'``
+
+Tip: Separate the docker image command arguments from the console commands with two dashes.
+
+=====================================  ================================================================================= ===============================================
+Option                                 Description                                                                       Values
+=====================================  ================================================================================= ===============================================
+-v                                     Verbose output                                                                    *option only*
+--dry-run                              Don't really execute build process                                                *option only*
+--whitelist=term                       Only build Docker images with *term* in name                                      *string value*
+--blacklist=term                       Don't build Docker images with *term* in name                                     *string value*
+=====================================  ================================================================================= ===============================================
+
+
 bin/console test:testinfra
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
