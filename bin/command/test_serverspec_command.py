@@ -29,6 +29,7 @@ class TestServerspecCommand(DoitCommand):
     Test docker images with Serverspec
 
     test:serverspec
+        {docker images*          : Docker images (whitelist)}
         {--dry-run               : show only which images will be build}
         {--t|threads=0           : threads}
         {--r|retry=0             : retry}

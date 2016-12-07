@@ -28,6 +28,7 @@ class DockerBuildCommand(DoitCommand):
     Build images
 
     docker:build
+        {docker images*          : Docker images (whitelist)}
         {--dry-run               : show only which images will be build}
         {--no-cache              : build without caching}
         {--t|threads=0           : threads}

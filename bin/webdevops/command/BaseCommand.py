@@ -183,7 +183,17 @@ class BaseCommand(Command):
         """
         Get whitelist
         """
-        return list(self.option('whitelist'))
+
+        # add whitelist from --whitelist
+        ret = list(self.option('whitelist'))
+
+        # add whitelist from argument list
+        try:
+            ret.extend(self.argument('docker images'))
+        except (Exception):
+            pass
+
+        return ret
 
     def get_blacklist(self):
         """
