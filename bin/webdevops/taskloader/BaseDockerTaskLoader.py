@@ -18,10 +18,7 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import os
-import sys
-import re
-import copy
+import os, sys, re, copy
 from .BaseTaskLoader import BaseTaskLoader
 from webdevops import DockerfileUtility
 from doit.task import dict_to_task
