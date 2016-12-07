@@ -42,7 +42,7 @@ class BaseTaskLoader(TaskLoader):
         for task in tasklist:
             ret.append(dict_to_task(task))
 
-        print 'Collected %s tasks, starting execution...' % (len(ret))
+        print 'Starting execution of %s tasks...' % (len(ret))
 
         return ret
 
