@@ -25,6 +25,9 @@ All commands are using configuration options from ``conf/console.yml``.
 bin/console tasks
 -----------------
 
+Tip: Most tasks are using arguments as whitelist addon for easier usage.
+
+
 bin/console docker:build
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
