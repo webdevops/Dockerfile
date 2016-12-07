@@ -27,7 +27,7 @@ class TestTestinfraCommand(DoitCommand):
     Test docker images with Testinfra
 
     test:testinfra
-        {docker images*          : Docker images (whitelist)}
+        {docker images?*         : Docker images (whitelist)}
         {--dry-run               : show only which images will be build}
         {--t|threads=0           : threads}
         {--whitelist=?*          : image/tag whitelist }

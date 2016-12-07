@@ -27,7 +27,7 @@ class DockerPullCommand(DoitCommand):
     Pull all built images from registry/hub
 
     docker:pull
-        {docker images*          : Docker images (whitelist)}
+        {docker images?*         : Docker images (whitelist)}
         {--dry-run               : show only which images will be build}
         {--t|threads=0           : threads}
         {--r|retry=0             : retry}

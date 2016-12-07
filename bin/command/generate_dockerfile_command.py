@@ -29,7 +29,7 @@ class GenerateDockerfileCommand(BaseCommand):
     Build Dockerfile containers
 
     generate:dockerfile
-        {docker images*          : Docker images (whitelist)}
+        {docker images?*         : Docker images (whitelist)}
         {--whitelist=?*          : image/tag whitelist }
         {--blacklist=?*          : image/tag blacklist }
     """
