@@ -52,7 +52,12 @@ class BaseTaskLoader(TaskLoader):
         """
         Translate internal task name to human readable name
         """
-        return re.search('^.*\|(.*)', name).group(1)
+        res = re.search('^.*\|(.*)', name)
+
+        if res:
+            return re.search('^.*\|(.*)', name).group(1)
+        else:
+            return name
 
 
     @staticmethod
