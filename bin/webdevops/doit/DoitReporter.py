@@ -138,7 +138,7 @@ class DoitReporter(object):
 
         if task.actions and (task.name[0] != '_'):
             duration = self.duration(self.t_results[task.name].elapsed)
-            self.write(colored('.  %s FAILED (%s)\n' % (BaseTaskLoader.human_task_name(task.title()), duration), 'red'))
+            self.writeln(colored('.  %s FAILED (%s)' % (BaseTaskLoader.human_task_name(task.title()), duration), 'red'))
         self.failures.append({'task': task, 'exception': exception})
 
     def add_success(self, task):
@@ -149,7 +149,7 @@ class DoitReporter(object):
 
         if task.actions and (task.name[0] != '_'):
             duration = self.duration(self.t_results[task.name].elapsed)
-            self.write(colored('.  %s finished (%s)\n' % (BaseTaskLoader.human_task_name(task.title()), duration), 'green'))
+            self.writeln(colored('.  %s finished (%s)' % (BaseTaskLoader.human_task_name(task.title()), duration), 'green'))
 
     def skip_uptodate(self, task):
         """
