@@ -125,7 +125,6 @@ function runProvisionBuild() {
     for FILE in /opt/docker/provision/build.d/*.sh; do
         # run custom scripts, only once
         . "$FILE"
-        rm -f -- "$FILE"
     done
 
     runDockerProvision build

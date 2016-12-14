@@ -18,13 +18,10 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import sys
-import os
-import time
-import datetime
-import StringIO
+import os, sys, time, datetime, StringIO
 import termcolor
 from termcolor import colored
+from ..taskloader.BaseTaskLoader import BaseTaskLoader
 
 class TaskResult(object):
     """
@@ -141,7 +138,7 @@ class DoitReporter(object):
 
         if task.actions and (task.name[0] != '_'):
             duration = self.duration(self.t_results[task.name].elapsed)
-            self.write(colored('.  %s FAILED (%s)\n' % (task.title(), duration), 'red'))
+            self.writeln(colored('.  %s FAILED (%s)' % (BaseTaskLoader.human_task_name(task.title()), duration), 'red'))
         self.failures.append({'task': task, 'exception': exception})
 
     def add_success(self, task):
@@ -152,7 +149,7 @@ class DoitReporter(object):
 
         if task.actions and (task.name[0] != '_'):
             duration = self.duration(self.t_results[task.name].elapsed)
-            self.write(colored('.  %s finished (%s)\n' % (task.title(), duration), 'green'))
+            self.writeln(colored('.  %s finished (%s)' % (BaseTaskLoader.human_task_name(task.title()), duration), 'green'))
 
     def skip_uptodate(self, task):
         """
@@ -252,7 +249,7 @@ class DoitReporter(object):
         if duration:
             text_duration = ' (%s)' % self.duration(duration)
 
-        title_full = 'Task %s%s:' % (title, text_duration)
+        title_full = 'Task %s%s:' % (BaseTaskLoader.human_task_name(title), text_duration)
 
         self.writeln(title_full)
         self.writeln('~' * len(title_full))
@@ -277,7 +274,7 @@ class DoitReporter(object):
             self.write('%s' % exception.get_msg())
 
         self.writeln()
-        self.writeln(':: end of output "%s"' % title)
+        self.writeln(':: end of output "%s"' % (BaseTaskLoader.human_task_name(title)))
         self.writeln()
 
     def duration(self, duration):

@@ -8,7 +8,7 @@ FROM debian:stretch
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.57.1
+LABEL io.webdevops.version=1.1.0
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8
@@ -56,4 +56,5 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         libssl-dev \
         libffi-dev \
     && apt-get autoremove -y -f \
-    && apt-get clean -y
+    && apt-get clean -y \
+    && find /var/log/ -mindepth 1 -delete

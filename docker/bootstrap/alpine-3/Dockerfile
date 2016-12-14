@@ -8,7 +8,7 @@ FROM alpine:3.4
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.57.1
+LABEL io.webdevops.version=1.1.0
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8
@@ -49,4 +49,5 @@ RUN set -x \
     && pip install ansible \
     && chmod 750 /usr/bin/ansible* \
     # Cleanup
-    && apk del python-dev
+    && apk del python-dev \
+    && find /var/log/ -mindepth 1 -delete

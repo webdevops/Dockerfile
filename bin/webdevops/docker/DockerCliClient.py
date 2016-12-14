@@ -18,12 +18,9 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import subprocess
-import os
-import tempfile
+import os, subprocess, tempfile
 from .DockerBaseClient import DockerBaseClient
 from webdevops import Command
-
 
 class DockerCliClient(DockerBaseClient):
 

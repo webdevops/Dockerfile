@@ -5,4 +5,4 @@ source /opt/docker/bin/config.sh
 
 includeScriptDir "/opt/docker/bin/service.d/syslog-ng.d/"
 
-exec syslog-ng -F -p /var/run/syslog-ng.pid $SYSLOGNG_OPTS
+exec syslog-ng -F --no-caps -p  /var/run/syslog-ng.pid $SYSLOGNG_OPTS

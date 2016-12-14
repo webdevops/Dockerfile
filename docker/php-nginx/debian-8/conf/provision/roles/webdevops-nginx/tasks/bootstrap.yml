@@ -8,6 +8,18 @@
   with_items:
    - { key: 'daemon', value: "off" }
 
+- name: Set access_log to stdout
+  replace:
+    dest:   /etc/nginx/nginx.conf
+    regexp: '^([ \t]*access_log)[ \t]*([^\t ;]+)(.*;)$'
+    replace: '\1 /docker.stdout \3'
+
+- name: Set access_log to stdout
+  replace:
+    dest:   /etc/nginx/nginx.conf
+    regexp: '^([ \t]*error_log)[ \t]*([^\t ;]+)(.*;)$'
+    replace: '\1 /docker.stdout \3'
+
 - name: Enable nginx main config
   file:
     src:  '/opt/docker/etc/nginx/main.conf'
@@ -33,6 +45,26 @@
     path:    "{{ DOCUMENT_ROOT }}"
     state:   directory
     recurse: yes
+
+- name: Remove old log directory
+  file:
+    path:    "/var/lib/nginx/logs"
+    state:   absent
+
+- name: Create log directory
+  file:
+    path:    "/var/lib/nginx/logs"
+    state:   directory
+
+- name: Create stdout symlinks
+  file:
+    dest:    "{{ item }}"
+    src:     "/docker.stdout"
+    state:   link
+    force:   yes
+  with_items:
+    - "/var/lib/nginx/logs/access.log"
+    - "/var/lib/nginx/logs/error.log"
 
 - name: Fix rights of ssl files
   file:

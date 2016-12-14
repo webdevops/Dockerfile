@@ -27,6 +27,7 @@ class DockerPushCommand(DoitCommand):
     Push images to registry/hub
 
     docker:push
+        {docker images?*         : Docker images (whitelist)}
         {--dry-run               : show only which images will be build}
         {--t|threads=0           : threads}
         {--r|retry=0             : retry}

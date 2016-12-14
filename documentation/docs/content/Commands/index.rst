@@ -25,6 +25,9 @@ All commands are using configuration options from ``conf/console.yml``.
 bin/console tasks
 -----------------
 
+Tip: Most tasks are using arguments as whitelist addon for easier usage.
+
+
 bin/console docker:build
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -74,6 +77,25 @@ Option                                 Description                              
 --whitelist=term                       Only build Docker images with *term* in name                                      *string value*
 --blacklist=term                       Don't build Docker images with *term* in name                                     *string value*
 =====================================  ================================================================================= ===============================================
+
+bin/console docker:exec
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Execute argument as command inside all docker images.
+
+eg. ``bin/console docker:exec --whitelist php -- 'php -v'``
+
+Tip: Separate the docker image command arguments from the console commands with two dashes.
+
+=====================================  ================================================================================= ===============================================
+Option                                 Description                                                                       Values
+=====================================  ================================================================================= ===============================================
+-v                                     Verbose output                                                                    *option only*
+--dry-run                              Don't really execute build process                                                *option only*
+--whitelist=term                       Only build Docker images with *term* in name                                      *string value*
+--blacklist=term                       Don't build Docker images with *term* in name                                     *string value*
+=====================================  ================================================================================= ===============================================
+
 
 bin/console test:testinfra
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

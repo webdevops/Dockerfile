@@ -18,10 +18,7 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import sys
-import re
-import time
-import StringIO
+import sys, re, time, StringIO
 from webdevops import DockerfileUtility
 from doit.cmd_base import TaskLoader
 from doit.task import dict_to_task
@@ -44,6 +41,9 @@ class BaseTaskLoader(TaskLoader):
         ret = []
         for task in tasklist:
             ret.append(dict_to_task(task))
+
+        print 'Starting execution of %s tasks...' % (len(ret))
+
         return ret
 
 
@@ -52,7 +52,12 @@ class BaseTaskLoader(TaskLoader):
         """
         Translate internal task name to human readable name
         """
-        return re.search('^.*\|(.*)', name).group(1)
+        res = re.search('^.*\|(.*)', name)
+
+        if res:
+            return re.search('^.*\|(.*)', name).group(1)
+        else:
+            return name
 
 
     @staticmethod

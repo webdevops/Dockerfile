@@ -8,7 +8,7 @@ FROM centos:7
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.57.1
+LABEL io.webdevops.version=1.1.0
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8
@@ -41,4 +41,5 @@ RUN set -x \
     && pip install ansible \
     && chmod 750 /usr/bin/ansible* \
     && yum erase -y python-devel \
-    && yum clean all
+    && yum clean all \
+    && find /var/log/ -mindepth 1 -delete

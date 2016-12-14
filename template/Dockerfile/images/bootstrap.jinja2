@@ -32,7 +32,8 @@ RUN set -x \
     && pip install ansible \
     && chmod 750 /usr/bin/ansible* \
     # Cleanup
-    && apk del python-dev
+    && apk del python-dev \
+    && find /var/log/ -mindepth 1 -delete
 {%- endmacro %}
 
 
@@ -63,7 +64,8 @@ RUN set -x \
     && pip install ansible \
     && chmod 750 /usr/bin/ansible* \
     && yum erase -y python-devel \
-    && yum clean all
+    && yum clean all \
+    && find /var/log/ -mindepth 1 -delete
 {%- endmacro %}
 
 
@@ -108,7 +110,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         libssl-dev \
         libffi-dev \
     && apt-get autoremove -y -f \
-    && apt-get clean -y
+    && apt-get clean -y \
+    && find /var/log/ -mindepth 1 -delete
 {%- endmacro %}
 
 
@@ -154,7 +157,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         libssl-dev \
         libffi-dev \
     && apt-get autoremove -y -f \
-    && apt-get clean -y
+    && apt-get clean -y \
+    && find /var/log/ -mindepth 1 -delete
 {%- endmacro %}
 
 
@@ -198,6 +202,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         libssl-dev \
         libffi-dev \
     && apt-get autoremove -y -f \
-    && apt-get clean -y
+    && apt-get clean -y \
+    && find /var/log/ -mindepth 1 -delete
 {%- endmacro %}
 

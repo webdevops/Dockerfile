@@ -1,3 +1,6 @@
+# Create dnsmasq.d directory if not exists
+mkdir -p -- /etc/dnsmasq.d/
+
 ## clear dns file
 echo > /etc/dnsmasq.d/webdevops
 
@@ -11,7 +14,19 @@ if [ ! -f /etc/resolv.conf.original ]; then
     echo "nameserver 127.0.0.1" > /etc/resolv.conf
 fi
 
+
 # Add own VIRTUAL_HOST as loopback
 if [[ -n "${VIRTUAL_HOST+x}" ]]; then
-    echo "address=/${VIRTUAL_HOST}/127.0.0.1" >>  /etc/dnsmasq.d/webdevops
+    # split comma by space
+    VIRTUAL_HOST_LIST=${VIRTUAL_HOST//,/$'\n'}
+
+    # replace *.domain for dns specific .domain wildcard
+    VIRTUAL_HOST_LIST=${VIRTUAL_HOST_LIST/\*./.}
+
+    # no support for .*
+    VIRTUAL_HOST_LIST=${VIRTUAL_HOST_LIST/.\*/.}
+
+    for DOMAIN in $VIRTUAL_HOST_LIST; do
+        echo "address=/${DOMAIN}/127.0.0.1" >>  /etc/dnsmasq.d/webdevops
+    done
 fi
