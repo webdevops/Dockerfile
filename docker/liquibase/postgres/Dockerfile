@@ -8,7 +8,7 @@ FROM java:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=0.57.1
+LABEL io.webdevops.version=1.1.0
 
 ENV LIQUIBASE_VERSION   "3.5.3"
 ENV LIQUIBASE_DRIVER    "org.postgresql.Driver"
