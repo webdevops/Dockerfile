@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.1.0] - 2016-12-14
+- Fixed dnsmasq startup
+- Removed all logfiles inside containers (using stdout)
+- Fixed syslog-ng setup (was complaining about version)
+- Fixed some php/hhvm tests
+- Improve bin/console
+- Add cleanup after container installation
+- Add multiple vhost support for dns lookup (VIRTUAL_HOST)
+
 ## [1.0.0] - 2016-11-28
 - Introduced python based processing script
 - Introduced testinfra test suite
