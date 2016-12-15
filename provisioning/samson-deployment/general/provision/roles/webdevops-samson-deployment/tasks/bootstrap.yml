@@ -35,3 +35,35 @@
     group: "{{ APPLICATION_GROUP }}"
     mode: u=rwX,g=rX,o=rX
     recurse: yes
+
+- name: Remove old log directory
+  file:
+    path:  "/var/lib/nginx/logs"
+    state: absent
+
+- name: Create log directory
+  file:
+    path:  "/var/lib/nginx/logs"
+    state: directory
+
+- name: Create stdout symlinks
+  file:
+    dest:  "{{ item }}"
+    src:   "/docker.stdout"
+    state: link
+    force: yes
+  with_items:
+    - "/var/lib/nginx/logs/access.log"
+    - "/var/lib/nginx/logs/error.log"
+
+- name: Create storage directories
+  file:
+    path:  "{{ item }}"
+    state: directory
+    owner: "{{ APPLICATION_USER }}"
+    group: "{{ APPLICATION_GROUP }}"
+    mode:  u=rwX,g=rX,o=rX
+    recurse: yes
+  with_items:
+    - "/storage"
+    - "/storage/db"

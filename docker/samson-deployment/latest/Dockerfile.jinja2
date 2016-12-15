@@ -38,6 +38,7 @@
 {{ samsonDeployment.general() }}
 
 {{ docker.expose('80') }}
+{{ docker.volume('/storage') }}
 
 {{ docker.entrypoint("/opt/docker/bin/entrypoint.sh") }}
 {{ docker.cmd("supervisord") }}
