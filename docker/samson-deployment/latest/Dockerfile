@@ -195,11 +195,12 @@ ADD crontab         /etc/cron.d/webdevops-samson-deployment
 
 RUN rake assets:precompile \
     && /opt/docker/bin/control.sh service.enable cron \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-samson-deployment \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base --role webdevops-base-app --role webdevops-samson-deployment \
     && /opt/docker/bin/bootstrap.sh
 
 
 EXPOSE 80
+VOLUME /storage
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 CMD ["supervisord"]
