@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.1.2] - 2016-12-16
+- Fix asset permissions in samson-deployment (fixed tests)
+
+## [1.1.1] - 2016-12-15
+- Fix provision and configuration for samson-deployment (fixed tests)
+
 ## [1.1.0] - 2016-12-14
 - Fixed dnsmasq startup
 - Removed all logfiles inside containers (using stdout)
