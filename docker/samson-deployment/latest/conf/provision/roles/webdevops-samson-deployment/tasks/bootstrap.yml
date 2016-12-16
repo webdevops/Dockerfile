@@ -28,13 +28,14 @@
     state: link
     force: yes
 
+- name: Fix permissions of public and asset directories
+  command: find /app/public -type d -exec chmod -c 0755 {} \;
+
 - name: Fix permissions of public and asset files
-  file:
-    path: "/app/public"
-    owner: "{{ APPLICATION_USER }}"
-    group: "{{ APPLICATION_GROUP }}"
-    mode: u=rwX,g=rX,o=rX
-    recurse: yes
+  command: find /app/public -type f -exec chmod -c 0644 {} \;
+
+- name: Fix owner of public and asset files
+  command: chown -R '{{ APPLICATION_USER }}:{{ APPLICATION_GROUP }}' /app/public
 
 - name: Remove old log directory
   file:
