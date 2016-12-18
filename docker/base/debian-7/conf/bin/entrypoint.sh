@@ -9,8 +9,9 @@ trap 'echo sigterm ; exit' SIGTERM
 trap 'echo sigkill ; exit' SIGKILL
 
 # link stdout from docker
-ln -f -s "/proc/$$/fd/0" /docker.stdout
-chmod 600 /docker.stdout
+ln -f -s "/proc/$$/fd/1" /docker.stdout
+ln -f -s "/proc/$$/fd/2" /docker.stderr
+chmod 600 /docker.stdout /docker.stderr
 
 # sanitize input and set task
 TASK="$(echo $1| sed 's/[^-_a-zA-Z0-9]*//g')"
