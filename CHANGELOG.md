@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.1.3] - 2016-12-18
+- Fix critical docker hang bug (using stdin instead of stdout for log)
+- Add /docker.stderr
+
 ## [1.1.2] - 2016-12-16
 - Fix asset permissions in samson-deployment (fixed tests)
 
