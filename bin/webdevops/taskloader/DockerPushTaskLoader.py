@@ -38,6 +38,10 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
                 'actions': [(BaseTaskLoader.task_runner, [DockerPushTaskLoader.task_run, [self.docker_client, dockerfile, self.configuration]])],
                 'task_dep': []
             }
+
+            if dockerfile['dependency']:
+                task['task_dep'].append('DockerPush|%s' % dockerfile['dependency']);
+
             tasklist.append(task)
 
         # task = {
