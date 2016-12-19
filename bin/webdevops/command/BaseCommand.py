@@ -90,26 +90,26 @@ class BaseCommand(Command):
         print 'Executing %s (%s)' % (self.name, ', '.join(options))
         print ''
 
-        if self.output.is_verbose():
-            try:
-                whitelist = self.get_whitelist()
-                if whitelist:
-                    print 'WHITELIST active:'
-                    for item in whitelist:
-                        print ' - %s' % item
-                    print ''
-            except:
-                pass
+        try:
+            whitelist = self.get_whitelist()
+            if whitelist:
+                print 'WHITELIST active:'
+                for item in whitelist:
+                    print ' - %s' % item
+                print ''
+        except:
+            pass
 
-            try:
-                blacklist = self.get_blacklist()
-                if blacklist:
-                    print 'BLACKLIST active:'
-                    for item in blacklist:
-                        print ' - %s' % item
-                    print ''
-            except:
-                pass
+        try:
+            blacklist = self.get_blacklist()
+            if blacklist:
+                print 'BLACKLIST active:'
+                for item in blacklist:
+                    print ' - %s' % item
+                print ''
+        except:
+            pass
+
     def teardown(self,exitcode):
         pass
 
