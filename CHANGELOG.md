@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.1.4] - 2016-12-20
+- Add task dependencies for docker:push (push in the right order)
+- Show blacklist/whitelist for bin/console commands (even if not in verbose mode)
+- Revert "Improve default entrypoint cmd" because of bugs, old handling is better
+
 ## [1.1.3] - 2016-12-18
 - Fix critical docker hang bug (using stdin instead of stdout for log)
 - Add /docker.stderr
