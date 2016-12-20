@@ -19,3 +19,11 @@
    # Hardening
    - { key: 'smtp_use_tls',            value: 'yes' }
    - { key: 'smtp_tls_security_level', value: 'may' }
+
+- name: Remove dynamic configuration for postfix
+  lineinfile:
+    dest:   /etc/postfix/main.cf
+    regexp: '^[\s]*{{ item }}[\s]*='
+    state:  absent
+  with_items:
+    - 'myhostname'
