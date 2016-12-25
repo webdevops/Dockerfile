@@ -1,9 +1,21 @@
 #!/usr/bin/env bash
 
+if [[ -z "$CONTAINER_UID" ]]; then
+    export CONTAINER_UID="$UID"
+fi
+
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
+# auto elevate privileges (if container is not started as root)
+if [[ "$UID" -ne 0 ]]; then
+    export CONTAINER_UID="$UID"
+    exec gosu root "$0" "$@"
+fi
+# remove suid bit on gosu
+chmod -s /usr/local/bin/gosu
 
 trap 'echo sigterm ; exit' SIGTERM
 trap 'echo sigkill ; exit' SIGKILL
