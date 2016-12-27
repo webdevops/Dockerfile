@@ -21,13 +21,12 @@ COPY conf/ /opt/docker/
 # Install apache
 RUN /usr/local/bin/apt-install \
         apache2 \
-        libapache2-mod-fastcgi \
 	&& sed -ri ' \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
-	&& a2enmod actions fastcgi ssl rewrite headers expires \
+	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache --role webdevops-apache-dev --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
 
