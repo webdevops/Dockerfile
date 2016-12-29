@@ -41,3 +41,4 @@
   with_items:
    - { key: 'error_log', value: "syslog" }
    - { key: 'pid',       value: "/var/run/php-fpm.pid" }
+   - { key: 'daemonize', value: 'no' }
