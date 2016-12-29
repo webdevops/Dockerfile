@@ -15,6 +15,7 @@
     regexp: '^[\s;]*{{ item.key }}[\s]*='
     line:   '{{ item.key }} = {{ item.value }}'
   with_items:
+   - { file: "php.ini", key: 'hhvm.log.use_syslog',       value: "true" }
    - { file: "php.ini", key: 'hhvm.server.fix_path_info', value: "true" }
 
 - name: Ensure /var/run/hhvm exists
