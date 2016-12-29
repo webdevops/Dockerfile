@@ -24,14 +24,23 @@ shared_examples 'apache::modules' do
         its(:stdout) { should contain('ssl_module') }
         its(:stdout) { should contain('status_module') }
         its(:stdout) { should contain('expires_module') }
-        its(:stdout) { should contain('proxy_module') }
-        its(:stdout) { should contain('proxy_fcgi_module') }
 
         ## mpm module
         if (os[:family] == 'debian' and os[:version] == '7') or (os[:family] == 'ubuntu' and os[:version] == '12.04')
             its(:stdout) { should contain('mpm_worker_module') }
         else
             its(:stdout) { should contain('mpm_event_module') }
+        end
+
+        ## fastcgi module
+        if (os[:family] == 'debian' and os[:version] == '7')
+            its(:stdout) { should contain('fastcgi_module') }
+            its(:stdout) { should_not contain('proxy_module') }
+            its(:stdout) { should_not contain('proxy_fcgi_module') }
+        else
+            its(:stdout) { should_not contain('fastcgi_module') }
+            its(:stdout) { should contain('proxy_module') }
+            its(:stdout) { should contain('proxy_fcgi_module') }
         end
 
         its(:exit_status) { should eq 0 }

@@ -28,6 +28,21 @@ RUN /usr/local/bin/yum-install \
 {%- endmacro %}
 
 
+{% macro debian7(role='') -%}
+# Install apache
+RUN /usr/local/bin/apt-install \
+        apache2 \
+        apache2-mpm-worker \
+        libapache2-mod-fastcgi \
+	&& sed -ri ' \
+		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+		' /etc/apache2/apache2.conf \
+	&& rm -f /etc/apache2/sites-enabled/* \
+	&& a2enmod actions fastcgi ssl rewrite headers expires \
+	{{ provision.runRoleInline('apache', role) }}
+{%- endmacro %}
+
 {% macro debian8(role='') -%}
 # Install apache
 RUN /usr/local/bin/apt-install \
