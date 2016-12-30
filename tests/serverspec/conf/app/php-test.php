@@ -22,6 +22,10 @@ switch($_GET['test']) {
         echo php_ini_scanned_files();
         break;
 
+    case 'process_user_id':
+        echo 'UID:' . posix_getuid() . '#';
+        break;
+
     default:
         header('HTTP/1.1 500 Internal Server Error');
         echo 'ERROR: Unknown test';
