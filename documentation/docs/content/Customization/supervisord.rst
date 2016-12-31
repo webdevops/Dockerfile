@@ -26,7 +26,6 @@ Example configuration for hhvm::
     command = /opt/docker/bin/service.d/hhvm.sh
     process_name=%(program_name)s
     directory = /var/run/hhvm/
-    user = application
     startsecs = 0
     autostart = true
     autorestart = true
