@@ -112,6 +112,10 @@
    - { regexp: 'LoadModule socache_shmcb_module', line: 'LoadModule socache_shmcb_module /usr/lib/apache2/mod_socache_shmcb.so' }
   when: ansible_os_family == 'Alpine'
 
+- name: Remove default vhost from ssl configuration [Alpine family]
+  command: sed -i -e '1h;2,$H;$!d;g' -e 's/<VirtualHost.*<\/VirtualHost>/#-> removed vhost/g' /etc/apache2/conf.d/ssl.conf
+  when: ansible_os_family == 'Alpine'
+
 - name: Disable proxy [Alpine family]
   lineinfile:
     dest:   '/etc/apache2/conf.d/proxy.conf'
