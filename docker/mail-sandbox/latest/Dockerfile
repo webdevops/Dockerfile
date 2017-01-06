@@ -8,7 +8,7 @@ FROM webdevops/php-nginx:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.1.4
+LABEL io.webdevops.version=1.2.0
 
 ENV MAILBOX_USERNAME "dev"
 ENV MAILBOX_PASSWORD "dev"
