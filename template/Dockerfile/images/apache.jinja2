@@ -28,7 +28,7 @@ RUN /usr/local/bin/yum-install \
 {%- endmacro %}
 
 
-{% macro debian8(role='') -%}
+{% macro debian7(role='') -%}
 # Install apache
 RUN /usr/local/bin/apt-install \
         apache2 \
@@ -43,18 +43,31 @@ RUN /usr/local/bin/apt-install \
 	{{ provision.runRoleInline('apache', role) }}
 {%- endmacro %}
 
-
-{% macro debian9(role='') -%}
+{% macro debian8(role='') -%}
 # Install apache
 RUN /usr/local/bin/apt-install \
         apache2 \
-        libapache2-mod-fastcgi \
+        apache2-mpm-worker \
 	&& sed -ri ' \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
-	&& a2enmod actions fastcgi ssl rewrite headers expires \
+	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
+	{{ provision.runRoleInline('apache', role) }}
+{%- endmacro %}
+
+
+{% macro debian9(role='') -%}
+# Install apache
+RUN /usr/local/bin/apt-install \
+        apache2 \
+	&& sed -ri ' \
+		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+		' /etc/apache2/apache2.conf \
+	&& rm -f /etc/apache2/sites-enabled/* \
+	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
     {{ provision.runRoleInline('apache', role) }}
 {%- endmacro %}
 
@@ -97,14 +110,13 @@ RUN /usr/local/bin/apt-install \
 # Install apache
 RUN /usr/local/bin/apt-install \
         apache2 \
-        libapache2-mod-fastcgi \
 	&& sed -ri ' \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
-	&& a2enmod actions fastcgi ssl rewrite headers expires \
+	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
     {{ provision.runRoleInline('apache', role) }}
 {%- endmacro %}
 
@@ -113,13 +125,12 @@ RUN /usr/local/bin/apt-install \
 # Install apache
 RUN /usr/local/bin/apt-install \
         apache2 \
-        libapache2-mod-fastcgi \
 	&& sed -ri ' \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
-	&& a2enmod actions fastcgi ssl rewrite headers expires \
+	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
     {{ provision.runRoleInline('apache', role) }}
 {%- endmacro %}

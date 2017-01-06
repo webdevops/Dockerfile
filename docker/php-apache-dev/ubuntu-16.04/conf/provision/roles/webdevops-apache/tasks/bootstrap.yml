@@ -3,7 +3,7 @@
 - name: Set apache vhost file [RedHat family]
   set_fact:
      apache_main_path:    /etc/httpd/
-     apache_docker_vhost: /etc/httpd/conf.d/docker.conf
+     apache_docker_vhost: /etc/httpd/conf.d/zzz-docker.conf
   when: ansible_os_family == 'RedHat'
 
 - name: Set apache vhost file [Debian family]
@@ -15,7 +15,7 @@
 - name: Set apache vhost file [Alpine family]
   set_fact:
      apache_main_path:    /etc/apache2/
-     apache_docker_vhost: /etc/apache2/conf.d/docker.conf
+     apache_docker_vhost: /etc/apache2/conf.d/zzz-docker.conf
   when: ansible_os_family == 'Alpine'
 
 - name: Enable apache main config
@@ -112,6 +112,10 @@
    - { regexp: 'LoadModule socache_shmcb_module', line: 'LoadModule socache_shmcb_module /usr/lib/apache2/mod_socache_shmcb.so' }
   when: ansible_os_family == 'Alpine'
 
+- name: Remove default vhost from ssl configuration [Alpine family]
+  command: sed -i -e '1h;2,$H;$!d;g' -e 's/<VirtualHost.*<\/VirtualHost>/#-> removed vhost/g' /etc/apache2/conf.d/ssl.conf
+  when: ansible_os_family == 'Alpine'
+
 - name: Disable proxy [Alpine family]
   lineinfile:
     dest:   '/etc/apache2/conf.d/proxy.conf'
@@ -141,3 +145,12 @@
     - { path: '/opt/docker/etc/httpd/ssl/server.crt', state: 'file',      mode: '0640' }
     - { path: '/opt/docker/etc/httpd/ssl/server.csr', state: 'file',      mode: '0640' }
     - { path: '/opt/docker/etc/httpd/ssl/server.key', state: 'file',      mode: '0640' }
+
+- name: Maintain lock directory [Debian family]
+  file:
+    path: "/var/lock/apache2"
+    state: "directory"
+    mode:  "0750"
+    owner: "www-data"
+    group: "www-data"
+  when: ansible_os_family == 'Debian'

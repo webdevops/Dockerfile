@@ -5,6 +5,14 @@ base_spec_dir = Pathname.new(File.join(File.dirname(__FILE__)))
 Dir[base_spec_dir.join('shared/**/*.rb')].sort.each{ |f| require f }
 Dir[base_spec_dir.join('collection/**.rb')].sort.each{ |f| require f }
 
+if not ENV['DOCKERFILE']
+    raise 'Environment variable "OCKERFILE" not set'
+end
+
+if not File.exist?(ENV['DOCKERFILE'])
+    raise 'Dockerfile \"' + ENV['DOCKERFILE'] + '\" not found'
+end
+
 set :backend, :docker
 set :docker_container, ENV['DOCKER_IMAGE']
 set :os, :family => ENV['OS_FAMILY'], :version => ENV['OS_VERSION'], :arch => 'x86_64'

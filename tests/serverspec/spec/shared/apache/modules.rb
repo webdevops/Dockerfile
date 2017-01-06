@@ -33,8 +33,16 @@ shared_examples 'apache::modules' do
         end
 
         ## fastcgi module
-        if ['debian', 'ubuntu'].include?(os[:family])
+        if (os[:family] == 'debian' and os[:version] == '7') or
+           (os[:family] == 'ubuntu' and os[:version] == '12.04') or
+           (os[:family] == 'ubuntu' and os[:version] == '14.04')
             its(:stdout) { should contain('fastcgi_module') }
+            its(:stdout) { should_not contain('proxy_module') }
+            its(:stdout) { should_not contain('proxy_fcgi_module') }
+        else
+            its(:stdout) { should_not contain('fastcgi_module') }
+            its(:stdout) { should contain('proxy_module') }
+            its(:stdout) { should contain('proxy_fcgi_module') }
         end
 
         its(:exit_status) { should eq 0 }
