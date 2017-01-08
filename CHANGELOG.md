@@ -2,7 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
-## [1.2.0] - 2016-12-20
+## [1.2.1] - 2017-01-08
+- Update to alpine 3.5
+- Enabled php7 builds again
+- Removed redis from alpine (not available anymore)
+- Added build-essentials for samson-deployment
+
+## [1.2.0] - 2017-01-06
 - Add mod_proxy_fcgi and mod_fastcgi configuration for Apache (Debian 9 doesn't provide mod_fastcgi anymore; using ifmodule-directive for automatic configuration switching)
 - Removed mod_fastcgi on most installations were it is not needed
 - Added tests to ensure /dev/null and /dev/zero are writeable

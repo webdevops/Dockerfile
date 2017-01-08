@@ -3,12 +3,12 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM alpine:3.4
+FROM alpine:3.5
 
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.2.0
+LABEL io.webdevops.version=1.2.1
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8
@@ -20,10 +20,8 @@ ADD baselayout.tar /
 RUN set -x \
     # Fix root terminal
     && echo "export TERM=xterm" >> /root/.bashrc \
-    # Add testing
-    && echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
     # Add community
-    && echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
+    && echo http://dl-4.alpinelinux.org/alpine/v3.5/community/ >> /etc/apk/repositories \
     # System update
     && /usr/local/bin/apk-upgrade \
     # Install base stuff
@@ -36,7 +34,7 @@ RUN set -x \
         python-dev \
         py-setuptools \
         py-crypto \
-        py-pip \
+        py2-pip \
         py-cparser \
         py-cryptography \
         py-markupsafe \

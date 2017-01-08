@@ -8,7 +8,7 @@ FROM webdevops/base-app:alpine-3
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.2.0
+LABEL io.webdevops.version=1.2.1
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php
@@ -32,7 +32,6 @@ RUN /usr/local/bin/apk-install \
         php5-mysqli \
         php5-pdo_mysql \
         php5-pdo_sqlite \
-        php5-memcached \
         php5-mcrypt \
         php5-gd \
         php5-bcmath \
@@ -62,7 +61,7 @@ RUN /usr/local/bin/apk-install \
         geoip \
         php5-ldap \
         php5-memcache \
-        php5-redis \
+        # php5-redis \
         php5-pear \
         php5-phar \
         php5-openssl \

@@ -8,7 +8,7 @@ FROM zendesk/samson:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.2.0
+LABEL io.webdevops.version=1.2.1
 
 
 ###############################################################################
@@ -171,6 +171,9 @@ RUN npm install -g npm \
 
 # Deployer stack
 RUN set -x \
+    # Compiler stuff
+    && /usr/local/bin/apt-install \
+        build-essential \
     # Deployer: Ansistratno (https://github.com/ansistrano)
     && ansible-galaxy install --force \
         carlosbuenosvinos.ansistrano-deploy \
