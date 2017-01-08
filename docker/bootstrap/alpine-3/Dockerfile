@@ -20,10 +20,8 @@ ADD baselayout.tar /
 RUN set -x \
     # Fix root terminal
     && echo "export TERM=xterm" >> /root/.bashrc \
-    # Add testing
-    && echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
     # Add community
-    && echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
+    && echo http://dl-4.alpinelinux.org/alpine/v3.5/community/ >> /etc/apk/repositories \
     # System update
     && /usr/local/bin/apk-upgrade \
     # Install base stuff

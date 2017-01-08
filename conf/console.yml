@@ -44,6 +44,7 @@ dockerTest:
         OS_FAMILY: 'alpine'
         OS_VERSION: '3'
         PHP_MHASH: '0'
+        PHP_REDIS: '0'
       ':ubuntu-12.04':
         OS_FAMILY: 'ubuntu'
         OS_VERSION: '12.04'
