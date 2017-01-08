@@ -4,6 +4,11 @@ Automated built and tested on [WebDevOps Build server](https://build.webdevops.i
 
 [![Docker layout](documentation/docs/resources/images/docker-image-layout.gv.png)](documentation/docs/resources/images/docker-image-layout.gv.png)
 
+# Documentation
+
+* [Documentation is available on readthedocs](https://dockerfile.readthedocs.io/en/latest/)
+
+
 Dockerfile                                                | Description                                                                             | Depends on                                                                       |
 --------------------------------------------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 [`bootstrap`](docker/base/README.md)                      | Distribution with ansible and some scripts                                              | official docker files                                                            |
