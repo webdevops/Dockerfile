@@ -171,6 +171,9 @@ RUN npm install -g npm \
 
 # Deployer stack
 RUN set -x \
+    # Compiler stuff
+    && /usr/local/bin/apt-install \
+        build-essential \
     # Deployer: Ansistratno (https://github.com/ansistrano)
     && ansible-galaxy install --force \
         carlosbuenosvinos.ansistrano-deploy \
