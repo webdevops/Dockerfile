@@ -3,7 +3,7 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM alpine:3.4
+FROM alpine:3.5
 
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
@@ -36,7 +36,7 @@ RUN set -x \
         python-dev \
         py-setuptools \
         py-crypto \
-        py-pip \
+        py2-pip \
         py-cparser \
         py-cryptography \
         py-markupsafe \
