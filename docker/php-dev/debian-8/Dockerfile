@@ -8,7 +8,7 @@ FROM webdevops/php:debian-8
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.2.1
+LABEL io.webdevops.version=1.2.2
 
 COPY conf/ /opt/docker/
 
