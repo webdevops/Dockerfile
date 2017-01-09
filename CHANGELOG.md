@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.2.2] - 2017-01-09
+- Removed deprecated SSLCompression option in Apache configuration (was disabled anyway)
+
 ## [1.2.1] - 2017-01-08
 - Update to alpine 3.5
 - Enabled php7 builds again
