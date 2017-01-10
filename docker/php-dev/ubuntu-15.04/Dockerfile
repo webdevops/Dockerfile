@@ -8,7 +8,7 @@ FROM webdevops/php:ubuntu-15.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.2.2
+LABEL io.webdevops.version=1.2.3
 
 COPY conf/ /opt/docker/
 
