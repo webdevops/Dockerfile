@@ -7,7 +7,7 @@ RUN /usr/local/bin/apk-install \
         graphviz \
         # Install php development stuff
         php7-xdebug \
-    {{ provision.runRoleInline('php-dev', role) }}
+    {{ provision.runRoleInline('dev', 'php-dev', role) }}
 {%- endmacro %}
 
 
@@ -21,7 +21,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         php7-xdebug \
         blackfire-php \
         blackfire-agent \
-    {{ provision.runRoleInline('php-dev', role) }}
+    {{ provision.runRoleInline('dev', 'php-dev', role) }}
 {%- endmacro %}
 
 
@@ -36,7 +36,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         php-xdebug \
         blackfire-php \
         blackfire-agent \
-    {{ provision.runRoleInline('php-dev', role) }}
+    {{ provision.runRoleInline('dev', 'php-dev', role) }}
 {%- endmacro %}
 
 {% macro debianDotDeb(role='') -%}
@@ -50,7 +50,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         php7.0-xdebug \
         blackfire-php \
         blackfire-agent \
-    {{ provision.runRoleInline('php-dev', role) }}
+    {{ provision.runRoleInline('dev', 'php-dev', role) }}
 {%- endmacro %}
 
 {% macro debianSury(role='') -%}
@@ -64,7 +64,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         # php7.0-xdebug \ # Is currently not available
         blackfire-php \
         blackfire-agent \
-    {{ provision.runRoleInline('php-dev', role) }}
+    {{ provision.runRoleInline('dev', 'php-dev', role) }}
 {%- endmacro %}
 
 {% macro ubuntu(role='') -%}
@@ -78,5 +78,5 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         php-xdebug \
         blackfire-php \
         blackfire-agent \
-    {{ provision.runRoleInline('php-dev', role) }}
+    {{ provision.runRoleInline('dev', 'php-dev', role) }}
 {%- endmacro %}

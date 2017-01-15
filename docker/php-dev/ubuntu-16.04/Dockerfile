@@ -22,6 +22,6 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         php-xdebug \
         blackfire-php \
         blackfire-agent \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php-dev \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-dev --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
 
