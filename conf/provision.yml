@@ -63,6 +63,7 @@ provision:
   php-dev:
     configuration:
       php-dev/general   : '*'
+      development/general: '*'
   php-apache-dev:
     configuration:
       apache/general    : '*'

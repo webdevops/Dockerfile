@@ -8,7 +8,7 @@ FROM webdevops/php:alpine-3
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.2.3
+LABEL io.webdevops.version=1.2.4
 
 COPY conf/ /opt/docker/
 
@@ -18,6 +18,6 @@ RUN /usr/local/bin/apk-install \
         graphviz \
         # Install php development stuff
         php5-xdebug \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php-dev \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-dev --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh
 

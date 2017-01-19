@@ -76,7 +76,7 @@ dockerTest:
         PHP_XDEBUG: '0'
       ':debian-9':
         OS_FAMILY: 'debian'
-        OS_VERSION: 'testing'
+        OS_VERSION: '9'
       ':centos-7':
         OS_FAMILY: 'redhat'
         OS_VERSION: '7'

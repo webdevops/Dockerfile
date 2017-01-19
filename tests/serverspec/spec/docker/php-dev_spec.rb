@@ -23,5 +23,6 @@ describe "Dockerfile" do
     end
 
     include_examples 'collection::php-tools'
+    include_examples 'collection::development'
 
 end
