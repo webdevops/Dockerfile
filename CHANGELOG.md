@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.2.4] - 2017-01-20
+- Enable sshd for php-dev images
+- Set root and application password of php-dev images to "dev"
+- Fixed syslog-ng error message about log file destination (use pipe instead of file)
+- Fixed test of debian-9 (distribution version is now "9", was "testing" before; upstream)
+
 ## [1.2.3] - 2017-01-10
 - Removed default nginx vhost configuration (configuration collision) for alpine
 
