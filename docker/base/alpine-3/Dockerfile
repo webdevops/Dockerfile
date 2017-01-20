@@ -24,6 +24,7 @@ RUN chmod +x /opt/docker/bin/* \
         curl \
         sed \
         gnupg \
+    && chmod +s /usr/local/bin/gosu \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh
 

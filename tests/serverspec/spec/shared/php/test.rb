@@ -130,3 +130,23 @@ shared_examples 'php7::fpm::test::version' do
         end
     end
 end
+
+shared_examples 'php::fpm::test::process_user_id' do
+    [
+        'http://localhost/php-test.php?test=process_user_id',
+        'https://localhost/php-test.php?test=process_user_id'
+    ].each do |url|
+        describe command("curl --insecure --silent --retry 10 --fail #{url}") do
+            its(:stdout) { should_not contain('PHP Notice') }
+            its(:stdout) { should_not contain('Notice') }
+            its(:stdout) { should_not contain('PHP Warning') }
+            its(:stderr) { should_not contain('PHP Notice') }
+            its(:stderr) { should_not contain('Notice') }
+            its(:stderr) { should_not contain('PHP Warning') }
+
+            its(:stdout) { should contain('UID:1000#') }
+
+            its(:exit_status) { should eq 0 }
+        end
+    end
+end
