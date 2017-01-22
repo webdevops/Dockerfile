@@ -2,15 +2,22 @@
 # Solr Docker container
 #++++++++++++++++++++++++++++++++++++++
 #
-# Images:
-#
+# Image:
 #   solr (official)
 #       https://hub.docker.com/_/solr/
+#       https://hub.docker.com/r/library/solr/tags/
+#       https://github.com/docker-solr/docker-solr
+#       Infos
+#           default Solr port: 8983
+#
+# TYPO3
 #   typo3 solr extension
 #       https://github.com/docker-solr/docker-solr
-#       https://github.com/TYPO3-Solr/ext-solr/blob/release-6.0.x/Dockerfile
-#       https://github.com/TYPO3-Solr/ext-solr/tree/release-6.0.x/Resources/Private/Solr
 #       https://docs.typo3.org/typo3cms/extensions/solr/Appendix/VersionMatrix.html
+#       Docker relevant links
+#           https://github.com/TYPO3-Solr/ext-solr/blob/release-6.0.x/Dockerfile
+#           https://github.com/TYPO3-Solr/ext-solr/tree/release-6.0.x/Resources/Private/Solr
+#
 #
 #++++++++++++++++++++++++++++++++++++++
 FROM solr:6.3.0
