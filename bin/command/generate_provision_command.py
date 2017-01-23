@@ -24,6 +24,7 @@ import yamlordereddictloader
 import time
 import Queue
 import shutil
+import grp
 from cleo import Output
 from webdevops import Provisioner
 from webdevops.command import BaseCommand
@@ -96,7 +97,16 @@ class GenerateProvisionCommand(BaseCommand):
             if Output.VERBOSITY_NORMAL <= self.output.get_verbosity():
                 self.line('<info>* </info> Building localscipts')
             base_path = self.configuration.get('baselayoutPath')
-            shutil.make_archive('baselayout', 'bztar', base_path)
+
+            root_group = grp.getgrgid(0)
+
+            shutil.make_archive(
+                base_name='baselayout',
+                format='bztar',
+                root_dir=base_path,
+                owner='root',
+                group=root_group.gr_name
+            )
             os.rename('baselayout.tar.bz2', 'baselayout.tar')
 
 
