@@ -95,7 +95,7 @@ class GenerateProvisionCommand(BaseCommand):
         if self.option('baselayout'):
             if Output.VERBOSITY_NORMAL <= self.output.get_verbosity():
                 self.line('<info>* </info> Building localscipts')
-            base_path = os.path.join(self.configuration.get('baselayoutPath'), 'baselayout')
+            base_path = self.configuration.get('baselayoutPath')
             shutil.make_archive('baselayout', 'bztar', base_path)
             os.rename('baselayout.tar.bz2', 'baselayout.tar')
 
