@@ -30,7 +30,7 @@ applications: webdevops/typo3 webdevops/piwik
 misc:      webdevops/mail-sandbox webdevops/sphinx webdevops/liquibase
 
 requirements:
-	pip install -r ./requirements.txt
+	pip install -r ./bin/requirements.txt
 	cd tests/serverspec && bundle install --path=vendor
 
 test:
