@@ -1,8 +1,9 @@
 shared_examples 'apache::service::running' do
-    describe command("service apache check") do
+    describe "service apache check" do
         it "should have running apache daemon", :retry => 5, :retry_wait => 10 do
-            its(:stdout) { should match 'ok' }
-            its(:exit_status) { should eq 0 }
+            cmd = command("service apache check")
+            expect(cmd.stdout).to match('ok')
+            expect(cmd.exit_status).to eq 0
         end
     end
 
