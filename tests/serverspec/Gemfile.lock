@@ -28,6 +28,8 @@ GEM
     rspec-mocks (3.5.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
+    rspec-retry (0.5.3)
+      rspec-core (> 3.3, < 3.6)
     rspec-support (3.5.0)
     serverspec (2.37.2)
       multi_json
@@ -49,6 +51,7 @@ DEPENDENCIES
   json
   rake
   rspec-core
+  rspec-retry
   serverspec
 
 BUNDLED WITH

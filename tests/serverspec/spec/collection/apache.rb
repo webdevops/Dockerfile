@@ -8,8 +8,6 @@ shared_examples 'collection::apache' do
     include_examples 'apache::modules'
     include_examples 'apache::service::running'
 
-    wait_retry 30 do
-        include_examples 'web::test::pi'
-    end
+    include_examples 'web::test::pi'
 end
 
