@@ -39,7 +39,7 @@ shared_examples 'php-fpm::listening::public' do
     end
 end
 
-shared_examples 'php-fpm::listening::local-only'
+shared_examples 'php-fpm::listening::local-only' do
     describe port(9000) do
         it "php-fpm should NOT be listening public", :retry => 5, :retry_wait => 10 do
             should_not be_listening.on('0.0.0.0')
