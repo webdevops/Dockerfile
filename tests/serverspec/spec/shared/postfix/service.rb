@@ -1,6 +1,6 @@
 shared_examples 'postfix::service::running' do
     describe "service postfix check" do
-        it "should have running postfix daemon", :retry => 5, :retry_wait => 10 do
+        it "should have running postfix daemon", :retry => 20, :retry_wait => 3 do
             cmd = command("service postfix check")
             expect(cmd.stdout).to match('ok')
             expect(cmd.exit_status).to eq 0

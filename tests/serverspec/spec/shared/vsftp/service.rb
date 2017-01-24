@@ -1,6 +1,6 @@
 shared_examples 'vsftp::service::running' do
     describe "service vsftp check" do
-        it "should have running vsftp daemon", :retry => 5, :retry_wait => 10 do
+        it "should have running vsftp daemon", :retry => 20, :retry_wait => 3 do
             cmd = command("service vsftp check")
             expect(cmd.stdout).to match('ok')
             expect(cmd.exit_status).to eq 0

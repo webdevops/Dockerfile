@@ -36,7 +36,7 @@ shared_examples 'php::fpm::test::sha1' do
         'https://localhost/php-test.php?test=sha1'
     ].each do |url|
         describe url do
-            it "should have running and answering webserver", :retry => 5, :retry_wait => 10 do
+            it "should have running and answering webserver", :retry => 20, :retry_wait => 3 do
                 cmd = command("curl --insecure --silent --retry 10 --fail #{url}")
                 expect(cmd.stdout).not_to contain('PHP Notice')
                 expect(cmd.stdout).not_to contain('Notice')
@@ -56,7 +56,7 @@ shared_examples 'php::fpm::test::php_sapi_name' do
         'https://localhost/php-test.php?test=php_sapi_name'
     ].each do |url|
         describe url do
-            it "should have running and answering webserver", :retry => 5, :retry_wait => 10 do
+            it "should have running and answering webserver", :retry => 20, :retry_wait => 3 do
                 cmd = command("curl --insecure --silent --retry 10 --fail #{url}")
                 expect(cmd.stdout).not_to contain('PHP Notice')
                 expect(cmd.stdout).not_to contain('Notice')
@@ -77,7 +77,7 @@ shared_examples 'php::fpm::test::php_ini_scanned_files' do
         'https://localhost/php-test.php?test=php_ini_scanned_files'
     ].each do |url|
         describe url do
-            it "should have running and answering webserver", :retry => 5, :retry_wait => 10 do
+            it "should have running and answering webserver", :retry => 20, :retry_wait => 3 do
                 cmd = command("curl --insecure --silent --retry 10 --fail #{url}")
                 expect(cmd.stdout).not_to contain('PHP Notice')
                 expect(cmd.stdout).not_to contain('Notice')
@@ -98,7 +98,7 @@ shared_examples 'php5::fpm::test::version' do
         'https://localhost/php-test.php?test=version'
     ].each do |url|
         describe url do
-            it "should have running and answering webserver", :retry => 5, :retry_wait => 10 do
+            it "should have running and answering webserver", :retry => 20, :retry_wait => 3 do
                 cmd = command("curl --insecure --silent --retry 10 --fail #{url}")
                 expect(cmd.stdout).not_to contain('PHP Notice')
                 expect(cmd.stdout).not_to contain('Notice')
@@ -118,7 +118,7 @@ shared_examples 'php7::fpm::test::version' do
         'https://localhost/php-test.php?test=version'
     ].each do |url|
         describe url do
-            it "should have running and answering webserver", :retry => 5, :retry_wait => 10 do
+            it "should have running and answering webserver", :retry => 20, :retry_wait => 3 do
                 cmd = command("curl --insecure --silent --retry 10 --fail #{url}")
                 expect(cmd.stdout).not_to contain('PHP Notice')
                 expect(cmd.stdout).not_to contain('Notice')
@@ -138,7 +138,7 @@ shared_examples 'php::fpm::test::process_user_id' do
         'https://localhost/php-test.php?test=process_user_id'
     ].each do |url|
         describe url do
-            it "should have running and answering webserver", :retry => 5, :retry_wait => 10 do
+            it "should have running and answering webserver", :retry => 20, :retry_wait => 3 do
                 cmd = command("curl --insecure --silent --retry 10 --fail #{url}")
                 expect(cmd.stdout).not_to contain('PHP Notice')
                 expect(cmd.stdout).not_to contain('Notice')

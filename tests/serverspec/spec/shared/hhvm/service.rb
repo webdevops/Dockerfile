@@ -1,6 +1,6 @@
 shared_examples 'hhvm::service::running' do
     describe "service hhvm check" do
-        it "should have running hhvm daemon", :retry => 5, :retry_wait => 10 do
+        it "should have running hhvm daemon", :retry => 20, :retry_wait => 3 do
             cmd = command("service hhvm check")
             expect(cmd.stdout).to match('ok')
             expect(cmd.exit_status).to eq 0

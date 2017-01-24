@@ -1,6 +1,6 @@
 shared_examples 'nginx::service::running' do
     describe "service nginx check" do
-        it "should have running nginx daemon", :retry => 5, :retry_wait => 10 do
+        it "should have running nginx daemon", :retry => 20, :retry_wait => 3 do
             cmd = command("service nginx check")
             expect(cmd.stdout).to match('ok')
             expect(cmd.exit_status).to eq 0

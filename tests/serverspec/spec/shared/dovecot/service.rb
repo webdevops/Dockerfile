@@ -1,6 +1,6 @@
 shared_examples 'dovecot::service::running' do
     describe "service dovecot check" do
-        it "should have running dovecot daemon", :retry => 5, :retry_wait => 10 do
+        it "should have running dovecot daemon", :retry => 20, :retry_wait => 3 do
             cmd = command("service dovecot check")
             expect(cmd.stdout).to match('ok')
             expect(cmd.exit_status).to eq 0
