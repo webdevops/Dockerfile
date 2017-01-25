@@ -63,7 +63,7 @@
     owner: "root"
     group: "root"
 
-- name: Configure php-fpm pool user (www.conf)
+- name: Configure php-fpm pool user (application.conf)
   lineinfile:
     dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
     regexp: '^[\s;]*{{ item.key }}[\s]*='
@@ -72,12 +72,19 @@
    - { key: 'listen',                      value: "0.0.0.0:9000" }
    - { key: 'catch_workers_output',        value: "yes" }
    - { key: 'access.format',               value: '[php-fpm:access] %R - %u %t "%m %r%Q%q" %s %f %{mili}d %{kilo}M %C%%' }
-   - { key: 'access.log',                  value: "/docker.stdout" }
    - { key: 'slowlog',                     value: "/docker.stderr" }
    - { key: 'php_admin_value[error_log]',  value: "/docker.stderr" }
    - { key: 'php_admin_value[log_errors]', value: "on" }
    - { key: 'user',                        value: "{{ APPLICATION_USER }}" }
    - { key: 'group',                       value: "{{ APPLICATION_GROUP }}" }
+
+- name: Configure php-fpm pool user (application.conf)
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   ';{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: 'access.log', value: "/docker.stdout" }
 
 - name: Disable clear env in php-fpm pool
   lineinfile:
