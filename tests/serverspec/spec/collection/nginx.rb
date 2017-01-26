@@ -7,8 +7,6 @@ shared_examples 'collection::nginx' do
     # test after services are up
     include_examples 'nginx::service::running'
 
-    wait_retry 30 do
-        include_examples 'web::test::pi'
-    end
+    include_examples 'web::test::pi'
 end
 

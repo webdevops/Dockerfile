@@ -12,7 +12,5 @@ shared_examples 'collection::hhvm' do
 end
 
 shared_examples 'collection::hhvm::webserver-test' do
-    wait_retry 30 do
-        include_examples 'php::fpm::test::sha1'
-    end
+    include_examples 'php::fpm::test::sha1'
 end

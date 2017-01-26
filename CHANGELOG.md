@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.3.0] - 2017-01-26
+- Enabled `docker --user` support
+- Added `service <service> check` for checking if a service is running
+- Added test to check if the services are staying up (see `service <service> check`)
+- Implemented rspec-retry
+- Disabeld php-fpm access logging for production images (default; high log load)
+- Introduced /entrypoit.d (symlink)
+
 ## [1.2.4] - 2017-01-20
 - Enable sshd for php-dev images
 - Set root and application password of php-dev images to "dev"

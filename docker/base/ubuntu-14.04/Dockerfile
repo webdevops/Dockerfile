@@ -8,7 +8,7 @@ FROM webdevops/bootstrap:ubuntu-14.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.2.4
+LABEL io.webdevops.version=1.3.0
 
 ENV DOCKER_CONF_HOME /opt/docker/
 
@@ -26,6 +26,7 @@ RUN chmod +x /opt/docker/bin/* \
         curl \
         net-tools \
         gnupg \
+    && chmod +s /usr/local/bin/gosu \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh
 

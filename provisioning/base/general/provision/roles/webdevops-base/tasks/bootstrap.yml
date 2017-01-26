@@ -1,5 +1,6 @@
 ---
 
+- include: bootstrap/system.yml
 - include: bootstrap/misc.yml
 - include: bootstrap/root.yml
 - include: bootstrap/supervisor.yml

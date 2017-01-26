@@ -8,7 +8,7 @@ FROM zendesk/samson:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.2.4
+LABEL io.webdevops.version=1.3.0
 
 
 ###############################################################################
@@ -54,6 +54,19 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && hash -r \
     && pip install ansible \
     && chmod 750 /usr/local/bin/ansible* \
+    # Install gosu
+    && GOSU_VERSION=1.10 \
+    && /usr/local/bin/apt-install wget gnupg dirmngr \
+    && dpkgArch="amd64" \
+    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
+    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+    && rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc \
+    && chmod +x /usr/local/bin/gosu \
+    && gosu nobody true \
+    && apt-get purge -y -f --force-yes wget dirmngr \
     # Cleanup
     && apt-get purge -y -f --force-yes \
         python-dev \
@@ -84,6 +97,7 @@ RUN chmod +x /opt/docker/bin/* \
         curl \
         net-tools \
         gnupg \
+    && chmod +s /usr/local/bin/gosu \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh
 

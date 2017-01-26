@@ -1,0 +1,8 @@
+---
+
+- name: Register logrotate configurations
+  file:
+    src:  '/opt/docker/provision/entrypoint.d'
+    dest: '/entrypoint.d'
+    state: link
+    force: yes

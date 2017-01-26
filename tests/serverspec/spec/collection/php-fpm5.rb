@@ -21,26 +21,24 @@ end
 
 
 shared_examples 'collection::php-fpm5::webserver-test::development' do
-    wait_retry 30 do
-        include_examples 'php-fpm::modules'
-        include_examples 'php-fpm5::modules'
-        include_examples 'php-fpm::modules::development'
-        include_examples 'php::fpm::test::sha1'
-        include_examples 'php::fpm::test::php_ini_scanned_files'
-        include_examples 'php::fpm::test::php_sapi_name'
-        include_examples 'php5::fpm::test::version'
-    end
+    include_examples 'php-fpm::modules'
+    include_examples 'php-fpm5::modules'
+    include_examples 'php-fpm::modules::development'
+    include_examples 'php::fpm::test::sha1'
+    include_examples 'php::fpm::test::php_ini_scanned_files'
+    include_examples 'php::fpm::test::php_sapi_name'
+    include_examples 'php::fpm::test::process_user_id'
+    include_examples 'php5::fpm::test::version'
 end
 
 shared_examples 'collection::php-fpm5::webserver-test::production' do
-    wait_retry 30 do
-        include_examples 'php-fpm::modules'
-        include_examples 'php-fpm5::modules'
-        include_examples 'php-fpm::modules::production'
-        include_examples 'php::fpm::test::sha1'
-        include_examples 'php::fpm::test::php_ini_scanned_files'
-        include_examples 'php::fpm::test::php_sapi_name'
-        include_examples 'php5::fpm::test::version'
-    end
+    include_examples 'php-fpm::modules'
+    include_examples 'php-fpm5::modules'
+    include_examples 'php-fpm::modules::production'
+    include_examples 'php::fpm::test::sha1'
+    include_examples 'php::fpm::test::php_ini_scanned_files'
+    include_examples 'php::fpm::test::php_sapi_name'
+    include_examples 'php::fpm::test::process_user_id'
+    include_examples 'php5::fpm::test::version'
 end
 

@@ -11,6 +11,7 @@ RUN chmod +x /opt/docker/bin/* \
         curl \
         sed \
         gnupg \
+    && chmod +s /usr/local/bin/gosu \
     {{ provision.runRoleInline('base', role) }}
 {%- endmacro %}
 
@@ -27,6 +28,7 @@ RUN chmod +x /opt/docker/bin/* \
         curl \
         net-tools \
         gnupg2 \
+    && chmod +s /usr/local/bin/gosu \
     {{ provision.runRoleInline('base', role) }}
 {%- endmacro %}
 
@@ -44,6 +46,7 @@ RUN chmod +x /opt/docker/bin/* \
         curl \
         net-tools \
         gnupg \
+    && chmod +s /usr/local/bin/gosu \
     {{ provision.runRoleInline('base', role) }}
 {%- endmacro %}
 
@@ -61,5 +64,6 @@ RUN chmod +x /opt/docker/bin/* \
         curl \
         net-tools \
         gnupg \
+    && chmod +s /usr/local/bin/gosu \
     {{ provision.runRoleInline('base', role) }}
 {%- endmacro %}

@@ -8,8 +8,8 @@ describe "Dockerfile" do
         set :docker_image, @image.id
     end
 
-    include_examples 'collection::bootstrap'
-    include_examples 'collection::base'
+    #include_examples 'collection::bootstrap'
+    #include_examples 'collection::base'
     include_examples 'collection::vsftp'
 
 end

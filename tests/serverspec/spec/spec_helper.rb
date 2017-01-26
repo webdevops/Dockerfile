@@ -1,4 +1,5 @@
 require 'serverspec'
+require 'rspec/retry'
 
 base_spec_dir = Pathname.new(File.join(File.dirname(__FILE__)))
 

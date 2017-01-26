@@ -8,7 +8,7 @@ FROM alpine:3.5
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.2.4
+LABEL io.webdevops.version=1.3.0
 
 # Ensure UTF-8
 ENV LANG       en_US.UTF-8
@@ -46,6 +46,22 @@ RUN set -x \
     && hash -r \
     && pip install ansible \
     && chmod 750 /usr/bin/ansible* \
+    # Install gosu
+    && GOSU_VERSION=1.10 \
+    && apk add --no-cache --virtual .gosu-deps \
+        dpkg \
+        gnupg \
+        openssl \
+    && dpkgArch="amd64" \
+    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
+    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+    && chmod +x /usr/local/bin/gosu \
+    && gosu nobody true \
+    && apk del .gosu-deps \
     # Cleanup
     && apk del python-dev \
     && find /var/log/ -mindepth 1 -delete
