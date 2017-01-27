@@ -61,7 +61,7 @@ push:
 	python ./bin/console docker:push --threads=auto
 
 setup:
-	pip install --upgrade -I -r ./requirements.txt
+	pip install --upgrade -I -r ./bin/requirements.txt
 
 graph:
 	python ./bin/console generate:graph
