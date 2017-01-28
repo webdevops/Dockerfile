@@ -29,7 +29,7 @@ applications: webdevops/typo3 webdevops/piwik
 
 misc:      webdevops/mail-sandbox webdevops/sphinx webdevops/liquibase
 
-setup:     equirements
+setup:     requirements
 
 requirements:
 	pip install --upgrade -I -r ./bin/requirements.txt
