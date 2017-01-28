@@ -47,18 +47,6 @@ provision:
 
 publish:    dist-update rebuild test old-test push
 
-dist-update:
-	docker pull centos:7
-	docker pull ubuntu:12.04
-	docker pull ubuntu:14.04
-	docker pull ubuntu:15.04
-	docker pull ubuntu:15.10
-	docker pull ubuntu:16.04
-	docker pull debian:7
-	docker pull debian:8
-	docker pull debian:stretch
-	docker pull alpine:3.4
-
 push:
 	python ./bin/console docker:push --threads=auto
 
