@@ -253,7 +253,8 @@ class BaseCommand(Command):
         Get number of retries
         """
         default = 1
-        retry = max(0, int(self.option('retry')))
+        retry = os.getenv('RETRY', self.option('retry'))
+        retry = max(0, int(retry))
 
         if retry > 0:
             # user value

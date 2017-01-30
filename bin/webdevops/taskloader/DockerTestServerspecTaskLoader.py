@@ -127,6 +127,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         with open(test_dockerfile.name, mode='w', buffering=0) as f:
             f.write(dockerfile_content)
             f.flush()
+            os.fsync(f.fileno())
             f.close()
 
         test_status = False

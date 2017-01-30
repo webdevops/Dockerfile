@@ -60,10 +60,12 @@ function replaceTextInFile() {
  #
  ##
 function includeScriptDir() {
-    for FILE in "$1"/*.sh; do
-        # run custom scripts, only once
-        . "$FILE"
-    done
+    if [[ -d "$1" ]]; then
+        for FILE in "$1"/*.sh; do
+            # run custom scripts, only once
+            . "$FILE"
+        done
+    fi
 }
 
 ###
@@ -144,6 +146,7 @@ function runProvisionOnBuild() {
  ##
 function runProvisionEntrypoint() {
     includeScriptDir "/opt/docker/provision/entrypoint.d"
+    includeScriptDir "/entrypoint.d"
 
     runDockerProvision entrypoint
 }

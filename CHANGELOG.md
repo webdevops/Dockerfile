@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.3.1] - 2017-01-30
+- Introduce /entrypoint.d and /entrypoint.cmd
+- Switch to endless tail in noop cmd (entrypoint cmd)
+- Improve syslog (eg. configuration improvements; switch to file/pipe based if tty is available or not; fixes warning)
+- Improved serverspec run (missing fsync after creation of Dockerfile)
+- Remove Makefile target dist-upgrade (not needed anymore)
+- Merge setup and requiements target
+- Introduce RETRY env var, set default to 1
+- Smaller bugfixes
+
 ## [1.3.0] - 2017-01-26
 - Enabled `docker --user` support
 - Added `service <service> check` for checking if a service is running

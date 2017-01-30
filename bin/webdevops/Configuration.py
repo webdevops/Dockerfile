@@ -73,7 +73,7 @@ default = {
 
     'verbosity': 0,
     'threads': 1,
-    'retry': 5,
+    'retry': 1,
     'dryRun': False,
 }
 

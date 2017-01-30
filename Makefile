@@ -29,8 +29,10 @@ applications: webdevops/typo3 webdevops/piwik
 
 misc:      webdevops/mail-sandbox webdevops/sphinx webdevops/liquibase
 
+setup:     requirements
+
 requirements:
-	pip install -r ./bin/requirements.txt
+	pip install --upgrade -I -r ./bin/requirements.txt
 	cd tests/serverspec && bundle install --path=vendor
 
 test:
@@ -45,23 +47,8 @@ provision:
 
 publish:    dist-update rebuild test old-test push
 
-dist-update:
-	docker pull centos:7
-	docker pull ubuntu:12.04
-	docker pull ubuntu:14.04
-	docker pull ubuntu:15.04
-	docker pull ubuntu:15.10
-	docker pull ubuntu:16.04
-	docker pull debian:7
-	docker pull debian:8
-	docker pull debian:stretch
-	docker pull alpine:3.4
-
 push:
 	python ./bin/console docker:push --threads=auto
-
-setup:
-	pip install --upgrade -I -r ./requirements.txt
 
 graph:
 	python ./bin/console generate:graph
