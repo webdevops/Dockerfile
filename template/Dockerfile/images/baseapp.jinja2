@@ -85,6 +85,33 @@ RUN /usr/local/bin/apt-install \
     {{ provision.runRoleInline('base-app', role) }}
 {%- endmacro %}
 
+{% macro debian9(role='') -%}
+# Install services
+RUN /usr/local/bin/apt-install \
+        # Install services
+        openssh-server \
+        mariadb-client \
+        sqlite \
+        dnsmasq \
+        postfix \
+        # Install common tools
+        sudo \
+        zip \
+        unzip \
+        bzip2 \
+        wget \
+        curl \
+        net-tools \
+        moreutils \
+        dnsutils \
+        openssh-client \
+        rsync \
+        git \
+        nano \
+        vim \
+    && /usr/local/bin/generate-locales \
+    {{ provision.runRoleInline('base-app', role) }}
+{%- endmacro %}
 
 {% macro ubuntu(role='') -%}
 # Install services

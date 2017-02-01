@@ -8,7 +8,7 @@ FROM webdevops/base:debian-9
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.3.1
+LABEL io.webdevops.version=1.3.2
 
 ENV APPLICATION_USER  application
 ENV APPLICATION_GROUP application
@@ -22,7 +22,7 @@ COPY conf/ /opt/docker/
 RUN /usr/local/bin/apt-install \
         # Install services
         openssh-server \
-        mysql-client \
+        mariadb-client \
         sqlite \
         dnsmasq \
         postfix \

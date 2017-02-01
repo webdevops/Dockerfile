@@ -4,6 +4,18 @@ Provisioning
 
 .. important:: Provision system is only available in Docker images which are based on ``webdevops/base``!
 
+
+Custom entrypoint scripts
+-------------------------
+
+Shell scripts (``*.sh``) for container startup can be placed inside following directories:
+
+- ``/entrypoint.d/``
+- ``/opt/docker/provision/entrypoint.d/``
+
+These files (``*.sh``) will be executed automatically.
+
+
 Provision Events
 ----------------
 
