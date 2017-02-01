@@ -22,7 +22,7 @@ COPY conf/ /opt/docker/
 RUN /usr/local/bin/apt-install \
         # Install services
         openssh-server \
-        mysql-client \
+        mariadb-client \
         sqlite \
         dnsmasq \
         postfix \
