@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.3.2] - 2017-01-30
+- Fix new package names for debian-9
+
 ## [1.3.1] - 2017-01-30
 - Introduce /entrypoint.d and /entrypoint.cmd
 - Switch to endless tail in noop cmd (entrypoint cmd)
