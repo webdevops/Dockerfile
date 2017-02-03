@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.3.4] - 2017-02-03
+- Add serverspec wrapper (do not run tests if Dockerfile isn't set or available)
+
 ## [1.3.3] - 2017-02-03
 - Improve logging (no output of environment variables, eg. php)
 - Add xdebug profiler environment variables
