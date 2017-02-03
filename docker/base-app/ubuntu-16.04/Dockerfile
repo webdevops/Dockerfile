@@ -8,7 +8,7 @@ FROM webdevops/base:ubuntu-16.04
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.3.3
+LABEL io.webdevops.version=1.3.4
 
 ENV APPLICATION_USER  application
 ENV APPLICATION_GROUP application
