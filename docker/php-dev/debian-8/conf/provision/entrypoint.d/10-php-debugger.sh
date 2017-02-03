@@ -62,46 +62,34 @@ fi
 #################################################
 
 function phpEnvironmentVariable() {
-    PHP_ENV_NAME="$1"
-    PHP_ENV_VALUE="$2"
+    PHP_INI_KEY="$1"
+    PHP_ENV_NAME="$2"
 
-    echo "${PHP_ENV_NAME}=\"${PHP_ENV_VALUE}\"" >> /opt/docker/etc/php/php.ini
+    if [[ -n "${!PHP_ENV_NAME+x}" ]]; then
+        PHP_ENV_VALUE="${!PHP_ENV_NAME}"
+        echo "${PHP_INI_KEY}=\"${PHP_ENV_VALUE}\"" >> /opt/docker/etc/php/php.ini
+    fi
 }
 
 ###################
 # XDEBUG
 ###################
 
-# xdebug.remote_connect_back
-if [[ -n "${XDEBUG_REMOTE_CONNECT_BACK+x}" ]]; then
-    phpEnvironmentVariable "xdebug.remote_connect_back" "$XDEBUG_REMOTE_CONNECT_BACK"
-fi
+# remote debugger
+phpEnvironmentVariable "xdebug.remote_connect_back" "XDEBUG_REMOTE_CONNECT_BACK"
+phpEnvironmentVariable "xdebug.remote_autostart"    "XDEBUG_REMOTE_AUTOSTART"
+phpEnvironmentVariable "xdebug.remote_host"         "XDEBUG_REMOTE_HOST"
+phpEnvironmentVariable "xdebug.remote_port"         "XDEBUG_REMOTE_PORT"
 
-# xdebug.remote_autostart
-if [[ -n "${XDEBUG_REMOTE_AUTOSTART+x}" ]]; then
-    phpEnvironmentVariable "xdebug.remote_autostart" "$XDEBUG_REMOTE_AUTOSTART"
-fi
-
-# xdebug.remote_host
-if [[ -n "${XDEBUG_REMOTE_HOST+x}" ]]; then
-    phpEnvironmentVariable "xdebug.remote_host" "$XDEBUG_REMOTE_HOST"
-fi
-
-# xdebug.remote_port
-if [[ -n "${XDEBUG_REMOTE_PORT+x}" ]]; then
-    phpEnvironmentVariable "xdebug.remote_port" "$XDEBUG_REMOTE_PORT"
-fi
+# profiler
+phpEnvironmentVariable "xdebug.profiler_enable"               "XDEBUG_PROFILER_ENABLE"
+phpEnvironmentVariable "xdebug.profiler_enable_trigger"       "XDEBUG_PROFILER_ENABLE_TRIGGER"
+phpEnvironmentVariable "xdebug.profiler_enable_trigger_value" "XDEBUG_PROFILER_ENABLE_TRIGGER_VALUE"
+phpEnvironmentVariable "xdebug.profiler_output_dir"           "XDEBUG_PROFILER_OUTPUT_DIR"
+phpEnvironmentVariable "xdebug.profiler_output_name"          "XDEBUG_PROFILER_OUTPUT_NAME"
 
 ###################
 # BLACKFIRE
 ###################
-
-# blackfire.server_id
-if [[ -n "${BLACKFIRE_SERVER_ID+x}" ]]; then
-    phpEnvironmentVariable "blackfire.server_id" "$BLACKFIRE_SERVER_ID"
-fi
-
-# blackfire.server_token
-if [[ -n "${BLACKFIRE_SERVER_TOKEN+x}" ]]; then
-    phpEnvironmentVariable "blackfire.server_token" "$BLACKFIRE_SERVER_TOKEN"
-fi
+phpEnvironmentVariable "blackfire.server_id"    "BLACKFIRE_SERVER_ID"
+phpEnvironmentVariable "blackfire.server_token" "BLACKFIRE_SERVER_TOKEN"
