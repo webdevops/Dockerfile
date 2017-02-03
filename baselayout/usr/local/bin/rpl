@@ -41,11 +41,11 @@ def get_files(filenames, recurse, suffixen, verbose, hidden_files):
 		if S_ISDIR(perms.st_mode):
 			if recurse:
 				if verbose:
-					sys.stderr.write("Scanning Directory: %s\n" % filename)
+					sys.stdout.write("Scanning Directory: %s\n" % filename)
 				for f in os.listdir(filename):
 					if not hidden_files and f.startswith('.'):
 						if verbose:
-							sys.stderr.write("Skipping: %s (hidden)\n"
+							sys.stdout.write("Skipping: %s (hidden)\n"
 											 % os.path.join(filename, f))
 						continue
 					new_files += get_files([os.path.join(filename, f)],
@@ -53,17 +53,17 @@ def get_files(filenames, recurse, suffixen, verbose, hidden_files):
 										   hidden_files)
 			else:
 				if verbose:
-					sys.stderr.write("Directory: %s skipped.\n" % filename)
+					sys.stdout.write("Directory: %s skipped.\n" % filename)
 				continue
 		elif S_ISREG(perms.st_mode):
 			if suffixen != [] and \
 				   not True in [ filename.endswith(s) for s in suffixen ]:
-				sys.stderr.write("Skipping: %s (suffix not in list)\n"
+				sys.stdout.write("Skipping: %s (suffix not in list)\n"
 								 % filename)
 				continue
 			new_files += [(filename, perms)]
 		else:
-			sys.stderr.write("Skipping: %s (not a regular file)\n"
+			sys.stdout.write("Skipping: %s (not a regular file)\n"
 							 % filename)
 	return new_files
 
@@ -158,11 +158,11 @@ def main():
 			sys.exit(os.EX_DATAERR)
 
 	if new_str == "" and not opts.quiet:
-		sys.stderr.write("Really DELETE all occurences of %s " % old_str)
+		sys.stdout.write("Really DELETE all occurences of %s " % old_str)
 		if opts.ignore_case:
-			sys.stderr.write("(ignoring case)? (Y/[N]) ")
+			sys.stdout.write("(ignoring case)? (Y/[N]) ")
 		else:
-			sys.stderr.write("(case sensitive)? (Y/[N]) ")
+			sys.stdout.write("(case sensitive)? (Y/[N]) ")
 		line = raw_input()
 		if line != "" and line[0] in "nN":
 			sys.stderr.write("\nrpl:  User cancelled operation.\n")
@@ -170,16 +170,16 @@ def main():
 
 	# Tell the user what is going to happen
 	if opts.dry_run:
-		sys.stderr.write("Simulating replacement of \"%s\" with \"%s\" "
+		sys.stdout.write("Simulating replacement of \"%s\" with \"%s\" "
 						 % (old_str, new_str))
 	else:
-		sys.stderr.write("Replacing \"%s\" with \"%s\" " % (old_str, new_str))
-	if opts.ignore_case: sys.stderr.write("(ignoring case) ")
-	else:                sys.stderr.write("(case sensitive) ")
-	if opts.whole_words: sys.stderr.write("(whole words only)\n")
-	else:                sys.stderr.write("(partial words matched)\n")
+		sys.stdout.write("Replacing \"%s\" with \"%s\" " % (old_str, new_str))
+	if opts.ignore_case: sys.stdout.write("(ignoring case) ")
+	else:                sys.stdout.write("(case sensitive) ")
+	if opts.whole_words: sys.stdout.write("(whole words only)\n")
+	else:                sys.stdout.write("(partial words matched)\n")
 	if opts.dry_run and not opts.quiet:
-		sys.stderr.write("The files listed below would be modified in a replace operation.\n")
+		sys.stdout.write("The files listed below would be modified in a replace operation.\n")
 
 	if opts.escapes:
 		old_str = unescape(old_str)
@@ -225,17 +225,17 @@ def main():
 							 % filename)
 			sys.stderr.write("\nrpl: Error: %s" % e)
 			if opts.force:
-				sys.stderr.write("\nrpl: WARNING: New owner/group/perms may not match!\n\n")
+				sys.stdout.write("\nrpl: WARNING: New owner/group/perms may not match!\n\n")
 			else:
-				sys.stderr.write("\nrpl: SKIPPING %s!\n\n" % filename)
+				sys.stdout.write("\nrpl: SKIPPING %s!\n\n" % filename)
 				os.unlink(tmp_path)
 				continue
 				
 		if opts.verbose and not opts.dry_run:
-			sys.stderr.write("Processing:  %s\n" % filename)
+			sys.stdout.write("Processing:  %s\n" % filename)
 		elif not opts.quiet and not opts.dry_run:
-			sys.stderr.write(".")
-			sys.stderr.flush()
+			sys.stdout.write(".")
+			sys.stdout.flush()
 
 		# Do the actual work now
 		matches = blockrepl(f, o, regex, old_str, new_str, 1024)
@@ -252,21 +252,21 @@ def main():
 				fn = os.path.realpath(filename)
 			except OSError, e:
 				fn = filename
-			if not opts.quiet: sys.stderr.write("  %s\n" % fn)
+			if not opts.quiet: sys.stdout.write("  %s\n" % fn)
 			os.unlink(tmp_path)
 			total_matches += matches
 			continue
 
 		if opts.prompt:
-			sys.stderr.write("\nSave '%s' ? ([Y]/N) " % filename)
+			sys.stdout.write("\nSave '%s' ? ([Y]/N) " % filename)
 			line = ""
 			while line == "" or line[0] not in "Yy\nnN":
 				line = raw_input()
 			if line[0] in "nN":
-				sys.stderr.write("Not Saved.\n")
+				sys.stdout.write("Not Saved.\n")
 				os.unlink(tmp_path)
 				continue
-			sys.stderr.write("Saved.\n")
+			sys.stdout.write("Saved.\n")
 
 		if opts.do_backup:
 			try: os.rename(filename, filename + "~")
@@ -295,13 +295,13 @@ def main():
 	# We're about to exit, give a summary
 	if not opts.quiet:
 		if opts.dry_run:
-			sys.stderr.write("\nA Total of %lu matches found in %lu file%s searched."
+			sys.stdout.write("\nA Total of %lu matches found in %lu file%s searched."
 							 % (total_matches,
 								len(files),
 								len(files) != 1 and "s" or ""))
-			sys.stderr.write("\nNone replaced (simulation mode).\n")
+			sys.stdout.write("\nNone replaced (simulation mode).\n")
 		else:
-			sys.stderr.write("\nA Total of %lu matches replaced in %lu file%s searched.\n"
+			sys.stdout.write("\nA Total of %lu matches replaced in %lu file%s searched.\n"
 							 % (total_matches,
 								len(files),
 								len(files) != 1 and "s" or ""))
