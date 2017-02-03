@@ -2,7 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
-## [1.3.2] - 2017-01-30
+## [1.3.3] - 2017-02-03
+- Improve logging (no output of environment variables, eg. php)
+- Add xdebug profiler environment variables
+- Fix docker installation for samson
+
+## [1.3.2] - 2017-02-01
 - Fix new package names for debian-9
 
 ## [1.3.1] - 2017-01-30
