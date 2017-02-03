@@ -8,7 +8,7 @@ FROM zendesk/samson:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.3.2
+LABEL io.webdevops.version=1.3.3
 
 
 ###############################################################################
@@ -151,7 +151,7 @@ ENV SQLITE_CLEANUP_DAYS=0
 # NGINX reverse proxy
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
        && echo deb https://apt.dockerproject.org/repo debian-jessie main > /etc/apt/sources.list.d/docker.list \
-       && apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D \
+       && curl -fsSL https://yum.dockerproject.org/gpg | sudo apt-key add - \
     && /usr/local/bin/apt-install \
         # Install nginx
         nginx \
