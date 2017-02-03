@@ -116,7 +116,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
             return True
 
         # build rspec/serverspec command
-        cmd = ['bundle', 'exec', 'rspec']
+        cmd = ['bash', 'serverspec.sh']
         cmd.extend(serverspec_opts)
 
         # Set environment variables
