@@ -162,12 +162,12 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         # add default vars
         default_env_list = configuration.get('dockerTest.environment.default', False)
         if default_env_list:
-            ret = default_env_list.to_dict()
+            ret = default_env_list.to_dict().copy()
 
         # add docker image specific vars
         image_env_list = configuration.get('dockerTest.environment.image')
         if image_env_list:
-            image_env_list = image_env_list.to_dict()
+            image_env_list = image_env_list.to_dict().copy()
             for term in image_env_list:
                 if term in dockerfile['image']['fullname']:
                     for key in image_env_list[term]:
