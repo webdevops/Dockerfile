@@ -39,7 +39,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
             }
 
             if dockerfile['dependency']:
-                task['task_dep'].append('DockerBuild|%s' % dockerfile['dependency']);
+                task['task_dep'].append('DockerBuild|%s' % dockerfile['dependency'])
 
             tasklist.append(task)
 
