@@ -6,18 +6,9 @@ base_spec_dir = Pathname.new(File.join(File.dirname(__FILE__)))
 Dir[base_spec_dir.join('shared/**/*.rb')].sort.each{ |f| require f }
 Dir[base_spec_dir.join('collection/**.rb')].sort.each{ |f| require f }
 
-if not ENV['DOCKERFILE']
-    raise 'Environment variable "OCKERFILE" not set'
-end
-
-if not File.exist?(ENV['DOCKERFILE'])
-    raise 'Dockerfile \"' + ENV['DOCKERFILE'] + '\" not found'
-end
-
 set :backend, :docker
 set :docker_container, ENV['DOCKER_IMAGE']
 set :os, :family => ENV['OS_FAMILY'], :version => ENV['OS_VERSION'], :arch => 'x86_64'
-
 
 Excon.defaults[:write_timeout] = 1000
 Excon.defaults[:read_timeout] = 1000
@@ -82,17 +73,4 @@ end
 if ENV['PHP_BLACKFIRE'] and ENV['PHP_BLACKFIRE'] == "1"
     $testConfiguration[:phpBlackfire] = true
     $testConfiguration[:phpXdebug] = false
-end
-
-def wait_retry(time, increment = 1, elapsed_time = 0, &block)
-  begin
-    yield
-  rescue Exception => e
-    if elapsed_time >= time
-      raise e
-    else
-      sleep increment
-      wait_retry(time, increment, elapsed_time + increment, &block)
-    end
-  end
 end
