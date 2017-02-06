@@ -40,6 +40,10 @@ class DockerTestTestinfraTaskLoader(BaseDockerTaskLoader):
                 'actions': [(BaseTaskLoader.task_runner, [DockerTestTestinfraTaskLoader.task_run, [dockerfile, self.configuration]])],
                 'task_dep': []
             }
+
+            if dockerfile['dependency']:
+                task['task_dep'].append('DockerTestTestinfra|%s' % dockerfile['dependency'])
+
             tasklist.append(task)
 
         # task = {

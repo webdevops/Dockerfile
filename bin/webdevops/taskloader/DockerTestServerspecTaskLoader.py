@@ -40,6 +40,10 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
                 'actions': [(BaseTaskLoader.task_runner, [DockerTestServerspecTaskLoader.task_run, [dockerfile, self.configuration]])],
                 'task_dep': []
             }
+
+            if dockerfile['dependency']:
+                task['task_dep'].append('DockerTestServerspec|%s' % dockerfile['dependency'])
+
             tasklist.append(task)
 
         # task = {
