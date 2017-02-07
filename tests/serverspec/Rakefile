@@ -1,13 +1,28 @@
-require 'rake'
-require 'rspec/core/rake_task'
+begin
+    require 'rake'
+    require 'rspec/core/rake_task'
+    require 'rspec'
+    require 'serverspec'
+    require 'rspec/retry'
 
-RSpec.configure do |config|
-  # show retry status in spec process
-  config.verbose_retry = true
-  # show exception that triggers a retry if verbose_retry is set to true
-  config.display_try_failure_messages = true
-end
+    RSpec.configure do |config|
+        # show retry status in spec process
+        config.verbose_retry = true
+        # show exception that triggers a retry if verbose_retry is set to true
+        config.display_try_failure_messages = true
+    end
 
-RSpec::Core::RakeTask.new(:"spec") do |t, args|
-  #t.pattern = 'spec/base/*_spec.rb'
+    RSpec::Core::RakeTask.new(:spec, :pattern, :dockerfile, :osFamily, :osVersion, :dockerImage, :dockerTag) do |t, task_args|
+        t.pattern = task_args[:pattern]
+
+        ENV['DOCKERFILE'] = task_args[:dockerfile]
+        ENV['DOCKER_IMAGE'] = task_args[:dockerImage]
+        ENV['DOCKER_TAG'] = task_args[:dockerTag]
+
+        ENV['OS_FAMILY'] = task_args[:osFamily]
+        ENV['OS_VERSION'] = task_args[:osVersion]
+    end
+
+rescue LoadError
+    # no rspec available
 end

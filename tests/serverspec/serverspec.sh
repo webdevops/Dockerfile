@@ -48,4 +48,4 @@ echo "  Docker image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
 echo "    Dockerfile: ${DOCKERFILE}"
 echo ""
 
-exec bundle exec rspec "$@"
+exec bundle exec rake spec["$1","$DOCKERFILE","$OS_FAMILY","$OS_VERSION","$DOCKER_IMAGE","$DOCKER_TAG"] "$@"

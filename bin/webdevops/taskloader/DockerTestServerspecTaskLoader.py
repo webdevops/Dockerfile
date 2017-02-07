@@ -77,7 +77,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         # serverspec options
         serverspec_opts = []
-        serverspec_opts.extend(['--pattern', spec_path])
+        serverspec_opts.extend([spec_path])
 
         # serverspec env
         serverspec_env = DockerTestServerspecTaskLoader.generate_serverspec_environment(

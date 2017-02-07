@@ -18,7 +18,7 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import os, subprocess, tempfile
+import os, subprocess, tempfile, copy
 
 def execute(cmd, cwd=False, env=None):
     """
@@ -26,6 +26,9 @@ def execute(cmd, cwd=False, env=None):
     """
 
     print 'Execute: %s' % ' '.join(cmd)
+
+    if env is not None:
+        env = copy.deepcopy(env)
 
     # remove _ from env (prevent errors)
     if env is not None and '_' in env:
