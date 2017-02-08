@@ -29,10 +29,25 @@ def execute(cmd, cwd=False, env=None):
 
     if env is not None:
         env = copy.deepcopy(env)
+        env['PWD'] = os.environ['PWD']
+        env['LC_CTYPE'] = os.environ['LC_CTYPE']
+        env['SHELL'] = os.environ['SHELL']
 
-    # remove _ from env (prevent errors)
-    if env is not None and '_' in env:
-        del env['_']
+        if '_' in env:
+            del env['_']
+
+        if not 'PWD' in env:
+            env['PWD'] = os.environ['PWD']
+        if not 'PATH' in env:
+            env['PATH'] = os.environ['PATH']
+        if not 'LC_CTYPE' in env:
+            env['LC_CTYPE'] = os.environ['LC_CTYPE']
+        if not 'SHELL' in env:
+            env['SHELL'] = os.environ['SHELL']
+        if not 'DOCKER_HOST' in env:
+            env['DOCKER_HOST'] = os.environ['DOCKER_HOST']
+        if not 'DOCKER_CERT_PATH' in env:
+            env['DOCKER_CERT_PATH'] = os.environ['DOCKER_CERT_PATH']
 
     # set current working directory
     path_current = os.getcwd()

@@ -1,9 +1,11 @@
 begin
     require 'rake'
-    require 'rspec/core/rake_task'
+    require 'json'
+    require 'base64'
     require 'rspec'
     require 'serverspec'
     require 'rspec/retry'
+    require 'rspec/core/rake_task'
 
     RSpec.configure do |config|
         # show retry status in spec process
@@ -12,15 +14,17 @@ begin
         config.display_try_failure_messages = true
     end
 
-    RSpec::Core::RakeTask.new(:spec, :pattern, :dockerfile, :osFamily, :osVersion, :dockerImage, :dockerTag) do |t, task_args|
+    RSpec::Core::RakeTask.new(:spec, :pattern, :configuration) do |t, task_args|
         t.pattern = task_args[:pattern]
+        t.fail_on_error = true
 
-        ENV['DOCKERFILE'] = task_args[:dockerfile]
-        ENV['DOCKER_IMAGE'] = task_args[:dockerImage]
-        ENV['DOCKER_TAG'] = task_args[:dockerTag]
+        $specConfiguration = JSON.parse(Base64.decode64(task_args[:configuration]))
 
-        ENV['OS_FAMILY'] = task_args[:osFamily]
-        ENV['OS_VERSION'] = task_args[:osVersion]
+        ENV['DOCKERFILE'] = $specConfiguration['DOCKERFILE']
+        ENV['OS_FAMILY'] = $specConfiguration['OS_FAMILY']
+        ENV['OS_VERSION'] = $specConfiguration['OS_VERSION']
+        ENV['DOCKER_IMAGE'] = $specConfiguration['DOCKER_IMAGE']
+        ENV['DOCKER_TAG'] = $specConfiguration['DOCKER_TAG']
     end
 
 rescue LoadError
