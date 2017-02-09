@@ -36,18 +36,11 @@ def execute(cmd, cwd=False, env=None):
         if '_' in env:
             del env['_']
 
-        if not 'PWD' in env:
-            env['PWD'] = os.environ['PWD']
-        if not 'PATH' in env:
-            env['PATH'] = os.environ['PATH']
-        if not 'LC_CTYPE' in env:
-            env['LC_CTYPE'] = os.environ['LC_CTYPE']
-        if not 'SHELL' in env:
-            env['SHELL'] = os.environ['SHELL']
-        if not 'DOCKER_HOST' in env:
-            env['DOCKER_HOST'] = os.environ['DOCKER_HOST']
-        if not 'DOCKER_CERT_PATH' in env:
-            env['DOCKER_CERT_PATH'] = os.environ['DOCKER_CERT_PATH']
+        # add system env vars
+        system_env_vars = ['PWD', 'PATH', 'LC_CTYPE', 'SHELL', 'DOCKER_HOST', 'DOCKER_CERT_PATH', 'DOCKER_MACHINE_NAME', 'DOCKER_TLS_VERIFY']
+        for var_name in system_env_vars:
+            if not var_name in env and var_name in os.environ:
+                env[var_name] = os.environ[var_name]
 
     # set current working directory
     path_current = os.getcwd()

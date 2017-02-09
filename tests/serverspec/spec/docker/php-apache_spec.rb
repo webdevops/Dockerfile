@@ -4,8 +4,7 @@ require 'spec_helper'
 
 describe "Dockerfile" do
     before(:all) do
-        @image = Docker::Image.build_from_dir('.', { 'dockerfile' => $specConfiguration['DOCKERFILE'] })
-        set :docker_image, @image.id
+        set :docker_image, ENV['DOCKERIMAGE_ID']
     end
 
     include_examples 'collection::bootstrap'
@@ -29,4 +28,5 @@ describe "Dockerfile" do
     else
         include_examples 'collection::php-fpm7::webserver-test::production'
     end
+
 end

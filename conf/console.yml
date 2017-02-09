@@ -7,6 +7,7 @@ imagePath: 'documentation/docs/resources/images/'
 baselayoutPath: 'baselayout'
 testinfraPath: 'tests/testinfra'
 serverspecPath: 'tests/serverspec'
+testDockerfilePath: 'tests/dockerfile'
 blacklistFile: 'BLACKLIST'
 
 docker:

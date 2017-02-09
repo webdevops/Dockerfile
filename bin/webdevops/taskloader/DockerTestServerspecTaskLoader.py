@@ -85,7 +85,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         # serverspec options
         serverspec_opts = []
-        serverspec_opts.extend([spec_path, base64.b64encode(json.dumps(serverspec_conf))])
+        serverspec_opts.extend([spec_path, dockerfile['image']['fullname'], base64.b64encode(json.dumps(serverspec_conf)), os.path.basename(test_dockerfile.name)])
 
         # dockerfile content
         dockerfile_content = DockerTestServerspecTaskLoader.generate_dockerfile(
@@ -110,8 +110,6 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
             print 'Dockerfile:'
             print '-----------'
             print dockerfile_content
-
-            os.remove(test_dockerfile.name)
             return True
 
         # check if we have any tests
@@ -145,7 +143,6 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
             else:
                 print '    failed, giving up'
 
-        os.remove(test_dockerfile.name)
         return test_status
 
     @staticmethod
@@ -187,6 +184,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         ret.append('FROM %s' % dockerfile['image']['fullname'])
         ret.append('COPY conf/ /')
+        ret.append('RUN echo "%s" > /DOCKER.IMAGENAME' % dockerfile['image']['fullname'])
 
         if is_toolimage:
             ret.append('RUN chmod +x /loop-entrypoint.sh')
