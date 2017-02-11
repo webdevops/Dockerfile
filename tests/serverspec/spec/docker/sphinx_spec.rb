@@ -1,6 +1,6 @@
 require 'serverspec'
 require 'docker'
-require 'spec_helper'
+require 'spec_init'
 
 describe "Dockerfile" do
     before(:all) do
