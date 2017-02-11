@@ -18,7 +18,7 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import os, subprocess, tempfile, copy
+import os, subprocess, tempfile, copy, time
 
 def execute(cmd, cwd=False, env=None):
     """
@@ -62,7 +62,7 @@ def execute(cmd, cwd=False, env=None):
 
     # wait for process end
     while proc.poll() is None:
-        pass
+        time.sleep(1)
 
     # output stdout
     with open(file_stdout.name, 'r') as f:
