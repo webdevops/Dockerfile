@@ -1,0 +1,18 @@
+{{ docker.fromOfficial("solr", "6.3.0") }}
+
+{{ docker.version() }}
+
+{{ environment.general(charset="C.UTF-8") }}
+
+RUN rm -fR /opt/solr/server/solr/*
+
+COPY ./solr/ /opt/solr/server/solr
+
+USER root
+
+RUN mkdir -p /opt/solr/server/solr/data \
+    && chown -R solr:solr /opt/solr/server/solr/
+
+USER solr
+
+VOLUME ["/opt/solr/server/solr/data"]
