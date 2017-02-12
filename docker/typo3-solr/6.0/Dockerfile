@@ -10,9 +10,9 @@ LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
 LABEL io.webdevops.version=1.3.5
 
-ENV TERM   xterm
-ENV LANG   en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+ENV TERM   "xterm"
+ENV LANG   "C.UTF-8"
+ENV LC_ALL "C.UTF-8"
 
 RUN rm -fR /opt/solr/server/solr/*
 

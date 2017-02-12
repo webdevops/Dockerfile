@@ -2,7 +2,7 @@
 
 {{ docker.version() }}
 
-{{ environment.general() }}
+{{ environment.general(charset="C.UTF-8") }}
 
 RUN rm -fR /opt/solr/server/solr/*
 
