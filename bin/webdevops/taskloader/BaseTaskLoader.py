@@ -96,7 +96,7 @@ class BaseTaskLoader(TaskLoader):
         backup = sys.stdout
         sys.stdout = StringIO.StringIO()
         result = func(task=task, *args)
-        out = sys.stdout.getvalue()
+        out = sys.stdout.getvalue().strip()
         sys.stdout.close()
         sys.stdout = backup
 
