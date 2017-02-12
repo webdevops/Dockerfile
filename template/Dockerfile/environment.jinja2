@@ -1,7 +1,7 @@
-{% macro lang() -%}
-# Ensure UTF-8
-ENV LANG       en_US.UTF-8
-ENV LC_ALL     en_US.UTF-8
+{% macro general() -%}
+ENV TERM   xterm
+ENV LANG   en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
 {%- endmacro %}
 
 {% macro homePath() -%}
