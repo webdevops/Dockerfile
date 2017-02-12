@@ -8,7 +8,7 @@ FROM webdevops/bootstrap:centos-7
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.3.4
+LABEL io.webdevops.version=1.3.5
 
 ENV DOCKER_CONF_HOME /opt/docker/
 
