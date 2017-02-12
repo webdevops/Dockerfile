@@ -35,6 +35,10 @@ dockerTest:
   dockerfile:
     '/varnish':
       - 'ENV VARNISH_BACKEND_HOST webdevops.io'
+    '/typo3-solr':
+      - 'USER root'
+      - 'RUN apt-get update && apt-get install -y -f --no-install-recommends lsb-release lsb-base net-tools && apt-get clean -y'
+      - 'USER solr'
 
   configuration:
     default:
@@ -111,5 +115,8 @@ dockerTest:
         OS_FAMILY: 'alpine'
         OS_VERSION: '3'
       '/samson-deployment':
+        OS_FAMILY: 'debian'
+        OS_VERSION: '8'
+      '/typo3-solr':
         OS_FAMILY: 'debian'
         OS_VERSION: '8'
