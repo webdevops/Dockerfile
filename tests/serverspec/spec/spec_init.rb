@@ -1,3 +1,5 @@
+require 'json'
+require 'shellwords'
 require 'serverspec'
 require 'rspec/retry'
 require 'spec_config'

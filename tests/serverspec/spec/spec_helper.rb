@@ -3,13 +3,25 @@
 #
 
 
+# Get content of url
+#
+# Example:
+#   get_url("http://localhost/")
+#     => 1
+def get_url(url)
+    cmd = command("curl -- %s" % Shellwords.escape(url))
+    expect(cmd.exit_status).to eq 0
+
+    return cmd.stdout
+end
+
 # Get pid of running service or process
 #
 # Example:
 #   service_get_pid("java")
 #     => 1
 def service_get_pid(process)
-    cmd = command("pidof " + process)
+    cmd = command("pidof %s" % Shellwords.escape(process))
     expect(cmd.exit_status).to eq 0
 
     pid = cmd.stdout
