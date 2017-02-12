@@ -16,7 +16,7 @@ ENV LC_ALL en_US.UTF-8
 
 RUN rm -fR /opt/solr/server/solr/*
 
-COPY ./conf/ /opt/solr/server/solr
+COPY ./solr/ /opt/solr/server/solr
 
 USER root
 
