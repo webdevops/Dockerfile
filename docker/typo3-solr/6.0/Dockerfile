@@ -1,27 +1,14 @@
-#++++++++++++++++++++++++++++++++++++++
-# Solr Docker container
-#++++++++++++++++++++++++++++++++++++++
-#
-# Image:
-#   solr (official)
-#       https://hub.docker.com/_/solr/
-#       https://hub.docker.com/r/library/solr/tags/
-#       https://github.com/docker-solr/docker-solr
-#       Infos
-#           default Solr port: 8983
-#
-# TYPO3
-#   typo3 solr extension
-#       https://github.com/docker-solr/docker-solr
-#       https://docs.typo3.org/typo3cms/extensions/solr/Appendix/VersionMatrix.html
-#       Docker relevant links
-#           https://github.com/TYPO3-Solr/ext-solr/blob/release-6.0.x/Dockerfile
-#           https://github.com/TYPO3-Solr/ext-solr/tree/release-6.0.x/Resources/Private/Solr
-#
-#
-#++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/typo3-solr:6.0
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
+
 FROM solr:6.3.0
-ENV TERM linux
+
+MAINTAINER info@webdevops.io
+LABEL vendor=WebDevOps.io
+LABEL io.webdevops.layout=8
+LABEL io.webdevops.version=1.2.4
 
 RUN rm -fR /opt/solr/server/solr/*
 
@@ -29,7 +16,8 @@ COPY ./conf/ /opt/solr/server/solr
 
 USER root
 
-RUN chown -R solr:solr /opt/solr/server/solr/
+RUN mkdir -p /opt/solr/server/solr/data \
+    && chown -R solr:solr /opt/solr/server/solr/
 
 USER solr
 
