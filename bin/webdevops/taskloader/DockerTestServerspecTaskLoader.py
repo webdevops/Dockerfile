@@ -18,7 +18,7 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import os, re, tempfile, json
+import os, re, tempfile, json, base64
 from webdevops import Command
 from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from .BaseTaskLoader import BaseTaskLoader
@@ -75,17 +75,17 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         tmp_suffix = '.%s_%s_%s.tmp' % (dockerfile['image']['repository'], dockerfile['image']['imageName'], dockerfile['image']['tag'])
         test_dockerfile = tempfile.NamedTemporaryFile(prefix='Dockerfile.', suffix=tmp_suffix, dir=configuration.get('serverspecPath'), bufsize=0, delete=False)
 
-        # serverspec options
-        serverspec_opts = []
-        serverspec_opts.extend(['--pattern', spec_path])
-
-        # serverspec env
-        serverspec_env = DockerTestServerspecTaskLoader.generate_serverspec_environment(
+        # serverspec conf
+        serverspec_conf = DockerTestServerspecTaskLoader.generate_serverspec_configuration(
             path=os.path.basename(test_dockerfile.name),
             dockerfile=dockerfile,
             configuration=configuration,
             is_toolimage=is_toolimage
         )
+
+        # serverspec options
+        serverspec_opts = []
+        serverspec_opts.extend([spec_path, dockerfile['image']['fullname'], base64.b64encode(json.dumps(serverspec_conf)), os.path.basename(test_dockerfile.name)])
 
         # dockerfile content
         dockerfile_content = DockerTestServerspecTaskLoader.generate_dockerfile(
@@ -103,15 +103,13 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
             print '          path: %s' % (spec_path)
             print '          args: %s' % (' '.join(serverspec_opts))
             print ''
-            print 'environment:'
-            print '------------'
-            print json.dumps(serverspec_env, indent=4, sort_keys=True)
+            print 'spec configuration:'
+            print '-------------------'
+            print json.dumps(serverspec_conf, indent=4, sort_keys=True)
             print ''
             print 'Dockerfile:'
             print '-----------'
             print dockerfile_content
-
-            os.remove(test_dockerfile.name)
             return True
 
         # check if we have any tests
@@ -123,10 +121,6 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         cmd = ['bash', 'serverspec.sh']
         cmd.extend(serverspec_opts)
 
-        # Set environment variables
-        env = os.environ.copy()
-        env.update(serverspec_env)
-
         # create Dockerfile
         with open(test_dockerfile.name, mode='w', buffering=0) as f:
             f.write(dockerfile_content)
@@ -137,7 +131,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         test_status = False
         for retry_count in range(0, configuration.get('retry')):
             try:
-                test_status = Command.execute(cmd, cwd=configuration.get('serverspecPath'), env=env)
+                test_status = Command.execute(cmd, cwd=configuration.get('serverspecPath'))
             except Exception as e:
                 print e
                 pass
@@ -149,23 +143,22 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
             else:
                 print '    failed, giving up'
 
-        os.remove(test_dockerfile.name)
         return test_status
 
     @staticmethod
-    def generate_serverspec_environment(path, dockerfile, configuration, is_toolimage=False):
+    def generate_serverspec_configuration(path, dockerfile, configuration, is_toolimage=False):
         """
-        Generate serverspec environment dict
+        Generate serverspec configuration dict
         """
         ret = {}
 
         # add default vars
-        default_env_list = configuration.get('dockerTest.environment.default', False)
+        default_env_list = configuration.get('dockerTest.configuration.default', False)
         if default_env_list:
             ret = default_env_list.to_dict().copy()
 
         # add docker image specific vars
-        image_env_list = configuration.get('dockerTest.environment.image')
+        image_env_list = configuration.get('dockerTest.configuration.image')
         if image_env_list:
             image_env_list = image_env_list.to_dict().copy()
             for term in image_env_list:
@@ -191,6 +184,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         ret.append('FROM %s' % dockerfile['image']['fullname'])
         ret.append('COPY conf/ /')
+        ret.append('RUN echo "%s" > /DOCKER.IMAGENAME' % dockerfile['image']['fullname'])
 
         if is_toolimage:
             ret.append('RUN chmod +x /loop-entrypoint.sh')
