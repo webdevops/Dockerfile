@@ -8,16 +8,16 @@ FROM zendesk/samson:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.3.5
+LABEL io.webdevops.version=1.4.0
 
 
 ###############################################################################
 # Bootstrap
 ###############################################################################
 
-# Ensure UTF-8
-ENV LANG       en_US.UTF-8
-ENV LC_ALL     en_US.UTF-8
+ENV TERM   "xterm"
+ENV LANG   "en_US.UTF-8"
+ENV LC_ALL "en_US.UTF-8"
 
 ADD baselayout.tar /
 

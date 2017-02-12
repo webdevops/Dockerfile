@@ -37,5 +37,7 @@ Docker images
    dockerfiles/sphinx
    dockerfiles/ssh
    dockerfiles/storage
+   dockerfiles/typo3-solr
    dockerfiles/varnish
    dockerfiles/vsftp
+

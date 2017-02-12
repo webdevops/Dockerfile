@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.4.0] - 2017-02-12
+- Add webdevops/typo3-solr:6.0
+- Improve testsuite and fixed minor issues
+
 ## [1.3.5] - 2017-02-12
 - Improve and fix parallel run of serverspec
 - Reduced python subprocess wait loop cpu time
