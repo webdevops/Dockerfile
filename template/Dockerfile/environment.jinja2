@@ -1,7 +1,7 @@
-{% macro general() -%}
-ENV TERM   xterm
-ENV LANG   en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+{% macro general(charset="en_US.UTF-8") -%}
+ENV TERM   "xterm"
+ENV LANG   "{{ charset }}"
+ENV LC_ALL "{{ charset }}"
 {%- endmacro %}
 
 {% macro homePath() -%}
