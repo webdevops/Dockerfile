@@ -8,7 +8,11 @@ FROM solr:6.3.0
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.2.4
+LABEL io.webdevops.version=1.3.5
+
+ENV TERM   xterm
+ENV LANG   en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
 
 RUN rm -fR /opt/solr/server/solr/*
 

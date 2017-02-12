@@ -2,6 +2,8 @@
 
 {{ docker.version() }}
 
+{{ environment.general() }}
+
 RUN rm -fR /opt/solr/server/solr/*
 
 COPY ./conf/ /opt/solr/server/solr
