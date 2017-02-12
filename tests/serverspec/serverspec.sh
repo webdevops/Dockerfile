@@ -1,21 +1,19 @@
 #!/usr/bin/env bash
 
-# Check if DOCKERFILE is set, needed for test
-if [[ -z "$DOCKERFILE" ]]; then
-    echo "Environment variable 'DOCKERFILE' not set"
-    exit 1
-fi
+set -o pipefail  ## trace ERR through pipes
+set -o errtrace  ## trace ERR through 'time command' and other functions
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
 
-# Check if dockerfile exists
-if [[ ! -f "${DOCKERFILE}" ]]; then
-    # Filesystem is maybe not synced?
-    sync
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-    # recheck if file is now available
-    if [[ ! -f "${DOCKERFILE}" ]]; then
-        echo "Dockerfile $DOCKERFILE' not found"
-        exit 1
-    fi
-fi
+PARAM_SPEC_FILE="$1"
+PARAM_DOCKER_IMAGE="$2"
+PARAM_SPEC_CONF="$3"
 
-exec bundle exec rspec "$@"
+# LOGFILE="${PARAM_DOCKER_IMAGE//:/_}"
+# LOGFILE="${PARAM_DOCKER_IMAGE//\//_}"
+# LOGFILE="${SCRIPT_DIR}/logs/${LOGFILE}.log"
+
+exec bundle exec rake spec["$PARAM_SPEC_FILE","$PARAM_DOCKER_IMAGE","$PARAM_SPEC_CONF"]
+

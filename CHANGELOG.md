@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.3.5] - 2017-02-12
+- Improve and fix parallel run of serverspec
+- Reduced python subprocess wait loop cpu time
+
 ## [1.3.4] - 2017-02-03
 - Add serverspec wrapper (do not run tests if Dockerfile isn't set or available)
 

@@ -1,13 +1,36 @@
-require 'rake'
-require 'rspec/core/rake_task'
+begin
+    require 'rake'
+    require 'json'
+    require 'base64'
+    require 'docker'
+    require 'rspec'
+    require 'serverspec'
+    require 'rspec/retry'
+    require 'rspec/core/rake_task'
 
-RSpec.configure do |config|
-  # show retry status in spec process
-  config.verbose_retry = true
-  # show exception that triggers a retry if verbose_retry is set to true
-  config.display_try_failure_messages = true
-end
+    RSpec::Core::RakeTask.new(:spec, :pattern, :dockerImageName, :configuration) do |t, task_args|
+        t.pattern = task_args[:pattern]
+        t.fail_on_error = true
 
-RSpec::Core::RakeTask.new(:"spec") do |t, args|
-  #t.pattern = 'spec/base/*_spec.rb'
+        # hide command
+        t.verbose = false
+
+        $specConfiguration = JSON.parse(Base64.decode64(task_args[:configuration]))
+
+        $dockerImage = Docker::Image.build_from_dir('.', { 'dockerfile' => $specConfiguration['DOCKERFILE'] })
+        $specConfiguration['DOCKERIMAGE_ID'] = $dockerImage.id
+
+        print "\n"
+        print "Environment configuration\n"
+        print "-------------------------\n"
+        $specConfiguration.each do |key, value|
+               print " " + key + ':' + value + "\n"
+               ENV[key] = value
+        end
+        print "\n"
+        print "\n"
+   end
+
+rescue LoadError
+    # no rspec available
 end

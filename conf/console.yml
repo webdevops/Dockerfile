@@ -7,6 +7,7 @@ imagePath: 'documentation/docs/resources/images/'
 baselayoutPath: 'baselayout'
 testinfraPath: 'tests/testinfra'
 serverspecPath: 'tests/serverspec'
+testDockerfilePath: 'tests/dockerfile'
 blacklistFile: 'BLACKLIST'
 
 docker:
@@ -35,7 +36,7 @@ dockerTest:
     '/varnish':
       - 'ENV VARNISH_BACKEND_HOST webdevops.io'
 
-  environment:
+  configuration:
     default:
       OS_FAMILY: 'ubuntu'
       OS_VERSION: '16.04'

@@ -1,18 +1,15 @@
 require 'serverspec'
 require 'docker'
-require 'spec_helper'
+require 'spec_init'
 
 describe "Dockerfile" do
     before(:all) do
-        @image = Docker::Image.build_from_dir('.', { 'dockerfile' => ENV['DOCKERFILE'] })
-        set :docker_image, @image.id
+        set :docker_image, ENV['DOCKERIMAGE_ID']
     end
 
     include_examples 'collection::bootstrap'
     include_examples 'collection::base'
     include_examples 'collection::postfix'
     include_examples 'collection::dovecot'
-
-
 
 end
