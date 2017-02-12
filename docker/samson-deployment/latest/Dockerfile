@@ -15,9 +15,9 @@ LABEL io.webdevops.version=1.3.5
 # Bootstrap
 ###############################################################################
 
-ENV TERM   xterm
-ENV LANG   en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+ENV TERM   "xterm"
+ENV LANG   "en_US.UTF-8"
+ENV LC_ALL "en_US.UTF-8"
 
 ADD baselayout.tar /
 
