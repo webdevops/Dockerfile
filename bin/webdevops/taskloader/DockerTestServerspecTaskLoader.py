@@ -73,6 +73,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         # create dockerfile
         tmp_suffix = '.%s_%s_%s.tmp' % (dockerfile['image']['repository'], dockerfile['image']['imageName'], dockerfile['image']['tag'])
+        tmp_suffix = tmp_suffix.replace('/', '_')
         test_dockerfile = tempfile.NamedTemporaryFile(prefix='Dockerfile.', suffix=tmp_suffix, dir=configuration.get('serverspecPath'), bufsize=0, delete=False)
 
         # serverspec conf
