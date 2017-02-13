@@ -122,3 +122,5 @@ dockerTest:
         OS_VERSION: '8'
       '/typo3-solr:6.0':
         SOLR_VERSION: '6.3.0'
+      '/typo3-solr:latest':
+        SOLR_VERSION: '6.3.0'
