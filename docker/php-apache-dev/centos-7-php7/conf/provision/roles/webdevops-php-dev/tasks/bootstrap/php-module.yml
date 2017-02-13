@@ -1,0 +1,41 @@
+---
+
+#############################
+# Workaround PHP configuration files
+# for alpine
+#############################
+
+- name: Get list of PHP5 configuration files
+  command: "ls /etc/php5/conf.d/ |grep .ini"
+  register: php5_ini
+  when: ansible_distribution == 'Alpine'
+  ignore_errors: yes
+
+- name: Link configuration files from php5 to php
+  file:
+    src:  '/etc/php5/conf.d/{{ item }}'
+    dest: '/etc/php/conf.d/{{ item }}'
+    state: link
+  with_items: "{{ php5_ini.stdout_lines }}"
+  when: ansible_distribution == 'Alpine' and php5_ini is defined
+  ignore_errors: yes
+
+#############################
+# Workaround PHP module files
+# for alpine
+#############################
+
+- name: Get list of PHP5 modules
+  command: "ls /usr/lib/php5/modules/ |grep .so"
+  register: php5_modules
+  when: ansible_distribution == 'Alpine'
+  ignore_errors: yes
+
+- name: Link module files from php5 to php
+  file:
+    src:  '/usr/lib/php5/modules/{{ item }}'
+    dest: '/usr/lib/php/modules/{{ item }}'
+    state: link
+  with_items: "{{ php5_modules.stdout_lines }}"
+  when: ansible_distribution == 'Alpine' and php5_modules is defined
+  ignore_errors: yes
