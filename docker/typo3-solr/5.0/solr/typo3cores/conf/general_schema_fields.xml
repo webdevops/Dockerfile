@@ -1,0 +1,231 @@
+<fields>
+	<!--
+
+		Valid attributes for fields:
+
+		name: mandatory - the name for the field
+		type: mandatory - the name of a previously defined type from the
+		   section
+		indexed: true if this field should be indexed (searchable or sortable)
+		stored: true if this field should be retrievable
+		multiValued: true if this field may contain multiple values per document
+		omitNorms: (expert) set to true to omit the norms associated with
+		  this field (this disables length normalization and index-time
+		  boosting for the field, and saves some memory).  Only full-text
+		  fields or fields that need an index-time boost need norms.
+		termVectors: [false] set to true to store the term vector for a
+		  given field.
+		  When using MoreLikeThis, fields used for similarity should be
+		  stored for best performance.
+		termPositions: Store position information with the term vector.
+		  This will increase storage costs.
+		termOffsets: Store offset information with the term vector. This
+		  will increase storage costs.
+		default: a value that should be used if no value is specified
+		  when adding a document.
+
+	-->
+
+	<field name="_version_" type="long" indexed="true" stored="true"/>
+
+	<!--
+		points to the root document of a block of nested documents.
+		Required for nested document support
+	-->
+	<field name="_root_" type="string" indexed="true" stored="false"/>
+
+	<!--
+		The document id is derived from a site-specific key (hash) and some
+		record properties like:
+		$document->id = $siteHash . '/' . $type . '/' . $record['uid'];
+	-->
+	<field name="id" type="string" indexed="true" stored="true" required="true" />
+
+	<!--
+		Using these fields we can "connect" the indexed documents to
+		specific sites.
+	-->
+	<field name="site"     type="string" indexed="true" stored="true" docValues="true" />
+	<field name="siteHash" type="string" indexed="true" stored="true" docValues="true" />
+
+	<!--
+		The application key which will come in handy as soon as other
+		systems start sending their content to the same index. Thus you
+		can search "external" systems' content through TYPO3
+	-->
+	<field name="appKey" type="string" indexed="true" stored="false" docValues="true" required="true" />
+
+	<!--
+		The type by default represents the table name of a record. For
+		external systems this field could be used differently.
+	-->
+	<field name="type" type="string" indexed="true" stored="true" docValues="true" required="true" />
+
+	<!--
+		The content hashs or more known as cHash in short is used to store
+		a hash over the GET parameters used to request a URL and identify a
+		cache entry for the generated page.
+	-->
+	<field name="contentHash" type="string" indexed="false" stored="true" />
+
+	<!--
+		Here, default is used to create a "timestamp" field indicating when
+		the document was indexed.
+	-->
+	<field name="indexed" type="date" indexed="true" stored="true" default="NOW/SECOND" />
+
+
+	<!-- system fields -->
+	<field name="uid"      type="integer" indexed="true" stored="true" />
+	<field name="pid"      type="integer" indexed="true" stored="true" docValues="true" />
+	<field name="typeNum"  type="integer" indexed="true" stored="true" />
+	<field name="created"  type="date"    indexed="true" stored="true" docValues="true" />
+	<field name="changed"  type="date"    indexed="true" stored="true" docValues="true" />
+	<field name="rootline" type="string"  indexed="true" stored="true" docValues="true" multiValued="true" />
+
+	<!-- access fields -->
+	<field name="access"  type="string"  indexed="true" stored="true" docValues="true" default="c:0" />
+	<!-- we only need endtime as records with a starttime > indexing time will not get indexed -->
+	<field name="endtime" type="date"    indexed="true" stored="true" docValues="true" />
+
+	<!-- content fields -->
+	<field name="title"       type="text"   indexed="true"  stored="true" termVectors="true" omitNorms="true" />
+	<field name="subTitle"    type="text"   indexed="true"  stored="true" termVectors="true" omitNorms="true" />
+	<field name="navTitle"    type="text"   indexed="true"  stored="true" termVectors="true" omitNorms="true" />
+	<field name="content"     type="text"   indexed="true"  stored="true" termVectors="true" termPositions="true" termOffsets="true" />
+	<field name="teaser"      type="text"   indexed="false" stored="true" />
+	<field name="abstract"    type="text"   indexed="true"  stored="true" termVectors="true" />
+	<field name="description" type="text"   indexed="true"  stored="true" termVectors="true" />
+	<field name="keywords"    type="text"   indexed="true"  stored="true" multiValued="true" omitNorms="true" />
+	<field name="author"      type="string" indexed="true"  stored="true" docValues="true" />
+	<field name="category"    type="string" indexed="true"  stored="true" docValues="true" multiValued="true" omitNorms="true" />
+
+	<field name="url"         type="string" indexed="true" stored="true" />
+
+	<!--
+		A set of fields to contain text extracted from tag contents which
+		we can boost at query time.
+	-->
+	<field name="tagsH1"     type="text" indexed="true" stored="false" omitNorms="true" />
+	<field name="tagsH2H3"   type="text" indexed="true" stored="false" omitNorms="true" />
+	<field name="tagsH4H5H6" type="text" indexed="true" stored="false" omitNorms="true" />
+	<field name="tagsA"      type="text" indexed="true" stored="false" omitNorms="true" />
+	<!-- Inline tags are typically u, b, i, em, strong -->
+	<field name="tagsInline" type="text" indexed="true" stored="false" omitNorms="true" />
+
+	<!--
+		File meta data fields
+	-->
+	<field name="fileName"                type="string"  indexed="true"  stored="true" />
+	<field name="fileExtension"           type="string"  indexed="true"  stored="true" docValues="true" />
+	<field name="fileMimeType"            type="string"  indexed="true"  stored="true" docValues="true" />
+	<field name="fileReferenceDocumentId" type="string"  indexed="true"  stored="true" />
+	<field name="fileReferenceTitle"      type="string"  indexed="true"  stored="true" />
+	<field name="fileReferenceUid"        type="integer" indexed="true"  stored="true" />
+	<field name="fileReferenceType"       type="string"  indexed="true"  stored="true" />
+	<field name="fileReferenceUrl"        type="string"  indexed="true"  stored="true" />
+	<field name="fileRelativePath"        type="string"  indexed="true"  stored="true" />
+	<field name="fileRelativePathOnly"    type="string"  indexed="true"  stored="true" />
+	<field name="fileSha1"                type="string"  indexed="false" stored="true" />
+	<field name="fileStorage"             type="integer" indexed="true"  stored="true" docValues="true" />
+	<field name="fileSize"                type="integer" indexed="true"  stored="true" />
+	<field name="fileUid"                 type="integer" indexed="true"  stored="true" />
+	<field name="filePublicUrl"           type="string"  indexed="true"  stored="true" />
+
+	<!--
+		Used to build the spellchecker index
+	-->
+	<field name="spell" type="textSpell" indexed="true" stored="false" multiValued="true" />
+	<copyField source="title"    dest="spell" />
+	<copyField source="subTitle" dest="spell" />
+	<copyField source="content"  dest="spell" />
+
+	<field name="sortTitle" type="string" indexed="true" stored="false" docValues="true" />
+	<copyField source="title" dest="sortTitle" />
+
+	<field name="sortAuthor" type="string" indexed="true" stored="false" docValues="true" />
+	<copyField source="author" dest="sortAuthor" />
+
+	<!-- The teaser can be used when a better snippet is not available -->
+	<copyField source="content" dest="teaser" maxChars="300" />
+
+
+	<!--
+		Dynamic field definitions. If a field name is not found, dynamic
+		fields will be used if the name matches any of the patterns.
+	-->
+	<dynamicField name="*_stringS"   type="string"    indexed="true" stored="true" docValues="true" multiValued="false" />
+	<dynamicField name="*_stringM"   type="string"    indexed="true" stored="true" docValues="true" multiValued="true" />
+
+	<dynamicField name="*_boolS"     type="boolean"   indexed="true" stored="true" multiValued="false" />
+	<dynamicField name="*_boolM"     type="boolean"   indexed="true" stored="true" multiValued="true" />
+
+	<dynamicField name="*_binS"      type="binary"    indexed="false" stored="true" multiValued="false" />
+	<dynamicField name="*_binM"      type="binary"    indexed="false" stored="true" multiValued="true" />
+
+	<dynamicField name="*_intS"      type="integer"   indexed="true" stored="true" docValues="true" multiValued="false" />
+	<dynamicField name="*_intM"      type="integer"   indexed="true" stored="true" docValues="true" multiValued="true" />
+	<dynamicField name="*_tIntS"     type="tint"      indexed="true" stored="true" docValues="true" multiValued="false" />
+	<dynamicField name="*_tIntM"     type="tint"      indexed="true" stored="true" docValues="true" multiValued="true" />
+
+	<dynamicField name="*_longS"     type="long"      indexed="true" stored="true" docValues="true" multiValued="false" />
+	<dynamicField name="*_longM"     type="long"      indexed="true" stored="true" docValues="true" multiValued="true" />
+	<dynamicField name="*_tLongS"    type="tlong"     indexed="true" stored="true" docValues="true" multiValued="false" />
+	<dynamicField name="*_tLongM"    type="tlong"     indexed="true" stored="true" docValues="true" multiValued="true" />
+
+	<dynamicField name="*_floatS"    type="float"     indexed="true" stored="true" docValues="true" multiValued="false"/>
+	<dynamicField name="*_floatM"    type="float"     indexed="true" stored="true" docValues="true" multiValued="true"/>
+	<dynamicField name="*_tFloatS"   type="tfloat"    indexed="true" stored="true" docValues="true" multiValued="false"/>
+	<dynamicField name="*_tFloatM"   type="tfloat"    indexed="true" stored="true" docValues="true" multiValued="true"/>
+
+	<dynamicField name="*_doubleS"   type="double"    indexed="true" stored="true" docValues="true" multiValued="false" />
+	<dynamicField name="*_doubleM"   type="double"    indexed="true" stored="true" docValues="true" multiValued="true" />
+	<dynamicField name="*_tDoubleS"  type="tdouble"   indexed="true" stored="true" docValues="true" multiValued="false" />
+	<dynamicField name="*_tDoubleM"  type="tdouble"   indexed="true" stored="true" docValues="true" multiValued="true" />
+	<dynamicField name="*_tDouble4S" type="tdouble4"  indexed="true" stored="true" docValues="true" multiValued="false" />
+	<dynamicField name="*_tDouble4M" type="tdouble4"  indexed="true" stored="true" docValues="true" multiValued="true" />
+
+
+	<dynamicField name="*_dateS"     type="date"      indexed="true" stored="true" docValues="true" multiValued="false" />
+	<dynamicField name="*_dateM"     type="date"      indexed="true" stored="true" docValues="true" multiValued="true" />
+	<dynamicField name="*_tDateS"    type="tdate"     indexed="true" stored="true" docValues="true" multiValued="false" />
+	<dynamicField name="*_tDateM"    type="tdate"     indexed="true" stored="true" docValues="true" multiValued="true" />
+
+
+	<dynamicField name="*_textS"     type="text"      indexed="true" stored="true" multiValued="false" />
+	<dynamicField name="*_textM"     type="text"      indexed="true" stored="true" multiValued="true" />
+	<dynamicField name="*_textTS"    type="textTight" indexed="true" stored="true" multiValued="false" />
+	<dynamicField name="*_textTM"    type="textTight" indexed="true" stored="true" multiValued="true" />
+	<dynamicField name="*_textSortS" type="textSort"  indexed="true" stored="true" multiValued="false" />
+	<dynamicField name="*_textSortM" type="textSort"  indexed="true" stored="true" multiValued="true" />
+	<dynamicField name="*_textWstS"  type="textWhiteSpaceTokenized" indexed="true" stored="true" multiValued="false" />
+	<dynamicField name="*_textWstM"  type="textWhiteSpaceTokenized" indexed="true" stored="true" multiValued="true" />
+	<dynamicField name="*_textPath"  type="textPath"  indexed="true" stored="true" multiValued="false" />
+
+	<dynamicField name="*_textSpellS" type="textSpell" indexed="true" stored="true" multiValued="false" />
+	<dynamicField name="*_textSpellM" type="textSpell" indexed="true" stored="true" multiValued="true" />
+
+	<dynamicField name="*_phoneticS" type="phonetic"  indexed="true" stored="true" multiValued="false" />
+	<dynamicField name="*_phoneticM" type="phonetic"  indexed="true" stored="true" multiValued="true" />
+
+
+	<dynamicField name="*_random"    type="random"    indexed="true" stored="true" multiValued="false" />
+
+
+	<dynamicField name="*_point"       type="point"       indexed="true" stored="true" multiValued="false" />
+	<dynamicField name="*_location"    type="location"    indexed="true" stored="true" multiValued="false" />
+	<!-- Type used to index the lat and lon components for the "location" field type -->
+	<dynamicField name="*_coordinate"  type="double"      indexed="true" stored="false" />
+	<dynamicField name="*_locationRpt" type="locationRpt" indexed="true" stored="true" multiValued="false" />
+
+
+	<dynamicField name="*_currency"  type="currency"  indexed="true" stored="true" multiValued="false" />
+
+	<!--
+		The following causes solr to ignore any fields that don't already
+		match an existing field name or dynamic field, rather than
+		reporting them as an error.
+	-->
+	<dynamicField name="*" type="ignored" />
+
+</fields>

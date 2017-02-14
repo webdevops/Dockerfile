@@ -4,7 +4,10 @@ shared_examples 'typo3-solr::test' do
             content = get_url('http://localhost:8983/solr/admin/info/system?wt=json')
             content = JSON.parse(content)
 
-            expect(content['solr_home']).to eql('/opt/solr/server/solr')
+            if content.key?('solr_home')
+                expect(content['solr_home']).to eql('/opt/solr/server/solr')
+            end
+
             expect(content['lucene']['solr-spec-version']).to eql(ENV['SOLR_VERSION'])
         end
     end
@@ -33,13 +36,13 @@ shared_examples 'typo3-solr::test' do
                 "core_hu",
                 "core_hy",
                 "core_id",
-                "core_ie",
+                # "core_ie",
                 "core_it",
                 "core_ja",
                 "core_km",
                 "core_ko",
                 "core_lo",
-                "core_lv",
+                # "core_lv",
                 "core_my",
                 "core_nl",
                 "core_no",
@@ -47,7 +50,7 @@ shared_examples 'typo3-solr::test' do
                 "core_pt",
                 "core_ptbr",
                 "core_ro",
-                "core_rs",
+                # "core_rs",
                 "core_ru",
                 "core_sv",
                 "core_th",
