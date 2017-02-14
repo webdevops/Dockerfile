@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
+## [1.4.0] - 2017-02-14
+- Add webdevops/typo3-solr:3.1
+- Add webdevops/typo3-solr:4.0
+- Add webdevops/typo3-solr:5.0
+- Fix minor issues in bin/console script
+
 ## [1.4.0] - 2017-02-12
 - Add webdevops/typo3-solr:6.0
 - Improve testsuite and fixed minor issues

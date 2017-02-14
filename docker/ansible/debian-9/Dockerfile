@@ -8,4 +8,4 @@ FROM webdevops/bootstrap:debian-9
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.4.0
+LABEL io.webdevops.version=1.4.1
