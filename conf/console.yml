@@ -113,6 +113,10 @@ dockerTest:
       '/samson-deployment':
         OS_FAMILY: 'debian'
         OS_VERSION: '8'
+      '/typo3-solr:3':
+        SOLR_VERSION: '4.10.4'
+        OS_FAMILY: 'arch'
+        OS_VERSION: ''
       '/typo3-solr:4':
         SOLR_VERSION: '4.10.4'
         OS_FAMILY: 'arch'
