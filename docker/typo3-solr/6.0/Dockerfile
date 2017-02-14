@@ -14,13 +14,13 @@ ENV TERM   "xterm"
 ENV LANG   "C.UTF-8"
 ENV LC_ALL "C.UTF-8"
 
-RUN rm -fR /opt/solr/server/solr/*
-
-COPY ./solr/ /opt/solr/server/solr
+COPY ./solr/ /tmp/solr
 
 USER root
 
-RUN mkdir -p /opt/solr/server/solr/data \
+RUN rm -rf /opt/solr/server/solr \
+    && mv /tmp/solr /opt/solr/server/solr \
+    && mkdir -p /opt/solr/server/solr/data \
     && chown -R solr:solr /opt/solr/server/solr/
 
 USER solr
