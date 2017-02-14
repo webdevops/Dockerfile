@@ -1,6 +1,6 @@
 shared_examples 'typo3-solr::test' do
     describe 'solr-system-status' do
-        it 'solr version should be correct', :retry => 10, :retry_wait => 3 do
+        it 'solr version should be correct', :retry => 20, :retry_wait => 3 do
             content = get_url('http://localhost:8983/solr/admin/info/system?wt=json')
             content = JSON.parse(content)
 
@@ -13,7 +13,7 @@ shared_examples 'typo3-solr::test' do
     end
 
     describe 'solr-core-status' do
-        it 'solr version should be correct', :retry => 10, :retry_wait => 3 do
+        it 'solr version should be correct', :retry => 20, :retry_wait => 3 do
             content = get_url('http://localhost:8983/solr/admin/cores?indexInfo=false&wt=json')
             content = JSON.parse(content)
 
