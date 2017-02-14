@@ -130,6 +130,6 @@ dockerTest:
         OS_FAMILY: 'debian'
         OS_VERSION: '8'
       '/typo3-solr:latest':
-        OS_FAMILY: 'debian'
+        SOLR_VERSION: '6.3.0'
         OS_FAMILY: 'debian'
         OS_VERSION: '8'
