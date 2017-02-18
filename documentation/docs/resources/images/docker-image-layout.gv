@@ -2,7 +2,7 @@ digraph webdevops {
 	graph [bgcolor=white fontcolor=black fontsize=16 rankdir=TP]
 	node [color=white fillcolor="#E1E1E1" fontcolor=black fontname=Helvetica shape=box style=filled]
 	edge [arrowhead=open color=black fontcolor=white fontname=Courier fontsize=12 style=dashed]
-	label = "\n\nWebdevops Images\n2016-11-28"
+	label = "\n\nWebdevops Images\n2017-02-18"
 	newrank=true;
 		subgraph cluster_php {
 			graph [fillcolor="#c0e5a8" style=filled]
@@ -40,6 +40,7 @@ digraph webdevops {
 				ubuntu
 				debian
 				alpine
+				solr
 		}
 		subgraph cluster_application {
 			graph [fillcolor="#f2e3b5" style=filled]
@@ -47,6 +48,7 @@ digraph webdevops {
 			label = "Application images"
 				"webdevops/typo3"
 				"webdevops/piwik"
+					"webdevops/typo3-solr" -> "webdevops/typo3-solr"
 		}
 		subgraph cluster_base {
 			graph [fillcolor=gray style=filled]
@@ -63,6 +65,7 @@ digraph webdevops {
 			node [color=black fillcolor="#e1e1e1" fontcolor=black fontname=Helvetica shape=box style=filled]
 			label = "Upstream images (Docker hub)"
 				"zendesk/samson"
+				"guywithnose/solr"
 		}
 		subgraph cluster_hhvm {
 			graph [fillcolor="#c1c3f2" style=filled]
@@ -137,6 +140,16 @@ digraph webdevops {
 	{ "alpine" -> "webdevops/storage" [style=invis] }
 	{ "alpine" -> "webdevops/bootstrap" [style=invis] }
 	{ "alpine" -> "webdevops/base" [style=invis] }
+	{ "solr" -> "webdevops/ansible" [style=invis] }
+	{ "solr" -> "webdevops/base-app" [style=invis] }
+	{ "solr" -> "webdevops/storage" [style=invis] }
+	{ "solr" -> "webdevops/bootstrap" [style=invis] }
+	{ "solr" -> "webdevops/base" [style=invis] }
+	{ "guywithnose/solr" -> "webdevops/ansible" [style=invis] }
+	{ "guywithnose/solr" -> "webdevops/base-app" [style=invis] }
+	{ "guywithnose/solr" -> "webdevops/storage" [style=invis] }
+	{ "guywithnose/solr" -> "webdevops/bootstrap" [style=invis] }
+	{ "guywithnose/solr" -> "webdevops/base" [style=invis] }
 	{ "webdevops/ansible" -> "webdevops/typo3" [style=invis] }
 	{ "webdevops/ansible" -> "webdevops/php-nginx-dev" [style=invis] }
 	{ "webdevops/ansible" -> "webdevops/piwik" [style=invis] }
@@ -156,6 +169,7 @@ digraph webdevops {
 	{ "webdevops/ansible" -> "webdevops/php-dev" [style=invis] }
 	{ "webdevops/ansible" -> "webdevops/samson-deployment" [style=invis] }
 	{ "webdevops/ansible" -> "webdevops/apache-dev" [style=invis] }
+	{ "webdevops/ansible" -> "webdevops/typo3-solr" [style=invis] }
 	{ "webdevops/ansible" -> "webdevops/hhvm-apache" [style=invis] }
 	{ "webdevops/ansible" -> "webdevops/postfix" [style=invis] }
 	{ "webdevops/ansible" -> "webdevops/liquibase" [style=invis] }
@@ -180,6 +194,7 @@ digraph webdevops {
 	{ "webdevops/base-app" -> "webdevops/php-dev" [style=invis] }
 	{ "webdevops/base-app" -> "webdevops/samson-deployment" [style=invis] }
 	{ "webdevops/base-app" -> "webdevops/apache-dev" [style=invis] }
+	{ "webdevops/base-app" -> "webdevops/typo3-solr" [style=invis] }
 	{ "webdevops/base-app" -> "webdevops/hhvm-apache" [style=invis] }
 	{ "webdevops/base-app" -> "webdevops/postfix" [style=invis] }
 	{ "webdevops/base-app" -> "webdevops/liquibase" [style=invis] }
@@ -204,6 +219,7 @@ digraph webdevops {
 	{ "webdevops/storage" -> "webdevops/php-dev" [style=invis] }
 	{ "webdevops/storage" -> "webdevops/samson-deployment" [style=invis] }
 	{ "webdevops/storage" -> "webdevops/apache-dev" [style=invis] }
+	{ "webdevops/storage" -> "webdevops/typo3-solr" [style=invis] }
 	{ "webdevops/storage" -> "webdevops/hhvm-apache" [style=invis] }
 	{ "webdevops/storage" -> "webdevops/postfix" [style=invis] }
 	{ "webdevops/storage" -> "webdevops/liquibase" [style=invis] }
@@ -228,6 +244,7 @@ digraph webdevops {
 	{ "webdevops/bootstrap" -> "webdevops/php-dev" [style=invis] }
 	{ "webdevops/bootstrap" -> "webdevops/samson-deployment" [style=invis] }
 	{ "webdevops/bootstrap" -> "webdevops/apache-dev" [style=invis] }
+	{ "webdevops/bootstrap" -> "webdevops/typo3-solr" [style=invis] }
 	{ "webdevops/bootstrap" -> "webdevops/hhvm-apache" [style=invis] }
 	{ "webdevops/bootstrap" -> "webdevops/postfix" [style=invis] }
 	{ "webdevops/bootstrap" -> "webdevops/liquibase" [style=invis] }
@@ -252,6 +269,7 @@ digraph webdevops {
 	{ "webdevops/base" -> "webdevops/php-dev" [style=invis] }
 	{ "webdevops/base" -> "webdevops/samson-deployment" [style=invis] }
 	{ "webdevops/base" -> "webdevops/apache-dev" [style=invis] }
+	{ "webdevops/base" -> "webdevops/typo3-solr" [style=invis] }
 	{ "webdevops/base" -> "webdevops/hhvm-apache" [style=invis] }
 	{ "webdevops/base" -> "webdevops/postfix" [style=invis] }
 	{ "webdevops/base" -> "webdevops/liquibase" [style=invis] }
