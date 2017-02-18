@@ -81,6 +81,11 @@ if __name__ == '__main__':
         if 'pathRegex' in configuration['docker']:
             configuration['docker']['autoPullBlacklist'] = re.compile(configuration['docker']['autoPullBlacklist'])
 
+    if 'dockerTest' in configuration:
+        if 'configuration' in configuration['dockerTest']:
+            if 'imageConfigurationRegex' in configuration['dockerTest']['configuration']:
+                configuration['dockerTest']['configuration']['imageConfigurationRegex'] = re.compile(configuration['dockerTest']['configuration']['imageConfigurationRegex'])
+
     configuration = Configuration.merge(configuration)
     configuration = Configuration.dotdictify(configuration)
 

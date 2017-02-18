@@ -158,6 +158,13 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         if default_env_list:
             ret = default_env_list.to_dict().copy()
 
+        # parse configuration by regexp
+        image_configuration_regex = configuration.get('dockerTest.configuration.imageConfigurationRegex', False)
+        if image_configuration_regex:
+            parsed_configuration = ([m.groupdict() for m in image_configuration_regex.finditer(dockerfile['image']['fullname'])])
+            if parsed_configuration:
+                ret.update(parsed_configuration[0])
+
         # add docker image specific vars
         image_env_list = configuration.get('dockerTest.configuration.image')
         if image_env_list:

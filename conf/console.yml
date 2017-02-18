@@ -37,53 +37,23 @@ dockerTest:
       - 'ENV VARNISH_BACKEND_HOST webdevops.io'
 
   configuration:
+    imageConfigurationRegex: ':(?P<OS_FAMILY>alpine|debian|ubuntu|centos)-(?P<OS_VERSION>[^-]+)'
     default:
       OS_FAMILY: 'ubuntu'
       OS_VERSION: '16.04'
     image:
       ':alpine':
-        OS_FAMILY: 'alpine'
-        OS_VERSION: '3'
         PHP_MHASH: '0'
         PHP_REDIS: '0'
       ':ubuntu-12.04':
-        OS_FAMILY: 'ubuntu'
-        OS_VERSION: '12.04'
         PHP_REDIS: '0'
         PHP_APCU: '0'
-      ':ubuntu-14.04':
-        OS_FAMILY: 'ubuntu'
-        OS_VERSION: '14.04'
-      ':ubuntu-15.04':
-        OS_FAMILY: 'ubuntu'
-        OS_VERSION: '15.04'
-      ':ubuntu-15.10':
-        OS_FAMILY: 'ubuntu'
-        OS_VERSION: '15.10'
-      ':ubuntu-16.04':
-        OS_FAMILY: 'ubuntu'
-        OS_VERSION: '16.04'
       ':debian-7':
-        OS_FAMILY: 'debian'
-        OS_VERSION: '7'
         PHP_REDIS: '0'
         PHP_APCU: '0'
-      ':debian-8':
-        OS_FAMILY: 'debian'
-        OS_VERSION: '8'
       ':debian-8-php7':
-        OS_FAMILY: 'debian'
-        OS_VERSION: '8'
         PHP_XDEBUG: '0'
-      ':debian-9':
-        OS_FAMILY: 'debian'
-        OS_VERSION: '9'
-      ':centos-7':
-        OS_FAMILY: 'redhat'
-        OS_VERSION: '7'
       ':centos-7-php56':
-        OS_FAMILY: 'redhat'
-        OS_VERSION: '7'
         PHP_APCU: '0'
         PHP_REDIS: '0'
       '/ssh':
