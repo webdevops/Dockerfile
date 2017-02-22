@@ -25,6 +25,9 @@ COPY {{ source }} {{ target }}
 EXPOSE {{ port }}
 {%- endmacro -%}
 
+{%- macro workdir(path) -%}
+WORKDIR {{ path }}
+{%- endmacro -%}
 
 {%- macro volume(volume) -%}
 VOLUME {{ volume }}
