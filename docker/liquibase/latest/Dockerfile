@@ -16,7 +16,7 @@ ENV LIQUIBASE_CLASSPATH "/usr/share/java/mysql.jar"
 ENV LIQUIBASE_URL       ""
 ENV LIQUIBASE_USERNAME  ""
 ENV LIQUIBASE_PASSWORD  ""
-ENV LIQUIBASE_CHANGELOG "/liquibase/changelog.xml"
+ENV LIQUIBASE_CHANGELOG "liquibase.xml"
 ENV LIQUIBASE_CONTEXTS  ""
 ENV LIQUIBASE_OPTS      ""
 
@@ -33,7 +33,10 @@ RUN apt-get update \
     && ln -s /opt/liquibase/liquibase /usr/local/bin/ \
     && chmod +x /opt/docker/bin/entrypoint.sh \
 	&& apt-get clean \
-	&& rm -r /var/lib/apt/lists/*
+	&& rm -r /var/lib/apt/lists/* \
+    && mkdir /liquibase
+
+WORKDIR /liquibase
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 
