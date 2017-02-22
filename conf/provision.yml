@@ -48,6 +48,7 @@ provision:
         - '*-php7'
         - debian-9
         - ubuntu-16.04
+        - ubuntu-16.10
   php-apache:
     configuration:
       apache/general    : '*'

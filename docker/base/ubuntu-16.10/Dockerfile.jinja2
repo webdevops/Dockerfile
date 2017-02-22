@@ -1,0 +1,12 @@
+{{ docker.from("bootstrap", "ubuntu-16.10") }}
+
+{{ docker.version() }}
+
+{{ environment.homePath() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ base.ubuntu() }}
+
+{{ docker.entrypoint("/opt/docker/bin/entrypoint.sh") }}
+{{ docker.cmd("supervisord") }}

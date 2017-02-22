@@ -1,0 +1,16 @@
+---
+
+- name: Create /entrypoint.d
+  file:
+    path: "/entrypoint.d"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode:  0700
+
+- name: Create /entrypoint.cmd
+  file:
+    src:  '/opt/docker/bin/entrypoint.d'
+    dest: '/entrypoint.cmd'
+    state: link
+    force: yes
