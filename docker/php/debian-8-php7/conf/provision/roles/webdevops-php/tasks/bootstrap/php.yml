@@ -35,8 +35,18 @@
    # PHP fpm
    - { category: 'fpm', file: '/opt/docker/etc/php/php.webdevops.ini', target: '98-webdevops.ini' }
    - { category: 'fpm', file: '/opt/docker/etc/php/php.ini',           target: '99-docker.ini' }
-
   when: ansible_os_family == 'Debian'
+
+- name: Create link for additional php.ini [RedHat family]
+  file:
+    src:  '/opt/docker/etc/php/{{ item.file }}'
+    dest: '/etc/php.d/{{ item.target }}'
+    state: link
+    force: yes
+  with_items:
+    - { file: 'php.webdevops.ini', target: 'zza-webdevops.ini'}
+    - { file: 'php.ini',           target: 'zzz-docker.ini'}
+  when: ansible_os_family == 'RedHat'
 
 - name: Link php.ini
   file:

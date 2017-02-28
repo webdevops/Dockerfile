@@ -8,7 +8,7 @@ FROM zendesk/samson:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.4.1
+LABEL io.webdevops.version=1.5.0
 
 
 ###############################################################################
@@ -176,8 +176,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && chmod 755 /usr/local/bin/ansible*
 
 # NPM stack
-RUN npm install -g npm \
-    && npm update -g \
+RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npm \
     && npm install -g gulp \
     && npm install -g grunt-cli \
     && npm install -g bower \

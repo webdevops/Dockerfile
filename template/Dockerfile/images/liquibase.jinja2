@@ -12,7 +12,10 @@ RUN apt-get update \
     && ln -s /opt/liquibase/liquibase /usr/local/bin/ \
     && chmod +x /opt/docker/bin/entrypoint.sh \
 	&& apt-get clean \
-	&& rm -r /var/lib/apt/lists/*
+	&& rm -r /var/lib/apt/lists/* \
+    && mkdir /liquibase
+
+WORKDIR /liquibase
 {%- endmacro %}
 
 {% macro postgres(role='') -%}
@@ -27,5 +30,8 @@ RUN apt-get update \
     && ln -s /opt/liquibase/liquibase /usr/local/bin/ \
     && chmod +x /opt/docker/bin/entrypoint.sh \
 	&& apt-get clean \
-	&& rm -r /var/lib/apt/lists/*
+	&& rm -r /var/lib/apt/lists/* \
+    && mkdir /liquibase
+
+WORKDIR /liquibase
 {%- endmacro %}

@@ -24,6 +24,17 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
     {{ provision.runRoleInline('dev', 'php-dev', role) }}
 {%- endmacro %}
 
+{% macro webtatic(role='') -%}
+RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/yum.repos.d/blackfire.repo \
+    && /usr/local/bin/yum-install \
+        # Install tools
+        graphviz \
+        # Install php development stuff
+        php70w-pecl-xdebug \
+        blackfire-php \
+        blackfire-agent \
+    {{ provision.runRoleInline('dev', 'php-dev', role) }}
+{%- endmacro %}
 
 {% macro debian(role='') -%}
 # Install development environment

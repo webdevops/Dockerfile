@@ -8,7 +8,7 @@ FROM java:latest
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.4.1
+LABEL io.webdevops.version=1.5.0
 
 ENV LIQUIBASE_VERSION   "3.5.3"
 ENV LIQUIBASE_DRIVER    "org.postgresql.Driver"
@@ -16,7 +16,7 @@ ENV LIQUIBASE_CLASSPATH "/usr/share/java/postgresql.jar"
 ENV LIQUIBASE_URL       ""
 ENV LIQUIBASE_USERNAME  ""
 ENV LIQUIBASE_PASSWORD  ""
-ENV LIQUIBASE_CHANGELOG "/liquibase/changelog.xml"
+ENV LIQUIBASE_CHANGELOG "liquibase.xml"
 ENV LIQUIBASE_CONTEXTS  ""
 ENV LIQUIBASE_OPTS      ""
 
@@ -33,7 +33,10 @@ RUN apt-get update \
     && ln -s /opt/liquibase/liquibase /usr/local/bin/ \
     && chmod +x /opt/docker/bin/entrypoint.sh \
 	&& apt-get clean \
-	&& rm -r /var/lib/apt/lists/*
+	&& rm -r /var/lib/apt/lists/* \
+    && mkdir /liquibase
+
+WORKDIR /liquibase
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 

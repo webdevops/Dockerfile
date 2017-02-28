@@ -2,7 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [WebDevOps.io Dockerfile](https://github.com/webdevops/Dockerfile).
 
-## [1.4.0] - 2017-02-14
+## [1.5.0] - 2017-03-01
+- Added ubuntu-16.10
+- Add centos-7-php7
+- Change liquibase execution handling (now using relative paths, easier to maintain)
+- Smaller improvements
+
+## [1.4.1] - 2017-02-14
 - Add webdevops/typo3-solr:3.1
 - Add webdevops/typo3-solr:4.0
 - Add webdevops/typo3-solr:5.0
