@@ -8,7 +8,7 @@ FROM webdevops/nginx:ubuntu-16.10
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.4.1
+LABEL io.webdevops.version=1.5.0
 
 ENV WEB_DOCUMENT_ROOT  /app
 ENV WEB_DOCUMENT_INDEX index.php

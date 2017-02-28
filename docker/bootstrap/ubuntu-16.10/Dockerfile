@@ -8,7 +8,7 @@ FROM ubuntu:16.10
 MAINTAINER info@webdevops.io
 LABEL vendor=WebDevOps.io
 LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.4.1
+LABEL io.webdevops.version=1.5.0
 
 ENV TERM   "xterm"
 ENV LANG   "en_US.UTF-8"
