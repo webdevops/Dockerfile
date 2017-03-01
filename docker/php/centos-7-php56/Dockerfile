@@ -18,11 +18,9 @@ COPY conf/ /opt/docker/
 
 RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && /usr/local/bin/yum-install \
-        # Install tools
         ImageMagick \
         GraphicsMagick \
         ghostscript \
-        # Install php (cli/fpm)
         php56w-cli \
         php56w-fpm \
         php56w-common \
@@ -49,6 +47,7 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && pear channel-update pear.php.net \
     && pear upgrade-all \
     && pear config-set auto_discover 1 \
+    && sed -i "$ s|\-n||g" /usr/bin/pecl \
     && pecl install imagick \
     # && pecl install redis \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
