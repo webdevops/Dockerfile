@@ -55,6 +55,9 @@ RUN /usr/local/bin/yum-install \
     && pear config-set auto_discover 1 \
     && pecl install imagick \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    # Cleanup
+    && yum erase -y php-devel gcc \
+    && yum clean all \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh
 
