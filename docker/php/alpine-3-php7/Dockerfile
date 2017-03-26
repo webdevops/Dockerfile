@@ -78,7 +78,7 @@ RUN /usr/local/bin/apk-install \
     # PECL workaround, see webdevops/Dockerfile#78
     && sed -i "s/ -n / /" $(which pecl) \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && /usr/local/bin/docker-image-cleanup
 
 EXPOSE 9000

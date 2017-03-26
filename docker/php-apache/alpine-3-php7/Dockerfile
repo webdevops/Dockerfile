@@ -28,7 +28,7 @@ RUN /usr/local/bin/apk-install \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/httpd.conf \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && /usr/local/bin/docker-image-cleanup
 
 EXPOSE 80 443

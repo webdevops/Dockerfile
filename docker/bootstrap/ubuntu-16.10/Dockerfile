@@ -17,8 +17,8 @@ ENV LC_ALL "en_US.UTF-8"
 ADD baselayout.tar /
 
 # Init bootstrap (and install ansible)
-RUN export DEBIAN_FRONTEND=noninteractive \
-    && set -x \
+RUN set -x \
+    && apt-update \
     # Fix root terminal
     && echo "export TERM=xterm" >> /root/.bashrc \
     # Generate base locale
@@ -27,11 +27,11 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && /usr/local/bin/apt-upgrade \
     # Install base stuff
     && /usr/local/bin/apt-install \
-        software-properties-common \
-        lsb-release \
         ca-certificates \
         apt-transport-https \
     && apt-add-repository multiverse \
+    && apt-update \
+    && /usr/local/bin/generate-dockerimage-info \
     # Install ansible
     && /usr/local/bin/apt-install \
         python-minimal \
@@ -67,6 +67,4 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         build-essential \
         libssl-dev \
         libffi-dev \
-    && apt-get autoremove -y -f \
-    && apt-get clean -y \
-    && find /var/log/ -mindepth 1 -delete
+    && /usr/local/bin/docker-image-cleanup

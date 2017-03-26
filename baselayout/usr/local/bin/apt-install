@@ -7,12 +7,18 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Update apt cache
-apt-get update
+if [[ -f "/tmp/.apt-update" ]]; then
+    echo "Detected prefetched 'apt-get update'"
+    # Install packages
+    apt-get install -y -f --no-install-recommends $*
+else
+    # Update apt cache
+    apt-get update
 
-# Install packages
-apt-get install -y -f --no-install-recommends $*
+    # Install packages
+    apt-get install -y -f --no-install-recommends $*
 
-# Clear files (reduce snapshot size)
-rm -rf /var/lib/apt/lists/*
-apt-get clean -y
+    # Clear files (reduce snapshot size)
+    rm -rf /var/lib/apt/lists/*
+    apt-get clean -y
+fi

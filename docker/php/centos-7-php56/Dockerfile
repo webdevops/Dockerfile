@@ -53,9 +53,8 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Cleanup
     && yum erase -y php-devel gcc \
-    && yum clean all \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && /usr/local/bin/docker-image-cleanup
 
 EXPOSE 9000

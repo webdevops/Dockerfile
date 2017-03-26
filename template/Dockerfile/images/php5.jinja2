@@ -1,3 +1,4 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro alpine(role='') -%}
@@ -57,7 +58,8 @@ RUN /usr/local/bin/apk-install \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # PECL workaround, see webdevops/Dockerfile#78
     && sed -i "s/ -n / /" $(which pecl) \
-    {{ provision.runRoleInline('php', role) }}
+    {{ provision.runRoleInline('php', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -103,8 +105,8 @@ RUN /usr/local/bin/yum-install \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Cleanup
     && yum erase -y php-devel gcc \
-    && yum clean all \
-    {{ provision.runRoleInline('php', role) }}
+    {{ provision.runRoleInline('php', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 {% macro centosWebtatic(role='') -%}
@@ -145,8 +147,8 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Cleanup
     && yum erase -y php-devel gcc \
-    && yum clean all \
-    {{ provision.runRoleInline('php', role) }}
+    {{ provision.runRoleInline('php', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 {% macro debian7(role='') -%}
@@ -180,7 +182,8 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ provision.runRoleInline('php', role) }}
+    {{ provision.runRoleInline('php', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -217,7 +220,8 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ provision.runRoleInline('php', role) }}
+    {{ provision.runRoleInline('php', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -253,7 +257,8 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ provision.runRoleInline('php', role) }}
+    {{ provision.runRoleInline('php', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 {% macro ubuntu12(role='') -%}
@@ -288,7 +293,8 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ provision.runRoleInline('php', role) }}
+    {{ provision.runRoleInline('php', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -325,7 +331,8 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ provision.runRoleInline('php', role) }}
+    {{ provision.runRoleInline('php', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 {% macro ubuntu16(role='') -%}
@@ -355,6 +362,7 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ provision.runRoleInline('php', role) }}
+    {{ provision.runRoleInline('php', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 

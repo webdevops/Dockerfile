@@ -96,6 +96,8 @@ provision:
   piwik:
     configuration:
       piwik/general     : '*'
+  typo3-solr:
+    baselayout: on
   varnish:
     configuration:
       varnish/general   : '*'

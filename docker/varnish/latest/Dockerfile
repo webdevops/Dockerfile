@@ -22,7 +22,8 @@ ENV VARNISH_BACKEND_PORT "80"
 COPY conf/ /opt/docker/
 
 RUN /usr/local/bin/apk-install \
-        varnish
+        varnish \
+    && /usr/local/bin/docker-image-cleanup
 
 CMD ["varnishd"]
 

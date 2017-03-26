@@ -14,7 +14,7 @@ COPY conf/ /opt/docker/
 
 RUN /opt/docker/bin/control.sh service.enable postfix \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-postfix \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && /usr/local/bin/docker-image-cleanup
 
 EXPOSE 25 465 587

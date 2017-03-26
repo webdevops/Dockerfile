@@ -20,7 +20,6 @@ RUN chmod +x /opt/docker/bin/* \
         supervisor \
         syslog-ng \
         syslog-ng-core \
-        logrotate \
         cron \
         wget \
         curl \
@@ -28,8 +27,8 @@ RUN chmod +x /opt/docker/bin/* \
         gnupg \
     && chmod +s /usr/local/bin/gosu \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && /usr/local/bin/docker-image-cleanup
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 CMD ["supervisord"]

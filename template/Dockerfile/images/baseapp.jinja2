@@ -1,3 +1,4 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro alpine(role='') -%}
@@ -24,7 +25,8 @@ RUN /usr/local/bin/apk-install-edge shadow \
         git \
         nano \
         vim \
-    {{ provision.runRoleInline('base-app', role) }}
+    {{ provision.runRoleInline('base-app', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -53,7 +55,8 @@ RUN /usr/local/bin/yum-install \
         nano \
         vim \
     && /usr/local/bin/generate-locales \
-    {{ provision.runRoleInline('base-app', role) }}
+    {{ provision.runRoleInline('base-app', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -82,7 +85,8 @@ RUN /usr/local/bin/apt-install \
         nano \
         vim \
     && /usr/local/bin/generate-locales \
-    {{ provision.runRoleInline('base-app', role) }}
+    {{ provision.runRoleInline('base-app', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 {% macro debian9(role='') -%}
@@ -110,7 +114,8 @@ RUN /usr/local/bin/apt-install \
         nano \
         vim \
     && /usr/local/bin/generate-locales \
-    {{ provision.runRoleInline('base-app', role) }}
+    {{ provision.runRoleInline('base-app', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 {% macro ubuntu(role='') -%}
@@ -139,5 +144,6 @@ RUN /usr/local/bin/apt-install \
         vim \
     && mkdir -p /var/lib/syslog-ng/ \
     && /usr/local/bin/generate-locales \
-    {{ provision.runRoleInline('base-app', role) }}
+    {{ provision.runRoleInline('base-app', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}

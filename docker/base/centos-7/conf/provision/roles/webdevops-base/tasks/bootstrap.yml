@@ -5,5 +5,4 @@
 - include: bootstrap/root.yml
 - include: bootstrap/supervisor.yml
 - include: bootstrap/syslog-ng.yml
-- include: bootstrap/logrotate.yml
 - include: bootstrap/pam.yml

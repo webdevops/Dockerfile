@@ -28,6 +28,7 @@ RUN set -x \
     && /usr/local/bin/apk-install \
         bash \
         ca-certificates \
+    && /usr/local/bin/generate-dockerimage-info \
     # Install ansible
     && /usr/local/bin/apk-install \
         python \
@@ -64,4 +65,4 @@ RUN set -x \
     && apk del .gosu-deps \
     # Cleanup
     && apk del python-dev \
-    && find /var/log/ -mindepth 1 -delete
+    && /usr/local/bin/docker-image-cleanup

@@ -35,6 +35,7 @@ RUN set -x \
         libffi \
         python-devel \
         libffi-devel \
+    && /usr/local/bin/generate-dockerimage-info \
     && easy_install pip \
     && pip install --upgrade pip \
     && hash -r \
@@ -55,5 +56,4 @@ RUN set -x \
     && yum erase -y wget \
     # Cleanup
     && yum erase -y python-devel \
-    && yum clean all \
-    && find /var/log/ -mindepth 1 -delete
+    && /usr/local/bin/docker-image-cleanup

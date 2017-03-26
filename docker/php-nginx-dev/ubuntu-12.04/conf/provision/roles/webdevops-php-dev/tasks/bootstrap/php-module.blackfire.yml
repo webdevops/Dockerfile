@@ -7,4 +7,4 @@
   with_items:
     - /etc/php5/cli/conf.d/zz-blackfire.ini
     - /etc/php5/fpm/conf.d/zz-blackfire.ini
-  when: ansible_distribution == 'Debian' and ansible_lsb.major_release|int >= 7
+  when: ansible_distribution == 'Debian' and dockerimage_distribution_version|int >= 7

@@ -8,6 +8,8 @@ USER root
 
 COPY ./solr/ /tmp/solr
 
+{{ docker.add('baselayout.tar', '/') }}
+
 RUN pacman --sync --noconfirm --noprogressbar --quiet net-tools \
     && rm -rf /opt/solr/server \
     && mv /opt/solr/example/ /opt/solr/server/ \

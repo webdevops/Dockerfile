@@ -15,14 +15,14 @@ shared_examples 'bootstrap::distribution' do
     # Ubuntu
     #########################
 
-    describe command('lsb_release -i | tr "\t" " " | tr -s " "'), :if => os[:family] == 'ubuntu' do
-        its(:stdout) { should contain('Distributor ID: Ubuntu') }
+    describe command('cat /etc/dockerimage_lsb'), :if => os[:family] == 'ubuntu' do
+        its(:stdout) { should contain("Distributor ID:\tUbuntu") }
 
         its(:exit_status) { should eq 0 }
     end
 
-    describe command('lsb_release -r | tr "\t" " " | tr -s " "'), :if => os[:family] == 'debian' do
-        its(:stdout) { should contain('Release: ' + os[:version]) }
+    describe command('cat /etc/dockerimage_lsb'), :if => os[:family] == 'debian' do
+        its(:stdout) { should contain("Release:\t" + os[:version]) }
 
         its(:exit_status) { should eq 0 }
     end
@@ -31,15 +31,15 @@ shared_examples 'bootstrap::distribution' do
     # Debian
     #########################
 
-    describe command('lsb_release -i | tr "\t" " " | tr -s " "'), :if => os[:family] == 'debian' do
-        its(:stdout) { should contain('Distributor ID: Debian') }
+    describe command('cat /etc/dockerimage_lsb'), :if => os[:family] == 'debian' do
+        its(:stdout) { should contain("Distributor ID:\tDebian") }
 
         its(:exit_status) { should eq 0 }
     end
 
 
-    describe command('lsb_release -r | tr "\t" " " | tr -s " "'), :if => os[:family] == 'debian' do
-        its(:stdout) { should contain('Release: ' + os[:version] + '.') }
+    describe command('cat /etc/dockerimage_lsb'), :if => os[:family] == 'debian' do
+        its(:stdout) { should contain("Release:\t" + os[:version] + '.') }
 
         its(:exit_status) { should eq 0 }
     end

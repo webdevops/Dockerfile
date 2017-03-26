@@ -1,3 +1,4 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro ubuntu(role='') -%}
@@ -8,7 +9,8 @@ RUN /usr/local/bin/apt-install \
     && /opt/docker/bin/control.sh service.enable postfix \
     && /opt/docker/bin/control.sh service.enable dovecot \
     && /opt/docker/bin/provision add --tag entrypoint webdevops-mail-sandbox \
-    {{ provision.runRoleInline('mail-sandbox', role) }}
+    {{ provision.runRoleInline('mail-sandbox', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 {% macro roundcube(role='') -%}
@@ -21,5 +23,6 @@ RUN cd /app \
     && ls -l  \
     && rm -rf .git installer \
     && ln -s /opt/docker/etc/roundcube/plugins/webdevops_autologin/ plugins/webdevops_autologin \
-    && ln -s /opt/docker/etc/roundcube/config.php config/config.inc.php
+    && ln -s /opt/docker/etc/roundcube/config.php config/config.inc.php \
+    {{ docker.cleanup() }}
 {%- endmacro %}

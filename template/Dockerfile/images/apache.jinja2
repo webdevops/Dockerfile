@@ -1,3 +1,4 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro alpine(role='') -%}
@@ -11,7 +12,8 @@ RUN /usr/local/bin/apk-install \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/httpd.conf \
-    {{ provision.runRoleInline('apache', role) }}
+    {{ provision.runRoleInline('apache', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -24,7 +26,8 @@ RUN /usr/local/bin/yum-install \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf \
-    {{ provision.runRoleInline('apache', role) }}
+    {{ provision.runRoleInline('apache', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -40,7 +43,8 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions fastcgi ssl rewrite headers expires \
-	{{ provision.runRoleInline('apache', role) }}
+	{{ provision.runRoleInline('apache', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 {% macro debian8(role='') -%}
@@ -54,7 +58,8 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
-	{{ provision.runRoleInline('apache', role) }}
+	{{ provision.runRoleInline('apache', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -68,7 +73,8 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
-    {{ provision.runRoleInline('apache', role) }}
+    {{ provision.runRoleInline('apache', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -85,7 +91,8 @@ RUN /usr/local/bin/apt-install \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions fastcgi ssl rewrite headers version expires \
 	&& mkdir -p /var/lock/apache2 \
-    {{ provision.runRoleInline('apache', role) }}
+    {{ provision.runRoleInline('apache', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -102,7 +109,8 @@ RUN /usr/local/bin/apt-install \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions fastcgi ssl rewrite headers expires \
 	&& mkdir -p /var/lock/apache2 \
-    {{ provision.runRoleInline('apache', role) }}
+    {{ provision.runRoleInline('apache', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -117,7 +125,8 @@ RUN /usr/local/bin/apt-install \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
 	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
-    {{ provision.runRoleInline('apache', role) }}
+    {{ provision.runRoleInline('apache', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -132,5 +141,6 @@ RUN /usr/local/bin/apt-install \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
 	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
-    {{ provision.runRoleInline('apache', role) }}
+    {{ provision.runRoleInline('apache', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}

@@ -1,6 +1,8 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro ubuntu(role='') -%}
 RUN /opt/docker/bin/control.sh service.enable postfix \
-    {{ provision.runRoleInline('postfix', role) }}
+    {{ provision.runRoleInline('postfix', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}

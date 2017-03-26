@@ -19,6 +19,7 @@ PLAYBOOK = Template(
 
 - hosts: all
   vars_files:
+    - ./variables-webdevops.yml
     - ./variables.yml
   roles:
     - $roles
@@ -188,7 +189,7 @@ def actionAdd(args):
                 'priority': args.priority
             }
 
-    saveJson(json);
+    saveJson(json)
 
 
 

@@ -20,7 +20,7 @@ COPY conf/ /opt/docker/
 RUN /usr/local/bin/apk-install \
         nginx \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-nginx \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && /usr/local/bin/docker-image-cleanup
 
 EXPOSE 80 443

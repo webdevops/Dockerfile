@@ -1,3 +1,4 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro alpine() -%}
@@ -20,5 +21,6 @@ RUN /usr/local/bin/apk-install \
     && pip install t3SphinxThemeRtd \
     && pip install t3fieldlisttable \
     && pip install t3tablerows \
-    && pip install t3targets
+    && pip install t3targets \
+    {{ docker.cleanup() }}
 {%- endmacro %}

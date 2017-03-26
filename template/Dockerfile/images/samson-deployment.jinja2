@@ -1,3 +1,4 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro general(role='') -%}
@@ -30,7 +31,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
         python-dotenv \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     ## Enable ansible for deployment user
-    && chmod 755 /usr/local/bin/ansible*
+    && chmod 755 /usr/local/bin/ansible* \
+    {{ docker.cleanup() }}
 
 # NPM stack
 RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
@@ -39,7 +41,8 @@ RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
     && npm install -g gulp \
     && npm install -g grunt-cli \
     && npm install -g bower \
-    && npm install -g npm-cache
+    && npm install -g npm-cache \
+    {{ docker.cleanup() }}
 
 # Deployer stack
 RUN set -x \
@@ -60,7 +63,8 @@ RUN set -x \
     && tar -xzf /tmp/magallanes.tar.gz -C /tmp/ \
     && /tmp/magallanes/bin/mage install --installDir=/opt/magallanes \
     && rm -rf /tmp/magallanes.tar.gz /tmp/magallanes/ \
-    && ln -s /opt/magallanes/latest/bin/mage /usr/bin/mage
+    && ln -s /opt/magallanes/latest/bin/mage /usr/bin/mage \
+    {{ docker.cleanup() }}
 
 # Upload
 ADD database.yml    /app/config/database.yml

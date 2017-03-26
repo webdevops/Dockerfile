@@ -27,7 +27,7 @@ RUN /usr/local/bin/apt-install \
             /var/log/supervisor \
     && /opt/docker/bin/provision add --tag entrypoint  webdevops-vsftp \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-vsftp \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && /usr/local/bin/docker-image-cleanup
 
 EXPOSE 20 21 12020 12021 12022 12023 12024 12025

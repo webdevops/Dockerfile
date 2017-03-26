@@ -29,7 +29,7 @@ RUN /usr/local/bin/apt-install \
 	&& a2enmod actions fastcgi ssl rewrite headers version expires \
 	&& mkdir -p /var/lock/apache2 \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && /usr/local/bin/docker-image-cleanup
 
 EXPOSE 80 443

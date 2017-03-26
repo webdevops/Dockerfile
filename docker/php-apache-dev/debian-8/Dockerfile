@@ -29,7 +29,7 @@ RUN /usr/local/bin/apt-install \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
 	&& /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache --role webdevops-apache-dev --role webdevops-php-dev \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && /usr/local/bin/docker-image-cleanup
 
 EXPOSE 80 443

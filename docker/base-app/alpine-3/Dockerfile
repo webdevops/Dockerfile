@@ -42,5 +42,5 @@ RUN /usr/local/bin/apk-install-edge shadow \
         nano \
         vim \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && /usr/local/bin/docker-image-cleanup

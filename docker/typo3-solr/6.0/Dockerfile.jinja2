@@ -4,18 +4,4 @@
 
 {{ environment.general(charset="C.UTF-8") }}
 
-COPY ./solr/ /tmp/solr
-
-USER root
-
-RUN apt-get update \
-    && apt-get install -y -f --no-install-recommends lsb-release lsb-base net-tools \
-    && apt-get clean -y \
-    && rm -rf /opt/solr/server/solr \
-    && mv /tmp/solr /opt/solr/server/solr \
-    && mkdir -p /opt/solr/server/solr/data \
-    && chown -R solr:solr /opt/solr/server/solr
-
-USER solr
-
-VOLUME ["/opt/solr/server/solr/data"]
+{{ typo3Solr.official() }}

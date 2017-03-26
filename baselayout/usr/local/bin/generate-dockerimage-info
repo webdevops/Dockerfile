@@ -1,0 +1,95 @@
+#!/bin/sh
+
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
+LSB_FAMILY=""
+
+#############################
+# Distribution detection
+#############################
+
+if [ -x "/usr/bin/apt-get" ]; then
+    # Debian family
+    LSB_FAMILY="Debian"
+
+elif [ -x "/bin/yum" ]; then
+    # RedHat family
+    LSB_FAMILY="RedHat"
+
+elif [ -x "/sbin/apk" ]; then
+    # Alpine family
+    LSB_FAMILY="Alpine"
+
+elif [ -f "/etc/arch-release" ]; then
+    # Alpine family
+    LSB_FAMILY="Arch"
+
+else
+    # Unknown
+    echo "ERROR: Distribution detection failed"
+    exit 1
+fi
+
+#############################
+# Install
+#############################
+
+case "$LSB_FAMILY" in
+    Debian)
+        apt-install lsb-release
+        ;;
+
+    RedHat)
+        yum-install redhat-lsb-core
+        ;;
+esac
+
+#############################
+# Set distribution information
+#############################
+
+echo "Detected $LSB_FAMILY"
+echo "$LSB_FAMILY" > /etc/dockerimage_distribution_family
+echo "$LSB_FAMILY" > /etc/dockerimage_distribution
+
+# Create all files
+touch /etc/dockerimage_distribution_version
+touch /etc/dockerimage_lsb
+touch /etc/dockerimage_lsb_id
+touch /etc/dockerimage_lsb_id
+touch /etc/dockerimage_lsb_release
+touch /etc/dockerimage_lsb_codename
+
+# Collect distribution specific informations
+case "$LSB_FAMILY" in
+    Debian|RedHat)
+        lsb_release -i -s > /etc/dockerimage_distribution
+        lsb_release -r -s > /etc/dockerimage_distribution_version
+        lsb_release -a > /etc/dockerimage_lsb
+        lsb_release -i -s > /etc/dockerimage_lsb_id
+        lsb_release -d -s > /etc/dockerimage_lsb_id
+        lsb_release -r -s > /etc/dockerimage_lsb_release
+        lsb_release -c -s > /etc/dockerimage_lsb_codename
+        ;;
+
+    Alpine)
+        cat /etc/alpine-release > /etc/dockerimage_distribution_version
+        ;;
+esac
+
+
+#############################
+# Uninstall
+#############################
+
+case "$LSB_FAMILY" in
+    Debian)
+        apt-get purge -y -f lsb-release
+        ;;
+
+    RedHat)
+        yum erase --assumeyes redhat-lsb-core
+        yum autoremove --assumeyes
+        ;;
+esac

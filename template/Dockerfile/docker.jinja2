@@ -41,3 +41,7 @@ ENTRYPOINT ["{{ command }}"]
 {%- macro cmd(command) -%}
 CMD ["{{ command }}"]
 {%- endmacro -%}
+
+{%- macro cleanup() -%}
+    && /usr/local/bin/docker-image-cleanup
+{%- endmacro -%}

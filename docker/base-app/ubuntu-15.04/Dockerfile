@@ -44,5 +44,5 @@ RUN /usr/local/bin/apt-install \
     && mkdir -p /var/lib/syslog-ng/ \
     && /usr/local/bin/generate-locales \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && /usr/local/bin/docker-image-cleanup
