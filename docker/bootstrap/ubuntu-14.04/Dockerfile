@@ -32,22 +32,6 @@ RUN set -x \
     && apt-add-repository multiverse \
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
-    # Install ansible
-    && /usr/local/bin/apt-install \
-        python-minimal \
-        python-setuptools \
-        python-pip \
-        python-paramiko \
-        python-jinja2 \
-        python-cffi \
-        python-dev \
-        libffi-dev \
-       	libssl-dev \
-        build-essential \
-    && pip install --upgrade pip \
-    && hash -r \
-    && pip install ansible \
-    && chmod 750 /usr/local/bin/ansible* \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && /usr/local/bin/apt-install wget gnupg \
@@ -61,10 +45,4 @@ RUN set -x \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
     && apt-get purge -y -f --force-yes wget \
-    # Cleanup
-    && apt-get purge -y -f --force-yes \
-        python-dev \
-        build-essential \
-        libssl-dev \
-        libffi-dev \
     && /usr/local/bin/docker-image-cleanup

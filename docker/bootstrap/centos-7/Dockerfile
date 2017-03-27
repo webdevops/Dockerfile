@@ -25,22 +25,7 @@ RUN set -x \
     # Install ansible
     && /usr/local/bin/yum-install \
         epel-release \
-        PyYAML \
-        python-jinja2 \
-        python-httplib2 \
-        python-keyczar \
-        python-paramiko \
-        python-setuptools \
-        python-setuptools-devel \
-        libffi \
-        python-devel \
-        libffi-devel \
     && /usr/local/bin/generate-dockerimage-info \
-    && easy_install pip \
-    && pip install --upgrade pip \
-    && hash -r \
-    && pip install ansible \
-    && chmod 750 /usr/bin/ansible* \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && /usr/local/bin/yum-install gpg wget \
@@ -54,6 +39,4 @@ RUN set -x \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
     && yum erase -y wget \
-    # Cleanup
-    && yum erase -y python-devel \
     && /usr/local/bin/docker-image-cleanup

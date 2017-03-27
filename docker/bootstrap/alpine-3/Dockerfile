@@ -29,24 +29,6 @@ RUN set -x \
         bash \
         ca-certificates \
     && /usr/local/bin/generate-dockerimage-info \
-    # Install ansible
-    && /usr/local/bin/apk-install \
-        python \
-        python-dev \
-        py-setuptools \
-        py-crypto \
-        py2-pip \
-        py-cparser \
-        py-cryptography \
-        py-markupsafe \
-        py-cffi \
-        py-yaml \
-        py-jinja2 \
-        py-paramiko \
-    && pip install --upgrade pip \
-    && hash -r \
-    && pip install ansible \
-    && chmod 750 /usr/bin/ansible* \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && apk add --no-cache --virtual .gosu-deps \
@@ -63,6 +45,4 @@ RUN set -x \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
     && apk del .gosu-deps \
-    # Cleanup
-    && apk del python-dev \
     && /usr/local/bin/docker-image-cleanup

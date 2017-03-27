@@ -33,3 +33,4 @@ case "$LSB_FAMILY" in
 esac
 
 find /tmp/ /var/log/ -mindepth 1 -delete
+rm -rf /root/.cache

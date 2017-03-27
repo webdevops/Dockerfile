@@ -6,6 +6,8 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
+{{ ansible.debian() }}
+
 {{ base.debian() }}
 
 {{ docker.entrypoint("/opt/docker/bin/entrypoint.sh") }}

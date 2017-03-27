@@ -6,6 +6,8 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
+{{ ansible.centos() }}
+
 {{ base.centos() }}
 
 {{ docker.entrypoint("/opt/docker/bin/entrypoint.sh") }}
