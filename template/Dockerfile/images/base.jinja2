@@ -5,6 +5,7 @@
 # Install services
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apk-install \
+        python \
         supervisor \
         syslog-ng \
         wget \
@@ -21,6 +22,7 @@ RUN chmod +x /opt/docker/bin/* \
 # Install services
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/yum-install \
+        python \
         cronie \
         supervisor \
         syslog-ng \
@@ -38,6 +40,7 @@ RUN chmod +x /opt/docker/bin/* \
 # Install packages
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apt-install \
+        python-minimal \
         supervisor \
         syslog-ng \
         syslog-ng-core \
@@ -56,6 +59,7 @@ RUN chmod +x /opt/docker/bin/* \
 # Install services
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apt-install \
+        python-minimal \
         supervisor \
         syslog-ng \
         syslog-ng-core \

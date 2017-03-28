@@ -8,5 +8,6 @@ describe "Dockerfile" do
     end
 
     include_examples 'collection::bootstrap'
+    include_examples 'collection::ansible'
 
 end

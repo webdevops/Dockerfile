@@ -9,7 +9,6 @@ describe "Dockerfile" do
 
     include_examples 'bootstrap::layout'
     include_examples 'bootstrap::distribution'
-    include_examples 'bootstrap::toolchain'
 
     include_examples 'collection::base-app'
     include_examples 'collection::samson-deployment::php'

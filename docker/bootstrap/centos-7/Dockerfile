@@ -16,13 +16,12 @@ ENV LC_ALL "en_US.UTF-8"
 
 ADD baselayout.tar /
 
-# Init bootstrap (and install ansible)
+# Init bootstrap
 RUN set -x \
     # Fix root terminal
     && echo "export TERM=xterm" >> /root/.bashrc \
     # System update
     && /usr/local/bin/yum-upgrade \
-    # Install ansible
     && /usr/local/bin/yum-install \
         epel-release \
     && /usr/local/bin/generate-dockerimage-info \

@@ -39,6 +39,7 @@ RUN /usr/local/bin/apk-install \
 # Install services
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apk-install \
+        python \
         supervisor \
         syslog-ng \
         wget \

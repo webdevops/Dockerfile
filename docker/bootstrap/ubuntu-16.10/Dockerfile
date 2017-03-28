@@ -16,7 +16,7 @@ ENV LC_ALL "en_US.UTF-8"
 
 ADD baselayout.tar /
 
-# Init bootstrap (and install ansible)
+# Init bootstrap
 RUN set -x \
     && apt-update \
     # Fix root terminal

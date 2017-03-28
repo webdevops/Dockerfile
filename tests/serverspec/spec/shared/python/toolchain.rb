@@ -1,4 +1,4 @@
-shared_examples 'bootstrap::toolchain' do
+shared_examples 'python::toolchain' do
 
     describe command('python --version') do
         its(:exit_status) { should eq 0 }
@@ -13,10 +13,6 @@ shared_examples 'bootstrap::toolchain' do
     end
 
     describe command('pip --help') do
-        its(:exit_status) { should eq 0 }
-    end
-
-    describe command('rpl --version') do
         its(:exit_status) { should eq 0 }
     end
 end

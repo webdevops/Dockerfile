@@ -21,7 +21,7 @@ ENV LC_ALL "en_US.UTF-8"
 
 ADD baselayout.tar /
 
-# Init bootstrap (and install ansible)
+# Init bootstrap
 RUN set -x \
     # Fix root terminal
     && echo "export TERM=xterm" >> /root/.bashrc \
@@ -63,9 +63,34 @@ ENV DOCKER_CONF_HOME /opt/docker/
 
 COPY conf/ /opt/docker/
 
+# Install ansible
+RUN /usr/local/bin/apt-install \
+        # Install ansible
+        python-minimal \
+        python-setuptools \
+        python-pip \
+        python-paramiko \
+        python-jinja2 \
+        python-dev \
+        libffi-dev \
+        libssl-dev \
+        build-essential \
+    && pip install --upgrade pip \
+    && hash -r \
+    && pip install --no-cache-dir ansible \
+    && chmod 750 /usr/local/bin/ansible* \
+    # Cleanup
+    && apt-get purge -y -f --force-yes \
+        python-dev \
+        build-essential \
+        libssl-dev \
+        libffi-dev \
+    && /usr/local/bin/docker-image-cleanup
+
 # Install packages
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apt-install \
+        python-minimal \
         supervisor \
         syslog-ng \
         syslog-ng-core \

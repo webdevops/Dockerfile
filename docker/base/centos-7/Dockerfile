@@ -39,6 +39,7 @@ RUN /usr/local/bin/yum-install \
 # Install services
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/yum-install \
+        python \
         cronie \
         supervisor \
         syslog-ng \

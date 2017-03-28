@@ -40,6 +40,7 @@ RUN /usr/local/bin/apt-install \
 # Install services
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apt-install \
+        python-minimal \
         supervisor \
         syslog-ng \
         syslog-ng-core \
