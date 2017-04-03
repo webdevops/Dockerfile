@@ -1,0 +1,4 @@
+{% macro goreplace() -%}
+    ## Install go-replace
+    && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/0.2.1/gr-64-linux && chmod +x /usr/local/bin/go-replace \
+{%- endmacro %}

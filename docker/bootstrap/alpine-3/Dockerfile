@@ -28,6 +28,8 @@ RUN set -x \
     && /usr/local/bin/apk-install \
         bash \
         ca-certificates \
+        openssl \
+    && update-ca-certificates \
     && /usr/local/bin/generate-dockerimage-info \
     # Install gosu
     && GOSU_VERSION=1.10 \
@@ -45,4 +47,6 @@ RUN set -x \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
     && apk del .gosu-deps \
+    ## Install go-replace
+    && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/0.2.1/gr-64-linux && chmod +x /usr/local/bin/go-replace \
     && /usr/local/bin/docker-image-cleanup

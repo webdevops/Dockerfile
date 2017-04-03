@@ -30,5 +30,5 @@ for envVariable in $(printenv|cut -f1 -d=); do
 done
 
 # Replace ;#CLEAR_ENV_WORKAROUND# with environment variable list for all php-fpm pool files
-find /opt/docker/etc/php/fpm/pool.d/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet ";#CLEAR_ENV_WORKAROUND#" "$VARIABLE_LIST" > /dev/null
+find /opt/docker/etc/php/fpm/pool.d/ -iname '*.conf' -print0 | xargs -0 -r go-replace -s ";#CLEAR_ENV_WORKAROUND#" -r "$VARIABLE_LIST"
 

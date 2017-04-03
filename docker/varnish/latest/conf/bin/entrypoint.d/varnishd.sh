@@ -34,11 +34,11 @@ if [[ -z "$VARNISH_PORT" ]]; then
 fi
 
 if [[ -n "$VARNISH_BACKEND_HOST" ]]; then
-    rpl --quiet "<VARNISH_BACKEND_HOST>" "$VARNISH_BACKEND_HOST" "$VARNISH_CONFIG" > /dev/null
+    go-replace -s "<VARNISH_BACKEND_HOST>" -r "$VARNISH_BACKEND_HOST" "$VARNISH_CONFIG"
 fi
 
 if [[ -n "$VARNISH_BACKEND_PORT" ]]; then
-    rpl --quiet "<VARNISH_BACKEND_PORT>" "$VARNISH_BACKEND_PORT" "$VARNISH_CONFIG" > /dev/null
+    go-replace -s "<VARNISH_BACKEND_PORT>" -r "$VARNISH_BACKEND_PORT" "$VARNISH_CONFIG"
 fi
 
 echo " Starting varnishd..."
