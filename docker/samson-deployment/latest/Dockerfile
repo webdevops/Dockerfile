@@ -62,6 +62,8 @@ RUN set -x \
 ###############################################################################
 
 ENV DOCKER_CONF_HOME /opt/docker/
+ENV LOG_STDOUT ""
+ENV LOG_STDERR ""
 
 COPY conf/ /opt/docker/
 

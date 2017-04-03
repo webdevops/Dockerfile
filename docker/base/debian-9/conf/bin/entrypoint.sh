@@ -21,8 +21,16 @@ trap 'echo sigterm ; exit' SIGTERM
 trap 'echo sigkill ; exit' SIGKILL
 
 # link stdout from docker
-ln -f -s "/proc/$$/fd/1" /docker.stdout
-ln -f -s "/proc/$$/fd/2" /docker.stderr
+if [[ -z "$LOG_STDOUT" ]]; then
+    LOG_STDOUT="/proc/$$/fd/1"
+fi
+
+if [[ -z "$LOG_STDERR" ]]; then
+    LOG_STDERR="/proc/$$/fd/2"
+fi
+
+ln -f -s "$LOG_STDOUT" /docker.stdout
+ln -f -s "$LOG_STDERR" /docker.stderr
 chmod 600 /docker.stdout /docker.stderr
 
 # sanitize input and set task

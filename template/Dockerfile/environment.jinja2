@@ -6,6 +6,8 @@ ENV LC_ALL "{{ charset }}"
 
 {% macro homePath() -%}
 ENV DOCKER_CONF_HOME /opt/docker/
+ENV LOG_STDOUT ""
+ENV LOG_STDERR ""
 {%- endmacro %}
 
 {% macro mailbox() -%}

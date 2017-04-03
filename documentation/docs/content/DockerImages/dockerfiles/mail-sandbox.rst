@@ -19,11 +19,12 @@ Tag                    Distribution name
 Environment variables
 ---------------------
 
+.. include:: include/environment-base.rst
 .. include:: include/environment-base-app.rst
 
 
-Base environment variables
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Mail sandbox environment variables
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ====================== ============================= =============
 Environment variable   Description                   Default

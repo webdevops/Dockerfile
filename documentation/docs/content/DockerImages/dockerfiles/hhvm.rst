@@ -14,6 +14,7 @@ Docker image tags
 Environment variables
 ---------------------
 
+.. include:: include/environment-base.rst
 .. include:: include/environment-base-app.rst
 
 Docker image layout

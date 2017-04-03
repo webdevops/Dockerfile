@@ -11,6 +11,11 @@ Docker image tags
 .. include:: include/image-tag-base.rst
 
 
+Environment variables
+---------------------
+
+.. include:: include/environment-base.rst
+
 Entrypoint
 ----------
 
