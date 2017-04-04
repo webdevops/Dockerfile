@@ -4,12 +4,6 @@
 {% macro alpine(role='') -%}
 RUN /usr/local/bin/apk-install-edge shadow \
     && /usr/local/bin/apk-install \
-        # Install services
-        openssh \
-        mysql-client \
-        sqlite \
-        dnsmasq \
-        postfix \
         # Install common tools
         sudo \
         zip \
@@ -33,11 +27,6 @@ RUN /usr/local/bin/apk-install-edge shadow \
 {% macro centos(role='') -%}
 # Install services
 RUN /usr/local/bin/yum-install \
-        openssh-server \
-        mysql \
-        sqlite \
-        dnsmasq \
-        postfix \
         # Install tools
         sudo \
         zip \
@@ -63,12 +52,6 @@ RUN /usr/local/bin/yum-install \
 {% macro debian(role='') -%}
 # Install services
 RUN /usr/local/bin/apt-install \
-        # Install services
-        openssh-server \
-        mysql-client \
-        sqlite \
-        dnsmasq \
-        postfix \
         # Install common tools
         sudo \
         zip \
@@ -92,12 +75,6 @@ RUN /usr/local/bin/apt-install \
 {% macro debian9(role='') -%}
 # Install services
 RUN /usr/local/bin/apt-install \
-        # Install services
-        openssh-server \
-        mariadb-client \
-        sqlite \
-        dnsmasq \
-        postfix \
         # Install common tools
         sudo \
         zip \
@@ -121,12 +98,6 @@ RUN /usr/local/bin/apt-install \
 {% macro ubuntu(role='') -%}
 # Install services
 RUN /usr/local/bin/apt-install \
-        # Install services
-        openssh-server \
-        mysql-client \
-        sqlite \
-        dnsmasq \
-        postfix \
         # Install common tools
         sudo \
         zip \

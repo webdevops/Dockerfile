@@ -47,7 +47,6 @@ RUN chmod +x /opt/docker/bin/* \
         supervisor \
         syslog-ng \
         syslog-ng-core \
-        cron \
         wget \
         curl \
         net-tools \

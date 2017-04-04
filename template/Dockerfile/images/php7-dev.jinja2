@@ -1,5 +1,6 @@
-{% import 'Dockerfile/docker.jinja2' as docker %}
+{% import 'Dockerfile/docker.jinja2'    as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
+{% import 'Dockerfile/services.jinja2'  as services %}
 
 {% macro alpine(role='') -%}
 # Install development environment
@@ -8,6 +9,7 @@ RUN /usr/local/bin/apk-install \
         graphviz \
         # Install php development stuff
         php7-xdebug \
+    {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -23,6 +25,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         php7-xdebug \
         blackfire-php \
         blackfire-agent \
+    {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -36,6 +39,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         php70w-pecl-xdebug \
         blackfire-php \
         blackfire-agent \
+    {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -51,6 +55,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         php-xdebug \
         blackfire-php \
         blackfire-agent \
+    {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -66,6 +71,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         php7.0-xdebug \
         blackfire-php \
         blackfire-agent \
+    {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -81,6 +87,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         # php7.0-xdebug \ # Is currently not available
         blackfire-php \
         blackfire-agent \
+    {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -96,6 +103,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         php-xdebug \
         blackfire-php \
         blackfire-agent \
+    {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

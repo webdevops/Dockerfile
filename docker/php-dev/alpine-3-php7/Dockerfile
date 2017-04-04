@@ -18,6 +18,9 @@ RUN /usr/local/bin/apk-install \
         graphviz \
         # Install php development stuff
         php7-xdebug \
+    # Enable php development services
+    && /opt/docker/bin/control.sh service.enable ssh \
+    && /opt/docker/bin/control.sh service.enable postfix \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-dev --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh \
     && /usr/local/bin/docker-image-cleanup

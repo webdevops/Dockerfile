@@ -1,5 +1,6 @@
-{% import 'Dockerfile/docker.jinja2' as docker %}
+{% import 'Dockerfile/docker.jinja2'    as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
+{% import 'Dockerfile/services.jinja2'  as services %}
 
 {% macro alpine(role='') -%}
 # Install php environment
@@ -63,6 +64,7 @@ RUN /usr/local/bin/apk-install \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # PECL workaround, see webdevops/Dockerfile#78
     && sed -i "s/ -n / /" $(which pecl) \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -96,6 +98,7 @@ RUN echo "deb http://packages.dotdeb.org {{ distribution }} all" >> /etc/apt/sou
         php7.0-memcached \
         php-apcu \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -142,6 +145,7 @@ RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
         php7.0-mbstring \
         php-apcu \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -177,6 +181,7 @@ RUN /usr/local/bin/apt-install \
         php-memcache \
         php-memcached \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -211,6 +216,7 @@ RUN /usr/local/bin/apt-install \
         php-redis \
         php-memcached \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -260,6 +266,7 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && rm -rf /tmp/* \
     && echo "extension=redis.so" > /etc/php.d/redis.ini \
     && yum remove -y ImageMagick-devel php70w-devel gcc make \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

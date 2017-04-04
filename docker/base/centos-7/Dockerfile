@@ -42,7 +42,6 @@ RUN /usr/local/bin/yum-install \
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/yum-install \
         python \
-        cronie \
         supervisor \
         syslog-ng \
         wget \

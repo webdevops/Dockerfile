@@ -20,12 +20,6 @@ COPY conf/ /opt/docker/
 
 # Install services
 RUN /usr/local/bin/apt-install \
-        # Install services
-        openssh-server \
-        mariadb-client \
-        sqlite \
-        dnsmasq \
-        postfix \
         # Install common tools
         sudo \
         zip \

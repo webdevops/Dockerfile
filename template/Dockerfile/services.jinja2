@@ -1,0 +1,11 @@
+{% macro php() -%}
+    # Enable php services
+    && /opt/docker/bin/control.sh service.enable cron
+{%- endmacro %}
+
+{% macro phpDev() -%}
+    # Enable php development services
+    && /opt/docker/bin/control.sh service.enable ssh \
+    && /opt/docker/bin/control.sh service.enable postfix
+{%- endmacro %}
+

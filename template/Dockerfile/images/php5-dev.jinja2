@@ -1,5 +1,7 @@
-{% import 'Dockerfile/docker.jinja2' as docker %}
+{% import 'Dockerfile/docker.jinja2'    as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
+{% import 'Dockerfile/services.jinja2'  as services %}
+
 
 {% macro alpine(role='') -%}
 # Install development environment
@@ -8,6 +10,7 @@ RUN /usr/local/bin/apk-install \
         graphviz \
         # Install php development stuff
         php5-xdebug \
+    {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -23,6 +26,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         php-pecl-xdebug \
         blackfire-php \
         blackfire-agent \
+    {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -36,6 +40,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         php56w-pecl-xdebug \
         blackfire-php \
         blackfire-agent \
+    {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -51,6 +56,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         php5-xdebug \
         blackfire-php \
         blackfire-agent \
+    {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -67,6 +73,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         php5-xdebug \
         blackfire-php \
         blackfire-agent \
+    {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

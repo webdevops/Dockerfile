@@ -1,11 +1,5 @@
 ---
 
-- name: Move dnsmasq group (Alpine family)
-  group:
-    name: dnsmasq
-    gid:  153
-  when: ansible_distribution == 'Alpine'
-
 - name: Create application group
   group:
     name:  "{{ APPLICATION_GROUP }}"

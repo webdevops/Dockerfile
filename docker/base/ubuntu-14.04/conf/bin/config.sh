@@ -2,6 +2,11 @@
 
 shopt -s nullglob
 
+IMAGE_FAMILY=$(cat /etc/dockerimage_distribution_family)
+IMAGE_DISTRIBUTION=$(cat /etc/dockerimage_distribution)
+IMAGE_DISTRIBUTION_VERSION=$(cat /etc/dockerimage_distribution_version)
+IMAGE_DISTRIBUTION_CODENAME=$(cat /etc/dockerimage_lsb_codename)
+
 ###
  # Check if current user is root
  #

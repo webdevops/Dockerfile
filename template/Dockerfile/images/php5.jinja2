@@ -1,5 +1,6 @@
-{% import 'Dockerfile/docker.jinja2' as docker %}
+{% import 'Dockerfile/docker.jinja2'    as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
+{% import 'Dockerfile/services.jinja2'  as services %}
 
 {% macro alpine(role='') -%}
 # Install php environment
@@ -58,6 +59,7 @@ RUN /usr/local/bin/apk-install \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # PECL workaround, see webdevops/Dockerfile#78
     && sed -i "s/ -n / /" $(which pecl) \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -105,6 +107,7 @@ RUN /usr/local/bin/yum-install \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Cleanup
     && yum erase -y php-devel gcc \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -147,6 +150,7 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Cleanup
     && yum erase -y php-devel gcc \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -182,6 +186,7 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -220,6 +225,7 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -257,6 +263,7 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -293,6 +300,7 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -331,6 +339,7 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -362,6 +371,7 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

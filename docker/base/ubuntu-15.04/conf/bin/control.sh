@@ -102,8 +102,24 @@ case "$CONTROL_COMMAND" in
 
     "service.enable")
         SERVICE_FILE="/opt/docker/etc/supervisor.d/$1.conf"
-        if [ -f "$SERVICE_FILE" ]; then
-            sed -i '/autostart = /c\autostart = true' -- "$SERVICE_FILE"
+        PROVISION_FILE="/opt/docker/provision/service.d/$1.sh"
+
+        if [[ -f "$PROVISION_FILE" ]]; then
+            echo "Running provisioning for $1, please wait..."
+
+            ## execute scripts
+            . "$PROVISION_FILE"
+
+            ## remove directory (one run time)
+            rm -f -- "$PROVISION_FILE"
+        fi
+
+        if [[ -f "$SERVICE_FILE" ]]; then
+            go-replace \
+                -s 'autostart =' \
+                -r 'autostart = true' \
+                --replace-line \
+                -- "$SERVICE_FILE"
         else
             echo "[ERROR] Service '${1}' not found (tried ${SERVICE_FILE})"
             exit 1
@@ -112,8 +128,12 @@ case "$CONTROL_COMMAND" in
 
     "service.disable")
         SERVICE_FILE="/opt/docker/etc/supervisor.d/$1.conf"
-        if [ -f "$SERVICE_FILE" ]; then
-            sed -i '/autostart = /c\autostart = false' -- "$SERVICE_FILE"
+        if [[ -f "$SERVICE_FILE" ]]; then
+            go-replace \
+                -s 'autostart =' \
+                -r 'autostart = false' \
+                --replace-line \
+                -- "$SERVICE_FILE"
         else
             echo "[ERROR] Service '${1}' not found (tried ${SERVICE_FILE})"
             exit 1

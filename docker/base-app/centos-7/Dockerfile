@@ -20,11 +20,6 @@ COPY conf/ /opt/docker/
 
 # Install services
 RUN /usr/local/bin/yum-install \
-        openssh-server \
-        mysql \
-        sqlite \
-        dnsmasq \
-        postfix \
         # Install tools
         sudo \
         zip \

@@ -20,12 +20,6 @@ COPY conf/ /opt/docker/
 
 RUN /usr/local/bin/apk-install-edge shadow \
     && /usr/local/bin/apk-install \
-        # Install services
-        openssh \
-        mysql-client \
-        sqlite \
-        dnsmasq \
-        postfix \
         # Install common tools
         sudo \
         zip \
