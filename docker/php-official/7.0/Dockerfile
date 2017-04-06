@@ -92,7 +92,6 @@ RUN chmod +x /opt/docker/bin/* \
         supervisor \
         syslog-ng \
         syslog-ng-core \
-        cron \
         wget \
         curl \
         net-tools \
@@ -104,12 +103,6 @@ RUN chmod +x /opt/docker/bin/* \
 
 # Install services
 RUN /usr/local/bin/apt-install \
-        # Install services
-        openssh-server \
-        mysql-client \
-        sqlite \
-        dnsmasq \
-        postfix \
         # Install common tools
         sudo \
         zip \
