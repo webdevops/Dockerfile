@@ -31,8 +31,7 @@ done
 
 # Replace ;#CLEAR_ENV_WORKAROUND# with environment variable list for all php-fpm pool files
 go-replace \
-    -s ";#CLEAR_ENV_WORKAROUND#" \
-    -r "$VARIABLE_LIST" \
+    -s ";#CLEAR_ENV_WORKAROUND#" -r "$VARIABLE_LIST" \
     --path=/opt/docker/etc/php/fpm/pool.d/ \
     --path-pattern= '*.conf' \
     --ignore-empty

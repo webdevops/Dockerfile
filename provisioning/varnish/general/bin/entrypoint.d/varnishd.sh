@@ -33,13 +33,10 @@ if [[ -z "$VARNISH_PORT" ]]; then
     exit 1
 fi
 
-if [[ -n "$VARNISH_BACKEND_HOST" ]]; then
-    go-replace -s "<VARNISH_BACKEND_HOST>" -r "$VARNISH_BACKEND_HOST" "$VARNISH_CONFIG"
-fi
-
-if [[ -n "$VARNISH_BACKEND_PORT" ]]; then
-    go-replace -s "<VARNISH_BACKEND_PORT>" -r "$VARNISH_BACKEND_PORT" "$VARNISH_CONFIG"
-fi
+go-replace \
+    -s "<VARNISH_BACKEND_HOST>" -r "$VARNISH_BACKEND_HOST" \
+    -s "<VARNISH_BACKEND_PORT>" -r "$VARNISH_BACKEND_PORT" \
+    -- "$VARNISH_CONFIG"
 
 echo " Starting varnishd..."
 echo "     listening on: 0.0.0.0:${VARNISH_PORT}"
