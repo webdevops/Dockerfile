@@ -1,0 +1,14 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
+{% import 'Dockerfile/provision.jinja2' as provision %}
+
+{% macro official(role='') -%}
+# Install php environment
+RUN /usr/local/bin/apt-install \
+        # Install tools
+        imagemagick \
+        graphicsmagick \
+        ghostscript \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ provision.runRoleInline('php', role) }} \
+    {{ docker.cleanup() }}
+{%- endmacro %}

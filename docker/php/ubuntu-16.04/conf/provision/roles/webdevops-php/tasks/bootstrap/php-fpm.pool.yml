@@ -1,44 +1,18 @@
 ---
-- name: Get php version
-  command: "php -r 'echo phpversion();'"
-  changed_when: true
-  register: php_version_cmd
-  ignore_errors: true
 
-- name: Set php_version version
-  set_fact:
-     php_version: "{{php_version_cmd.stdout}}"
+- set_fact:
+     php_clear_env_available: False
 
-- debug:
-    msg: "PHP-Version: {{php_version}}"
+- set_fact:
+     php_clear_env_available: True
+  when: ( php_version | version_compare('5.4', 'eq') and php_version | version_compare('5.4.27', 'ge') ) or
+        ( php_version | version_compare('5.5', 'eq') and php_version | version_compare('5.5.11', 'ge') ) or
+        ( php_version | version_compare('5.6', 'ge') )
 
-- name: Set php pool file
-  set_fact:
-     php_pool_conf: www.conf
-     php_pool_dir:  /etc/php-fpm.d
-  when: ansible_os_family == 'RedHat'
-
-- name: Set php pool file
-  set_fact:
-     php_pool_conf: www.conf
-     php_pool_dir:  /etc/php/7.0/fpm/pool.d
-  when: ansible_os_family == 'Debian'
-
-- name: Set php pool file
-  set_fact:
-     php_pool_conf: www.conf
-     php_pool_dir:  /etc/php7/php-fpm.d
-  when: ansible_os_family == 'Alpine'
-
-- name: Create php directories
+- name: Create /opt/docker/etc/php/fpm directory
   file:
-    path:  "{{ item }}"
+    path: "/opt/docker/etc/php/fpm"
     state: directory
-    mode:  0755
-    owner: "root"
-    group: "root"
-  with_items:
-    - /opt/docker/etc/php/fpm/
 
 - name: Move php-fpm pool directory file to /opt/docker/etc/php/
   command: "mv {{ php_pool_dir }}  /opt/docker/etc/php/fpm/pool.d"
@@ -55,7 +29,7 @@
     path: "{{ php_pool_dir }}"
     state: absent
 
-- name: Symlink php-fpm main file
+- name: Symlink php-fpm pool file
   file:
     path: "{{ php_pool_dir }}"
     src:  "/opt/docker/etc/php/fpm/pool.d"
@@ -63,8 +37,7 @@
     owner: "root"
     group: "root"
 
-
-- name: Configure php-fpm pool user (www.conf)
+- name: Configure php-fpm pool user (application.conf)
   lineinfile:
     dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
     regexp: '^[\s;]*{{ item.key }}[\s]*='
@@ -77,9 +50,37 @@
    - { key: 'slowlog',                     value: "/docker.stderr" }
    - { key: 'php_admin_value[error_log]',  value: "/docker.stderr" }
    - { key: 'php_admin_value[log_errors]', value: "on" }
-   - { key: 'clear_env',                   value: "no" }
    - { key: 'user',                        value: "{{ APPLICATION_USER }}" }
    - { key: 'group',                       value: "{{ APPLICATION_GROUP }}" }
+
+- name: Configure php-fpm pool user (application.conf)
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   ';{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: 'access.log', value: "/docker.stdout" }
+
+- name: Disable clear env in php-fpm pool
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: 'clear_env', value: "no" }
+  when: php_clear_env_available == True
+
+- name: Remove clear env workaround
+  file:
+    path: "/opt/docker/bin/service.d/php-fpm.d/11-clear-env.sh"
+    state: absent
+  when: php_clear_env_available == True
+
+- name: Append clear env workaround in php-fpm pool (old php-fpm versions)
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    line:   ';#CLEAR_ENV_WORKAROUND#'
+  when: php_clear_env_available == False
 
 - name: Disable php-fpm connection limit
   lineinfile:

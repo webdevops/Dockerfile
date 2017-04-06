@@ -1,20 +1,5 @@
 ---
 
-- name: Set php main file
-  set_fact:
-     php_main_conf: /etc/php-fpm.conf
-  when: ansible_os_family == 'RedHat'
-
-- name: Set php main file
-  set_fact:
-     php_main_conf: /etc/php/7.0/fpm/php-fpm.conf
-  when: ansible_os_family == 'Debian'
-
-- name: Set php main file
-  set_fact:
-     php_main_conf: /etc/php7/php-fpm.conf
-  when: ansible_os_family == 'Alpine'
-
 - name: Create php directories
   file:
     path:  "{{ item }}"
@@ -43,11 +28,20 @@
     owner: "root"
     group: "root"
 
-- name: Configure php-fpm main
+- name: Configure php-fpm main (all versions)
   lineinfile:
     dest:   '/opt/docker/etc/php/fpm/php-fpm.conf'
     regexp: '^[\s;]*{{ item.key }}[\s]*='
     line:   '{{ item.key }} = {{ item.value }}'
   with_items:
-   - { key: 'error_log',                   value: "syslog" }
-   - { key: 'pid',                         value: "/var/run/php-fpm.pid" }
+   - { key: 'error_log', value: "/docker.stderr" }
+   - { key: 'pid',       value: "/var/run/php-fpm.pid" }
+
+- name: Configure php-fpm main (php 5.x)
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/php-fpm.conf'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: 'daemonize', value: 'no' }
+  when: ( php_version | version_compare('7.0.0', '<') )

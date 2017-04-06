@@ -170,7 +170,9 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         if image_env_list:
             image_env_list = image_env_list.to_dict().copy()
             for term in image_env_list:
-                if term in dockerfile['image']['fullname']:
+                regex = r'.*%s.*' % term
+                match = re.match(regex, dockerfile['image']['fullname'], re.IGNORECASE)
+                if match:
                     for key in image_env_list[term]:
                         ret[key] = str(image_env_list[term][key])
 

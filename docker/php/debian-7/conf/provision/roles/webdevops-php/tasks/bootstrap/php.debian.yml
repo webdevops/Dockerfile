@@ -1,0 +1,18 @@
+---
+
+- name: Link php.ini for cli and fpm [Debian family]
+  file:
+    src:  '{{ item.file }}'
+    dest: '{{ php_etc_dir }}/{{ item.category }}/conf.d/{{ item.target }}'
+    force: yes
+    state: link
+  with_items:
+  # PHP cli
+   - { category: 'cli', file: '/etc/php5/mods-available/mcrypt.ini',   target: '20-mcrypt.ini' }
+   - { category: 'cli', file: '/opt/docker/etc/php/php.webdevops.ini', target: '98-webdevops.ini' }
+   - { category: 'cli', file: '/opt/docker/etc/php/php.ini',           target: '99-docker.ini' }
+   # PHP fpm
+   - { category: 'fpm', file: '/etc/php5/mods-available/mcrypt.ini',   target: '20-mcrypt.ini' }
+   - { category: 'fpm', file: '/opt/docker/etc/php/php.webdevops.ini', target: '98-webdevops.ini' }
+   - { category: 'fpm', file: '/opt/docker/etc/php/php.ini',           target: '99-docker.ini' }
+  when: ansible_os_family == 'Debian'

@@ -4,4 +4,4 @@ source /opt/docker/bin/config.sh
 
 includeScriptDir "/opt/docker/bin/service.d/php-fpm.d/"
 
-exec /usr/sbin/php5-fpm
+exec /usr/local/bin/php-fpm

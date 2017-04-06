@@ -1,0 +1,10 @@
+---
+
+- name: Remove superfluous blackfire configuration file
+  file:
+    path:  '{{ item }}'
+    state: absent
+  with_items:
+    - /etc/php5/cli/conf.d/zz-blackfire.ini
+    - /etc/php5/fpm/conf.d/zz-blackfire.ini
+  when: ansible_distribution == 'Debian' and dockerimage_distribution_version|int >= 7

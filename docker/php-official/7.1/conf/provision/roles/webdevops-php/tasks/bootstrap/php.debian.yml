@@ -1,0 +1,11 @@
+---
+
+- name: Link php.ini for cli and fpm [Official PHP]
+  file:
+    src:  '{{ item.file }}'
+    dest: '{{ php_etc_dir }}/conf.d/{{ item.target }}'
+    force: yes
+    state: link
+  with_items:
+   - { category: 'cli', file: '/opt/docker/etc/php/php.webdevops.ini', target: '98-webdevops.ini' }
+   - { category: 'cli', file: '/opt/docker/etc/php/php.ini',           target: '99-docker.ini' }

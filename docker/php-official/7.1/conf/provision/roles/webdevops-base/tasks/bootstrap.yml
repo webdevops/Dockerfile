@@ -1,0 +1,8 @@
+---
+
+- include: bootstrap/system.yml
+- include: bootstrap/misc.yml
+- include: bootstrap/root.yml
+- include: bootstrap/supervisor.yml
+- include: bootstrap/syslog-ng.yml
+- include: bootstrap/pam.yml

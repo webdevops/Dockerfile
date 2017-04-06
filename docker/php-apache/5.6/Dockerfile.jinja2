@@ -1,0 +1,12 @@
+{{ docker.from("php", "5.6") }}
+
+{{ docker.version() }}
+
+{{ environment.web() }}
+{{ environment.webPhp() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ apache.debian8('php-apache') }}
+
+{{ docker.expose('80 443') }}

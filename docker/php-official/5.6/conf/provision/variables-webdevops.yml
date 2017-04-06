@@ -1,0 +1,7 @@
+---
+
+dockerimage_distribution_family:  "{{ lookup('file', '/etc/dockerimage_distribution_family') }}"
+dockerimage_distribution:         "{{ lookup('file', '/etc/dockerimage_distribution') }}"
+dockerimage_distribution_version: "{{ lookup('file', '/etc/dockerimage_distribution_version') }}"
+dockerimage_lsb_release:          "{{ lookup('file', '/etc/dockerimage_lsb_release') }}"
+dockerimage_lsb_codename:         "{{ lookup('file', '/etc/dockerimage_lsb_codename') }}"

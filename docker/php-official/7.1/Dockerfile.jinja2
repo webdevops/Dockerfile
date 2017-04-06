@@ -1,0 +1,24 @@
+{{ docker.fromOfficial("php", "7.1-fpm") }}
+
+{{ docker.version() }}
+
+{{ environment.general() }}
+{{ environment.app() }}
+
+{{ docker.add('baselayout.tar', '/') }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ bootstrap.debian('jessie') }}
+
+{{ ansible.debian() }}
+
+{{ base.debian() }}
+
+{{ baseapp.debian() }}
+
+{{ php.official() }}
+
+{{ docker.expose('9000') }}
+{{ docker.entrypoint("/opt/docker/bin/entrypoint.sh") }}
+{{ docker.cmd("supervisord") }}

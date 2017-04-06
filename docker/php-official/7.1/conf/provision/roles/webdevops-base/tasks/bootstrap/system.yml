@@ -1,0 +1,33 @@
+---
+
+- name: Create /entrypoint.d
+  file:
+    path: "/entrypoint.d"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode:  0700
+
+- name: Create /entrypoint.cmd
+  file:
+    src:  '/opt/docker/bin/entrypoint.d'
+    dest: '/entrypoint.cmd'
+    state: link
+    force: yes
+
+- name: Remove system logrotate and cronjobs (not needed)
+  file:
+    path: '{{ item }}'
+    state: absent
+  with_items:
+  # Debian/Ubuntu
+    - /etc/cron.daily/logrotate
+    - /etc/cron.daily/apt-compat
+    - /etc/cron.daily/dpkg
+    - /etc/cron.daily/passwd
+  # RedHat
+    - /etc/cron.daily/0yum-daily.cron
+    - /etc/cron.daily/logrotate
+    - /etc/cron.hourly/0yum-hourly.cron
+  # Alpine
+    - /etc/periodic/daily/logrotate

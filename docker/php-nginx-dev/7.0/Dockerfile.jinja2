@@ -1,0 +1,13 @@
+{{ docker.from("php-dev", "7.0") }}
+
+{{ docker.version() }}
+
+{{ environment.web() }}
+{{ environment.webPhp() }}
+{{ environment.webDevelopment() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ nginx.debian('php-nginx nginx-dev php-dev') }}
+
+{{ docker.expose('80 443') }}

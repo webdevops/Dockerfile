@@ -1,18 +1,5 @@
 ---
 
-- name: Get php version
-  command: "php -r 'echo phpversion();'"
-  changed_when: true
-  register: php_version_cmd
-  ignore_errors: true
-
-- name: Set php_version version
-  set_fact:
-     php_version: "{{php_version_cmd.stdout}}"
-
-- debug:
-    msg: "PHP-Version: {{php_version}}"
-
 - set_fact:
      php_clear_env_available: False
 
@@ -22,23 +9,10 @@
         ( php_version | version_compare('5.5', 'eq') and php_version | version_compare('5.5.11', 'ge') ) or
         ( php_version | version_compare('5.6', 'ge') )
 
-- name: Set php pool file
-  set_fact:
-     php_pool_conf: www.conf
-     php_pool_dir:  /etc/php-fpm.d
-  when: ansible_os_family == 'RedHat'
-
-- name: Set php pool file
-  set_fact:
-     php_pool_conf: www.conf
-     php_pool_dir:  /etc/php5/fpm/pool.d
-  when: ansible_os_family == 'Debian'
-
-- name: Set php pool file
-  set_fact:
-     php_pool_conf: www.conf
-     php_pool_dir: /etc/php5/fpm.d
-  when: ansible_os_family == 'Alpine'
+- name: Create /opt/docker/etc/php/fpm directory
+  file:
+    path: "/opt/docker/etc/php/fpm"
+    state: directory
 
 - name: Move php-fpm pool directory file to /opt/docker/etc/php/
   command: "mv {{ php_pool_dir }}  /opt/docker/etc/php/fpm/pool.d"
@@ -55,7 +29,7 @@
     path: "{{ php_pool_dir }}"
     state: absent
 
-- name: Symlink php-fpm main file
+- name: Symlink php-fpm pool file
   file:
     path: "{{ php_pool_dir }}"
     src:  "/opt/docker/etc/php/fpm/pool.d"
@@ -72,6 +46,7 @@
    - { key: 'listen',                      value: "0.0.0.0:9000" }
    - { key: 'catch_workers_output',        value: "yes" }
    - { key: 'access.format',               value: '[php-fpm:access] %R - %u %t "%m %r%Q%q" %s %f %{mili}d %{kilo}M %C%%' }
+   - { key: 'access.log',                  value: "/docker.stdout" }
    - { key: 'slowlog',                     value: "/docker.stderr" }
    - { key: 'php_admin_value[error_log]',  value: "/docker.stderr" }
    - { key: 'php_admin_value[log_errors]', value: "on" }

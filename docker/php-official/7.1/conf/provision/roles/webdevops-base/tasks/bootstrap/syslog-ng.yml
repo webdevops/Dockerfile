@@ -1,0 +1,33 @@
+---
+
+- name: Get syslog-ng version
+  shell: "syslog-ng --version | grep -E -e '^syslog-ng[ ]+[0-9]+\\.[0-9]+' | head -n 1 | awk '{print $2}' | cut -f 1,2 -d ."
+  register: syslogng_version
+
+- name: Configure syslog-ng (default)
+  lineinfile:
+    dest:   /etc/default/syslog-ng
+    regexp: '^[\s]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }}="{{ item.value }}"'
+    create: yes
+  with_items:
+   - { key: 'SYSLOGNG_OPTS',  value: '--no-caps' }
+
+- name: Enable syslog-ng config
+  file:
+    src:  '/opt/docker/etc/syslog-ng/syslog-ng.conf'
+    dest: '/etc/syslog-ng/syslog-ng.conf'
+    state: link
+    force: yes
+
+- name: Set version of syslog-ng file
+  lineinfile:
+    dest:   '/etc/syslog-ng/syslog-ng.conf'
+    regexp: '^@version:'
+    line:   '@version: {{ syslogng_version.stdout }}'
+
+- name: Ensure /var/lib/syslog-ng exists
+  file:
+    path:    '/var/lib/syslog-ng'
+    state:   directory
+    recurse: yes

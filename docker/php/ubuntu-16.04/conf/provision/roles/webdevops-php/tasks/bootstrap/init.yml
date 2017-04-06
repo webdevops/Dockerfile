@@ -1,0 +1,71 @@
+---
+
+- name: Get php version
+  command: "php -r 'echo phpversion();'"
+  changed_when: true
+  register: php_version_cmd
+  ignore_errors: true
+
+- name: Set php_version version
+  set_fact:
+     php_version: "{{php_version_cmd.stdout}}"
+
+#############################
+# PHP 5.x
+#############################
+
+- name: Set php main file (RedHat, PHP 5.x)
+  set_fact:
+     php_main_conf: /etc/php-fpm.conf
+     php_pool_conf: www.conf
+     php_pool_dir:  /etc/php-fpm.d
+     php_fpm_bin:   /usr/sbin/php-fpm
+  when: ansible_os_family == 'RedHat' and ( php_version | version_compare('7.0.0', '<') )
+
+- name: Set php main file (Debian, PHP 5.x)
+  set_fact:
+     php_etc_dir:   /etc/php5
+     php_main_conf: /etc/php5/fpm/php-fpm.conf
+     php_pool_conf: www.conf
+     php_pool_dir:  /etc/php5/fpm/pool.d
+     php_fpm_bin:   /usr/sbin/php5-fpm
+  when: ansible_os_family == 'Debian' and ( php_version | version_compare('7.0.0', '<') )
+
+- name: Set php main file (Alpine, PHP 5.x)
+  set_fact:
+     php_etc_dir:   /etc/php5
+     php_main_conf: /etc/php5/php-fpm.conf
+     php_pool_conf: www.conf
+     php_pool_dir:  /etc/php5/fpm.d
+     php_fpm_bin:   /usr/bin/php-fpm5
+  when: ansible_os_family == 'Alpine' and ( php_version | version_compare('7.0.0', '<') )
+
+#############################
+# PHP 7.x
+#############################
+
+- name: Set php main file (RedHat, PHP 7.x)
+  set_fact:
+     php_main_conf: /etc/php-fpm.conf
+     php_pool_conf: www.conf
+     php_pool_dir:  /etc/php-fpm.d
+     php_fpm_bin:   /usr/sbin/php-fpm
+  when: ansible_os_family == 'RedHat' and ( php_version | version_compare('7.0.0', '>=') ) and ( php_version | version_compare('8.0.0', '<') )
+
+- name: Set php main file (Debian, PHP 7.x)
+  set_fact:
+     php_etc_dir:   /etc/php/7.0
+     php_main_conf: /etc/php/7.0/fpm/php-fpm.conf
+     php_pool_conf: www.conf
+     php_pool_dir:  /etc/php/7.0/fpm/pool.d
+     php_fpm_bin:   /usr/sbin/php-fpm7.0
+  when: ansible_os_family == 'Debian' and ( php_version | version_compare('7.0.0', '>=') ) and ( php_version | version_compare('8.0.0', '<') )
+
+- name: Set php main file (Alpine, PHP 7.x)
+  set_fact:
+     php_etc_dir:   /etc/php7
+     php_main_conf: /etc/php7/php-fpm.conf
+     php_pool_conf: www.conf
+     php_pool_dir:  /etc/php7/php-fpm.d
+     php_fpm_bin:   /usr/sbin/php-fpm7
+  when: ansible_os_family == 'Alpine' and ( php_version | version_compare('7.0.0', '>=') ) and ( php_version | version_compare('8.0.0', '<') )

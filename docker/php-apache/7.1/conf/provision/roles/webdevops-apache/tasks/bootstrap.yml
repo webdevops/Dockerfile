@@ -1,0 +1,156 @@
+---
+
+- name: Set apache vhost file [RedHat family]
+  set_fact:
+     apache_main_path:    /etc/httpd/
+     apache_docker_vhost: /etc/httpd/conf.d/zzz-docker.conf
+  when: ansible_os_family == 'RedHat'
+
+- name: Set apache vhost file [Debian family]
+  set_fact:
+     apache_main_path:    /etc/apache2/
+     apache_docker_vhost: /etc/apache2/sites-enabled/10-docker.conf
+  when: ansible_os_family == 'Debian'
+
+- name: Set apache vhost file [Alpine family]
+  set_fact:
+     apache_main_path:    /etc/apache2/
+     apache_docker_vhost: /etc/apache2/conf.d/zzz-docker.conf
+  when: ansible_os_family == 'Alpine'
+
+- name: Enable apache main config
+  file:
+    src:  '/opt/docker/etc/httpd/main.conf'
+    dest: '{{ apache_docker_vhost }}'
+    state: link
+    force: yes
+
+- name: Ensure document root is available
+  file:
+    path:    "{{ DOCUMENT_ROOT }}"
+    state:   directory
+    recurse: yes
+
+- name: Ensure /var/run/apache2 exists
+  file:
+    path:    '/var/run/apache2'
+    state:   directory
+    recurse: yes
+
+- name: Ensure /run/apache2 exists
+  file:
+    path:    '/run/apache2'
+    state:   directory
+    recurse: yes
+  when: ansible_os_family == 'Alpine'
+
+- name: Find apache2 files
+  shell: "find '{{ apache_main_path }}' -type f -iname '*.conf' -o -iname 'default*' -o -iname '*log'"
+  register: apache2_conf_files
+
+- name: Change CustomLog to Docker stdout
+  replace:
+    dest:  '{{ item }}'
+    regexp: '^[\s]*CustomLog ([^\s]+)(.*)'
+    replace: 'CustomLog /docker.stdout \2'
+  with_items: "{{ apache2_conf_files.stdout_lines }}"
+
+- name: Change CustomLog to Docker stdout
+  replace:
+    dest:  '{{ item }}'
+    regexp: '^[\s]*ErrorLog ([^\s]+)(.*)'
+    replace: 'ErrorLog /docker.stdout \2'
+  with_items: "{{ apache2_conf_files.stdout_lines }}"
+
+- name: Change TransferLog to Docker stdout
+  replace:
+    dest:  '{{ item }}'
+    regexp: '^[\s]*TransferLog ([^\s]+)(.*)'
+    replace: 'TransferLog /docker.stdout \2'
+  with_items: "{{ apache2_conf_files.stdout_lines }}"
+
+- name: Switch MPM to worker [RedHat family]
+  lineinfile:
+    dest:   '/etc/httpd/conf.modules.d/00-mpm.conf'
+    regexp: '^[\s#]*{{ item.line }}'
+    line:   '{{ item.prefix }}{{ item.line }}'
+  with_items:
+   - { line: 'LoadModule mpm_prefork_module modules/mod_mpm_prefork.so', prefix: "#" }
+   - { line: 'LoadModule mpm_event_module modules/mod_mpm_event.so',   prefix: "" }
+  when: ansible_os_family == 'RedHat'
+
+- name: Switch MPM to event for Apache 2.4 and higher [Ubuntu family]
+  command: "{{ item }}"
+  with_items:
+   - 'a2dismod mpm_event'
+   - 'a2enmod mpm_event'
+  when: (ansible_distribution == 'Ubuntu' and dockerimage_distribution_version|int >= 14) or (ansible_distribution == 'Debian' and dockerimage_distribution_version|int >= 8)
+
+- name: Manage modules [Alpine family]
+  lineinfile:
+    dest:   '/etc/apache2/httpd.conf'
+    regexp: '^[\s#]*{{ item.line }}'
+    line:   '{{ item.prefix }}{{ item.line }}'
+  with_items:
+   - { line: 'LoadModule mpm_prefork_module modules/mod_mpm_prefork.so', prefix: "#" }
+   - { line: 'LoadModule mpm_event_module modules/mod_mpm_event.so',     prefix: "" }
+   - { line: 'LoadModule deflate_module modules/mod_deflate.so',         prefix: "" }
+   - { line: 'LoadModule rewrite_module modules/mod_rewrite.so',         prefix: "" }
+   - { line: 'LoadModule logio_module modules/mod_logio.so',             prefix: "" }
+   - { line: 'LoadModule slotmem_shm_module modules/mod_slotmem_shm.so', prefix: "" }
+   - { line: 'LoadModule actions_module modules/mod_actions.so',         prefix: "" }
+   - { line: 'LoadModule expires_module modules/mod_expires.so',         prefix: "" }
+  when: ansible_os_family == 'Alpine'
+
+- name: Fix ssl support [Alpine family]
+  lineinfile:
+    dest:   '/etc/apache2/conf.d/ssl.conf'
+    regexp: '{{ item.regexp }}'
+    line:   '{{ item.line }}'
+  with_items:
+   - { regexp: 'LoadModule ssl_module',           line: 'LoadModule ssl_module /usr/lib/apache2/mod_ssl.so' }
+   - { regexp: 'LoadModule socache_shmcb_module', line: 'LoadModule socache_shmcb_module /usr/lib/apache2/mod_socache_shmcb.so' }
+  when: ansible_os_family == 'Alpine'
+
+- name: Remove default vhost from ssl configuration [Alpine family]
+  command: sed -i -e '1h;2,$H;$!d;g' -e 's/<VirtualHost.*<\/VirtualHost>/#-> removed vhost/g' /etc/apache2/conf.d/ssl.conf
+  when: ansible_os_family == 'Alpine'
+
+- name: Disable proxy [Alpine family]
+  lineinfile:
+    dest:   '/etc/apache2/conf.d/proxy.conf'
+    regexp: '^[\s#]*{{ item.line }}'
+    line:   '{{ item.prefix }}{{ item.line }}'
+  with_items:
+   - { line: 'LoadModule proxy_ajp_module modules/mod_proxy_ajp.so',           prefix: "#" }
+   - { line: 'LoadModule proxy_connect_module modules/mod_proxy_connect.so',   prefix: "#" }
+   - { line: 'LoadModule proxy_balancer_module modules/mod_proxy_balancer.so', prefix: "#" }
+   - { line: 'LoadModule proxy_express_module modules/mod_proxy_express.so',   prefix: "#" }
+   - { line: 'LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so',         prefix: "" }
+   - { line: 'LoadModule proxy_fdpass_module modules/mod_proxy_fdpass.so',     prefix: "#" }
+   - { line: 'LoadModule proxy_ftp_module modules/mod_proxy_ftp.so',           prefix: "#" }
+   - { line: 'LoadModule proxy_http_module modules/mod_proxy_http.so',         prefix: "#" }
+   - { line: 'LoadModule proxy_scgi_module modules/mod_proxy_scgi.so',         prefix: "#" }
+  when: ansible_os_family == 'Alpine'
+
+- name: Fix rights of ssl files
+  file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    mode:  "{{ item.mode }}"
+    owner: "root"
+    group: "root"
+  with_items:
+    - { path: '/opt/docker/etc/httpd/ssl',            state: 'directory', mode: '0750' }
+    - { path: '/opt/docker/etc/httpd/ssl/server.crt', state: 'file',      mode: '0640' }
+    - { path: '/opt/docker/etc/httpd/ssl/server.csr', state: 'file',      mode: '0640' }
+    - { path: '/opt/docker/etc/httpd/ssl/server.key', state: 'file',      mode: '0640' }
+
+- name: Maintain lock directory [Debian family]
+  file:
+    path: "/var/lock/apache2"
+    state: "directory"
+    mode:  "0750"
+    owner: "www-data"
+    group: "www-data"
+  when: ansible_os_family == 'Debian'

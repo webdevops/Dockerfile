@@ -1,0 +1,12 @@
+---
+
+- name: Create link for additional php.ini [RedHat family]
+  file:
+    src:  '/opt/docker/etc/php/{{ item.file }}'
+    dest: '/etc/php.d/{{ item.target }}'
+    state: link
+    force: yes
+  with_items:
+    - { file: 'php.webdevops.ini', target: 'zza-webdevops.ini'}
+    - { file: 'php.ini',           target: 'zzz-docker.ini'}
+  when: ansible_os_family == 'RedHat'
