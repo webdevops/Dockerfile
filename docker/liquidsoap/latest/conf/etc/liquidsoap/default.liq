@@ -10,24 +10,26 @@ set("log.file.path","/dev/null")
 set("log.stdout", true)
 
 # Use the telnet server for requests
-{{if .Env.LIQUIBASE_TELNET}}
+{{if .Env.LIQUIDSOAP_TELNET}}
 set("server.telnet", true)
+{{else}}
+set("server.telnet", false)
 {{end}}
 
 ##################
 # Settings
 ##################
 
-DJ_stream = "{{.Env.LIQUIBASE_STREAM_INPUT}}"
+DJ_stream = "{{.Env.LIQUIDSOAP_STREAM_INPUT}}"
 
-PLAYLIST_default = {{.Env.LIQUIBASE_PLAYLIST_DEFAULT}}
-PLAYLIST_day     = {{.Env.LIQUIBASE_PLAYLIST_DAY}}
-PLAYLIST_night   = {{.Env.LIQUIBASE_PLAYLIST_NIGHT}}
+PLAYLIST_default = {{.Env.LIQUIDSOAP_PLAYLIST_DEFAULT}}
+PLAYLIST_day     = {{.Env.LIQUIDSOAP_PLAYLIST_DAY}}
+PLAYLIST_night   = {{.Env.LIQUIDSOAP_PLAYLIST_NIGHT}}
 
-META_name  = "{{.Env.LIQUIBASE_META_NAME}}"
-META_genre = "{{.Env.LIQUIBASE_META_GENRE}}"
-META_url   = "{{.Env.LIQUIBASE_META_URL}}"
-META_desc  = "{{.Env.LIQUIBASE_META_DESCRIPTION}}"
+META_name  = "{{.Env.LIQUIDSOAP_META_NAME}}"
+META_genre = "{{.Env.LIQUIDSOAP_META_GENRE}}"
+META_url   = "{{.Env.LIQUIDSOAP_META_URL}}"
+META_desc  = "{{.Env.LIQUIDSOAP_META_DESCRIPTION}}"
 
 ## fetch dj stream
 DJ_input  = input.http(DJ_stream)
@@ -39,8 +41,8 @@ DJ_input  = input.http(DJ_stream)
 # otherwise one of our playlists,
 # and the default file if anything goes wrong.
 PLAYLIST_input = fallback([
-	switch([({ {{.Env.LIQUIBASE_PLAYLIST_DAY_TIMERANGE}} }, PLAYLIST_day),
-                ({ {{.Env.LIQUIBASE_PLAYLIST_NIGHT_TIMERANGE}} }, PLAYLIST_night)]),
+	switch([({ {{.Env.LIQUIDSOAP_PLAYLIST_DAY_TIMERANGE}} }, PLAYLIST_day),
+                ({ {{.Env.LIQUIDSOAP_PLAYLIST_NIGHT_TIMERANGE}} }, PLAYLIST_night)]),
 	PLAYLIST_default
 ])
 
@@ -51,7 +53,7 @@ PLAYLIST_input = smart_crossfade(fade_out=0.5, fade_in=0.5, PLAYLIST_input)
 PLAYLIST_input = rewrite_metadata(
 	[
 	    ("title", "$(title)"),
-        ("comment", "{{.Env.LIQUIBASE_META_URL}}")
+        ("comment", "{{.Env.LIQUIDSOAP_META_URL}}")
     ],
     PLAYLIST_input
 )
@@ -63,24 +65,24 @@ ALL_input = fallback(track_sensitive=false, [DJ_input, PLAYLIST_input])
 # Output
 #################
 
-{{.Env.LIQUIBASE_OUTPUT}}
-{{.Env.LIQUIBASE_OUTPUT_1}}
-{{.Env.LIQUIBASE_OUTPUT_2}}
-{{.Env.LIQUIBASE_OUTPUT_3}}
-{{.Env.LIQUIBASE_OUTPUT_4}}
-{{.Env.LIQUIBASE_OUTPUT_5}}
-{{.Env.LIQUIBASE_OUTPUT_6}}
-{{.Env.LIQUIBASE_OUTPUT_7}}
-{{.Env.LIQUIBASE_OUTPUT_8}}
-{{.Env.LIQUIBASE_OUTPUT_9}}
-{{.Env.LIQUIBASE_OUTPUT_10}}
-{{.Env.LIQUIBASE_OUTPUT_11}}
-{{.Env.LIQUIBASE_OUTPUT_12}}
-{{.Env.LIQUIBASE_OUTPUT_13}}
-{{.Env.LIQUIBASE_OUTPUT_14}}
-{{.Env.LIQUIBASE_OUTPUT_15}}
-{{.Env.LIQUIBASE_OUTPUT_16}}
-{{.Env.LIQUIBASE_OUTPUT_17}}
-{{.Env.LIQUIBASE_OUTPUT_18}}
-{{.Env.LIQUIBASE_OUTPUT_19}}
-{{.Env.LIQUIBASE_OUTPUT_20}}
+{{.Env.LIQUIDSOAP_OUTPUT}}
+{{.Env.LIQUIDSOAP_OUTPUT_1}}
+{{.Env.LIQUIDSOAP_OUTPUT_2}}
+{{.Env.LIQUIDSOAP_OUTPUT_3}}
+{{.Env.LIQUIDSOAP_OUTPUT_4}}
+{{.Env.LIQUIDSOAP_OUTPUT_5}}
+{{.Env.LIQUIDSOAP_OUTPUT_6}}
+{{.Env.LIQUIDSOAP_OUTPUT_7}}
+{{.Env.LIQUIDSOAP_OUTPUT_8}}
+{{.Env.LIQUIDSOAP_OUTPUT_9}}
+{{.Env.LIQUIDSOAP_OUTPUT_10}}
+{{.Env.LIQUIDSOAP_OUTPUT_11}}
+{{.Env.LIQUIDSOAP_OUTPUT_12}}
+{{.Env.LIQUIDSOAP_OUTPUT_13}}
+{{.Env.LIQUIDSOAP_OUTPUT_14}}
+{{.Env.LIQUIDSOAP_OUTPUT_15}}
+{{.Env.LIQUIDSOAP_OUTPUT_16}}
+{{.Env.LIQUIDSOAP_OUTPUT_17}}
+{{.Env.LIQUIDSOAP_OUTPUT_18}}
+{{.Env.LIQUIDSOAP_OUTPUT_19}}
+{{.Env.LIQUIDSOAP_OUTPUT_20}}
