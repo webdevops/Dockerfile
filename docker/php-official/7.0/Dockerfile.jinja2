@@ -3,7 +3,9 @@
 {{ docker.version() }}
 
 {{ environment.general() }}
-{{ environment.app() }}
+{{ environment.base() }}
+{{ environment.baseApp() }}
+
 
 {{ docker.add('baselayout.tar', '/') }}
 

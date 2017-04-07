@@ -2,7 +2,7 @@
 
 {{ docker.version() }}
 
-{{ environment.app() }}
+{{ environment.baseApp() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
