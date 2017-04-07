@@ -1,0 +1,8 @@
+---
+
+- include: bootstrap/tools.yml
+- include: bootstrap/php-fpm.yml
+- include: bootstrap/php-module.yml
+- include: bootstrap/php-module.opcache.yml
+- include: bootstrap/php-module.xdebug.yml
+- include: bootstrap/php-module.blackfire.yml
