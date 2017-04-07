@@ -64,8 +64,6 @@ RUN set -x \
 ###############################################################################
 
 ENV DOCKER_CONF_HOME /opt/docker/
-ENV LOG_STDOUT ""
-ENV LOG_STDERR ""
 
 COPY conf/ /opt/docker/
 
@@ -118,6 +116,8 @@ ENV APPLICATION_GROUP application
 ENV APPLICATION_PATH  /app
 ENV APPLICATION_UID   1000
 ENV APPLICATION_GID   1000
+ENV LOG_STDOUT ""
+ENV LOG_STDERR ""
 
 # Install services
 RUN /usr/local/bin/apt-install \

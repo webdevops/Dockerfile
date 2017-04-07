@@ -115,10 +115,8 @@ case "$CONTROL_COMMAND" in
         fi
 
         if [[ -f "$SERVICE_FILE" ]]; then
-            go-replace \
-                -s 'autostart =' \
-                -r 'autostart = true' \
-                --replace-line \
+            go-replace --mode=line \
+                -s 'autostart =' -r 'autostart = true' \
                 -- "$SERVICE_FILE"
         else
             echo "[ERROR] Service '${1}' not found (tried ${SERVICE_FILE})"
@@ -129,10 +127,8 @@ case "$CONTROL_COMMAND" in
     "service.disable")
         SERVICE_FILE="/opt/docker/etc/supervisor.d/$1.conf"
         if [[ -f "$SERVICE_FILE" ]]; then
-            go-replace \
-                -s 'autostart =' \
-                -r 'autostart = false' \
-                --replace-line \
+            go-replace --mode=line \
+                -s 'autostart =' -r 'autostart = false' \
                 -- "$SERVICE_FILE"
         else
             echo "[ERROR] Service '${1}' not found (tried ${SERVICE_FILE})"

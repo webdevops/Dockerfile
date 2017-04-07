@@ -16,14 +16,7 @@ case "$IMAGE_FAMILY" in
 esac
 
 # Configuration
-go-replace \
-    -s '^[\s]*user[\s]*=' \
-    -r 'user = root' \
-    --replace-line
-    /etc/dnsmasq.conf
-
-go-replace \
-    -s '^[\s]*conf-dir[\s]*=' \
-    -r 'conf-dir = /etc/dnsmasq.d' \
-    --replace-line
-    /etc/dnsmasq.conf
+go-replace --mode=line \
+    -s '^[\s]*user[\s]*=' -r 'user = root' \
+    -s '^[\s]*conf-dir[\s]*=' -r 'conf-dir = /etc/dnsmasq.d' \
+    -- /etc/dnsmasq.conf

@@ -6,8 +6,6 @@ ENV LC_ALL "{{ charset }}"
 
 {% macro homePath() -%}
 ENV DOCKER_CONF_HOME /opt/docker/
-ENV LOG_STDOUT ""
-ENV LOG_STDERR ""
 {%- endmacro %}
 
 {% macro mailbox() -%}
@@ -43,6 +41,8 @@ ENV APPLICATION_GROUP application
 ENV APPLICATION_PATH  /app
 ENV APPLICATION_UID   1000
 ENV APPLICATION_GID   1000
+ENV LOG_STDOUT ""
+ENV LOG_STDERR ""
 {%- endmacro %}
 
 {% macro liquibase(version, driver, classpath) -%}
