@@ -45,7 +45,6 @@ dockerTest:
       ':centos':
         OS_FAMILY: 'redhat'
       ':alpine':
-        PHP_MHASH: '0'
         PHP_REDIS: '0'
       ':ubuntu-12.04':
         PHP_REDIS: '0'
@@ -61,6 +60,7 @@ dockerTest:
       'php[^:]*:[0-9]':
         OS_FAMILY: 'debian'
         OS_VERSION: '8'
+        PHP_OFFICIAL: '1'
       '/liquibase':
         OS_FAMILY: 'alpine'
         OS_VERSION: '3'

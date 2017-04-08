@@ -43,7 +43,7 @@
     regexp: '^[\s;]*{{ item.key }}[\s]*='
     line:   '{{ item.key }} = {{ item.value }}'
   with_items:
-   - { key: 'listen',                      value: "0.0.0.0:9000" }
+   - { key: 'listen',                      value: "[::]:9000" }
    - { key: 'catch_workers_output',        value: "yes" }
    - { key: 'access.format',               value: '[php-fpm:access] %R - %u %t "%m %r%Q%q" %s %f %{mili}d %{kilo}M %C%%' }
    - { key: 'access.log',                  value: "/docker.stdout" }

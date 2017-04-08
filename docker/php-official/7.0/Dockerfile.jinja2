@@ -19,7 +19,7 @@
 
 {{ baseapp.debian() }}
 
-{{ php.official() }}
+{{ php.official(version='7.0') }}
 
 {{ docker.expose('9000') }}
 {{ docker.entrypoint("/opt/docker/bin/entrypoint.sh") }}

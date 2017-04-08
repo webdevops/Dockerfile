@@ -20,7 +20,7 @@ shared_examples 'php::modules' do
         its(:stdout) { should     contain('hash') }
         its(:stdout) { should     contain('iconv') }
         its(:stdout) { should     contain('json') }
-        its(:stdout) { should     contain('ldap') }
+        #its(:stdout) { should     contain('ldap') }
         its(:stdout) { should     contain('libxml') }
         its(:stdout) { should     contain('mbstring') }
         its(:stdout) { should     contain('mysqli') }
@@ -48,7 +48,7 @@ shared_examples 'php::modules' do
         its(:stdout) { should     contain('tokenizer') }
         its(:stdout) { should     contain('xml') }
         its(:stdout) { should     contain('xmlreader') }
-        its(:stdout) { should     contain('xmlrpc') }
+        #its(:stdout) { should     contain('xmlrpc') }
         its(:stdout) { should     contain('xmlwriter') }
         its(:stdout) { should     contain('xsl') }
         its(:stdout) { should     contain('zip') }
@@ -96,14 +96,6 @@ shared_examples 'php5::modules' do
     describe command('php -m') do
         its(:stdout) { should     contain('shmop') }
 
-        if ( $testConfiguration[:phpMhash] )
-            its(:stdout) { should     contain('mhash') }
-        else
-            its(:stdout) { should_not contain('mhash') }
-        end
-
-        its(:stdout) { should     contain('wddx') }
-
         if ( $testConfiguration[:phpRedis] )
             its(:stdout) { should     contain('redis') }
         else
@@ -148,7 +140,7 @@ shared_examples 'php-fpm::modules' do
         its(:stdout) { should     contain('hash') }
         its(:stdout) { should     contain('iconv') }
         its(:stdout) { should     contain('json') }
-        its(:stdout) { should     contain('ldap') }
+        #its(:stdout) { should     contain('ldap') }
         its(:stdout) { should     contain('libxml') }
         its(:stdout) { should     contain('mbstring') }
         its(:stdout) { should     contain('mysqli') }

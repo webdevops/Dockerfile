@@ -133,6 +133,59 @@ RUN /usr/local/bin/apt-install \
         imagemagick \
         graphicsmagick \
         ghostscript \
+        # Libraries
+        libldap-2.4-2 \
+        libxslt1.1 \
+        zlib1g \
+        libpng12-0 \
+        libmcrypt4 \
+        # Dev and headers
+        libbz2-dev \
+        libldap2-dev \
+        libldb-dev \
+        libmcrypt-dev \
+        libxml2-dev \
+        libxslt1-dev \
+        zlib1g-dev \
+        libpng12-dev \
+    # Install extensions
+    && docker-php-ext-install \
+        bcmath \
+        bz2 \
+        calendar \
+        exif \
+        gettext \
+        mysqli \
+        mcrypt \
+        hash \
+        pcntl \
+        pdo_mysql \
+        soap \
+        sockets \
+        tokenizer \
+        sysvmsg \
+        sysvsem \
+        sysvshm \
+        shmop \
+        xsl \
+        zip \
+        gd \
+        gettext \
+        opcache \
+    # Uninstall dev and header packages
+    && apt-get purge -y -f --force-yes \
+        libbz2-dev \
+        libldap2-dev \
+        libldb-dev \
+        libmcrypt-dev \
+        libxml2-dev \
+        libxslt1-dev \
+        zlib1g-dev \
+        libpng12-dev \
+    # Install extensions for PHP 7.x
+    && pecl install apcu redis \
+    && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
+    && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh \

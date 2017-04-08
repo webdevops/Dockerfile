@@ -33,6 +33,7 @@
     dest:   '/opt/docker/etc/php/fpm/php-fpm.conf'
     regexp: '^[\s;]*{{ item.key }}[\s]*='
     line:   '{{ item.key }} = {{ item.value }}'
+    insertafter: '\[global\]'
   with_items:
    - { key: 'error_log', value: "/docker.stderr" }
    - { key: 'pid',       value: "/var/run/php-fpm.pid" }
