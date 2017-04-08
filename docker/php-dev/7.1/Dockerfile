@@ -16,12 +16,10 @@ COPY conf/ /opt/docker/
 RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
     && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
     && /usr/local/bin/apt-install \
-        # Install tools
-        graphviz \
-        # Install php development stuff
-        php5-xdebug \
         blackfire-php \
         blackfire-agent \
+    && pecl install xdebug \
+    && echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
     # Enable php development services
     && /opt/docker/bin/control.sh service.enable ssh \
     && /opt/docker/bin/control.sh service.enable postfix \

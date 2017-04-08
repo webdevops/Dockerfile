@@ -168,7 +168,7 @@ shared_examples 'php-fpm::modules' do
         its(:stdout) { should     contain('tokenizer') }
         its(:stdout) { should     contain('xml') }
         its(:stdout) { should     contain('xmlreader') }
-        its(:stdout) { should     contain('xmlrpc') }
+        # its(:stdout) { should     contain('xmlrpc') }
         its(:stdout) { should     contain('xmlwriter') }
         its(:stdout) { should     contain('xsl') }
         its(:stdout) { should     contain('zip') }
@@ -215,14 +215,6 @@ end
 shared_examples 'php-fpm5::modules' do
     describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
         its(:stdout) { should     contain('shmop') }
-
-        if ( $testConfiguration[:phpMhash] )
-            its(:stdout) { should     contain('mhash') }
-        else
-            its(:stdout) { should_not contain('mhash') }
-        end
-
-        its(:stdout) { should     contain('wddx') }
 
         if ( $testConfiguration[:phpRedis] )
             its(:stdout) { should     contain('redis') }

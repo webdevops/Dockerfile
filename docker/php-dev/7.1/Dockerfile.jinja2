@@ -4,4 +4,4 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ php5dev.debian() }}
+{{ php.officialDevelopment(version="7.1") }}

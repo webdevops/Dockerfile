@@ -185,10 +185,13 @@ RUN /usr/local/bin/apt-install \
     && pecl install apcu redis \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
+    && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh \
     && /usr/local/bin/docker-image-cleanup
+
+WORKDIR /
 
 EXPOSE 9000
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]

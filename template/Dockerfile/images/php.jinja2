@@ -1,5 +1,6 @@
-{% import 'Dockerfile/docker.jinja2' as docker %}
+{% import 'Dockerfile/docker.jinja2'    as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
+{% import 'Dockerfile/services.jinja2'  as services %}
 
 {% macro official(role='', version='') -%}
 # Install php environment
@@ -68,7 +69,25 @@ RUN /usr/local/bin/apt-install \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
 {%- endif %}
+    && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     {{ provision.runRoleInline('php', role) }} \
+    {{ docker.cleanup() }}
+
+WORKDIR /
+{%- endmacro %}
+
+
+{% macro officialDevelopment(role='', version='') -%}
+# Install development environment
+RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
+    && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
+    && /usr/local/bin/apt-install \
+        blackfire-php \
+        blackfire-agent \
+    && pecl install xdebug \
+    && echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
+    {{ services.phpDev() }} \
+    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

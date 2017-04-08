@@ -15,7 +15,8 @@ PHP_CONF_PATHS="
 /etc/php5/fpm/conf.d
 /etc/php/7.0/mods-available
 /etc/php/7.0/cli/conf.d
-/etc/php/7.0/fpm/conf.d"
+/etc/php/7.0/fpm/conf.d
+/usr/local/etc/php/conf.d/"
 
 function phpModuleRemove() {
     if [ "$#" -ne 1 ]; then

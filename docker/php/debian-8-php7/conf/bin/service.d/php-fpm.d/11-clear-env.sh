@@ -33,6 +33,6 @@ done
 go-replace \
     -s ";#CLEAR_ENV_WORKAROUND#" -r "$VARIABLE_LIST" \
     --path=/opt/docker/etc/php/fpm/pool.d/ \
-    --path-pattern= '*.conf' \
+    --path-pattern='*.conf' \
     --ignore-empty
 

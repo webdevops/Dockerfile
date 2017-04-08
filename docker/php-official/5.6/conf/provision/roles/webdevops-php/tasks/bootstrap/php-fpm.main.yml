@@ -43,6 +43,7 @@
     dest:   '/opt/docker/etc/php/fpm/php-fpm.conf'
     regexp: '^[\s;]*{{ item.key }}[\s]*='
     line:   '{{ item.key }} = {{ item.value }}'
+    insertbefore: '[\s]*include[\s]*='
   with_items:
    - { key: 'daemonize', value: 'no' }
   when: ( php_version | version_compare('7.0.0', '<') )

@@ -57,6 +57,15 @@
   lineinfile:
     dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
     regexp: '^[\s;]*{{ item.key }}[\s]*='
+    line:   '{{ item.key }} = {{ item.value }}'
+  with_items:
+   - { key: 'listen',                      value: "0.0.0.0:9000" }
+  when: php_version | version_compare('5.5.99', '<=')
+
+- name: Configure php-fpm pool user (application.conf)
+  lineinfile:
+    dest:   '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    regexp: '^[\s;]*{{ item.key }}[\s]*='
     line:   ';{{ item.key }} = {{ item.value }}'
   with_items:
    - { key: 'access.log', value: "/docker.stdout" }
