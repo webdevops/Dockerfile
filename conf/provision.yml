@@ -6,7 +6,7 @@ provision:
     configuration:
       base/general: '*'
       base/centos: centos-*
-      base/alpine: alpine-*
+      base/alpine: alpine
   base-app:
     configuration:
       base-app/general: '*'
@@ -14,7 +14,7 @@ provision:
     configuration:
       apache/general    : '*'
       apache/centos     : centos-*
-      apache/alpine     : alpine-*
+      apache/alpine     : alpine
   apache-dev:
     configuration:
       apache-dev/general: '*'
@@ -22,7 +22,7 @@ provision:
     configuration:
       nginx/general     : '*'
       nginx/centos      : centos-*
-      nginx/alpine      : alpine-*
+      nginx/alpine      : alpine
   nginx-dev:
     configuration:
       nginx-dev/general : '*'
@@ -42,18 +42,18 @@ provision:
     configuration:
       php/general       : '(debian|ubuntu|centos|alpine)'
       php/ubuntu-12.04  : ubuntu-12.04
-      php/alpine        : alpine-*
+      php/alpine        : alpine
   php-apache:
     configuration:
       apache/general    : '*'
       apache/centos     : centos-*
-      apache/alpine     : alpine-*
+      apache/alpine     : alpine
       php-apache/general: '*'
   php-nginx:
     configuration:
       nginx/general     : '*'
       nginx/centos      : centos-*
-      nginx/alpine      : alpine-*
+      nginx/alpine      : alpine
       php-nginx/general : '*'
   php-dev:
     configuration:
@@ -63,7 +63,7 @@ provision:
     configuration:
       apache/general    : '*'
       apache/centos     : centos-*
-      apache/alpine     : alpine-*
+      apache/alpine     : alpine
       php-apache/general: '*'
       php-dev/general   : '*'
       apache-dev/general: '*'
@@ -71,7 +71,7 @@ provision:
     configuration:
       nginx/general     : '*'
       nginx/centos      : centos-*
-      nginx/alpine      : alpine-*
+      nginx/alpine      : alpine
       php-nginx/general : '*'
       php-dev/general   : '*'
       nginx-dev/general : '*'
