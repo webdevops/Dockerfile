@@ -1,9 +1,9 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/php-dev:alpine
+# Dockerfile for webdevops/php-dev:alpine-php5
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/php:alpine-3
+FROM webdevops/php:alpine
 
 COPY conf/ /opt/docker/
 

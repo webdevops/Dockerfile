@@ -1,5 +1,5 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/bootstrap:alpine
+# Dockerfile for webdevops/bootstrap:alpine-php5
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 

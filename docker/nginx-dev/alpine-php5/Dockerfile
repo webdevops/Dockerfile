@@ -1,9 +1,9 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/nginx-dev:alpine
+# Dockerfile for webdevops/nginx-dev:alpine-php5
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/nginx:alpine-3
+FROM webdevops/nginx:alpine
 
 ENV WEB_DOCUMENT_ROOT=/app \
     WEB_DOCUMENT_INDEX=index.php \

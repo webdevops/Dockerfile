@@ -1,9 +1,9 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/ansible:alpine
+# Dockerfile for webdevops/ansible:alpine-php5
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/bootstrap:alpine-3
+FROM webdevops/bootstrap:alpine
 
 # Install ansible
 RUN /usr/local/bin/apk-install \

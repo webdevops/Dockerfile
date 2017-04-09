@@ -1,9 +1,9 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/base:alpine
+# Dockerfile for webdevops/base:alpine-php5
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/bootstrap:alpine-3
+FROM webdevops/bootstrap:alpine
 
 ENV DOCKER_CONF_HOME=/opt/docker/ \
     LOG_STDOUT="" \
@@ -36,7 +36,6 @@ RUN /usr/local/bin/apk-install \
 # Install services
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apk-install \
-        python \
         supervisor \
         syslog-ng \
         wget \

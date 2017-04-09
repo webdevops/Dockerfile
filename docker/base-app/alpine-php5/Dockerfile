@@ -1,9 +1,9 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/base-app:alpine
+# Dockerfile for webdevops/base-app:alpine-php5
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base:alpine-3
+FROM webdevops/base:alpine
 
 ENV APPLICATION_USER=application \
     APPLICATION_GROUP=application \

@@ -3,7 +3,7 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/bootstrap:alpine-3
+FROM webdevops/bootstrap:alpine
 
 RUN /usr/local/bin/apk-install \
     # General python

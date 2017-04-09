@@ -3,7 +3,7 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base:alpine-3
+FROM webdevops/base:alpine
 
 ENV VARNISH_PORT    80
 

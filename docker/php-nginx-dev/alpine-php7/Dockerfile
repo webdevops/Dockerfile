@@ -1,9 +1,9 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/php-nginx-dev:alpine-3-php7
+# Dockerfile for webdevops/php-nginx-dev:alpine-php7
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/php-dev:alpine-3-php7
+FROM webdevops/php-dev:alpine-php7
 
 ENV WEB_DOCUMENT_ROOT=/app \
     WEB_DOCUMENT_INDEX=index.php \
