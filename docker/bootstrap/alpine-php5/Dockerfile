@@ -48,7 +48,7 @@ RUN set -x \
     && gosu nobody true \
     && apk del .gosu-deps \
     ## Install go-replace
-    && GOREPLACE_VERSION=0.5.3 \
+    && GOREPLACE_VERSION=0.5.4 \
     && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
     && chmod +x /usr/local/bin/go-replace \
     && /usr/local/bin/docker-image-cleanup
