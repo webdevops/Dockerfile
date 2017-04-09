@@ -1,6 +1,11 @@
 ====================== ========================== ===============
 Tag                    Distribution name          PHP Version
 ====================== ========================== ===============
+``alpine``             *link to alpine-php7*      PHP 7.x
+``alpine-php7``                                   PHP 7.x
+``alpine-php5``                                   PHP 5.6
+``alpine-3``           *deprecated*               PHP 5.6
+``alpine-3-php7``      *deprecated*               PHP 7.x
 ``ubuntu-12.04``       precise                    PHP 5.3
 ``ubuntu-14.04``       trusty (LTS)               PHP 5.5
 ``ubuntu-15.04``       vivid                      PHP 5.6
