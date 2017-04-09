@@ -98,6 +98,9 @@ shared_examples 'base::layout' do
         "/opt/docker/bin/entrypoint.d/noop.sh",
         "/opt/docker/bin/entrypoint.d/root.sh",
         "/opt/docker/bin/entrypoint.d/supervisord.sh",
+        "/usr/local/bin/service",
+        "/usr/local/bin/docker-service-enable",
+        "/usr/local/bin/docker-service-disable",
     ].each do |file|
         describe file("#{file}") do
             # Type check
