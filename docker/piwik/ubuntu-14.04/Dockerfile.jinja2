@@ -1,7 +1,5 @@
 {{ docker.from("php-nginx", "ubuntu-14.04") }}
 
-{{ docker.version() }}
-
 ENV WEB_DOCUMENT_ROOT  /app/piwik/
 ENV PIWIK_URL          http://example.com/
 

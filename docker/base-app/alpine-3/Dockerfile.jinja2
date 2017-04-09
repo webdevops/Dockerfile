@@ -1,7 +1,5 @@
 {{ docker.from("base", "alpine-3") }}
 
-{{ docker.version() }}
-
 {{ environment.baseApp() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}

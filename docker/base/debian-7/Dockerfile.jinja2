@@ -1,7 +1,5 @@
 {{ docker.from("bootstrap", "debian-7") }}
 
-{{ docker.version() }}
-
 {{ environment.base() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}

@@ -1,7 +1,5 @@
 {{ docker.from("base-app") }}
 
-{{ docker.version() }}
-
 {{ ssh.ubuntu() }}
 
 {{ docker.expose('22') }}

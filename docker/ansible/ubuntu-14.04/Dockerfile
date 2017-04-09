@@ -5,11 +5,6 @@
 
 FROM webdevops/bootstrap:ubuntu-14.04
 
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
-
 # Install ansible
 RUN /usr/local/bin/apt-install \
         python-minimal \

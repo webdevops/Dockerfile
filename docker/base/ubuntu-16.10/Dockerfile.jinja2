@@ -1,7 +1,5 @@
 {{ docker.from("bootstrap", "ubuntu-16.10") }}
 
-{{ docker.version() }}
-
 {{ environment.base() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}

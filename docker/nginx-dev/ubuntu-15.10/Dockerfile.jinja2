@@ -1,7 +1,5 @@
 {{ docker.from("nginx", "ubuntu-15.10") }}
 
-{{ docker.version() }}
-
 {{ environment.web() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}

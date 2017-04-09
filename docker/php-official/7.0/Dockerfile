@@ -22,7 +22,6 @@ ENV APPLICATION_PATH  /app
 ENV APPLICATION_UID   1000
 ENV APPLICATION_GID   1000
 
-
 ADD baselayout.tar /
 
 COPY conf/ /opt/docker/

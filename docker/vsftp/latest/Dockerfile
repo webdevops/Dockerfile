@@ -5,11 +5,6 @@
 
 FROM webdevops/base:latest
 
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
-
 ENV FTP_USER     application
 ENV FTP_PASSWORD application
 ENV FTP_UID      1000

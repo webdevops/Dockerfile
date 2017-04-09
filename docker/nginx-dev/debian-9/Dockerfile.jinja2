@@ -1,7 +1,5 @@
 {{ docker.from("nginx", "debian-9") }}
 
-{{ docker.version() }}
-
 {{ environment.web() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}

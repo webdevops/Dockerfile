@@ -1,7 +1,5 @@
 {{ docker.from("apache", "alpine-3") }}
 
-{{ docker.version() }}
-
 {{ environment.web() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}

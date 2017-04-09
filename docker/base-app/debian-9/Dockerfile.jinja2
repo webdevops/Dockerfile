@@ -1,7 +1,5 @@
 {{ docker.from("base", "debian-9") }}
 
-{{ docker.version() }}
-
 {{ environment.baseApp() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}

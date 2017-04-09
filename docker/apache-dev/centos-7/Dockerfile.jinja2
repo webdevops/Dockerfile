@@ -1,7 +1,5 @@
 {{ docker.from("apache", "centos-7") }}
 
-{{ docker.version() }}
-
 {{ environment.web() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
