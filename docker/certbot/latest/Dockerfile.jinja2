@@ -1,4 +1,4 @@
-{{ docker.from("bootstrap","alpine-3") }}
+{{ docker.from("bootstrap","alpine") }}
 
 {{ docker.volume('/etc/letsencrypt') }}
 {{ docker.volume('/var/www') }}

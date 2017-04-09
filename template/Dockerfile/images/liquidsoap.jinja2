@@ -7,12 +7,3 @@ RUN /usr/local/bin/apt-install \
         liquidsoap \
     {{ docker.cleanup() }}
 {%- endmacro %}
-  libasound2-plugins alsa-utils libcamomile-ocaml-dev file libsox-fmt-all
-  festival icecast2 liguidsoap liquidsoap-plugin-samplerate
-  liquidsoap-plugin-xmlplaylist mplayer perl-doc libterm-readline-gnu-perl
-  | libterm-readline-perl-perl make
-Recommended packages:
-  liquidsoap-plugin-faad liquidsoap-plugin-flac liquidsoap-plugin-icecast
-  liquidsoap-plugin-lame liquidsoap-plugin-mad liquidsoap-plugin-pulseaudio
-  liquidsoap-plugin-taglib liquidsoap-plugin-voaacenc liquidsoap-plugin-vorbis
-  logrotate mp3gain vorbis-tools vorbisgain netbase rename

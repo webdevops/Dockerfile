@@ -4,10 +4,12 @@ ENV TERM="xterm" \
     LC_ALL="{{ charset }}"
 {%- endmacro %}
 
+
 {% macro mailbox() -%}
 ENV MAILBOX_USERNAME="dev" \
     MAILBOX_PASSWORD="dev"
 {%- endmacro %}
+
 
 {% macro web() -%}
 ENV WEB_DOCUMENT_ROOT=/app \
@@ -15,13 +17,16 @@ ENV WEB_DOCUMENT_ROOT=/app \
     WEB_ALIAS_DOMAIN=*.vm
 {%- endmacro %}
 
+
 {% macro webPhp() -%}
 ENV WEB_PHP_SOCKET=127.0.0.1:9000
 {%- endmacro %}
 
+
 {% macro webDevelopment() -%}
 ENV WEB_NO_CACHE_PATTERN="\.(css|js|gif|png|jpg|svg|json|xml)$"
 {%- endmacro %}
+
 
 {% macro ftp() -%}
 ENV FTP_USER=application \
@@ -38,14 +43,15 @@ ENV DOCKER_CONF_HOME=/opt/docker/ \
     LOG_STDERR=""
 {%- endmacro %}
 
+
 {% macro baseApp() -%}
 ENV APPLICATION_USER=application \
     APPLICATION_GROUP=application \
     APPLICATION_PATH=/app \
     APPLICATION_UID=1000 \
     APPLICATION_GID=1000
-
 {%- endmacro %}
+
 
 {% macro liquibase(version, driver, classpath) -%}
 ENV LIQUIBASE_VERSION="{{ version }}" \
