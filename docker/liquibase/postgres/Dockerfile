@@ -5,20 +5,20 @@
 
 FROM java:latest
 
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
+LABEL maintainer=info@webdevops.io \
+      vendor=WebDevOps.io \
+      io.webdevops.layout=8 \
+      io.webdevops.version=1.5.0
 
-ENV LIQUIBASE_VERSION   "3.5.3"
-ENV LIQUIBASE_DRIVER    "org.postgresql.Driver"
-ENV LIQUIBASE_CLASSPATH "/usr/share/java/postgresql.jar"
-ENV LIQUIBASE_URL       ""
-ENV LIQUIBASE_USERNAME  ""
-ENV LIQUIBASE_PASSWORD  ""
-ENV LIQUIBASE_CHANGELOG "liquibase.xml"
-ENV LIQUIBASE_CONTEXTS  ""
-ENV LIQUIBASE_OPTS      ""
+ENV LIQUIBASE_VERSION="3.5.3" \
+    LIQUIBASE_DRIVER="org.postgresql.Driver" \
+    LIQUIBASE_CLASSPATH="/usr/share/java/postgresql.jar" \
+    LIQUIBASE_URL="" \
+    LIQUIBASE_USERNAME="" \
+    LIQUIBASE_PASSWORD="" \
+    LIQUIBASE_CHANGELOG="liquibase.xml" \
+    LIQUIBASE_CONTEXTS="" \
+    LIQUIBASE_OPTS=""
 
 COPY conf/ /opt/docker/
 

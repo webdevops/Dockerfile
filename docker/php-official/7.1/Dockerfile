@@ -5,22 +5,22 @@
 
 FROM php:7.1-fpm
 
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
+LABEL maintainer=info@webdevops.io \
+      vendor=WebDevOps.io \
+      io.webdevops.layout=8 \
+      io.webdevops.version=1.5.0
 
-ENV TERM   "xterm"
-ENV LANG   "en_US.UTF-8"
-ENV LC_ALL "en_US.UTF-8"
-ENV DOCKER_CONF_HOME /opt/docker/
-ENV LOG_STDOUT ""
-ENV LOG_STDERR ""
-ENV APPLICATION_USER  application
-ENV APPLICATION_GROUP application
-ENV APPLICATION_PATH  /app
-ENV APPLICATION_UID   1000
-ENV APPLICATION_GID   1000
+ENV TERM="xterm" \
+    LANG="en_US.UTF-8" \
+    LC_ALL="en_US.UTF-8"
+ENV DOCKER_CONF_HOME=/opt/docker/ \
+    LOG_STDOUT="" \
+    LOG_STDERR=""
+ENV APPLICATION_USER=application \
+    APPLICATION_GROUP=application \
+    APPLICATION_PATH=/app \
+    APPLICATION_UID=1000 \
+    APPLICATION_GID=1000
 
 ADD baselayout.tar /
 

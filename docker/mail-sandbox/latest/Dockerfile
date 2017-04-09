@@ -5,8 +5,8 @@
 
 FROM webdevops/php-nginx:latest
 
-ENV MAILBOX_USERNAME "dev"
-ENV MAILBOX_PASSWORD "dev"
+ENV MAILBOX_USERNAME="dev" \
+    MAILBOX_PASSWORD="dev"
 
 COPY conf/ /opt/docker/
 

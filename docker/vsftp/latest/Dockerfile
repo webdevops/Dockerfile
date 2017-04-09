@@ -5,11 +5,11 @@
 
 FROM webdevops/base:latest
 
-ENV FTP_USER     application
-ENV FTP_PASSWORD application
-ENV FTP_UID      1000
-ENV FTP_GID      1000
-ENV FTP_PATH     /data/ftp/
+ENV FTP_USER=application \
+    FTP_PASSWORD=application \
+    FTP_UID=1000 \
+    FTP_GID=1000 \
+    FTP_PATH=/data/ftp/
 
 COPY conf/ /opt/docker/
 

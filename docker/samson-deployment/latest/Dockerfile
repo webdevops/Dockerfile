@@ -10,9 +10,9 @@ FROM zendesk/samson:latest
 # Bootstrap
 ###############################################################################
 
-ENV TERM   "xterm"
-ENV LANG   "en_US.UTF-8"
-ENV LC_ALL "en_US.UTF-8"
+ENV TERM="xterm" \
+    LANG="en_US.UTF-8" \
+    LC_ALL="en_US.UTF-8"
 
 ADD baselayout.tar /
 
@@ -58,9 +58,9 @@ RUN set -x \
 # Base
 ###############################################################################
 
-ENV DOCKER_CONF_HOME /opt/docker/
-ENV LOG_STDOUT ""
-ENV LOG_STDERR ""
+ENV DOCKER_CONF_HOME=/opt/docker/ \
+    LOG_STDOUT="" \
+    LOG_STDERR=""
 
 COPY conf/ /opt/docker/
 
@@ -108,11 +108,11 @@ RUN chmod +x /opt/docker/bin/* \
 # Base-app
 ###############################################################################
 
-ENV APPLICATION_USER  application
-ENV APPLICATION_GROUP application
-ENV APPLICATION_PATH  /app
-ENV APPLICATION_UID   1000
-ENV APPLICATION_GID   1000
+ENV APPLICATION_USER=application \
+    APPLICATION_GROUP=application \
+    APPLICATION_PATH=/app \
+    APPLICATION_UID=1000 \
+    APPLICATION_GID=1000
 
 # Install services
 RUN /usr/local/bin/apt-install \

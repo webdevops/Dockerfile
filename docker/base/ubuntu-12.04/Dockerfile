@@ -5,9 +5,9 @@
 
 FROM webdevops/bootstrap:ubuntu-12.04
 
-ENV DOCKER_CONF_HOME /opt/docker/
-ENV LOG_STDOUT ""
-ENV LOG_STDERR ""
+ENV DOCKER_CONF_HOME=/opt/docker/ \
+    LOG_STDOUT="" \
+    LOG_STDERR=""
 
 COPY conf/ /opt/docker/
 

@@ -5,10 +5,10 @@
 
 FROM webdevops/php:debian-8-php7
 
-ENV WEB_DOCUMENT_ROOT  /app
-ENV WEB_DOCUMENT_INDEX index.php
-ENV WEB_ALIAS_DOMAIN   *.vm
-ENV WEB_PHP_SOCKET  127.0.0.1:9000
+ENV WEB_DOCUMENT_ROOT=/app \
+    WEB_DOCUMENT_INDEX=index.php \
+    WEB_ALIAS_DOMAIN=*.vm
+ENV WEB_PHP_SOCKET=127.0.0.1:9000
 
 COPY conf/ /opt/docker/
 

@@ -5,14 +5,14 @@
 
 FROM solr:6.3.0
 
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
+LABEL maintainer=info@webdevops.io \
+      vendor=WebDevOps.io \
+      io.webdevops.layout=8 \
+      io.webdevops.version=1.5.0
 
-ENV TERM   "xterm"
-ENV LANG   "C.UTF-8"
-ENV LC_ALL "C.UTF-8"
+ENV TERM="xterm" \
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
 
 USER root
 

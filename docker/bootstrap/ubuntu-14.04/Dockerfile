@@ -5,14 +5,14 @@
 
 FROM ubuntu:14.04
 
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
+LABEL maintainer=info@webdevops.io \
+      vendor=WebDevOps.io \
+      io.webdevops.layout=8 \
+      io.webdevops.version=1.5.0
 
-ENV TERM   "xterm"
-ENV LANG   "en_US.UTF-8"
-ENV LC_ALL "en_US.UTF-8"
+ENV TERM="xterm" \
+    LANG="en_US.UTF-8" \
+    LC_ALL="en_US.UTF-8"
 
 ADD baselayout.tar /
 
