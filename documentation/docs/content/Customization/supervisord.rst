@@ -1,6 +1,6 @@
-=================
-Supervisor Daemon
-=================
+============================
+Supervisor Daemon (Services)
+============================
 
 .. important:: Supervisor is only available in Docker images which are based on ``webdevops/base``!
 
@@ -9,6 +9,17 @@ Introduction
 
 Supervisor daemon is used to start and supervise more than one process in Docker containers. More about supervisor can
 be found on supervisor homepage at http://supervisord.org/
+
+Enable and disable services
+---------------------------
+
+For enabling services run `docker-service-enable` or `docker-service-disable` inside your Dockerfile.
+
+eg::
+
+    RUN docker-service-enable ssh
+
+This task will also trigger an auto installation if the daemon is not installed.
 
 Configuration
 -------------

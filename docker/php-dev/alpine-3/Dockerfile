@@ -19,8 +19,8 @@ RUN /usr/local/bin/apk-install \
         # Install php development stuff
         php5-xdebug \
     # Enable php development services
-    && /opt/docker/bin/control.sh service.enable ssh \
-    && /opt/docker/bin/control.sh service.enable postfix \
+    && docker-service-enable ssh \
+    && docker-service-enable postfix \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-dev --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh \
     && /usr/local/bin/docker-image-cleanup

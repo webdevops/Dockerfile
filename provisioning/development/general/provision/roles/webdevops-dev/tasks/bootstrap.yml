@@ -1,8 +1,5 @@
 ---
 
-- name: Enable ssh daemon
-  shell: "/opt/docker/bin/control.sh service.enable ssh"
-
 - name: Set application user password
   user:
     name:     "{{ APPLICATION_USER }}"

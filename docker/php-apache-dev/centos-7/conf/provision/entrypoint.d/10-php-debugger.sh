@@ -41,7 +41,7 @@ if [[ -n "${PHP_DEBUGGER+x}" ]]; then
         blackfire)
             echo "PHP-Debugger: Blackfire enabled"
             phpModuleRemove "xdebug"
-            /opt/docker/bin/control.sh service.enable blackfire-agent
+            docker-service-enable blackfire-agent
             ;;
 
         none)
