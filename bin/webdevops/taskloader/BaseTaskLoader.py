@@ -23,8 +23,11 @@ from webdevops import DockerfileUtility
 from doit.cmd_base import TaskLoader
 from doit.task import dict_to_task
 
+
 class BaseTaskLoader(TaskLoader):
     configuration = False
+    reporter = False
+    TASK_COUNT = 0
 
     def __init__(self, configuration):
         """
@@ -32,7 +35,6 @@ class BaseTaskLoader(TaskLoader):
         """
         # Build configuration as namespace object
         self.configuration = configuration
-
 
     def process_tasklist(self, tasklist):
         """
@@ -43,6 +45,8 @@ class BaseTaskLoader(TaskLoader):
             ret.append(dict_to_task(task))
 
         print 'Starting execution of %s tasks...' % (len(ret))
+
+        BaseTaskLoader.TASK_COUNT = len(ret)
 
         return ret
 

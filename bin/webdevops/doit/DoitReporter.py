@@ -293,7 +293,8 @@ class DoitReporter(object):
         return 'duration: %s' % str(datetime.timedelta(seconds=int(duration)))
 
     def calc_progress(self):
-        return 'task #%s' % (self.task_finished)
+        percentage = 100 * float(self.task_finished)/float(BaseTaskLoader.TASK_COUNT)
+        return 'task %s/%s, progress %d%%' % (self.task_finished, BaseTaskLoader.TASK_COUNT, percentage)
 
     def writeln(self, text=''):
         """
