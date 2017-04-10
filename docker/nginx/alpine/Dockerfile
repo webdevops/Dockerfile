@@ -1,5 +1,5 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/nginx:alpine-php5
+# Dockerfile for webdevops/nginx:alpine
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
