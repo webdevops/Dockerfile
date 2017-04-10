@@ -99,6 +99,8 @@ class DoitReporter(object):
 
     show_out = False
     show_err = False
+    task_finished = 0
+    task_total = 0
 
     def __init__(self, outstream, options=None): #pylint: disable=W0613
         # result is sent to stdout when doit finishes running
@@ -130,15 +132,19 @@ class DoitReporter(object):
         """
         self.t_results[task.name].start()
 
+
     def add_failure(self, task, exception):
         """
         called when excution finishes with a failure
         """
         self.t_results[task.name].set_result('fail', exception.get_msg())
 
+        self.task_finished += 1
+
         if task.actions and (task.name[0] != '_'):
             duration = self.duration(self.t_results[task.name].elapsed)
-            self.writeln(colored('.  %s FAILED (%s)' % (BaseTaskLoader.human_task_name(task.title()), duration), 'red'))
+            progress = self.calc_progress()
+            self.writeln(colored('.  %s FAILED (%s, #%s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'red'))
         self.failures.append({'task': task, 'exception': exception})
 
     def add_success(self, task):
@@ -147,9 +153,12 @@ class DoitReporter(object):
         """
         self.t_results[task.name].set_result('success')
 
+        self.task_finished += 1
+
         if task.actions and (task.name[0] != '_'):
             duration = self.duration(self.t_results[task.name].elapsed)
-            self.writeln(colored('.  %s finished (%s)' % (BaseTaskLoader.human_task_name(task.title()), duration), 'green'))
+            progress = self.calc_progress()
+            self.writeln(colored('.  %s finished (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'green'))
 
     def skip_uptodate(self, task):
         """
@@ -282,6 +291,9 @@ class DoitReporter(object):
         Calculate duration (seconds) to human readable time
         """
         return 'duration: %s' % str(datetime.timedelta(seconds=int(duration)))
+
+    def calc_progress(self):
+        return 'task #%s' % (self.task_finished)
 
     def writeln(self, text=''):
         """
