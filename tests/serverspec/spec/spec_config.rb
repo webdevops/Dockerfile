@@ -49,8 +49,8 @@ if ((os[:family] == 'ubuntu' and os[:version] == '12.04') or
     (os[:family] == 'redhat' and os[:version] == '7') or
     (os[:family] == 'debian' and os[:version] == '7') or
     (os[:family] == 'debian' and os[:version] == '8') or
-    (os[:family] == 'alpine' and os[:version] == '3') or
     (ENV['DOCKER_TAG'].match('php5')) or
+    (ENV['DOCKER_TAG'].match('alpine-3')) or
     (ENV['DOCKER_TAG'] =~ /^5\.[0-9]+/)
    )
     $testConfiguration[:php] = 5
