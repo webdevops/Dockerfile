@@ -3,7 +3,7 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/php:alpine
+FROM webdevops/php:alpine-php5
 
 COPY conf/ /opt/docker/
 
