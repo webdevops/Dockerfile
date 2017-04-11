@@ -89,7 +89,6 @@ shared_examples 'base::layout' do
         "/opt/docker/bin/config.sh",
         "/opt/docker/bin/control.sh",
         "/opt/docker/bin/entrypoint.sh",
-        "/opt/docker/bin/provision.sh",
         "/opt/docker/bin/service.d/syslog-ng.sh",
         "/opt/docker/bin/service.d/supervisor.sh",
         "/opt/docker/bin/entrypoint.d/cli.sh",
