@@ -237,13 +237,14 @@ class DoitReporter(object):
                 if 'FinishChain|' in task['name']:
                     continue
 
-                self.task_stdout(
-                    title=task['name'],
-                    duration=task['elapsed'],
-                    stdout=task['out'],
-                    stderr=task['err'],
-                    error=task['error']
-                )
+                if task['result'] != 'fail':
+                    self.task_stdout(
+                        title=task['name'],
+                        duration=task['elapsed'],
+                        stdout=task['out'],
+                        stderr=task['err'],
+                        error=task['error']
+                    )
 
         # show failed tasks (at the end)
         for task in task_result_list:
