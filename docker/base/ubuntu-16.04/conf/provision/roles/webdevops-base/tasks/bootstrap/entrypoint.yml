@@ -1,0 +1,8 @@
+---
+
+- name: Create link for entrypoint
+  file:
+    src:  '/opt/docker/bin/entrypoint.sh'
+    dest: '/entrypoint'
+    state: link
+    force: yes

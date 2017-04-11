@@ -16,7 +16,6 @@ COPY conf/ /opt/docker/
 # Install services
 RUN /usr/local/bin/yum-install \
         # Install tools
-        sudo \
         zip \
         unzip \
         bzip2 \

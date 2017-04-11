@@ -53,7 +53,7 @@ RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
         php-apcu \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services
-    && docker-service-enable cron \
+    && docker-service-enable syslog cron \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh \
     && /usr/local/bin/docker-image-cleanup

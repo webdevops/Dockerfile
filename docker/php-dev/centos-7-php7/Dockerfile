@@ -16,8 +16,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         blackfire-php \
         blackfire-agent \
     # Enable php development services
-    && docker-service-enable ssh \
-    && docker-service-enable postfix \
+    && docker-service-enable syslog ssh postfix \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-dev --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh \
     && /usr/local/bin/docker-image-cleanup

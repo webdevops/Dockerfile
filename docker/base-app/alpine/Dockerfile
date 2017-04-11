@@ -16,7 +16,6 @@ COPY conf/ /opt/docker/
 RUN /usr/local/bin/apk-install-edge shadow \
     && /usr/local/bin/apk-install \
         # Install common tools
-        sudo \
         zip \
         unzip \
         bzip2 \

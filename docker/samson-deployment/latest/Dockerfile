@@ -116,7 +116,6 @@ ENV APPLICATION_USER=application \
 # Install services
 RUN /usr/local/bin/apt-install \
         # Install common tools
-        sudo \
         zip \
         unzip \
         bzip2 \
