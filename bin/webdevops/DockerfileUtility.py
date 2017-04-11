@@ -79,6 +79,8 @@ def find_dockerfiles_in_path(base_path, path_regex, image_prefix, whitelist=Fals
         image_name = (image_name_info['image'] if 'image' in image_name_info else '')
         image_tag = (image_name_info['tag'] if 'tag' in image_name_info else '')
 
+        image_is_duplicate = False
+
         # check if path is linked
         if os.path.islink(os.path.dirname(path)):
             linked_image_name_info = ([m.groupdict() for m in path_regex.finditer(os.path.realpath(path))])[0]
@@ -88,6 +90,7 @@ def find_dockerfiles_in_path(base_path, path_regex, image_prefix, whitelist=Fals
             linked_image_tag = (linked_image_name_info['tag'] if 'tag' in linked_image_name_info else '')
 
             image_from = image_prefix + linked_image_repository + '/' + linked_image_name + ':' + linked_image_tag
+            image_is_duplicate = True
         else:
             image_from = parse_dockerfile_from_statement(path)
 
@@ -97,7 +100,8 @@ def find_dockerfiles_in_path(base_path, path_regex, image_prefix, whitelist=Fals
             'tag': image_tag,
             'repository': image_prefix + image_repository,
             'imageName': image_name,
-            'from': image_from
+            'from': image_from,
+            'duplicate': image_is_duplicate
         }
         return imageInfo
 
