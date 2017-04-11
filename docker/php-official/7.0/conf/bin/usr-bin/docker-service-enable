@@ -9,7 +9,7 @@ source /opt/docker/bin/config.sh
 
 rootCheck "$0"
 
-if [[ "$#" -ne 1 ]]; then
+if [[ "$#" -eq 0 ]]; then
     echo "Usage: $0 <service>"
     exit 1
 fi
