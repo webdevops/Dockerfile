@@ -57,8 +57,8 @@ esac
 ######################
 
 echo "Checking provision status..."
-for PROVISION_TAG in onbuild build bootstrap entrypoint;
-    ROLES=$(/opt/docker/bin/provision list --tag "$PROVISION_TAG")
+for PROVISION_TAG in onbuild build bootstrap entrypoint; do
+    ROLES=$(docker-provision list --tag "$PROVISION_TAG")
     if [[ -n "$ROLES" ]]; then
         PROVISION_ROLE_COUNT=$(echo "$ROLES" | wc -l)
         echo "  - found ${PROVISION_ROLE_COUNT} for provision tag ${PROVISION_TAG}, caching info for execution"

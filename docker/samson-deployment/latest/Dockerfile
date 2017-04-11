@@ -145,7 +145,7 @@ ENV SQLITE_CLEANUP_DAYS=0
 # NGINX reverse proxy
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
        && echo deb https://apt.dockerproject.org/repo debian-jessie main > /etc/apt/sources.list.d/docker.list \
-       && curl -fsSL https://yum.dockerproject.org/gpg | sudo apt-key add - \
+       && curl -fsSL https://yum.dockerproject.org/gpg | apt-key add - \
     && /usr/local/bin/apt-install \
         # Install nginx
         nginx \
