@@ -51,7 +51,7 @@ shared_examples 'base::layout' do
         "/opt/docker/etc/supervisor.conf",
         "/opt/docker/etc/logrotate.d/syslog-ng",
         "/opt/docker/etc/supervisor.d/cron.conf",
-        "/opt/docker/etc/supervisor.d/syslog-ng.conf",
+        "/opt/docker/etc/supervisor.d/syslog.conf",
         "/opt/docker/etc/syslog-ng/syslog-ng.conf",
         "/opt/docker/etc/supervisor.conf",
         "/opt/docker/etc/logrotate.d/syslog-ng",
@@ -101,6 +101,7 @@ shared_examples 'base::layout' do
         "/usr/local/bin/service",
         "/usr/local/bin/docker-service-enable",
         "/usr/local/bin/docker-service-disable",
+        "/usr/local/bin/docker-provision",
     ].each do |file|
         describe file("#{file}") do
             # Type check
