@@ -156,9 +156,15 @@ class DoitReporter(object):
         self.task_finished += 1
 
         if task.actions and (task.name[0] != '_'):
-            duration = self.duration(self.t_results[task.name].elapsed)
+            durationSeconds = self.t_results[task.name].elapsed
+            duration = self.duration(durationSeconds)
             progress = self.calc_progress()
-            self.writeln(colored('.  %s finished (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'green'))
+
+            if durationSeconds >= 2:
+                self.writeln(colored('.  %s finished (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'green'))
+            else:
+                self.writeln(colored(
+                    '.  %s SKIPPED (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'yellow'))
 
     def skip_uptodate(self, task):
         """
