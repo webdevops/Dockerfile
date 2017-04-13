@@ -10,6 +10,9 @@ RUN /usr/local/bin/apk-install \
         graphviz \
         # Install php development stuff
         php5-xdebug \
+        # Tools
+        nano \
+        vim \
     {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
@@ -26,6 +29,9 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         php-pecl-xdebug \
         blackfire-php \
         blackfire-agent \
+        # Tools
+        nano \
+        vim \
     {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
@@ -40,6 +46,9 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         php56w-pecl-xdebug \
         blackfire-php \
         blackfire-agent \
+        # Tools
+        nano \
+        vim \
     {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
@@ -56,6 +65,9 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         php5-xdebug \
         blackfire-php \
         blackfire-agent \
+        # Tools
+        nano \
+        vim \
     {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}
@@ -73,6 +85,9 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         php5-xdebug \
         blackfire-php \
         blackfire-agent \
+        # Tools
+        nano \
+        vim \
     {{ services.phpDev() }} \
     {{ provision.runRoleInline('dev', 'php-dev', role) }} \
     {{ docker.cleanup() }}

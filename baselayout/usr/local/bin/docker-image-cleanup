@@ -3,7 +3,7 @@
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
 
-LSB_FAMILY=$(cat /etc/dockerimage_distribution_family)
+LSB_FAMILY=$(docker-image-info family)
 
 case "$LSB_FAMILY" in
     Debian)

@@ -11,15 +11,13 @@ LABEL maintainer=info@webdevops.io \
       io.webdevops.version=1.5.0
 
 ENV TERM="xterm" \
-    LANG="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8"
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
 
 ADD baselayout.tar /
 
 # Init bootstrap
 RUN set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
@@ -32,9 +30,6 @@ RUN set -x \
         apt-transport-https \
         ca-certificates \
         locales \
-    # Generate base locale
-    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
-    && locale-gen \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && /usr/local/bin/apt-install wget gnupg dirmngr \

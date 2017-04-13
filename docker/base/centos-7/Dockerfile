@@ -37,7 +37,6 @@ RUN /usr/local/bin/yum-install \
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/yum-install \
         supervisor \
-        syslog-ng \
         wget \
         curl \
         net-tools \

@@ -28,8 +28,6 @@ RUN /usr/local/bin/yum-install \
         rsync \
         git \
         pygpgme \
-        nano \
-        vim \
     && /usr/local/bin/generate-locales \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \

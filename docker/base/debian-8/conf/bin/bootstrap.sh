@@ -17,6 +17,7 @@ rootCheck "$0"
 
 # Save the buildtime
 date +%s > /opt/docker/BUILDTIME
+date +%s >/opt/docker/etc/.registry/image_info_buildtime
 
 # Make all scripts executable
 find /opt/docker/bin/ -type f -iname '*.sh' -print0 | xargs --no-run-if-empty -0 chmod +x

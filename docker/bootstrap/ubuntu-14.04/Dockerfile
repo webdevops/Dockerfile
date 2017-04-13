@@ -11,18 +11,14 @@ LABEL maintainer=info@webdevops.io \
       io.webdevops.version=1.5.0
 
 ENV TERM="xterm" \
-    LANG="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8"
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
 
 ADD baselayout.tar /
 
 # Init bootstrap
 RUN set -x \
     && apt-update \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
-    # Generate base locale
-    && locale-gen en_US.UTF-8 \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Install base stuff

@@ -37,7 +37,6 @@ RUN /usr/local/bin/apk-install \
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apk-install \
         supervisor \
-        syslog-ng \
         wget \
         curl \
         sed \

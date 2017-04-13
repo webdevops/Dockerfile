@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+IMAGE_FAMILY=$(docker-image-info family)
+
 # Installation
 case "$IMAGE_FAMILY" in
     Debian|Ubuntu)

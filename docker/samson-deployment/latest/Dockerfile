@@ -11,15 +11,13 @@ FROM zendesk/samson:latest
 ###############################################################################
 
 ENV TERM="xterm" \
-    LANG="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8"
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
 
 ADD baselayout.tar /
 
 # Init bootstrap
 RUN set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
@@ -32,9 +30,6 @@ RUN set -x \
         apt-transport-https \
         ca-certificates \
         locales \
-    # Generate base locale
-    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
-    && locale-gen \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && /usr/local/bin/apt-install wget gnupg dirmngr \
@@ -92,8 +87,6 @@ RUN /usr/local/bin/apt-install \
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apt-install \
         supervisor \
-        syslog-ng \
-        syslog-ng-core \
         wget \
         curl \
         net-tools \
@@ -127,8 +120,6 @@ RUN /usr/local/bin/apt-install \
         openssh-client \
         rsync \
         git \
-        nano \
-        vim \
     && /usr/local/bin/generate-locales \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \

@@ -11,15 +11,13 @@ LABEL maintainer=info@webdevops.io \
       io.webdevops.version=1.5.0
 
 ENV TERM="xterm" \
-    LANG="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8"
+    LANG="en_US.utf8" \
+    LC_ALL="en_US.utf8"
 
 ADD baselayout.tar /
 
 # Init bootstrap
 RUN set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
     # System update
     && /usr/local/bin/yum-upgrade \
     && /usr/local/bin/yum-install \

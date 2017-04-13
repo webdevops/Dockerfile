@@ -1,0 +1,87 @@
+#!/bin/sh
+
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
+help() {
+    if [ -n "$1" ]; then
+        echo "$1"
+        echo ""
+    fi
+
+    echo "Usage: $0 <argument>"
+    echo ""
+    echo "  Application arguments:"
+    echo "         family    Get distribution family"
+    echo "           dist    Get distribution name"
+    echo "   dist-version    Get distribution version"
+    echo "   dist-release    Get distribution release"
+    echo "  dist-codename    Get distribution codename"
+    echo "            lsb    Get lsb informations (if available)"
+    echo "       lsb-desc    Get lsb description (if available)"
+    echo "      buildtime    Get buildtime of docker image"
+    echo ""
+
+    exit $2
+
+}
+
+if [ "$#" -ne 1 ]; then
+        help "[ERROR] Invalid argument" 1
+fi
+
+INFO_FILE=""
+
+case "$1" in
+    dist-family|distribution-family|family)
+        INFO_FILE=/opt/docker/etc/.registry/image_info_distribution_family
+        ;;
+
+    dist|distribution)
+        INFO_FILE=/opt/docker/etc/.registry/image_info_distribution
+        ;;
+
+    dist-version|distribution-version)
+        INFO_FILE=/opt/docker/etc/.registry/image_info_distribution_version
+        ;;
+
+    dist-release|distribution-release)
+        INFO_FILE=/opt/docker/etc/.registry/image_info_lsb_release
+        ;;
+
+    dist-codename|distribution-codename)
+        INFO_FILE=/opt/docker/etc/.registry/image_info_lsb_codename
+        ;;
+
+    lsb)
+        INFO_FILE=/opt/docker/etc/.registry/image_info_lsb
+        ;;
+
+    lsb-desc|lsb-description)
+        INFO_FILE=/opt/docker/etc/.registry/image_info_lsb_description
+        ;;
+
+    buildtime)
+        INFO_FILE=/opt/docker/etc/.registry/image_info_buildtime
+        ;;
+
+    help)
+        help "" 0
+        ;;
+
+    *)
+        help "[ERROR] Invalid argument" 1
+        ;;
+esac
+
+if [ -n "$INFO_FILE" ]; then
+    if [ -f "$INFO_FILE" ]; then
+        cat -- "$INFO_FILE"
+    else
+        echo "[ERROR] Infomation file $INFO_FILE not found!"
+        echo "        Please run generate-dockerimage-info on docker image creation!"
+        exit 2
+    fi
+else
+    help "" 1
+fi

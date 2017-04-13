@@ -4,8 +4,6 @@
 {% macro alpine() -%}
 # Init bootstrap
 RUN set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
     # Add community
     && echo http://dl-4.alpinelinux.org/alpine/v3.5/community/ >> /etc/apk/repositories \
     # System update
@@ -42,8 +40,6 @@ RUN set -x \
 {% macro centos() -%}
 # Init bootstrap
 RUN set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
     # System update
     && /usr/local/bin/yum-upgrade \
     && /usr/local/bin/yum-install \
@@ -70,8 +66,6 @@ RUN set -x \
 {% macro debian(distribution) -%}
 # Init bootstrap
 RUN set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
@@ -84,9 +78,6 @@ RUN set -x \
         apt-transport-https \
         ca-certificates \
         locales \
-    # Generate base locale
-    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
-    && locale-gen \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && /usr/local/bin/apt-install wget gnupg dirmngr \
@@ -114,10 +105,6 @@ RUN set -x \
     && echo "deb http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
     && echo "deb-src http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
     && apt-update \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
-    # Generate base locale
-    && locale-gen en_US.UTF-8 \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Install base stuff
@@ -149,10 +136,6 @@ RUN set -x \
 # Init bootstrap
 RUN set -x \
     && apt-update \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
-    # Generate base locale
-    && locale-gen en_US.UTF-8 \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Install base stuff
