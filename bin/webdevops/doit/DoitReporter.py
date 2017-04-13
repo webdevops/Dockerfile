@@ -95,6 +95,9 @@ class DoitReporter(object):
     output results after finish
     """
 
+    skip_detection = True
+    simulation_mode = False
+
     desc = 'output after finish'
 
     show_out = False
@@ -160,11 +163,19 @@ class DoitReporter(object):
             duration = self.duration(durationSeconds)
             progress = self.calc_progress()
 
-            if durationSeconds >= 2:
-                self.writeln(colored('.  %s finished (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'green'))
+            if DoitReporter.simulation_mode:
+                self.writeln(
+                    colored('.  %s simulated (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'blue')
+                )
             else:
-                self.writeln(colored(
-                    '.  %s SKIPPED (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'yellow'))
+                if DoitReporter.skip_detection and durationSeconds < 1:
+                    self.writeln(
+                        colored('.  %s SKIPPED (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'yellow')
+                    )
+                else:
+                    self.writeln(
+                        colored('.  %s finished (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'green')
+                    )
 
     def skip_uptodate(self, task):
         """
