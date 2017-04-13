@@ -4,8 +4,14 @@ shared_examples 'bootstrap::distribution' do
     # CentOS
     #########################
 
-    describe command('docker-image-info dist'), :if => os[:family] == 'redhat' do
+    describe command('docker-image-info family'), :if => os[:family] == 'redhat' do
         its(:stdout) { should contain("RedHat") }
+
+        its(:exit_status) { should eq 0 }
+    end
+
+    describe command('docker-image-info dist'), :if => os[:family] == 'redhat' do
+        its(:stdout) { should contain("CentOS") }
 
         its(:exit_status) { should eq 0 }
     end
@@ -26,6 +32,12 @@ shared_examples 'bootstrap::distribution' do
     #########################
     # Ubuntu
     #########################
+
+    describe command('docker-image-info family'), :if => os[:family] == 'ubuntu' do
+        its(:stdout) { should contain("Debian") }
+
+        its(:exit_status) { should eq 0 }
+    end
 
     describe command('docker-image-info dist'), :if => os[:family] == 'ubuntu' do
         its(:stdout) { should contain("Ubuntu") }
@@ -55,6 +67,12 @@ shared_examples 'bootstrap::distribution' do
     # Debian
     #########################
 
+    describe command('docker-image-info family'), :if => os[:family] == 'debian' do
+        its(:stdout) { should contain("Debian") }
+
+        its(:exit_status) { should eq 0 }
+    end
+
     describe command('docker-image-info dist'), :if => os[:family] == 'debian' do
         its(:stdout) { should contain("Debian") }
 
@@ -82,6 +100,13 @@ shared_examples 'bootstrap::distribution' do
     #########################
     # Alpine
     #########################
+
+    describe command('docker-image-info family'), :if => os[:family] == 'alpine' do
+        its(:stdout) { should contain("Alpine") }
+
+        its(:exit_status) { should eq 0 }
+    end
+
 
     describe command('docker-image-info dist'), :if => os[:family] == 'alpine' do
         its(:stdout) { should contain("Alpine") }

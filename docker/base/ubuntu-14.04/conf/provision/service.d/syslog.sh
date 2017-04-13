@@ -10,6 +10,9 @@ case "$IMAGE_FAMILY" in
 
     RedHat)
         yum-install syslog-ng
+
+        # remove logrotate (not needed for docker)
+        rm -f "/etc/cron.daily/logrotate"
         ;;
 
     Alpine)
