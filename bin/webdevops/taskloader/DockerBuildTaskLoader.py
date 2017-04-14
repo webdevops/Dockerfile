@@ -59,6 +59,13 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         Build one Dockerfile
         """
 
+        # check if dockerfile is symlink, skipping tests if just a duplicate image
+        # image is using the same hashes
+        if dockerfile['image']['duplicate'] and not task.task_dep:
+            print '  Docker image %s is build from symlink but not included in build chain, please include %s' % (dockerfile['image']['fullname'], dockerfile['image']['from'])
+            print '  -> failing build'
+            return False
+
         pull_parent_image = DockerfileUtility.check_if_base_image_needs_pull(dockerfile, configuration)
 
         if configuration.get('dryRun'):

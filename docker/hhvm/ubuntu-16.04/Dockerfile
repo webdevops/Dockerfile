@@ -21,7 +21,7 @@ RUN /usr/local/bin/apt-install \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-hhvm \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 EXPOSE 9000
 

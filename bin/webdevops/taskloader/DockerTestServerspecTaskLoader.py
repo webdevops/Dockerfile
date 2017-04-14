@@ -61,6 +61,14 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         """
         Run test
         """
+
+        # check if dockerfile is symlink, skipping tests if just a duplicate image
+        # image is using the same hashes
+        if dockerfile['image']['duplicate']:
+            print '  Docker image %s is build from symlink and duplicate of %s' % (dockerfile['image']['fullname'], dockerfile['image']['from'])
+            print '  -> skipping tests'
+            return True
+
         # Check if current image is a toolimage (no daemon)
         is_toolimage = False
         for term in configuration.get('dockerTest.toolImages', {}):

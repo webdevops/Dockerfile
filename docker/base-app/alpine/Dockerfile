@@ -16,7 +16,6 @@ COPY conf/ /opt/docker/
 RUN /usr/local/bin/apk-install-edge shadow \
     && /usr/local/bin/apk-install \
         # Install common tools
-        sudo \
         zip \
         unzip \
         bzip2 \
@@ -28,8 +27,6 @@ RUN /usr/local/bin/apk-install-edge shadow \
         openssh-client \
         rsync \
         git \
-        nano \
-        vim \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup

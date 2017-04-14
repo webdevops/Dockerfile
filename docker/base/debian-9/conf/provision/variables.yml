@@ -1,7 +1,7 @@
 ---
 
-dockerimage_distribution_family:  "{{ lookup('file', '/etc/dockerimage_distribution_family') }}"
-dockerimage_distribution:         "{{ lookup('file', '/etc/dockerimage_distribution') }}"
-dockerimage_distribution_version: "{{ lookup('file', '/etc/dockerimage_distribution_version') }}"
-dockerimage_lsb_release:          "{{ lookup('file', '/etc/dockerimage_lsb_release') }}"
-dockerimage_lsb_codename:         "{{ lookup('file', '/etc/dockerimage_lsb_codename') }}"
+docker_image_info_family:                "{{ lookup('pipe', 'docker-image-info family') }}"
+docker_image_info_distribution:          "{{ lookup('pipe', 'docker-image-info dist') }}"
+docker_image_info_distribution_version:  "{{ lookup('pipe', 'docker-image-info dist-version') }}"
+docker_image_info_distribution_release:  "{{ lookup('pipe', 'docker-image-info dist-release') }}"
+docker_image_info_distribution_codename: "{{ lookup('pipe', 'docker-image-info dist-codename') }}"

@@ -4,6 +4,24 @@ shared_examples 'bootstrap::distribution' do
     # CentOS
     #########################
 
+    describe command('docker-image-info family'), :if => os[:family] == 'redhat' do
+        its(:stdout) { should contain("RedHat") }
+
+        its(:exit_status) { should eq 0 }
+    end
+
+    describe command('docker-image-info dist'), :if => os[:family] == 'redhat' do
+        its(:stdout) { should contain("CentOS") }
+
+        its(:exit_status) { should eq 0 }
+    end
+
+    describe command('docker-image-info dist-version'), :if => os[:family] == 'redhat' do
+        its(:stdout) { should contain(os[:version]) }
+
+        its(:exit_status) { should eq 0 }
+    end
+
     describe command('cat /etc/redhat-release'), :if => os[:family] == 'redhat' do
         its(:stdout) { should contain('CentOS') }
         its(:stdout) { should contain('Linux release ' + os[:version] + '.') }
@@ -15,14 +33,32 @@ shared_examples 'bootstrap::distribution' do
     # Ubuntu
     #########################
 
-    describe command('cat /etc/dockerimage_lsb'), :if => os[:family] == 'ubuntu' do
+    describe command('docker-image-info family'), :if => os[:family] == 'ubuntu' do
+        its(:stdout) { should contain("Debian") }
+
+        its(:exit_status) { should eq 0 }
+    end
+
+    describe command('docker-image-info dist'), :if => os[:family] == 'ubuntu' do
+        its(:stdout) { should contain("Ubuntu") }
+
+        its(:exit_status) { should eq 0 }
+    end
+
+    describe command('docker-image-info lsb'), :if => os[:family] == 'ubuntu' do
         its(:stdout) { should contain("Distributor ID:\tUbuntu") }
 
         its(:exit_status) { should eq 0 }
     end
 
-    describe command('cat /etc/dockerimage_lsb'), :if => os[:family] == 'debian' do
-        its(:stdout) { should contain("Release:\t" + os[:version]) }
+    describe command('docker-image-info dist-version'), :if => os[:family] == 'ubuntu' do
+        its(:stdout) { should contain(os[:version]) }
+
+        its(:exit_status) { should eq 0 }
+    end
+
+    describe command('docker-image-info lsb'), :if => os[:family] == 'ubuntu' do
+        its(:stdout) { should contain("Release:\t" + os[:version] + '.') }
 
         its(:exit_status) { should eq 0 }
     end
@@ -31,14 +67,31 @@ shared_examples 'bootstrap::distribution' do
     # Debian
     #########################
 
-    describe command('cat /etc/dockerimage_lsb'), :if => os[:family] == 'debian' do
+    describe command('docker-image-info family'), :if => os[:family] == 'debian' do
+        its(:stdout) { should contain("Debian") }
+
+        its(:exit_status) { should eq 0 }
+    end
+
+    describe command('docker-image-info dist'), :if => os[:family] == 'debian' do
+        its(:stdout) { should contain("Debian") }
+
+        its(:exit_status) { should eq 0 }
+    end
+
+    describe command('docker-image-info lsb'), :if => os[:family] == 'debian' do
         its(:stdout) { should contain("Distributor ID:\tDebian") }
 
         its(:exit_status) { should eq 0 }
     end
 
+    describe command('docker-image-info dist-version'), :if => os[:family] == 'debian' do
+        its(:stdout) { should contain(os[:version]) }
 
-    describe command('cat /etc/dockerimage_lsb'), :if => os[:family] == 'debian' do
+        its(:exit_status) { should eq 0 }
+    end
+
+    describe command('docker-image-info lsb'), :if => os[:family] == 'debian' do
         its(:stdout) { should contain("Release:\t" + os[:version] + '.') }
 
         its(:exit_status) { should eq 0 }
@@ -47,6 +100,25 @@ shared_examples 'bootstrap::distribution' do
     #########################
     # Alpine
     #########################
+
+    describe command('docker-image-info family'), :if => os[:family] == 'alpine' do
+        its(:stdout) { should contain("Alpine") }
+
+        its(:exit_status) { should eq 0 }
+    end
+
+
+    describe command('docker-image-info dist'), :if => os[:family] == 'alpine' do
+        its(:stdout) { should contain("Alpine") }
+
+        its(:exit_status) { should eq 0 }
+    end
+
+    describe command('docker-image-info dist-version'), :if => os[:family] == 'alpine' do
+        its(:stdout) { should contain(os[:version]) }
+
+        its(:exit_status) { should eq 0 }
+    end
 
     describe command('sed -e "s/^/Release: /" /etc/alpine-release'), :if => os[:family] == 'alpine' do
         its(:stdout) { should contain('Release: ' + os[:version] + '.') }

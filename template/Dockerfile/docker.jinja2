@@ -43,5 +43,5 @@ CMD ["{{ command }}"]
 {%- endmacro -%}
 
 {%- macro cleanup() -%}
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 {%- endmacro -%}

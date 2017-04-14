@@ -11,19 +11,17 @@ FROM zendesk/samson:latest
 ###############################################################################
 
 ENV TERM="xterm" \
-    LANG="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8"
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
 
 ADD baselayout.tar /
 
 # Init bootstrap
 RUN set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
-    && sed -ri "s/(deb.*\/debian $(cat /etc/dockerimage_lsb_codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list \
+    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list \
     && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \
@@ -32,9 +30,6 @@ RUN set -x \
         apt-transport-https \
         ca-certificates \
         locales \
-    # Generate base locale
-    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
-    && locale-gen \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && /usr/local/bin/apt-install wget gnupg dirmngr \
@@ -52,7 +47,7 @@ RUN set -x \
     && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
     && chmod +x /usr/local/bin/go-replace \
     && apt-get purge -y -f --force-yes wget dirmngr \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 ###############################################################################
 # Base
@@ -86,14 +81,12 @@ RUN /usr/local/bin/apt-install \
         build-essential \
         libssl-dev \
         libffi-dev \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # Install packages
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apt-install \
         supervisor \
-        syslog-ng \
-        syslog-ng-core \
         wget \
         curl \
         net-tools \
@@ -101,7 +94,7 @@ RUN chmod +x /opt/docker/bin/* \
     && chmod +s /usr/local/bin/gosu \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 ###############################################################################
 # Base-app
@@ -116,7 +109,6 @@ ENV APPLICATION_USER=application \
 # Install services
 RUN /usr/local/bin/apt-install \
         # Install common tools
-        sudo \
         zip \
         unzip \
         bzip2 \
@@ -128,12 +120,10 @@ RUN /usr/local/bin/apt-install \
         openssh-client \
         rsync \
         git \
-        nano \
-        vim \
     && /usr/local/bin/generate-locales \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 ###############################################################################
 # Samson
@@ -146,7 +136,7 @@ ENV SQLITE_CLEANUP_DAYS=0
 # NGINX reverse proxy
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
        && echo deb https://apt.dockerproject.org/repo debian-jessie main > /etc/apt/sources.list.d/docker.list \
-       && curl -fsSL https://yum.dockerproject.org/gpg | sudo apt-key add - \
+       && curl -fsSL https://yum.dockerproject.org/gpg | apt-key add - \
     && /usr/local/bin/apt-install \
         # Install nginx
         nginx \
@@ -169,7 +159,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     ## Enable ansible for deployment user
     && chmod 755 /usr/local/bin/ansible* \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # NPM stack
 RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
@@ -179,7 +169,7 @@ RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
     && npm install -g grunt-cli \
     && npm install -g bower \
     && npm install -g npm-cache \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # Deployer stack
 RUN set -x \
@@ -201,7 +191,7 @@ RUN set -x \
     && /tmp/magallanes/bin/mage install --installDir=/opt/magallanes \
     && rm -rf /tmp/magallanes.tar.gz /tmp/magallanes/ \
     && ln -s /opt/magallanes/latest/bin/mage /usr/bin/mage \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # Upload
 ADD database.yml    /app/config/database.yml

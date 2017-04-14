@@ -11,15 +11,13 @@ LABEL maintainer=info@webdevops.io \
       io.webdevops.version=1.5.0
 
 ENV TERM="xterm" \
-    LANG="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8"
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
 
 ADD baselayout.tar /
 
 # Init bootstrap
 RUN set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
     # Add community
     && echo http://dl-4.alpinelinux.org/alpine/v3.5/community/ >> /etc/apk/repositories \
     # System update
@@ -51,4 +49,4 @@ RUN set -x \
     && GOREPLACE_VERSION=0.5.4 \
     && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
     && chmod +x /usr/local/bin/go-replace \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup

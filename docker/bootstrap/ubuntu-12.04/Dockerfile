@@ -11,8 +11,8 @@ LABEL maintainer=info@webdevops.io \
       io.webdevops.version=1.5.0
 
 ENV TERM="xterm" \
-    LANG="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8"
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
 
 ADD baselayout.tar /
 
@@ -24,10 +24,6 @@ RUN set -x \
     && echo "deb http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
     && echo "deb-src http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
     && apt-update \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
-    # Generate base locale
-    && locale-gen en_US.UTF-8 \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Install base stuff
@@ -54,4 +50,4 @@ RUN set -x \
     && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
     && chmod +x /usr/local/bin/go-replace \
     && apt-get purge -y -f --force-yes wget \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup

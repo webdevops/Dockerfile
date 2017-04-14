@@ -5,14 +5,15 @@ set -o errtrace  ## trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
 
-LSB_DISTRIBUTION=$(cat /etc/dockerimage_distribution)
-LSB_DISTRIBUTION_VERSION=$(cat /etc/dockerimage_distribution_version)
+IMAGE_DISTRIBUTION_FAMILY=$(docker-image-info family)
+IMAGE_DISTRIBUTION=$(docker-image-info distribution)
+IMAGE_DISTRIBUTION_VERSION=$(docker-image-info distribution-version)
 
 #######################################
 ## Debian
 #######################################
 
-if [[ "$LSB_DISTRIBUTION" == "Debian" ]]; then
+if [[ "$IMAGE_DISTRIBUTION" == "Debian" ]]; then
     /usr/local/bin/apt-install locales-all
 fi
 
@@ -20,8 +21,8 @@ fi
 ## Ubuntu
 #######################################
 
-if [[ "$LSB_DISTRIBUTION" == "Ubuntu" ]]; then
-    if [[ "$(echo $LSB_DISTRIBUTION_VERSION| cut -f 1 -d .)" -ge "16" ]]; then
+if [[ "$IMAGE_DISTRIBUTION" == "Ubuntu" ]]; then
+    if [[ "$(echo $IMAGE_DISTRIBUTION_VERSION| cut -f 1 -d .)" -ge "16" ]]; then
         # Ubuntu 16.04 or later
         /usr/local/bin/apt-install locales-all
     else
@@ -35,12 +36,12 @@ fi
 ## RedHat family
 #######################################
 
-function localedefdebug() {
-    echo $*
-    localedef "$@"
-}
+if [[ "$IMAGE_DISTRIBUTION_FAMILY" == "RedHat" ]]; then
 
-if [[ -f /etc/redhat-release ]]; then
+    function localedefdebug() {
+        echo $*
+        localedef "$@"
+    }
 
     # Failing locales
     ## && localedefdebug -c -i bo_CN -f UTF-8 bo_CN.utf8 \

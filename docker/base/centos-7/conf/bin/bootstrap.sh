@@ -17,6 +17,7 @@ rootCheck "$0"
 
 # Save the buildtime
 date +%s > /opt/docker/BUILDTIME
+date +%s >/opt/docker/etc/.registry/image_info_buildtime
 
 # Make all scripts executable
 find /opt/docker/bin/ -type f -iname '*.sh' -print0 | xargs --no-run-if-empty -0 chmod +x
@@ -49,6 +50,23 @@ case "$BOOTSTRAP_MODE" in
         echo "[ERROR] Bootstrap mode '$BOOTSTRAP_MODE' not defined"
         exit 1
         ;;
-
 esac
+
+
+######################
+# Check if entrypoint provisioning is available
+######################
+
+echo "Checking provision status..."
+for PROVISION_TAG in onbuild build bootstrap entrypoint; do
+    ROLES=$(docker-provision list --tag "$PROVISION_TAG")
+    if [[ -n "$ROLES" ]]; then
+        PROVISION_ROLE_COUNT=$(echo "$ROLES" | wc -l)
+        echo "  - found ${PROVISION_ROLE_COUNT} for provision tag ${PROVISION_TAG}, caching info for execution"
+        echo -n "$PROVISION_ROLE_COUNT" > "/opt/docker/etc/.registry/provision-availale.${PROVISION_TAG}"
+    else
+        echo "  - no roles found for provision tag ${PROVISION_TAG}"
+        echo -n '' > "/opt/docker/etc/.registry/provision-availale.${PROVISION_TAG}"
+    fi
+done
 

@@ -11,19 +11,17 @@ LABEL maintainer=info@webdevops.io \
       io.webdevops.version=1.5.0
 
 ENV TERM="xterm" \
-    LANG="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8"
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
 
 ADD baselayout.tar /
 
 # Init bootstrap
 RUN set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
-    && sed -ri "s/(deb.*\/debian $(cat /etc/dockerimage_lsb_codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list \
+    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list \
     && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \
@@ -32,9 +30,6 @@ RUN set -x \
         apt-transport-https \
         ca-certificates \
         locales \
-    # Generate base locale
-    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
-    && locale-gen \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && /usr/local/bin/apt-install wget gnupg dirmngr \
@@ -52,4 +47,4 @@ RUN set -x \
     && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
     && chmod +x /usr/local/bin/go-replace \
     && apt-get purge -y -f --force-yes wget dirmngr \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup

@@ -7,9 +7,9 @@ FROM webdevops/base-app:latest
 
 COPY conf/ /opt/docker/
 
-RUN /opt/docker/bin/control.sh service.enable postfix \
+RUN /opt/docker/bin/control.sh service.enable postfix syslog \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-postfix \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 EXPOSE 25 465 587

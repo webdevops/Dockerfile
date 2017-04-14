@@ -68,9 +68,9 @@ RUN /usr/local/bin/apk-install \
     # PECL workaround, see webdevops/Dockerfile#78
     && sed -i "s/ -n / /" $(which pecl) \
     # Enable php services
-    && docker-service-enable cron \
+    && docker-service-enable syslog cron \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 EXPOSE 9000

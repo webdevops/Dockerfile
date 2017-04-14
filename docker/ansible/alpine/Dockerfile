@@ -25,4 +25,4 @@ RUN /usr/local/bin/apk-install \
     && chmod 750 /usr/bin/ansible* \
     # Cleanup
     && apk del python-dev \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup

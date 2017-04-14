@@ -31,4 +31,4 @@ RUN /usr/local/bin/apk-install \
     && pip install t3fieldlisttable \
     && pip install t3tablerows \
     && pip install t3targets \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup

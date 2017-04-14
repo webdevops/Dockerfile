@@ -33,14 +33,12 @@ RUN /usr/local/bin/apt-install \
         build-essential \
         libssl-dev \
         libffi-dev \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # Install packages
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apt-install \
         supervisor \
-        syslog-ng \
-        syslog-ng-core \
         wget \
         curl \
         net-tools \
@@ -48,7 +46,7 @@ RUN chmod +x /opt/docker/bin/* \
     && chmod +s /usr/local/bin/gosu \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 CMD ["supervisord"]

@@ -16,7 +16,6 @@ COPY conf/ /opt/docker/
 # Install services
 RUN /usr/local/bin/apt-install \
         # Install common tools
-        sudo \
         zip \
         unzip \
         bzip2 \
@@ -28,9 +27,7 @@ RUN /usr/local/bin/apt-install \
         openssh-client \
         rsync \
         git \
-        nano \
-        vim \
     && /usr/local/bin/generate-locales \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
