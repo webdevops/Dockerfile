@@ -26,6 +26,6 @@ RUN /usr/local/bin/apt-install \
 	&& a2enmod actions fastcgi ssl rewrite headers expires \
 	&& /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache --role webdevops-apache-dev --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 EXPOSE 80 443

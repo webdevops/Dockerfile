@@ -27,6 +27,6 @@ RUN /usr/local/bin/apt-install \
 	&& mkdir -p /var/lock/apache2 \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache --role webdevops-apache-dev --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 EXPOSE 80 443

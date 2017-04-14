@@ -1,5 +1,5 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/build-env:latest
+# Dockerfile for webdevops/dockerfile-build-env:latest
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
@@ -44,4 +44,4 @@ RUN apt-install \
         termcolor \
         pytest-timeout \
         pytest-rerunfailures \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup

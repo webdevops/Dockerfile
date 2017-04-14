@@ -19,7 +19,7 @@ RUN /usr/local/bin/apt-install \
     && /opt/docker/bin/provision add --tag entrypoint webdevops-mail-sandbox \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-mail-sandbox \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # Install Roundcube + plugins
 RUN cd /app \
@@ -31,6 +31,6 @@ RUN cd /app \
     && rm -rf .git installer \
     && ln -s /opt/docker/etc/roundcube/plugins/webdevops_autologin/ plugins/webdevops_autologin \
     && ln -s /opt/docker/etc/roundcube/config.php config/config.inc.php \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 EXPOSE 25 465 587 143 993

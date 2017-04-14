@@ -47,4 +47,4 @@ RUN set -x \
     && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
     && chmod +x /usr/local/bin/go-replace \
     && apt-get purge -y -f --force-yes wget dirmngr \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup

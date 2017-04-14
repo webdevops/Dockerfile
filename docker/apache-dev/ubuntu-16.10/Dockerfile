@@ -15,6 +15,6 @@ COPY conf/ /opt/docker/
 RUN echo \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache-dev \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 EXPOSE 80 443

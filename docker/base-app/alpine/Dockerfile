@@ -29,4 +29,4 @@ RUN /usr/local/bin/apk-install-edge shadow \
         git \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup

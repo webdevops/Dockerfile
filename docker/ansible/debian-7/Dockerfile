@@ -27,4 +27,4 @@ RUN /usr/local/bin/apt-install \
         build-essential \
         libssl-dev \
         libffi-dev \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup

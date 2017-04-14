@@ -31,7 +31,7 @@ RUN /usr/local/bin/yum-install \
     && chmod 750 /usr/bin/ansible* \
     # Cleanup
     && yum erase -y python-devel \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # Install services
 RUN chmod +x /opt/docker/bin/* \
@@ -44,7 +44,7 @@ RUN chmod +x /opt/docker/bin/* \
     && chmod +s /usr/local/bin/gosu \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 CMD ["supervisord"]

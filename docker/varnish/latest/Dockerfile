@@ -18,7 +18,7 @@ COPY conf/ /opt/docker/
 
 RUN /usr/local/bin/apk-install \
         varnish \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 CMD ["varnishd"]
 

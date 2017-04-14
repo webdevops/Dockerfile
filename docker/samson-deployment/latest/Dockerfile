@@ -47,7 +47,7 @@ RUN set -x \
     && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
     && chmod +x /usr/local/bin/go-replace \
     && apt-get purge -y -f --force-yes wget dirmngr \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 ###############################################################################
 # Base
@@ -81,7 +81,7 @@ RUN /usr/local/bin/apt-install \
         build-essential \
         libssl-dev \
         libffi-dev \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # Install packages
 RUN chmod +x /opt/docker/bin/* \
@@ -94,7 +94,7 @@ RUN chmod +x /opt/docker/bin/* \
     && chmod +s /usr/local/bin/gosu \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 ###############################################################################
 # Base-app
@@ -123,7 +123,7 @@ RUN /usr/local/bin/apt-install \
     && /usr/local/bin/generate-locales \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 ###############################################################################
 # Samson
@@ -159,7 +159,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     ## Enable ansible for deployment user
     && chmod 755 /usr/local/bin/ansible* \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # NPM stack
 RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
@@ -169,7 +169,7 @@ RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
     && npm install -g grunt-cli \
     && npm install -g bower \
     && npm install -g npm-cache \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # Deployer stack
 RUN set -x \
@@ -191,7 +191,7 @@ RUN set -x \
     && /tmp/magallanes/bin/mage install --installDir=/opt/magallanes \
     && rm -rf /tmp/magallanes.tar.gz /tmp/magallanes/ \
     && ln -s /opt/magallanes/latest/bin/mage /usr/bin/mage \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # Upload
 ADD database.yml    /app/config/database.yml

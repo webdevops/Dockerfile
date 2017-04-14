@@ -57,7 +57,7 @@ RUN set -x \
     && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
     && chmod +x /usr/local/bin/go-replace \
     && apt-get purge -y -f --force-yes wget dirmngr \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # Install ansible
 RUN /usr/local/bin/apt-install \
@@ -81,7 +81,7 @@ RUN /usr/local/bin/apt-install \
         build-essential \
         libssl-dev \
         libffi-dev \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # Install packages
 RUN chmod +x /opt/docker/bin/* \
@@ -94,7 +94,7 @@ RUN chmod +x /opt/docker/bin/* \
     && chmod +s /usr/local/bin/gosu \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # Install services
 RUN /usr/local/bin/apt-install \
@@ -113,7 +113,7 @@ RUN /usr/local/bin/apt-install \
     && /usr/local/bin/generate-locales \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 # Install php environment
 RUN /usr/local/bin/apt-install \
@@ -178,7 +178,7 @@ RUN /usr/local/bin/apt-install \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 WORKDIR /
 

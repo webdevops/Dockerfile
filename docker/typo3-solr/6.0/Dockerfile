@@ -27,7 +27,7 @@ RUN /usr/local/bin/apt-update \
     && mv /tmp/solr /opt/solr/server/solr \
     && mkdir -p /opt/solr/server/solr/data \
     && chown -R solr:solr /opt/solr/server/solr \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 USER solr
 

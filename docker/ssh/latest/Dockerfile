@@ -6,6 +6,6 @@
 FROM webdevops/base-app:latest
 
 RUN /opt/docker/bin/control.sh service.enable ssh \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
 
 EXPOSE 22

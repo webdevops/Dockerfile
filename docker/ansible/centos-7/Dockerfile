@@ -25,4 +25,4 @@ RUN /usr/local/bin/yum-install \
     && chmod 750 /usr/bin/ansible* \
     # Cleanup
     && yum erase -y python-devel \
-    && /usr/local/bin/docker-image-cleanup
+    && docker-image-cleanup
