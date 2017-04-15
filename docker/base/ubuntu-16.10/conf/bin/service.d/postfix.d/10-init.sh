@@ -22,3 +22,6 @@ if [[ -n "${POSTFIX_MYNETWORKS+x}" ]]; then
     sed -i '/mynetworks[ ]* =/c\' main.cf
     echo "mynetworks = $POSTFIX_MYNETWORKS" >> /etc/postfix/main.cf
 fi
+
+# generate aliases db
+newaliases
