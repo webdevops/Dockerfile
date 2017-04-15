@@ -1,3 +1,4 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro alpine(role='') -%}
@@ -5,14 +6,13 @@
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apk-install \
         supervisor \
-        syslog-ng \
-        logrotate \
         wget \
         curl \
         sed \
         gnupg \
     && chmod +s /usr/local/bin/gosu \
-    {{ provision.runRoleInline('base', role) }}
+    {{ provision.runRoleInline('base', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -20,16 +20,14 @@ RUN chmod +x /opt/docker/bin/* \
 # Install services
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/yum-install \
-        cronie \
         supervisor \
-        syslog-ng \
-        logrotate \
         wget \
         curl \
         net-tools \
         gnupg2 \
     && chmod +s /usr/local/bin/gosu \
-    {{ provision.runRoleInline('base', role) }}
+    {{ provision.runRoleInline('base', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -38,16 +36,13 @@ RUN chmod +x /opt/docker/bin/* \
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apt-install \
         supervisor \
-        syslog-ng \
-        syslog-ng-core \
-        logrotate \
-        cron \
         wget \
         curl \
         net-tools \
         gnupg \
     && chmod +s /usr/local/bin/gosu \
-    {{ provision.runRoleInline('base', role) }}
+    {{ provision.runRoleInline('base', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -56,14 +51,11 @@ RUN chmod +x /opt/docker/bin/* \
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apt-install \
         supervisor \
-        syslog-ng \
-        syslog-ng-core \
-        logrotate \
-        cron \
         wget \
         curl \
         net-tools \
         gnupg \
     && chmod +s /usr/local/bin/gosu \
-    {{ provision.runRoleInline('base', role) }}
+    {{ provision.runRoleInline('base', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}

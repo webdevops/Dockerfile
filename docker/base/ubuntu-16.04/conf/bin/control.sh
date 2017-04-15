@@ -101,23 +101,13 @@ case "$CONTROL_COMMAND" in
     ## ------------------------------------------
 
     "service.enable")
-        SERVICE_FILE="/opt/docker/etc/supervisor.d/$1.conf"
-        if [ -f "$SERVICE_FILE" ]; then
-            sed -i '/autostart = /c\autostart = true' -- "$SERVICE_FILE"
-        else
-            echo "[ERROR] Service '${1}' not found (tried ${SERVICE_FILE})"
-            exit 1
-        fi
+        deprecationNotice " Please use >>docker-service-enable [service]<<"
+        docker-service-enable "$1"
         ;;
 
     "service.disable")
-        SERVICE_FILE="/opt/docker/etc/supervisor.d/$1.conf"
-        if [ -f "$SERVICE_FILE" ]; then
-            sed -i '/autostart = /c\autostart = false' -- "$SERVICE_FILE"
-        else
-            echo "[ERROR] Service '${1}' not found (tried ${SERVICE_FILE})"
-            exit 1
-        fi
+        deprecationNotice " Please use >>docker-service-disable [service]<<"
+        docker-service-disable "$1"
         ;;
 
     ## ------------------------------------------

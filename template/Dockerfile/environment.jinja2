@@ -1,56 +1,66 @@
-{% macro general(charset="en_US.UTF-8") -%}
-ENV TERM   "xterm"
-ENV LANG   "{{ charset }}"
-ENV LC_ALL "{{ charset }}"
+{% macro general(charset="C.UTF-8") -%}
+ENV TERM="xterm" \
+    LANG="{{ charset }}" \
+    LC_ALL="{{ charset }}"
 {%- endmacro %}
 
-{% macro homePath() -%}
-ENV DOCKER_CONF_HOME /opt/docker/
-{%- endmacro %}
 
 {% macro mailbox() -%}
-ENV MAILBOX_USERNAME "dev"
-ENV MAILBOX_PASSWORD "dev"
+ENV MAILBOX_USERNAME="dev" \
+    MAILBOX_PASSWORD="dev"
 {%- endmacro %}
+
 
 {% macro web() -%}
-ENV WEB_DOCUMENT_ROOT  /app
-ENV WEB_DOCUMENT_INDEX index.php
-ENV WEB_ALIAS_DOMAIN   *.vm
+ENV WEB_DOCUMENT_ROOT=/app \
+    WEB_DOCUMENT_INDEX=index.php \
+    WEB_ALIAS_DOMAIN=*.vm
 {%- endmacro %}
+
 
 {% macro webPhp() -%}
-ENV WEB_PHP_SOCKET  127.0.0.1:9000
+ENV WEB_PHP_SOCKET=127.0.0.1:9000
 {%- endmacro %}
+
 
 {% macro webDevelopment() -%}
-ENV WEB_NO_CACHE_PATTERN  "\.(css|js|gif|png|jpg|svg|json|xml)$"
+ENV WEB_NO_CACHE_PATTERN="\.(css|js|gif|png|jpg|svg|json|xml)$"
 {%- endmacro %}
+
 
 {% macro ftp() -%}
-ENV FTP_USER     application
-ENV FTP_PASSWORD application
-ENV FTP_UID      1000
-ENV FTP_GID      1000
-ENV FTP_PATH     /data/ftp/
+ENV FTP_USER=application \
+    FTP_PASSWORD=application \
+    FTP_UID=1000 \
+    FTP_GID=1000 \
+    FTP_PATH=/data/ftp/
 {%- endmacro %}
 
-{% macro app() -%}
-ENV APPLICATION_USER  application
-ENV APPLICATION_GROUP application
-ENV APPLICATION_PATH  /app
-ENV APPLICATION_UID   1000
-ENV APPLICATION_GID   1000
+
+{% macro base() -%}
+ENV DOCKER_CONF_HOME=/opt/docker/ \
+    LOG_STDOUT="" \
+    LOG_STDERR=""
 {%- endmacro %}
+
+
+{% macro baseApp() -%}
+ENV APPLICATION_USER=application \
+    APPLICATION_GROUP=application \
+    APPLICATION_PATH=/app \
+    APPLICATION_UID=1000 \
+    APPLICATION_GID=1000
+{%- endmacro %}
+
 
 {% macro liquibase(version, driver, classpath) -%}
-ENV LIQUIBASE_VERSION   "{{ version }}"
-ENV LIQUIBASE_DRIVER    "{{ driver }}"
-ENV LIQUIBASE_CLASSPATH "{{ classpath }}"
-ENV LIQUIBASE_URL       ""
-ENV LIQUIBASE_USERNAME  ""
-ENV LIQUIBASE_PASSWORD  ""
-ENV LIQUIBASE_CHANGELOG "liquibase.xml"
-ENV LIQUIBASE_CONTEXTS  ""
-ENV LIQUIBASE_OPTS      ""
+ENV LIQUIBASE_VERSION="{{ version }}" \
+    LIQUIBASE_DRIVER="{{ driver }}" \
+    LIQUIBASE_CLASSPATH="{{ classpath }}" \
+    LIQUIBASE_URL="" \
+    LIQUIBASE_USERNAME="" \
+    LIQUIBASE_PASSWORD="" \
+    LIQUIBASE_CHANGELOG="liquibase.xml" \
+    LIQUIBASE_CONTEXTS="" \
+    LIQUIBASE_OPTS=""
 {%- endmacro %}

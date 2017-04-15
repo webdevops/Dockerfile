@@ -1,0 +1,9 @@
+{{ docker.from("apache", "alpine") }}
+
+{{ environment.web() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ apachedev.general() }}
+
+{{ docker.expose('80 443') }}

@@ -1,6 +1,10 @@
 ---
 
+- include: bootstrap/init.yml
 - include: bootstrap/php.yml
+- include: bootstrap/php.debian.yml
+- include: bootstrap/php.redhat.yml
+- include: bootstrap/php.alpine.yml
 - include: bootstrap/php-fpm.main.yml
 - include: bootstrap/php-fpm.pool.yml
 - include: bootstrap/php-fpm.yml

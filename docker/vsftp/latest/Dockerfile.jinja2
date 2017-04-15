@@ -1,7 +1,5 @@
 {{ docker.from("base", "latest") }}
 
-{{ docker.version() }}
-
 {{ environment.ftp() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}

@@ -1,7 +1,5 @@
 {{ docker.from("php-apache", "ubuntu-14.04") }}
 
-{{ docker.version() }}
-
 ENV WEB_DOCUMENT_ROOT /app/web/
 
 {{ docker.copy('conf/', '/opt/docker/') }}

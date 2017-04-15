@@ -40,7 +40,6 @@ shared_examples 'bootstrap::layout' do
         "/usr/local/bin/apk-upgrade",
         "/usr/local/bin/apt-install",
         "/usr/local/bin/apt-upgrade",
-        "/usr/local/bin/service",
         "/usr/local/bin/yum-install",
         "/usr/local/bin/yum-upgrade",
     ].each do |file|

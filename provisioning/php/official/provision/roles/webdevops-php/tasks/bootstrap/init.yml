@@ -1,0 +1,23 @@
+---
+
+- name: Get php version
+  command: "php -r 'echo phpversion();'"
+  changed_when: true
+  register: php_version_cmd
+  ignore_errors: true
+
+- name: Set php_version version
+  set_fact:
+     php_version: "{{php_version_cmd.stdout}}"
+
+#############################
+# PHP
+#############################
+
+- name: Set php main file (official)
+  set_fact:
+     php_etc_dir:   /usr/local/etc/php
+     php_main_conf: /usr/local/etc/php-fpm.conf
+     php_pool_conf: www.conf
+     php_pool_dir:  /usr/local/etc/php-fpm.d
+     php_fpm_bin:   /usr/local/sbin/php-fpm

@@ -1,0 +1,93 @@
+{% import 'Dockerfile/docker.jinja2'    as docker %}
+{% import 'Dockerfile/provision.jinja2' as provision %}
+{% import 'Dockerfile/services.jinja2'  as services %}
+
+{% macro official(role='', version='') -%}
+# Install php environment
+RUN /usr/local/bin/apt-install \
+        # Install tools
+        imagemagick \
+        graphicsmagick \
+        ghostscript \
+        # Libraries
+        libldap-2.4-2 \
+        libxslt1.1 \
+        zlib1g \
+        libpng12-0 \
+        libmcrypt4 \
+        # Dev and headers
+        libbz2-dev \
+        libldap2-dev \
+        libldb-dev \
+        libmcrypt-dev \
+        libxml2-dev \
+        libxslt1-dev \
+        zlib1g-dev \
+        libpng12-dev \
+    # Install extensions
+    && docker-php-ext-install \
+        bcmath \
+        bz2 \
+        calendar \
+        exif \
+        gettext \
+        mysqli \
+        mcrypt \
+        hash \
+        pcntl \
+        pdo_mysql \
+        soap \
+        sockets \
+        tokenizer \
+        sysvmsg \
+        sysvsem \
+        sysvshm \
+        shmop \
+        xsl \
+        zip \
+        gd \
+        gettext \
+        opcache \
+    # Uninstall dev and header packages
+    && apt-get purge -y -f --force-yes \
+        libbz2-dev \
+        libldap2-dev \
+        libldb-dev \
+        libmcrypt-dev \
+        libxml2-dev \
+        libxslt1-dev \
+        zlib1g-dev \
+        libpng12-dev \
+{%- if version|int == 5 %}
+    # Install extensions for PHP 5.x
+    && pecl install apcu-4.0.11 redis \
+    && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
+    && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
+{%- else %}
+    # Install extensions for PHP 7.x
+    && pecl install apcu redis \
+    && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
+    && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
+{%- endif %}
+    && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ provision.runRoleInline('php', role) }} \
+    {{ docker.cleanup() }}
+
+WORKDIR /
+{%- endmacro %}
+
+
+{% macro officialDevelopment(role='', version='') -%}
+# Install development environment
+RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
+    && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
+    && /usr/local/bin/apt-install \
+        blackfire-php \
+        blackfire-agent \
+    && pecl install xdebug \
+    && echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
+    {{ services.phpDev() }} \
+    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ docker.cleanup() }}
+{%- endmacro %}

@@ -1,6 +1,6 @@
 shared_examples 'php-fpm::service::running' do
     describe "service php-fpm check" do
-        it "should have running php-fpm daemon", :retry => 20, :retry_wait => 3 do
+        it "should have running php-fpm daemon", :retry => 5, :retry_wait => 3 do
             cmd = command("service php-fpm check")
             expect(cmd.stdout).to match('ok')
             expect(cmd.exit_status).to eq 0

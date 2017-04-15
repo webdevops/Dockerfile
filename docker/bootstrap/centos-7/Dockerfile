@@ -5,41 +5,24 @@
 
 FROM centos:7
 
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
+LABEL maintainer=info@webdevops.io \
+      vendor=WebDevOps.io \
+      io.webdevops.layout=8 \
+      io.webdevops.version=1.5.0
 
-ENV TERM   "xterm"
-ENV LANG   "en_US.UTF-8"
-ENV LC_ALL "en_US.UTF-8"
+ENV TERM="xterm" \
+    LANG="en_US.utf8" \
+    LC_ALL="en_US.utf8"
 
 ADD baselayout.tar /
 
-# Init bootstrap (and install ansible)
+# Init bootstrap
 RUN set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
     # System update
     && /usr/local/bin/yum-upgrade \
-    # Install ansible
     && /usr/local/bin/yum-install \
         epel-release \
-        PyYAML \
-        python-jinja2 \
-        python-httplib2 \
-        python-keyczar \
-        python-paramiko \
-        python-setuptools \
-        python-setuptools-devel \
-        libffi \
-        python-devel \
-        libffi-devel \
-    && easy_install pip \
-    && pip install --upgrade pip \
-    && hash -r \
-    && pip install ansible \
-    && chmod 750 /usr/bin/ansible* \
+    && /usr/local/bin/generate-dockerimage-info \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && /usr/local/bin/yum-install gpg wget \
@@ -52,8 +35,9 @@ RUN set -x \
     && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
+    ## Install go-replace
+    && GOREPLACE_VERSION=0.5.4 \
+    && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
+    && chmod +x /usr/local/bin/go-replace \
     && yum erase -y wget \
-    # Cleanup
-    && yum erase -y python-devel \
-    && yum clean all \
-    && find /var/log/ -mindepth 1 -delete
+    && docker-image-cleanup

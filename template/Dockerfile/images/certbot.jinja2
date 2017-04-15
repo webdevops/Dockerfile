@@ -15,5 +15,6 @@ RUN /usr/local/bin/apk-install \
         certbot \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install pyRFC3339 configobj ConfigArgParse
+    && pip install pyRFC3339 configobj ConfigArgParse \
+    {{ docker.cleanup() }}
 {%- endmacro %}

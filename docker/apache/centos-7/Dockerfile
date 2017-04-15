@@ -5,14 +5,9 @@
 
 FROM webdevops/base:centos-7
 
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
-
-ENV WEB_DOCUMENT_ROOT  /app
-ENV WEB_DOCUMENT_INDEX index.php
-ENV WEB_ALIAS_DOMAIN   *.vm
+ENV WEB_DOCUMENT_ROOT=/app \
+    WEB_DOCUMENT_INDEX=index.php \
+    WEB_ALIAS_DOMAIN=*.vm
 
 COPY conf/ /opt/docker/
 
@@ -25,7 +20,7 @@ RUN /usr/local/bin/yum-install \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && docker-image-cleanup
 
 EXPOSE 80 443

@@ -2,7 +2,7 @@
 
 {{ docker.version() }}
 
-{{ environment.general() }}
+{{ environment.general(charset='en_US.utf8') }}
 
 {{ docker.add('baselayout.tar', '/') }}
 

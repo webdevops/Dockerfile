@@ -5,55 +5,31 @@
 
 FROM zendesk/samson:latest
 
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
-
 
 ###############################################################################
 # Bootstrap
 ###############################################################################
 
-ENV TERM   "xterm"
-ENV LANG   "en_US.UTF-8"
-ENV LC_ALL "en_US.UTF-8"
+ENV TERM="xterm" \
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
 
 ADD baselayout.tar /
 
-# Init bootstrap (and install ansible)
-RUN export DEBIAN_FRONTEND=noninteractive \
-    && set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
+# Init bootstrap
+RUN set -x \
+    && apt-update \
+    && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
-    && sed -ri 's/(deb.*\/debian jessie main)/\1 contrib non-free /' -- /etc/apt/sources.list \
-    # System updatei
+    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list \
+    && apt-update \
+    # System update
     && /usr/local/bin/apt-upgrade \
     # Base stuff
     && /usr/local/bin/apt-install \
-        lsb-release \
+        apt-transport-https \
         ca-certificates \
         locales \
-        apt-transport-https \
-    # Generate base locale
-    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
-    && locale-gen \
-    && /usr/local/bin/apt-install \
-        # Install ansible
-        python-minimal \
-        python-setuptools \
-        python-pip \
-        python-paramiko \
-        python-jinja2 \
-        python-dev \
-        libffi-dev \
-        libssl-dev \
-        build-essential \
-    && pip install --upgrade pip \
-    && hash -r \
-    && pip install ansible \
-    && chmod 750 /usr/local/bin/ansible* \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && /usr/local/bin/apt-install wget gnupg dirmngr \
@@ -66,62 +42,73 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
+    ## Install go-replace
+    && GOREPLACE_VERSION=0.5.4 \
+    && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
+    && chmod +x /usr/local/bin/go-replace \
     && apt-get purge -y -f --force-yes wget dirmngr \
+    && docker-image-cleanup
+
+###############################################################################
+# Base
+###############################################################################
+
+ENV DOCKER_CONF_HOME=/opt/docker/ \
+    LOG_STDOUT="" \
+    LOG_STDERR=""
+
+COPY conf/ /opt/docker/
+
+# Install ansible
+RUN /usr/local/bin/apt-install \
+        # Install ansible
+        python-minimal \
+        python-setuptools \
+        python-pip \
+        python-paramiko \
+        python-jinja2 \
+        python-dev \
+        libffi-dev \
+        libssl-dev \
+        build-essential \
+    && pip install --upgrade pip \
+    && hash -r \
+    && pip install --no-cache-dir ansible \
+    && chmod 750 /usr/local/bin/ansible* \
     # Cleanup
     && apt-get purge -y -f --force-yes \
         python-dev \
         build-essential \
         libssl-dev \
         libffi-dev \
-    && apt-get autoremove -y -f \
-    && apt-get clean -y \
-    && find /var/log/ -mindepth 1 -delete
-
-###############################################################################
-# Base
-###############################################################################
-
-ENV DOCKER_CONF_HOME /opt/docker/
-
-COPY conf/ /opt/docker/
+    && docker-image-cleanup
 
 # Install packages
 RUN chmod +x /opt/docker/bin/* \
     && /usr/local/bin/apt-install \
         supervisor \
-        syslog-ng \
-        syslog-ng-core \
-        logrotate \
-        cron \
         wget \
         curl \
         net-tools \
         gnupg \
     && chmod +s /usr/local/bin/gosu \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && docker-image-cleanup
 
 ###############################################################################
 # Base-app
 ###############################################################################
 
-ENV APPLICATION_USER  application
-ENV APPLICATION_GROUP application
-ENV APPLICATION_PATH  /app
-ENV APPLICATION_UID   1000
-ENV APPLICATION_GID   1000
+ENV APPLICATION_USER=application \
+    APPLICATION_GROUP=application \
+    APPLICATION_PATH=/app \
+    APPLICATION_UID=1000 \
+    APPLICATION_GID=1000
 
 # Install services
 RUN /usr/local/bin/apt-install \
-        # Install services
-        openssh-server \
-        mysql-client \
-        sqlite \
-        dnsmasq \
-        postfix \
         # Install common tools
-        sudo \
         zip \
         unzip \
         bzip2 \
@@ -133,12 +120,10 @@ RUN /usr/local/bin/apt-install \
         openssh-client \
         rsync \
         git \
-        nano \
-        vim \
     && /usr/local/bin/generate-locales \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && docker-image-cleanup
 
 ###############################################################################
 # Samson
@@ -151,7 +136,7 @@ ENV SQLITE_CLEANUP_DAYS=0
 # NGINX reverse proxy
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
        && echo deb https://apt.dockerproject.org/repo debian-jessie main > /etc/apt/sources.list.d/docker.list \
-       && curl -fsSL https://yum.dockerproject.org/gpg | sudo apt-key add - \
+       && curl -fsSL https://yum.dockerproject.org/gpg | apt-key add - \
     && /usr/local/bin/apt-install \
         # Install nginx
         nginx \
@@ -173,7 +158,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
         python-dotenv \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     ## Enable ansible for deployment user
-    && chmod 755 /usr/local/bin/ansible*
+    && chmod 755 /usr/local/bin/ansible* \
+    && docker-image-cleanup
 
 # NPM stack
 RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
@@ -182,7 +168,8 @@ RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
     && npm install -g gulp \
     && npm install -g grunt-cli \
     && npm install -g bower \
-    && npm install -g npm-cache
+    && npm install -g npm-cache \
+    && docker-image-cleanup
 
 # Deployer stack
 RUN set -x \
@@ -203,7 +190,8 @@ RUN set -x \
     && tar -xzf /tmp/magallanes.tar.gz -C /tmp/ \
     && /tmp/magallanes/bin/mage install --installDir=/opt/magallanes \
     && rm -rf /tmp/magallanes.tar.gz /tmp/magallanes/ \
-    && ln -s /opt/magallanes/latest/bin/mage /usr/bin/mage
+    && ln -s /opt/magallanes/latest/bin/mage /usr/bin/mage \
+    && docker-image-cleanup
 
 # Upload
 ADD database.yml    /app/config/database.yml
@@ -215,7 +203,6 @@ RUN rake assets:precompile \
     && /opt/docker/bin/control.sh service.enable cron \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base --role webdevops-base-app --role webdevops-samson-deployment \
     && /opt/docker/bin/bootstrap.sh
-
 
 EXPOSE 80
 VOLUME /storage

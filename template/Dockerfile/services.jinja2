@@ -1,0 +1,11 @@
+{% macro php() -%}
+    # Enable php services
+    && docker-service-enable syslog cron
+{%- endmacro %}
+
+
+{% macro phpDev() -%}
+    # Enable php development services
+    && docker-service-enable syslog ssh postfix
+{%- endmacro %}
+

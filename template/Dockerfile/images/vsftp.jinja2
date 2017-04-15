@@ -1,3 +1,4 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro ubuntu(role='') -%}
@@ -9,5 +10,6 @@ RUN /usr/local/bin/apt-install \
             /var/run/vsftpd/empty \
             /var/log/supervisor \
     {{ provision.registerRole('vsftp', entrypoint=True) }} \
-    {{ provision.runRoleInline('vsftp', role) }}
+    {{ provision.runRoleInline('vsftp', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}

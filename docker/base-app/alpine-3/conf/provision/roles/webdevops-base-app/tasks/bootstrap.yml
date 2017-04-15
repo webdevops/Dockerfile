@@ -1,7 +1,0 @@
----
-
-- include: bootstrap/user.yml
-- include: bootstrap/application.yml
-- include: bootstrap/dnsmasq.yml
-- include: bootstrap/postfix.yml
-- include: bootstrap/ssh.yml

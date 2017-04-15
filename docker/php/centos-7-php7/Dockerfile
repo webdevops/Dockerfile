@@ -5,14 +5,9 @@
 
 FROM webdevops/base-app:centos-7
 
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
-
-ENV WEB_DOCUMENT_ROOT  /app
-ENV WEB_DOCUMENT_INDEX index.php
-ENV WEB_ALIAS_DOMAIN   *.vm
+ENV WEB_DOCUMENT_ROOT=/app \
+    WEB_DOCUMENT_INDEX=index.php \
+    WEB_ALIAS_DOMAIN=*.vm
 
 COPY conf/ /opt/docker/
 
@@ -60,8 +55,10 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && rm -rf /tmp/* \
     && echo "extension=redis.so" > /etc/php.d/redis.ini \
     && yum remove -y ImageMagick-devel php70w-devel gcc make \
+    # Enable php services
+    && docker-service-enable syslog cron \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && docker-image-cleanup
 
 EXPOSE 9000

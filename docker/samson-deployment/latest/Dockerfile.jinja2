@@ -1,7 +1,5 @@
 {{ docker.from("samson", user="zendesk") }}
 
-{{ docker.version() }}
-
 
 ###############################################################################
 # Bootstrap
@@ -17,9 +15,11 @@
 # Base
 ###############################################################################
 
-{{ environment.homePath() }}
+{{ environment.base() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ ansible.debian() }}
 
 {{ base.debian() }}
 
@@ -27,7 +27,7 @@
 # Base-app
 ###############################################################################
 
-{{ environment.app() }}
+{{ environment.baseApp() }}
 
 {{ baseapp.debian() }}
 

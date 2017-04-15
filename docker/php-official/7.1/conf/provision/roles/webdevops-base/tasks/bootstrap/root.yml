@@ -1,0 +1,5 @@
+---
+
+- file:
+    path: "/root/.profile"
+    state: absent

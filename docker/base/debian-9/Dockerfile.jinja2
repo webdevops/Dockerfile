@@ -1,10 +1,10 @@
 {{ docker.from("bootstrap", "debian-9") }}
 
-{{ docker.version() }}
-
-{{ environment.homePath() }}
+{{ environment.base() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ ansible.debian() }}
 
 {{ base.debian() }}
 

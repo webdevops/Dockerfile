@@ -7,10 +7,10 @@ FROM {{ image }}:{{ tag }}
 {%- endmacro %}
 
 {% macro version() -%}
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
+LABEL maintainer=info@webdevops.io \
+      vendor=WebDevOps.io \
+      io.webdevops.layout=8 \
+      io.webdevops.version=1.5.0
 {%- endmacro %}
 
 {%- macro add(source, target) -%}
@@ -40,4 +40,8 @@ ENTRYPOINT ["{{ command }}"]
 
 {%- macro cmd(command) -%}
 CMD ["{{ command }}"]
+{%- endmacro -%}
+
+{%- macro cleanup() -%}
+    && docker-image-cleanup
 {%- endmacro -%}

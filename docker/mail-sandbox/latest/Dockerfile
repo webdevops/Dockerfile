@@ -5,13 +5,8 @@
 
 FROM webdevops/php-nginx:latest
 
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
-
-ENV MAILBOX_USERNAME "dev"
-ENV MAILBOX_PASSWORD "dev"
+ENV MAILBOX_USERNAME="dev" \
+    MAILBOX_PASSWORD="dev"
 
 COPY conf/ /opt/docker/
 
@@ -23,8 +18,8 @@ RUN /usr/local/bin/apt-install \
     && /opt/docker/bin/control.sh service.enable dovecot \
     && /opt/docker/bin/provision add --tag entrypoint webdevops-mail-sandbox \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-mail-sandbox \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && docker-image-cleanup
 
 # Install Roundcube + plugins
 RUN cd /app \
@@ -35,6 +30,7 @@ RUN cd /app \
     && ls -l  \
     && rm -rf .git installer \
     && ln -s /opt/docker/etc/roundcube/plugins/webdevops_autologin/ plugins/webdevops_autologin \
-    && ln -s /opt/docker/etc/roundcube/config.php config/config.inc.php
+    && ln -s /opt/docker/etc/roundcube/config.php config/config.inc.php \
+    && docker-image-cleanup
 
 EXPOSE 25 465 587 143 993

@@ -41,8 +41,8 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
                 'task_dep': []
             }
 
-            if dockerfile['dependency']:
-                task['task_dep'].append('DockerTestServerspec|%s' % dockerfile['dependency'])
+            #if dockerfile['dependency']:
+            #    task['task_dep'].append('DockerTestServerspec|%s' % dockerfile['dependency'])
 
             tasklist.append(task)
 
@@ -61,6 +61,14 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         """
         Run test
         """
+
+        # check if dockerfile is symlink, skipping tests if just a duplicate image
+        # image is using the same hashes
+        if dockerfile['image']['duplicate']:
+            print '  Docker image %s is build from symlink and duplicate of %s' % (dockerfile['image']['fullname'], dockerfile['image']['from'])
+            print '  -> skipping tests'
+            return True
+
         # Check if current image is a toolimage (no daemon)
         is_toolimage = False
         for term in configuration.get('dockerTest.toolImages', {}):
@@ -170,7 +178,9 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         if image_env_list:
             image_env_list = image_env_list.to_dict().copy()
             for term in image_env_list:
-                if term in dockerfile['image']['fullname']:
+                regex = r'.*%s.*' % term
+                match = re.match(regex, dockerfile['image']['fullname'], re.IGNORECASE)
+                if match:
                     for key in image_env_list[term]:
                         ret[key] = str(image_env_list[term][key])
 

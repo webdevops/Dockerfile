@@ -3,14 +3,13 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/bootstrap:alpine-3
-
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
+FROM webdevops/bootstrap:alpine
 
 RUN /usr/local/bin/apk-install \
+    # General python
+    python \
+    py-crypto \
+    py2-pip \
     # General sphinx
     py-pillow \
     py-yaml \
@@ -19,6 +18,8 @@ RUN /usr/local/bin/apk-install \
     # GRAPHVIZ
     graphviz \
     ttf-dejavu \
+    && pip install --upgrade pip \
+    && hash -r \
     && pip install --upgrade sphinxcontrib-googlechart \
     && pip install --upgrade sphinxcontrib-googlemaps \
     && pip install --upgrade sphinxcontrib-httpdomain \
@@ -29,4 +30,5 @@ RUN /usr/local/bin/apk-install \
     && pip install t3SphinxThemeRtd \
     && pip install t3fieldlisttable \
     && pip install t3tablerows \
-    && pip install t3targets
+    && pip install t3targets \
+    && docker-image-cleanup

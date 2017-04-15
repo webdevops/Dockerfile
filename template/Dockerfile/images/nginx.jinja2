@@ -1,10 +1,12 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro alpine(role='') -%}
 # Install nginx
 RUN /usr/local/bin/apk-install \
         nginx \
-    {{ provision.runRoleInline('nginx', role) }}
+    {{ provision.runRoleInline('nginx', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -12,7 +14,8 @@ RUN /usr/local/bin/apk-install \
 # Install tools
 RUN /usr/local/bin/yum-install \
         nginx \
-    {{ provision.runRoleInline('nginx', role) }}
+    {{ provision.runRoleInline('nginx', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -20,7 +23,8 @@ RUN /usr/local/bin/yum-install \
 # Install nginx
 RUN /usr/local/bin/apt-install \
         nginx \
-    {{ provision.runRoleInline('nginx', role) }}
+    {{ provision.runRoleInline('nginx', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
@@ -28,5 +32,6 @@ RUN /usr/local/bin/apt-install \
 # Install nginx
 RUN /usr/local/bin/apt-install \
         nginx \
-    {{ provision.runRoleInline('nginx', role) }}
+    {{ provision.runRoleInline('nginx', role) }} \
+    {{ docker.cleanup() }}
 {%- endmacro %}

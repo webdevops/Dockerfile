@@ -1,6 +1,0 @@
----
-
-- name: Remove /usr/sbin/service
-  file:
-    path:  '/usr/sbin/service'
-    state: absent

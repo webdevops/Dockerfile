@@ -8,7 +8,7 @@ if [ -n "${CLI_SCRIPT}" ]; then
     if [ -n "$APPLICATION_USER" ]; then
         # Run as EFFECTIVE_USER
         shift
-        exec sudo -H -E -u "${APPLICATION_USER}" ${CLI_SCRIPT} "$@"
+        exec gosu "${APPLICATION_USER}" ${CLI_SCRIPT} "$@"
     else
         # Run as root
         exec ${CLI_SCRIPT} "$@"

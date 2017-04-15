@@ -21,6 +21,7 @@ The original image is only the webbased deployment system and is extended by:
 Environment variables
 ---------------------
 
+.. include:: include/environment-base.rst
 .. include:: include/environment-base-app.rst
 
 

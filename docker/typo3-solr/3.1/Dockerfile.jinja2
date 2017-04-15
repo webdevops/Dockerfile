@@ -2,11 +2,13 @@
 
 {{ docker.version() }}
 
-{{ environment.general(charset="C.UTF-8") }}
+{{ environment.general() }}
 
 USER root
 
 COPY ./solr/ /tmp/solr
+
+{{ docker.add('baselayout.tar', '/') }}
 
 RUN pacman --sync --noconfirm --noprogressbar --quiet net-tools \
     && rm -rf /opt/solr/server \

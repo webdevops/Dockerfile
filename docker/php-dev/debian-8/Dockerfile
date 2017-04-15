@@ -5,11 +5,6 @@
 
 FROM webdevops/php:debian-8
 
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
-
 COPY conf/ /opt/docker/
 
 # Install development environment
@@ -22,6 +17,11 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         php5-xdebug \
         blackfire-php \
         blackfire-agent \
+        # Tools
+        nano \
+        vim \
+    # Enable php development services
+    && docker-service-enable syslog ssh postfix \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-dev --role webdevops-php-dev \
-    && /opt/docker/bin/bootstrap.sh
-
+    && /opt/docker/bin/bootstrap.sh \
+    && docker-image-cleanup

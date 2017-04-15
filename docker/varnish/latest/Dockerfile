@@ -3,12 +3,7 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base:alpine-3
-
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
+FROM webdevops/base:alpine
 
 ENV VARNISH_PORT    80
 
@@ -22,7 +17,8 @@ ENV VARNISH_BACKEND_PORT "80"
 COPY conf/ /opt/docker/
 
 RUN /usr/local/bin/apk-install \
-        varnish
+        varnish \
+    && docker-image-cleanup
 
 CMD ["varnishd"]
 

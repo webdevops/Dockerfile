@@ -68,17 +68,10 @@ class BaseDockerTaskLoader(BaseTaskLoader):
         Prepare dockerfile list with dependency and also add "auto latest tag" images
         """
 
-        image_list = [x['image']['fullname'] for x in dockerfile_list if x['image']['fullname']]
-
+        # Process auto latest tag
         autoLatestTagImageList = []
-
+        image_list = [x['image']['fullname'] for x in dockerfile_list if x['image']['fullname']]
         for dockerfile in dockerfile_list:
-            # Calculate dependency
-            dockerfile['dependency'] = False
-            if dockerfile['image']['from'] and dockerfile['image']['from'] in image_list:
-                dockerfile['dependency'] = dockerfile['image']['from']
-
-            # Process auto latest tag
             if self.configuration.get('docker.autoLatestTag') and dockerfile['image']['tag'] == self.configuration.get('docker.autoLatestTag'):
                 imageNameLatest = DockerfileUtility.generate_image_name_with_tag_latest(dockerfile['image']['fullname'])
                 if imageNameLatest not in image_list:
@@ -87,9 +80,16 @@ class BaseDockerTaskLoader(BaseTaskLoader):
                     autoLatestTagImage['image']['tag'] = 'latest'
                     autoLatestTagImage['dependency'] = dockerfile['image']['fullname']
                     autoLatestTagImageList.append(autoLatestTagImage)
-
         # Add auto latest tag images to dockerfile list
         dockerfile_list.extend(autoLatestTagImageList)
+
+        # Calculate dependency
+        image_list = [x['image']['fullname'] for x in dockerfile_list if x['image']['fullname']]
+        for dockerfile in dockerfile_list:
+            if not 'dependency' in dockerfile:
+                dockerfile['dependency'] = False
+                if dockerfile['image']['from'] and dockerfile['image']['from'] in image_list:
+                    dockerfile['dependency'] = dockerfile['image']['from']
 
         return dockerfile_list
 

@@ -1,5 +1,7 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro ubuntu() -%}
-RUN /opt/docker/bin/control.sh service.enable ssh
+RUN /opt/docker/bin/control.sh service.enable ssh \
+    {{ docker.cleanup() }}
 {%- endmacro %}

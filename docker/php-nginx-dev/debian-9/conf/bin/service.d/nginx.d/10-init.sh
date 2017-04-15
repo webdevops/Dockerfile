@@ -8,15 +8,17 @@ fi
 ln -f -s /var/lib/nginx/logs /var/log/nginx
 
 # Replace markers
-find /opt/docker/etc/nginx/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<DOCUMENT_INDEX>" "$WEB_DOCUMENT_INDEX" > /dev/null
-find /opt/docker/etc/nginx/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<DOCUMENT_ROOT>"  "$WEB_DOCUMENT_ROOT" > /dev/null
-find /opt/docker/etc/nginx/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<ALIAS_DOMAIN>"   "$WEB_ALIAS_DOMAIN" > /dev/null
-find /opt/docker/etc/nginx/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<SERVERNAME>"     "$HOSTNAME" > /dev/null
+go-replace \
+    -s "<DOCUMENT_INDEX>" -r "$WEB_DOCUMENT_INDEX" \
+    -s "<DOCUMENT_ROOT>" -r "$WEB_DOCUMENT_ROOT" \
+    -s "<ALIAS_DOMAIN>" -r "$WEB_ALIAS_DOMAIN" \
+    -s "<SERVERNAME>" -r "$HOSTNAME" \
+    -s "<PHP_SOCKET>" -r "$WEB_PHP_SOCKET" \
+    --path=/opt/docker/etc/nginx/ \
+    --path-pattern='*.conf' \
+    --ignore-empty
 
-if [[ -n "${WEB_PHP_SOCKET+x}" ]]; then
-    ## WEB_PHP_SOCKET is set
-    find /opt/docker/etc/nginx/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<PHP_SOCKET>" "$WEB_PHP_SOCKET" > /dev/null
-else
+if [[ -z "${WEB_PHP_SOCKET+x}" ]]; then
     ## WEB_PHP_SOCKET is not set, remove PHP files
     rm -f -- /opt/docker/etc/nginx/conf.d/10-php.conf
     rm -f -- /opt/docker/etc/nginx/vhost.common.d/10-php.conf

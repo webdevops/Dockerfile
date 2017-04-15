@@ -1,7 +1,5 @@
 {{ docker.from("php-nginx") }}
 
-{{ docker.version() }}
-
 {{ environment.mailbox() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}

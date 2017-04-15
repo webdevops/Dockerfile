@@ -1,8 +1,9 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
+{% import 'Dockerfile/tools.jinja2' as tools %}
+
 {% macro alpine() -%}
-# Init bootstrap (and install ansible)
+# Init bootstrap
 RUN set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
     # Add community
     && echo http://dl-4.alpinelinux.org/alpine/v3.5/community/ >> /etc/apk/repositories \
     # System update
@@ -11,24 +12,9 @@ RUN set -x \
     && /usr/local/bin/apk-install \
         bash \
         ca-certificates \
-    # Install ansible
-    && /usr/local/bin/apk-install \
-        python \
-        python-dev \
-        py-setuptools \
-        py-crypto \
-        py2-pip \
-        py-cparser \
-        py-cryptography \
-        py-markupsafe \
-        py-cffi \
-        py-yaml \
-        py-jinja2 \
-        py-paramiko \
-    && pip install --upgrade pip \
-    && hash -r \
-    && pip install ansible \
-    && chmod 750 /usr/bin/ansible* \
+        openssl \
+    && update-ca-certificates \
+    && /usr/local/bin/generate-dockerimage-info \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && apk add --no-cache --virtual .gosu-deps \
@@ -45,38 +31,20 @@ RUN set -x \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
     && apk del .gosu-deps \
-    # Cleanup
-    && apk del python-dev \
-    && find /var/log/ -mindepth 1 -delete
+    {{ tools.goreplace() }}
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
 
 {% macro centos() -%}
-# Init bootstrap (and install ansible)
+# Init bootstrap
 RUN set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
     # System update
     && /usr/local/bin/yum-upgrade \
-    # Install ansible
     && /usr/local/bin/yum-install \
         epel-release \
-        PyYAML \
-        python-jinja2 \
-        python-httplib2 \
-        python-keyczar \
-        python-paramiko \
-        python-setuptools \
-        python-setuptools-devel \
-        libffi \
-        python-devel \
-        libffi-devel \
-    && easy_install pip \
-    && pip install --upgrade pip \
-    && hash -r \
-    && pip install ansible \
-    && chmod 750 /usr/bin/ansible* \
+    && /usr/local/bin/generate-dockerimage-info \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && /usr/local/bin/yum-install gpg wget \
@@ -89,48 +57,27 @@ RUN set -x \
     && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
+    {{ tools.goreplace() }}
     && yum erase -y wget \
-    # Cleanup
-    && yum erase -y python-devel \
-    && yum clean all \
-    && find /var/log/ -mindepth 1 -delete
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
 {% macro debian(distribution) -%}
-# Init bootstrap (and install ansible)
-RUN export DEBIAN_FRONTEND=noninteractive \
-    && set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
+# Init bootstrap
+RUN set -x \
+    && apt-update \
+    && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
-    && sed -ri 's/(deb.*\/debian {{ distribution }} main)/\1 contrib non-free /' -- /etc/apt/sources.list \
-    # System updatei
+    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list \
+    && apt-update \
+    # System update
     && /usr/local/bin/apt-upgrade \
     # Base stuff
     && /usr/local/bin/apt-install \
-        lsb-release \
+        apt-transport-https \
         ca-certificates \
         locales \
-        apt-transport-https \
-    # Generate base locale
-    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
-    && locale-gen \
-    && /usr/local/bin/apt-install \
-        # Install ansible
-        python-minimal \
-        python-setuptools \
-        python-pip \
-        python-paramiko \
-        python-jinja2 \
-        python-dev \
-        libffi-dev \
-        libssl-dev \
-        build-essential \
-    && pip install --upgrade pip \
-    && hash -r \
-    && pip install ansible \
-    && chmod 750 /usr/local/bin/ansible* \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && /usr/local/bin/apt-install wget gnupg dirmngr \
@@ -143,54 +90,30 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
+    {{ tools.goreplace() }}
     && apt-get purge -y -f --force-yes wget dirmngr \
-    # Cleanup
-    && apt-get purge -y -f --force-yes \
-        python-dev \
-        build-essential \
-        libssl-dev \
-        libffi-dev \
-    && apt-get autoremove -y -f \
-    && apt-get clean -y \
-    && find /var/log/ -mindepth 1 -delete
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
 {% macro ubuntu12() -%}
-# Init bootstrap (and install ansible)
-RUN export DEBIAN_FRONTEND=noninteractive \
-    && set -x \
+# Init bootstrap
+RUN set -x \
     # Add multiverse
     && echo "deb http://archive.ubuntu.com/ubuntu/ precise-security multiverse" >> /etc/apt/sources.list \
     && echo "deb-src http://archive.ubuntu.com/ubuntu/ precise-security multiverse" >> /etc/apt/sources.list \
     && echo "deb http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
     && echo "deb-src http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
-    # Generate base locale
-    && locale-gen en_US.UTF-8 \
+    && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Install base stuff
     && /usr/local/bin/apt-install \
-        python-software-properties \
-        lsb-release \
-        ca-certificates \
-        # Install ansible
-        python-minimal \
-        python-setuptools \
-        python-pip \
-        python-paramiko \
-        python-jinja2 \
-        python-dev \
-        libffi-dev \
-        libssl-dev \
-        build-essential \
         apt-transport-https \
-    && pip install --upgrade pip \
-    && hash -r \
-    && pip install ansible \
-    && chmod 750 /usr/local/bin/ansible* \
+        python-software-properties \
+        ca-certificates \
+        apt-transport-https \
+    && /usr/local/bin/generate-dockerimage-info \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && /usr/local/bin/apt-install wget gnupg \
@@ -203,52 +126,25 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
+    {{ tools.goreplace() }}
     && apt-get purge -y -f --force-yes wget \
-    # Cleanup
-    && apt-get purge -y -f --force-yes \
-        python-dev \
-        build-essential \
-        libssl-dev \
-        libffi-dev \
-    && apt-get autoremove -y -f \
-    && apt-get clean -y \
-    && find /var/log/ -mindepth 1 -delete
+    {{ docker.cleanup() }}
 {%- endmacro %}
 
 
 {% macro ubuntu() -%}
-# Init bootstrap (and install ansible)
-RUN export DEBIAN_FRONTEND=noninteractive \
-    && set -x \
-    # Fix root terminal
-    && echo "export TERM=xterm" >> /root/.bashrc \
-    # Generate base locale
-    && locale-gen en_US.UTF-8 \
+# Init bootstrap
+RUN set -x \
+    && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Install base stuff
     && /usr/local/bin/apt-install \
-        software-properties-common \
-        lsb-release \
         ca-certificates \
         apt-transport-https \
     && apt-add-repository multiverse \
-    # Install ansible
-    && /usr/local/bin/apt-install \
-        python-minimal \
-        python-setuptools \
-        python-pip \
-        python-paramiko \
-        python-jinja2 \
-        python-cffi \
-        python-dev \
-        libffi-dev \
-       	libssl-dev \
-        build-essential \
-    && pip install --upgrade pip \
-    && hash -r \
-    && pip install ansible \
-    && chmod 750 /usr/local/bin/ansible* \
+    && apt-update \
+    && /usr/local/bin/generate-dockerimage-info \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && /usr/local/bin/apt-install wget gnupg \
@@ -261,15 +157,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
+    {{ tools.goreplace() }}
     && apt-get purge -y -f --force-yes wget \
-    # Cleanup
-    && apt-get purge -y -f --force-yes \
-        python-dev \
-        build-essential \
-        libssl-dev \
-        libffi-dev \
-    && apt-get autoremove -y -f \
-    && apt-get clean -y \
-    && find /var/log/ -mindepth 1 -delete
+    {{ docker.cleanup() }}
 {%- endmacro %}
 

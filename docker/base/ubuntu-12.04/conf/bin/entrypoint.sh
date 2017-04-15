@@ -20,15 +20,12 @@ chmod -s /usr/local/bin/gosu
 trap 'echo sigterm ; exit' SIGTERM
 trap 'echo sigkill ; exit' SIGKILL
 
-# link stdout from docker
-ln -f -s "/proc/$$/fd/1" /docker.stdout
-ln -f -s "/proc/$$/fd/2" /docker.stderr
-chmod 600 /docker.stdout /docker.stderr
-
 # sanitize input and set task
 TASK="$(echo $1| sed 's/[^-_a-zA-Z0-9]*//g')"
 
 source /opt/docker/bin/config.sh
+
+createDockerStdoutStderr
 
 if [[ "$UID" -eq 0 ]]; then
     # Only run provision if user is root

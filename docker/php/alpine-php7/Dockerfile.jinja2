@@ -1,0 +1,9 @@
+{{ docker.from("base-app", "alpine") }}
+
+{{ environment.web() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ php7.alpine() }}
+
+{{ docker.expose('9000') }}

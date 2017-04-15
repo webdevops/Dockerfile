@@ -39,8 +39,8 @@ $testConfiguration[:php] = 7
 $testConfiguration[:phpXdebug] = true
 $testConfiguration[:phpApcu] = true
 $testConfiguration[:phpRedis] = true
-$testConfiguration[:phpMhash] = true
 $testConfiguration[:phpBlackfire] = false
+$testConfiguration[:phpOfficialImage] = false
 
 if ((os[:family] == 'ubuntu' and os[:version] == '12.04') or
     (os[:family] == 'ubuntu' and os[:version] == '14.04') or
@@ -49,15 +49,22 @@ if ((os[:family] == 'ubuntu' and os[:version] == '12.04') or
     (os[:family] == 'redhat' and os[:version] == '7') or
     (os[:family] == 'debian' and os[:version] == '7') or
     (os[:family] == 'debian' and os[:version] == '8') or
-    (os[:family] == 'alpine' and os[:version] == '3') or
-    (ENV['DOCKER_TAG'].match('php5')))
+    (ENV['DOCKER_TAG'].match('php5')) or
+    (ENV['DOCKER_TAG'].match('alpine-3')) or
+    (ENV['DOCKER_TAG'] =~ /^5\.[0-9]+/)
+   )
     $testConfiguration[:php] = 5
 end
 
-if (ENV['DOCKER_TAG'].match('php7'))
+if ((ENV['DOCKER_TAG'].match('php7')) or
+    (ENV['DOCKER_TAG'] =~ /^7\.[0-9]+/)
+   )
     $testConfiguration[:php] = 7
 end
 
+if ENV['PHP_OFFICIAL'] and ENV['PHP_OFFICIAL'] == "1"
+    $testConfiguration[:phpOfficialImage] = true
+end
 
 if ENV['PHP_XDEBUG'] and ENV['PHP_XDEBUG'] == "0"
     $testConfiguration[:phpXdebug] = false
@@ -69,10 +76,6 @@ end
 
 if ENV['PHP_REDIS'] and ENV['PHP_REDIS'] == "0"
     $testConfiguration[:phpRedis] = false
-end
-
-if ENV['PHP_MHASH'] and ENV['PHP_MHASH'] == "0"
-    $testConfiguration[:phpMhash] = false
 end
 
 if ENV['PHP_BLACKFIRE'] and ENV['PHP_BLACKFIRE'] == "1"

@@ -1,7 +1,5 @@
 {{ docker.from("php", "ubuntu-16.04") }}
 
-{{ docker.version() }}
-
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 {{ php7dev.ubuntu() }}

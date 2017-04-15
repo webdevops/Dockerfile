@@ -1,0 +1,12 @@
+---
+
+- name: Create link for additional php.ini [Alpine family]
+  file:
+    src:  '/opt/docker/etc/php/{{ item.file }}'
+    dest: '{{ php_etc_dir }}/conf.d/{{ item.target }}'
+    state: link
+    force: yes
+  with_items:
+    - { file: 'php.webdevops.ini', target: 'xzza-webdevops.ini'}
+    - { file: 'php.ini',           target: 'xzzz-docker.ini'}
+  when: ansible_os_family == 'Alpine'

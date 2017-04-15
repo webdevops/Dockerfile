@@ -3,8 +3,7 @@
         {% if role %}--role webdevops-{{ role }} {% endif %}
         {%- endfor -%}{%- endfor -%}
     \{%- endif %}
-    && /opt/docker/bin/bootstrap.sh
-{% endmacro %}
+    && /opt/docker/bin/bootstrap.sh{% endmacro %}
 
 
 {% macro registerRole(role='',bootstrap=False,build=False,onbuild=False,entrypoint=False) %}&& /opt/docker/bin/provision add {%if bootstrap%}--tag bootstrap {% endif %}{%if build%}--tag build {% endif %}{%if onbuild%}--tag onbuild {% endif %}{%if entrypoint%}--tag entrypoint {% endif %} webdevops-{{ role }}{% endmacro %}

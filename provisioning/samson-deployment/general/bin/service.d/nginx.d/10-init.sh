@@ -2,5 +2,9 @@
 ln -f -s /var/lib/nginx/logs /var/log/nginx
 
 # Replace markers
-find /opt/docker/etc/nginx/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<ALIAS_DOMAIN>"   "$WEB_ALIAS_DOMAIN" > /dev/null
-find /opt/docker/etc/nginx/ -iname '*.conf' -print0 | xargs -0 -r rpl --quiet "<SERVERNAME>"     "$HOSTNAME" > /dev/null
+go-replace \
+    -s "<ALIAS_DOMAIN>" -r "$WEB_ALIAS_DOMAIN" \
+    -s "<SERVERNAME>" -r "$HOSTNAME" \
+    --path=/opt/docker/etc/nginx/ \
+    --path-pattern='*.conf' \
+    --ignore-empty

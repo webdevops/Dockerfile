@@ -1,7 +1,12 @@
+{% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro alpine() -%}
 RUN /usr/local/bin/apk-install \
+    # General python
+    python \
+    py-crypto \
+    py2-pip \
     # General sphinx
     py-pillow \
     py-yaml \
@@ -10,6 +15,8 @@ RUN /usr/local/bin/apk-install \
     # GRAPHVIZ
     graphviz \
     ttf-dejavu \
+    && pip install --upgrade pip \
+    && hash -r \
     && pip install --upgrade sphinxcontrib-googlechart \
     && pip install --upgrade sphinxcontrib-googlemaps \
     && pip install --upgrade sphinxcontrib-httpdomain \
@@ -20,5 +27,6 @@ RUN /usr/local/bin/apk-install \
     && pip install t3SphinxThemeRtd \
     && pip install t3fieldlisttable \
     && pip install t3tablerows \
-    && pip install t3targets
+    && pip install t3targets \
+    {{ docker.cleanup() }}
 {%- endmacro %}

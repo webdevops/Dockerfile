@@ -4,5 +4,4 @@
 ## NOOP (no operation)
 #############################################
 
-tail -f /dev/null
-exit
+exec tail -f /dev/null

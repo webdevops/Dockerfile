@@ -1,0 +1,8 @@
+---
+
+- file:
+    path: "/var/log/wtmp"
+    state: touch
+    mode:  0664
+    owner: "root"
+    group: "root"

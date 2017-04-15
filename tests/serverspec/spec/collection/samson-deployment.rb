@@ -1,4 +1,7 @@
 shared_examples 'collection::samson-deployment' do
+    include_examples 'python::toolchain'
+    include_examples 'ansible::toolchain::public'
+
     include_examples 'samson-deployment::layout'
     include_examples 'samson-deployment::deployment'
 

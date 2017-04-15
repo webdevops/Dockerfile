@@ -1,0 +1,5 @@
+{{ docker.from("php", "5.6") }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ php.officialDevelopment(version="5.6") }}

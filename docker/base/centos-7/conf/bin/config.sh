@@ -15,44 +15,23 @@ function rootCheck() {
 }
 
 ###
- # Create named pipe
- #
- # $1 -> name of file
+ # Create /docker.stdout and /docker.stderr
  #
  ##
-function createNamedPipe() {
-    rm --force -- "$1"
-    mknod "$1" p
+function createDockerStdoutStderr() {
+    # link stdout from docker
+    if [[ -z "$LOG_STDOUT" ]]; then
+        LOG_STDOUT="/proc/$$/fd/1"
+    fi
+
+    if [[ -z "$LOG_STDERR" ]]; then
+        LOG_STDERR="/proc/$$/fd/2"
+    fi
+
+    ln -f -s "$LOG_STDOUT" /docker.stdout
+    ln -f -s "$LOG_STDERR" /docker.stderr
+    chmod 600 /docker.stdout /docker.stderr
 }
-
-###
- # Escape value for sed usage
- #
- # $1     -> value
- # STDOUT -> escaped value
- #
- ##
-function sedEscape() {
-    echo "$(echo $* |sed -e 's/[]\/$*.^|[]/\\&/g')"
-}
-
-###
- # Replace text inside a file
- #
- # $1 -> source value
- # $2 -> target value
- # $3 -> path to file
- #
- ##
-function replaceTextInFile() {
-    SOURCE="$(sedEscape $1)"
-    REPLACE="$(sedEscape $2)"
-    TARGET="$3"
-
-    sed -i "s/${SOURCE}/${REPLACE}/" "${TARGET}"
-}
-
-
 ###
  # Include script directory text inside a file
  #
@@ -104,7 +83,7 @@ function runEntrypoints() {
         . /opt/docker/bin/entrypoint.d/default.sh
     fi
 
-    exit
+    exit 1
 }
 
 ###
@@ -161,6 +140,12 @@ function runProvisionEntrypoint() {
 function runDockerProvision() {
     ANSIBLE_TAG="$1"
 
-    /opt/docker/bin/provision run --tag "$ANSIBLE_TAG" --use-registry
+    PROVISION_STATS_FILE="/opt/docker/etc/.registry/provision-stats.${ANSIBLE_TAG}"
+
+    # run provision if stats file doesn't exists (unknown mode)
+    # or if stats file is not empty
+    if [[ ! -f "$PROVISION_STATS_FILE" ]] || [[ -s "$PROVISION_STATS_FILE" ]]; then
+        /opt/docker/bin/provision run --tag "${ANSIBLE_TAG}" --use-registry
+    fi
 }
 

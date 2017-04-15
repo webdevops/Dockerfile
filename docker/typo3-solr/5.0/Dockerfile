@@ -5,20 +5,25 @@
 
 FROM guywithnose/solr:4.10.4
 
-MAINTAINER info@webdevops.io
-LABEL vendor=WebDevOps.io
-LABEL io.webdevops.layout=8
-LABEL io.webdevops.version=1.5.0
+LABEL maintainer=info@webdevops.io \
+      vendor=WebDevOps.io \
+      io.webdevops.layout=8 \
+      io.webdevops.version=1.5.0
 
-ENV TERM   "xterm"
-ENV LANG   "C.UTF-8"
-ENV LC_ALL "C.UTF-8"
+ENV TERM="xterm" \
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
 
 USER root
 
 COPY ./solr/ /tmp/solr
 
+ADD baselayout.tar /
+
+WORKDIR /
+
 RUN pacman --sync --noconfirm --noprogressbar --quiet net-tools \
+    && /usr/local/bin/generate-dockerimage-info \
     && rm -rf /opt/solr/server \
     && mv /opt/solr/example/ /opt/solr/server/ \
     && rm -rf /opt/solr/server/solr \
@@ -28,10 +33,12 @@ RUN pacman --sync --noconfirm --noprogressbar --quiet net-tools \
     && ln -s /opt/solr/contrib /opt/solr/server/solr/contrib \
     && mkdir -p /opt/solr/server/solr/data \
     && ln -s /opt/solr/server/solr/data /opt/solr/server/solr/typo3cores/data \
-    && chown -R solr:solr /opt/solr/server/solr/
+    && chown -R solr:solr /opt/solr/server/solr/ \
+    && docker-image-cleanup
 
 USER solr
 
 WORKDIR /opt/solr/server
 
 VOLUME ["/opt/solr/server/solr/data"]
+

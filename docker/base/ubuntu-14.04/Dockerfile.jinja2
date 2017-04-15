@@ -1,10 +1,10 @@
 {{ docker.from("bootstrap", "ubuntu-14.04") }}
 
-{{ docker.version() }}
-
-{{ environment.homePath() }}
+{{ environment.base() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ ansible.ubuntu() }}
 
 {{ base.ubuntu() }}
 

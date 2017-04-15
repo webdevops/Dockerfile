@@ -95,10 +95,15 @@ class DoitReporter(object):
     output results after finish
     """
 
+    skip_detection = True
+    simulation_mode = False
+
     desc = 'output after finish'
 
     show_out = False
     show_err = False
+    task_finished = 0
+    task_total = 0
 
     def __init__(self, outstream, options=None): #pylint: disable=W0613
         # result is sent to stdout when doit finishes running
@@ -130,15 +135,19 @@ class DoitReporter(object):
         """
         self.t_results[task.name].start()
 
+
     def add_failure(self, task, exception):
         """
         called when excution finishes with a failure
         """
         self.t_results[task.name].set_result('fail', exception.get_msg())
 
+        self.task_finished += 1
+
         if task.actions and (task.name[0] != '_'):
             duration = self.duration(self.t_results[task.name].elapsed)
-            self.writeln(colored('.  %s FAILED (%s)' % (BaseTaskLoader.human_task_name(task.title()), duration), 'red'))
+            progress = self.calc_progress()
+            self.writeln(colored('.  %s FAILED (%s, #%s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'red'))
         self.failures.append({'task': task, 'exception': exception})
 
     def add_success(self, task):
@@ -147,9 +156,26 @@ class DoitReporter(object):
         """
         self.t_results[task.name].set_result('success')
 
+        self.task_finished += 1
+
         if task.actions and (task.name[0] != '_'):
-            duration = self.duration(self.t_results[task.name].elapsed)
-            self.writeln(colored('.  %s finished (%s)' % (BaseTaskLoader.human_task_name(task.title()), duration), 'green'))
+            durationSeconds = self.t_results[task.name].elapsed
+            duration = self.duration(durationSeconds)
+            progress = self.calc_progress()
+
+            if DoitReporter.simulation_mode:
+                self.writeln(
+                    colored('.  %s simulated (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'blue')
+                )
+            else:
+                if DoitReporter.skip_detection and durationSeconds < 1:
+                    self.writeln(
+                        colored('.  %s SKIPPED (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'yellow')
+                    )
+                else:
+                    self.writeln(
+                        colored('.  %s finished (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'green')
+                    )
 
     def skip_uptodate(self, task):
         """
@@ -211,13 +237,14 @@ class DoitReporter(object):
                 if 'FinishChain|' in task['name']:
                     continue
 
-                self.task_stdout(
-                    title=task['name'],
-                    duration=task['elapsed'],
-                    stdout=task['out'],
-                    stderr=task['err'],
-                    error=task['error']
-                )
+                if task['result'] != 'fail':
+                    self.task_stdout(
+                        title=task['name'],
+                        duration=task['elapsed'],
+                        stdout=task['out'],
+                        stderr=task['err'],
+                        error=task['error']
+                    )
 
         # show failed tasks (at the end)
         for task in task_result_list:
@@ -282,6 +309,10 @@ class DoitReporter(object):
         Calculate duration (seconds) to human readable time
         """
         return 'duration: %s' % str(datetime.timedelta(seconds=int(duration)))
+
+    def calc_progress(self):
+        percentage = 100 * float(self.task_finished)/float(BaseTaskLoader.TASK_COUNT)
+        return 'task %s/%s, progress %d%%' % (self.task_finished, BaseTaskLoader.TASK_COUNT, percentage)
 
     def writeln(self, text=''):
         """

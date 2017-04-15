@@ -1,7 +1,5 @@
 {{ docker.from("php", "centos-7-php56") }}
 
-{{ docker.version() }}
-
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 {{ php5dev.webtatic() }}

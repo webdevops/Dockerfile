@@ -1,7 +1,5 @@
 {{ docker.from("base", "ubuntu-12.04") }}
 
-{{ docker.version() }}
-
 {{ environment.web() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}

@@ -1,0 +1,96 @@
+#!/bin/sh
+
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
+LSB_FAMILY=""
+
+#############################
+# Distribution detection
+#############################
+
+if [ -x "/usr/bin/apt-get" ]; then
+    # Debian family
+    LSB_FAMILY="Debian"
+
+elif [ -x "/bin/yum" ]; then
+    # RedHat family
+    LSB_FAMILY="RedHat"
+
+elif [ -x "/sbin/apk" ]; then
+    # Alpine family
+    LSB_FAMILY="Alpine"
+
+elif [ -f "/etc/arch-release" ]; then
+    # Alpine family
+    LSB_FAMILY="Arch"
+
+else
+    # Unknown
+    echo "ERROR: Distribution detection failed"
+    exit 1
+fi
+
+#############################
+# Install
+#############################
+
+case "$LSB_FAMILY" in
+    Debian)
+        apt-install lsb-release
+        ;;
+
+    RedHat)
+        yum-install redhat-lsb-core
+        ;;
+esac
+
+#############################
+# Set distribution information
+#############################
+
+echo "Detected $LSB_FAMILY"
+
+mkdir -p /opt/docker/etc/.registry/
+echo "$LSB_FAMILY" > /opt/docker/etc/.registry/image_info_distribution_family
+echo "$LSB_FAMILY" > /opt/docker/etc/.registry/image_info_distribution
+date +%s >/opt/docker/etc/.registry/image_info_buildtime
+
+# Create all files
+touch /opt/docker/etc/.registry/image_info_distribution_version
+touch /opt/docker/etc/.registry/image_info_lsb
+touch /opt/docker/etc/.registry/image_info_lsb_description
+touch /opt/docker/etc/.registry/image_info_lsb_release
+touch /opt/docker/etc/.registry/image_info_lsb_codename
+
+# Collect distribution specific informations
+case "$LSB_FAMILY" in
+    Debian|RedHat)
+        lsb_release -i -s > /opt/docker/etc/.registry/image_info_distribution
+        lsb_release -r -s > /opt/docker/etc/.registry/image_info_distribution_version
+        lsb_release -a > /opt/docker/etc/.registry/image_info_lsb
+        lsb_release -d -s > /opt/docker/etc/.registry/image_info_lsb_description
+        lsb_release -r -s > /opt/docker/etc/.registry/image_info_lsb_release
+        lsb_release -c -s > /opt/docker/etc/.registry/image_info_lsb_codename
+        ;;
+
+    Alpine)
+        cat /etc/alpine-release > /opt/docker/etc/.registry/image_info_distribution_version
+        ;;
+esac
+
+
+#############################
+# Uninstall
+#############################
+
+case "$LSB_FAMILY" in
+    Debian)
+        apt-get purge -y -f lsb-release
+        ;;
+
+    RedHat)
+        yum erase --assumeyes redhat-lsb-core
+        yum autoremove --assumeyes
+        ;;
+esac

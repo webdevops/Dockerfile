@@ -23,6 +23,7 @@ import time, datetime
 import multiprocessing
 from cleo import Command
 from webdevops import Configuration
+from ..doit.DoitReporter import DoitReporter
 
 class BaseCommand(Command):
     configuration = False
@@ -86,6 +87,8 @@ class BaseCommand(Command):
 
         if 'dryRun' in self.configuration and self.configuration.get('dryRun'):
             options.append('dry-run')
+            DoitReporter.simulation_mode = True
+
 
         print 'Executing %s (%s)' % (self.name, ', '.join(options))
         print ''
