@@ -24,4 +24,4 @@ if [[ -n "${POSTFIX_MYNETWORKS+x}" ]]; then
 fi
 
 # generate aliases db
-newaliases
+newaliases || :
