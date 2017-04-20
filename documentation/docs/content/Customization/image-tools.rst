@@ -34,6 +34,17 @@ eg::
 
 Because this comand is run in shell mode make sure you add appropriate quotes to disable wildcard matching.
 
+docker-php-setting
+------------------
+
+Only available on php images!
+
+This scripts sets php.ini setting globaly.
+
+eg::
+
+    RUN docker-php-setting memory_limit 1G
+
 docker-provision
 ----------------
 
