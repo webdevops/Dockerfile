@@ -27,6 +27,7 @@ Overview
 
    content/DockerImages/index
    content/Commands/index
+   content/Customization/index
    content/BuildingProcess/index
    content/KnownIssues/index
    content/FAQ/index
