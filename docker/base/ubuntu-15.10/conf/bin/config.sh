@@ -20,17 +20,20 @@ function rootCheck() {
  ##
 function createDockerStdoutStderr() {
     # link stdout from docker
-    if [[ -z "$LOG_STDOUT" ]]; then
+    if [[ -n "$LOG_STDOUT" ]]; then
+        echo "Log stdout redirected to $LOG_STDOUT"
+    else
         LOG_STDOUT="/proc/$$/fd/1"
     fi
 
-    if [[ -z "$LOG_STDERR" ]]; then
+    if [[ -n "$LOG_STDERR" ]]; then
+        echo "Log stderr redirected to $LOG_STDERR"
+    else
         LOG_STDERR="/proc/$$/fd/2"
     fi
 
     ln -f -s "$LOG_STDOUT" /docker.stdout
     ln -f -s "$LOG_STDERR" /docker.stderr
-    chmod 600 /docker.stdout /docker.stderr
 }
 ###
  # Include script directory text inside a file
