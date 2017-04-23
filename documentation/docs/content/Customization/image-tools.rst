@@ -45,6 +45,8 @@ eg::
 
     RUN docker-php-setting memory_limit 1G
 
+    RUN docker-php-setting --raw error_reporting 'E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED'
+
 docker-provision
 ----------------
 
