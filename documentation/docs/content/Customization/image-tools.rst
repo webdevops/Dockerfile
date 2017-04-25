@@ -5,9 +5,7 @@ Docker image tools
 docker-service
 --------------
 
-For enabling or disabling services run `docker-service-enable` or `docker-service-disable` inside your Dockerfile.
-
-eg::
+For enabling or disabling services run `docker-service-enable` or `docker-service-disable` inside your Dockerfile::
 
     RUN docker-service-enable ssh
 
@@ -26,9 +24,7 @@ Common services are:
 docker-cronjob
 --------------
 
-For adding cronjobs the `docker-cronjob` script can be used in your Dockerfile.
-
-eg::
+For adding cronjobs the `docker-cronjob` script can be used in your Dockerfile::
 
     RUN docker-cronjob '* * * * * application /app/cron.php`
 
@@ -39,9 +35,7 @@ docker-php-setting
 
 Only available on php images!
 
-This scripts sets php.ini setting globaly.
-
-eg::
+This scripts sets php.ini setting globaly::
 
     RUN docker-php-setting memory_limit 1G
 
