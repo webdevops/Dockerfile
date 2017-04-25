@@ -53,3 +53,17 @@ docker-provision
 The `docker-provision` script crontols the ansible provision system. See provision for more details.
 
 (Will be replaced in future)
+
+go-replace
+----------
+
+Simple but powerfull search&replace and template processing tool for manipulating files inside Docker::
+
+    # normal search&replace
+    go-replace -s VIRTUAL_HOST -r "$VIRTUAL_HOST" daemon.conf
+
+    # or with template
+    go-replace --mode=template daemon.conf.tmpl:daemon.conf
+
+
+For more informations see documentation inside `go-replace repository <https://github.com/webdevops/go-replace>`_.
