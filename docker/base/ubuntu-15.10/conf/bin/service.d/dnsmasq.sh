@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-source /opt/docker/bin/config.sh
+# Init vars
+if [[ -z "$SERVICE_DNSMASQ_OPTS" ]]; then SERVICE_DNSMASQ_OPTS=""; fi
+if [[ -z "$SERVICE_DNSMASQ_USER" ]]; then SERVICE_DNSMASQ_USER="root"; fi
 
-DNSMASQ_USER="root"
-DNSMASQ_OPTS=""
+source /opt/docker/bin/config.sh
 
 includeScriptDir "/opt/docker/bin/service.d/dnsmasq.d/"
 
-exec dnsmasq --keep-in-foreground --user="$DNSMASQ_USER" $DNSMASQ_OPTS
+exec dnsmasq --keep-in-foreground --user="$SERVICE_DNSMASQ_USER" $SERVICE_DNSMASQ_OPTS

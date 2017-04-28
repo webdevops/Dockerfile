@@ -25,4 +25,5 @@ Environment variable      Description                          Default
 ``FTP_UID``               FTP account uid                      ``1000``
 ``FTP_GID``               FTP account gid                      ``1000``
 ``FTP_PATH``              FTP account home path                ``/data/ftp/``
+``SERVICE_VSFTP_OPTS``    VSFTP command arguments              *empty*
 ========================= ==================================== ==================

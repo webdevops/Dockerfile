@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-set -e
+
+# Init vars
+if [[ -z "$SERVICE_APACHE_OPTS" ]]; then SERVICE_APACHE_OPTS=""; fi
+
 source /opt/docker/bin/config.sh
 
 includeScriptDir "/opt/docker/bin/service.d/httpd.d/"
@@ -7,4 +10,4 @@ includeScriptDir "/opt/docker/bin/service.d/httpd.d/"
 # Apache gets grumpy about PID files pre-existing
 rm -f /var/run/httpd/httpd.pid
 
-exec httpd -DFOREGROUND
+exec httpd -DFOREGROUND $SERVICE_APACHE_OPTS

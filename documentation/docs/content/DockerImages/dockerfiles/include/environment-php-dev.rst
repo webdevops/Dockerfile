@@ -35,4 +35,5 @@ Environment variable                          Description                       
                                               ``blackfire.server_id``
 ``BLACKFIRE_SERVER_TOKEN``                    php.ini value for                         ``none``
                                               ``blackfire.server_token``
+``SERVICE_BLACKFIRE_AGENT_OPTS``              Blackfire agent command arguments         *empty*
 ============================================= ========================================= ==============================================

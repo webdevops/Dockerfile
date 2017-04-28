@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-set -e
+
+# Init vars
+if [[ -z "$SERVICE_BLACKFIRE_AGENT_OPTS" ]]; then SERVICE_BLACKFIRE_AGENT_OPTS=""; fi
 
 source /opt/docker/bin/config.sh
 
@@ -20,4 +22,4 @@ fi
 # create directory for unix socket
 mkdir -p /var/run/blackfire
 
-eval exec blackfire-agent $BLACKFIRE_ARGS
+eval exec blackfire-agent $BLACKFIRE_ARGS $SERVICE_BLACKFIRE_AGENT_OPTS

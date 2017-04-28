@@ -8,5 +8,8 @@ Environment variable       Description                  Default
 ``WEB_DOCUMENT_INDEX``     Index document               ``index.php``
 ``WEB_ALIAS_DOMAIN``       Domain aliases               ``*.vm``
 ``WEB_PHP_SOCKET``         PHP-FPM socket address       ``127.0.0.1:9000`` (for php-* images)
+``SERVICE_PHPFPM_OPTS``    PHP-FPM command arguments    *empty* (when php fpm is used)
+``SERVICE_APACHE_OPTS``    Apache comamnd arguments     *empty* (when apache is used)
+``SERVICE_NGINX_OPTS``     Nginx comamnd arguments      *empty* (when nginx is used)
 ========================== ============================ ==============================================
 
