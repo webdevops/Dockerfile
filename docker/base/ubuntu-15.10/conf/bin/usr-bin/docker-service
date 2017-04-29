@@ -66,17 +66,10 @@ for SERVICE in "$@"; do
             fi
             ;;
 
-        start)
-            service "${SERVICE}" start
+        stop|start|restart|status|pid|check)
+            service "${SERVICE}" "$SERVICE_COMMAND"
             ;;
 
-        stop)
-            service "${SERVICE}" stop
-            ;;
-
-        restart)
-            service "${SERVICE}" restart
-            ;;
     esac
 done
 
