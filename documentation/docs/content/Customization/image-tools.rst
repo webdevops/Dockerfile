@@ -5,9 +5,9 @@ Docker image tools
 docker-service
 --------------
 
-For enabling or disabling services run `docker-service-enable` or `docker-service-disable` inside your Dockerfile::
+For enabling or disabling services run `docker-service enable` or `docker-service disable` inside your Dockerfile::
 
-    RUN docker-service-enable ssh
+    RUN docker-service enable ssh
 
 This task will also trigger an auto installation if the daemon is not installed.
 
