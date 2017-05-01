@@ -71,6 +71,7 @@ RUN /usr/local/bin/apt-install \
 {%- endif %}
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ services.php() }} \
     {{ provision.runRoleInline('php', role) }} \
     {{ docker.cleanup() }}
 

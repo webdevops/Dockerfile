@@ -176,6 +176,8 @@ RUN /usr/local/bin/apt-install \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    # Enable php services
+    && docker-service-enable syslog cron \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
