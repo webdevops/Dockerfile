@@ -47,5 +47,5 @@ RUN chmod +x /opt/docker/bin/* \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 
-ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint"]
 CMD ["supervisord"]
