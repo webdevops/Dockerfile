@@ -120,7 +120,6 @@ RUN /usr/local/bin/apt-install \
         rsync \
         git \
     && /usr/local/bin/generate-locales \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 

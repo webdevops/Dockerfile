@@ -16,7 +16,7 @@ RUN /usr/local/bin/apk-install-edge shadow \
         openssh-client \
         rsync \
         git \
-    {{ provision.runRoleInline('base-app', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -38,7 +38,7 @@ RUN /usr/local/bin/yum-install \
         git \
         pygpgme \
     && /usr/local/bin/generate-locales \
-    {{ provision.runRoleInline('base-app', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -59,7 +59,7 @@ RUN /usr/local/bin/apt-install \
         rsync \
         git \
     && /usr/local/bin/generate-locales \
-    {{ provision.runRoleInline('base-app', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -79,7 +79,7 @@ RUN /usr/local/bin/apt-install \
         rsync \
         git \
     && /usr/local/bin/generate-locales \
-    {{ provision.runRoleInline('base-app', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -100,6 +100,6 @@ RUN /usr/local/bin/apt-install \
         git \
     && mkdir -p /var/lib/syslog-ng/ \
     && /usr/local/bin/generate-locales \
-    {{ provision.runRoleInline('base-app', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

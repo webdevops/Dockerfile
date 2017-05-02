@@ -29,6 +29,5 @@ RUN /usr/local/bin/yum-install \
         git \
         pygpgme \
     && /usr/local/bin/generate-locales \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
