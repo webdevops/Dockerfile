@@ -44,6 +44,7 @@ function createDockerStdoutStderr() {
 function includeScriptDir() {
     if [[ -d "$1" ]]; then
         for FILE in "$1"/*.sh; do
+            echo "-> Executing ${FILE}"
             # run custom scripts, only once
             . "$FILE"
         done
@@ -94,6 +95,8 @@ function runEntrypoints() {
  ##
 function runProvisionBootstrap() {
     for FILE in /opt/docker/provision/bootstrap.d/*.sh; do
+        echo "-> Executing ${FILE}"
+
         # run custom scripts, only once
         . "$FILE"
         rm -f -- "$FILE"
@@ -107,6 +110,8 @@ function runProvisionBootstrap() {
  ##
 function runProvisionBuild() {
     for FILE in /opt/docker/provision/build.d/*.sh; do
+        echo "-> Executing ${FILE}"
+
         # run custom scripts, only once
         . "$FILE"
     done

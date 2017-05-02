@@ -11,7 +11,7 @@ RUN chmod +x /opt/docker/bin/* \
         sed \
         gnupg \
     && chmod +s /usr/local/bin/gosu \
-    {{ provision.runRoleInline('base', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -26,7 +26,7 @@ RUN chmod +x /opt/docker/bin/* \
         net-tools \
         gnupg2 \
     && chmod +s /usr/local/bin/gosu \
-    {{ provision.runRoleInline('base', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -41,7 +41,7 @@ RUN chmod +x /opt/docker/bin/* \
         net-tools \
         gnupg \
     && chmod +s /usr/local/bin/gosu \
-    {{ provision.runRoleInline('base', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -56,6 +56,6 @@ RUN chmod +x /opt/docker/bin/* \
         net-tools \
         gnupg \
     && chmod +s /usr/local/bin/gosu \
-    {{ provision.runRoleInline('base', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

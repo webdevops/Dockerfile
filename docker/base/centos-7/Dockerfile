@@ -42,7 +42,6 @@ RUN chmod +x /opt/docker/bin/* \
         net-tools \
         gnupg2 \
     && chmod +s /usr/local/bin/gosu \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 
