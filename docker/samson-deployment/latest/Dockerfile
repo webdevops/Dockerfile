@@ -5,14 +5,21 @@
 
 FROM zendesk/samson:latest
 
+ENV TERM="xterm" \
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
+ENV DOCKER_CONF_HOME=/opt/docker/ \
+    LOG_STDOUT="" \
+    LOG_STDERR=""
+ENV APPLICATION_USER=application \
+    APPLICATION_GROUP=application \
+    APPLICATION_PATH=/app \
+    APPLICATION_UID=1000 \
+    APPLICATION_GID=1000
 
 ###############################################################################
 # Bootstrap
 ###############################################################################
-
-ENV TERM="xterm" \
-    LANG="C.UTF-8" \
-    LC_ALL="C.UTF-8"
 
 ADD baselayout.tar /
 
@@ -52,10 +59,6 @@ RUN set -x \
 ###############################################################################
 # Base
 ###############################################################################
-
-ENV DOCKER_CONF_HOME=/opt/docker/ \
-    LOG_STDOUT="" \
-    LOG_STDERR=""
 
 COPY conf/ /opt/docker/
 
@@ -98,12 +101,6 @@ RUN chmod +x /opt/docker/bin/* \
 ###############################################################################
 # Base-app
 ###############################################################################
-
-ENV APPLICATION_USER=application \
-    APPLICATION_GROUP=application \
-    APPLICATION_PATH=/app \
-    APPLICATION_UID=1000 \
-    APPLICATION_GID=1000
 
 # Install services
 RUN /usr/local/bin/apt-install \
