@@ -4,8 +4,6 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ ansible.ubuntu() }}
-
 {{ base.ubuntu() }}
 
 {{ docker.entrypoint("/entrypoint") }}

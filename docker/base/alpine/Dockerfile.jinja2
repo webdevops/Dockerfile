@@ -4,8 +4,6 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ ansible.alpine() }}
-
 {{ base.alpine() }}
 
 {{ docker.entrypoint("/entrypoint") }}
