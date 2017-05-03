@@ -107,12 +107,7 @@ function runProvisionBootstrap() {
  # Run "build" provisioning
  ##
 function runProvisionBuild() {
-    for FILE in /opt/docker/provision/build.d/*.sh; do
-        echo "-> Executing ${FILE}"
-
-        # run custom scripts, only once
-        . "$FILE"
-    done
+    includeScriptDir "/opt/docker/provision/build.d"
 }
 
 ###
