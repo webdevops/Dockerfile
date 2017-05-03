@@ -13,8 +13,6 @@ shared_examples 'base::layout' do
         "/opt/docker/etc/syslog-ng",
         "/opt/docker/provision/roles",
         "/opt/docker/provision/roles",
-        "/opt/docker/provision/roles/webdevops-base",
-        "/opt/docker/provision/roles/webdevops-cleanup",
         "/opt/docker/provision/entrypoint.d",
         "/opt/docker/provision/onbuild.d",
         "/opt/docker/provision/bootstrap.d",
