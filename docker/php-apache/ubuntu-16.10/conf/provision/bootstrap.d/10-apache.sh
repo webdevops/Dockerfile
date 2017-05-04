@@ -50,7 +50,7 @@ go-replace --regex --regex-backrefs \
 
 # Switch MPM to event
 if [[ "$IMAGE_FAMILY" == "RedHat" ]]; then
-    go-replace --mode=lineinfile --regex \
+    go-replace --mode=line --regex \
         -s '^[\s#]*(LoadModule mpm_prefork_module.*)' -r '#$1' \
         -s '^[\s#]*(LoadModule mpm_event_module.*)' -r '$1' \
         -- /etc/httpd/conf.modules.d/00-mpm.conf
@@ -65,7 +65,7 @@ if [[ "$IMAGE_DISTRIBUTION" == "Debian" ]] && [[ "$IMAGE_DISTRIBUTION_VERSION" -
 fi
 
 if [[ "$IMAGE_FAMILY" == "Alpine" ]]; then
-    go-replace --mode=lineinfile --regex --regex-backrefs \
+    go-replace --mode=line --regex --regex-backrefs \
         -s '^[\s#]*(LoadModule mpm_prefork_module.*)' -r '#$1' \
         -s '^[\s#]*(LoadModule mpm_event_module.*)' -r '$1' \
         -s '^[\s#]*(LoadModule deflate_module.*)' -r '$1' \
