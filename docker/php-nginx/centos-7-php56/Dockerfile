@@ -15,7 +15,6 @@ COPY conf/ /opt/docker/
 # Install tools
 RUN /usr/local/bin/yum-install \
         nginx \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-nginx --role webdevops-php-nginx \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 
