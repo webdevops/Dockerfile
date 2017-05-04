@@ -4,7 +4,7 @@ IMAGE_FAMILY=$(docker-image-info family)
 IMAGE_DISTRIBUTION=$(docker-image-info dist)
 IMAGE_DISTRIBUTION_VERSION=$(docker-image-info dist-version)
 
-# Installation
+# Collect environment variables
 case "$IMAGE_FAMILY" in
     Debian|Ubuntu)
          APACHE_MAIN_PATH=/etc/apache2/
