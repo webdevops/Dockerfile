@@ -25,7 +25,6 @@ RUN /usr/local/bin/apt-install \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions fastcgi ssl rewrite headers expires \
 	&& mkdir -p /var/lock/apache2 \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache --role webdevops-apache-dev --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 

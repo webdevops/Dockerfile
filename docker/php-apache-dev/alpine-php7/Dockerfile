@@ -23,7 +23,6 @@ RUN /usr/local/bin/apk-install \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/httpd.conf \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache --role webdevops-apache-dev --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 
