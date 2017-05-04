@@ -44,7 +44,7 @@ fi
 APACHE_CONF_FILES=$(find "$APACHE_MAIN_PATH" -type f -iname '*.conf' -o -iname 'default*' -o -iname '*log')
 
 # Change log to Docker stdout
-go-replace --mode=lineinfile --regex --regexp-backrefs \
+go-replace --mode=lineinfile --regex --regex-backrefs \
     -s '^[\s]*CustomLog ([^\s]+)(.*)' -r 'CustomLog /docker.stdout \2' \
     -s '^[\s]*ErrorLog ([^\s]+)(.*)' -r 'ErrorLog /docker.stdout \2' \
     -s '^[\s]*TransferLog ([^\s]+)(.*)' -r 'TransferLog /docker.stdout \2' \
@@ -68,7 +68,7 @@ if [[ "$IMAGE_DISTRIBUTION" == "Debian" ]] && [[ "$IMAGE_DISTRIBUTION_VERSION" -
 fi
 
 if [[ "$IMAGE_FAMILY" == "Alpine" ]]; then
-    go-replace --mode=lineinfile --regex --regexp-backrefs \
+    go-replace --mode=lineinfile --regex --regex-backrefs \
         -s '^[\s#]*(LoadModule mpm_prefork_module.*)' -r '#$1' \
         -s '^[\s#]*(LoadModule mpm_event_module.*)' -r '$1' \
         -s '^[\s#]*(LoadModule deflate_module.*)' -r '$1' \
