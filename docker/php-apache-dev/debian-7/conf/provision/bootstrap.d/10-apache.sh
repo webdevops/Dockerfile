@@ -52,7 +52,7 @@ go-replace --mode=lineinfile --regex --regex-backrefs \
     --path-regex='(.*\.conf|default.*|.*log)$'
 
 # Switch MPM to event
-if [[ "$IMAGE_FAMILY" == "Alpine" ]]; then
+if [[ "$IMAGE_FAMILY" == "RedHat" ]]; then
     go-replace --mode=lineinfile --regex \
         -s '^[\s#]*(LoadModule mpm_prefork_module.*)' -r '#$1' \
         -s '^[\s#]*(LoadModule mpm_event_module.*)' -r '$1' \
