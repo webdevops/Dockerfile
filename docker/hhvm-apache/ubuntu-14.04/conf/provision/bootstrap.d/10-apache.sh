@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-#!/usr/bin/env bash
-
 IMAGE_FAMILY=$(docker-image-info family)
 IMAGE_DISTRIBUTION=$(docker-image-info dist)
 IMAGE_DISTRIBUTION_VERSION=$(docker-image-info dist-version)
