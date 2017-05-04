@@ -49,7 +49,7 @@ go-replace --mode=lineinfile --regex --regex-backrefs \
     -s '^[\s]*ErrorLog ([^\s]+)(.*)' -r 'ErrorLog /docker.stdout \2' \
     -s '^[\s]*TransferLog ([^\s]+)(.*)' -r 'TransferLog /docker.stdout \2' \
     --path "$APACHE_MAIN_PATH" \
-    --path-regex='(*.conf|default*|*log)^'
+    --path-regex='(.*\.conf|default.*|.*log)^'
 
 # Switch MPM to event
 if [[ "$IMAGE_FAMILY" == "Alpine" ]]; then
