@@ -43,9 +43,9 @@ APACHE_CONF_FILES=$(find "$APACHE_MAIN_PATH" -type f -iname '*.conf' -o -iname '
 
 # Change log to Docker stdout
 go-replace --mode=lineinfile --regex --regex-backrefs \
-    -s '^[\s]*CustomLog ([^\s]+)(.*)' -r 'CustomLog /docker.stdout \2' \
-    -s '^[\s]*ErrorLog ([^\s]+)(.*)' -r 'ErrorLog /docker.stdout \2' \
-    -s '^[\s]*TransferLog ([^\s]+)(.*)' -r 'TransferLog /docker.stdout \2' \
+    -s '^[\s]*CustomLog ([^\s]+)(.*)' -r 'CustomLog /docker.stdout $2' \
+    -s '^[\s]*ErrorLog ([^\s]+)(.*)' -r 'ErrorLog /docker.stdout $2' \
+    -s '^[\s]*TransferLog ([^\s]+)(.*)' -r 'TransferLog /docker.stdout $2' \
     --path="$APACHE_MAIN_PATH" \
     --path-regex='(.*\.conf|default.*|.*log)$'
 
