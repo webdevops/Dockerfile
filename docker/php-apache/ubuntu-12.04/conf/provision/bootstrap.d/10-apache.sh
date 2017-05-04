@@ -97,7 +97,7 @@ if [[ "$IMAGE_FAMILY" == "Alpine" ]]; then
 fi
 
 # Fix rights of ssl files
-chown -r root:root /opt/docker/etc/httpd/ssl
+chown -R root:root /opt/docker/etc/httpd/ssl
 chmod 0750 /opt/docker/etc/httpd/ssl
 chmod 0640 /opt/docker/etc/httpd/ssl/server.crt
 chmod 0640 /opt/docker/etc/httpd/ssl/server.csr
