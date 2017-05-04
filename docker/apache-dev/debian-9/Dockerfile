@@ -11,6 +11,6 @@ ENV WEB_DOCUMENT_ROOT=/app \
 
 COPY conf/ /opt/docker/
 
-# no further commands needed
+
 
 EXPOSE 80 443
