@@ -2,7 +2,7 @@
 
 PHP_CLEAR_ENV_AVAILABLE=1
 
-if [[ "$(versionCompare "$PHP_VERSION" "5.99.999")" == "<" ]]; then
+if [[ "$(version-compare "$PHP_VERSION" "5.99.999")" == "<" ]]; then
     #############################
     # PHP 5.x
     #############################
@@ -32,20 +32,20 @@ if [[ "$(versionCompare "$PHP_VERSION" "5.99.999")" == "<" ]]; then
     esac
 
     # Check for claer env setting (not available in old versions)
-    if [[ "$(versionCompare "$PHP_VERSION" "5.4.0")" == "<" ]]; then
+    if [[ "$(version-compare "$PHP_VERSION" "5.4.0")" == "<" ]]; then
         PHP_CLEAR_ENV_AVAILABLE=0
     fi
 
-    if [[ "$(versionCompare "$PHP_VERSION" "5.4.*")" == "=" ]] && [[ "$(versionCompare "$PHP_VERSION" "5.4.27")" == "<" ]]; then
+    if [[ "$(version-compare "$PHP_VERSION" "5.4.*")" == "=" ]] && [[ "$(version-compare "$PHP_VERSION" "5.4.27")" == "<" ]]; then
         PHP_CLEAR_ENV_AVAILABLE=0
     fi
 
     # Check for claer env setting (not available in old versions)
-    if [[ "$(versionCompare "$PHP_VERSION" "5.5.*")" == "=" ]] && [[ "$(versionCompare "$PHP_VERSION" "5.5.11")" == "<" ]]; then
+    if [[ "$(version-compare "$PHP_VERSION" "5.5.*")" == "=" ]] && [[ "$(version-compare "$PHP_VERSION" "5.5.11")" == "<" ]]; then
         PHP_CLEAR_ENV_AVAILABLE=0
     fi
 
-elif [[ "$(versionCompare "$PHP_VERSION" "7.99.999")" == "<" ]]; then
+elif [[ "$(version-compare "$PHP_VERSION" "7.99.999")" == "<" ]]; then
     #############################
     # PHP 7.x
     #############################

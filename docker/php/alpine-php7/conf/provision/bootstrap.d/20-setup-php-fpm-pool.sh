@@ -28,7 +28,7 @@ go-replace --mode=lineinfile --regex \
     -s '^[\s;]*listen.allowed_clients[\s]*='        -r ";listen.allowed_clients" \
     -- /opt/docker/etc/php/fpm/pool.d/application.conf
 
-if [[ "$(versionCompare "$PHP_VERSION" "5.5.999")" == "<" ]]; then
+if [[ "$(version-compare "$PHP_VERSION" "5.5.999")" == "<" ]]; then
     # no ipv6 sockets available for old php version
     go-replace --mode=lineinfile --regex \
         -s '^[\s;]*listen[\s]*='                        -r 'listen = 0.0.0.0:9000' \
