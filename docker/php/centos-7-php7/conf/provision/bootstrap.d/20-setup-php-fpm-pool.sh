@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-# Move php-fpm pool directory file to /opt/docker/etc/php/
-rm -rf /opt/docker/etc/php/fpm/pool.d
-mv -- "$PHP_POOL_DIR"  /opt/docker/etc/php/fpm/pool.d
-
 # Rename pool file file to application.conf
-mv -- "/opt/docker/etc/php/fpm/pool.d/${PHP_POOL_CONF}" /opt/docker/etc/php/fpm/pool.d/application.conf
+if [[ ! -f "/opt/docker/etc/php/fpm/pool.d/application.conf" ]]; then
+    # Move php-fpm pool directory file to /opt/docker/etc/php/
+    mv -- "$PHP_POOL_DIR"  /opt/docker/etc/php/fpm/pool.d
+
+    mv -- "/opt/docker/etc/php/fpm/pool.d/${PHP_POOL_CONF}" /opt/docker/etc/php/fpm/pool.d/application.conf
+fi
 
 # Remove php-fpm pool directory
 rm -rf -- "$PHP_POOL_DIR"
