@@ -8,13 +8,13 @@ go-replace --mode=lineinfile --regex \
 if [[ "$(version-compare "$PHP_VERSION" "5.5.999")" == "<" ]]; then
     # listen on public IPv4 port
     # no ipv6 sockets available for old php version
-    go-replace --mode=lineinfile --regex \
+    go-replace --mode=line --regex \
         -s '^[\s;]*listen[\s]*=' -r 'listen = 0.0.0.0:9000' \
         -- /opt/docker/etc/php/fpm/pool.d/application.conf \
            /opt/docker/etc/php/fpm/php-fpm.conf
 else
     # listen on public IPv6 port
-    go-replace --mode=lineinfile --regex \
+    go-replace --mode=line --regex \
         -s '^[\s;]*listen[\s]*=' -r 'listen = [::]:9000' \
         -- /opt/docker/etc/php/fpm/pool.d/application.conf \
            /opt/docker/etc/php/fpm/php-fpm.conf
