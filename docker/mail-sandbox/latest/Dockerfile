@@ -16,7 +16,6 @@ RUN /usr/local/bin/apt-install \
         dovecot-imapd \
     && /opt/docker/bin/control.sh service.enable postfix \
     && /opt/docker/bin/control.sh service.enable dovecot \
-    && /opt/docker/bin/provision add --tag entrypoint webdevops-mail-sandbox \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 
