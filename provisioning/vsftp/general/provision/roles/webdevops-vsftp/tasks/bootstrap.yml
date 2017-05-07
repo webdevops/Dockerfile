@@ -1,8 +1,0 @@
----
-
-- name: Create vsftpd.log
-  file:
-    path:    "/var/log/vsftpd.log"
-    state:   touch
-    owner:   "root"
-    group:   "root"
