@@ -15,7 +15,7 @@ case "$IMAGE_FAMILY" in
         if [[ -f "/etc/php7/conf.d/xdebug.ini" ]]; then
             go-replace --mode=lineinfile \
                 -s '^extension=xdebug.so'  -r 'zend_extension=xdebug.so' \
-                /etc/php5/conf.d/xdebug.ini
+                /etc/php7/conf.d/xdebug.ini
         fi
 
         ;;
