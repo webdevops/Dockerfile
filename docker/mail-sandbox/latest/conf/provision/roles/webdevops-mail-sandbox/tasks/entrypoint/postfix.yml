@@ -1,4 +1,4 @@
----
+r---
 
 - name: Deploy local configuration
   template:
