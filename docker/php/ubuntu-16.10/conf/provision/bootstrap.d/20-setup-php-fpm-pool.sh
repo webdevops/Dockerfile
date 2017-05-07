@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Move php-fpm pool directory file to /opt/docker/etc/php/
+rm -rf /opt/docker/etc/php/fpm/pool.d
 mv -- "$PHP_POOL_DIR"  /opt/docker/etc/php/fpm/pool.d
 
 # Rename pool file file to application.conf
