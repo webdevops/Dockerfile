@@ -36,12 +36,12 @@ if [[ "$(versionCompare "$PHP_VERSION" "5.99.999")" == "<" ]]; then
         PHP_CLEAR_ENV_AVAILABLE=0
     fi
 
-    if [[ "$(versionCompare "$PHP_VERSION" "5.4")" == "=" ]] && [[ "$(versionCompare "$PHP_VERSION" "5.4.27")" == "<" ]]; then
+    if [[ "$(versionCompare "$PHP_VERSION" "5.4.*")" == "=" ]] && [[ "$(versionCompare "$PHP_VERSION" "5.4.27")" == "<" ]]; then
         PHP_CLEAR_ENV_AVAILABLE=0
     fi
 
     # Check for claer env setting (not available in old versions)
-    if [[ "$(versionCompare "$PHP_VERSION" "5.5")" == "=" ]] && [[ "$(versionCompare "$PHP_VERSION" "5.5.11")" == "<" ]]; then
+    if [[ "$(versionCompare "$PHP_VERSION" "5.5.*")" == "=" ]] && [[ "$(versionCompare "$PHP_VERSION" "5.5.11")" == "<" ]]; then
         PHP_CLEAR_ENV_AVAILABLE=0
     fi
 
