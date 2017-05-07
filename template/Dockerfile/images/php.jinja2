@@ -72,7 +72,7 @@ RUN /usr/local/bin/apt-install \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     {{ services.php() }} \
-    {{ provision.runRoleInline('php', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 
 WORKDIR /
@@ -89,6 +89,6 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
     && pecl install xdebug \
     && echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

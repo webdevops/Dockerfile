@@ -57,7 +57,6 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && yum remove -y ImageMagick-devel php70w-devel gcc make \
     # Enable php services
     && docker-service-enable syslog cron \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 

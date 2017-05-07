@@ -65,7 +65,7 @@ RUN /usr/local/bin/apk-install \
     # PECL workaround, see webdevops/Dockerfile#78
     && sed -i "s/ -n / /" $(which pecl) \
     {{ services.php() }} \
-    {{ provision.runRoleInline('php', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -99,7 +99,7 @@ RUN echo "deb http://packages.dotdeb.org {{ distribution }} all" >> /etc/apt/sou
         php-apcu \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     {{ services.php() }} \
-    {{ provision.runRoleInline('php', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -146,7 +146,7 @@ RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
         php-apcu \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     {{ services.php() }} \
-    {{ provision.runRoleInline('php', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -182,7 +182,7 @@ RUN /usr/local/bin/apt-install \
         php-memcached \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     {{ services.php() }} \
-    {{ provision.runRoleInline('php', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -217,7 +217,7 @@ RUN /usr/local/bin/apt-install \
         php-memcached \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     {{ services.php() }} \
-    {{ provision.runRoleInline('php', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -267,6 +267,6 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && echo "extension=redis.so" > /etc/php.d/redis.ini \
     && yum remove -y ImageMagick-devel php70w-devel gcc make \
     {{ services.php() }} \
-    {{ provision.runRoleInline('php', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

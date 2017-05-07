@@ -74,7 +74,6 @@ RUN /usr/local/bin/apk-install \
     && sed -i "s/ -n / /" $(which pecl) \
     # Enable php services
     && docker-service-enable syslog cron \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 
