@@ -2,8 +2,11 @@
 
 IMAGE_FAMILY=$(docker-image-info family)
 
+go-replace --mode=lineinfile --regex --regex-backrefs \
+    -s '^[\s#]*daemon' -r 'daemon off;' \
+    --  /etc/nginx/nginx.conf
+
 go-replace --mode=line --regex --regex-backrefs \
-    -s '^[\s#]*(daemon)' -r 'daemon off' \
     -s '^([ \t]*access_log)[ \t]*([^\t ;]+)(.*;)$' -r '$1 /docker.stdout $3' \
     -s '^([ \t]*error_log)[ \t]*([^\t ;]+)(.*;)$' -r '$1 /docker.stderr $3' \
     --  /etc/nginx/nginx.conf
