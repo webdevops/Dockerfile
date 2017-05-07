@@ -2,9 +2,10 @@
 
 IMAGE_FAMILY=$(docker-image-info family)
 
+# Remove daemon statement (will be added as command line argument)
 go-replace --mode=lineinfile --regex --regex-backrefs \
-    -s '^[\s#]*daemon' -r 'daemon off;' \
-    --  /etc/nginx/nginx.conf
+    -s '^[\s#]*daemon ' -r '' \
+    -- /etc/nginx/nginx.conf
 
 go-replace --mode=line --regex --regex-backrefs \
     -s '^([ \t]*access_log)[ \t]*([^\t ;]+)(.*;)$' -r '$1 /docker.stdout $3' \
