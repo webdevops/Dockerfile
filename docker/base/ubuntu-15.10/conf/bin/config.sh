@@ -130,6 +130,7 @@ function versionCompare () {
     if [[ $1 == $2 ]]
     then
         echo -n '='
+        return
     fi
     local IFS=.
     local i ver1=($1) ver2=($2)
@@ -148,11 +149,14 @@ function versionCompare () {
         if ((10#${ver1[i]} > 10#${ver2[i]}))
         then
             echo -n '>'
+            return
         fi
         if ((10#${ver1[i]} < 10#${ver2[i]}))
         then
             echo -n '<'
+            return
         fi
     done
-    return 0
+
+    echo -n '='
 }
