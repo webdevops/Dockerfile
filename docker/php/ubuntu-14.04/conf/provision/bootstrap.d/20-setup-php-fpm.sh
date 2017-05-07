@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Link main php-fpm binary
+ln -sf -- "$PHP_FPM_BIN" /usr/local/bin/php-fpm
+
 # Move php-fpm main file to /opt/docker/etc/php/fpm/ and create symlink
 mv -- "$PHP_MAIN_CONF" /opt/docker/etc/php/fpm/php-fpm.conf
 ln -sf -- /opt/docker/etc/php/fpm/php-fpm.conf "$PHP_MAIN_CONF"
