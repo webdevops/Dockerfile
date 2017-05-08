@@ -18,7 +18,6 @@ if [[ "$(version-compare "$PHP_VERSION" "5.5.999")" == "<" ]]; then
     # listen on public IPv4 port
     # no ipv6 sockets available for old php version
     go-replace --mode=line --regex \
-        --lineinfile-after='\[global\]' \
         -s '^[\s;]*listen[\s]*=' -r 'listen = 0.0.0.0:9000' \
         --path=/opt/docker/etc/php/fpm/ \
         --path-pattern='*.conf'
