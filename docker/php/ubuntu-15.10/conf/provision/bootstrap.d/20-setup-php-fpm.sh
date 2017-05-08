@@ -20,15 +20,14 @@ if [[ "$(version-compare "$PHP_VERSION" "5.5.999")" == "<" ]]; then
     go-replace --mode=line --regex \
         --lineinfile-after='\[global\]' \
         -s '^[\s;]*listen[\s]*=' -r 'listen = 0.0.0.0:9000' \
-        -- /opt/docker/etc/php/fpm/pool.d/application.conf \
-           /opt/docker/etc/php/fpm/php-fpm.conf
+        --path=/opt/docker/etc/php/fpm/ \
+        --path-pattern='*.conf'
 else
     # listen on public IPv6 port
     go-replace --mode=line --regex \
-        --lineinfile-after='\[global\]' \
         -s '^[\s;]*listen[\s]*=' -r 'listen = [::]:9000' \
-        -- /opt/docker/etc/php/fpm/pool.d/application.conf \
-           /opt/docker/etc/php/fpm/php-fpm.conf
+        --path=/opt/docker/etc/php/fpm/ \
+        --path-pattern='*.conf'
 
 fi
 
