@@ -14,7 +14,7 @@ rm -rf -- "$PHP_POOL_DIR"
 # Symlink php-fpm pool file to original destination
 ln -sf -- /opt/docker/etc/php/fpm/pool.d "$PHP_POOL_DIR"
 
-# Configure php-fpm pool user (application.conf)
+# Configure php-fpm pool (application.conf)
 go-replace --mode=lineinfile --regex \
     -s '^[\s;]*catch_workers_output[\s]*='          -r 'catch_workers_output = yes' \
     -s '^[\s;]*access.format[\s]*='                 -r 'access.format = "[php-fpm:access] %R - %u %t \"%m %r%Q%q\" %s %f %{mili}d %{kilo}M %C%%"' \
@@ -22,10 +22,15 @@ go-replace --mode=lineinfile --regex \
     -s '^[\s;]*slowlog[\s]*='                       -r 'slowlog = /docker.stderr' \
     -s '^[\s;]*php_admin_value\[error_log\][\s]*='  -r 'php_admin_value[error_log] = /docker.stderr' \
     -s '^[\s;]*php_admin_value\[log_errors\][\s]*=' -r 'php_admin_value[log_errors] = on' \
-    -s '^[\s;]*user[\s]*='                          -r "user = $APPLICATION_USER" \
-    -s '^[\s;]*group[\s]*='                         -r "user = $APPLICATION_GROUP" \
     -s '^[\s;]*listen.allowed_clients[\s]*='        -r ";listen.allowed_clients" \
     -- /opt/docker/etc/php/fpm/pool.d/application.conf
+
+# Fix user setting
+go-replace --mode=line --regex \
+    -s '^[\s;]*user[\s]*='  -r "user = $APPLICATION_USER" \
+    -s '^[\s;]*group[\s]*=' -r "user = $APPLICATION_GROUP" \
+    --path=/opt/docker/etc/php/fpm/ \
+    --path-pattern='*.conf'
 
 if [[ "$PHP_CLEAR_ENV_AVAILABLE" -eq 1 ]]; then
     # Clear env setting available, disable clearing of environment variables
