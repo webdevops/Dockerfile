@@ -202,5 +202,5 @@ RUN rake assets:precompile \
 EXPOSE 80
 VOLUME /storage
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint"]
 CMD ["supervisord"]

@@ -37,5 +37,5 @@
 {{ docker.expose('80') }}
 {{ docker.volume('/storage') }}
 
-{{ docker.entrypoint("/entrypoint.sh") }}
+{{ docker.entrypoint("/entrypoint") }}
 {{ docker.cmd("supervisord") }}

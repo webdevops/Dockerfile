@@ -182,5 +182,5 @@ RUN /usr/local/bin/apt-install \
 WORKDIR /
 
 EXPOSE 9000
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint"]
 CMD ["supervisord"]

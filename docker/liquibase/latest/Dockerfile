@@ -38,5 +38,5 @@ RUN apt-get update \
 
 WORKDIR /liquibase
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint"]
 
