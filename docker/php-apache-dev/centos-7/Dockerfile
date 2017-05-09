@@ -3,7 +3,7 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/php-dev:centos-7
+FROM webdevops/php-apache:centos-7
 
 ENV WEB_DOCUMENT_ROOT=/app \
     WEB_DOCUMENT_INDEX=index.php \

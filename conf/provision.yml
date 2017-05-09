@@ -61,10 +61,12 @@ provision:
       development/general: '*'
   php-apache-dev:
     configuration:
+      php-apache/general: '*'
       php-dev/general   : '*'
       apache-dev/general: '*'
   php-nginx-dev:
     configuration:
+      php-nginx/general : '*'
       php-dev/general   : '*'
       nginx-dev/general : '*'
   php-official:
