@@ -13,10 +13,13 @@ ENV WEB_NO_CACHE_PATTERN="\.(css|js|gif|png|jpg|svg|json|xml)$"
 
 COPY conf/ /opt/docker/
 
-# Install nginx
+# Install development environment
 RUN /usr/local/bin/apk-install \
-        nginx \
+        # Install tools
+        graphviz \
+        # Install php development stuff
+        php7-xdebug \
+    # Enable php development services
+    && docker-service-enable syslog ssh postfix \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
-
-EXPOSE 80 443

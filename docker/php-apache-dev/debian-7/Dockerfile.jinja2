@@ -6,6 +6,4 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ apache.debian7('php-apache apache-dev php-dev') }}
-
-{{ docker.expose('80 443') }}
+{{ php5dev.debian() }}

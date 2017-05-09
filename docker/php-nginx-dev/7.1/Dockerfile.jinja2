@@ -6,6 +6,4 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ nginx.debian('php-nginx nginx-dev php-dev') }}
-
-{{ docker.expose('80 443') }}
+{{ php.officialDevelopment(version="7.1") }}
