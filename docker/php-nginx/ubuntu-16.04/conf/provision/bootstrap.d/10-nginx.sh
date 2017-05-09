@@ -33,7 +33,5 @@ ln -sf /var/lib/nginx/logs/error.log /docker.stderr
 
 # Fix rights of ssl files
 chown -R root:root /opt/docker/etc/nginx/ssl
-chmod 0750 /opt/docker/etc/nginx/ssl
-chmod 0640 /opt/docker/etc/nginx/ssl/server.crt
-chmod 0640 /opt/docker/etc/nginx/ssl/server.csr
-chmod 0640 /opt/docker/etc/nginx/ssl/server.key
+find /opt/docker/etc/nginx/ssl -type d -exec chmod 750 {} \;
+find /opt/docker/etc/nginx/ssl -type f -exec chmod 640 {} \;

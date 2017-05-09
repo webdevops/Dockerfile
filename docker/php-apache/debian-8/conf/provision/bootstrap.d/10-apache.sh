@@ -50,7 +50,7 @@ go-replace --regex --regex-backrefs \
 
 # Switch MPM to event
 if [[ "$IMAGE_FAMILY" == "RedHat" ]]; then
-    go-replace --mode=line --regex \
+    go-replace --mode=line --regex --regex-backrefs \
         -s '^[\s#]*(LoadModule mpm_prefork_module.*)' -r '#$1' \
         -s '^[\s#]*(LoadModule mpm_event_module.*)' -r '$1' \
         -- /etc/httpd/conf.modules.d/00-mpm.conf
@@ -94,8 +94,6 @@ if [[ "$IMAGE_FAMILY" == "Alpine" ]]; then
 fi
 
 # Fix rights of ssl files
-chown -R root:root /opt/docker/etc/httpd/ssl
-chmod 0750 /opt/docker/etc/httpd/ssl
-chmod 0640 /opt/docker/etc/httpd/ssl/server.crt
-chmod 0640 /opt/docker/etc/httpd/ssl/server.csr
-chmod 0640 /opt/docker/etc/httpd/ssl/server.key
+chown -R root:root /opt/docker/etc/nginx/ssl
+find /opt/docker/etc/nginx/ssl -type d -exec chmod 750 {} \;
+find /opt/docker/etc/nginx/ssl -type f -exec chmod 640 {} \;

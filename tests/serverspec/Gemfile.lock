@@ -6,38 +6,38 @@ GEM
       excon (>= 0.38.0)
       json
     excon (0.55.0)
-    json (2.0.4)
+    json (2.1.0)
     multi_json (1.12.1)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (4.1.0)
     net-telnet (0.1.1)
     rake (12.0.0)
-    rspec (3.5.0)
-      rspec-core (~> 3.5.0)
-      rspec-expectations (~> 3.5.0)
-      rspec-mocks (~> 3.5.0)
-    rspec-core (3.5.4)
-      rspec-support (~> 3.5.0)
-    rspec-expectations (3.5.0)
+    rspec (3.6.0)
+      rspec-core (~> 3.6.0)
+      rspec-expectations (~> 3.6.0)
+      rspec-mocks (~> 3.6.0)
+    rspec-core (3.6.0)
+      rspec-support (~> 3.6.0)
+    rspec-expectations (3.6.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.5.0)
+      rspec-support (~> 3.6.0)
     rspec-its (1.2.0)
       rspec-core (>= 3.0.0)
       rspec-expectations (>= 3.0.0)
-    rspec-mocks (3.5.0)
+    rspec-mocks (3.6.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.5.0)
-    rspec-retry (0.5.3)
-      rspec-core (> 3.3, < 3.6)
-    rspec-support (3.5.0)
+      rspec-support (~> 3.6.0)
+    rspec-retry (0.5.4)
+      rspec-core (> 3.3, < 3.7)
+    rspec-support (3.6.0)
     serverspec (2.38.0)
       multi_json
       rspec (~> 3.0)
       rspec-its
       specinfra (~> 2.53)
     sfl (2.3)
-    specinfra (2.67.8)
+    specinfra (2.67.9)
       net-scp
       net-ssh (>= 2.7, < 5.0)
       net-telnet
@@ -55,4 +55,4 @@ DEPENDENCIES
   serverspec
 
 BUNDLED WITH
-   1.11.2
+   1.14.6
