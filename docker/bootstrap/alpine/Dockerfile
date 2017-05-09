@@ -29,6 +29,8 @@ RUN set -x \
         openssl \
     && update-ca-certificates \
     && /usr/local/bin/generate-dockerimage-info \
+    ## Fix su execution (eg for tests)
+    && echo 'auth sufficient pam_rootok.so' >> /etc/pam.d/su \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && apk add --no-cache --virtual .gosu-deps \
