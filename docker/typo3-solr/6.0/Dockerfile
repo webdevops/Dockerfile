@@ -18,13 +18,15 @@ USER root
 
 ADD baselayout.tar /
 
-COPY ./solr/ /tmp/solr
-
-RUN /usr/local/bin/apt-update \
-    && /usr/local/bin/apt-install net-tools \
-    && /usr/local/bin/generate-dockerimage-info \
+RUN apt-update \
+    && apt-install net-tools \
+    && generate-dockerimage-info \
+    && mkdir /tmp/solr \
+    && wget -O/tmp/solr/extension.tar.gz "https://github.com/TYPO3-Solr/ext-solr/archive/6.0.1.tar.gz" \
+    && cd /tmp/solr \
+    && tar --strip 1 -zxf /tmp/solr/extension.tar.gz \
     && rm -rf /opt/solr/server/solr \
-    && mv /tmp/solr /opt/solr/server/solr \
+    && mv /tmp/solr/Resources/Private/Solr/ /opt/solr/server/solr \
     && mkdir -p /opt/solr/server/solr/data \
     && chown -R solr:solr /opt/solr/server/solr \
     && docker-image-cleanup
