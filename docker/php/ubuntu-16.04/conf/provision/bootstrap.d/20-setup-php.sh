@@ -2,9 +2,11 @@
 
 case "$IMAGE_FAMILY" in
     Debian|Ubuntu)
-        # Enable mcrypt
-        ln -sf "${PHP_ETC_DIR}/mods-available/mcrypt.ini" "${PHP_ETC_DIR}/cli/conf.d/20-mcrypt.ini"
-        ln -sf "${PHP_ETC_DIR}/mods-available/mcrypt.ini" "${PHP_ETC_DIR}/fpm/conf.d/20-mcrypt.ini"
+        # Enable mcrypt (if available)
+        if [[ -f "${PHP_ETC_DIR}/mods-available/mcrypt.ini" ]]; then
+            ln -sf "${PHP_ETC_DIR}/mods-available/mcrypt.ini" "${PHP_ETC_DIR}/cli/conf.d/20-mcrypt.ini"
+            ln -sf "${PHP_ETC_DIR}/mods-available/mcrypt.ini" "${PHP_ETC_DIR}/fpm/conf.d/20-mcrypt.ini"
+        fi
 
         # Register webdevops ini
         ln -sf "/opt/docker/etc/php/php.webdevops.ini" "${PHP_ETC_DIR}/cli/conf.d/98-webdevops.ini"

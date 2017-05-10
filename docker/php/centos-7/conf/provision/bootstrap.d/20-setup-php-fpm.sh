@@ -4,7 +4,11 @@
 ln -sf -- "$PHP_FPM_BIN" /usr/local/bin/php-fpm
 
 # Move php-fpm main file to /opt/docker/etc/php/fpm/ and create symlink
-mv -- "$PHP_MAIN_CONF" /opt/docker/etc/php/fpm/php-fpm.conf
+if [[ ! -f /opt/docker/etc/php/fpm/php-fpm.conf ]]; then
+       mv -- "$PHP_MAIN_CONF" /opt/docker/etc/php/fpm/php-fpm.conf
+else
+       rm -f -- "PHP_MAIN_CONF"
+fi
 ln -sf -- /opt/docker/etc/php/fpm/php-fpm.conf "$PHP_MAIN_CONF"
 
 # Configure php-fpm main (all versions)

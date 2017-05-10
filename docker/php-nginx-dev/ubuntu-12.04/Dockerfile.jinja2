@@ -6,6 +6,5 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ nginx.ubuntu('php-nginx nginx-dev php-dev') }}
+{{ php5dev.ubuntu() }}
 
-{{ docker.expose('80 443') }}
