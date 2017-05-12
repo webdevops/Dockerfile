@@ -8,9 +8,6 @@ RUN /usr/local/bin/apk-install-edge shadow \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         drill \
         ldns \
         openssh-client \
@@ -28,15 +25,11 @@ RUN /usr/local/bin/yum-install \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         bind-utils \
         rsync \
         git \
-        pygpgme \
     && /usr/local/bin/generate-locales \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
@@ -50,9 +43,6 @@ RUN /usr/local/bin/apt-install \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         openssh-client \
@@ -70,9 +60,6 @@ RUN /usr/local/bin/apt-install \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         openssh-client \
@@ -90,9 +77,6 @@ RUN /usr/local/bin/apt-install \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         openssh-client \

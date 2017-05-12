@@ -9,7 +9,6 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         sed \
-        gnupg \
     && chmod +s /usr/local/bin/gosu \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
@@ -24,7 +23,6 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
-        gnupg2 \
     && chmod +s /usr/local/bin/gosu \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
@@ -39,7 +37,6 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
-        gnupg \
     && chmod +s /usr/local/bin/gosu \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
@@ -54,7 +51,6 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
-        gnupg \
     && chmod +s /usr/local/bin/gosu \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
