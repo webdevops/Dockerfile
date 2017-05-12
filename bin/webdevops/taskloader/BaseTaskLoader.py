@@ -28,6 +28,7 @@ class BaseTaskLoader(TaskLoader):
     configuration = False
     reporter = False
     TASK_COUNT = 0
+    TASK_RESULTS = {}
 
     def __init__(self, configuration):
         """
@@ -50,6 +51,24 @@ class BaseTaskLoader(TaskLoader):
 
         return ret
 
+    @staticmethod
+    def set_task_status(task, status, color):
+        """
+        Set task status
+        """
+
+        BaseTaskLoader.TASK_RESULTS[task.name] = {
+            'task': task,
+            'status': status,
+            'color': color
+        }
+
+    @staticmethod
+    def get_task_status(task):
+        ret = False
+        if task in BaseTaskLoader.TASK_RESULTS:
+            ret = BaseTaskLoader.TASK_RESULTS[task]
+        return ret
 
     @staticmethod
     def human_task_name(name):
