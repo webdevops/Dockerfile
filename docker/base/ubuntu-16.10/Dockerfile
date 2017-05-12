@@ -18,7 +18,6 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
-        gnupg \
     && chmod +s /usr/local/bin/gosu \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup

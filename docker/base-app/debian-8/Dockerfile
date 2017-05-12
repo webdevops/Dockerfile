@@ -19,9 +19,6 @@ RUN /usr/local/bin/apt-install \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         openssh-client \

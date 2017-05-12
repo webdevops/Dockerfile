@@ -93,7 +93,6 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
-        gnupg \
     && chmod +s /usr/local/bin/gosu \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
@@ -108,9 +107,6 @@ RUN /usr/local/bin/apt-install \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         openssh-client \

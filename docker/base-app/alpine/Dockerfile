@@ -19,9 +19,6 @@ RUN /usr/local/bin/apk-install-edge shadow \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         drill \
         ldns \
         openssh-client \
