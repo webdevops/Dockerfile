@@ -41,7 +41,7 @@ RUN set -x \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
     ## Install go-replace
-    && GOREPLACE_VERSION=1.1.0 \
+    && GOREPLACE_VERSION=1.1.1 \
     && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
     && chmod +x /usr/local/bin/go-replace \
     && apt-get purge -y -f --force-yes wget \
