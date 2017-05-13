@@ -38,5 +38,5 @@ RUN apt-get update \
 
 WORKDIR /liquibase
 
-ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint"]
 

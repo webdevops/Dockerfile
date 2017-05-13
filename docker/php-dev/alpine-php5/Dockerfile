@@ -18,6 +18,5 @@ RUN /usr/local/bin/apk-install \
         vim \
     # Enable php development services
     && docker-service-enable syslog ssh postfix \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-dev --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup

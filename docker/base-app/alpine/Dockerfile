@@ -19,14 +19,10 @@ RUN /usr/local/bin/apk-install-edge shadow \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         drill \
         ldns \
         openssh-client \
         rsync \
         git \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup

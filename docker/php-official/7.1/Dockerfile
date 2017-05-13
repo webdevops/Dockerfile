@@ -53,7 +53,7 @@ RUN set -x \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
     ## Install go-replace
-    && GOREPLACE_VERSION=1.0.1 \
+    && GOREPLACE_VERSION=1.1.0 \
     && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
     && chmod +x /usr/local/bin/go-replace \
     && apt-get purge -y -f --force-yes wget dirmngr \
@@ -90,9 +90,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
-        gnupg \
     && chmod +s /usr/local/bin/gosu \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 
@@ -102,16 +100,12 @@ RUN /usr/local/bin/apt-install \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         openssh-client \
         rsync \
         git \
     && /usr/local/bin/generate-locales \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 
@@ -127,6 +121,7 @@ RUN /usr/local/bin/apt-install \
         zlib1g \
         libpng12-0 \
         libmcrypt4 \
+    	libpcre3-dev \
         # Dev and headers
         libbz2-dev \
         libldap2-dev \
@@ -170,6 +165,7 @@ RUN /usr/local/bin/apt-install \
         libxslt1-dev \
         zlib1g-dev \
         libpng12-dev \
+        libpcre3-dev \
     # Install extensions for PHP 7.x
     && pecl install apcu redis \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
@@ -178,12 +174,11 @@ RUN /usr/local/bin/apt-install \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services
     && docker-service-enable syslog cron \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 
 WORKDIR /
 
 EXPOSE 9000
-ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint"]
 CMD ["supervisord"]

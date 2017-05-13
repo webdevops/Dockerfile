@@ -3,7 +3,7 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/php-dev:ubuntu-16.10
+FROM webdevops/php-apache:ubuntu-16.10
 
 ENV WEB_DOCUMENT_ROOT=/app \
     WEB_DOCUMENT_INDEX=index.php \
@@ -13,18 +13,17 @@ ENV WEB_NO_CACHE_PATTERN="\.(css|js|gif|png|jpg|svg|json|xml)$"
 
 COPY conf/ /opt/docker/
 
-# Install apache
-RUN /usr/local/bin/apt-install \
-        apache2 \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/apache2.conf \
-	&& rm -f /etc/apache2/sites-enabled/* \
-	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
-	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache --role webdevops-apache-dev --role webdevops-php-dev \
+# Install development environment
+RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
+    && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
+    && /usr/local/bin/apt-install \
+        # Install tools
+        graphviz \
+        # Install php development stuff
+        php-xdebug \
+        blackfire-php \
+        blackfire-agent \
+    # Enable php development services
+    && docker-service-enable syslog ssh postfix \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
-
-EXPOSE 80 443

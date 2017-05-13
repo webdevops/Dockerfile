@@ -5,6 +5,6 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ apache.ubuntu16(role='hhvm-apache') }}
+{{ apache.ubuntu16() }}
 
 {{ docker.expose('80 443') }}

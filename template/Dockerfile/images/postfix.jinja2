@@ -3,6 +3,6 @@
 
 {% macro ubuntu(role='') -%}
 RUN /opt/docker/bin/control.sh service.enable postfix syslog \
-    {{ provision.runRoleInline('postfix', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

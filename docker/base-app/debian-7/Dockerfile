@@ -19,15 +19,11 @@ RUN /usr/local/bin/apt-install \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         openssh-client \
         rsync \
         git \
     && /usr/local/bin/generate-locales \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup

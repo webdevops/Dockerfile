@@ -9,7 +9,6 @@ RUN /usr/local/bin/apt-install \
     && mkdir -p \
             /var/run/vsftpd/empty \
             /var/log/supervisor \
-    {{ provision.registerRole('vsftp', entrypoint=True) }} \
-    {{ provision.runRoleInline('vsftp', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

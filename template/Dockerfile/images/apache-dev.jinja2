@@ -2,8 +2,4 @@
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro general(role='') -%}
-# Install apache
-RUN echo \
-    {{ provision.runRoleInline('apache-dev', role) }} \
-    {{ docker.cleanup() }}
 {%- endmacro %}

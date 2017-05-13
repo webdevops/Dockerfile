@@ -5,7 +5,7 @@
 # Install nginx
 RUN /usr/local/bin/apk-install \
         nginx \
-    {{ provision.runRoleInline('nginx', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -14,7 +14,7 @@ RUN /usr/local/bin/apk-install \
 # Install tools
 RUN /usr/local/bin/yum-install \
         nginx \
-    {{ provision.runRoleInline('nginx', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -23,7 +23,7 @@ RUN /usr/local/bin/yum-install \
 # Install nginx
 RUN /usr/local/bin/apt-install \
         nginx \
-    {{ provision.runRoleInline('nginx', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -32,6 +32,6 @@ RUN /usr/local/bin/apt-install \
 # Install nginx
 RUN /usr/local/bin/apt-install \
         nginx \
-    {{ provision.runRoleInline('nginx', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

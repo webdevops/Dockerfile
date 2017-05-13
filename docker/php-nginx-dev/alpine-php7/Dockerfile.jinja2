@@ -1,4 +1,4 @@
-{{ docker.from("php-dev", "alpine-php7") }}
+{{ docker.from("php-nginx", "alpine-php7") }}
 
 {{ environment.web() }}
 {{ environment.webPhp() }}
@@ -6,6 +6,4 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ nginx.alpine('php-nginx nginx-dev php-dev') }}
-
-{{ docker.expose('80 443') }}
+{{ php7dev.alpine() }}

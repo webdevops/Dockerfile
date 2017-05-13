@@ -13,8 +13,6 @@ shared_examples 'base::layout' do
         "/opt/docker/etc/syslog-ng",
         "/opt/docker/provision/roles",
         "/opt/docker/provision/roles",
-        "/opt/docker/provision/roles/webdevops-base",
-        "/opt/docker/provision/roles/webdevops-cleanup",
         "/opt/docker/provision/entrypoint.d",
         "/opt/docker/provision/onbuild.d",
         "/opt/docker/provision/bootstrap.d",
@@ -50,10 +48,13 @@ shared_examples 'base::layout' do
     [
         "/opt/docker/etc/supervisor.conf",
         "/opt/docker/etc/logrotate.d/syslog-ng",
+        "/opt/docker/etc/supervisor.conf",
         "/opt/docker/etc/supervisor.d/cron.conf",
         "/opt/docker/etc/supervisor.d/syslog.conf",
+        "/opt/docker/etc/supervisor.d/dnsmasq.conf",
+        "/opt/docker/etc/supervisor.d/postfix.conf",
+        "/opt/docker/etc/supervisor.d/ssh.conf",
         "/opt/docker/etc/syslog-ng/syslog-ng.conf",
-        "/opt/docker/etc/supervisor.conf",
         "/opt/docker/etc/logrotate.d/syslog-ng",
     ].each do |file|
         describe file("#{file}") do
@@ -96,6 +97,8 @@ shared_examples 'base::layout' do
         "/opt/docker/bin/entrypoint.d/noop.sh",
         "/opt/docker/bin/entrypoint.d/root.sh",
         "/opt/docker/bin/entrypoint.d/supervisord.sh",
+        "/opt/docker/bin/service.d/dnsmasq.sh",
+        "/opt/docker/bin/service.d/postfix.sh",
         "/usr/local/bin/service",
         "/usr/local/bin/docker-service-enable",
         "/usr/local/bin/docker-service-disable",

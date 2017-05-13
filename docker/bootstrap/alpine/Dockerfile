@@ -29,6 +29,9 @@ RUN set -x \
         openssl \
     && update-ca-certificates \
     && /usr/local/bin/generate-dockerimage-info \
+    ## Fix su execution (eg for tests)
+    && mkdir -p /etc/pam.d/ \
+    && echo 'auth sufficient pam_rootok.so' >> /etc/pam.d/su \
     # Install gosu
     && GOSU_VERSION=1.10 \
     && apk add --no-cache --virtual .gosu-deps \
@@ -46,7 +49,7 @@ RUN set -x \
     && gosu nobody true \
     && apk del .gosu-deps \
     ## Install go-replace
-    && GOREPLACE_VERSION=1.0.1 \
+    && GOREPLACE_VERSION=1.1.0 \
     && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
     && chmod +x /usr/local/bin/go-replace \
     && docker-image-cleanup

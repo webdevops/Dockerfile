@@ -54,7 +54,6 @@ RUN /usr/local/bin/yum-install \
     && yum erase -y php-devel gcc \
     # Enable php services
     && docker-service-enable syslog cron \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 

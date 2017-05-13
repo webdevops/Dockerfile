@@ -15,6 +15,7 @@ RUN /usr/local/bin/apt-install \
         zlib1g \
         libpng12-0 \
         libmcrypt4 \
+    	libpcre3-dev \
         # Dev and headers
         libbz2-dev \
         libldap2-dev \
@@ -58,6 +59,7 @@ RUN /usr/local/bin/apt-install \
         libxslt1-dev \
         zlib1g-dev \
         libpng12-dev \
+        libpcre3-dev \
 {%- if version|int == 5 %}
     # Install extensions for PHP 5.x
     && pecl install apcu-4.0.11 redis \
@@ -72,7 +74,7 @@ RUN /usr/local/bin/apt-install \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     {{ services.php() }} \
-    {{ provision.runRoleInline('php', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 
 WORKDIR /
@@ -89,6 +91,6 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
     && pecl install xdebug \
     && echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

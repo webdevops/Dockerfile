@@ -1,8 +1,0 @@
----
-
-
-- name: Clear target directory
-  file:
-    path:  /app/
-    state: absent
-    force: yes

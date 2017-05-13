@@ -4,8 +4,6 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ ansible.debian() }}
-
 {{ base.debian() }}
 
 {{ docker.entrypoint("/entrypoint") }}
