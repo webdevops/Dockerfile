@@ -44,7 +44,7 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services
-    && docker-service-enable syslog cron \
+    && docker-service-enable cron \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 

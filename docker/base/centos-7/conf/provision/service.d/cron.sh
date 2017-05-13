@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-IMAGE_FAMILY=$(docker-image-info family)
-
-case "$IMAGE_FAMILY" in
-    Debian|Ubuntu)
-        apt-install cron
-        ;;
-
-    RedHat)
-        yum-install cronie
-        ;;
-esac
+GOCROND_VERSION=0.4.0
+wget -O /usr/local/bin/go-crond https://github.com/webdevops/go-crond/releases/download/$GOREPLACE_VERSION/go-crond-64-linux
+chmod +x /usr/local/bin/go-crond

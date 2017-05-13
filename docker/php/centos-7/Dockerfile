@@ -53,7 +53,7 @@ RUN /usr/local/bin/yum-install \
     # Cleanup
     && yum erase -y php-devel gcc \
     # Enable php services
-    && docker-service-enable syslog cron \
+    && docker-service-enable cron \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 

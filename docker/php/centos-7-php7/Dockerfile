@@ -56,7 +56,7 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && echo "extension=redis.so" > /etc/php.d/redis.ini \
     && yum remove -y ImageMagick-devel php70w-devel gcc make \
     # Enable php services
-    && docker-service-enable syslog cron \
+    && docker-service-enable cron \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 

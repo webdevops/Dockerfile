@@ -73,7 +73,7 @@ RUN /usr/local/bin/apk-install \
     # PECL workaround, see webdevops/Dockerfile#78
     && sed -i "s/ -n / /" $(which pecl) \
     # Enable php services
-    && docker-service-enable syslog cron \
+    && docker-service-enable cron \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 

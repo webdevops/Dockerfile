@@ -5,8 +5,6 @@ provision:
   base:
     configuration:
       base/general: '*'
-      base/centos: centos-*
-      base/alpine: alpine
   base-app:
     configuration:
       base-app/general: '*'
