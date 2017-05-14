@@ -3,6 +3,7 @@
 IMAGE_FAMILY=$(docker-image-info family)
 IMAGE_DISTRIBUTION=$(docker-image-info dist)
 IMAGE_DISTRIBUTION_VERSION=$(docker-image-info dist-version)
+IMAGE_DISTRIBUTION_VERSION_MAIN=$(echo "$IMAGE_DISTRIBUTION_VERSION" | sed 's/^\([0-9]*\).*/\1/g')
 
 # Collect environment variables
 case "$IMAGE_FAMILY" in
@@ -56,11 +57,11 @@ if [[ "$IMAGE_FAMILY" == "RedHat" ]]; then
         -- /etc/httpd/conf.modules.d/00-mpm.conf
 fi
 
-if [[ "$IMAGE_DISTRIBUTION" == "Ubuntu" ]] && [[ "$IMAGE_DISTRIBUTION_VERSION" -ge 14 ]]; then
+if [[ "$IMAGE_DISTRIBUTION" == "Ubuntu" ]] && [[ "$IMAGE_DISTRIBUTION_VERSION_MAIN" -ge 14 ]]; then
     a2enmod mpm_event
 fi
 
-if [[ "$IMAGE_DISTRIBUTION" == "Debian" ]] && [[ "$IMAGE_DISTRIBUTION_VERSION" -ge 8 ]]; then
+if [[ "$IMAGE_DISTRIBUTION" == "Debian" ]] && [[ "$IMAGE_DISTRIBUTION_VERSION_MAIN" -ge 8 ]]; then
     a2enmod mpm_event
 fi
 
