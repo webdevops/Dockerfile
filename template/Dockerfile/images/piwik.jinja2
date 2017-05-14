@@ -1,0 +1,15 @@
+{% import 'Dockerfile/docker.jinja2'    as docker %}
+{% import 'Dockerfile/provision.jinja2' as provision %}
+{% import 'Dockerfile/services.jinja2'  as services %}
+
+
+{% macro install() -%}
+RUN mkdir -p /app/ \
+    && wget -O/tmp/piwik.zip http://builds.piwik.org/piwik.zip \
+    && unzip /tmp/piwik.zip -d /app/ \
+    && rm -f /tmp/piwik.zip \
+    && chown -R application /app \
+    && find /app/ -type d -exec chmod 0755 {} \; \
+    && find /app/ -type f -exec chmod 0644 {} \;
+VOLUME /app
+{%- endmacro %}
