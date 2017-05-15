@@ -1,0 +1,1 @@
+5 * * * * application php /app/code/piwik/console core:archive --url="$PIWIK_URL"
