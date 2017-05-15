@@ -13,7 +13,7 @@ case "$IMAGE_FAMILY" in
         ;;
 
     Debian|Ubuntu)
-        cat << EOF > /etc/crontab
+        cat << 'EOF' > /etc/crontab
 # /etc/crontab: system-wide crontab
 # Unlike any other crontab you don't have to run the `crontab'
 # command to install the new version when you edit this file
@@ -39,7 +39,7 @@ EOF
         ;;
 
     RedHat)
-        cat << EOF > /etc/crontab
+        cat << 'EOF' > /etc/crontab
 SHELL=/bin/bash
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 MAILTO=root
