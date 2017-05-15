@@ -97,7 +97,6 @@ RUN /usr/local/bin/apt-install \
         zlib1g \
         libpng12-0 \
         libmcrypt4 \
-    	libpcre3-dev \
         # Dev and headers
         libbz2-dev \
         libldap2-dev \
@@ -141,7 +140,6 @@ RUN /usr/local/bin/apt-install \
         libxslt1-dev \
         zlib1g-dev \
         libpng12-dev \
-        libpcre3-dev \
     # Install extensions for PHP 7.x
     && pecl install apcu redis \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
