@@ -17,6 +17,9 @@
 # autorestart = false
 #
 
+# Init vars
+if [[ -z "$SERVICE_POSTFIX_OPTS" ]]; then SERVICE_POSTFIX_OPTS=""; fi
+
 source /opt/docker/bin/config.sh
 
 trap "postfix stop" SIGINT
@@ -26,7 +29,7 @@ trap "postfix reload" SIGHUP
 includeScriptDir "/opt/docker/bin/service.d/postfix.d/"
 
 # start postfix
-postfix start
+postfix start $SERVICE_POSTFIX_OPTS
 
 # lets give postfix some time to start
 sleep 3

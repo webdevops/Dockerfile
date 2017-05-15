@@ -12,8 +12,6 @@
 
 {{ bootstrap.debian('jessie') }}
 
-{{ ansible.debian() }}
-
 {{ base.debian() }}
 
 {{ baseapp.debian() }}
@@ -21,5 +19,5 @@
 {{ php.official(version='7.1') }}
 
 {{ docker.expose('9000') }}
-{{ docker.entrypoint("/opt/docker/bin/entrypoint.sh") }}
+{{ docker.entrypoint("/entrypoint") }}
 {{ docker.cmd("supervisord") }}

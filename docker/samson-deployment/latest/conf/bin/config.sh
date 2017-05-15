@@ -44,6 +44,7 @@ function createDockerStdoutStderr() {
 function includeScriptDir() {
     if [[ -d "$1" ]]; then
         for FILE in "$1"/*.sh; do
+            echo "-> Executing ${FILE}"
             # run custom scripts, only once
             . "$FILE"
         done
@@ -94,24 +95,19 @@ function runEntrypoints() {
  ##
 function runProvisionBootstrap() {
     for FILE in /opt/docker/provision/bootstrap.d/*.sh; do
+        echo "-> Executing ${FILE}"
+
         # run custom scripts, only once
         . "$FILE"
         rm -f -- "$FILE"
     done
-
-    runDockerProvision bootstrap
 }
 
 ###
  # Run "build" provisioning
  ##
 function runProvisionBuild() {
-    for FILE in /opt/docker/provision/build.d/*.sh; do
-        # run custom scripts, only once
-        . "$FILE"
-    done
-
-    runDockerProvision build
+    includeScriptDir "/opt/docker/provision/build.d"
 }
 
 ###
@@ -119,8 +115,6 @@ function runProvisionBuild() {
  ##
 function runProvisionOnBuild() {
     includeScriptDir "/opt/docker/provision/onbuild.d"
-
-    runDockerProvision onbuild
 }
 
 ###
@@ -129,26 +123,4 @@ function runProvisionOnBuild() {
 function runProvisionEntrypoint() {
     includeScriptDir "/opt/docker/provision/entrypoint.d"
     includeScriptDir "/entrypoint.d"
-
-    runDockerProvision entrypoint
 }
-
-
-###
- # Run docker provisioning with dyniamic playbook generation
- #
- # $1 -> playbook tag (bootstrap, onbuild, entrypoint)
- #
- ##
-function runDockerProvision() {
-    ANSIBLE_TAG="$1"
-
-    PROVISION_STATS_FILE="/opt/docker/etc/.registry/provision-stats.${ANSIBLE_TAG}"
-
-    # run provision if stats file doesn't exists (unknown mode)
-    # or if stats file is not empty
-    if [[ ! -f "$PROVISION_STATS_FILE" ]] || [[ -s "$PROVISION_STATS_FILE" ]]; then
-        /opt/docker/bin/provision run --tag "${ANSIBLE_TAG}" --use-registry
-    fi
-}
-

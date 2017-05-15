@@ -5,14 +5,21 @@
 
 FROM zendesk/samson:latest
 
+ENV TERM="xterm" \
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
+ENV DOCKER_CONF_HOME=/opt/docker/ \
+    LOG_STDOUT="" \
+    LOG_STDERR=""
+ENV APPLICATION_USER=application \
+    APPLICATION_GROUP=application \
+    APPLICATION_PATH=/app \
+    APPLICATION_UID=1000 \
+    APPLICATION_GID=1000
 
 ###############################################################################
 # Bootstrap
 ###############################################################################
-
-ENV TERM="xterm" \
-    LANG="C.UTF-8" \
-    LC_ALL="C.UTF-8"
 
 ADD baselayout.tar /
 
@@ -43,7 +50,7 @@ RUN set -x \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
     ## Install go-replace
-    && GOREPLACE_VERSION=0.5.4 \
+    && GOREPLACE_VERSION=1.1.2 \
     && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
     && chmod +x /usr/local/bin/go-replace \
     && apt-get purge -y -f --force-yes wget dirmngr \
@@ -52,10 +59,6 @@ RUN set -x \
 ###############################################################################
 # Base
 ###############################################################################
-
-ENV DOCKER_CONF_HOME=/opt/docker/ \
-    LOG_STDOUT="" \
-    LOG_STDERR=""
 
 COPY conf/ /opt/docker/
 
@@ -90,9 +93,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
-        gnupg \
     && chmod +s /usr/local/bin/gosu \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 
@@ -100,28 +101,18 @@ RUN chmod +x /opt/docker/bin/* \
 # Base-app
 ###############################################################################
 
-ENV APPLICATION_USER=application \
-    APPLICATION_GROUP=application \
-    APPLICATION_PATH=/app \
-    APPLICATION_UID=1000 \
-    APPLICATION_GID=1000
-
 # Install services
 RUN /usr/local/bin/apt-install \
         # Install common tools
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         openssh-client \
         rsync \
         git \
     && /usr/local/bin/generate-locales \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 
@@ -201,11 +192,11 @@ ADD crontab         /etc/cron.d/webdevops-samson-deployment
 
 RUN rake assets:precompile \
     && /opt/docker/bin/control.sh service.enable cron \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base --role webdevops-base-app --role webdevops-samson-deployment \
+    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-samson-deployment \
     && /opt/docker/bin/bootstrap.sh
 
 EXPOSE 80
 VOLUME /storage
 
-ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint"]
 CMD ["supervisord"]

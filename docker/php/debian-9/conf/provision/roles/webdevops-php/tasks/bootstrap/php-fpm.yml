@@ -1,9 +1,0 @@
----
-
-- name: Symlink php-fpm binary
-  file:
-    path: "/usr/local/bin/php-fpm"
-    src:  "{{ php_fpm_bin }}"
-    state: link
-    owner: "root"
-    group: "root"

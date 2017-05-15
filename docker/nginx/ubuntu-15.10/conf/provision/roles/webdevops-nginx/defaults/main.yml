@@ -1,3 +1,0 @@
----
-
-DOCUMENT_ROOT:     "{{ lookup('env','WEB_DOCUMENT_ROOT') }}"

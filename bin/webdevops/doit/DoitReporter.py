@@ -105,6 +105,13 @@ class DoitReporter(object):
     task_finished = 0
     task_total = 0
 
+    COLOR_SCHEMA = {
+        'skipped':   'yellow',
+        'simulated': 'blue',
+        'success':   'green',
+        'failed':    'red',
+    }
+
     def __init__(self, outstream, options=None): #pylint: disable=W0613
         # result is sent to stdout when doit finishes running
         self.t_results = {}
@@ -147,7 +154,7 @@ class DoitReporter(object):
         if task.actions and (task.name[0] != '_'):
             duration = self.duration(self.t_results[task.name].elapsed)
             progress = self.calc_progress()
-            self.writeln(colored('.  %s FAILED (%s, #%s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'red'))
+            self.writeln(colored('.  %s FAILED (%s, #%s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), DoitReporter.COLOR_SCHEMA['failed']))
         self.failures.append({'task': task, 'exception': exception})
 
     def add_success(self, task):
@@ -164,18 +171,27 @@ class DoitReporter(object):
             progress = self.calc_progress()
 
             if DoitReporter.simulation_mode:
-                self.writeln(
-                    colored('.  %s simulated (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'blue')
-                )
+                output_status = 'simulated'
+                output_color = DoitReporter.COLOR_SCHEMA['simulated']
             else:
                 if DoitReporter.skip_detection and durationSeconds < 1:
-                    self.writeln(
-                        colored('.  %s SKIPPED (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'yellow')
-                    )
+                    output_status = 'SKIPPED'
+                    output_color = DoitReporter.COLOR_SCHEMA['skipped']
                 else:
-                    self.writeln(
-                        colored('.  %s finished (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), duration, progress), 'green')
-                    )
+                    output_status = 'finished'
+                    output_color = DoitReporter.COLOR_SCHEMA['success']
+
+            # custom status
+            task_status = BaseTaskLoader.get_task_status(task.name)
+            if task_status:
+                if task_status['color'] and task_status['color'] in DoitReporter.COLOR_SCHEMA:
+                    output_color = DoitReporter.COLOR_SCHEMA[task_status['color']]
+                if task_status['status']:
+                    output_status = task_status['status']
+
+            self.writeln(
+                colored('.  %s %s (%s, %s)' % (BaseTaskLoader.human_task_name(task.title()), output_status, duration, progress), output_color)
+            )
 
     def skip_uptodate(self, task):
         """

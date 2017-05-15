@@ -1,11 +1,12 @@
 {{ docker.from("samson", user="zendesk") }}
 
+{{ environment.general() }}
+{{ environment.base() }}
+{{ environment.baseApp() }}
 
 ###############################################################################
 # Bootstrap
 ###############################################################################
-
-{{ environment.general() }}
 
 {{ docker.add('baselayout.tar', '/') }}
 
@@ -14,8 +15,6 @@
 ###############################################################################
 # Base
 ###############################################################################
-
-{{ environment.base() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
@@ -26,8 +25,6 @@
 ###############################################################################
 # Base-app
 ###############################################################################
-
-{{ environment.baseApp() }}
 
 {{ baseapp.debian() }}
 
@@ -40,5 +37,5 @@
 {{ docker.expose('80') }}
 {{ docker.volume('/storage') }}
 
-{{ docker.entrypoint("/opt/docker/bin/entrypoint.sh") }}
+{{ docker.entrypoint("/entrypoint") }}
 {{ docker.cmd("supervisord") }}

@@ -14,7 +14,7 @@ RUN /usr/local/bin/apk-install \
         nano \
         vim \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -33,7 +33,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         nano \
         vim \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -50,7 +50,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         nano \
         vim \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -69,7 +69,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         nano \
         vim \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -89,6 +89,6 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         nano \
         vim \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

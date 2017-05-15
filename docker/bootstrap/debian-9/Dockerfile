@@ -43,7 +43,7 @@ RUN set -x \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
     ## Install go-replace
-    && GOREPLACE_VERSION=0.5.4 \
+    && GOREPLACE_VERSION=1.1.2 \
     && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
     && chmod +x /usr/local/bin/go-replace \
     && apt-get purge -y -f --force-yes wget dirmngr \

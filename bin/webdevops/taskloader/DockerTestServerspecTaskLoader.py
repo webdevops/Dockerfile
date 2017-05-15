@@ -67,6 +67,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         if dockerfile['image']['duplicate']:
             print '  Docker image %s is build from symlink and duplicate of %s' % (dockerfile['image']['fullname'], dockerfile['image']['from'])
             print '  -> skipping tests'
+            BaseTaskLoader.set_task_status(task, 'skipped (symlink)', 'skipped')
             return True
 
         # Check if current image is a toolimage (no daemon)
@@ -124,6 +125,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         # check if we have any tests
         if not os.path.isfile(spec_abs_path):
             print '         no tests defined (%s)' % (spec_path)
+            BaseTaskLoader.set_task_status(task, 'skipped (no test)', 'skipped')
             return True
 
         # build rspec/serverspec command

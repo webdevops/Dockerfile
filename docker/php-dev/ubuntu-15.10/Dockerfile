@@ -22,6 +22,5 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         vim \
     # Enable php development services
     && docker-service-enable syslog ssh postfix \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-dev --role webdevops-php-dev \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup

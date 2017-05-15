@@ -1,0 +1,5 @@
+{{ docker.from("php-apache", "ubuntu-16.04") }}
+
+ENV WEB_DOCUMENT_ROOT /app/web/
+
+{{ typo3.install() }}

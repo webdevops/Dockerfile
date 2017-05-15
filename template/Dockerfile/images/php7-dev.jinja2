@@ -10,7 +10,7 @@ RUN /usr/local/bin/apk-install \
         # Install php development stuff
         php7-xdebug \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -26,7 +26,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         blackfire-php \
         blackfire-agent \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -40,7 +40,7 @@ RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/y
         blackfire-php \
         blackfire-agent \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -56,7 +56,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         blackfire-php \
         blackfire-agent \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -72,7 +72,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         blackfire-php \
         blackfire-agent \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -88,7 +88,7 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         blackfire-php \
         blackfire-agent \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -104,6 +104,6 @@ RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
         blackfire-php \
         blackfire-agent \
     {{ services.phpDev() }} \
-    {{ provision.runRoleInline('dev', 'php-dev', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

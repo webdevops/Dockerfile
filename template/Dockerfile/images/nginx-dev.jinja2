@@ -3,7 +3,7 @@
 
 {% macro general(role='') -%}
 # Install apache
-RUN echo \
-    {{ provision.runRoleInline('nginx-dev', role) }} \
+RUN true \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

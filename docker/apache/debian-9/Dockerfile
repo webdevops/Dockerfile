@@ -20,7 +20,6 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 

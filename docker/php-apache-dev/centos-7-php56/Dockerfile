@@ -3,7 +3,7 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/php-dev:centos-7-php56
+FROM webdevops/php-apache:centos-7-php56
 
 ENV WEB_DOCUMENT_ROOT=/app \
     WEB_DOCUMENT_INDEX=index.php \
@@ -13,16 +13,18 @@ ENV WEB_NO_CACHE_PATTERN="\.(css|js|gif|png|jpg|svg|json|xml)$"
 
 COPY conf/ /opt/docker/
 
-# Install apache
-RUN /usr/local/bin/yum-install \
-        httpd \
-        mod_ssl \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-apache --role webdevops-php-apache --role webdevops-apache-dev --role webdevops-php-dev \
+RUN wget -O - "https://packages.blackfire.io/fedora/blackfire.repo" | tee /etc/yum.repos.d/blackfire.repo \
+    && /usr/local/bin/yum-install \
+        # Install tools
+        graphviz \
+        # Install php development stuff
+        php56w-pecl-xdebug \
+        blackfire-php \
+        blackfire-agent \
+        # Tools
+        nano \
+        vim \
+    # Enable php development services
+    && docker-service-enable syslog ssh postfix \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
-
-EXPOSE 80 443

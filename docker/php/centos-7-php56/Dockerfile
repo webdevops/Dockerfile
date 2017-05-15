@@ -50,7 +50,6 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && yum erase -y php-devel gcc \
     # Enable php services
     && docker-service-enable syslog cron \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-php \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 

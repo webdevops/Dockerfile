@@ -3,7 +3,7 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/php-dev:ubuntu-16.04
+FROM webdevops/php-nginx:ubuntu-16.04
 
 ENV WEB_DOCUMENT_ROOT=/app \
     WEB_DOCUMENT_INDEX=index.php \
@@ -13,11 +13,17 @@ ENV WEB_NO_CACHE_PATTERN="\.(css|js|gif|png|jpg|svg|json|xml)$"
 
 COPY conf/ /opt/docker/
 
-# Install nginx
-RUN /usr/local/bin/apt-install \
-        nginx \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-nginx --role webdevops-php-nginx --role webdevops-nginx-dev --role webdevops-php-dev \
+# Install development environment
+RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
+    && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
+    && /usr/local/bin/apt-install \
+        # Install tools
+        graphviz \
+        # Install php development stuff
+        php-xdebug \
+        blackfire-php \
+        blackfire-agent \
+    # Enable php development services
+    && docker-service-enable syslog ssh postfix \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
-
-EXPOSE 80 443

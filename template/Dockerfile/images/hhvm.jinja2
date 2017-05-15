@@ -13,7 +13,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
         ghostscript \
     && /usr/bin/update-alternatives --install /usr/bin/php php /usr/bin/hhvm 60 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ provision.runRoleInline('hhvm', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -27,6 +27,6 @@ RUN /usr/local/bin/apt-install \
         ghostscript \
     && /usr/bin/update-alternatives --install /usr/bin/php php /usr/bin/hhvm 60 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ provision.runRoleInline('hhvm', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

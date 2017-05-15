@@ -1,4 +1,4 @@
-{{ docker.from("php-dev", "debian-8") }}
+{{ docker.from("php-apache", "debian-8") }}
 
 {{ environment.web() }}
 {{ environment.webPhp() }}
@@ -6,6 +6,4 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ apache.debian8('php-apache apache-dev php-dev') }}
-
-{{ docker.expose('80 443') }}
+{{ php5dev.debian() }}

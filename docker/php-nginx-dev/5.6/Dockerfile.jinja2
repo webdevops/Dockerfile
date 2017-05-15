@@ -1,4 +1,4 @@
-{{ docker.from("php-dev", "5.6") }}
+{{ docker.from("php-nginx", "5.6") }}
 
 {{ environment.web() }}
 {{ environment.webPhp() }}
@@ -6,6 +6,4 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ nginx.debian('php-nginx nginx-dev php-dev') }}
-
-{{ docker.expose('80 443') }}
+{{ php.officialDevelopment(version="5.6") }}

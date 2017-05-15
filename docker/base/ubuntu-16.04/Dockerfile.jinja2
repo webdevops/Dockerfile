@@ -4,9 +4,7 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ ansible.ubuntu() }}
-
 {{ base.ubuntu() }}
 
-{{ docker.entrypoint("/opt/docker/bin/entrypoint.sh") }}
+{{ docker.entrypoint("/entrypoint") }}
 {{ docker.cmd("supervisord") }}

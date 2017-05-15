@@ -8,15 +8,12 @@ RUN /usr/local/bin/apk-install-edge shadow \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         drill \
         ldns \
         openssh-client \
         rsync \
         git \
-    {{ provision.runRoleInline('base-app', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -28,17 +25,13 @@ RUN /usr/local/bin/yum-install \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         bind-utils \
         rsync \
         git \
-        pygpgme \
     && /usr/local/bin/generate-locales \
-    {{ provision.runRoleInline('base-app', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -50,16 +43,13 @@ RUN /usr/local/bin/apt-install \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         openssh-client \
         rsync \
         git \
     && /usr/local/bin/generate-locales \
-    {{ provision.runRoleInline('base-app', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -70,16 +60,13 @@ RUN /usr/local/bin/apt-install \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         openssh-client \
         rsync \
         git \
     && /usr/local/bin/generate-locales \
-    {{ provision.runRoleInline('base-app', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -90,9 +77,6 @@ RUN /usr/local/bin/apt-install \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         openssh-client \
@@ -100,6 +84,6 @@ RUN /usr/local/bin/apt-install \
         git \
     && mkdir -p /var/lib/syslog-ng/ \
     && /usr/local/bin/generate-locales \
-    {{ provision.runRoleInline('base-app', role) }} \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}

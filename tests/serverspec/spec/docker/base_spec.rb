@@ -10,4 +10,6 @@ describe "Dockerfile" do
     include_examples 'collection::bootstrap'
     include_examples 'collection::base'
 
+    # special tests
+    include_examples 'base::services::additional'
 end

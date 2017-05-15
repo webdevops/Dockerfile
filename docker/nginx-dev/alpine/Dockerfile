@@ -12,8 +12,7 @@ ENV WEB_DOCUMENT_ROOT=/app \
 COPY conf/ /opt/docker/
 
 # Install apache
-RUN echo \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-nginx-dev \
+RUN true \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 

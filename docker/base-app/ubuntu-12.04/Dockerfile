@@ -19,9 +19,6 @@ RUN /usr/local/bin/apt-install \
         zip \
         unzip \
         bzip2 \
-        wget \
-        curl \
-        net-tools \
         moreutils \
         dnsutils \
         openssh-client \
@@ -29,6 +26,5 @@ RUN /usr/local/bin/apt-install \
         git \
     && mkdir -p /var/lib/syslog-ng/ \
     && /usr/local/bin/generate-locales \
-    && /opt/docker/bin/provision run --tag bootstrap --role webdevops-base-app \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
