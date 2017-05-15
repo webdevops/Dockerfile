@@ -15,6 +15,7 @@ RUN /usr/local/bin/apt-install \
         zlib1g \
         libpng12-0 \
         libmcrypt4 \
+    	libpcre3-dev \
         # Dev and headers
         libbz2-dev \
         libldap2-dev \
@@ -24,7 +25,6 @@ RUN /usr/local/bin/apt-install \
         libxslt1-dev \
         zlib1g-dev \
         libpng12-dev \
-        libpcre3-dev \
     # Install extensions
     && docker-php-ext-install \
         bcmath \
@@ -49,6 +49,17 @@ RUN /usr/local/bin/apt-install \
         gd \
         gettext \
         opcache \
+    # Uninstall dev and header packages
+    && apt-get purge -y -f --force-yes \
+        libbz2-dev \
+        libldap2-dev \
+        libldb-dev \
+        libmcrypt-dev \
+        libxml2-dev \
+        libxslt1-dev \
+        zlib1g-dev \
+        libpng12-dev \
+        libpcre3-dev \
 {%- if version|int == 5 %}
     # Install extensions for PHP 5.x
     && pecl install apcu-4.0.11 redis \
@@ -62,17 +73,6 @@ RUN /usr/local/bin/apt-install \
 {%- endif %}
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    # Uninstall dev and header packages
-    && apt-get purge -y -f --force-yes \
-        libbz2-dev \
-        libldap2-dev \
-        libldb-dev \
-        libmcrypt-dev \
-        libxml2-dev \
-        libxslt1-dev \
-        zlib1g-dev \
-        libpng12-dev \
-        libpcre3-dev \
     {{ services.php() }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
