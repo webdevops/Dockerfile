@@ -34,7 +34,8 @@ RUN apt-get update \
     && chmod +x /opt/docker/bin/entrypoint.sh \
 	&& apt-get clean \
 	&& rm -r /var/lib/apt/lists/* \
-    && mkdir /liquibase
+    && mkdir /liquibase \
+    && ln -sf /opt/docker/bin/entrypoint.sh /entrypoint
 
 WORKDIR /liquibase
 
