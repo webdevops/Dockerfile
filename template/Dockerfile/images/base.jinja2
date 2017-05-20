@@ -11,7 +11,7 @@ RUN chmod +x /opt/docker/bin/* \
         curl \
         sed \
     && chmod +s /usr/local/bin/gosu \
-    && {{ tools.gologd() }} \
+    {{ tools.gologd() }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -26,7 +26,7 @@ RUN chmod +x /opt/docker/bin/* \
         curl \
         net-tools \
     && chmod +s /usr/local/bin/gosu \
-    && {{ tools.gologd() }} \
+    {{ tools.gologd() }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -41,7 +41,7 @@ RUN chmod +x /opt/docker/bin/* \
         curl \
         net-tools \
     && chmod +s /usr/local/bin/gosu \
-    && {{ tools.gologd() }} \
+    {{ tools.gologd() }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -56,7 +56,7 @@ RUN chmod +x /opt/docker/bin/* \
         curl \
         net-tools \
     && chmod +s /usr/local/bin/gosu \
-    && {{ tools.gologd() }} \
+    {{ tools.gologd() }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
