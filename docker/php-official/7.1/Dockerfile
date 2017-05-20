@@ -69,7 +69,7 @@ RUN chmod +x /opt/docker/bin/* \
     && chmod +s /usr/local/bin/gosu \
     ## Install go-logd
     && GOLOGD_VERSION=1.0.0 \
-    && wget -O /usr/local/bin/go-crond https://github.com/webdevops/go-crond/releases/download/$GOLOGD_VERSION/go-logd-64-linux \
+    && wget -O /usr/local/bin/go-crond https://github.com/webdevops/go-logd/releases/download/$GOLOGD_VERSION/go-logd-64-linux \
     && chmod +x /usr/local/bin/go-logd \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
