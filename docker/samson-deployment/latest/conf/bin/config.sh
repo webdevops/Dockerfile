@@ -19,6 +19,8 @@ function rootCheck() {
  #
  ##
 function createDockerStdoutStderr() {
+    rm -f /docker.stdout /docker.stderr
+
     mkfifo /docker.stdout
     mkfifo /docker.stderr
 
