@@ -1,0 +1,31 @@
+---
+
+# Syslog daemon
+syslog:
+
+  # Path to socket (default)
+  path: "/dev/log"
+
+  # Permissions
+  perms: 0666
+
+  # Message filtering
+  filter:
+    facility: "auth,authpriv"
+
+  # Output manipulation
+  output:
+    template: "[SYSLOG] %s"
+
+# Named pipes (FIFO, multiple allowed)
+pipes:
+  -
+    path: /docker.stdout
+    type: stdout
+    perms: 0666
+  -
+    path: /docker.stderr
+    type: stderr
+    perms: 0666
+    output:
+      #template: "[STDERR] %s"

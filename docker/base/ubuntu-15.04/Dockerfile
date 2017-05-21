@@ -19,10 +19,10 @@ RUN chmod +x /opt/docker/bin/* \
         curl \
         net-tools \
     && chmod +s /usr/local/bin/gosu \
-    ## Install go-logd
-    && GOLOGD_VERSION=1.0.0 \
-    && wget -O /usr/local/bin/go-logd https://github.com/webdevops/go-logd/releases/download/$GOLOGD_VERSION/go-logd-64-linux \
-    && chmod +x /usr/local/bin/go-logd \
+    ## Install go-syslogd
+    && GOSYSLOGD_VERSION=0.1.0 \
+    && wget -O /sbin/go-syslogd https://github.com/webdevops/go-logd/releases/download/$GOSYSLOGD_VERSION/go-syslogd-64-linux \
+    && chmod +x /sbin/go-syslogd \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
 
