@@ -20,7 +20,7 @@ RUN chmod +x /opt/docker/bin/* \
         net-tools \
     && chmod +s /usr/local/bin/gosu \
     ## Install go-syslogd
-    && GOSYSLOGD_VERSION=0.1.0 \
+    && GOSYSLOGD_VERSION=0.2.1 \
     && wget -O /sbin/go-syslogd https://github.com/webdevops/go-logd/releases/download/$GOSYSLOGD_VERSION/go-syslogd-64-linux \
     && chmod +x /sbin/go-syslogd \
     && /opt/docker/bin/bootstrap.sh \
