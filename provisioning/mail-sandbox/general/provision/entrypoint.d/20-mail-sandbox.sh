@@ -16,13 +16,13 @@ echo "$MAILBOX_USERNAME":"$MAILBOX_PASSWORD" | chpasswd
 
 # Create mailbox
 mkdir -p -- \
-    "/var/mail/${MAILBOX_USERNAME}" \
-    "/var/mail/${MAILBOX_USERNAME}/.mail" \
-    "/var/mail/${MAILBOX_USERNAME}/.mail/Archive" \
-    "/var/mail/${MAILBOX_USERNAME}/.mail/Drafts" \
-    "/var/mail/${MAILBOX_USERNAME}/.mail/Sent" \
-    "/var/mail/${MAILBOX_USERNAME}/.mail/Spam" \
-    "/var/mail/${MAILBOX_USERNAME}/.mail/Tash"
+    "~${MAILBOX_USERNAME}" \
+    "~${MAILBOX_USERNAME}/.mail" \
+    "~${MAILBOX_USERNAME}/.mail/Archive" \
+    "~${MAILBOX_USERNAME}/.mail/Drafts" \
+    "~${MAILBOX_USERNAME}/.mail/Sent" \
+    "~${MAILBOX_USERNAME}/.mail/Spam" \
+    "~${MAILBOX_USERNAME}/.mail/Tash"
 
 # Fix permissions
-chown -R "${MAILBOX_USERNAME}:${MAILBOX_USERNAME}" --  "/var/mail/${MAILBOX_USERNAME}"
+chown -R "${MAILBOX_USERNAME}:${MAILBOX_USERNAME}" --  "~${MAILBOX_USERNAME}"
