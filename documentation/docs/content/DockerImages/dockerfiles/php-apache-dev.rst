@@ -17,6 +17,7 @@ Environment variables
 
 .. include:: include/environment-base.rst
 .. include:: include/environment-base-app.rst
+.. include:: include/environment-php.rst
 .. include:: include/environment-php-dev.rst
 
 
