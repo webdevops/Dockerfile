@@ -1,7 +1,8 @@
-
 #######################################
 ### FPM MAIN
 #######################################
+
+container-file-auto-restore "/opt/docker/etc/php/fpm/php-fpm.conf"
 
 if [[ -n "${FPM_PROCESS_MAX+x}" ]]; then
     go-replace --mode=lineinfile --regex \
@@ -13,6 +14,8 @@ fi
 #######################################
 ### FPM POOL
 #######################################
+
+container-file-auto-restore "/opt/docker/etc/php/fpm/pool.d/application.conf"
 
 if [[ -n "${FPM_PM_MAX_CHILDREN+x}" ]]; then
     echo "pm.max_children = ${FPM_PM_MAX_CHILDREN}" >> /opt/docker/etc/php/fpm/pool.d/application.conf
