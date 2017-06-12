@@ -1,3 +1,5 @@
+container-file-auto-restore "/opt/docker/etc/php/php.webdevops.ini"
+
 if [[ -n "${PHP_DATE_TIMEZONE+x}" ]]; then
     echo "date.timezone = ${PHP_DATE_TIMEZONE}" >> /opt/docker/etc/php/php.webdevops.ini
 fi
