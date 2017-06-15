@@ -1,5 +1,17 @@
 container-file-auto-restore "/opt/docker/etc/php/php.webdevops.ini"
 
+echo '' >> /opt/docker/etc/php/php.webdevops.ini
+echo '; container env settings' >> /opt/docker/etc/php/php.webdevops.ini
+
+# General php setting
+for ENV_VAR in $(envListVars "php\."); do
+    env_key=${ENV_VAR#php.}
+    env_val=$(envGetValue "$ENV_VAR")
+
+    echo "$env_key = ${env_val}" >> /opt/docker/etc/php/php.webdevops.ini
+done
+
+
 if [[ -n "${PHP_DATE_TIMEZONE+x}" ]]; then
     echo "date.timezone = ${PHP_DATE_TIMEZONE}" >> /opt/docker/etc/php/php.webdevops.ini
 fi

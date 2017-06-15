@@ -4,18 +4,39 @@
 
 container-file-auto-restore "/opt/docker/etc/php/fpm/php-fpm.conf"
 
+echo '' >> /opt/docker/etc/php/fpm/php-fpm.conf
+echo '; container env settings' >> /opt/docker/etc/php/fpm/php-fpm.conf
+echo '[global]' >> /opt/docker/etc/php/fpm/php-fpm.conf
+
 if [[ -n "${FPM_PROCESS_MAX+x}" ]]; then
-    go-replace --mode=lineinfile --regex \
-        --lineinfile-after='\[global\]' \
-        -s '^[\s;]*process.max[\s]*=' -r "process.max = ${CONF_PHP_FPM_MAIN}"
-        -- /opt/docker/etc/php/fpm/php-fpm.conf
+    echo "process.max = ${FPM_PROCESS_MAX}" >> /opt/docker/etc/php/fpm/php-fpm.conf
 fi
+
+# General fpm main setting
+for ENV_VAR in $(envListVars "fpm\.global\."); do
+    env_key=${ENV_VAR#fpm.global.}
+    env_val=$(envGetValue "$ENV_VAR")
+
+    echo "$env_key = ${env_val}" >> /opt/docker/etc/php/fpm/php-fpm.conf
+done
 
 #######################################
 ### FPM POOL
 #######################################
 
 container-file-auto-restore "/opt/docker/etc/php/fpm/pool.d/application.conf"
+
+echo '' >> /opt/docker/etc/php/fpm/pool.d/application.conf
+echo '; container env settings' >> /opt/docker/etc/php/fpm/pool.d/application.conf
+
+# General fpm pool setting
+for ENV_VAR in $(envListVars "fpm\.pool\."); do
+    env_key=${ENV_VAR#fpm.pool.}
+    env_val=$(envGetValue "$ENV_VAR")
+
+    echo "$env_key = ${env_val}" >> /opt/docker/etc/php/fpm/pool.d/application.conf
+done
+
 
 if [[ -n "${FPM_PM_MAX_CHILDREN+x}" ]]; then
     echo "pm.max_children = ${FPM_PM_MAX_CHILDREN}" >> /opt/docker/etc/php/fpm/pool.d/application.conf

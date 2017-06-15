@@ -1,9 +1,12 @@
 PHP.ini variables
 ^^^^^^^^^^^^^^^^^
 
+You can specify eg. ``php.memory_limit=256M`` as dyanmic env variable which will sets ``memory_limit = 256M`` as php setting.
+
 ============================================= ========================================= ==============================================
 Environment variable                          Description                               Default
 ============================================= ========================================= ==============================================
+``php.{setting-key}``                         Sets the ``{setting-key}`` as php setting
 ``PHP_DATE_TIMEZONE``                         ``date.timezone``                         ``UTC``
 ``PHP_DISPLAY_ERRORS``                        ``display_errors``                        ``0``
 ``PHP_MEMORY_LIMIT``                          ``memory_limit``                          ``512M``
@@ -17,12 +20,19 @@ Environment variable                          Description                       
 ``PHP_OPCACHE_INTERNED_STRINGS_BUFFER``       ``opcache.interned_strings_buffer``       ``16``
 ============================================= ========================================= ==============================================
 
-PHP FPM variables
-^^^^^^^^^^^^^^^^^
+PHP FPM  variables
+^^^^^^^^^^^^^^^^^^
+
+You can specify eg. ``fpm.pool.pm.max_requests=1000`` as dyanmic env variable which will sets ``pm.max_requests = 1000`` as fpm pool setting.
+The prefix ``fpm.pool`` is for pool settings and ``fpm.global`` for global master process settings.
 
 ============================================= ========================================= ==============================================
 Environment variable                          Description                               Default
 ============================================= ========================================= ==============================================
+``fpm.global.{setting-key}``                  Sets the ``{setting-key}`` as fpm global
+                                              setting for the master process
+``fpm.pool.{setting-key}``                    Sets the ``{setting-key}`` as fpm pool
+                                              setting
 ``FPM_PROCESS_MAX``                           ``process.max``                           ``distribution default``
 ``FPM_PM_MAX_CHILDREN``                       ``pm.max_children``                       ``distribution default``
 ``FPM_PM_START_SERVERS``                      ``pm.start_servers``                      ``distribution default``

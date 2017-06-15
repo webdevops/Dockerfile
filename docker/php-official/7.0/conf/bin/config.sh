@@ -124,3 +124,22 @@ function runProvisionEntrypoint() {
     includeScriptDir "/opt/docker/provision/entrypoint.d"
     includeScriptDir "/entrypoint.d"
 }
+
+###
+ # List environment variables (based on prefix)
+ ##
+function envListVars() {
+    if [[ $# -eq 1 ]]; then
+        env | grep "^${1}" | cut -d= -f1
+    else
+        env | cut -d= -f1
+    fi
+}
+
+###
+ # Get environment variable (even with dots in name)
+ #
+ ##
+function envGetValue() {
+    awk "BEGIN {print ENVIRON[\"$1\"]}"
+}
