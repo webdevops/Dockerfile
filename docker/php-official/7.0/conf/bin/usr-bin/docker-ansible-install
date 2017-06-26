@@ -74,4 +74,4 @@ case "$IMAGE_FAMILY" in
         chmod 750 /usr/bin/ansible*
         ;;
 esac
-docker-image cleanup
+docker-image-cleanup
