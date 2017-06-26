@@ -1,0 +1,9 @@
+{{ docker.from("apache", "ubuntu-17.04") }}
+
+{{ environment.web() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ apachedev.general() }}
+
+{{ docker.expose('80 443') }}

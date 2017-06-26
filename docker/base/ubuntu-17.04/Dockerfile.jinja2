@@ -1,0 +1,10 @@
+{{ docker.from("bootstrap", "ubuntu-17.04") }}
+
+{{ environment.base() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ base.ubuntu() }}
+
+{{ docker.entrypoint("/entrypoint") }}
+{{ docker.cmd("supervisord") }}

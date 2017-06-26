@@ -1,0 +1,9 @@
+{{ docker.from("nginx", "ubuntu-17.04") }}
+
+{{ environment.web() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ nginxdev.general() }}
+
+{{ docker.expose('80 443') }}

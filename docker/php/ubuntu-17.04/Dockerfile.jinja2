@@ -1,0 +1,9 @@
+{{ docker.from("base-app", "ubuntu-17.04") }}
+
+{{ environment.web() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ php7.ubuntu() }}
+
+{{ docker.expose('9000') }}

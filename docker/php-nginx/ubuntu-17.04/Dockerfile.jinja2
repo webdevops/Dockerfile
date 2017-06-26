@@ -1,0 +1,10 @@
+{{ docker.from("php", "ubuntu-17.04") }}
+
+{{ environment.web() }}
+{{ environment.webPhp() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+{{ nginx.ubuntu() }}
+
+{{ docker.expose('80 443') }}

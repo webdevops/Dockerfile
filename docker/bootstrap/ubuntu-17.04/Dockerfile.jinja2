@@ -1,0 +1,9 @@
+{{ docker.fromOfficial("ubuntu", "17.04") }}
+
+{{ docker.version() }}
+
+{{ environment.general() }}
+
+{{ docker.add('baselayout.tar', '/') }}
+
+{{ bootstrap.ubuntu() }}

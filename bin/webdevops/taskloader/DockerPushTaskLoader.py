@@ -18,7 +18,8 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import os, sys, re, copy
+import os, sys, re, copy, time
+from random import randint
 from .BaseTaskLoader import BaseTaskLoader
 from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from webdevops import DockerfileUtility
@@ -73,6 +74,7 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
                 break
             elif retry_count < (configuration.get('retry') - 1):
                 print '    failed, retrying... (try %s)' % (retry_count+1)
+                time.sleep(randint(10, 30))
             else:
                 print '    failed, giving up'
 
