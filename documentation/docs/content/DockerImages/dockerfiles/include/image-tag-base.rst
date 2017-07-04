@@ -1,6 +1,8 @@
 ====================== ==========================
 Tag                    Distribution name
 ====================== ==========================
+``alpine``             Alpine (rolling release)
+``alpine-3``           *deprecated*
 ``ubuntu-12.04``       precise
 ``ubuntu-14.04``       trusty (LTS)
 ``ubuntu-15.04``       vivid
