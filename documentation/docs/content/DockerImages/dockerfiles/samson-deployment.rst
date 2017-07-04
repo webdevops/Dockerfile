@@ -17,6 +17,7 @@ The original image is only the webbased deployment system and is extended by:
 * gulp, grunt, bower
 * PHP cli & composer_
 
+.. include:: include/general-supervisor.rst
 
 Environment variables
 ---------------------

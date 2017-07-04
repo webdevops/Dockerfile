@@ -6,6 +6,8 @@ These image extends ``webdevops/base`` with a postfix daemon which is running on
 
 This images catches all emails sent to it and stores them locally. These mails are available via IMAP and web (roundcube)
 
+.. include:: include/general-supervisor.rst
+
 Docker image tags
 -----------------
 

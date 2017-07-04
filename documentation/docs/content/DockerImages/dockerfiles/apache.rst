@@ -4,6 +4,7 @@ webdevops/apache
 
 These image extends ``webdevops/base`` with a apache daemon which is running on port 80 and 443
 
+.. include:: include/general-supervisor.rst
 
 Docker image tags
 -----------------

@@ -4,6 +4,7 @@ webdevops/php-apache-dev
 
 These image extends ``webdevops/php-dev`` with a apache daemon which is running on port 80 and 443
 
+.. include:: include/general-supervisor.rst
 .. include:: include/info-php-development.rst
 
 Docker image tags

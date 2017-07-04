@@ -4,6 +4,8 @@ webdevops/hhvm
 
 The hhvm images are based on ``webdevops/base-app`` with HHVM cli and HHVM daemon. HHVM daemon is running on port 9000.
 
+.. include:: include/general-supervisor.rst
+
 Docker image tags
 -----------------
 

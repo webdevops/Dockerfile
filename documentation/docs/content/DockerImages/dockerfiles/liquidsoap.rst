@@ -4,6 +4,8 @@ webdevops/liquidsoap
 
 The liquidsoap images are based on ``webdevops/base`` with liquidsoap multimedia streaming server with most plugins.
 
+.. include:: include/general-supervisor.rst
+
 Docker image tags
 -----------------
 

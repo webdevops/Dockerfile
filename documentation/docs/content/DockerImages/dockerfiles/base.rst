@@ -5,6 +5,8 @@ webdevops/base
 Our application base container contains some general tools, the provisioning system (Ansible), a preconfgured
 modular ``supervisord`` and a modular `entrypoint` script.
 
+.. include:: include/general-supervisor.rst
+
 Docker image tags
 -----------------
 

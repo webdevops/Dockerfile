@@ -4,6 +4,8 @@ webdevops/hhvm-apache
 
 These image extends ``webdevops/hhvm`` with a apache daemon which is running on port 80 and 443
 
+.. include:: include/general-supervisor.rst
+
 Docker image tags
 -----------------
 
