@@ -19,7 +19,7 @@ ADD baselayout.tar /
 # Init bootstrap
 RUN set -x \
     # Add community
-    && echo http://dl-4.alpinelinux.org/alpine/v3.6/community/ >> /etc/apk/repositories \
+    && echo http://dl-4.alpinelinux.org/alpine/v3.5/community/ >> /etc/apk/repositories \
     # System update
     && /usr/local/bin/apk-upgrade \
     # Install base stuff
