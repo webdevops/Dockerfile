@@ -3,6 +3,15 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
+
+# Staged baselayout builder
+FROM alpine:latest AS baselayout
+RUN apk add --no-cache ca-certificates wget \
+    && update-ca-certificates \
+    && wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
+    && sh /tmp/baselayout-install.sh /baselayout
+
+
 FROM solr:6.3.0
 
 LABEL maintainer=info@webdevops.io \
@@ -16,7 +25,10 @@ ENV TERM="xterm" \
 
 USER root
 
-ADD baselayout.tar /
+
+# Baselayout copy (from staged image)
+COPY --from=baselayout /baselayout /
+
 
 RUN apt-update \
     && apt-install net-tools \

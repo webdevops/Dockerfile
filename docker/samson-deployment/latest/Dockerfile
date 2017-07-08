@@ -3,6 +3,15 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
+
+# Staged baselayout builder
+FROM alpine:latest AS baselayout
+RUN apk add --no-cache ca-certificates wget \
+    && update-ca-certificates \
+    && wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
+    && sh /tmp/baselayout-install.sh /baselayout
+
+
 FROM zendesk/samson:latest
 
 ENV TERM="xterm" \
@@ -21,7 +30,10 @@ ENV APPLICATION_USER=application \
 # Bootstrap
 ###############################################################################
 
-ADD baselayout.tar /
+
+# Baselayout copy (from staged image)
+COPY --from=baselayout /baselayout /
+
 
 # Init bootstrap
 RUN set -x \

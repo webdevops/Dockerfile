@@ -1,3 +1,5 @@
+{{ baselayout.dockerStage() }}
+
 {{ docker.from(user="guywithnose", image="solr", tag="4.10.4") }}
 
 {{ docker.version() }}

@@ -2,7 +2,7 @@
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro alpine(role='') -%}
-RUN /usr/local/bin/apk-install-edge shadow \
+RUN /usr/local/bin/apk-install shadow \
     && /usr/local/bin/apk-install \
         # Install common tools
         zip \

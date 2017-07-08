@@ -1,6 +1,6 @@
 ARGS = $(filter-out $@,$(MAKECMDGOALS))
 MAKEFLAGS += --silent
-.PHONY: test documentation baselayout provision
+.PHONY: test documentation provision
 
 DOCKER_REPOSITORY=`cat DOCKER_REPOSITORY`
 DOCKER_TAG_LATEST=`cat DOCKER_TAG_LATEST`
@@ -43,7 +43,8 @@ test:
 	python bin/console test:serverspec --threads=auto -v
 
 baselayout:
-	python bin/console generate:provision --baselayout
+	echo "[WARNING] Not needed anymore"
+	python bin/console generate:provision
 
 provision:
 	python bin/console generate:dockerfile

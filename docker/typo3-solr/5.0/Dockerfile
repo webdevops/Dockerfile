@@ -3,6 +3,15 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
+
+# Staged baselayout builder
+FROM alpine:latest AS baselayout
+RUN apk add --no-cache ca-certificates wget \
+    && update-ca-certificates \
+    && wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
+    && sh /tmp/baselayout-install.sh /baselayout
+
+
 FROM guywithnose/solr:4.10.4
 
 LABEL maintainer=info@webdevops.io \
@@ -18,7 +27,10 @@ USER root
 
 COPY ./solr/ /tmp/solr
 
-ADD baselayout.tar /
+
+# Baselayout copy (from staged image)
+COPY --from=baselayout /baselayout /
+
 
 WORKDIR /
 

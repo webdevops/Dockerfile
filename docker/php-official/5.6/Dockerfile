@@ -3,6 +3,15 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
+
+# Staged baselayout builder
+FROM alpine:latest AS baselayout
+RUN apk add --no-cache ca-certificates wget \
+    && update-ca-certificates \
+    && wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
+    && sh /tmp/baselayout-install.sh /baselayout
+
+
 FROM php:5.6-fpm
 
 LABEL maintainer=info@webdevops.io \
@@ -22,7 +31,10 @@ ENV APPLICATION_USER=application \
     APPLICATION_UID=1000 \
     APPLICATION_GID=1000
 
-ADD baselayout.tar /
+
+# Baselayout copy (from staged image)
+COPY --from=baselayout /baselayout /
+
 
 COPY conf/ /opt/docker/
 

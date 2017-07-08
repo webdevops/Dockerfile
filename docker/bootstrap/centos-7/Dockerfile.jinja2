@@ -1,9 +1,11 @@
+{{ baselayout.dockerStage() }}
+
 {{ docker.fromOfficial("centos", "7") }}
 
 {{ docker.version() }}
 
 {{ environment.general(charset='en_US.utf8') }}
 
-{{ docker.add('baselayout.tar', '/') }}
+{{ baselayout.copy() }}
 
 {{ bootstrap.centos() }}

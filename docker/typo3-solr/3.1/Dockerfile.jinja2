@@ -1,3 +1,5 @@
+{{ baselayout.dockerStage() }}
+
 {{ docker.from(user="guywithnose", image="solr", tag="4.10.4") }}
 
 {{ docker.version() }}
@@ -8,7 +10,7 @@ USER root
 
 COPY ./solr/ /tmp/solr
 
-{{ docker.add('baselayout.tar', '/') }}
+{{ baselayout.copy() }}
 
 RUN pacman --sync --noconfirm --noprogressbar --quiet net-tools \
     && rm -rf /opt/solr/server \

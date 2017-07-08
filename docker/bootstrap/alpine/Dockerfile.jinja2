@@ -1,9 +1,11 @@
+{{ baselayout.dockerStage() }}
+
 {{ docker.fromOfficial("alpine", "3.5") }}
 
 {{ docker.version() }}
 
 {{ environment.general() }}
 
-{{ docker.add('baselayout.tar', '/') }}
+{{ baselayout.copy() }}
 
 {{ bootstrap.alpine() }}

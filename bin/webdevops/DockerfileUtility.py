@@ -21,7 +21,8 @@
 import os
 import re
 
-DOCKERFILE_STATEMENT_FROM_RE = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE)
+DOCKERFILE_STATEMENT_FROM_RE = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>[^\s:]+))?(?!.*\s+AS)', re.MULTILINE)
+DOCKERFILE_STATEMENT_FROM_MULTISTAGE_RE = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>[^\s:]+))?(\s+AS)', re.MULTILINE)
 
 def find_file_in_path(dockerfile_path, filename="Dockerfile", whitelist=False, blacklist=False):
     """
@@ -101,7 +102,8 @@ def find_dockerfiles_in_path(base_path, path_regex, image_prefix, whitelist=Fals
             'repository': image_prefix + image_repository,
             'imageName': image_name,
             'from': image_from,
-            'duplicate': image_is_duplicate
+            'duplicate': image_is_duplicate,
+            'multiStageImages': parse_dockerfile_multistage_images(path)
         }
         return imageInfo
 
@@ -158,6 +160,16 @@ def find_dockerfile_in_path_recursive(basePath):
                 ret.append(os.path.join(root, file))
     return ret
 
+def create_imagename_from_regex_result(data):
+    """
+    Create imagename from regex result (parsed Dockerfile)
+    """
+    ret = data['image']
+
+    if data['tag']:
+        ret += ':%s' % data['tag']
+
+    return ret
 
 def parse_dockerfile_from_statement(path):
     """
@@ -165,12 +177,21 @@ def parse_dockerfile_from_statement(path):
     """
     with open(path, 'r') as fileInput:
         DockerfileContent = fileInput.read()
-        data = \
-            ([m.groupdict() for m in DOCKERFILE_STATEMENT_FROM_RE.finditer(DockerfileContent)])[0]
-        ret = data['image']
+        data = ([m.groupdict() for m in DOCKERFILE_STATEMENT_FROM_RE.finditer(DockerfileContent)])[0]
+        ret = create_imagename_from_regex_result(data)
+    return ret
 
-        if data['tag']:
-            ret += ':%s' % data['tag']
+def parse_dockerfile_multistage_images(path):
+    """
+    Extract docker image name from FROM statement
+    """
+    ret = []
+
+    with open(path, 'r') as fileInput:
+        DockerfileContent = fileInput.read()
+
+        for data in ([m.groupdict() for m in DOCKERFILE_STATEMENT_FROM_MULTISTAGE_RE.finditer(DockerfileContent)]):
+            ret.append(create_imagename_from_regex_result(data))
     return ret
 
 
@@ -202,12 +223,11 @@ def extract_image_name_tag(image_name):
         ret = 'latest'
     return ret
 
-def check_if_base_image_needs_pull(dockerfile, configuration):
+def check_if_base_image_needs_pull(image, configuration):
     ret = False
-    base_image = dockerfile['image']['from']
 
     if configuration.get('docker.autoPull'):
-        if configuration.get('docker.autoPullWhitelist') and configuration.get('docker.autoPullWhitelist').search(base_image):
+        if configuration.get('docker.autoPullWhitelist') and configuration.get('docker.autoPullWhitelist').search(image):
             """
             Matched whitelist
             """
@@ -218,7 +238,7 @@ def check_if_base_image_needs_pull(dockerfile, configuration):
             """
             ret = True
 
-        if configuration.get('docker.autoPullBlacklist') and configuration.get('docker.autoPullBlacklist').match(base_image):
+        if configuration.get('docker.autoPullBlacklist') and configuration.get('docker.autoPullBlacklist').match(image):
             """
             Matched blacklist
             """

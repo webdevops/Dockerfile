@@ -1,7 +1,5 @@
 ---
 provision:
-  bootstrap:
-    baselayout: on
   base:
     configuration:
       base/general: '*'
@@ -70,7 +68,6 @@ provision:
       php-dev/general   : '*'
       nginx-dev/general : '*'
   php-official:
-    baselayout: on
     configuration:
       base/general     : '*'
       base-app/general : '*'
@@ -91,8 +88,6 @@ provision:
   piwik:
     configuration:
       piwik/general     : '*'
-  typo3-solr:
-    baselayout: on
   varnish:
     configuration:
       varnish/general   : '*'
@@ -100,7 +95,6 @@ provision:
     configuration:
       liquibase/general   : '*'
   samson-deployment:
-    baselayout: on
     configuration:
       base/general      : latest
       base-app/general  : latest

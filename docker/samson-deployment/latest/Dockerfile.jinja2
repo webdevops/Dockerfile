@@ -1,3 +1,5 @@
+{{ baselayout.dockerStage() }}
+
 {{ docker.from("samson", user="zendesk") }}
 
 {{ environment.general() }}
@@ -8,7 +10,7 @@
 # Bootstrap
 ###############################################################################
 
-{{ docker.add('baselayout.tar', '/') }}
+{{ baselayout.copy() }}
 
 {{ bootstrap.debian('jessie') }}
 

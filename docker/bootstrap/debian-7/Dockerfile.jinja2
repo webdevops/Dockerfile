@@ -1,9 +1,11 @@
+{{ baselayout.dockerStage() }}
+
 {{ docker.fromOfficial("debian", "7") }}
 
 {{ docker.version() }}
 
 {{ environment.general() }}
 
-{{ docker.add('baselayout.tar', '/') }}
+{{ baselayout.copy() }}
 
 {{ bootstrap.debian('wheezy') }}

@@ -13,7 +13,7 @@ ENV APPLICATION_USER=application \
 
 COPY conf/ /opt/docker/
 
-RUN /usr/local/bin/apk-install-edge shadow \
+RUN /usr/local/bin/apk-install shadow \
     && /usr/local/bin/apk-install \
         # Install common tools
         zip \

@@ -1,12 +1,13 @@
 {% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
+{% import 'Dockerfile/baselayout.jinja2' as baselayout %}
 
 {% macro guywithnose(release) -%}
 USER root
 
 COPY ./solr/ /tmp/solr
 
-{{ docker.add('baselayout.tar', '/') }}
+{{ baselayout.copy() }}
 
 WORKDIR /
 
@@ -35,7 +36,7 @@ VOLUME ["/opt/solr/server/solr/data"]
 {% macro official(version) -%}
 USER root
 
-{{ docker.add('baselayout.tar', '/') }}
+{{ baselayout.copy() }}
 
 RUN apt-update \
     && apt-install net-tools \

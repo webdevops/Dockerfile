@@ -89,8 +89,6 @@ class Provisioner(Thread):
                         '<fg=blue;options=bold>Building configuration for </>webdevops/%s' % self.image_name
                     )
                 self.__clear_configuration()
-                if 'baselayout' in self.image_config:
-                    self.__deploy_base_layout()
                 if 'configuration' in self.image_config:
                     self.__deploy_configuration()
                 self.__done_item()
@@ -128,19 +126,6 @@ class Provisioner(Thread):
             dockerfiles = [os.path.dirname(image_path) for image_path in dockerfiles]
             self.__copy_configuration(dockerfiles, src)
 
-    def __deploy_base_layout(self):
-        """
-        Deploy localscripts
-
-        copy tar to various containers
-        """
-        if os.path.exists('baselayout.tar') and self.image_config['baselayout']:
-            dockerfiles = Dockerfile.find_by_image(self.dockerfile, "Dockerfile", [self.image_name])
-            dockerfiles = [os.path.dirname(image_path) for image_path in dockerfiles]
-            for target_path in dockerfiles:
-                if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
-                    self.line('<comment>copy baselayout to </comment> %s ' % target_path)
-                shutil.copy2('baselayout.tar', target_path)
 
     def __copy_configuration(self, dockerfiles, src):
         """

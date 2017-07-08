@@ -1,9 +1,11 @@
+{{ baselayout.dockerStage() }}
+
 {{ docker.fromOfficial("ubuntu", "14.04") }}
 
 {{ docker.version() }}
 
 {{ environment.general() }}
 
-{{ docker.add('baselayout.tar', '/') }}
+{{ baselayout.copy() }}
 
 {{ bootstrap.ubuntu() }}

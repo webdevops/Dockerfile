@@ -1,3 +1,5 @@
+{{ baselayout.dockerStage() }}
+
 {{ docker.fromOfficial("solr", "6.3.0") }}
 
 {{ docker.version() }}
