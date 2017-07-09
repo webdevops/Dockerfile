@@ -40,8 +40,8 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
                 'task_dep': []
             }
 
-            if dockerfile['dependency']:
-                task['task_dep'].append('DockerPush|%s' % dockerfile['dependency']);
+            for dep in dockerfile['dependency']:
+                task['task_dep'].append('DockerPush|%s' % dep)
 
             tasklist.append(task)
 

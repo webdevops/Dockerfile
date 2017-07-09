@@ -78,7 +78,10 @@ class BaseDockerTaskLoader(BaseTaskLoader):
                     autoLatestTagImage = copy.deepcopy(dockerfile)
                     autoLatestTagImage['image']['fullname'] = imageNameLatest
                     autoLatestTagImage['image']['tag'] = 'latest'
-                    autoLatestTagImage['dependency'] = dockerfile['image']['fullname']
+
+                    if not 'dependency' in autoLatestTagImage:
+                        autoLatestTagImage['dependency'] = []
+                    autoLatestTagImage['dependency'].append(dockerfile['image']['fullname'])
                     autoLatestTagImageList.append(autoLatestTagImage)
         # Add auto latest tag images to dockerfile list
         dockerfile_list.extend(autoLatestTagImageList)
@@ -87,9 +90,21 @@ class BaseDockerTaskLoader(BaseTaskLoader):
         image_list = [x['image']['fullname'] for x in dockerfile_list if x['image']['fullname']]
         for dockerfile in dockerfile_list:
             if not 'dependency' in dockerfile:
-                dockerfile['dependency'] = False
-                if dockerfile['image']['from'] and dockerfile['image']['from'] in image_list:
-                    dockerfile['dependency'] = dockerfile['image']['from']
+                dockerfile['dependency'] = []
+
+            # add image from if it is a dependency
+            if dockerfile['image']['from'] and dockerfile['image']['from'] in image_list:
+                dockerfile['dependency'].append(dockerfile['image']['from'])
+
+            # add multi stage image if it is a dependency
+            for multiStageImage in dockerfile['image']['multiStageImages']:
+                if multiStageImage in image_list:
+                    dockerfile['dependency'].append(multiStageImage)
+
+            # unique list
+            unique_dep_list = []
+            [unique_dep_list.append(item) for item in dockerfile['dependency'] if item not in unique_dep_list]
+            dockerfile['dependency'] = unique_dep_list
 
         return dockerfile_list
 

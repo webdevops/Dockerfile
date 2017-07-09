@@ -50,8 +50,9 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
                 'task_dep': ['DockerBuild|DependencyPuller']
             }
 
-            if dockerfile['dependency']:
-                task['task_dep'].append('DockerBuild|%s' % dockerfile['dependency'])
+            for dep in dockerfile['dependency']:
+                task['task_dep'].append('DockerBuild|%s' % dep)
+
 
             tasklist.append(task)
 

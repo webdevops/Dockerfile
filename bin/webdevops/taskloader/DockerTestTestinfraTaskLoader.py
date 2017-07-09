@@ -41,8 +41,8 @@ class DockerTestTestinfraTaskLoader(BaseDockerTaskLoader):
                 'task_dep': []
             }
 
-            if dockerfile['dependency']:
-                task['task_dep'].append('DockerTestTestinfra|%s' % dockerfile['dependency'])
+            for dep in dockerfile['dependency']:
+                task['task_dep'].append('DockerTestTestinfra|%s' % dep)
 
             tasklist.append(task)
 

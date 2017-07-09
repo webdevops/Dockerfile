@@ -169,6 +169,8 @@ def create_imagename_from_regex_result(data):
     if data['tag']:
         ret += ':%s' % data['tag']
 
+    ret = image_full_name(ret)
+
     return ret
 
 def parse_dockerfile_from_statement(path):
@@ -194,6 +196,13 @@ def parse_dockerfile_multistage_images(path):
             ret.append(create_imagename_from_regex_result(data))
     return ret
 
+def image_full_name(image_name):
+    """
+    Return full name image if just short form (eg. alpine instead of alpine:latest)
+    """
+    if not re.search(':[^:]+$', image_name):
+        image_name = '%s:latest' % image_name
+    return image_name
 
 def generate_image_name_with_tag_latest(image_name):
     """
