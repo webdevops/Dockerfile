@@ -130,6 +130,11 @@ class DoitReporter(object):
         self.show_out = options.get('show_out', True)
         self.show_err = options.get('show_err', True)
 
+    def collect_task_result(self, task):
+        task_status = BaseTaskLoader.task_get_statusfile(task)
+        if task_status:
+            BaseTaskLoader.TASK_RESULTS[task.name] = task_status
+
     def get_status(self, task):
         """
         called when task is selected (check if up-to-date)
@@ -147,6 +152,7 @@ class DoitReporter(object):
         """
         called when excution finishes with a failure
         """
+        self.collect_task_result(task)
         self.t_results[task.name].set_result('fail', exception.get_msg())
 
         self.task_finished += 1
@@ -161,6 +167,7 @@ class DoitReporter(object):
         """
         called when excution finishes successfuly
         """
+        self.collect_task_result(task)
         self.t_results[task.name].set_result('success')
 
         self.task_finished += 1
@@ -203,6 +210,7 @@ class DoitReporter(object):
         """
         skipped ignored task
         """
+        self.collect_task_result(task)
         self.t_results[task.name].set_result('ignore')
 
     def cleanup_error(self, exception):
@@ -238,7 +246,7 @@ class DoitReporter(object):
             log_err += "\n".join(self.errors)
 
         task_result_list = [tr.to_dict() for tr in self.t_results.values()]
-        
+
         self.writeln('')
         self.writeln('-> finished %s tasks' % (len(task_result_list)))
         self.writeln('')

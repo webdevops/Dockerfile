@@ -18,7 +18,7 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import sys, re, time, StringIO
+import sys, re, time, StringIO, tempfile, json, base64, os
 from webdevops import DockerfileUtility
 from doit.cmd_base import TaskLoader
 from doit.task import dict_to_task
@@ -56,12 +56,12 @@ class BaseTaskLoader(TaskLoader):
         """
         Set task status
         """
-
         BaseTaskLoader.TASK_RESULTS[task.name] = {
-            'task': task,
+            'task': task.name,
             'status': status,
             'color': color
         }
+        BaseTaskLoader.task_write_statusfile(task, BaseTaskLoader.TASK_RESULTS[task.name])
 
     @staticmethod
     def get_task_status(task):
@@ -118,14 +118,51 @@ class BaseTaskLoader(TaskLoader):
         """
         backup = sys.stdout
         sys.stdout = StringIO.StringIO()
-        result = func(task=task, *args)
-        out = sys.stdout.getvalue().strip()
+        status = func(task=task, *args)
+        output = sys.stdout.getvalue().strip()
         sys.stdout.close()
         sys.stdout = backup
 
-        if not result:
-            raise Exception(out)
+        if not status:
+            raise Exception(output)
         else:
-            print out
+            print output
 
-        return result
+        return status
+
+
+
+    @staticmethod
+    def task_statusfile(task):
+        return '%s/%s' % (tempfile.gettempdir(), base64.b64encode(task.name))
+
+    @staticmethod
+    def task_write_statusfile(task, data):
+        filename = BaseTaskLoader.task_statusfile(task)
+        with open(filename, "w") as f:
+            f.write(json.dumps(data))
+            f.flush()
+            os.fsync(f.fileno())
+            f.close()
+
+    @staticmethod
+    def task_get_statusfile(task, remove=True):
+        ret = False
+        filename = BaseTaskLoader.task_statusfile(task)
+
+        if os.path.isfile(filename):
+            with open(filename, "r") as f:
+                try:
+                    json_data = f.read()
+                    ret = json.loads(json_data)
+                except ValueError:
+                    pass
+                f.close()
+            if remove:
+                BaseTaskLoader.task_remove_statusfile(task)
+        return ret
+
+    @staticmethod
+    def task_remove_statusfile(task):
+        filename = '%s/%s' % (tempfile.gettempdir(), base64.b64encode(task.name))
+        os.remove(filename)
