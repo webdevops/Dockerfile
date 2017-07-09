@@ -109,6 +109,7 @@ class DoitReporter(object):
         'skipped':   'yellow',
         'simulated': 'blue',
         'success':   'green',
+        'success2':  'cyan',
         'failed':    'red',
     }
 

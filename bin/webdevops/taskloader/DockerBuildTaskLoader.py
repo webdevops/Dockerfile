@@ -156,6 +156,9 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
             else:
                 print '    failed, giving up'
 
+        if build_status and dockerfile['image']['duplicate']:
+            BaseTaskLoader.set_task_status(task, 'finished (duplicate)', 'success2')
+
         return build_status
 
     @staticmethod
