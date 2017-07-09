@@ -1,6 +1,18 @@
-{% macro goreplace() -%}
+{% macro goreplace(path="/usr/local/bin", version="1.1.2") -%}
     ## Install go-replace
-    && GOREPLACE_VERSION=1.1.2 \
-    && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
-    && chmod +x /usr/local/bin/go-replace
+    && wget -O "{{ path }}/go-replace" "https://github.com/webdevops/goreplace/releases/download/{{ version }}/gr-64-linux" \
+    && chmod +x "{{ path }}/go-replace" \
+    && "{{ path }}/go-replace" --version
+{%- endmacro %}
+
+{% macro gosu(path="/sbin", arch="amd64", version="1.10") -%}
+    # Install gosu
+    && wget -O "{{ path }}/gosu" "https://github.com/tianon/gosu/releases/download/{{ version }}/gosu-{{ arch }}" \
+    && wget -O "/tmp/gosu.asc" "https://github.com/tianon/gosu/releases/download/{{ version }}/gosu-{{ arch }}.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --batch --verify /tmp/gosu.asc "{{ path }}/gosu" \
+    && rm -rf "$GNUPGHOME" /tmp/gosu.asc \
+    && chmod +x "{{ path }}/gosu" \
+    && "{{ path }}/gosu" nobody true
 {%- endmacro %}

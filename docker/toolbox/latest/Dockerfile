@@ -23,6 +23,6 @@ RUN apk add --no-cache \
         git \
         gnupg \
     ## Install go-replace
-    && GOREPLACE_VERSION=1.1.2 \
-    && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
-    && chmod +x /usr/local/bin/go-replace
+    && wget -O "/usr/local/bin/go-replace" "https://github.com/webdevops/goreplace/releases/download/1.1.2/gr-64-linux" \
+    && chmod +x "/usr/local/bin/go-replace" \
+    && "/usr/local/bin/go-replace" --version

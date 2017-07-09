@@ -6,8 +6,25 @@
 
 # Staged baselayout builder
 FROM webdevops/toolbox AS baselayout
-RUN wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
-    && sh /tmp/baselayout-install.sh /baselayout
+RUN mkdir -p \
+        /baselayout/sbin \
+        /baselayout/usr/local/bin \
+    # Baselayout scripts
+    && wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
+    && sh /tmp/baselayout-install.sh /baselayout \
+    ## Install go-replace
+    && wget -O "/baselayout/usr/local/bin/go-replace" "https://github.com/webdevops/goreplace/releases/download/1.1.2/gr-64-linux" \
+    && chmod +x "/baselayout/usr/local/bin/go-replace" \
+    && "/baselayout/usr/local/bin/go-replace" --version \
+    # Install gosu
+    && wget -O "/baselayout/sbin/gosu" "https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64" \
+    && wget -O "/tmp/gosu.asc" "https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --batch --verify /tmp/gosu.asc "/baselayout/sbin/gosu" \
+    && rm -r "$GNUPGHOME" /tmp/gosu.asc \
+    && chmod +x "/baselayout/sbin/gosu" \
+    && "/baselayout/sbin/gosu" nobody true
 
 
 FROM ubuntu:16.04
@@ -38,21 +55,4 @@ RUN set -x \
     && apt-add-repository multiverse \
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
-    # Install gosu
-    && GOSU_VERSION=1.10 \
-    && /usr/local/bin/apt-install wget gnupg \
-    && dpkgArch="amd64" \
-    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
-    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
-    && export GNUPGHOME="$(mktemp -d)" \
-    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
-    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
-    && chmod +x /usr/local/bin/gosu \
-    && gosu nobody true \
-    ## Install go-replace
-    && GOREPLACE_VERSION=1.1.2 \
-    && wget -O /usr/local/bin/go-replace https://github.com/webdevops/goreplace/releases/download/$GOREPLACE_VERSION/gr-64-linux \
-    && chmod +x /usr/local/bin/go-replace \
-    && apt-get purge -y -f --force-yes wget \
     && docker-image-cleanup
