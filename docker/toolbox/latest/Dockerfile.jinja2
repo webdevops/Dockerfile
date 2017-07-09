@@ -1,0 +1,20 @@
+{{ docker.fromOfficial("alpine") }}
+
+RUN apk add --no-cache \
+        ca-certificates \
+        openssl \
+        curl \
+        bash \
+        sed \
+        wget \
+        zip \
+        unzip \
+        bzip2 \
+        p7zip \
+        drill \
+        ldns \
+        openssh-client \
+        rsync \
+        git \
+        gnupg \
+    {{ tools.goreplace() }}

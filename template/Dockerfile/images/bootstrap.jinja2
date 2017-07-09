@@ -34,7 +34,7 @@ RUN set -x \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
     && apk del .gosu-deps \
-    {{ tools.goreplace() }}
+    {{ tools.goreplace() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -60,7 +60,7 @@ RUN set -x \
     && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
-    {{ tools.goreplace() }}
+    {{ tools.goreplace() }} \
     && yum erase -y wget \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -93,7 +93,7 @@ RUN set -x \
     && rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
-    {{ tools.goreplace() }}
+    {{ tools.goreplace() }} \
     && apt-get purge -y -f --force-yes wget dirmngr \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -129,7 +129,7 @@ RUN set -x \
     && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
-    {{ tools.goreplace() }}
+    {{ tools.goreplace() }} \
     && apt-get purge -y -f --force-yes wget \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -160,7 +160,7 @@ RUN set -x \
     && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
-    {{ tools.goreplace() }}
+    {{ tools.goreplace() }} \
     && apt-get purge -y -f --force-yes wget \
     {{ docker.cleanup() }}
 {%- endmacro %}

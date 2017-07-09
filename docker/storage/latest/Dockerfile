@@ -3,9 +3,5 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM busybox:latest
+FROM alpine:latest
 
-RUN mkdir /storage/ \
-    && chmod 777 /storage/
-
-VOLUME "/storage"

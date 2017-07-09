@@ -1,9 +1,7 @@
 {% macro dockerStage() %}
 # Staged baselayout builder
-FROM alpine:latest AS baselayout
-RUN apk add --no-cache ca-certificates wget \
-    && update-ca-certificates \
-    && wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
+FROM webdevops/toolbox AS baselayout
+RUN wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
     && sh /tmp/baselayout-install.sh /baselayout
 {% endmacro %}
 
