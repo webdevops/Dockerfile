@@ -23,7 +23,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
-    && chmod +s /usr/local/bin/gosu \
+    && chmod +s /sbin/gosu \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -37,7 +37,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
-    && chmod +s /usr/local/bin/gosu \
+    && chmod +s /sbin/gosu \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
@@ -51,7 +51,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
-    && chmod +s /usr/local/bin/gosu \
+    && chmod +s /sbin/gosu \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
