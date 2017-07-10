@@ -8,7 +8,9 @@ FROM webdevops/php:debian-8-php7
 COPY conf/ /opt/docker/
 
 # Install development environment
-RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
+RUN /usr/local/bin/apt-install \
+        gnupg \
+    && wget -O - https://packagecloud.io/gpg.key | apt-key add - \
     && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
     && /usr/local/bin/apt-install \
         # Install tools
