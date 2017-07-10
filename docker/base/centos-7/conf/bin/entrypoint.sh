@@ -15,7 +15,7 @@ if [[ "$UID" -ne 0 ]]; then
     exec gosu root "$0" "$@"
 fi
 # remove suid bit on gosu
-chmod -s /usr/local/bin/gosu
+chmod -s /sbin/gosu
 
 trap 'echo sigterm ; exit' SIGTERM
 trap 'echo sigkill ; exit' SIGKILL
