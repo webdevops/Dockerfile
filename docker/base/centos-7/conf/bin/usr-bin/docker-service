@@ -80,6 +80,10 @@ for SERVICE in "$@"; do
             service "${SERVICE}" "$SERVICE_COMMAND"
             ;;
 
+         *)
+            echo "[ERROR] $SERVICE_COMMAND is not a valid command"
+            exit 1
+            ;;
     esac
 done
 
