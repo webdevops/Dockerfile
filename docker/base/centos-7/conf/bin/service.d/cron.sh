@@ -7,4 +7,8 @@ source /opt/docker/bin/config.sh
 
 includeScriptDir "/opt/docker/bin/service.d/cron.d/"
 
-exec /sbin/crond -n $SERVICE_CRON_OPTS
+if [[ -f /sbin/crond ]]; then
+    exec /sbin/crond -n $SERVICE_CRON_OPTS
+else
+    exec /usr/sbin/crond -n $SERVICE_CRON_OPTS
+fi

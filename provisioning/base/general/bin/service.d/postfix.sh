@@ -35,6 +35,8 @@ postfix start $SERVICE_POSTFIX_OPTS
 sleep 3
 
 # wait until postfix is dead (triggered by trap)
-while kill -0 "$(cat /var/spool/postfix/pid/master.pid)"; do
-  sleep 5
-done
+if [[ -f /var/spool/postfix/pid/master.pid ]]; then
+    while kill -0 "$(cat /var/spool/postfix/pid/master.pid 2>/dev/null)" &>/dev/null; do
+      sleep 5
+    done
+fi
