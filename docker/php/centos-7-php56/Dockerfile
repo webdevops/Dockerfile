@@ -46,8 +46,6 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && pecl install imagick \
     # && pecl install redis \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    # Fix mysql lib
-    && ln -s /usr/lib64/mysql/libmysqlclient.so.18 /lib64/libmysqlclient.so.18 \
     # Cleanup
     && yum erase -y php-devel gcc \
     # Enable php services

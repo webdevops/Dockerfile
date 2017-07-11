@@ -6,7 +6,7 @@ cp -f /etc/services    /var/spool/postfix/etc/services
 
 # General
 go-replace --mode=lineinfile \
-    -s '/myhostname[ ]* =/c\' -r "myhostname = $(hostname)" \
+    -s '/myhostname[ ]* =/c\' -r "myhostname = $HOSTNAME" \
     -s '/inet_interfaces[ ]* =/c\' -r "inet_interfaces = 127.0.0.1" \
     -- /etc/postfix/main.cf
 

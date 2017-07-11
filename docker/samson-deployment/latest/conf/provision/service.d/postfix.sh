@@ -10,11 +10,16 @@ case "$IMAGE_FAMILY" in
 
     RedHat)
         yum-install postfix
+        HOSTNAME
         ;;
 
     Alpine)
         apk-install postfix
-        ln -s -f /etc/postfix/aliases /etc/aliases
+
+        # Fix mysql lib
+        if [[ ! -f /lib64/libmysqlclient.so.18 ]] && [[ -f /usr/lib64/mysql/libmysqlclient.so.18 ]]; then
+            echo ln -s /usr/lib64/mysql/libmysqlclient.so.18 /lib64/libmysqlclient.so.18
+        fi
         ;;
 esac
 
