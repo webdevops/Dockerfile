@@ -93,8 +93,8 @@ dockerTest:
       '/typo3-solr:6':
         SOLR_VERSION: '6.3.0'
         OS_FAMILY: 'debian'
-        OS_VERSION: '8'
+        OS_VERSION: '9'
       '/typo3-solr:latest':
         SOLR_VERSION: '6.3.0'
         OS_FAMILY: 'debian'
-        OS_VERSION: '8'
+        OS_VERSION: '9'
