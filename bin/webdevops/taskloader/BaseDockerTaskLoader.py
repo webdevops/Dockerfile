@@ -78,6 +78,7 @@ class BaseDockerTaskLoader(BaseTaskLoader):
                     autoLatestTagImage = copy.deepcopy(dockerfile)
                     autoLatestTagImage['image']['fullname'] = imageNameLatest
                     autoLatestTagImage['image']['tag'] = 'latest'
+                    autoLatestTagImage['image']['duplicate'] = True
 
                     if not 'dependency' in autoLatestTagImage:
                         autoLatestTagImage['dependency'] = []
