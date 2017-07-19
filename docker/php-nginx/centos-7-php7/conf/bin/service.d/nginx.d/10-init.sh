@@ -4,6 +4,9 @@ if [[ ! -e "$WEB_DOCUMENT_ROOT" ]]; then
     echo ""
 fi
 
+# Create tmp dir for nginx
+mkdir -p /var/tmp/nginx/
+
 # Prevent startup of nginx (ubuntu 16.04 needs it)
 ln -f -s /var/lib/nginx/logs /var/log/nginx
 

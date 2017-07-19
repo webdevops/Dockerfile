@@ -27,7 +27,7 @@ RUN mkdir -p \
     && "/baselayout/sbin/gosu" nobody true
 
 
-FROM alpine:3.5
+FROM alpine:3.6
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
