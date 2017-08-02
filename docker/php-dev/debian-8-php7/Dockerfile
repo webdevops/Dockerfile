@@ -16,7 +16,7 @@ RUN /usr/local/bin/apt-install \
         # Install tools
         graphviz \
         # Install php development stuff
-        # php7.0-xdebug \ # Is currently not available
+        php7.0-xdebug \
         blackfire-php \
         blackfire-agent \
     # Enable php development services
