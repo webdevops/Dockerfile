@@ -17,6 +17,7 @@ go-replace \
     -s "<ALIAS_DOMAIN>" -r "$WEB_ALIAS_DOMAIN" \
     -s "<SERVERNAME>" -r "$HOSTNAME" \
     -s "<PHP_SOCKET>" -r "$WEB_PHP_SOCKET" \
+    -s "<PHP_TIMEOUT>" -r "$WEB_PHP_TIMEOUT" \
     --path=/opt/docker/etc/nginx/ \
     --path-pattern='*.conf' \
     --ignore-empty

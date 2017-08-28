@@ -20,6 +20,7 @@ ENV WEB_DOCUMENT_ROOT=/app \
 
 {% macro webPhp() -%}
 ENV WEB_PHP_SOCKET=127.0.0.1:9000
+ENV WEB_PHP_TIMEOUT=600
 {%- endmacro %}
 
 
