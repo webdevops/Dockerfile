@@ -9,6 +9,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         sed \
+        tzdata \
     && chmod +s /sbin/gosu \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
@@ -23,6 +24,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
+        tzdata \
     && chmod +s /sbin/gosu \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
@@ -37,6 +39,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
+        tzdata \
     && chmod +s /sbin/gosu \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
@@ -51,6 +54,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
+        tzdata \
     && chmod +s /sbin/gosu \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}

@@ -103,6 +103,7 @@ RUN chmod +x /opt/docker/bin/* \
         wget \
         curl \
         net-tools \
+        tzdata \
     && chmod +s /sbin/gosu \
     && /opt/docker/bin/bootstrap.sh \
     && docker-image-cleanup
