@@ -28,7 +28,7 @@ go-replace --mode=lineinfile --regex \
 # Fix user setting
 go-replace --mode=line --regex \
     -s '^[\s;]*user[\s]*='  -r "user = $APPLICATION_USER" \
-    -s '^[\s;]*group[\s]*=' -r "user = $APPLICATION_GROUP" \
+    -s '^[\s;]*group[\s]*=' -r "group = $APPLICATION_GROUP" \
     --path=/opt/docker/etc/php/fpm/ \
     --path-pattern='*.conf'
 
