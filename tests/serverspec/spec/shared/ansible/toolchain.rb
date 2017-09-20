@@ -45,6 +45,7 @@ shared_examples 'ansible::toolchain::public' do
 
     ansibleList = [
         $testConfiguration[:ansiblePath] + "/ansible",
+    ].each do |file|
         describe file("#{file}") do
             # Type check
             it { should be_file }
