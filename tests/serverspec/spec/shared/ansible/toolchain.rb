@@ -2,11 +2,6 @@ shared_examples 'ansible::toolchain' do
 
     ansibleList = [
         $testConfiguration[:ansiblePath] + "/ansible",
-        $testConfiguration[:ansiblePath] + "/ansible-playbook",
-        $testConfiguration[:ansiblePath] + "/ansible-galaxy",
-        $testConfiguration[:ansiblePath] + "/ansible-pull",
-        $testConfiguration[:ansiblePath] + "/ansible-doc",
-        $testConfiguration[:ansiblePath] + "/ansible-vault",
     ].each do |file|
         describe file("#{file}") do
             # Type check
@@ -50,12 +45,6 @@ shared_examples 'ansible::toolchain::public' do
 
     ansibleList = [
         $testConfiguration[:ansiblePath] + "/ansible",
-        $testConfiguration[:ansiblePath] + "/ansible-playbook",
-        $testConfiguration[:ansiblePath] + "/ansible-galaxy",
-        $testConfiguration[:ansiblePath] + "/ansible-pull",
-        $testConfiguration[:ansiblePath] + "/ansible-doc",
-        $testConfiguration[:ansiblePath] + "/ansible-vault",
-    ].each do |file|
         describe file("#{file}") do
             # Type check
             it { should be_file }
