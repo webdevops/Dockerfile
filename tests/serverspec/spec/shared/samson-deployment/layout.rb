@@ -70,7 +70,6 @@ shared_examples 'samson-deployment::layout' do
 
     [
         "/usr/local/bin/ansible",
-        "/usr/local/bin/ansible-playbook",
         "/usr/local/bin/dep",
         "/usr/local/bundle/bin/cap",
     ].each do |file|
