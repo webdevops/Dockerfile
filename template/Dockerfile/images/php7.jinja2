@@ -256,17 +256,7 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
         php70w-opcache \
         php70w-pecl-imagick \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    && cd /tmp \
-    && wget https://github.com/phpredis/phpredis/archive/php7.zip -O phpredis.zip \
-    && unzip -o /tmp/phpredis.zip \
-    && mv /tmp/phpredis-* /tmp/phpredis \
-    && cd /tmp/phpredis \
-    && phpize \
-    && ./configure \
-    && make \
-    && make install \
-    && cd / \
-    && rm -rf /tmp/* \
+    && pecl install redis \
     && echo "extension=redis.so" > /etc/php.d/redis.ini \
     && yum remove -y ImageMagick-devel php70w-devel gcc make \
     {{ services.php() }} \
