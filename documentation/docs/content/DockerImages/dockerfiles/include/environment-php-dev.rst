@@ -21,6 +21,8 @@ Environment variable                          Description                       
                                               ``xdebug.remote_host``
 ``XDEBUG_REMOTE_PORT``                        php.ini value for                         ``none``
                                               ``xdebug.remote_port``
+``XDEBUG_REMOTE_LOG``                         php.ini value for                         ``none`` (eg. ``/var/log/xdebug.log``)
+                                              ``xdebug.remote_log``
 ``XDEBUG_PROFILER_ENABLE``                    php.ini value for                         ``none``
                                               ``xdebug.profiler_enable``
 ``XDEBUG_PROFILER_ENABLE_TRIGGER``            php.ini value for                         ``none``
