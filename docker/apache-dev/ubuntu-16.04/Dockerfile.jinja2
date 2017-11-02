@@ -1,6 +1,6 @@
 {{ docker.from("apache", "ubuntu-16.04") }}
 
-{{ environment.web() }}
+{{ environment.webDevelopment() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 

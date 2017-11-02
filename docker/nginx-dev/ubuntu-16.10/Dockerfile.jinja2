@@ -1,6 +1,6 @@
 {{ docker.from("nginx", "ubuntu-16.10") }}
 
-{{ environment.web() }}
+{{ environment.webDevelopment() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
