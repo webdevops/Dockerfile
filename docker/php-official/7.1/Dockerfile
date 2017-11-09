@@ -53,8 +53,8 @@ COPY --from=baselayout /baselayout /
 
 COPY conf/ /opt/docker/
 
-# Init bootstrap
 RUN set -x \
+    # Init bootstrap
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
@@ -63,26 +63,27 @@ RUN set -x \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Base stuff
-    && /usr/local/bin/apt-install \
+    && apt-install \
         apt-transport-https \
         ca-certificates \
-        locales \
-    && docker-image-cleanup
+        locales
 
-# Install packages
-RUN chmod +x /opt/docker/bin/* \
-    && /usr/local/bin/apt-install \
+RUN set -x \
+    # Install packages
+    && chmod +x /opt/docker/bin/* \
+    && apt-install \
         supervisor \
         wget \
         curl \
         net-tools \
         tzdata \
     && chmod +s /sbin/gosu \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
-# Install services
-RUN /usr/local/bin/apt-install \
+RUN set -x \
+    # Install services
+    && apt-install \
         # Install common tools
         zip \
         unzip \
@@ -93,11 +94,12 @@ RUN /usr/local/bin/apt-install \
         rsync \
         git \
     && /usr/local/bin/generate-locales \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
-# Install php environment
-RUN /usr/local/bin/apt-install \
+RUN set -x \
+    # Install php environment
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -155,18 +157,19 @@ RUN /usr/local/bin/apt-install \
         zlib1g-dev \
         libpng12-dev \
     # Install extensions for PHP 7.x
-    && pecl install apcu redis \
+    && pecl install apcu \
+    && pecl install redis \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services
-    && docker-service-enable syslog cron \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-service enable syslog \
+    && docker-service enable cron \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 WORKDIR /
-
 EXPOSE 9000
 ENTRYPOINT ["/entrypoint"]
 CMD ["supervisord"]

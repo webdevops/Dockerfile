@@ -50,8 +50,8 @@ ENV APPLICATION_USER=application \
 COPY --from=baselayout /baselayout /
 
 
-# Init bootstrap
 RUN set -x \
+    # Init bootstrap
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
@@ -60,7 +60,7 @@ RUN set -x \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Base stuff
-    && /usr/local/bin/apt-install \
+    && apt-install \
         apt-transport-https \
         ca-certificates \
         locales \
@@ -72,8 +72,9 @@ RUN set -x \
 
 COPY conf/ /opt/docker/
 
-# Install ansible
-RUN /usr/local/bin/apt-install \
+RUN set -x \
+    # Install ansible
+    && apt-install \
         # Install ansible
         python-minimal \
         python-setuptools \
@@ -96,24 +97,26 @@ RUN /usr/local/bin/apt-install \
         libffi-dev \
     && docker-image-cleanup
 
-# Install packages
-RUN chmod +x /opt/docker/bin/* \
-    && /usr/local/bin/apt-install \
+RUN set -x \
+    # Install packages
+    && chmod +x /opt/docker/bin/* \
+    && apt-install \
         supervisor \
         wget \
         curl \
         net-tools \
         tzdata \
     && chmod +s /sbin/gosu \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 ###############################################################################
 # Base-app
 ###############################################################################
 
-# Install services
-RUN /usr/local/bin/apt-install \
+RUN set -x \
+    # Install services
+    && apt-install \
         # Install common tools
         zip \
         unzip \
@@ -124,14 +127,15 @@ RUN /usr/local/bin/apt-install \
         rsync \
         git \
     && /usr/local/bin/generate-locales \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 ###############################################################################
 # Samson
 ###############################################################################
 
-ENV RAILS_ENV="production"
+RUN set -x \
+    ENV RAILS_ENV="production"
 
 ENV SQLITE_CLEANUP_DAYS=0
 
@@ -139,7 +143,7 @@ ENV SQLITE_CLEANUP_DAYS=0
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
        && echo deb https://apt.dockerproject.org/repo debian-jessie main > /etc/apt/sources.list.d/docker.list \
        && curl -fsSL https://yum.dockerproject.org/gpg | apt-key add - \
-    && /usr/local/bin/apt-install \
+    && apt-install \
         # Install nginx
         nginx \
         # Install docker
@@ -176,7 +180,7 @@ RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
 # Deployer stack
 RUN set -x \
     # Compiler stuff
-    && /usr/local/bin/apt-install \
+    && apt-install \
         build-essential \
     # Deployer: Ansistratno (https://github.com/ansistrano)
     && ansible-galaxy install --force \
@@ -196,9 +200,11 @@ ADD web/            /app/public/assets/
 ADD crontab         /etc/cron.d/webdevops-samson-deployment
 
 RUN rake assets:precompile \
-    && /opt/docker/bin/control.sh service.enable cron \
+    && docker-service enable cron \
     && /opt/docker/bin/provision run --tag bootstrap --role webdevops-samson-deployment \
-    && /opt/docker/bin/bootstrap.sh
+    && /opt/docker/bin/bootstrap.sh \
+    && docker-run-bootstrap \
+    && docker-image-cleanup
 
 EXPOSE 80
 VOLUME /storage

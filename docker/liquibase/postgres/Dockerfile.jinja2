@@ -6,7 +6,10 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ liquibase.postgres() }}
+RUN set -x \
+    {{ liquibase.postgres() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 {{ docker.entrypoint("/entrypoint") }}
 

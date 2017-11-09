@@ -13,8 +13,9 @@ ENV WEB_DOCUMENT_ROOT=/app \
 
 COPY conf/ /opt/docker/
 
-# Install php environment
-RUN /usr/local/bin/apt-install \
+RUN set -x \
+    # Install php environment
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -46,8 +47,9 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services
-    && docker-service-enable syslog cron \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-service enable syslog \
+    && docker-service enable cron \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 EXPOSE 9000

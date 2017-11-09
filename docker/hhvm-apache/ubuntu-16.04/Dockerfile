@@ -14,8 +14,9 @@ ENV WEB_PHP_SOCKET=127.0.0.1:9000
 
 COPY conf/ /opt/docker/
 
-# Install apache
-RUN /usr/local/bin/apt-install \
+RUN set -x \
+    # Install apache
+    && apt-install \
         apache2 \
 	&& sed -ri ' \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
@@ -24,7 +25,7 @@ RUN /usr/local/bin/apt-install \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
 	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 EXPOSE 80 443

@@ -14,8 +14,9 @@ ENV WEB_PHP_SOCKET=127.0.0.1:9000
 
 COPY conf/ /opt/docker/
 
-# Install apache
-RUN /usr/local/bin/apk-install \
+RUN set -x \
+    # Install apache
+    && apk-install \
         apache2 \
         apache2-utils \
         apache2-proxy \
@@ -24,7 +25,7 @@ RUN /usr/local/bin/apk-install \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /etc/apache2/httpd.conf \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 EXPOSE 80 443

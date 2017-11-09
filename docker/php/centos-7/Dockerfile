@@ -13,8 +13,9 @@ ENV WEB_DOCUMENT_ROOT=/app \
 
 COPY conf/ /opt/docker/
 
-# Install php environment
-RUN /usr/local/bin/yum-install \
+RUN set -x \
+    # Install php environment
+    && yum-install \
         # Install tools
         ImageMagick \
         GraphicsMagick \
@@ -55,8 +56,9 @@ RUN /usr/local/bin/yum-install \
     # Cleanup
     && yum erase -y php-devel gcc \
     # Enable php services
-    && docker-service-enable syslog cron \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-service enable syslog \
+    && docker-service enable cron \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 EXPOSE 9000

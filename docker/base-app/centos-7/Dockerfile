@@ -13,8 +13,9 @@ ENV APPLICATION_USER=application \
 
 COPY conf/ /opt/docker/
 
-# Install services
-RUN /usr/local/bin/yum-install \
+RUN set -x \
+    # Install services
+    && yum-install \
         # Install tools
         zip \
         unzip \
@@ -25,5 +26,5 @@ RUN /usr/local/bin/yum-install \
         rsync \
         git \
     && /usr/local/bin/generate-locales \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-run-bootstrap \
     && docker-image-cleanup

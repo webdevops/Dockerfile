@@ -4,4 +4,7 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ baseapp.ubuntu() }}
+RUN set -x \
+    {{ baseapp.ubuntu() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

@@ -5,7 +5,8 @@
 
 FROM webdevops/bootstrap:alpine
 
-RUN /usr/local/bin/apk-install \
+RUN set -x \
+    && apk-install \
     # General python
     python \
     py-crypto \
@@ -31,4 +32,5 @@ RUN /usr/local/bin/apk-install \
     && pip install t3fieldlisttable \
     && pip install t3tablerows \
     && pip install t3targets \
+    && docker-run-bootstrap \
     && docker-image-cleanup

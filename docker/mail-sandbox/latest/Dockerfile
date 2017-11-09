@@ -10,17 +10,19 @@ ENV MAILBOX_USERNAME="dev" \
 
 COPY conf/ /opt/docker/
 
-# Install services
-RUN /usr/local/bin/apt-install \
+RUN set -x \
+    # Install services
+    && apt-install \
         dovecot-core \
         dovecot-imapd \
-    && /opt/docker/bin/control.sh service.enable postfix \
-    && /opt/docker/bin/control.sh service.enable dovecot \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-service enable postfix \
+    && docker-service enable dovecot \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
-# Install Roundcube + plugins
-RUN cd /app \
+RUN set -x \
+    # Install Roundcube + plugins
+    && cd /app \
     && rm -rf * \
     && wget https://github.com/roundcube/roundcubemail/releases/download/1.2.2/roundcubemail-1.2.2-complete.tar.gz \
     && tar xf roundcubemail-1.2.2-complete.tar.gz  --strip-components 1 \
@@ -28,7 +30,6 @@ RUN cd /app \
     && ls -l  \
     && rm -rf .git installer \
     && ln -s /opt/docker/etc/roundcube/plugins/webdevops_autologin/ plugins/webdevops_autologin \
-    && ln -s /opt/docker/etc/roundcube/config.php config/config.inc.php \
-    && docker-image-cleanup
+    && ln -s /opt/docker/etc/roundcube/config.php config/config.inc.php
 
 EXPOSE 25 465 587 143 993

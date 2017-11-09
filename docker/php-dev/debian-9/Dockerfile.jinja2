@@ -2,4 +2,7 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ php7dev.debian() }}
+RUN set -x \
+    {{ php7dev.debian() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

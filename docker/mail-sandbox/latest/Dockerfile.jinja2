@@ -4,8 +4,12 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ mailsandbox.ubuntu() }}
+RUN set -x \
+    {{ mailsandbox.ubuntu() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
-{{ mailsandbox.roundcube() }}
+RUN set -x \
+    {{ mailsandbox.roundcube() }}
 
 {{ docker.expose('25 465 587 143 993') }}

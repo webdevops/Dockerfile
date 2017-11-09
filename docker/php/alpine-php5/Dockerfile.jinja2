@@ -4,6 +4,9 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ php5.alpine() }}
+RUN set -x \
+    {{ php5.alpine() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 {{ docker.expose('9000') }}

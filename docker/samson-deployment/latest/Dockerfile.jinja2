@@ -12,7 +12,9 @@
 
 {{ baselayout.copy() }}
 
-{{ bootstrap.debian('jessie') }}
+RUN set -x \
+    {{ bootstrap.debian('jessie') }} \
+    {{ docker.cleanup() }}
 
 ###############################################################################
 # Base
@@ -20,21 +22,32 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ ansible.debian() }}
+RUN set -x \
+    {{ ansible.debian() }} \
+    {{ docker.cleanup() }}
 
-{{ base.debian() }}
+RUN set -x \
+    {{ base.debian() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 ###############################################################################
 # Base-app
 ###############################################################################
 
-{{ baseapp.debian() }}
+RUN set -x \
+    {{ baseapp.debian() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 ###############################################################################
 # Samson
 ###############################################################################
 
-{{ samsonDeployment.general() }}
+RUN set -x \
+    {{ samsonDeployment.general() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 {{ docker.expose('80') }}
 {{ docker.volume('/storage') }}

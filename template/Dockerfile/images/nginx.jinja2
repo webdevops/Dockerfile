@@ -2,36 +2,28 @@
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro alpine(role='') -%}
-# Install nginx
-RUN /usr/local/bin/apk-install \
-        nginx \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    # Install nginx
+    && apk-install \
+        nginx
 {%- endmacro %}
 
 
 {% macro centos(role='') -%}
-# Install tools
-RUN /usr/local/bin/yum-install \
-        nginx \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    # Install tools
+    && yum-install \
+        nginx
 {%- endmacro %}
 
 
 {% macro debian(role='') -%}
-# Install nginx
-RUN /usr/local/bin/apt-install \
-        nginx \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    # Install nginx
+    && apt-install \
+        nginx
 {%- endmacro %}
 
 
 {% macro ubuntu(role='') -%}
-# Install nginx
-RUN /usr/local/bin/apt-install \
-        nginx \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    # Install nginx
+    && apt-install \
+        nginx
 {%- endmacro %}

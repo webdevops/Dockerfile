@@ -2,4 +2,7 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ php.officialDevelopment(version="5.6") }}
+RUN set -x \
+    {{ php.officialDevelopment(version="5.6") }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

@@ -8,4 +8,5 @@
 
 {{ baselayout.copy() }}
 
-{{ bootstrap.debian('jessie') }}
+RUN set -x \
+    {{ bootstrap.debian('jessie') }}

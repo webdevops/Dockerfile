@@ -5,8 +5,9 @@
 
 FROM webdevops/bootstrap:alpine
 
-# Install ansible
-RUN /usr/local/bin/apk-install \
+RUN set -x \
+    # Install ansible
+    && apk-install \
         python \
         python-dev \
         py-setuptools \
@@ -25,4 +26,5 @@ RUN /usr/local/bin/apk-install \
     && chmod 750 /usr/bin/ansible* \
     # Cleanup
     && apk del python-dev \
+    && docker-run-bootstrap \
     && docker-image-cleanup

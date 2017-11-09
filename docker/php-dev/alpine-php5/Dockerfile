@@ -7,8 +7,9 @@ FROM webdevops/php:alpine-php5
 
 COPY conf/ /opt/docker/
 
-# Install development environment
-RUN apk-install \
+RUN set -x \
+    # Install development environment
+    && apk-install \
         # Install tools
         graphviz \
         # Tools
@@ -18,6 +19,8 @@ RUN apk-install \
     && pecl install xdebug \
     && apk del .pecl-deps \
     # Enable php development services
-    && docker-service-enable syslog ssh postfix \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-service enable syslog \
+    && docker-service enable postfix \
+    && docker-service enable ssh \
+    && docker-run-bootstrap \
     && docker-image-cleanup

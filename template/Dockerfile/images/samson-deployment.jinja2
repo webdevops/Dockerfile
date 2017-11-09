@@ -10,7 +10,7 @@ ENV SQLITE_CLEANUP_DAYS=0
 RUN export DEBIAN_FRONTEND=noninteractive && set -x \
        && echo deb https://apt.dockerproject.org/repo debian-jessie main > /etc/apt/sources.list.d/docker.list \
        && curl -fsSL https://yum.dockerproject.org/gpg | apt-key add - \
-    && /usr/local/bin/apt-install \
+    && apt-install \
         # Install nginx
         nginx \
         # Install docker
@@ -47,7 +47,7 @@ RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
 # Deployer stack
 RUN set -x \
     # Compiler stuff
-    && /usr/local/bin/apt-install \
+    && apt-install \
         build-essential \
     # Deployer: Ansistratno (https://github.com/ansistrano)
     && ansible-galaxy install --force \
@@ -67,7 +67,7 @@ ADD web/            /app/public/assets/
 ADD crontab         /etc/cron.d/webdevops-samson-deployment
 
 RUN rake assets:precompile \
-    && /opt/docker/bin/control.sh service.enable cron \
+    && docker-service enable cron \
     {{ provision.runRoleInline('samson-deployment', role) }}
 
 

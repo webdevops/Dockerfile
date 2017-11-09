@@ -12,14 +12,25 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ bootstrap.debian('jessie') }}
+RUN set -x \
+    {{ bootstrap.debian('jessie') }}
 
-{{ base.debian() }}
+RUN set -x \
+    {{ base.debian() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
-{{ baseapp.debian() }}
+RUN set -x \
+    {{ baseapp.debian() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
-{{ php.official(version='5.6') }}
+RUN set -x \
+    {{ php.official(version='5.6') }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
+{{ docker.workdir('/') }}
 {{ docker.expose('9000') }}
 {{ docker.entrypoint("/entrypoint") }}
 {{ docker.cmd("supervisord") }}

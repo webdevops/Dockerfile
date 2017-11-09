@@ -14,8 +14,9 @@ ENV WEB_PHP_SOCKET=127.0.0.1:9000
 
 COPY conf/ /opt/docker/
 
-# Install apache
-RUN /usr/local/bin/apt-install \
+RUN set -x \
+    # Install apache
+    && apt-install \
         apache2 \
         apache2-mpm-worker \
         libapache2-mod-fastcgi \
@@ -25,7 +26,9 @@ RUN /usr/local/bin/apt-install \
 		' /etc/apache2/apache2.conf \
 	&& rm -f /etc/apache2/sites-enabled/* \
 	&& a2enmod actions fastcgi ssl rewrite headers expires \
-	&& /opt/docker/bin/bootstrap.sh \
+	&& docker-run-bootstrap \
+    && docker-image-cleanup \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 EXPOSE 80 443

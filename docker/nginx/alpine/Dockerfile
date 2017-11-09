@@ -13,10 +13,11 @@ ENV WEB_DOCUMENT_ROOT=/app \
 
 COPY conf/ /opt/docker/
 
-# Install nginx
-RUN /usr/local/bin/apk-install \
+RUN set -x \
+    # Install nginx
+    && apk-install \
         nginx \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 EXPOSE 80 443

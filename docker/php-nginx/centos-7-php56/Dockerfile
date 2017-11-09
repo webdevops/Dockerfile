@@ -14,10 +14,11 @@ ENV WEB_PHP_SOCKET=127.0.0.1:9000
 
 COPY conf/ /opt/docker/
 
-# Install tools
-RUN /usr/local/bin/yum-install \
+RUN set -x \
+    # Install tools
+    && yum-install \
         nginx \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 EXPOSE 80 443

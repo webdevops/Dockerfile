@@ -11,16 +11,17 @@ ENV DOCKER_CONF_HOME=/opt/docker/ \
 
 COPY conf/ /opt/docker/
 
-# Install packages
-RUN chmod +x /opt/docker/bin/* \
-    && /usr/local/bin/apt-install \
+RUN set -x \
+    # Install packages
+    && chmod +x /opt/docker/bin/* \
+    && apt-install \
         supervisor \
         wget \
         curl \
         net-tools \
         tzdata \
     && chmod +s /sbin/gosu \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 ENTRYPOINT ["/entrypoint"]

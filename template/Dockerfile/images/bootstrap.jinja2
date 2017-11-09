@@ -1,14 +1,13 @@
 {% import 'Dockerfile/docker.jinja2' as docker %}
 
 {% macro alpine() -%}
-# Init bootstrap
-RUN set -x \
+    # Init bootstrap
     # Add community
     && echo http://dl-4.alpinelinux.org/alpine/v3.6/community/ >> /etc/apk/repositories \
     # System update
     && /usr/local/bin/apk-upgrade \
     # Install base stuff
-    && /usr/local/bin/apk-install \
+    && apk-install \
         bash \
         ca-certificates \
         openssl \
@@ -16,27 +15,23 @@ RUN set -x \
     && /usr/local/bin/generate-dockerimage-info \
     ## Fix su execution (eg for tests)
     && mkdir -p /etc/pam.d/ \
-    && echo 'auth sufficient pam_rootok.so' >> /etc/pam.d/su \
-    {{ docker.cleanup() }}
+    && echo 'auth sufficient pam_rootok.so' >> /etc/pam.d/su
 {%- endmacro %}
 
 
 
 {% macro centos() -%}
-# Init bootstrap
-RUN set -x \
+    # Init bootstrap
     # System update
     && /usr/local/bin/yum-upgrade \
-    && /usr/local/bin/yum-install \
+    && yum-install \
         epel-release \
-    && /usr/local/bin/generate-dockerimage-info \
-    {{ docker.cleanup() }}
+    && /usr/local/bin/generate-dockerimage-info
 {%- endmacro %}
 
 
 {% macro debian(distribution) -%}
-# Init bootstrap
-RUN set -x \
+    # Init bootstrap
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
@@ -45,17 +40,15 @@ RUN set -x \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Base stuff
-    && /usr/local/bin/apt-install \
+    && apt-install \
         apt-transport-https \
         ca-certificates \
-        locales \
-    {{ docker.cleanup() }}
+        locales
 {%- endmacro %}
 
 
 {% macro ubuntu12() -%}
-# Init bootstrap
-RUN set -x \
+    # Init bootstrap
     # Add multiverse
     && echo "deb http://archive.ubuntu.com/ubuntu/ precise-security multiverse" >> /etc/apt/sources.list \
     && echo "deb-src http://archive.ubuntu.com/ubuntu/ precise-security multiverse" >> /etc/apt/sources.list \
@@ -65,29 +58,26 @@ RUN set -x \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Install base stuff
-    && /usr/local/bin/apt-install \
+    && apt-install \
         apt-transport-https \
         python-software-properties \
         ca-certificates \
         apt-transport-https \
-    && /usr/local/bin/generate-dockerimage-info \
-    {{ docker.cleanup() }}
+    && /usr/local/bin/generate-dockerimage-info
 {%- endmacro %}
 
 
 {% macro ubuntu() -%}
-# Init bootstrap
-RUN set -x \
+    # Init bootstrap
     && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Install base stuff
-    && /usr/local/bin/apt-install \
+    && apt-install \
         ca-certificates \
         apt-transport-https \
     && apt-add-repository multiverse \
     && apt-update \
-    && /usr/local/bin/generate-dockerimage-info \
-    {{ docker.cleanup() }}
+    && /usr/local/bin/generate-dockerimage-info
 {%- endmacro %}
 

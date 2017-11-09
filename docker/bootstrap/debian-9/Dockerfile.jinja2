@@ -8,4 +8,5 @@
 
 {{ baselayout.copy() }}
 
-{{ bootstrap.debian('stretch') }}
+RUN set -x \
+    {{ bootstrap.debian('stretch') }}

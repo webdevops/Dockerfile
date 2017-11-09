@@ -6,4 +6,7 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ php5dev.centos() }}
+RUN set -x \
+    {{ php5dev.centos() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

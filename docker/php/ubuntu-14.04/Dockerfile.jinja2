@@ -4,6 +4,9 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ php5.ubuntu14() }}
+RUN set -x \
+    {{ php5.ubuntu14() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 {{ docker.expose('9000') }}

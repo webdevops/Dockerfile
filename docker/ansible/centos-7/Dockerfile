@@ -5,8 +5,9 @@
 
 FROM webdevops/bootstrap:centos-7
 
-# Install ansible
-RUN /usr/local/bin/yum-install \
+RUN set -x \
+    # Install ansible
+    && yum-install \
         epel-release \
         PyYAML \
         python-jinja2 \
@@ -25,4 +26,5 @@ RUN /usr/local/bin/yum-install \
     && chmod 750 /usr/bin/ansible* \
     # Cleanup
     && yum erase -y python-devel \
+    && docker-run-bootstrap \
     && docker-image-cleanup

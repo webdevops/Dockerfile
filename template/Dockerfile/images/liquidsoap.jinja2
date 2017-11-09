@@ -2,8 +2,7 @@
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro ubuntu(role='') -%}
-# Install services
-RUN /usr/local/bin/apt-install \
-        liquidsoap \
-    {{ docker.cleanup() }}
+    # Install services
+    && apt-install \
+        liquidsoap
 {%- endmacro %}

@@ -13,7 +13,8 @@ ENV WEB_DOCUMENT_ROOT=/app \
 
 COPY conf/ /opt/docker/
 
-RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
+RUN set -x \
+    && apt-install apt-transport-https lsb-release \
     && echo "deb https://packages.sury.org/php/ jessie main" >> /etc/apt/sources.list \
     && echo "deb http://ftp2.de.debian.org/debian/ testing main" >> /etc/apt/sources.list \
     && echo "deb-src http://ftp2.de.debian.org/debian/ testing main" >> /etc/apt/sources.list \
@@ -26,7 +27,7 @@ RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
     && echo "Pin-Priority: 995" >> /etc/apt/preferences.d/libpcre.pref \
     && apt-get update \
     && apt-get -t testing install -y -f libpcre3 \
-    && /usr/local/bin/apt-install \
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -55,8 +56,9 @@ RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
         php-apcu \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services
-    && docker-service-enable syslog cron \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-service enable syslog \
+    && docker-service enable cron \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 EXPOSE 9000

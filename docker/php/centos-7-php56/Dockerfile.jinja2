@@ -4,6 +4,9 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ php5.centosWebtatic() }}
+RUN set -x \
+    {{ php5.centosWebtatic() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 {{ docker.expose('9000') }}

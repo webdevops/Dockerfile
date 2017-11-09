@@ -13,8 +13,9 @@ ENV WEB_DOCUMENT_ROOT=/app \
 
 COPY conf/ /opt/docker/
 
-RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
-    && /usr/local/bin/yum-install \
+RUN set -x \
+    && rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
+    && yum-install \
         ImageMagick \
         GraphicsMagick \
         # Install php (cli/fpm)
@@ -48,8 +49,9 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && echo "extension=redis.so" > /etc/php.d/redis.ini \
     && yum remove -y ImageMagick-devel php70w-devel gcc make \
     # Enable php services
-    && docker-service-enable syslog cron \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-service enable syslog \
+    && docker-service enable cron \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 EXPOSE 9000

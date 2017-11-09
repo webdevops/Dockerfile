@@ -5,7 +5,9 @@
 
 FROM webdevops/base-app:latest
 
-RUN /opt/docker/bin/control.sh service.enable ssh \
+RUN set -x \
+    && docker-service enable ssh \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 EXPOSE 22

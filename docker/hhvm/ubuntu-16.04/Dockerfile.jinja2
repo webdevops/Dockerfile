@@ -4,7 +4,10 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ hhvm.ubuntu16() }}
+RUN set -x \
+    {{ hhvm.ubuntu16() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 {{ docker.expose('9000') }}
 

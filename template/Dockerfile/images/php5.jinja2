@@ -3,8 +3,8 @@
 {% import 'Dockerfile/services.jinja2'  as services %}
 
 {% macro alpine(role='') -%}
-# Install php environment
-RUN /usr/local/bin/apk-install \
+    # Install php environment
+    && apk-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -66,15 +66,13 @@ RUN /usr/local/bin/apk-install \
     # && go-replace  -v -s 'expr -- [$]0 : "'\''.*"' -r 'expr " [$]0" : " '\''.*"' -- /usr/lib/php/build/acinclude.m4
     # && pecl install apcu-4.0.11 \
     # && apk del .pecl-deps \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 
 
 {% macro centos(role='') -%}
-# Install php environment
-RUN /usr/local/bin/yum-install \
+    # Install php environment
+    && yum-install \
         # Install tools
         ImageMagick \
         GraphicsMagick \
@@ -114,14 +112,12 @@ RUN /usr/local/bin/yum-install \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Cleanup
     && yum erase -y php-devel gcc \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 
 {% macro centosWebtatic(role='') -%}
-RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
-    && /usr/local/bin/yum-install \
+    && rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
+    && yum-install \
         ImageMagick \
         GraphicsMagick \
         ghostscript \
@@ -157,14 +153,12 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Cleanup
     && yum erase -y php-devel gcc \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 
 {% macro debian7(role='') -%}
-# Install php environment
-RUN /usr/local/bin/apt-install \
+    # Install php environment
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -193,15 +187,13 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 
 
 {% macro debian8(role='') -%}
-# Install php environment
-RUN /usr/local/bin/apt-install \
+    # Install php environment
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -232,15 +224,13 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 
 
 {% macro debian9(role='') -%}
-# Install php environment
-RUN /usr/local/bin/apt-install \
+    # Install php environment
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -270,14 +260,12 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 
 {% macro ubuntu12(role='') -%}
-# Install php environment
-RUN /usr/local/bin/apt-install \
+    # Install php environment
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -307,15 +295,13 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 
 
 {% macro ubuntu14(role='') -%}
-# Install php environment
-RUN /usr/local/bin/apt-install \
+    # Install php environment
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -346,14 +332,12 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 
 {% macro ubuntu16(role='') -%}
-# Install php environment
-RUN /usr/local/bin/apt-install \
+    # Install php environment
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -378,8 +362,6 @@ RUN /usr/local/bin/apt-install \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 

@@ -3,4 +3,7 @@
 {{ docker.volume('/etc/letsencrypt') }}
 {{ docker.volume('/var/www') }}
 
-{{ certbot.alpine() }}
+RUN set -x \
+    {{ certbot.alpine() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

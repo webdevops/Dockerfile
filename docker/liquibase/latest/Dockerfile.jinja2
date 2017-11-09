@@ -6,7 +6,10 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ liquibase.mysql() }}
+RUN set -x \
+    {{ liquibase.mysql() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 {{ docker.entrypoint("/entrypoint") }}
 

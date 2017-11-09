@@ -43,16 +43,17 @@ ENV TERM="xterm" \
 COPY --from=baselayout /baselayout /
 
 
-# Init bootstrap
 RUN set -x \
+    # Init bootstrap
     && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Install base stuff
-    && /usr/local/bin/apt-install \
+    && apt-install \
         ca-certificates \
         apt-transport-https \
     && apt-add-repository multiverse \
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
+    && docker-run-bootstrap \
     && docker-image-cleanup

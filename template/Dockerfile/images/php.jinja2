@@ -3,8 +3,8 @@
 {% import 'Dockerfile/services.jinja2'  as services %}
 
 {% macro official(role='', version='') -%}
-# Install php environment
-RUN /usr/local/bin/apt-install \
+    # Install php environment
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -63,35 +63,31 @@ RUN /usr/local/bin/apt-install \
         libpng12-dev \
 {%- if version|int == 5 %}
     # Install extensions for PHP 5.x
-    && pecl install apcu-4.0.11 redis \
+    && pecl install apcu-4.0.11 \
+    && pecl install redis \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
 {%- else %}
     # Install extensions for PHP 7.x
-    && pecl install apcu redis \
+    && pecl install apcu \
+    && pecl install redis \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
 {%- endif %}
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
-
-WORKDIR /
+    {{ services.php() }}
 {%- endmacro %}
 
 
 {% macro officialDevelopment(role='', version='') -%}
-# Install development environment
-RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - \
+    # Install development environment
+    && wget -O - https://packagecloud.io/gpg.key | apt-key add - \
     && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
-    && /usr/local/bin/apt-install \
+    && apt-install \
         blackfire-php \
         blackfire-agent \
     && pecl install xdebug \
     && echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
-    {{ services.phpDev() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.phpDev() }}
 {%- endmacro %}

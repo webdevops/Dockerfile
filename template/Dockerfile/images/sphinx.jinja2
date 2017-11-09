@@ -2,7 +2,7 @@
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro alpine() -%}
-RUN /usr/local/bin/apk-install \
+    && apk-install \
     # General python
     python \
     py-crypto \
@@ -27,6 +27,5 @@ RUN /usr/local/bin/apk-install \
     && pip install t3SphinxThemeRtd \
     && pip install t3fieldlisttable \
     && pip install t3tablerows \
-    && pip install t3targets \
-    {{ docker.cleanup() }}
+    && pip install t3targets
 {%- endmacro %}

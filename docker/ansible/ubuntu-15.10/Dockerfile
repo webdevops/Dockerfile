@@ -5,8 +5,9 @@
 
 FROM webdevops/bootstrap:ubuntu-15.10
 
-# Install ansible
-RUN /usr/local/bin/apt-install \
+RUN set -x \
+    # Install ansible
+    && apt-install \
         python-minimal \
         python-setuptools \
         python-pip \
@@ -26,4 +27,5 @@ RUN /usr/local/bin/apt-install \
         build-essential \
         libssl-dev \
         libffi-dev \
+    && docker-run-bootstrap \
     && docker-image-cleanup

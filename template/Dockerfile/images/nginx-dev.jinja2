@@ -1,9 +1,3 @@
 {% import 'Dockerfile/docker.jinja2' as docker %}
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
-{% macro general(role='') -%}
-# Install apache
-RUN true \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
-{%- endmacro %}

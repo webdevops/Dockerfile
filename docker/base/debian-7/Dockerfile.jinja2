@@ -4,7 +4,10 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ base.debian() }}
+RUN set -x \
+    {{ base.debian() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 {{ docker.entrypoint("/entrypoint") }}
 {{ docker.cmd("supervisord") }}

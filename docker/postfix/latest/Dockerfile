@@ -7,8 +7,10 @@ FROM webdevops/base-app:latest
 
 COPY conf/ /opt/docker/
 
-RUN /opt/docker/bin/control.sh service.enable postfix syslog \
-    && /opt/docker/bin/bootstrap.sh \
+RUN set -x \
+    && docker-service enable syslog \
+    && docker-service enable postfix \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 EXPOSE 25 465 587

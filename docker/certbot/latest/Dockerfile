@@ -8,7 +8,8 @@ FROM webdevops/bootstrap:alpine
 VOLUME /etc/letsencrypt
 VOLUME /var/www
 
-RUN /usr/local/bin/apk-install \
+RUN set -x \
+    && apk-install \
         python \
         py-crypto \
         py2-pip \
@@ -17,4 +18,5 @@ RUN /usr/local/bin/apk-install \
     && pip install --upgrade pip \
     && hash -r \
     && pip install pyRFC3339 configobj ConfigArgParse \
+    && docker-run-bootstrap \
     && docker-image-cleanup

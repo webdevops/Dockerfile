@@ -2,6 +2,9 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ postfix.ubuntu() }}
+RUN set -x \
+    {{ postfix.ubuntu() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 {{ docker.expose('25 465 587') }}

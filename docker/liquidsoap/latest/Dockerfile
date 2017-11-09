@@ -12,6 +12,7 @@ RUN /usr/local/bin/apt-install \
         mplayer \
         gstreamer0.10-plugins-base \
         gstreamer0.10-plugins-good \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 ENV LIQUIDSOAP_USER            "liquidsoap"

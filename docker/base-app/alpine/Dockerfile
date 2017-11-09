@@ -13,8 +13,9 @@ ENV APPLICATION_USER=application \
 
 COPY conf/ /opt/docker/
 
-RUN /usr/local/bin/apk-install shadow \
-    && /usr/local/bin/apk-install \
+RUN set -x \
+    && apk-install shadow \
+    && apk-install \
         # Install common tools
         zip \
         unzip \
@@ -24,5 +25,5 @@ RUN /usr/local/bin/apk-install shadow \
         openssh-client \
         rsync \
         git \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-run-bootstrap \
     && docker-image-cleanup

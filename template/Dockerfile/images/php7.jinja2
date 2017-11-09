@@ -3,8 +3,8 @@
 {% import 'Dockerfile/services.jinja2'  as services %}
 
 {% macro alpine(role='') -%}
-# Install php environment
-RUN /usr/local/bin/apk-install \
+    # Install php environment
+    && apk-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -67,17 +67,15 @@ RUN /usr/local/bin/apk-install \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # PECL workaround, see webdevops/Dockerfile#78
     && sed -i "s/ -n / /" $(which pecl) \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 
 {% macro debianDotDeb(distribution,role='') -%}
-# Install php environment
-RUN echo "deb http://packages.dotdeb.org {{ distribution }} all" >> /etc/apt/sources.list \
+    # Install php environment
+    && echo "deb http://packages.dotdeb.org {{ distribution }} all" >> /etc/apt/sources.list \
     && echo "deb-src http://packages.dotdeb.org {{ distribution }} all" >> /etc/apt/sources.list \
     && wget -O- https://www.dotdeb.org/dotdeb.gpg | apt-key add  - \
-    && /usr/local/bin/apt-install \
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -101,13 +99,11 @@ RUN echo "deb http://packages.dotdeb.org {{ distribution }} all" >> /etc/apt/sou
         php7.0-memcached \
         php-apcu \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 
 {% macro debianSury(distribution,role='') -%}
-RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
+    && apt-install apt-transport-https lsb-release \
     && echo "deb https://packages.sury.org/php/ {{ distribution }} main" >> /etc/apt/sources.list \
     && echo "deb http://ftp2.de.debian.org/debian/ testing main" >> /etc/apt/sources.list \
     && echo "deb-src http://ftp2.de.debian.org/debian/ testing main" >> /etc/apt/sources.list \
@@ -120,7 +116,7 @@ RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
     && echo "Pin-Priority: 995" >> /etc/apt/preferences.d/libpcre.pref \
     && apt-get update \
     && apt-get -t testing install -y -f libpcre3 \
-    && /usr/local/bin/apt-install \
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -148,14 +144,12 @@ RUN /usr/local/bin/apt-install apt-transport-https lsb-release \
         php7.0-mbstring \
         php-apcu \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 
 {% macro debian9(role='') -%}
-# Install php environment
-RUN /usr/local/bin/apt-install \
+    # Install php environment
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -184,14 +178,12 @@ RUN /usr/local/bin/apt-install \
         php-memcache \
         php-memcached \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 
 {% macro ubuntu(role='') -%}
-# Install php environment
-RUN /usr/local/bin/apt-install \
+    # Install php environment
+    && apt-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -219,14 +211,12 @@ RUN /usr/local/bin/apt-install \
         php-redis \
         php-memcached \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}
 
 {% macro centosWebtatic(role='') -%}
-RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
-    && /usr/local/bin/yum-install \
+    && rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
+    && yum-install \
         ImageMagick \
         GraphicsMagick \
         # Install php (cli/fpm)
@@ -259,7 +249,5 @@ RUN rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm \
     && pecl install redis \
     && echo "extension=redis.so" > /etc/php.d/redis.ini \
     && yum remove -y ImageMagick-devel php70w-devel gcc make \
-    {{ services.php() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ services.php() }}
 {%- endmacro %}

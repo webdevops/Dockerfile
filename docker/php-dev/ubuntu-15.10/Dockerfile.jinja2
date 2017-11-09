@@ -2,4 +2,7 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ php5dev.ubuntu() }}
+RUN set -x \
+    {{ php5dev.ubuntu() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

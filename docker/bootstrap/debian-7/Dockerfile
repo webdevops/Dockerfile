@@ -43,8 +43,8 @@ ENV TERM="xterm" \
 COPY --from=baselayout /baselayout /
 
 
-# Init bootstrap
 RUN set -x \
+    # Init bootstrap
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
@@ -53,8 +53,7 @@ RUN set -x \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Base stuff
-    && /usr/local/bin/apt-install \
+    && apt-install \
         apt-transport-https \
         ca-certificates \
-        locales \
-    && docker-image-cleanup
+        locales

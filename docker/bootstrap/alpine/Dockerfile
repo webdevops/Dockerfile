@@ -43,14 +43,14 @@ ENV TERM="xterm" \
 COPY --from=baselayout /baselayout /
 
 
-# Init bootstrap
 RUN set -x \
+    # Init bootstrap
     # Add community
     && echo http://dl-4.alpinelinux.org/alpine/v3.6/community/ >> /etc/apk/repositories \
     # System update
     && /usr/local/bin/apk-upgrade \
     # Install base stuff
-    && /usr/local/bin/apk-install \
+    && apk-install \
         bash \
         ca-certificates \
         openssl \
@@ -59,4 +59,5 @@ RUN set -x \
     ## Fix su execution (eg for tests)
     && mkdir -p /etc/pam.d/ \
     && echo 'auth sufficient pam_rootok.so' >> /etc/pam.d/su \
+    && docker-run-bootstrap \
     && docker-image-cleanup

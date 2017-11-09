@@ -4,7 +4,10 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ base.ubuntu() }}
+RUN set -x \
+    {{ base.ubuntu() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 {{ docker.entrypoint("/entrypoint") }}
 {{ docker.cmd("supervisord") }}

@@ -2,60 +2,52 @@
 {% import 'Dockerfile/provision.jinja2' as provision %}
 
 {% macro alpine(role='') -%}
-# Install services
-RUN chmod +x /opt/docker/bin/* \
-    && /usr/local/bin/apk-install \
+    # Install services
+    && chmod +x /opt/docker/bin/* \
+    && apk-install \
         supervisor \
         wget \
         curl \
         sed \
         tzdata \
-    && chmod +s /sbin/gosu \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    && chmod +s /sbin/gosu
 {%- endmacro %}
 
 
 {% macro centos(role='') -%}
-# Install services
-RUN chmod +x /opt/docker/bin/* \
-    && /usr/local/bin/yum-install \
+    # Install services
+    && chmod +x /opt/docker/bin/* \
+    && yum-install \
         supervisor \
         wget \
         curl \
         net-tools \
         tzdata \
-    && chmod +s /sbin/gosu \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    && chmod +s /sbin/gosu
 {%- endmacro %}
 
 
 {% macro debian(role='') -%}
-# Install packages
-RUN chmod +x /opt/docker/bin/* \
-    && /usr/local/bin/apt-install \
+    # Install packages
+    && chmod +x /opt/docker/bin/* \
+    && apt-install \
         supervisor \
         wget \
         curl \
         net-tools \
         tzdata \
-    && chmod +s /sbin/gosu \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    && chmod +s /sbin/gosu
 {%- endmacro %}
 
 
 {% macro ubuntu(role='') -%}
-# Install services
-RUN chmod +x /opt/docker/bin/* \
-    && /usr/local/bin/apt-install \
+    # Install services
+    && chmod +x /opt/docker/bin/* \
+    && apt-install \
         supervisor \
         wget \
         curl \
         net-tools \
         tzdata \
-    && chmod +s /sbin/gosu \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    && chmod +s /sbin/gosu
 {%- endmacro %}

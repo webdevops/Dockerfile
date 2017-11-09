@@ -5,8 +5,9 @@
 
 FROM webdevops/bootstrap:debian-8
 
-# Install ansible
-RUN /usr/local/bin/apt-install \
+RUN set -x \
+    # Install ansible
+    && apt-install \
         # Install ansible
         python-minimal \
         python-setuptools \
@@ -27,4 +28,5 @@ RUN /usr/local/bin/apt-install \
         build-essential \
         libssl-dev \
         libffi-dev \
+    && docker-run-bootstrap \
     && docker-image-cleanup

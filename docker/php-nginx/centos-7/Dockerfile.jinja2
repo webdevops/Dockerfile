@@ -5,6 +5,9 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ nginx.centos() }}
+RUN set -x \
+    {{ nginx.centos() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 {{ docker.expose('80 443') }}

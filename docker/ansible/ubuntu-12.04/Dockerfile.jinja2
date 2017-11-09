@@ -1,3 +1,6 @@
 {{ docker.from("bootstrap", "ubuntu-12.04") }}
 
-{{ ansible.ubuntu() }}
+RUN set -x \
+    {{ ansible.ubuntu() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

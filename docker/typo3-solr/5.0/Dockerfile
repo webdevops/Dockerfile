@@ -68,4 +68,3 @@ USER solr
 WORKDIR /opt/solr/server
 
 VOLUME ["/opt/solr/server/solr/data"]
-

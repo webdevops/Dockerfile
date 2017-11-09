@@ -4,4 +4,7 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ baseapp.centos() }}
+RUN set -x \
+    {{ baseapp.centos() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

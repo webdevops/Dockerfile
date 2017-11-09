@@ -16,8 +16,10 @@ ENV VARNISH_BACKEND_PORT "80"
 
 COPY conf/ /opt/docker/
 
-RUN /usr/local/bin/apk-install \
+RUN set -x \
+    && apk-install \
         varnish \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 CMD ["varnishd"]

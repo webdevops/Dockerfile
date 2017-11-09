@@ -13,8 +13,9 @@ ENV WEB_DOCUMENT_ROOT=/app \
 
 COPY conf/ /opt/docker/
 
-# Install php environment
-RUN /usr/local/bin/apk-install \
+RUN set -x \
+    # Install php environment
+    && apk-install \
         # Install tools
         imagemagick \
         graphicsmagick \
@@ -77,8 +78,9 @@ RUN /usr/local/bin/apk-install \
     # && pecl install apcu-4.0.11 \
     # && apk del .pecl-deps \
     # Enable php services
-    && docker-service-enable syslog cron \
-    && /opt/docker/bin/bootstrap.sh \
+    && docker-service enable syslog \
+    && docker-service enable cron \
+    && docker-run-bootstrap \
     && docker-image-cleanup
 
 EXPOSE 9000

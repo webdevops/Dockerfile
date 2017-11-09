@@ -5,6 +5,9 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ apache.ubuntu14() }}
+RUN set -x \
+    {{ apache.ubuntu14() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
 
 {{ docker.expose('80 443') }}

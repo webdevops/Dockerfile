@@ -2,4 +2,7 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ php7dev.debianSury() }}
+RUN set -x \
+    {{ php7dev.debianSury() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

@@ -4,4 +4,7 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-{{ baseapp.debian() }}
+RUN set -x \
+    {{ baseapp.debian() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

@@ -1,8 +1,8 @@
 {% import 'Dockerfile/docker.jinja2' as docker %}
 
 {% macro alpine() -%}
-# Install ansible
-RUN /usr/local/bin/apk-install \
+    # Install ansible
+    && apk-install \
         python \
         python-dev \
         py-setuptools \
@@ -20,14 +20,13 @@ RUN /usr/local/bin/apk-install \
     && pip install --no-cache-dir ansible \
     && chmod 750 /usr/bin/ansible* \
     # Cleanup
-    && apk del python-dev \
-    {{ docker.cleanup() }}
+    && apk del python-dev
 {%- endmacro %}
 
 
 {% macro centos() -%}
-# Install ansible
-RUN /usr/local/bin/yum-install \
+    # Install ansible
+    && yum-install \
         epel-release \
         PyYAML \
         python-jinja2 \
@@ -45,14 +44,13 @@ RUN /usr/local/bin/yum-install \
     && pip install --no-cache-dir ansible \
     && chmod 750 /usr/bin/ansible* \
     # Cleanup
-    && yum erase -y python-devel \
-    {{ docker.cleanup() }}
+    && yum erase -y python-devel
 {%- endmacro %}
 
 
 {% macro debian(distribution) -%}
-# Install ansible
-RUN /usr/local/bin/apt-install \
+    # Install ansible
+    && apt-install \
         # Install ansible
         python-minimal \
         python-setuptools \
@@ -72,14 +70,13 @@ RUN /usr/local/bin/apt-install \
         python-dev \
         build-essential \
         libssl-dev \
-        libffi-dev \
-    {{ docker.cleanup() }}
+        libffi-dev
 {%- endmacro %}
 
 
 {% macro ubuntu() -%}
-# Install ansible
-RUN /usr/local/bin/apt-install \
+    # Install ansible
+    && apt-install \
         python-minimal \
         python-setuptools \
         python-pip \
@@ -98,7 +95,6 @@ RUN /usr/local/bin/apt-install \
         python-dev \
         build-essential \
         libssl-dev \
-        libffi-dev \
-    {{ docker.cleanup() }}
+        libffi-dev
 {%- endmacro %}
 
