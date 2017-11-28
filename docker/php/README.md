@@ -2,8 +2,8 @@
 
 Automated build and tested by [WebDevOps Build Server](https://build.webdevops.io/)
 
-Container                           | Distribution name        | PHP Version                                                               
------------------------------------ | -----------------------------------------
+Container                           | Distribution name        | PHP Version
+----------------------------------- | -------------------------|---------------
 `webdevops/php:ubuntu-12.04`        | precise                  | PHP 5.3
 `webdevops/php:ubuntu-14.04`        | trusty (LTS)             | PHP 5.5
 `webdevops/php:ubuntu-15.04`        | vivid                    | PHP 5.6
