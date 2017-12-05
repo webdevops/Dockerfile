@@ -36,11 +36,10 @@ RUN set -x \
 	&& apt-get clean \
 	&& rm -r /var/lib/apt/lists/* \
     && mkdir /liquibase \
-    && ln -sf /opt/docker/bin/entrypoint.sh /entrypoint
-
-WORKDIR /liquibase \
+    && ln -sf /opt/docker/bin/entrypoint.sh /entrypoint \
     && docker-run-bootstrap \
     && docker-image-cleanup
 
+WORKDIR /liquibase
 ENTRYPOINT ["/entrypoint"]
 

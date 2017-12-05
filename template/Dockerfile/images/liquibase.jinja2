@@ -16,8 +16,6 @@
 	&& rm -r /var/lib/apt/lists/* \
     && mkdir /liquibase \
     && ln -sf /opt/docker/bin/entrypoint.sh /entrypoint
-
-WORKDIR /liquibase
 {%- endmacro %}
 
 {% macro postgres(role='') -%}
@@ -35,6 +33,4 @@ WORKDIR /liquibase
 	&& rm -r /var/lib/apt/lists/* \
     && mkdir /liquibase \
     && ln -sf /opt/docker/bin/entrypoint.sh /entrypoint
-
-WORKDIR /liquibase
 {%- endmacro %}
