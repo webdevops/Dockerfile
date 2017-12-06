@@ -35,9 +35,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
     {{ docker.cleanup() }}
 
 # NPM stack
-RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_9.x | bash - \
     && apt-get install -y nodejs \
-    && npm install -g npm \
     && npm install -g gulp \
     && npm install -g grunt-cli \
     && npm install -g bower \
