@@ -60,12 +60,6 @@ shared_examples 'php::modules' do
             its(:stdout) { should_not contain('apcu') }
         end
 
-        if ( $testConfiguration[:phpMcrypt] )
-            its(:stdout) { should     contain('mcrypt') }
-        else
-            its(:stdout) { should_not contain('mcrypt') }
-        end
-
         its(:exit_status) { should eq 0 }
     end
 end
@@ -178,12 +172,6 @@ shared_examples 'php-fpm::modules' do
         its(:stdout) { should     contain('zip') }
         its(:stdout) { should     contain('zlib') }
         its(:stdout) { should     contain('gd') }
-
-        if ( $testConfiguration[:phpMcrypt] )
-            its(:stdout) { should     contain('mcrypt') }
-        else
-            its(:stdout) { should_not contain('mcrypt') }
-        end
 
         if ( $testConfiguration[:phpApcu] )
             its(:stdout) { should     contain('apcu') }
