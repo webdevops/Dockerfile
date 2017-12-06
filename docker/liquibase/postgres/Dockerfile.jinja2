@@ -7,9 +7,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ liquibase.postgres() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ liquibase.postgres() }}
 
 {{ docker.workdir("/liquibase") }}
 {{ docker.entrypoint("/entrypoint") }}

@@ -15,7 +15,11 @@
 	&& apt-get clean \
 	&& rm -r /var/lib/apt/lists/* \
     && mkdir /liquibase \
-    && ln -sf /opt/docker/bin/entrypoint.sh /entrypoint
+    && ln -sf /opt/docker/bin/entrypoint.sh /entrypoint \
+    # cleanup
+    && apt-get autoremove -y -f \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/*
 {%- endmacro %}
 
 {% macro postgres(role='') -%}
@@ -32,5 +36,9 @@
 	&& apt-get clean \
 	&& rm -r /var/lib/apt/lists/* \
     && mkdir /liquibase \
-    && ln -sf /opt/docker/bin/entrypoint.sh /entrypoint
+    && ln -sf /opt/docker/bin/entrypoint.sh /entrypoint \
+    # cleanup
+    && apt-get autoremove -y -f \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/*
 {%- endmacro %}
