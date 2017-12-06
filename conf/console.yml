@@ -65,6 +65,10 @@ dockerTest:
         OS_FAMILY: 'debian'
         OS_VERSION: '8'
         PHP_OFFICIAL: '1'
+      'php[^:]*:7.2':
+        OS_FAMILY: 'debian'
+        OS_VERSION: '9'
+        PHP_OFFICIAL: '1'
       '/liquibase':
         OS_FAMILY: 'alpine'
         OS_VERSION: '3'

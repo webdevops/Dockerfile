@@ -108,7 +108,7 @@ RUN set -x \
         libldap-2.4-2 \
         libxslt1.1 \
         zlib1g \
-        libpng12-0 \
+        libpng-tools \
         libmcrypt4 \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
@@ -120,7 +120,7 @@ RUN set -x \
         libxml2-dev \
         libxslt1-dev \
         zlib1g-dev \
-        libpng12-dev \
+        libpng-dev \
     # Install extensions
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install \
@@ -155,7 +155,7 @@ RUN set -x \
         libxml2-dev \
         libxslt1-dev \
         zlib1g-dev \
-        libpng12-dev \
+        libpng-dev \
     # Install extensions for PHP 7.x
     && pecl install apcu \
     && pecl install redis \

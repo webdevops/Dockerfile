@@ -2,7 +2,7 @@
 {% import 'Dockerfile/provision.jinja2' as provision %}
 {% import 'Dockerfile/services.jinja2'  as services %}
 
-{% macro official(role='', version='') -%}
+{% macro official(role='', version='',debian='') -%}
     # Install php environment
     && apt-install \
         # Install tools
@@ -13,7 +13,7 @@
         libldap-2.4-2 \
         libxslt1.1 \
         zlib1g \
-        libpng12-0 \
+        libpng-tools \
         libmcrypt4 \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
@@ -25,7 +25,7 @@
         libxml2-dev \
         libxslt1-dev \
         zlib1g-dev \
-        libpng12-dev \
+        libpng-dev \
     # Install extensions
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install \
@@ -60,7 +60,7 @@
         libxml2-dev \
         libxslt1-dev \
         zlib1g-dev \
-        libpng12-dev \
+        libpng-dev \
 {%- if version|int == 5 %}
     # Install extensions for PHP 5.x
     && pecl install apcu-4.0.11 \

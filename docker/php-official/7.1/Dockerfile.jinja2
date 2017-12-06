@@ -26,7 +26,7 @@ RUN set -x \
     {{ docker.cleanup() }}
 
 RUN set -x \
-    {{ php.official(version='7.1') }} \
+    {{ php.official(version='7.1',debian='jessie') }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 
