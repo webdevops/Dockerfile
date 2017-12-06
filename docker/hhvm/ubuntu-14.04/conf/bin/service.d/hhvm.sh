@@ -11,4 +11,4 @@ if [[ -z "$CONTAINER_UID" ]]; then
     CONTAINER_UID="application"
 fi
 
-exec /usr/bin/hhvm --mode server -vServer.Type=fastcgi -vServer.Port=9000 --user "${CONTAINER_UID}" $SERVICE_HHVM_OPTS
+exec gosu "${CONTAINER_UID}":"${CONTAINER_UID}" /usr/bin/hhvm --mode server -vServer.Type=fastcgi -vServer.Port=9000 -vServer.AllowRunAsRoot=1 $SERVICE_HHVM_OPTS
