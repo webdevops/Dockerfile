@@ -64,6 +64,7 @@ RUN set -x \
         apt-transport-https \
         ca-certificates \
         locales \
+        gnupg \
     && docker-image-cleanup
 
 ###############################################################################

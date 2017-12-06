@@ -13,7 +13,11 @@
         libldap-2.4-2 \
         libxslt1.1 \
         zlib1g \
-        libpng-tools \
+{%- if debian == 'jessie' %}
+        libpng12-0 \
+{%- else %}
+        libpng16-16 \
+{%- endif %}
         libmcrypt4 \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
@@ -35,7 +39,9 @@
         exif \
         gettext \
         mysqli \
+{%- if version|int == 5 or version == '7.0' or version == '7.1' %}
         mcrypt \
+{%- endif %}
         hash \
         pcntl \
         pdo_mysql \

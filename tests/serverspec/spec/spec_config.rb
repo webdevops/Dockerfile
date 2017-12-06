@@ -41,6 +41,7 @@ $testConfiguration[:phpApcu] = true
 $testConfiguration[:phpRedis] = true
 $testConfiguration[:phpBlackfire] = false
 $testConfiguration[:phpOfficialImage] = false
+$testConfiguration[:phpMcrypt] = false
 
 if ((os[:family] == 'ubuntu' and os[:version] == '12.04') or
     (os[:family] == 'ubuntu' and os[:version] == '14.04') or
@@ -54,12 +55,17 @@ if ((os[:family] == 'ubuntu' and os[:version] == '12.04') or
     (ENV['DOCKER_TAG'] =~ /^5\.[0-9]+/)
    )
     $testConfiguration[:php] = 5
+    $testConfiguration[:phpMcrypt] = true
 end
 
 if ((ENV['DOCKER_TAG'].match('php7')) or
     (ENV['DOCKER_TAG'] =~ /^7\.[0-9]+/)
    )
     $testConfiguration[:php] = 7
+
+    if (ENV['DOCKER_TAG'] =~ /^7\.[0-1]/)
+        $testConfiguration[:phpMcrypt] = true
+    end
 end
 
 if ENV['PHP_OFFICIAL'] and ENV['PHP_OFFICIAL'] == "1"

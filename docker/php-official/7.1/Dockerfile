@@ -66,7 +66,8 @@ RUN set -x \
     && apt-install \
         apt-transport-https \
         ca-certificates \
-        locales
+        locales \
+        gnupg
 
 RUN set -x \
     # Install packages
@@ -108,7 +109,7 @@ RUN set -x \
         libldap-2.4-2 \
         libxslt1.1 \
         zlib1g \
-        libpng-tools \
+        libpng12-0 \
         libmcrypt4 \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
