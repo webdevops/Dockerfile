@@ -93,7 +93,11 @@
     && apt-install \
         blackfire-php \
         blackfire-agent \
+{%- if version|int == 5 %}
+    && pecl install xdebug-2.5.5 \
+{%- else %}
     && pecl install xdebug \
+{%- endif %}
     && echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
     {{ services.phpDev() }}
 {%- endmacro %}

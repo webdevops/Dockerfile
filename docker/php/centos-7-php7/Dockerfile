@@ -44,6 +44,7 @@ RUN set -x \
         make \
         php70w-opcache \
         php70w-pecl-imagick \
+    && pecl channel-update pecl.php.net \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     && pecl install redis \
     && echo "extension=redis.so" > /etc/php.d/redis.ini \

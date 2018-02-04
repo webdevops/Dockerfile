@@ -72,6 +72,7 @@ RUN set -x \
         php7-tokenizer \
         php7-xmlwriter \
     && ln -s /usr/sbin/php-fpm7 /usr/sbin/php-fpm \
+    && pecl channel-update pecl.php.net \
     && pear channel-update pear.php.net \
     && pear upgrade-all \
     && pear config-set auto_discover 1 \

@@ -67,6 +67,7 @@ RUN set -x \
     && ln -s /usr/bin/php5      /usr/bin/php \
     && ln -s /usr/sbin/php-fpm5 /usr/sbin/php-fpm \
     && ln -s /usr/bin/phpize5 /usr/sbin/phpize \
+    && pecl channel-update pecl.php.net \
     && pear channel-update pear.php.net \
     && pear upgrade-all \
     && pear config-set auto_discover 1 \

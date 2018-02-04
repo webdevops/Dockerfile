@@ -39,6 +39,7 @@ RUN set -x \
         php5-imagick \
         #php5-redis \
         php-pear \
+    && pecl channel-update pecl.php.net \
     && pear channel-update pear.php.net \
     && pear upgrade-all \
     && pear config-set auto_discover 1 \

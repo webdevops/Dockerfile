@@ -16,7 +16,7 @@ RUN set -x \
         nano \
         vim \
     && apk-install gcc php5-dev autoconf --virtual .pecl-deps \
-    && pecl install xdebug \
+    && pecl install xdebug-2.5.5 \
     && apk del .pecl-deps \
     # Enable php development services
     && docker-service enable syslog \

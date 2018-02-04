@@ -40,8 +40,8 @@ RUN set -x \
         php5-redis \
         php5-apcu \
         php-pear \
+    && pecl channel-update pecl.php.net \
     && pear channel-update pear.php.net \
-    && pear upgrade-all \
     && pear config-set auto_discover 1 \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \

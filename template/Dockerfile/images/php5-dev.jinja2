@@ -12,7 +12,7 @@
         nano \
         vim \
     && apk-install gcc php5-dev autoconf --virtual .pecl-deps \
-    && pecl install xdebug \
+    && pecl install xdebug-2.5.5 \
     && apk del .pecl-deps \
     {{ services.phpDev() }}
 {%- endmacro %}

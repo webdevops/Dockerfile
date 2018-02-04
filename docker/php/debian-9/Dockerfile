@@ -39,10 +39,12 @@ RUN set -x \
         php7.0-xmlrpc \
         php7.0-xsl \
         php7.0-bz2 \
+        php-pear \
         php-apcu \
         php-redis \
         php-memcache \
         php-memcached \
+    && pecl channel-update pecl.php.net \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services
     && docker-service enable syslog \
