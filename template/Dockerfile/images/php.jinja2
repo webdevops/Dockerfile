@@ -2,7 +2,7 @@
 {% import 'Dockerfile/provision.jinja2' as provision %}
 {% import 'Dockerfile/services.jinja2'  as services %}
 
-{% macro official(role='', version='',debian='') -%}
+{% macro official(role='', version='') -%}
     # Install php environment
     && apt-install \
         # Install tools
@@ -13,11 +13,7 @@
         libldap-2.4-2 \
         libxslt1.1 \
         zlib1g \
-{%- if debian == 'jessie' %}
-        libpng12-0 \
-{%- else %}
         libpng16-16 \
-{%- endif %}
         libmcrypt4 \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
