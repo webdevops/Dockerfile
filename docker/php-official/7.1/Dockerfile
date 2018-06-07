@@ -109,7 +109,7 @@ RUN set -x \
         libldap-2.4-2 \
         libxslt1.1 \
         zlib1g \
-        libpng12-0 \
+        libpng16-16 \
         libmcrypt4 \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
