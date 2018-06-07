@@ -1,5 +1,5 @@
 ======================
-webdevops/mail-catcher
+webdevops/mail-sandbox
 ======================
 
 These image extends ``webdevops/base`` with a postfix daemon which is running on port 25 and dovecot on IMAP.
