@@ -115,6 +115,7 @@ RUN set -x \
         libfreetype6-dev \
         # Dev and headers
         libbz2-dev \
+        libicu-dev \
         libldap2-dev \
         libldb-dev \
         libmcrypt-dev \
@@ -129,6 +130,7 @@ RUN set -x \
         bz2 \
         calendar \
         exif \
+        intl \
         gettext \
         mysqli \
         hash \
@@ -149,6 +151,7 @@ RUN set -x \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
         libbz2-dev \
+        libicu-dev \
         libldap2-dev \
         libldb-dev \
         libmcrypt-dev \
