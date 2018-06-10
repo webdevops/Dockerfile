@@ -16,14 +16,14 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
         # Install docker
         docker-engine \
         # Install php
-        php5-cli \
-        php5-mysqlnd \
-        php5-mcrypt \
-        php5-curl \
-        php5-recode \
-        php5-json \
+        php-cli \
+        php-mysqlnd \
+        php-mcrypt \
+        php-curl \
+        php-recode \
+        php-json \
         # Install java
-        openjdk-7-jre \
+        openjdk-8-jre \
         # SQlite 3
         sqlite3 \
     && pip install -U \
