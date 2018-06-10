@@ -15,6 +15,7 @@ RUN apt-install \
         ruby-dev \
         ruby-bundler \
     && pip install --upgrade pip \
+    && hash -r pip \
     && pip install --upgrade setuptools \
     && pip install --upgrade \
         MarkupSafe \
