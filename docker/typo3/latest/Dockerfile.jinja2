@@ -1,8 +1,10 @@
-{{ docker.from("php-apache", "ubuntu-16.04") }}
+{{ docker.from("php-apache", "7.2") }}
 
-ENV WEB_DOCUMENT_ROOT /app/web/
+ENV WEB_DOCUMENT_ROOT /app/public/
 
 RUN set -x \
     {{ typo3.install() }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
+
+VOLUME /app
