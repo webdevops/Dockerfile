@@ -11,6 +11,6 @@ end
 
 shared_examples 'collection::samson-deployment::php' do
     include_examples 'php::cli'
-    include_examples 'php5::cli::version'
+    include_examples 'php7::cli::version'
     include_examples 'php::composer'
 end
