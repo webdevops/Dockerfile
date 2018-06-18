@@ -5,13 +5,19 @@ Automated build and tested by [WebDevOps Build Server](https://build.webdevops.i
 ## Containers
 Container                           | Distribution name                                                                 
 ----------------------------------- | -------------------------
-`webdevops/base:ubuntu-12.04`       | precise                   
-`webdevops/base:ubuntu-14.04`       | trusty (LTS)             
-`webdevops/base:ubuntu-15.04`       | vivid                    
-`webdevops/base:ubuntu-15.10`       | wily                     
-`webdevops/base:debian-7`           | wheezy                   
-`webdevops/base:debian-8`           | jessie                   
-`webdevops/base:centos-7`           |                          
+`webdevops/base:ubuntu-12.04`       | precise
+`webdevops/base:ubuntu-14.04`       | trusty (LTS)
+`webdevops/base:ubuntu-15.04`       | vivid
+`webdevops/base:ubuntu-15.10`       | wily
+`webdevops/base:ubuntu-16.04`       | xenial
+`webdevops/base:ubuntu-16.10`       | yakkety
+`webdevops/base:ubuntu-17.04`       | zesty
+`webdevops/base:ubuntu-17.10`       | artful
+`webdevops/base:ubuntu-18.04`       | bionic
+`webdevops/base:debian-7`           | wheezy
+`webdevops/base:debian-8`           | jessie
+`webdevops/base:debian-9`           | stretch
+`webdevops/base:centos-7`           |
 
 ## Environment variables
 
@@ -102,6 +108,12 @@ webdevops/base:ubuntu-12.04         | [![](https://badge.imagelayers.io/webdevop
 webdevops/base:ubuntu-14.04         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-14.04.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-14.04 'Get your own badge on imagelayers.io')
 webdevops/base:ubuntu-15.04         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-15.04 'Get your own badge on imagelayers.io')
 webdevops/base:ubuntu-15.10         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-15.14 'Get your own badge on imagelayers.io')
+webdevops/base:ubuntu-16.04         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-16.04.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-16.04 'Get your own badge on imagelayers.io')
+webdevops/base:ubuntu-16.10         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-16.10.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-16.14 'Get your own badge on imagelayers.io')
+webdevops/base:ubuntu-17.04         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-17.04.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-17.04 'Get your own badge on imagelayers.io')
+webdevops/base:ubuntu-17.10         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-17.10.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-17.14 'Get your own badge on imagelayers.io')
+webdevops/base:ubuntu-18.04         | [![](https://badge.imagelayers.io/webdevops/base:ubuntu-18.04.svg)](https://imagelayers.io/?images=webdevops/base:ubuntu-18.04 'Get your own badge on imagelayers.io')
 webdevops/base:centos-7             | [![](https://badge.imagelayers.io/webdevops/base:centos-7.svg)](https://imagelayers.io/?images=webdevops/base:centos-7 'Get your own badge on imagelayers.io')
 webdevops/base:debian-7             | [![](https://badge.imagelayers.io/webdevops/base:debian-7.svg)](https://imagelayers.io/?images=webdevops/base:debian-7 'Get your own badge on imagelayers.io')
 webdevops/base:debian-8             | [![](https://badge.imagelayers.io/webdevops/base:debian-8.svg)](https://imagelayers.io/?images=webdevops/base:debian-8 'Get your own badge on imagelayers.io')
+webdevops/base:debian-9             | [![](https://badge.imagelayers.io/webdevops/base:debian-9.svg)](https://imagelayers.io/?images=webdevops/base:debian-9 'Get your own badge on imagelayers.io')

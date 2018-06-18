@@ -4,15 +4,20 @@ Automated build and tested by [WebDevOps Build Server](https://build.webdevops.i
 
 Container                                | Distribution name        | PHP Version                                                               
 ---------------------------------------- | -------------------------|---------------
-`webdevops/php-apache:ubuntu-12.04`      | precise                  | PHP 5.3
-`webdevops/php-apache:ubuntu-14.04`      | trusty (LTS)             | PHP 5.5
-`webdevops/php-apache:ubuntu-15.04`      | vivid                    | PHP 5.6
-`webdevops/php-apache:ubuntu-15.10`      | wily                     | PHP 5.6
-`webdevops/php-apache:ubuntu-16.04`      | xenial (LTS)             | PHP 7.0
-`webdevops/php-apache:debian-7`          | wheezy                   | PHP 5.4
-`webdevops/php-apache:debian-8`          | jessie                   | PHP 5.6
-`webdevops/php-apache:debian-8-php7`     | jessie with dotdeb       | PHP 7.x (via dotdeb)
-`webdevops/php-apache:centos-7`          |                          | PHP 5.4
+`webdevops/php-apache-dev:ubuntu-12.04`      | precise                  | PHP 5.3
+`webdevops/php-apache-dev:ubuntu-14.04`      | trusty (LTS)             | PHP 5.5
+`webdevops/php-apache-dev:ubuntu-15.04`      | vivid                    | PHP 5.6
+`webdevops/php-apache-dev:ubuntu-15.10`      | wily                     | PHP 5.6
+`webdevops/php-apache-dev:ubuntu-16.04`      | xenial (LTS)             | PHP 7.0
+`webdevops/php-apache-dev:ubuntu-16.10`      | yakkety                  | PHP 7.0
+`webdevops/php-apache-dev:ubuntu-17.04`      | zesty                    | PHP 7.0
+`webdevops/php-apache-dev:ubuntu-17.10`      | artful                   | PHP 7.0
+`webdevops/php-apache-dev:ubuntu-18.04`      | bionic (LTS)             | PHP 7.2
+`webdevops/php-apache-dev:debian-7`          | wheezy                   | PHP 5.4
+`webdevops/php-apache-dev:debian-8`          | jessie                   | PHP 5.6
+`webdevops/php-apache-dev:debian-8-php7`     | jessie with dotdeb       | PHP 7.x (via dotdeb)
+`webdevops/php-apache-dev:debian-9`          | stretch                  | PHP 7.0
+`webdevops/php-apache-dev:centos-7`          |                          | PHP 5.4
 
 ## Filesystem layout
 
@@ -48,11 +53,17 @@ Variable              | Description
 
 Image                               | Info                                                                       
 ----------------------------------- | ----------------------------------------------------------------------------------
-webdevops/php-apache:latest         | [![](https://badge.imagelayers.io/webdevops/php-apache:latest.svg)](https://imagelayers.io/?images=webdevops/php-apache:latest 'Get your own badge on imagelayers.io')
-webdevops/php-apache:ubuntu-14.04   | [![](https://badge.imagelayers.io/webdevops/php-apache:ubuntu-14.04.svg)](https://imagelayers.io/?images=webdevops/php-apache:ubuntu-14.04 'Get your own badge on imagelayers.io')
-webdevops/php-apache:ubuntu-15.04   | [![](https://badge.imagelayers.io/webdevops/php-apache:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/php-apache:ubuntu-15.04 'Get your own badge on imagelayers.io')
-webdevops/php-apache:ubuntu-15.10   | [![](https://badge.imagelayers.io/webdevops/php-apache:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/php-apache:ubuntu-15.14 'Get your own badge on imagelayers.io')
-webdevops/php-apache:centos-7       | [![](https://badge.imagelayers.io/webdevops/php-apache:centos-7.svg)](https://imagelayers.io/?images=webdevops/php-apache:centos-7 'Get your own badge on imagelayers.io')
-webdevops/php-apache:debian-8-php7  | [![](https://badge.imagelayers.io/webdevops/php-apache:debian-8-php-apache7.svg)](https://imagelayers.io/?images=webdevops/php-apache:debian-8-php-apache7 'Get your own badge on imagelayers.io')
-webdevops/php-apache:debian-8       | [![](https://badge.imagelayers.io/webdevops/php-apache:debian-8.svg)](https://imagelayers.io/?images=webdevops/php-apache:debian-8 'Get your own badge on imagelayers.io')
-webdevops/php-apache:debian-7       | [![](https://badge.imagelayers.io/webdevops/php-apache:debian-7.svg)](https://imagelayers.io/?images=webdevops/php-apache:debian-7 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:latest         | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:latest.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:latest 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:ubuntu-14.04   | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:ubuntu-14.04.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:ubuntu-14.04 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:ubuntu-15.04   | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:ubuntu-15.04 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:ubuntu-15.10   | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:ubuntu-15.14 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:ubuntu-16.04   | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:ubuntu-16.04.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:ubuntu-16.04 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:ubuntu-16.10   | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:ubuntu-16.10.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:ubuntu-16.14 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:ubuntu-17.04   | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:ubuntu-17.04.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:ubuntu-17.04 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:ubuntu-17.10   | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:ubuntu-17.10.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:ubuntu-17.14 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:ubuntu-18.04   | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:ubuntu-18.04.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:ubuntu-18.04 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:centos-7       | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:centos-7.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:centos-7 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:debian-7       | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:debian-7.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:debian-7 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:debian-8-php7  | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:debian-8-php-apache7.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:debian-8-php-apache7 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:debian-8       | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:debian-8.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:debian-8 'Get your own badge on imagelayers.io')
+webdevops/php-apache-dev:debian-9       | [![](https://badge.imagelayers.io/webdevops/php-apache-dev:debian-9.svg)](https://imagelayers.io/?images=webdevops/php-apache-dev:debian-9 'Get your own badge on imagelayers.io')
