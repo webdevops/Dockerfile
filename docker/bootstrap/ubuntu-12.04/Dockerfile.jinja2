@@ -9,6 +9,6 @@
 {{ baselayout.copy() }}
 
 RUN set -x \
-    {{ bootstrap.ubuntu12() }} \
+    {{ bootstrap.ubuntuOld() }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}

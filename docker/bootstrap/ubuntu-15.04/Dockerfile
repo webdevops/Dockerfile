@@ -45,11 +45,15 @@ COPY --from=baselayout /baselayout /
 
 RUN set -x \
     # Init bootstrap
+    # Add multiverse
+    && sed -i 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list \
     && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \
     # Install base stuff
     && apt-install \
+        apt-transport-https \
+        python-software-properties \
         ca-certificates \
         apt-transport-https \
     && apt-add-repository multiverse \
