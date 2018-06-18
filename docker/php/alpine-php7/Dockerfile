@@ -58,7 +58,7 @@ RUN set -x \
         geoip \
         php7-ldap \
         # php7-memcache \
-        # php7-redis \
+        php7-redis \
         php7-pear \
         php7-phar \
         php7-openssl \
