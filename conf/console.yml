@@ -47,7 +47,6 @@ dockerTest:
       ':alpine':
         OS_FAMILY: 'alpine'
         OS_VERSION: '3'
-        PHP_REDIS: '0'
       ':alpine-3':
         PHP_APCU: '0'
       ':alpine-php5':
