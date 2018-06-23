@@ -11,7 +11,7 @@ Environment variable                          Description                       
 ``WEB_NO_CACHE_PATTERN``                      RegExp of files which should              ``\.(css|js|gif|png|jpg|svg|json|xml)$``
                                               be delivered by webserver as
                                               non cacheable to browser
-``PHP_DEBUGGER``                              Specifies which php debugger              *empty* (eg. ``xdebug``, ``blackfire`` or
+``PHP_DEBUGGER``                              Specifies which php debugger              ``xdebug`` (eg. ``xdebug``, ``blackfire`` or
                                               should be active                          ``none``)
 ``XDEBUG_REMOTE_AUTOSTART``                   php.ini value for                         ``none``
                                               ``xdebug.remote_autostart``
