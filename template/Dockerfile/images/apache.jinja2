@@ -8,10 +8,10 @@
         apache2-utils \
         apache2-proxy \
         apache2-ssl \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/httpd.conf
+    && sed -ri ' \
+        s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+        s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+        ' /etc/apache2/httpd.conf
 {%- endmacro %}
 
 
@@ -20,10 +20,10 @@
     && yum-install \
         httpd \
         mod_ssl \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf
+    && sed -ri ' \
+        s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+        s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+        ' /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/ssl.conf
 {%- endmacro %}
 
 
@@ -33,13 +33,13 @@
         apache2 \
         apache2-mpm-worker \
         libapache2-mod-fastcgi \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/apache2.conf \
-	&& rm -f /etc/apache2/sites-enabled/* \
-	&& a2enmod actions fastcgi ssl rewrite headers expires \
-	{{ provision.runBootstrap() }} \
+    && sed -ri ' \
+        s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+        s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+        ' /etc/apache2/apache2.conf \
+    && rm -f /etc/apache2/sites-enabled/* \
+    && a2enmod actions fastcgi ssl rewrite headers expires \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -48,13 +48,13 @@
     && apt-install \
         apache2 \
         apache2-mpm-worker \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/apache2.conf \
-	&& rm -f /etc/apache2/sites-enabled/* \
-	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
-	{{ provision.runBootstrap() }} \
+    && sed -ri ' \
+        s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+        s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+        ' /etc/apache2/apache2.conf \
+    && rm -f /etc/apache2/sites-enabled/* \
+    && a2enmod actions proxy proxy_fcgi ssl rewrite headers expires \
+    {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 {%- endmacro %}
 
@@ -63,12 +63,12 @@
     # Install apache
     && apt-install \
         apache2 \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/apache2.conf \
-	&& rm -f /etc/apache2/sites-enabled/* \
-	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires
+    && sed -ri ' \
+        s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+        s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+        ' /etc/apache2/apache2.conf \
+    && rm -f /etc/apache2/sites-enabled/* \
+    && a2enmod actions proxy proxy_fcgi ssl rewrite headers expires
 {%- endmacro %}
 
 
@@ -78,13 +78,13 @@
         apache2 \
         apache2-mpm-worker \
         libapache2-mod-fastcgi \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/apache2.conf \
-	&& rm -f /etc/apache2/sites-enabled/* \
-	&& a2enmod actions fastcgi ssl rewrite headers version expires \
-	&& mkdir -p /var/lock/apache2
+    && sed -ri ' \
+        s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+        s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+        ' /etc/apache2/apache2.conf \
+    && rm -f /etc/apache2/sites-enabled/* \
+    && a2enmod actions fastcgi ssl rewrite headers version expires \
+    && mkdir -p /var/lock/apache2
 {%- endmacro %}
 
 
@@ -94,13 +94,13 @@
         apache2 \
         apache2-mpm-worker \
         libapache2-mod-fastcgi \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/apache2.conf \
-	&& rm -f /etc/apache2/sites-enabled/* \
-	&& a2enmod actions fastcgi ssl rewrite headers expires \
-	&& mkdir -p /var/lock/apache2
+    && sed -ri ' \
+        s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+        s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+        ' /etc/apache2/apache2.conf \
+    && rm -f /etc/apache2/sites-enabled/* \
+    && a2enmod actions fastcgi ssl rewrite headers expires \
+    && mkdir -p /var/lock/apache2
 {%- endmacro %}
 
 
@@ -108,13 +108,13 @@
     # Install apache
     && apt-install \
         apache2 \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/apache2.conf \
-	&& rm -f /etc/apache2/sites-enabled/* \
-	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
-	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires
+    && sed -ri ' \
+        s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+        s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+        ' /etc/apache2/apache2.conf \
+    && rm -f /etc/apache2/sites-enabled/* \
+    && ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
+    && a2enmod actions proxy proxy_fcgi ssl rewrite headers expires
 {%- endmacro %}
 
 
@@ -122,13 +122,13 @@
     # Install apache
     && apt-install \
         apache2 \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/apache2.conf \
-	&& rm -f /etc/apache2/sites-enabled/* \
-	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
-	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires
+    && sed -ri ' \
+        s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+        s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+        ' /etc/apache2/apache2.conf \
+    && rm -f /etc/apache2/sites-enabled/* \
+    && ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
+    && a2enmod actions proxy proxy_fcgi ssl rewrite headers expires
 {%- endmacro %}
 
 
@@ -136,13 +136,13 @@
     # Install apache
     && apt-install \
         apache2 \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/apache2.conf \
-	&& rm -f /etc/apache2/sites-enabled/* \
-	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
-	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires
+    && sed -ri ' \
+        s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+        s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+        ' /etc/apache2/apache2.conf \
+    && rm -f /etc/apache2/sites-enabled/* \
+    && ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
+    && a2enmod actions proxy proxy_fcgi ssl rewrite headers expires
 {%- endmacro %}
 
 
@@ -150,11 +150,11 @@
     # Install apache
     && apt-install \
         apache2 \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/apache2.conf \
-	&& rm -f /etc/apache2/sites-enabled/* \
-	&& ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
-	&& a2enmod actions proxy proxy_fcgi ssl rewrite headers expires
+    && sed -ri ' \
+        s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+        s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+        ' /etc/apache2/apache2.conf \
+    && rm -f /etc/apache2/sites-enabled/* \
+    && ln -sf /opt/docker/etc/httpd/main.conf /etc/apache2/sites-enabled/10-docker.conf \
+    && a2enmod actions proxy proxy_fcgi ssl rewrite headers expires
 {%- endmacro %}
