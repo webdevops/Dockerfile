@@ -59,7 +59,7 @@ RUN set -x \
         geoip \
         php5-ldap \
         # php5-memcache \
-        # php5-redis \
+        php5-redis \
         php5-pear \
         php5-phar \
         php5-openssl \

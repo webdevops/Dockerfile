@@ -104,6 +104,7 @@ RUN set -x \
         # Install tools
         imagemagick \
         graphicsmagick \
+        libmagickwand-dev \
         ghostscript \
         # Libraries
         libldap-2.4-2 \
@@ -163,8 +164,10 @@ RUN set -x \
     # Install extensions for PHP 5.x
     && pecl install apcu-4.0.11 \
     && pecl install redis \
+    && pecl install imagick \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
+    && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services
