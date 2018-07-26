@@ -9,9 +9,14 @@ Container                           | Distribution name        | PHP Version
 `webdevops/php:ubuntu-15.04`        | vivid                    | PHP 5.6
 `webdevops/php:ubuntu-15.10`        | wily                     | PHP 5.6
 `webdevops/php:ubuntu-16.04`        | xenial (LTS)             | PHP 7.0
+`webdevops/php:ubuntu-16.10`        | yakkety                  | PHP 7.0
+`webdevops/php:ubuntu-17.04`        | zesty                    | PHP 7.0
+`webdevops/php:ubuntu-17.10`        | artful                   | PHP 7.0
+`webdevops/php:ubuntu-18.04`        | bionic (LTS)             | PHP 7.2
 `webdevops/php:debian-7`            | wheezy                   | PHP 5.4
 `webdevops/php:debian-8`            | jessie                   | PHP 5.6
 `webdevops/php:debian-8-php7`       | jessie with dotdeb       | PHP 7.x (via dotdeb)
+`webdevops/php:debian-9`            | stretch                  | PHP 7.0
 `webdevops/php:centos-7`            |                          | PHP 5.4
 
 
@@ -42,7 +47,14 @@ webdevops/php:ubuntu-12.04          | [![](https://badge.imagelayers.io/webdevop
 webdevops/php:ubuntu-14.04          | [![](https://badge.imagelayers.io/webdevops/php:ubuntu-14.04.svg)](https://imagelayers.io/?images=webdevops/php:ubuntu-14.04 'Get your own badge on imagelayers.io')
 webdevops/php:ubuntu-15.04          | [![](https://badge.imagelayers.io/webdevops/php:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/php:ubuntu-15.04 'Get your own badge on imagelayers.io')
 webdevops/php:ubuntu-15.10          | [![](https://badge.imagelayers.io/webdevops/php:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/php:ubuntu-15.14 'Get your own badge on imagelayers.io')
+webdevops/php:ubuntu-16.04          | [![](https://badge.imagelayers.io/webdevops/php:ubuntu-16.04.svg)](https://imagelayers.io/?images=webdevops/php:ubuntu-16.04 'Get your own badge on imagelayers.io')
+webdevops/php:ubuntu-16.10          | [![](https://badge.imagelayers.io/webdevops/php:ubuntu-16.10.svg)](https://imagelayers.io/?images=webdevops/php:ubuntu-16.14 'Get your own badge on imagelayers.io')
+webdevops/php:ubuntu-17.04          | [![](https://badge.imagelayers.io/webdevops/php:ubuntu-17.04.svg)](https://imagelayers.io/?images=webdevops/php:ubuntu-17.04 'Get your own badge on imagelayers.io')
+webdevops/php:ubuntu-17.10          | [![](https://badge.imagelayers.io/webdevops/php:ubuntu-17.10.svg)](https://imagelayers.io/?images=webdevops/php:ubuntu-17.14 'Get your own badge on imagelayers.io')
+webdevops/php:ubuntu-18.04          | [![](https://badge.imagelayers.io/webdevops/php:ubuntu-18.04.svg)](https://imagelayers.io/?images=webdevops/php:ubuntu-18.04 'Get your own badge on imagelayers.io')
 webdevops/php:centos-7              | [![](https://badge.imagelayers.io/webdevops/php:centos-7.svg)](https://imagelayers.io/?images=webdevops/php:centos-7 'Get your own badge on imagelayers.io')
-webdevops/php:debian-8-php7         | [![](https://badge.imagelayers.io/webdevops/php:debian-8-php7.svg)](https://imagelayers.io/?images=webdevops/php:debian-8-php7 'Get your own badge on imagelayers.io')
-webdevops/php:debian-8              | [![](https://badge.imagelayers.io/webdevops/php:debian-8.svg)](https://imagelayers.io/?images=webdevops/php:debian-8 'Get your own badge on imagelayers.io')
 webdevops/php:debian-7              | [![](https://badge.imagelayers.io/webdevops/php:debian-7.svg)](https://imagelayers.io/?images=webdevops/php:debian-7 'Get your own badge on imagelayers.io')
+webdevops/php:debian-8              | [![](https://badge.imagelayers.io/webdevops/php:debian-8.svg)](https://imagelayers.io/?images=webdevops/php:debian-8 'Get your own badge on imagelayers.io')
+webdevops/php:debian-8-php7         | [![](https://badge.imagelayers.io/webdevops/php:debian-8-php7.svg)](https://imagelayers.io/?images=webdevops/php:debian-8-php7 'Get your own badge on imagelayers.io')
+webdevops/php:debian-9              | [![](https://badge.imagelayers.io/webdevops/php:debian-9.svg)](https://imagelayers.io/?images=webdevops/php:debian-9 'Get your own badge on imagelayers.io')
+

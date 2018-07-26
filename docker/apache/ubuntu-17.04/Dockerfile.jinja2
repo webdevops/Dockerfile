@@ -5,7 +5,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ apache.ubuntu16() }} \
+    {{ apache.ubuntu17() }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 

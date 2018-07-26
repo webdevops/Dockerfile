@@ -1,0 +1,14 @@
+{{ baselayout.dockerStage() }}
+
+{{ docker.fromOfficial("ubuntu", "18.04") }}
+
+{{ docker.version() }}
+
+{{ environment.general() }}
+
+{{ baselayout.copy() }}
+
+RUN set -x \
+    {{ bootstrap.ubuntu() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

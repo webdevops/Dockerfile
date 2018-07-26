@@ -4,13 +4,13 @@ Automated build and tested by [WebDevOps Build Server](https://build.webdevops.i
 
 Container                           | Distribution name                                                                 
 ----------------------------------- | -------------------
-`webdevops/nginx:ubuntu-12.04`      | precise            
-`webdevops/nginx:ubuntu-14.04`      | trusty (LTS)       
-`webdevops/nginx:ubuntu-15.04`      | vivid              
-`webdevops/nginx:ubuntu-15.10`      | wily               
-`webdevops/nginx:debian-7`          | wheezy            
-`webdevops/nginx:debian-8`          | jessie            
-`webdevops/nginx:centos-7`          |                    
+`webdevops/nginx:ubuntu-12.04`      | precise
+`webdevops/nginx:ubuntu-14.04`      | trusty (LTS)
+`webdevops/nginx:ubuntu-15.04`      | vivid
+`webdevops/nginx:ubuntu-15.10`      | wily
+`webdevops/nginx:debian-7`          | wheezy
+`webdevops/nginx:debian-8`          | jessie
+`webdevops/nginx:centos-7`          |
 
 
 ## Environment variables
@@ -50,6 +50,12 @@ webdevops/nginx:latest              | [![](https://badge.imagelayers.io/webdevop
 webdevops/nginx:ubuntu-14.04        | [![](https://badge.imagelayers.io/webdevops/nginx:ubuntu-14.04.svg)](https://imagelayers.io/?images=webdevops/nginx:ubuntu-14.04 'Get your own badge on imagelayers.io')
 webdevops/nginx:ubuntu-15.04        | [![](https://badge.imagelayers.io/webdevops/nginx:ubuntu-15.04.svg)](https://imagelayers.io/?images=webdevops/nginx:ubuntu-15.04 'Get your own badge on imagelayers.io')
 webdevops/nginx:ubuntu-15.10        | [![](https://badge.imagelayers.io/webdevops/nginx:ubuntu-15.10.svg)](https://imagelayers.io/?images=webdevops/nginx:ubuntu-15.14 'Get your own badge on imagelayers.io')
+webdevops/nginx:ubuntu-16.04        | [![](https://badge.imagelayers.io/webdevops/nginx:ubuntu-16.04.svg)](https://imagelayers.io/?images=webdevops/nginx:ubuntu-16.04 'Get your own badge on imagelayers.io')
+webdevops/nginx:ubuntu-16.10        | [![](https://badge.imagelayers.io/webdevops/nginx:ubuntu-16.10.svg)](https://imagelayers.io/?images=webdevops/nginx:ubuntu-16.14 'Get your own badge on imagelayers.io')
+webdevops/nginx:ubuntu-17.04        | [![](https://badge.imagelayers.io/webdevops/nginx:ubuntu-17.04.svg)](https://imagelayers.io/?images=webdevops/nginx:ubuntu-17.04 'Get your own badge on imagelayers.io')
+webdevops/nginx:ubuntu-17.10        | [![](https://badge.imagelayers.io/webdevops/nginx:ubuntu-17.10.svg)](https://imagelayers.io/?images=webdevops/nginx:ubuntu-17.14 'Get your own badge on imagelayers.io')
+webdevops/nginx:ubuntu-18.04        | [![](https://badge.imagelayers.io/webdevops/nginx:ubuntu-18.04.svg)](https://imagelayers.io/?images=webdevops/nginx:ubuntu-18.04 'Get your own badge on imagelayers.io')
 webdevops/nginx:centos-7            | [![](https://badge.imagelayers.io/webdevops/nginx:centos-7.svg)](https://imagelayers.io/?images=webdevops/nginx:centos-7 'Get your own badge on imagelayers.io')
 webdevops/nginx:debian-7            | [![](https://badge.imagelayers.io/webdevops/nginx:debian-7.svg)](https://imagelayers.io/?images=webdevops/nginx:debian-7 'Get your own badge on imagelayers.io')
 webdevops/nginx:debian-8            | [![](https://badge.imagelayers.io/webdevops/nginx:debian-8.svg)](https://imagelayers.io/?images=webdevops/nginx:debian-8 'Get your own badge on imagelayers.io')
+webdevops/nginx:debian-9            | [![](https://badge.imagelayers.io/webdevops/nginx:debian-9.svg)](https://imagelayers.io/?images=webdevops/nginx:debian-9 'Get your own badge on imagelayers.io')
