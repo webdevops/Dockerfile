@@ -24,6 +24,7 @@ RUN set -x \
         ldns \
         openssh-client \
         rsync \
+        patch \
         git \
     && docker-run-bootstrap \
     && docker-image-cleanup

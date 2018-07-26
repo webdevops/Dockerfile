@@ -12,6 +12,7 @@
         ldns \
         openssh-client \
         rsync \
+        patch \
         git
 {%- endmacro %}
 
@@ -28,6 +29,7 @@
         bind-utils \
         rsync \
         git \
+        patch \
     && /usr/local/bin/generate-locales
 {%- endmacro %}
 
@@ -44,6 +46,7 @@
         openssh-client \
         rsync \
         git \
+        patch \
     && /usr/local/bin/generate-locales
 {%- endmacro %}
 
@@ -59,6 +62,7 @@
         openssh-client \
         rsync \
         git \
+        patch \
     && /usr/local/bin/generate-locales
 {%- endmacro %}
 
@@ -74,6 +78,7 @@
         openssh-client \
         rsync \
         git \
+        patch \
     && mkdir -p /var/lib/syslog-ng/ \
     && /usr/local/bin/generate-locales
 {%- endmacro %}

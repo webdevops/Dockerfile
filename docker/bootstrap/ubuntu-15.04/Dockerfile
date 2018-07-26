@@ -57,6 +57,7 @@ RUN set -x \
         ca-certificates \
         apt-transport-https \
     && apt-add-repository multiverse \
+    && sed -i 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list \
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     && docker-run-bootstrap \

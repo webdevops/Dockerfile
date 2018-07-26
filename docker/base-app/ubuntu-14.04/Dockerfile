@@ -25,6 +25,7 @@ RUN set -x \
         openssh-client \
         rsync \
         git \
+        patch \
     && mkdir -p /var/lib/syslog-ng/ \
     && /usr/local/bin/generate-locales \
     && docker-run-bootstrap \

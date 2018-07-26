@@ -127,6 +127,7 @@ RUN set -x \
         openssh-client \
         rsync \
         git \
+        patch \
     && /usr/local/bin/generate-locales \
     && docker-run-bootstrap \
     && docker-image-cleanup
