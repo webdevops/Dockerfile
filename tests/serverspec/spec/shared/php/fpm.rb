@@ -30,7 +30,13 @@ shared_examples 'php-fpm7::layout' do
         elsif os[:family] == 'redhat'
             expect(file("/etc/php-fpm.d")).to be_symlink
         elsif ['debian', 'ubuntu'].include?(os[:family])
-            expect(file("/etc/php/7.0/fpm/pool.d")).to be_symlink
+            if (os[:family] == 'ubuntu' and os[:version] == '17.10')
+                expect(file("/etc/php/7.1/fpm/pool.d")).to be_symlink
+            elsif (os[:family] == 'ubuntu' and os[:version] == '18.04')
+                expect(file("/etc/php/7.2/fpm/pool.d")).to be_symlink
+            else
+                expect(file("/etc/php/7.0/fpm/pool.d")).to be_symlink
+            end
         end
     end
 end

@@ -51,11 +51,23 @@ elif [[ "$(version-compare "$PHP_VERSION" "7.99.999")" == "<" ]]; then
     #############################
     case "$IMAGE_FAMILY" in
         Debian|Ubuntu)
-             PHP_ETC_DIR=/etc/php/7.0
-             PHP_MAIN_CONF=/etc/php/7.0/fpm/php-fpm.conf
+             if [[ "$(version-compare "$PHP_VERSION" "7.2.*")" == "=" ]]; then
+                 PHP_ETC_DIR=/etc/php/7.2
+                 PHP_MAIN_CONF=/etc/php/7.2/fpm/php-fpm.conf
+                 PHP_POOL_DIR=/etc/php/7.2/fpm/pool.d
+                 PHP_FPM_BIN=/usr/sbin/php-fpm7.2
+             elif [[ "$(version-compare "$PHP_VERSION" "7.1.*")" == "=" ]]; then
+                 PHP_ETC_DIR=/etc/php/7.1
+                 PHP_MAIN_CONF=/etc/php/7.1/fpm/php-fpm.conf
+                 PHP_POOL_DIR=/etc/php/7.1/fpm/pool.d
+                 PHP_FPM_BIN=/usr/sbin/php-fpm7.1
+             else
+                 PHP_ETC_DIR=/etc/php/7.0
+                 PHP_MAIN_CONF=/etc/php/7.0/fpm/php-fpm.conf
+                 PHP_POOL_DIR=/etc/php/7.0/fpm/pool.d
+                 PHP_FPM_BIN=/usr/sbin/php-fpm7.0
+             fi
              PHP_POOL_CONF=www.conf
-             PHP_POOL_DIR=/etc/php/7.0/fpm/pool.d
-             PHP_FPM_BIN=/usr/sbin/php-fpm7.0
             ;;
 
         RedHat)
