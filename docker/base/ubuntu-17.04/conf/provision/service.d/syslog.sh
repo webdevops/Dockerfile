@@ -21,7 +21,7 @@ case "$IMAGE_FAMILY" in
 esac
 
 ## Configuration
-SYSLOG_NG_VERSION=$(syslog-ng --version | grep -E -e '^syslog-ng[ ]+[0-9]+\.[0-9]+' | head -n 1 | awk '{print $2}' | cut -f 1,2 -d .)
+SYSLOG_NG_VERSION=$(syslog-ng --version | grep -E -e '^Installer-Version:[ ]+[0-9]+\.[0-9]+' | head -n 1 | awk '{print $2}' | cut -f 1,2 -d .)
 
 # Disable caps inside container
 if [[ -f /etc/default/syslog-ng ]]; then
