@@ -187,7 +187,7 @@
     {{ services.php() }}
 {%- endmacro %}
 
-{% macro ubuntu(role='') -%}
+{% macro ubuntu(role='', phpVersion='7.0') -%}
     # Install php environment
     && apt-install \
         # Install tools
@@ -195,24 +195,24 @@
         graphicsmagick \
         ghostscript \
         # Install php (cli/fpm)
-        php7.0-cli \
-        php7.0-fpm \
-        php7.0-json \
-        php7.0-intl \
-        php7.0-curl \
-        php7.0-mysql \
-        php7.0-mcrypt \
-        php7.0-gd \
-        php7.0-sqlite3 \
-        php7.0-ldap \
-        php7.0-opcache \
-        php7.0-soap \
-        php7.0-zip \
-        php7.0-mbstring \
-        php7.0-bcmath \
-        php7.0-xmlrpc \
-        php7.0-xsl \
-        php7.0-bz2 \
+        php{{ phpVersion }}-cli \
+        php{{ phpVersion }}-fpm \
+        php{{ phpVersion }}-json \
+        php{{ phpVersion }}-intl \
+        php{{ phpVersion }}-curl \
+        php{{ phpVersion }}-mysql \
+        php{{ phpVersion }}-mcrypt \
+        php{{ phpVersion }}-gd \
+        php{{ phpVersion }}-sqlite3 \
+        php{{ phpVersion }}-ldap \
+        php{{ phpVersion }}-opcache \
+        php{{ phpVersion }}-soap \
+        php{{ phpVersion }}-zip \
+        php{{ phpVersion }}-mbstring \
+        php{{ phpVersion }}-bcmath \
+        php{{ phpVersion }}-xmlrpc \
+        php{{ phpVersion }}-xsl \
+        php{{ phpVersion }}-bz2 \
         php-pear \
         php-apcu \
         php-redis \

@@ -5,7 +5,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ php7.ubuntu() }} \
+    {{ php7.ubuntu(phpVersion='7.2') }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 
