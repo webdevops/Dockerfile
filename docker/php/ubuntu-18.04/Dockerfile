@@ -27,7 +27,6 @@ RUN set -x \
         php7.2-intl \
         php7.2-curl \
         php7.2-mysql \
-        php7.2-mcrypt \
         php7.2-gd \
         php7.2-sqlite3 \
         php7.2-ldap \
@@ -42,6 +41,7 @@ RUN set -x \
         php-pear \
         php-apcu \
         php-redis \
+        php-libsodium \
         php-memcached \
     && pecl channel-update pecl.php.net \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \

@@ -201,7 +201,9 @@
         php{{ phpVersion }}-intl \
         php{{ phpVersion }}-curl \
         php{{ phpVersion }}-mysql \
+{%- if phpVersion == '7.0' %}
         php{{ phpVersion }}-mcrypt \
+{%- endif %}
         php{{ phpVersion }}-gd \
         php{{ phpVersion }}-sqlite3 \
         php{{ phpVersion }}-ldap \
@@ -216,6 +218,9 @@
         php-pear \
         php-apcu \
         php-redis \
+{%- if phpVersion == '7.1' or phpVersion == '7.2' %}
+        php-libsodium \
+{%- endif %}
         php-memcached \
     && pecl channel-update pecl.php.net \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
