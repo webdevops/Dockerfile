@@ -17,6 +17,7 @@ RUN set -x \
     # Install apache
     && apk-install \
         apache2 \
+        apache2-ctl \
         apache2-utils \
         apache2-proxy \
         apache2-ssl \
