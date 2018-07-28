@@ -1,18 +1,23 @@
 #!/bin/bash
 
-#
-# Test webdevops/bootstrap images
-#
-BOOTSTRAP_IMAGES="$(docker images -f "reference=webdevops/bootstrap" --format "{{.Tag}}")"
-for bootstrapImageTag in ${BOOTSTRAP_IMAGES}; do
-    if [ "$bootstrapImageTag" = "<none>" ]; then
+TEST_REPOS="bootstrap base"
+
+for testRepo in ${TEST_REPOS}; do
+    if [[ ! -f $testRepo/test.yaml ]]; then
+        echo "Skipping tests for webdevops/$testRepo as no common test.yaml was found"
         continue
     fi
-    echo "==================================="
-    echo "Testing: webdevops/bootstrap:$bootstrapImageTag"
-    echo "==================================="
-    container-structure-test test --image webdevops/bootstrap:$bootstrapImageTag --config bootstrap/files.yaml
-    if [[ -f bootstrap/$bootstrapImageTag/commands.yaml ]]; then
-        container-structure-test test --image webdevops/bootstrap:$bootstrapImageTag --config bootstrap/$bootstrapImageTag/commands.yaml
-    fi
+    TEST_IMAGES="$(docker images -f "reference=webdevops/${testRepo}" --format "{{.Tag}}")"
+    for imageTag in ${TEST_IMAGES}; do
+        if [ "$imageTag" = "<none>" ]; then
+            continue
+        fi
+        echo "=============================================="
+        echo "Testing: webdevops/$testRepo:$imageTag"
+        echo "=============================================="
+        container-structure-test test --image webdevops/$testRepo:$imageTag --config $testRepo/test.yaml
+        if [[ -f $testRepo/$imageTag/test.yaml ]]; then
+            container-structure-test test --image webdevops/$testRepo:$imageTag --config $testRepo/$imageTag/test.yaml
+        fi
+    done
 done
