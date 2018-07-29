@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEST_REPOS="bootstrap base"
+TEST_REPOS="bootstrap base base-app"
 
 for testRepo in ${TEST_REPOS}; do
     if [[ ! -f $testRepo/test.yaml ]]; then
@@ -15,9 +15,10 @@ for testRepo in ${TEST_REPOS}; do
         echo "=============================================="
         echo "Testing: webdevops/$testRepo:$imageTag"
         echo "=============================================="
-        container-structure-test test --image webdevops/$testRepo:$imageTag --config $testRepo/test.yaml
         if [[ -f $testRepo/$imageTag/test.yaml ]]; then
-            container-structure-test test --image webdevops/$testRepo:$imageTag --config $testRepo/$imageTag/test.yaml
+            container-structure-test test --image webdevops/$testRepo:$imageTag --config $testRepo/$imageTag/test.yaml  --config $testRepo/test.yaml
+        else
+            container-structure-test test --image webdevops/$testRepo:$imageTag --config $testRepo/test.yaml
         fi
     done
 done

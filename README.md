@@ -48,6 +48,7 @@ Command                     | Description
 `make full`                 | Run provision and build all images
 <br>                        |
 `make test`                 | Run testsuite (use currently available docker images on your docker host)
+`make structure-tests`      | Run container structure tests (use currently available docker images on your docker host)
 `make test-hub-images`      | Run testsuite but pull newest docker images from docker hub first
 <br>                        |
 `make push`                 | Run tests and rebuild them (use cache) and push them to docker hub
@@ -63,7 +64,7 @@ Command                     | Description
 
 # Provisioning
 
-All `base` inherited containers provides an modular provisioning available as simple shell scripts and ansible roles.
+All `base` inherited containers provides an modular provisioning available as simple shell scripts.
 See [docker/base/README.md](docker/base/README.md) for more informations.
 
 The configuration and provisioning files are build from [_provisioning/](_provisioning/README.md) to get a consistent
