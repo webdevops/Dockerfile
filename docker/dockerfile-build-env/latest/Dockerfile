@@ -7,6 +7,10 @@ FROM webdevops/bootstrap:ubuntu-16.04
 
 RUN apt-install \
         build-essential \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        software-properties-common \
         python \
         python-dev \
         python-setuptools \
@@ -14,6 +18,9 @@ RUN apt-install \
         ruby \
         ruby-dev \
         ruby-bundler \
+    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
+    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu    $(lsb_release -cs)    stable" \
+    && apt-install docker-ce \
     && pip install --upgrade pip \
     && hash -r pip \
     && pip install --upgrade setuptools \
