@@ -20,6 +20,7 @@
         php7-pdo_sqlite \
         php7-mcrypt \
         php7-gd \
+        php7-imagick \
         php7-bcmath \
         php7-soap \
         php7-sqlite3 \
@@ -60,7 +61,6 @@
         php7-simplexml \
         php7-tokenizer \
         php7-xmlwriter \
-        php7-imagick \
     && ln -s /usr/sbin/php-fpm7 /usr/sbin/php-fpm \
     && pecl channel-update pecl.php.net \
     && pear channel-update pear.php.net \
@@ -91,6 +91,7 @@
         php7.0-mysql \
         php7.0-mcrypt \
         php7.0-gd \
+        php7.0-imagick \
         php7.0-sqlite3 \
         php7.0-ldap \
         php7.0-opcache \
@@ -133,6 +134,7 @@
         php7.0-mysql \
         php7.0-mcrypt \
         php7.0-gd \
+        php7.0-imagick \
         php7.0-sqlite3 \
         php7.0-ldap \
         php7.0-opcache \
@@ -168,6 +170,7 @@
         php7.0-mysql \
         php7.0-mcrypt \
         php7.0-gd \
+        php7.0-imagick \
         php7.0-sqlite3 \
         php7.0-ldap \
         php7.0-opcache \
@@ -206,6 +209,7 @@
         php{{ phpVersion }}-mcrypt \
 {%- endif %}
         php{{ phpVersion }}-gd \
+        php{{ phpVersion }}-imagick \
         php{{ phpVersion }}-sqlite3 \
         php{{ phpVersion }}-ldap \
         php{{ phpVersion }}-opcache \

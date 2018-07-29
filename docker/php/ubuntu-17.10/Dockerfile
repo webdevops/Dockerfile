@@ -28,6 +28,7 @@ RUN set -x \
         php7.1-curl \
         php7.1-mysql \
         php7.1-gd \
+        php7.1-imagick \
         php7.1-sqlite3 \
         php7.1-ldap \
         php7.1-opcache \

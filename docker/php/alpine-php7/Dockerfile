@@ -31,6 +31,7 @@ RUN set -x \
         php7-pdo_sqlite \
         php7-mcrypt \
         php7-gd \
+        php7-imagick \
         php7-bcmath \
         php7-soap \
         php7-sqlite3 \
@@ -71,7 +72,6 @@ RUN set -x \
         php7-simplexml \
         php7-tokenizer \
         php7-xmlwriter \
-        php7-imagick \
     && ln -s /usr/sbin/php-fpm7 /usr/sbin/php-fpm \
     && pecl channel-update pecl.php.net \
     && pear channel-update pear.php.net \

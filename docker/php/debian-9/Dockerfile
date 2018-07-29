@@ -29,6 +29,7 @@ RUN set -x \
         php7.0-mysql \
         php7.0-mcrypt \
         php7.0-gd \
+        php7.0-imagick \
         php7.0-sqlite3 \
         php7.0-ldap \
         php7.0-opcache \
