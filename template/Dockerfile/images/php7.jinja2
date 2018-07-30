@@ -209,7 +209,6 @@
         php{{ phpVersion }}-mcrypt \
 {%- endif %}
         php{{ phpVersion }}-gd \
-        php{{ phpVersion }}-imagick \
         php{{ phpVersion }}-sqlite3 \
         php{{ phpVersion }}-ldap \
         php{{ phpVersion }}-opcache \
@@ -222,6 +221,8 @@
         php{{ phpVersion }}-bz2 \
         php-pear \
         php-apcu \
+        php-igbinary \
+        php-imagick \
         php-redis \
 {%- if phpVersion == '7.1' or phpVersion == '7.2' %}
         php-libsodium \

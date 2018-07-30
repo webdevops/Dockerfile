@@ -29,7 +29,6 @@ RUN set -x \
         php7.0-mysql \
         php7.0-mcrypt \
         php7.0-gd \
-        php7.0-imagick \
         php7.0-sqlite3 \
         php7.0-ldap \
         php7.0-opcache \
@@ -42,6 +41,8 @@ RUN set -x \
         php7.0-bz2 \
         php-pear \
         php-apcu \
+        php-igbinary \
+        php-imagick \
         php-redis \
         php-memcached \
     && pecl channel-update pecl.php.net \

@@ -28,7 +28,6 @@ RUN set -x \
         php7.2-curl \
         php7.2-mysql \
         php7.2-gd \
-        php7.2-imagick \
         php7.2-sqlite3 \
         php7.2-ldap \
         php7.2-opcache \
@@ -41,6 +40,8 @@ RUN set -x \
         php7.2-bz2 \
         php-pear \
         php-apcu \
+        php-igbinary \
+        php-imagick \
         php-redis \
         php-libsodium \
         php-memcached \
