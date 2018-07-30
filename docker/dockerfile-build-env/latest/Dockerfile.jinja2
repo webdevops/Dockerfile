@@ -1,10 +1,9 @@
-{{ docker.from("bootstrap","ubuntu-16.04") }}
+{{ docker.from("base-app","ubuntu-16.04") }}
 
 RUN apt-install \
         build-essential \
         apt-transport-https \
         ca-certificates \
-        curl \
         software-properties-common \
         python \
         python-dev \
@@ -49,3 +48,7 @@ RUN apt-install \
         pytest-timeout \
         pytest-rerunfailures \
     {{ docker.cleanup() }}
+
+WORKDIR /app
+
+CMD ["gosu", "application", "bash"]

@@ -3,13 +3,12 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/bootstrap:ubuntu-16.04
+FROM webdevops/base-app:ubuntu-16.04
 
 RUN apt-install \
         build-essential \
         apt-transport-https \
         ca-certificates \
-        curl \
         software-properties-common \
         python \
         python-dev \
@@ -54,3 +53,7 @@ RUN apt-install \
         pytest-timeout \
         pytest-rerunfailures \
     && docker-image-cleanup
+
+WORKDIR /app
+
+CMD ["gosu", "application", "bash"]
