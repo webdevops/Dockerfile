@@ -25,34 +25,9 @@ RUN apt-install \
     && pip install --upgrade pip \
     && hash -r pip \
     && pip install --upgrade setuptools \
-    && pip install --upgrade \
-        MarkupSafe \
-        Jinja2 \
-        graphviz \
-        funcsigs \
-        pbr \
-        six \
-        mock \
-        psutil \
-        pylev \
-        py \
-        appdirs \
-        pyparsing \
-        packaging \
-        pytest \
-        simplejson \
-        backpack \
-        cleo \
-        pyyaml \
-        yamlordereddictloader \
-        testinfra \
-        cloudpickle \
-        pyinotify \
-        configparser \
-        doit==0.29.0 \
-        termcolor \
-        pytest-timeout \
-        pytest-rerunfailures \
+    && git clone https://github.com/webdevops/Dockerfile.git /tmp/Dockerfile \
+    && cd /tmp/Dockerfile \
+    && make setup \
     && docker-image-cleanup
 
 WORKDIR /app
