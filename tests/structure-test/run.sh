@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEST_REPOS="bootstrap base base-app"
+TEST_REPOS="bootstrap base base-app php"
 
 for testRepo in ${TEST_REPOS}; do
     if [[ ! -f $testRepo/test.yaml ]]; then
