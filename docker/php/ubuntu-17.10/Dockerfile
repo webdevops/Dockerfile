@@ -40,6 +40,8 @@ RUN set -x \
         php7.1-bz2 \
         php-pear \
         php-apcu \
+        php-igbinary \
+        php-imagick \
         php-redis \
         php-libsodium \
         php-memcached \

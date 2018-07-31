@@ -41,6 +41,8 @@ RUN set -x \
         php7.0-bz2 \
         php-pear \
         php-apcu \
+        php-igbinary \
+        php-imagick \
         php-redis \
         php-memcached \
     && pecl channel-update pecl.php.net \

@@ -1,6 +1,6 @@
 ![Dockerfile](https://static.webdevops.io/dockerfile.svg)
 
-Automated built and tested on [WebDevOps Build server](https://build.webdevops.io/) sponsored by [<img src="https://static.webdevops.io/sponsor-infogene.png" width="100">](http://infogene.eu/)
+Automated built and tested on [WebDevOps CI](https://gitlab.com/webdevops/autobuild/) sponsored by [<img src="https://webdevops.io/wp-content/uploads/2016/02/onedrop-logo.png" width="50">](https://1drop.de/)
 
 [![Docker layout](documentation/docs/resources/images/docker-image-layout.gv.png)](documentation/docs/resources/images/docker-image-layout.gv.png)
 

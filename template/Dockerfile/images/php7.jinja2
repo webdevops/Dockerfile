@@ -20,6 +20,7 @@
         php7-pdo_sqlite \
         php7-mcrypt \
         php7-gd \
+        php7-imagick \
         php7-bcmath \
         php7-soap \
         php7-sqlite3 \
@@ -90,6 +91,7 @@
         php7.0-mysql \
         php7.0-mcrypt \
         php7.0-gd \
+        php7.0-imagick \
         php7.0-sqlite3 \
         php7.0-ldap \
         php7.0-opcache \
@@ -132,6 +134,7 @@
         php7.0-mysql \
         php7.0-mcrypt \
         php7.0-gd \
+        php7.0-imagick \
         php7.0-sqlite3 \
         php7.0-ldap \
         php7.0-opcache \
@@ -167,6 +170,7 @@
         php7.0-mysql \
         php7.0-mcrypt \
         php7.0-gd \
+        php7.0-imagick \
         php7.0-sqlite3 \
         php7.0-ldap \
         php7.0-opcache \
@@ -217,8 +221,10 @@
         php{{ phpVersion }}-bz2 \
         php-pear \
         php-apcu \
+        php-igbinary \
+        php-imagick \
         php-redis \
-{%- if phpVersion == '7.1' or phpVersion == '7.2' %}
+{%- if phpVersion == '7.1' %}
         php-libsodium \
 {%- endif %}
         php-memcached \

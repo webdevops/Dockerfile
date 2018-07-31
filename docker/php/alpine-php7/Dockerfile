@@ -31,6 +31,7 @@ RUN set -x \
         php7-pdo_sqlite \
         php7-mcrypt \
         php7-gd \
+        php7-imagick \
         php7-bcmath \
         php7-soap \
         php7-sqlite3 \
