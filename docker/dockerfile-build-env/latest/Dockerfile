@@ -3,13 +3,12 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/bootstrap:ubuntu-16.04
+FROM webdevops/base-app:ubuntu-16.04
 
 RUN apt-install \
         build-essential \
         apt-transport-https \
         ca-certificates \
-        curl \
         software-properties-common \
         python \
         python-dev \
@@ -22,35 +21,15 @@ RUN apt-install \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
     && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu    $(lsb_release -cs)    stable" \
     && apt-install docker-ce \
+    && usermod -aG docker application \
     && pip install --upgrade pip \
     && hash -r pip \
     && pip install --upgrade setuptools \
-    && pip install --upgrade \
-        MarkupSafe \
-        Jinja2 \
-        graphviz \
-        funcsigs \
-        pbr \
-        six \
-        mock \
-        psutil \
-        pylev \
-        py \
-        appdirs \
-        pyparsing \
-        packaging \
-        pytest \
-        simplejson \
-        backpack \
-        cleo \
-        pyyaml \
-        yamlordereddictloader \
-        testinfra \
-        cloudpickle \
-        pyinotify \
-        configparser \
-        doit==0.29.0 \
-        termcolor \
-        pytest-timeout \
-        pytest-rerunfailures \
+    && git clone --depth 1 https://github.com/webdevops/Dockerfile.git /tmp/Dockerfile \
+    && cd /tmp/Dockerfile \
+    && make setup \
     && docker-image-cleanup
+
+WORKDIR /app
+
+CMD ["gosu", "application", "bash"]

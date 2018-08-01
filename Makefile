@@ -42,15 +42,9 @@ requirements:
 test:
 	python bin/console test:serverspec --threads=auto -v
 
-baselayout:
-	echo "[WARNING] Not needed anymore"
-	python bin/console generate:provision
-
 provision:
 	python bin/console generate:dockerfile
 	python bin/console generate:provision
-
-publish:    dist-update rebuild test old-test push
 
 push:
 	python ./bin/console docker:push --threads=auto
