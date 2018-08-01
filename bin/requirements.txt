@@ -22,7 +22,6 @@ pytest
 simplejson
 backpack
 PyYAML
-testinfra
 cloudpickle
 pyinotify
 configparser
