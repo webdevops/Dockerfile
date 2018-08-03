@@ -1,5 +1,5 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/typo3-solr:8.0
+# Dockerfile for webdevops/typo3-solr:8.1
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
@@ -27,7 +27,7 @@ RUN mkdir -p \
     && "/baselayout/sbin/gosu" nobody true
 
 
-FROM solr:6.6.2
+FROM solr:6.6.3
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
@@ -49,7 +49,7 @@ RUN apt-update \
     && apt-install net-tools \
     && generate-dockerimage-info \
     && mkdir /tmp/solr \
-    && wget -O/tmp/solr/extension.tar.gz "https://github.com/TYPO3-Solr/ext-solr/archive/8.0.0.tar.gz" \
+    && wget -O/tmp/solr/extension.tar.gz "https://github.com/TYPO3-Solr/ext-solr/archive/8.1.0.tar.gz" \
     && cd /tmp/solr \
     && tar --strip 1 -zxf /tmp/solr/extension.tar.gz \
     && rm -rf /opt/solr/server/solr \

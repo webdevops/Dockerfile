@@ -27,7 +27,7 @@ RUN mkdir -p \
     && "/baselayout/sbin/gosu" nobody true
 
 
-FROM solr:6.6.3
+FROM solr:6.6.2
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
