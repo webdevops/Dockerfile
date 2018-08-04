@@ -1,0 +1,14 @@
+{
+    "name": "webdevops/dockerfile-ci",
+    "description": "Gitlab CI configuration generation",
+    "require": {
+        "symfony/yaml": "^4.1"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hans Höchtl",
+            "email": "hhoechtl@1drop.de"
+        }
+    ]
+}
