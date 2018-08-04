@@ -124,17 +124,20 @@ usort($dockerfiles, function($a, $b) {
 foreach ($dockerfiles as $dockerfile) {
     $script = [
         'cd ' . dirname($dockerfile->path),
-        'docker build --no-cache -t ' . $dockerfile->image . ' .',
+        //'docker build --no-cache -t ' . $dockerfile->image . ' .',
+        'docker build --no-cache -t $CI_REGISTRY_IMAGE/' . $dockerfile->jobName . ' .',
     ];
 
     // Add tests if available
     list($type, $distro) = explode(':', $dockerfile->jobName);
     if (file_exists(__DIR__ . '/../tests/structure-test/' . $type . '/test.yaml')) {
-        $script[] = 'cd $CI_BUILD_DIR/tests/structure-test';
+        $script[] = 'cd $CI_PROJECT_DIR/tests/structure-test';
         if (file_exists(__DIR__ . '/../tests/structure-test/' . $type . '/' . $distro . '/test.yaml')) {
-            $script[] = 'container-structure-test test --image ' . $dockerfile->image . ' --config ' . $type . '/test.yaml --config ' . $type . '/' . $distro . '/test.yaml';
+            //$script[] = 'container-structure-test test --image ' . $dockerfile->image . ' --config ' . $type . '/test.yaml --config ' . $type . '/' . $distro . '/test.yaml';
+            $script[] = 'container-structure-test test --image $CI_REGISTRY_IMAGE/' . $dockerfile->jobName . ' --config ' . $type . '/test.yaml --config ' . $type . '/' . $distro . '/test.yaml';
         } else {
-            $script[] = 'container-structure-test test --image ' . $dockerfile->image . ' --config ' . $type . '/test.yaml';
+            //$script[] = 'container-structure-test test --image ' . $dockerfile->image . ' --config ' . $type . '/test.yaml';
+            $script[] = 'container-structure-test test --image $CI_REGISTRY_IMAGE/' . $dockerfile->jobName . ' --config ' . $type . '/test.yaml';
         }
     }
 
@@ -142,7 +145,7 @@ foreach ($dockerfiles as $dockerfile) {
     $testDockerfile = uniqid('Dockerfile_', true);
     if (true) {
         $script = array_merge($script, [
-            'cd $CI_BUILD_DIR/tests/serverspec',
+            'cd $CI_PROJECT_DIR/tests/serverspec',
             'echo "FROM ' . $dockerfile->image . '" >> ' . $testDockerfile,
             'echo "COPY conf/ /" >> ' . $testDockerfile,
             'bash serverspec.sh spec/docker/php_spec.rb ' . $dockerfile->image .' ' . $encodedJsonConfig  . '  ' . $testDockerfile,
@@ -150,18 +153,20 @@ foreach ($dockerfiles as $dockerfile) {
     }
     */
     $script = array_merge($script, [
-        'docker push ' . $dockerfile->image
+        //'docker push ' . $dockerfile->image
+        'docker push $CI_REGISTRY_IMAGE/' . $dockerfile->jobName
     ]);
 
     $gitlabCi[$dockerfile->jobName] = [
         'stage' => 'level' . $dockerfile->level,
         'before_script' => [
-            'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+            //'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+            'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
         ],
         'script' => $script,
         'retry' => 2,
         'tags' => ['aws'],
-        'only' => ['master']
+        //'only' => ['master']
     ];
     if (!$gitlabCi->dependencyIsExternal && !empty($gitlabCi->dependency)) {
         $gitlabCi[$dockerfile->jobName]['dependencies'] = [$gitlabCi->dependency];
