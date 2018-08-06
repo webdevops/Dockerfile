@@ -7,20 +7,19 @@ stages:
     - level3
     - level4
     - level5
-before_script:
-    - 'apk add curl'
-    - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
-    - 'chmod +x container-structure-test-linux-amd64'
-    - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
 'bootstrap:alpine':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/alpine'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:alpine .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:alpine --config bootstrap/test.yaml --config bootstrap/alpine/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:alpine --config bootstrap/test.yaml --config bootstrap/alpine/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:alpine'
     retry: 2
     tags:
@@ -28,12 +27,16 @@ before_script:
 'bootstrap:centos-7':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/centos-7'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:centos-7 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:centos-7 --config bootstrap/test.yaml --config bootstrap/centos-7/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:centos-7 --config bootstrap/test.yaml --config bootstrap/centos-7/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:centos-7'
     retry: 2
     tags:
@@ -41,12 +44,16 @@ before_script:
 'bootstrap:debian-7':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/debian-7'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:debian-7 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:debian-7 --config bootstrap/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:debian-7 --config bootstrap/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:debian-7'
     retry: 2
     tags:
@@ -54,12 +61,16 @@ before_script:
 'bootstrap:debian-8':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/debian-8'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:debian-8 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:debian-8 --config bootstrap/test.yaml --config bootstrap/debian-8/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:debian-8 --config bootstrap/test.yaml --config bootstrap/debian-8/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:debian-8'
     retry: 2
     tags:
@@ -67,12 +78,16 @@ before_script:
 'bootstrap:debian-9':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/debian-9'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:debian-9 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:debian-9 --config bootstrap/test.yaml --config bootstrap/debian-9/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:debian-9 --config bootstrap/test.yaml --config bootstrap/debian-9/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:debian-9'
     retry: 2
     tags:
@@ -80,12 +95,16 @@ before_script:
 'bootstrap:ubuntu-12.04':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/ubuntu-12.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:ubuntu-12.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-12.04 --config bootstrap/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-12.04 --config bootstrap/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:ubuntu-12.04'
     retry: 2
     tags:
@@ -93,12 +112,16 @@ before_script:
 'bootstrap:ubuntu-14.04':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/ubuntu-14.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:ubuntu-14.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-14.04 --config bootstrap/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-14.04 --config bootstrap/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:ubuntu-14.04'
     retry: 2
     tags:
@@ -106,12 +129,16 @@ before_script:
 'bootstrap:ubuntu-15.04':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/ubuntu-15.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:ubuntu-15.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-15.04 --config bootstrap/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-15.04 --config bootstrap/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:ubuntu-15.04'
     retry: 2
     tags:
@@ -119,12 +146,16 @@ before_script:
 'bootstrap:ubuntu-15.10':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/ubuntu-15.10'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:ubuntu-15.10 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-15.10 --config bootstrap/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-15.10 --config bootstrap/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:ubuntu-15.10'
     retry: 2
     tags:
@@ -132,12 +163,16 @@ before_script:
 'bootstrap:ubuntu-16.04':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/ubuntu-16.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:ubuntu-16.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-16.04 --config bootstrap/test.yaml --config bootstrap/ubuntu-16.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-16.04 --config bootstrap/test.yaml --config bootstrap/ubuntu-16.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:ubuntu-16.04'
     retry: 2
     tags:
@@ -145,12 +180,16 @@ before_script:
 'bootstrap:ubuntu-16.10':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/ubuntu-16.10'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:ubuntu-16.10 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-16.10 --config bootstrap/test.yaml --config bootstrap/ubuntu-16.10/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-16.10 --config bootstrap/test.yaml --config bootstrap/ubuntu-16.10/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:ubuntu-16.10'
     retry: 2
     tags:
@@ -158,12 +197,16 @@ before_script:
 'bootstrap:ubuntu-17.04':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/ubuntu-17.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:ubuntu-17.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-17.04 --config bootstrap/test.yaml --config bootstrap/ubuntu-17.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-17.04 --config bootstrap/test.yaml --config bootstrap/ubuntu-17.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:ubuntu-17.04'
     retry: 2
     tags:
@@ -171,12 +214,16 @@ before_script:
 'bootstrap:ubuntu-17.10':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/ubuntu-17.10'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:ubuntu-17.10 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-17.10 --config bootstrap/test.yaml --config bootstrap/ubuntu-17.10/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-17.10 --config bootstrap/test.yaml --config bootstrap/ubuntu-17.10/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:ubuntu-17.10'
     retry: 2
     tags:
@@ -184,12 +231,16 @@ before_script:
 'bootstrap:ubuntu-18.04':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/bootstrap/ubuntu-18.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/bootstrap:ubuntu-18.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-18.04 --config bootstrap/test.yaml --config bootstrap/ubuntu-18.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/bootstrap:ubuntu-18.04 --config bootstrap/test.yaml --config bootstrap/ubuntu-18.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/bootstrap:ubuntu-18.04'
     retry: 2
     tags:
@@ -197,6 +248,10 @@ before_script:
 'liquibase:latest':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/liquibase/latest'
@@ -208,6 +263,10 @@ before_script:
 'liquibase:mysql':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/liquibase/mysql'
@@ -219,6 +278,10 @@ before_script:
 'liquibase:postgres':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/liquibase/postgres'
@@ -230,12 +293,16 @@ before_script:
 'php:5.6':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-official/5.6'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:5.6 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:5.6 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:5.6 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:5.6'
     retry: 2
     tags:
@@ -243,12 +310,16 @@ before_script:
 'php:7.0':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-official/7.0'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:7.0 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:7.0 --config php/test.yaml --config php/7.0/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:7.0 --config php/test.yaml --config php/7.0/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:7.0'
     retry: 2
     tags:
@@ -256,12 +327,16 @@ before_script:
 'php:7.1':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-official/7.1'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:7.1 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:7.1 --config php/test.yaml --config php/7.1/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:7.1 --config php/test.yaml --config php/7.1/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:7.1'
     retry: 2
     tags:
@@ -269,12 +344,16 @@ before_script:
 'php:7.2':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-official/7.2'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:7.2 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:7.2 --config php/test.yaml --config php/7.2/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:7.2 --config php/test.yaml --config php/7.2/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:7.2'
     retry: 2
     tags:
@@ -282,6 +361,10 @@ before_script:
 'samson-deployment:latest':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/samson-deployment/latest'
@@ -293,6 +376,10 @@ before_script:
 'storage:latest':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/storage/latest'
@@ -304,6 +391,10 @@ before_script:
 'toolbox:latest':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/toolbox/latest'
@@ -315,6 +406,10 @@ before_script:
 'typo3-solr:3.1':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/typo3-solr/3.1'
@@ -326,6 +421,10 @@ before_script:
 'typo3-solr:5.0':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/typo3-solr/5.0'
@@ -337,6 +436,10 @@ before_script:
 'typo3-solr:6.0':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/typo3-solr/6.0'
@@ -348,6 +451,10 @@ before_script:
 'typo3-solr:6.1':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/typo3-solr/6.1'
@@ -359,6 +466,10 @@ before_script:
 'typo3-solr:6.5':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/typo3-solr/6.5'
@@ -370,6 +481,10 @@ before_script:
 'typo3-solr:7.0':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/typo3-solr/7.0'
@@ -381,6 +496,10 @@ before_script:
 'typo3-solr:7.5':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/typo3-solr/7.5'
@@ -392,6 +511,10 @@ before_script:
 'typo3-solr:8.0':
     stage: level0
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/typo3-solr/8.0'
@@ -403,6 +526,10 @@ before_script:
 'ansible:alpine':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/ansible/alpine'
@@ -416,6 +543,10 @@ before_script:
 'ansible:centos-7':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/ansible/centos-7'
@@ -429,6 +560,10 @@ before_script:
 'ansible:debian-7':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/ansible/debian-7'
@@ -442,6 +577,10 @@ before_script:
 'ansible:debian-8':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/ansible/debian-8'
@@ -455,6 +594,10 @@ before_script:
 'ansible:debian-9':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/ansible/debian-9'
@@ -468,6 +611,10 @@ before_script:
 'ansible:ubuntu-12.04':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/ansible/ubuntu-12.04'
@@ -481,6 +628,10 @@ before_script:
 'ansible:ubuntu-14.04':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/ansible/ubuntu-14.04'
@@ -494,6 +645,10 @@ before_script:
 'ansible:ubuntu-15.04':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/ansible/ubuntu-15.04'
@@ -507,6 +662,10 @@ before_script:
 'ansible:ubuntu-15.10':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/ansible/ubuntu-15.10'
@@ -520,6 +679,10 @@ before_script:
 'ansible:ubuntu-16.04':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/ansible/ubuntu-16.04'
@@ -533,6 +696,10 @@ before_script:
 'ansible:ubuntu-17.04':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/ansible/ubuntu-17.04'
@@ -546,12 +713,16 @@ before_script:
 'base:alpine':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/alpine'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:alpine .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:alpine --config base/test.yaml --config base/alpine/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:alpine --config base/test.yaml --config base/alpine/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:alpine'
     retry: 2
     tags:
@@ -561,12 +732,16 @@ before_script:
 'base:centos-7':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/centos-7'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:centos-7 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:centos-7 --config base/test.yaml --config base/centos-7/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:centos-7 --config base/test.yaml --config base/centos-7/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:centos-7'
     retry: 2
     tags:
@@ -576,12 +751,16 @@ before_script:
 'base:debian-7':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/debian-7'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:debian-7 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:debian-7 --config base/test.yaml --config base/debian-7/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:debian-7 --config base/test.yaml --config base/debian-7/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:debian-7'
     retry: 2
     tags:
@@ -591,12 +770,16 @@ before_script:
 'base:debian-8':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/debian-8'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:debian-8 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:debian-8 --config base/test.yaml --config base/debian-8/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:debian-8 --config base/test.yaml --config base/debian-8/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:debian-8'
     retry: 2
     tags:
@@ -606,12 +789,16 @@ before_script:
 'base:debian-9':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/debian-9'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:debian-9 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:debian-9 --config base/test.yaml --config base/debian-9/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:debian-9 --config base/test.yaml --config base/debian-9/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:debian-9'
     retry: 2
     tags:
@@ -621,12 +808,16 @@ before_script:
 'base:ubuntu-12.04':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/ubuntu-12.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:ubuntu-12.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-12.04 --config base/test.yaml --config base/ubuntu-12.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-12.04 --config base/test.yaml --config base/ubuntu-12.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:ubuntu-12.04'
     retry: 2
     tags:
@@ -636,12 +827,16 @@ before_script:
 'base:ubuntu-14.04':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/ubuntu-14.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:ubuntu-14.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-14.04 --config base/test.yaml --config base/ubuntu-14.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-14.04 --config base/test.yaml --config base/ubuntu-14.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:ubuntu-14.04'
     retry: 2
     tags:
@@ -651,12 +846,16 @@ before_script:
 'base:ubuntu-15.04':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/ubuntu-15.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:ubuntu-15.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-15.04 --config base/test.yaml --config base/ubuntu-15.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-15.04 --config base/test.yaml --config base/ubuntu-15.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:ubuntu-15.04'
     retry: 2
     tags:
@@ -666,12 +865,16 @@ before_script:
 'base:ubuntu-15.10':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/ubuntu-15.10'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:ubuntu-15.10 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-15.10 --config base/test.yaml --config base/ubuntu-15.10/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-15.10 --config base/test.yaml --config base/ubuntu-15.10/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:ubuntu-15.10'
     retry: 2
     tags:
@@ -681,12 +884,16 @@ before_script:
 'base:ubuntu-16.04':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/ubuntu-16.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:ubuntu-16.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-16.04 --config base/test.yaml --config base/ubuntu-16.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-16.04 --config base/test.yaml --config base/ubuntu-16.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:ubuntu-16.04'
     retry: 2
     tags:
@@ -696,12 +903,16 @@ before_script:
 'base:ubuntu-16.10':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/ubuntu-16.10'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:ubuntu-16.10 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-16.10 --config base/test.yaml --config base/ubuntu-16.10/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-16.10 --config base/test.yaml --config base/ubuntu-16.10/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:ubuntu-16.10'
     retry: 2
     tags:
@@ -711,12 +922,16 @@ before_script:
 'base:ubuntu-17.04':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/ubuntu-17.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:ubuntu-17.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-17.04 --config base/test.yaml --config base/ubuntu-17.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-17.04 --config base/test.yaml --config base/ubuntu-17.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:ubuntu-17.04'
     retry: 2
     tags:
@@ -726,12 +941,16 @@ before_script:
 'base:ubuntu-17.10':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/ubuntu-17.10'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:ubuntu-17.10 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-17.10 --config base/test.yaml --config base/ubuntu-17.10/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-17.10 --config base/test.yaml --config base/ubuntu-17.10/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:ubuntu-17.10'
     retry: 2
     tags:
@@ -741,12 +960,16 @@ before_script:
 'base:ubuntu-18.04':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base/ubuntu-18.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base:ubuntu-18.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-18.04 --config base/test.yaml --config base/ubuntu-18.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base:ubuntu-18.04 --config base/test.yaml --config base/ubuntu-18.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base:ubuntu-18.04'
     retry: 2
     tags:
@@ -756,6 +979,10 @@ before_script:
 'certbot:latest':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/certbot/latest'
@@ -769,6 +996,10 @@ before_script:
 'dockerfile-build-env:latest':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/dockerfile-build-env/latest'
@@ -782,6 +1013,10 @@ before_script:
 'php-apache:5.6':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/5.6'
@@ -795,6 +1030,10 @@ before_script:
 'php-apache:7.0':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/7.0'
@@ -808,6 +1047,10 @@ before_script:
 'php-apache:7.1':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/7.1'
@@ -821,6 +1064,10 @@ before_script:
 'php-apache:7.2':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/7.2'
@@ -834,6 +1081,10 @@ before_script:
 'php-dev:5.6':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/5.6'
@@ -847,6 +1098,10 @@ before_script:
 'php-dev:7.0':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/7.0'
@@ -860,6 +1115,10 @@ before_script:
 'php-dev:7.1':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/7.1'
@@ -873,6 +1132,10 @@ before_script:
 'php-dev:7.2':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/7.2'
@@ -886,6 +1149,10 @@ before_script:
 'php-nginx:5.6':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/5.6'
@@ -899,6 +1166,10 @@ before_script:
 'php-nginx:7.0':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/7.0'
@@ -912,6 +1183,10 @@ before_script:
 'php-nginx:7.1':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/7.1'
@@ -925,6 +1200,10 @@ before_script:
 'php-nginx:7.2':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/7.2'
@@ -938,6 +1217,10 @@ before_script:
 'sphinx:latest':
     stage: level1
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/sphinx/latest'
@@ -951,6 +1234,10 @@ before_script:
 'apache:alpine':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/alpine'
@@ -964,6 +1251,10 @@ before_script:
 'apache:centos-7':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/centos-7'
@@ -977,6 +1268,10 @@ before_script:
 'apache:debian-7':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/debian-7'
@@ -990,6 +1285,10 @@ before_script:
 'apache:debian-8':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/debian-8'
@@ -1003,6 +1302,10 @@ before_script:
 'apache:debian-9':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/debian-9'
@@ -1016,6 +1319,10 @@ before_script:
 'apache:ubuntu-12.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/ubuntu-12.04'
@@ -1029,6 +1336,10 @@ before_script:
 'apache:ubuntu-14.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/ubuntu-14.04'
@@ -1042,6 +1353,10 @@ before_script:
 'apache:ubuntu-15.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/ubuntu-15.04'
@@ -1055,6 +1370,10 @@ before_script:
 'apache:ubuntu-15.10':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/ubuntu-15.10'
@@ -1068,6 +1387,10 @@ before_script:
 'apache:ubuntu-16.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/ubuntu-16.04'
@@ -1081,6 +1404,10 @@ before_script:
 'apache:ubuntu-16.10':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/ubuntu-16.10'
@@ -1094,6 +1421,10 @@ before_script:
 'apache:ubuntu-17.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/ubuntu-17.04'
@@ -1107,6 +1438,10 @@ before_script:
 'apache:ubuntu-17.10':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/ubuntu-17.10'
@@ -1120,6 +1455,10 @@ before_script:
 'apache:ubuntu-18.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache/ubuntu-18.04'
@@ -1133,12 +1472,16 @@ before_script:
 'base-app:alpine':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/alpine'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:alpine .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:alpine --config base-app/test.yaml --config base-app/alpine/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:alpine --config base-app/test.yaml --config base-app/alpine/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:alpine'
     retry: 2
     tags:
@@ -1148,12 +1491,16 @@ before_script:
 'base-app:centos-7':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/centos-7'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:centos-7 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:centos-7 --config base-app/test.yaml --config base-app/centos-7/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:centos-7 --config base-app/test.yaml --config base-app/centos-7/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:centos-7'
     retry: 2
     tags:
@@ -1163,12 +1510,16 @@ before_script:
 'base-app:debian-7':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/debian-7'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:debian-7 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:debian-7 --config base-app/test.yaml --config base-app/debian-7/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:debian-7 --config base-app/test.yaml --config base-app/debian-7/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:debian-7'
     retry: 2
     tags:
@@ -1178,12 +1529,16 @@ before_script:
 'base-app:debian-8':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/debian-8'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:debian-8 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:debian-8 --config base-app/test.yaml --config base-app/debian-8/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:debian-8 --config base-app/test.yaml --config base-app/debian-8/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:debian-8'
     retry: 2
     tags:
@@ -1193,12 +1548,16 @@ before_script:
 'base-app:debian-9':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/debian-9'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:debian-9 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:debian-9 --config base-app/test.yaml --config base-app/debian-9/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:debian-9 --config base-app/test.yaml --config base-app/debian-9/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:debian-9'
     retry: 2
     tags:
@@ -1208,12 +1567,16 @@ before_script:
 'base-app:ubuntu-12.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/ubuntu-12.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:ubuntu-12.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-12.04 --config base-app/test.yaml --config base-app/ubuntu-12.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-12.04 --config base-app/test.yaml --config base-app/ubuntu-12.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:ubuntu-12.04'
     retry: 2
     tags:
@@ -1223,12 +1586,16 @@ before_script:
 'base-app:ubuntu-14.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/ubuntu-14.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:ubuntu-14.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-14.04 --config base-app/test.yaml --config base-app/ubuntu-14.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-14.04 --config base-app/test.yaml --config base-app/ubuntu-14.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:ubuntu-14.04'
     retry: 2
     tags:
@@ -1238,12 +1605,16 @@ before_script:
 'base-app:ubuntu-15.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/ubuntu-15.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:ubuntu-15.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-15.04 --config base-app/test.yaml --config base-app/ubuntu-15.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-15.04 --config base-app/test.yaml --config base-app/ubuntu-15.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:ubuntu-15.04'
     retry: 2
     tags:
@@ -1253,12 +1624,16 @@ before_script:
 'base-app:ubuntu-15.10':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/ubuntu-15.10'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:ubuntu-15.10 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-15.10 --config base-app/test.yaml --config base-app/ubuntu-15.10/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-15.10 --config base-app/test.yaml --config base-app/ubuntu-15.10/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:ubuntu-15.10'
     retry: 2
     tags:
@@ -1268,12 +1643,16 @@ before_script:
 'base-app:ubuntu-16.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/ubuntu-16.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:ubuntu-16.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-16.04 --config base-app/test.yaml --config base-app/ubuntu-16.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-16.04 --config base-app/test.yaml --config base-app/ubuntu-16.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:ubuntu-16.04'
     retry: 2
     tags:
@@ -1283,12 +1662,16 @@ before_script:
 'base-app:ubuntu-16.10':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/ubuntu-16.10'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:ubuntu-16.10 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-16.10 --config base-app/test.yaml --config base-app/ubuntu-16.10/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-16.10 --config base-app/test.yaml --config base-app/ubuntu-16.10/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:ubuntu-16.10'
     retry: 2
     tags:
@@ -1298,12 +1681,16 @@ before_script:
 'base-app:ubuntu-17.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/ubuntu-17.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:ubuntu-17.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-17.04 --config base-app/test.yaml --config base-app/ubuntu-17.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-17.04 --config base-app/test.yaml --config base-app/ubuntu-17.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:ubuntu-17.04'
     retry: 2
     tags:
@@ -1313,12 +1700,16 @@ before_script:
 'base-app:ubuntu-17.10':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/ubuntu-17.10'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:ubuntu-17.10 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-17.10 --config base-app/test.yaml --config base-app/ubuntu-17.10/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-17.10 --config base-app/test.yaml --config base-app/ubuntu-17.10/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:ubuntu-17.10'
     retry: 2
     tags:
@@ -1328,12 +1719,16 @@ before_script:
 'base-app:ubuntu-18.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/base-app/ubuntu-18.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/base-app:ubuntu-18.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-18.04 --config base-app/test.yaml --config base-app/ubuntu-18.04/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/base-app:ubuntu-18.04 --config base-app/test.yaml --config base-app/ubuntu-18.04/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/base-app:ubuntu-18.04'
     retry: 2
     tags:
@@ -1343,6 +1738,10 @@ before_script:
 'liquidsoap:latest':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/liquidsoap/latest'
@@ -1356,6 +1755,10 @@ before_script:
 'nginx:alpine':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/alpine'
@@ -1369,6 +1772,10 @@ before_script:
 'nginx:centos-7':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/centos-7'
@@ -1382,6 +1789,10 @@ before_script:
 'nginx:debian-7':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/debian-7'
@@ -1395,6 +1806,10 @@ before_script:
 'nginx:debian-8':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/debian-8'
@@ -1408,6 +1823,10 @@ before_script:
 'nginx:debian-9':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/debian-9'
@@ -1421,6 +1840,10 @@ before_script:
 'nginx:ubuntu-12.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/ubuntu-12.04'
@@ -1434,6 +1857,10 @@ before_script:
 'nginx:ubuntu-14.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/ubuntu-14.04'
@@ -1447,6 +1874,10 @@ before_script:
 'nginx:ubuntu-15.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/ubuntu-15.04'
@@ -1460,6 +1891,10 @@ before_script:
 'nginx:ubuntu-15.10':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/ubuntu-15.10'
@@ -1473,6 +1908,10 @@ before_script:
 'nginx:ubuntu-16.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/ubuntu-16.04'
@@ -1486,6 +1925,10 @@ before_script:
 'nginx:ubuntu-16.10':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/ubuntu-16.10'
@@ -1499,6 +1942,10 @@ before_script:
 'nginx:ubuntu-17.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/ubuntu-17.04'
@@ -1512,6 +1959,10 @@ before_script:
 'nginx:ubuntu-17.10':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/ubuntu-17.10'
@@ -1525,6 +1976,10 @@ before_script:
 'nginx:ubuntu-18.04':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx/ubuntu-18.04'
@@ -1538,6 +1993,10 @@ before_script:
 'php-apache-dev:5.6':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/5.6'
@@ -1551,6 +2010,10 @@ before_script:
 'php-apache-dev:7.0':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/7.0'
@@ -1564,6 +2027,10 @@ before_script:
 'php-apache-dev:7.1':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/7.1'
@@ -1577,6 +2044,10 @@ before_script:
 'php-apache-dev:7.2':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/7.2'
@@ -1590,6 +2061,10 @@ before_script:
 'php-nginx-dev:5.6':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/5.6'
@@ -1603,6 +2078,10 @@ before_script:
 'php-nginx-dev:7.0':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/7.0'
@@ -1616,6 +2095,10 @@ before_script:
 'php-nginx-dev:7.1':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/7.1'
@@ -1629,6 +2112,10 @@ before_script:
 'php-nginx-dev:7.2':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/7.2'
@@ -1642,6 +2129,10 @@ before_script:
 'piwik:latest':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/piwik/latest'
@@ -1655,6 +2146,10 @@ before_script:
 'typo3:latest':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/typo3/latest'
@@ -1668,6 +2163,10 @@ before_script:
 'varnish:latest':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/varnish/latest'
@@ -1681,6 +2180,10 @@ before_script:
 'vsftp:latest':
     stage: level2
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/vsftp/latest'
@@ -1694,6 +2197,10 @@ before_script:
 'apache-dev:alpine':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/alpine'
@@ -1707,6 +2214,10 @@ before_script:
 'apache-dev:centos-7':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/centos-7'
@@ -1720,6 +2231,10 @@ before_script:
 'apache-dev:debian-7':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/debian-7'
@@ -1733,6 +2248,10 @@ before_script:
 'apache-dev:debian-8':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/debian-8'
@@ -1746,6 +2265,10 @@ before_script:
 'apache-dev:debian-9':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/debian-9'
@@ -1759,6 +2282,10 @@ before_script:
 'apache-dev:ubuntu-12.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/ubuntu-12.04'
@@ -1772,6 +2299,10 @@ before_script:
 'apache-dev:ubuntu-14.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/ubuntu-14.04'
@@ -1785,6 +2316,10 @@ before_script:
 'apache-dev:ubuntu-15.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/ubuntu-15.04'
@@ -1798,6 +2333,10 @@ before_script:
 'apache-dev:ubuntu-15.10':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/ubuntu-15.10'
@@ -1811,6 +2350,10 @@ before_script:
 'apache-dev:ubuntu-16.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/ubuntu-16.04'
@@ -1824,6 +2367,10 @@ before_script:
 'apache-dev:ubuntu-16.10':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/ubuntu-16.10'
@@ -1837,6 +2384,10 @@ before_script:
 'apache-dev:ubuntu-17.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/ubuntu-17.04'
@@ -1850,6 +2401,10 @@ before_script:
 'apache-dev:ubuntu-17.10':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/ubuntu-17.10'
@@ -1863,6 +2418,10 @@ before_script:
 'apache-dev:ubuntu-18.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/apache-dev/ubuntu-18.04'
@@ -1876,6 +2435,10 @@ before_script:
 'hhvm:ubuntu-14.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/hhvm/ubuntu-14.04'
@@ -1889,6 +2452,10 @@ before_script:
 'hhvm:ubuntu-16.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/hhvm/ubuntu-16.04'
@@ -1902,6 +2469,10 @@ before_script:
 'nginx-dev:alpine':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/alpine'
@@ -1915,6 +2486,10 @@ before_script:
 'nginx-dev:centos-7':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/centos-7'
@@ -1928,6 +2503,10 @@ before_script:
 'nginx-dev:debian-7':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/debian-7'
@@ -1941,6 +2520,10 @@ before_script:
 'nginx-dev:debian-8':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/debian-8'
@@ -1954,6 +2537,10 @@ before_script:
 'nginx-dev:debian-9':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/debian-9'
@@ -1967,6 +2554,10 @@ before_script:
 'nginx-dev:ubuntu-12.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/ubuntu-12.04'
@@ -1980,6 +2571,10 @@ before_script:
 'nginx-dev:ubuntu-14.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/ubuntu-14.04'
@@ -1993,6 +2588,10 @@ before_script:
 'nginx-dev:ubuntu-15.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/ubuntu-15.04'
@@ -2006,6 +2605,10 @@ before_script:
 'nginx-dev:ubuntu-15.10':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/ubuntu-15.10'
@@ -2019,6 +2622,10 @@ before_script:
 'nginx-dev:ubuntu-16.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/ubuntu-16.04'
@@ -2032,6 +2639,10 @@ before_script:
 'nginx-dev:ubuntu-16.10':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/ubuntu-16.10'
@@ -2045,6 +2656,10 @@ before_script:
 'nginx-dev:ubuntu-17.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/ubuntu-17.04'
@@ -2058,6 +2673,10 @@ before_script:
 'nginx-dev:ubuntu-17.10':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/ubuntu-17.10'
@@ -2071,6 +2690,10 @@ before_script:
 'nginx-dev:ubuntu-18.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/nginx-dev/ubuntu-18.04'
@@ -2084,12 +2707,16 @@ before_script:
 'php:alpine-php5':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/alpine-php5'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:alpine-php5 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:alpine-php5 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:alpine-php5 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:alpine-php5'
     retry: 2
     tags:
@@ -2099,12 +2726,16 @@ before_script:
 'php:alpine-php7':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/alpine-php7'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:alpine-php7 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:alpine-php7 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:alpine-php7 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:alpine-php7'
     retry: 2
     tags:
@@ -2114,12 +2745,16 @@ before_script:
 'php:centos-7':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/centos-7'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:centos-7 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:centos-7 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:centos-7 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:centos-7'
     retry: 2
     tags:
@@ -2129,12 +2764,16 @@ before_script:
 'php:centos-7-php56':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/centos-7-php56'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:centos-7-php56 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:centos-7-php56 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:centos-7-php56 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:centos-7-php56'
     retry: 2
     tags:
@@ -2144,12 +2783,16 @@ before_script:
 'php:centos-7-php7':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/centos-7-php7'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:centos-7-php7 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:centos-7-php7 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:centos-7-php7 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:centos-7-php7'
     retry: 2
     tags:
@@ -2159,12 +2802,16 @@ before_script:
 'php:debian-7':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/debian-7'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:debian-7 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:debian-7 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:debian-7 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:debian-7'
     retry: 2
     tags:
@@ -2174,12 +2821,16 @@ before_script:
 'php:debian-8':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/debian-8'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:debian-8 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:debian-8 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:debian-8 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:debian-8'
     retry: 2
     tags:
@@ -2189,12 +2840,16 @@ before_script:
 'php:debian-8-php7':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/debian-8-php7'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:debian-8-php7 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:debian-8-php7 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:debian-8-php7 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:debian-8-php7'
     retry: 2
     tags:
@@ -2204,12 +2859,16 @@ before_script:
 'php:debian-9':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/debian-9'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:debian-9 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:debian-9 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:debian-9 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:debian-9'
     retry: 2
     tags:
@@ -2219,12 +2878,16 @@ before_script:
 'php:ubuntu-12.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/ubuntu-12.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:ubuntu-12.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-12.04 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-12.04 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:ubuntu-12.04'
     retry: 2
     tags:
@@ -2234,12 +2897,16 @@ before_script:
 'php:ubuntu-14.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/ubuntu-14.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:ubuntu-14.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-14.04 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-14.04 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:ubuntu-14.04'
     retry: 2
     tags:
@@ -2249,12 +2916,16 @@ before_script:
 'php:ubuntu-15.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/ubuntu-15.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:ubuntu-15.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-15.04 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-15.04 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:ubuntu-15.04'
     retry: 2
     tags:
@@ -2264,12 +2935,16 @@ before_script:
 'php:ubuntu-15.10':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/ubuntu-15.10'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:ubuntu-15.10 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-15.10 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-15.10 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:ubuntu-15.10'
     retry: 2
     tags:
@@ -2279,12 +2954,16 @@ before_script:
 'php:ubuntu-16.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/ubuntu-16.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:ubuntu-16.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-16.04 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-16.04 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:ubuntu-16.04'
     retry: 2
     tags:
@@ -2294,12 +2973,16 @@ before_script:
 'php:ubuntu-16.10':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/ubuntu-16.10'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:ubuntu-16.10 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-16.10 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-16.10 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:ubuntu-16.10'
     retry: 2
     tags:
@@ -2309,12 +2992,16 @@ before_script:
 'php:ubuntu-17.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/ubuntu-17.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:ubuntu-17.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-17.04 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-17.04 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:ubuntu-17.04'
     retry: 2
     tags:
@@ -2324,12 +3011,16 @@ before_script:
 'php:ubuntu-17.10':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/ubuntu-17.10'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:ubuntu-17.10 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-17.10 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-17.10 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:ubuntu-17.10'
     retry: 2
     tags:
@@ -2339,12 +3030,16 @@ before_script:
 'php:ubuntu-18.04':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php/ubuntu-18.04'
         - 'docker build --no-cache -t $CI_REGISTRY_IMAGE/php:ubuntu-18.04 .'
         - 'cd $CI_PROJECT_DIR/tests/structure-test'
-        - 'container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-18.04 --config php/test.yaml'
+        - '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/php:ubuntu-18.04 --config php/test.yaml'
         - 'docker push $CI_REGISTRY_IMAGE/php:ubuntu-18.04'
     retry: 2
     tags:
@@ -2354,6 +3049,10 @@ before_script:
 'postfix:latest':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/postfix/latest'
@@ -2367,6 +3066,10 @@ before_script:
 'ssh:latest':
     stage: level3
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/ssh/latest'
@@ -2380,6 +3083,10 @@ before_script:
 'hhvm-apache:ubuntu-14.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/hhvm-apache/ubuntu-14.04'
@@ -2393,6 +3100,10 @@ before_script:
 'hhvm-apache:ubuntu-16.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/hhvm-apache/ubuntu-16.04'
@@ -2406,6 +3117,10 @@ before_script:
 'hhvm-nginx:ubuntu-14.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/hhvm-nginx/ubuntu-14.04'
@@ -2419,6 +3134,10 @@ before_script:
 'hhvm-nginx:ubuntu-16.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/hhvm-nginx/ubuntu-16.04'
@@ -2432,6 +3151,10 @@ before_script:
 'php-apache:alpine-php5':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/alpine-php5'
@@ -2445,6 +3168,10 @@ before_script:
 'php-apache:alpine-php7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/alpine-php7'
@@ -2458,6 +3185,10 @@ before_script:
 'php-apache:centos-7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/centos-7'
@@ -2471,6 +3202,10 @@ before_script:
 'php-apache:centos-7-php56':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/centos-7-php56'
@@ -2484,6 +3219,10 @@ before_script:
 'php-apache:centos-7-php7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/centos-7-php7'
@@ -2497,6 +3236,10 @@ before_script:
 'php-apache:debian-7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/debian-7'
@@ -2510,6 +3253,10 @@ before_script:
 'php-apache:debian-8':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/debian-8'
@@ -2523,6 +3270,10 @@ before_script:
 'php-apache:debian-8-php7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/debian-8-php7'
@@ -2536,6 +3287,10 @@ before_script:
 'php-apache:debian-9':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/debian-9'
@@ -2549,6 +3304,10 @@ before_script:
 'php-apache:ubuntu-12.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/ubuntu-12.04'
@@ -2562,6 +3321,10 @@ before_script:
 'php-apache:ubuntu-14.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/ubuntu-14.04'
@@ -2575,6 +3338,10 @@ before_script:
 'php-apache:ubuntu-15.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/ubuntu-15.04'
@@ -2588,6 +3355,10 @@ before_script:
 'php-apache:ubuntu-15.10':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/ubuntu-15.10'
@@ -2601,6 +3372,10 @@ before_script:
 'php-apache:ubuntu-16.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/ubuntu-16.04'
@@ -2614,6 +3389,10 @@ before_script:
 'php-apache:ubuntu-16.10':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/ubuntu-16.10'
@@ -2627,6 +3406,10 @@ before_script:
 'php-apache:ubuntu-17.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/ubuntu-17.04'
@@ -2640,6 +3423,10 @@ before_script:
 'php-apache:ubuntu-17.10':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/ubuntu-17.10'
@@ -2653,6 +3440,10 @@ before_script:
 'php-apache:ubuntu-18.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache/ubuntu-18.04'
@@ -2666,6 +3457,10 @@ before_script:
 'php-dev:alpine-php5':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/alpine-php5'
@@ -2679,6 +3474,10 @@ before_script:
 'php-dev:alpine-php7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/alpine-php7'
@@ -2692,6 +3491,10 @@ before_script:
 'php-dev:centos-7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/centos-7'
@@ -2705,6 +3508,10 @@ before_script:
 'php-dev:centos-7-php56':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/centos-7-php56'
@@ -2718,6 +3525,10 @@ before_script:
 'php-dev:centos-7-php7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/centos-7-php7'
@@ -2731,6 +3542,10 @@ before_script:
 'php-dev:debian-7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/debian-7'
@@ -2744,6 +3559,10 @@ before_script:
 'php-dev:debian-8':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/debian-8'
@@ -2757,6 +3576,10 @@ before_script:
 'php-dev:debian-8-php7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/debian-8-php7'
@@ -2770,6 +3593,10 @@ before_script:
 'php-dev:debian-9':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/debian-9'
@@ -2783,6 +3610,10 @@ before_script:
 'php-dev:ubuntu-12.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/ubuntu-12.04'
@@ -2796,6 +3627,10 @@ before_script:
 'php-dev:ubuntu-14.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/ubuntu-14.04'
@@ -2809,6 +3644,10 @@ before_script:
 'php-dev:ubuntu-15.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/ubuntu-15.04'
@@ -2822,6 +3661,10 @@ before_script:
 'php-dev:ubuntu-15.10':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/ubuntu-15.10'
@@ -2835,6 +3678,10 @@ before_script:
 'php-dev:ubuntu-16.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/ubuntu-16.04'
@@ -2848,6 +3695,10 @@ before_script:
 'php-dev:ubuntu-16.10':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/ubuntu-16.10'
@@ -2861,6 +3712,10 @@ before_script:
 'php-dev:ubuntu-17.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/ubuntu-17.04'
@@ -2874,6 +3729,10 @@ before_script:
 'php-dev:ubuntu-17.10':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/ubuntu-17.10'
@@ -2887,6 +3746,10 @@ before_script:
 'php-dev:ubuntu-18.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-dev/ubuntu-18.04'
@@ -2900,6 +3763,10 @@ before_script:
 'php-nginx:alpine-php5':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/alpine-php5'
@@ -2913,6 +3780,10 @@ before_script:
 'php-nginx:alpine-php7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/alpine-php7'
@@ -2926,6 +3797,10 @@ before_script:
 'php-nginx:centos-7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/centos-7'
@@ -2939,6 +3814,10 @@ before_script:
 'php-nginx:centos-7-php56':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/centos-7-php56'
@@ -2952,6 +3831,10 @@ before_script:
 'php-nginx:centos-7-php7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/centos-7-php7'
@@ -2965,6 +3848,10 @@ before_script:
 'php-nginx:debian-7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/debian-7'
@@ -2978,6 +3865,10 @@ before_script:
 'php-nginx:debian-8':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/debian-8'
@@ -2991,6 +3882,10 @@ before_script:
 'php-nginx:debian-8-php7':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/debian-8-php7'
@@ -3004,6 +3899,10 @@ before_script:
 'php-nginx:debian-9':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/debian-9'
@@ -3017,6 +3916,10 @@ before_script:
 'php-nginx:ubuntu-12.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/ubuntu-12.04'
@@ -3030,6 +3933,10 @@ before_script:
 'php-nginx:ubuntu-14.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/ubuntu-14.04'
@@ -3043,6 +3950,10 @@ before_script:
 'php-nginx:ubuntu-15.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/ubuntu-15.04'
@@ -3056,6 +3967,10 @@ before_script:
 'php-nginx:ubuntu-15.10':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/ubuntu-15.10'
@@ -3069,6 +3984,10 @@ before_script:
 'php-nginx:ubuntu-16.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/ubuntu-16.04'
@@ -3082,6 +4001,10 @@ before_script:
 'php-nginx:ubuntu-16.10':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/ubuntu-16.10'
@@ -3095,6 +4018,10 @@ before_script:
 'php-nginx:ubuntu-17.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/ubuntu-17.04'
@@ -3108,6 +4035,10 @@ before_script:
 'php-nginx:ubuntu-17.10':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/ubuntu-17.10'
@@ -3121,6 +4052,10 @@ before_script:
 'php-nginx:ubuntu-18.04':
     stage: level4
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx/ubuntu-18.04'
@@ -3134,6 +4069,10 @@ before_script:
 'mail-sandbox:latest':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/mail-sandbox/latest'
@@ -3147,6 +4086,10 @@ before_script:
 'php-apache-dev:alpine-php5':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/alpine-php5'
@@ -3160,6 +4103,10 @@ before_script:
 'php-apache-dev:alpine-php7':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/alpine-php7'
@@ -3173,6 +4120,10 @@ before_script:
 'php-apache-dev:centos-7':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/centos-7'
@@ -3186,6 +4137,10 @@ before_script:
 'php-apache-dev:centos-7-php56':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/centos-7-php56'
@@ -3199,6 +4154,10 @@ before_script:
 'php-apache-dev:centos-7-php7':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/centos-7-php7'
@@ -3212,6 +4171,10 @@ before_script:
 'php-apache-dev:debian-7':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/debian-7'
@@ -3225,6 +4188,10 @@ before_script:
 'php-apache-dev:debian-8':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/debian-8'
@@ -3238,6 +4205,10 @@ before_script:
 'php-apache-dev:debian-8-php7':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/debian-8-php7'
@@ -3251,6 +4222,10 @@ before_script:
 'php-apache-dev:debian-9':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/debian-9'
@@ -3264,6 +4239,10 @@ before_script:
 'php-apache-dev:ubuntu-12.04':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/ubuntu-12.04'
@@ -3277,6 +4256,10 @@ before_script:
 'php-apache-dev:ubuntu-14.04':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/ubuntu-14.04'
@@ -3290,6 +4273,10 @@ before_script:
 'php-apache-dev:ubuntu-15.04':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/ubuntu-15.04'
@@ -3303,6 +4290,10 @@ before_script:
 'php-apache-dev:ubuntu-15.10':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/ubuntu-15.10'
@@ -3316,6 +4307,10 @@ before_script:
 'php-apache-dev:ubuntu-16.04':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/ubuntu-16.04'
@@ -3329,6 +4324,10 @@ before_script:
 'php-apache-dev:ubuntu-16.10':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/ubuntu-16.10'
@@ -3342,6 +4341,10 @@ before_script:
 'php-apache-dev:ubuntu-17.04':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/ubuntu-17.04'
@@ -3355,6 +4358,10 @@ before_script:
 'php-apache-dev:ubuntu-17.10':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/ubuntu-17.10'
@@ -3368,6 +4375,10 @@ before_script:
 'php-apache-dev:ubuntu-18.04':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-apache-dev/ubuntu-18.04'
@@ -3381,6 +4392,10 @@ before_script:
 'php-nginx-dev:alpine-php5':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/alpine-php5'
@@ -3394,6 +4409,10 @@ before_script:
 'php-nginx-dev:alpine-php7':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/alpine-php7'
@@ -3407,6 +4426,10 @@ before_script:
 'php-nginx-dev:centos-7':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/centos-7'
@@ -3420,6 +4443,10 @@ before_script:
 'php-nginx-dev:centos-7-php56':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/centos-7-php56'
@@ -3433,6 +4460,10 @@ before_script:
 'php-nginx-dev:centos-7-php7':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/centos-7-php7'
@@ -3446,6 +4477,10 @@ before_script:
 'php-nginx-dev:debian-7':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/debian-7'
@@ -3459,6 +4494,10 @@ before_script:
 'php-nginx-dev:debian-8':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/debian-8'
@@ -3472,6 +4511,10 @@ before_script:
 'php-nginx-dev:debian-8-php7':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/debian-8-php7'
@@ -3485,6 +4528,10 @@ before_script:
 'php-nginx-dev:debian-9':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/debian-9'
@@ -3498,6 +4545,10 @@ before_script:
 'php-nginx-dev:ubuntu-12.04':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/ubuntu-12.04'
@@ -3511,6 +4562,10 @@ before_script:
 'php-nginx-dev:ubuntu-14.04':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/ubuntu-14.04'
@@ -3524,6 +4579,10 @@ before_script:
 'php-nginx-dev:ubuntu-15.04':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/ubuntu-15.04'
@@ -3537,6 +4596,10 @@ before_script:
 'php-nginx-dev:ubuntu-15.10':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/ubuntu-15.10'
@@ -3550,6 +4613,10 @@ before_script:
 'php-nginx-dev:ubuntu-16.04':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/ubuntu-16.04'
@@ -3563,6 +4630,10 @@ before_script:
 'php-nginx-dev:ubuntu-16.10':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/ubuntu-16.10'
@@ -3576,6 +4647,10 @@ before_script:
 'php-nginx-dev:ubuntu-17.04':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/ubuntu-17.04'
@@ -3589,6 +4664,10 @@ before_script:
 'php-nginx-dev:ubuntu-17.10':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/ubuntu-17.10'
@@ -3602,6 +4681,10 @@ before_script:
 'php-nginx-dev:ubuntu-18.04':
     stage: level5
     before_script:
+        - 'apk add curl'
+        - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+        - 'chmod +x container-structure-test-linux-amd64'
+        - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
         - 'cd docker/php-nginx-dev/ubuntu-18.04'

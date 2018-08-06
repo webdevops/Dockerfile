@@ -61,12 +61,6 @@ class DockerfileStruct {
 $gitlabCi = [
     'image' => 'docker',
     'stages' => [],
-    'before_script' => [
-        'apk add curl',
-        'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64',
-        'chmod +x container-structure-test-linux-amd64',
-        'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test',
-    ]
 ];
 $dockerfiles = [];
 $maxLevel = 0;
@@ -140,10 +134,10 @@ foreach ($dockerfiles as $dockerfile) {
         $script[] = 'cd $CI_PROJECT_DIR/tests/structure-test';
         if (file_exists(__DIR__ . '/../tests/structure-test/' . $type . '/' . $distro . '/test.yaml')) {
             //$script[] = 'container-structure-test test --image ' . $dockerfile->image . ' --config ' . $type . '/test.yaml --config ' . $type . '/' . $distro . '/test.yaml';
-            $script[] = 'container-structure-test test --image $CI_REGISTRY_IMAGE/' . $dockerfile->jobName . ' --config ' . $type . '/test.yaml --config ' . $type . '/' . $distro . '/test.yaml';
+            $script[] = '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/' . $dockerfile->jobName . ' --config ' . $type . '/test.yaml --config ' . $type . '/' . $distro . '/test.yaml';
         } else {
             //$script[] = 'container-structure-test test --image ' . $dockerfile->image . ' --config ' . $type . '/test.yaml';
-            $script[] = 'container-structure-test test --image $CI_REGISTRY_IMAGE/' . $dockerfile->jobName . ' --config ' . $type . '/test.yaml';
+            $script[] = '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/' . $dockerfile->jobName . ' --config ' . $type . '/test.yaml';
         }
     }
 
@@ -167,6 +161,10 @@ foreach ($dockerfiles as $dockerfile) {
         'stage' => 'level' . $dockerfile->level,
         'before_script' => [
             //'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+            'apk add curl',
+            'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64',
+            'chmod +x container-structure-test-linux-amd64',
+            'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test',
             'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
         ],
         'script' => $script,
