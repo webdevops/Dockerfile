@@ -22,6 +22,9 @@ RUN apt-install \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
     && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu    $(lsb_release -cs)    stable" \
     && apt-install docker-ce \
+    && curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64 \
+    && chmod +x container-structure-test-linux-amd64 \
+    && sudo mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test \
     && pip install --upgrade pip \
     && hash -r pip \
     && pip install --upgrade setuptools \

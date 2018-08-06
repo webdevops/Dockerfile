@@ -1,4 +1,4 @@
-image: webdevops/dockerfile-build-env
+image: docker
 stages:
     - build-env
     - level0
@@ -7,6 +7,11 @@ stages:
     - level3
     - level4
     - level5
+before_script:
+    - 'apk add curl'
+    - 'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64'
+    - 'chmod +x container-structure-test-linux-amd64'
+    - 'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test'
 'bootstrap:alpine':
     stage: level0
     before_script:
@@ -406,6 +411,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:alpine'
 'ansible:centos-7':
     stage: level1
     before_script:
@@ -417,6 +424,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:centos-7'
 'ansible:debian-7':
     stage: level1
     before_script:
@@ -428,6 +437,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:debian-7'
 'ansible:debian-8':
     stage: level1
     before_script:
@@ -439,6 +450,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:debian-8'
 'ansible:debian-9':
     stage: level1
     before_script:
@@ -450,6 +463,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:debian-9'
 'ansible:ubuntu-12.04':
     stage: level1
     before_script:
@@ -461,6 +476,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-12.04'
 'ansible:ubuntu-14.04':
     stage: level1
     before_script:
@@ -472,6 +489,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-14.04'
 'ansible:ubuntu-15.04':
     stage: level1
     before_script:
@@ -483,6 +502,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-15.04'
 'ansible:ubuntu-15.10':
     stage: level1
     before_script:
@@ -494,6 +515,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-15.10'
 'ansible:ubuntu-16.04':
     stage: level1
     before_script:
@@ -505,6 +528,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-16.04'
 'ansible:ubuntu-17.04':
     stage: level1
     before_script:
@@ -516,6 +541,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-17.04'
 'base:alpine':
     stage: level1
     before_script:
@@ -529,6 +556,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:alpine'
 'base:centos-7':
     stage: level1
     before_script:
@@ -542,6 +571,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:centos-7'
 'base:debian-7':
     stage: level1
     before_script:
@@ -555,6 +586,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:debian-7'
 'base:debian-8':
     stage: level1
     before_script:
@@ -568,6 +601,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:debian-8'
 'base:debian-9':
     stage: level1
     before_script:
@@ -581,6 +616,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:debian-9'
 'base:ubuntu-12.04':
     stage: level1
     before_script:
@@ -594,6 +631,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-12.04'
 'base:ubuntu-14.04':
     stage: level1
     before_script:
@@ -607,6 +646,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-14.04'
 'base:ubuntu-15.04':
     stage: level1
     before_script:
@@ -620,6 +661,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-15.04'
 'base:ubuntu-15.10':
     stage: level1
     before_script:
@@ -633,6 +676,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-15.10'
 'base:ubuntu-16.04':
     stage: level1
     before_script:
@@ -646,6 +691,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-16.04'
 'base:ubuntu-16.10':
     stage: level1
     before_script:
@@ -659,6 +706,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-16.10'
 'base:ubuntu-17.04':
     stage: level1
     before_script:
@@ -672,6 +721,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-17.04'
 'base:ubuntu-17.10':
     stage: level1
     before_script:
@@ -685,6 +736,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-17.10'
 'base:ubuntu-18.04':
     stage: level1
     before_script:
@@ -698,6 +751,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-18.04'
 'certbot:latest':
     stage: level1
     before_script:
@@ -709,8 +764,10 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:alpine'
 'dockerfile-build-env:latest':
-    stage: build-env
+    stage: level1
     before_script:
         - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
     script:
@@ -720,6 +777,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:ubuntu-16.04'
 'php-apache:5.6':
     stage: level1
     before_script:
@@ -731,6 +790,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:5.6'
 'php-apache:7.0':
     stage: level1
     before_script:
@@ -742,6 +803,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:7.0'
 'php-apache:7.1':
     stage: level1
     before_script:
@@ -753,6 +816,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:7.1'
 'php-apache:7.2':
     stage: level1
     before_script:
@@ -764,6 +829,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:7.2'
 'php-dev:5.6':
     stage: level1
     before_script:
@@ -775,6 +842,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:5.6'
 'php-dev:7.0':
     stage: level1
     before_script:
@@ -786,6 +855,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:7.0'
 'php-dev:7.1':
     stage: level1
     before_script:
@@ -797,6 +868,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:7.1'
 'php-dev:7.2':
     stage: level1
     before_script:
@@ -808,6 +881,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:7.2'
 'php-nginx:5.6':
     stage: level1
     before_script:
@@ -819,6 +894,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:5.6'
 'php-nginx:7.0':
     stage: level1
     before_script:
@@ -830,6 +907,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:7.0'
 'php-nginx:7.1':
     stage: level1
     before_script:
@@ -841,6 +920,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:7.1'
 'php-nginx:7.2':
     stage: level1
     before_script:
@@ -852,6 +933,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:7.2'
 'sphinx:latest':
     stage: level1
     before_script:
@@ -863,6 +946,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'bootstrap:alpine'
 'apache:alpine':
     stage: level2
     before_script:
@@ -874,6 +959,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:alpine'
 'apache:centos-7':
     stage: level2
     before_script:
@@ -885,6 +972,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:centos-7'
 'apache:debian-7':
     stage: level2
     before_script:
@@ -896,6 +985,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:debian-7'
 'apache:debian-8':
     stage: level2
     before_script:
@@ -907,6 +998,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:debian-8'
 'apache:debian-9':
     stage: level2
     before_script:
@@ -918,6 +1011,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:debian-9'
 'apache:ubuntu-12.04':
     stage: level2
     before_script:
@@ -929,6 +1024,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-12.04'
 'apache:ubuntu-14.04':
     stage: level2
     before_script:
@@ -940,6 +1037,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-14.04'
 'apache:ubuntu-15.04':
     stage: level2
     before_script:
@@ -951,6 +1050,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-15.04'
 'apache:ubuntu-15.10':
     stage: level2
     before_script:
@@ -962,6 +1063,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-15.10'
 'apache:ubuntu-16.04':
     stage: level2
     before_script:
@@ -973,6 +1076,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-16.04'
 'apache:ubuntu-16.10':
     stage: level2
     before_script:
@@ -984,6 +1089,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-16.10'
 'apache:ubuntu-17.04':
     stage: level2
     before_script:
@@ -995,6 +1102,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-17.04'
 'apache:ubuntu-17.10':
     stage: level2
     before_script:
@@ -1006,6 +1115,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-17.10'
 'apache:ubuntu-18.04':
     stage: level2
     before_script:
@@ -1017,6 +1128,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-18.04'
 'base-app:alpine':
     stage: level2
     before_script:
@@ -1030,6 +1143,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:alpine'
 'base-app:centos-7':
     stage: level2
     before_script:
@@ -1043,6 +1158,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:centos-7'
 'base-app:debian-7':
     stage: level2
     before_script:
@@ -1056,6 +1173,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:debian-7'
 'base-app:debian-8':
     stage: level2
     before_script:
@@ -1069,6 +1188,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:debian-8'
 'base-app:debian-9':
     stage: level2
     before_script:
@@ -1082,6 +1203,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:debian-9'
 'base-app:ubuntu-12.04':
     stage: level2
     before_script:
@@ -1095,6 +1218,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-12.04'
 'base-app:ubuntu-14.04':
     stage: level2
     before_script:
@@ -1108,6 +1233,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-14.04'
 'base-app:ubuntu-15.04':
     stage: level2
     before_script:
@@ -1121,6 +1248,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-15.04'
 'base-app:ubuntu-15.10':
     stage: level2
     before_script:
@@ -1134,6 +1263,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-15.10'
 'base-app:ubuntu-16.04':
     stage: level2
     before_script:
@@ -1147,6 +1278,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-16.04'
 'base-app:ubuntu-16.10':
     stage: level2
     before_script:
@@ -1160,6 +1293,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-16.10'
 'base-app:ubuntu-17.04':
     stage: level2
     before_script:
@@ -1173,6 +1308,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-17.04'
 'base-app:ubuntu-17.10':
     stage: level2
     before_script:
@@ -1186,6 +1323,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-17.10'
 'base-app:ubuntu-18.04':
     stage: level2
     before_script:
@@ -1199,6 +1338,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-18.04'
 'liquidsoap:latest':
     stage: level2
     before_script:
@@ -1210,6 +1351,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-16.04'
 'nginx:alpine':
     stage: level2
     before_script:
@@ -1221,6 +1364,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:alpine'
 'nginx:centos-7':
     stage: level2
     before_script:
@@ -1232,6 +1377,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:centos-7'
 'nginx:debian-7':
     stage: level2
     before_script:
@@ -1243,6 +1390,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:debian-7'
 'nginx:debian-8':
     stage: level2
     before_script:
@@ -1254,6 +1403,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:debian-8'
 'nginx:debian-9':
     stage: level2
     before_script:
@@ -1265,6 +1416,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:debian-9'
 'nginx:ubuntu-12.04':
     stage: level2
     before_script:
@@ -1276,6 +1429,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-12.04'
 'nginx:ubuntu-14.04':
     stage: level2
     before_script:
@@ -1287,6 +1442,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-14.04'
 'nginx:ubuntu-15.04':
     stage: level2
     before_script:
@@ -1298,6 +1455,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-15.04'
 'nginx:ubuntu-15.10':
     stage: level2
     before_script:
@@ -1309,6 +1468,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-15.10'
 'nginx:ubuntu-16.04':
     stage: level2
     before_script:
@@ -1320,6 +1481,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-16.04'
 'nginx:ubuntu-16.10':
     stage: level2
     before_script:
@@ -1331,6 +1494,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-16.10'
 'nginx:ubuntu-17.04':
     stage: level2
     before_script:
@@ -1342,6 +1507,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-17.04'
 'nginx:ubuntu-17.10':
     stage: level2
     before_script:
@@ -1353,6 +1520,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-17.10'
 'nginx:ubuntu-18.04':
     stage: level2
     before_script:
@@ -1364,6 +1533,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-18.04'
 'php-apache-dev:5.6':
     stage: level2
     before_script:
@@ -1375,6 +1546,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:5.6'
 'php-apache-dev:7.0':
     stage: level2
     before_script:
@@ -1386,6 +1559,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:7.0'
 'php-apache-dev:7.1':
     stage: level2
     before_script:
@@ -1397,6 +1572,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:7.1'
 'php-apache-dev:7.2':
     stage: level2
     before_script:
@@ -1408,6 +1585,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:7.2'
 'php-nginx-dev:5.6':
     stage: level2
     before_script:
@@ -1419,6 +1598,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:5.6'
 'php-nginx-dev:7.0':
     stage: level2
     before_script:
@@ -1430,6 +1611,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:7.0'
 'php-nginx-dev:7.1':
     stage: level2
     before_script:
@@ -1441,6 +1624,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:7.1'
 'php-nginx-dev:7.2':
     stage: level2
     before_script:
@@ -1452,6 +1637,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:7.2'
 'piwik:latest':
     stage: level2
     before_script:
@@ -1463,6 +1650,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:7.1'
 'typo3:latest':
     stage: level2
     before_script:
@@ -1474,6 +1663,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:7.2'
 'varnish:latest':
     stage: level2
     before_script:
@@ -1485,6 +1676,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:alpine'
 'vsftp:latest':
     stage: level2
     before_script:
@@ -1496,6 +1689,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base:ubuntu-16.04'
 'apache-dev:alpine':
     stage: level3
     before_script:
@@ -1507,6 +1702,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:alpine'
 'apache-dev:centos-7':
     stage: level3
     before_script:
@@ -1518,6 +1715,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:centos-7'
 'apache-dev:debian-7':
     stage: level3
     before_script:
@@ -1529,6 +1728,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:debian-7'
 'apache-dev:debian-8':
     stage: level3
     before_script:
@@ -1540,6 +1741,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:debian-8'
 'apache-dev:debian-9':
     stage: level3
     before_script:
@@ -1551,6 +1754,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:debian-9'
 'apache-dev:ubuntu-12.04':
     stage: level3
     before_script:
@@ -1562,6 +1767,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:ubuntu-12.04'
 'apache-dev:ubuntu-14.04':
     stage: level3
     before_script:
@@ -1573,6 +1780,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:ubuntu-14.04'
 'apache-dev:ubuntu-15.04':
     stage: level3
     before_script:
@@ -1584,6 +1793,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:ubuntu-15.04'
 'apache-dev:ubuntu-15.10':
     stage: level3
     before_script:
@@ -1595,6 +1806,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:ubuntu-15.10'
 'apache-dev:ubuntu-16.04':
     stage: level3
     before_script:
@@ -1606,6 +1819,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:ubuntu-16.04'
 'apache-dev:ubuntu-16.10':
     stage: level3
     before_script:
@@ -1617,6 +1832,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:ubuntu-16.10'
 'apache-dev:ubuntu-17.04':
     stage: level3
     before_script:
@@ -1628,6 +1845,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:ubuntu-17.04'
 'apache-dev:ubuntu-17.10':
     stage: level3
     before_script:
@@ -1639,6 +1858,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:ubuntu-17.10'
 'apache-dev:ubuntu-18.04':
     stage: level3
     before_script:
@@ -1650,6 +1871,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'apache:ubuntu-18.04'
 'hhvm:ubuntu-14.04':
     stage: level3
     before_script:
@@ -1661,6 +1884,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:ubuntu-14.04'
 'hhvm:ubuntu-16.04':
     stage: level3
     before_script:
@@ -1672,6 +1897,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:ubuntu-16.04'
 'nginx-dev:alpine':
     stage: level3
     before_script:
@@ -1683,6 +1910,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:alpine'
 'nginx-dev:centos-7':
     stage: level3
     before_script:
@@ -1694,6 +1923,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:centos-7'
 'nginx-dev:debian-7':
     stage: level3
     before_script:
@@ -1705,6 +1936,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:debian-7'
 'nginx-dev:debian-8':
     stage: level3
     before_script:
@@ -1716,6 +1949,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:debian-8'
 'nginx-dev:debian-9':
     stage: level3
     before_script:
@@ -1727,6 +1962,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:debian-9'
 'nginx-dev:ubuntu-12.04':
     stage: level3
     before_script:
@@ -1738,6 +1975,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:ubuntu-12.04'
 'nginx-dev:ubuntu-14.04':
     stage: level3
     before_script:
@@ -1749,6 +1988,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:ubuntu-14.04'
 'nginx-dev:ubuntu-15.04':
     stage: level3
     before_script:
@@ -1760,6 +2001,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:ubuntu-15.04'
 'nginx-dev:ubuntu-15.10':
     stage: level3
     before_script:
@@ -1771,6 +2014,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:ubuntu-15.10'
 'nginx-dev:ubuntu-16.04':
     stage: level3
     before_script:
@@ -1782,6 +2027,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:ubuntu-16.04'
 'nginx-dev:ubuntu-16.10':
     stage: level3
     before_script:
@@ -1793,6 +2040,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:ubuntu-16.10'
 'nginx-dev:ubuntu-17.04':
     stage: level3
     before_script:
@@ -1804,6 +2053,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:ubuntu-17.04'
 'nginx-dev:ubuntu-17.10':
     stage: level3
     before_script:
@@ -1815,6 +2066,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:ubuntu-17.10'
 'nginx-dev:ubuntu-18.04':
     stage: level3
     before_script:
@@ -1826,6 +2079,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'nginx:ubuntu-18.04'
 'php:alpine-php5':
     stage: level3
     before_script:
@@ -1839,6 +2094,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:alpine'
 'php:alpine-php7':
     stage: level3
     before_script:
@@ -1852,6 +2109,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:alpine'
 'php:centos-7':
     stage: level3
     before_script:
@@ -1865,6 +2124,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:centos-7'
 'php:centos-7-php56':
     stage: level3
     before_script:
@@ -1878,6 +2139,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:centos-7'
 'php:centos-7-php7':
     stage: level3
     before_script:
@@ -1891,6 +2154,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:centos-7'
 'php:debian-7':
     stage: level3
     before_script:
@@ -1904,6 +2169,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:debian-7'
 'php:debian-8':
     stage: level3
     before_script:
@@ -1917,6 +2184,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:debian-8'
 'php:debian-8-php7':
     stage: level3
     before_script:
@@ -1930,6 +2199,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:debian-8'
 'php:debian-9':
     stage: level3
     before_script:
@@ -1943,6 +2214,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:debian-9'
 'php:ubuntu-12.04':
     stage: level3
     before_script:
@@ -1956,6 +2229,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:ubuntu-12.04'
 'php:ubuntu-14.04':
     stage: level3
     before_script:
@@ -1969,6 +2244,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:ubuntu-14.04'
 'php:ubuntu-15.04':
     stage: level3
     before_script:
@@ -1982,6 +2259,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:ubuntu-15.04'
 'php:ubuntu-15.10':
     stage: level3
     before_script:
@@ -1995,6 +2274,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:ubuntu-15.10'
 'php:ubuntu-16.04':
     stage: level3
     before_script:
@@ -2008,6 +2289,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:ubuntu-16.04'
 'php:ubuntu-16.10':
     stage: level3
     before_script:
@@ -2021,6 +2304,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:ubuntu-16.10'
 'php:ubuntu-17.04':
     stage: level3
     before_script:
@@ -2034,6 +2319,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:ubuntu-17.04'
 'php:ubuntu-17.10':
     stage: level3
     before_script:
@@ -2047,6 +2334,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:ubuntu-17.10'
 'php:ubuntu-18.04':
     stage: level3
     before_script:
@@ -2060,6 +2349,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:ubuntu-18.04'
 'postfix:latest':
     stage: level3
     before_script:
@@ -2071,6 +2362,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:ubuntu-16.04'
 'ssh:latest':
     stage: level3
     before_script:
@@ -2082,6 +2375,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'base-app:ubuntu-16.04'
 'hhvm-apache:ubuntu-14.04':
     stage: level4
     before_script:
@@ -2093,6 +2388,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'hhvm:ubuntu-14.04'
 'hhvm-apache:ubuntu-16.04':
     stage: level4
     before_script:
@@ -2104,6 +2401,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'hhvm:ubuntu-16.04'
 'hhvm-nginx:ubuntu-14.04':
     stage: level4
     before_script:
@@ -2115,6 +2414,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'hhvm:ubuntu-14.04'
 'hhvm-nginx:ubuntu-16.04':
     stage: level4
     before_script:
@@ -2126,6 +2427,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'hhvm:ubuntu-16.04'
 'php-apache:alpine-php5':
     stage: level4
     before_script:
@@ -2137,6 +2440,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:alpine-php5'
 'php-apache:alpine-php7':
     stage: level4
     before_script:
@@ -2148,6 +2453,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:alpine-php7'
 'php-apache:centos-7':
     stage: level4
     before_script:
@@ -2159,6 +2466,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:centos-7'
 'php-apache:centos-7-php56':
     stage: level4
     before_script:
@@ -2170,6 +2479,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:centos-7-php56'
 'php-apache:centos-7-php7':
     stage: level4
     before_script:
@@ -2181,6 +2492,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:centos-7-php7'
 'php-apache:debian-7':
     stage: level4
     before_script:
@@ -2192,6 +2505,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:debian-7'
 'php-apache:debian-8':
     stage: level4
     before_script:
@@ -2203,6 +2518,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:debian-8'
 'php-apache:debian-8-php7':
     stage: level4
     before_script:
@@ -2214,6 +2531,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:debian-8-php7'
 'php-apache:debian-9':
     stage: level4
     before_script:
@@ -2225,6 +2544,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:debian-9'
 'php-apache:ubuntu-12.04':
     stage: level4
     before_script:
@@ -2236,6 +2557,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-12.04'
 'php-apache:ubuntu-14.04':
     stage: level4
     before_script:
@@ -2247,6 +2570,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-14.04'
 'php-apache:ubuntu-15.04':
     stage: level4
     before_script:
@@ -2258,6 +2583,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-15.04'
 'php-apache:ubuntu-15.10':
     stage: level4
     before_script:
@@ -2269,6 +2596,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-15.10'
 'php-apache:ubuntu-16.04':
     stage: level4
     before_script:
@@ -2280,6 +2609,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-16.04'
 'php-apache:ubuntu-16.10':
     stage: level4
     before_script:
@@ -2291,6 +2622,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-16.10'
 'php-apache:ubuntu-17.04':
     stage: level4
     before_script:
@@ -2302,6 +2635,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-17.04'
 'php-apache:ubuntu-17.10':
     stage: level4
     before_script:
@@ -2313,6 +2648,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-17.10'
 'php-apache:ubuntu-18.04':
     stage: level4
     before_script:
@@ -2324,6 +2661,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-18.04'
 'php-dev:alpine-php5':
     stage: level4
     before_script:
@@ -2335,6 +2674,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:alpine-php5'
 'php-dev:alpine-php7':
     stage: level4
     before_script:
@@ -2346,6 +2687,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:alpine-php7'
 'php-dev:centos-7':
     stage: level4
     before_script:
@@ -2357,6 +2700,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:centos-7'
 'php-dev:centos-7-php56':
     stage: level4
     before_script:
@@ -2368,6 +2713,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:centos-7-php56'
 'php-dev:centos-7-php7':
     stage: level4
     before_script:
@@ -2379,6 +2726,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:centos-7-php7'
 'php-dev:debian-7':
     stage: level4
     before_script:
@@ -2390,6 +2739,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:debian-7'
 'php-dev:debian-8':
     stage: level4
     before_script:
@@ -2401,6 +2752,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:debian-8'
 'php-dev:debian-8-php7':
     stage: level4
     before_script:
@@ -2412,6 +2765,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:debian-8-php7'
 'php-dev:debian-9':
     stage: level4
     before_script:
@@ -2423,6 +2778,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:debian-9'
 'php-dev:ubuntu-12.04':
     stage: level4
     before_script:
@@ -2434,6 +2791,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-12.04'
 'php-dev:ubuntu-14.04':
     stage: level4
     before_script:
@@ -2445,6 +2804,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-14.04'
 'php-dev:ubuntu-15.04':
     stage: level4
     before_script:
@@ -2456,6 +2817,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-15.04'
 'php-dev:ubuntu-15.10':
     stage: level4
     before_script:
@@ -2467,6 +2830,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-15.10'
 'php-dev:ubuntu-16.04':
     stage: level4
     before_script:
@@ -2478,6 +2843,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-16.04'
 'php-dev:ubuntu-16.10':
     stage: level4
     before_script:
@@ -2489,6 +2856,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-16.10'
 'php-dev:ubuntu-17.04':
     stage: level4
     before_script:
@@ -2500,6 +2869,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-17.04'
 'php-dev:ubuntu-17.10':
     stage: level4
     before_script:
@@ -2511,6 +2882,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-17.10'
 'php-dev:ubuntu-18.04':
     stage: level4
     before_script:
@@ -2522,6 +2895,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-18.04'
 'php-nginx:alpine-php5':
     stage: level4
     before_script:
@@ -2533,6 +2908,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:alpine-php5'
 'php-nginx:alpine-php7':
     stage: level4
     before_script:
@@ -2544,6 +2921,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:alpine-php7'
 'php-nginx:centos-7':
     stage: level4
     before_script:
@@ -2555,6 +2934,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:centos-7'
 'php-nginx:centos-7-php56':
     stage: level4
     before_script:
@@ -2566,6 +2947,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:centos-7-php56'
 'php-nginx:centos-7-php7':
     stage: level4
     before_script:
@@ -2577,6 +2960,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:centos-7-php7'
 'php-nginx:debian-7':
     stage: level4
     before_script:
@@ -2588,6 +2973,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:debian-7'
 'php-nginx:debian-8':
     stage: level4
     before_script:
@@ -2599,6 +2986,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:debian-8'
 'php-nginx:debian-8-php7':
     stage: level4
     before_script:
@@ -2610,6 +2999,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:debian-8-php7'
 'php-nginx:debian-9':
     stage: level4
     before_script:
@@ -2621,6 +3012,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:debian-9'
 'php-nginx:ubuntu-12.04':
     stage: level4
     before_script:
@@ -2632,6 +3025,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-12.04'
 'php-nginx:ubuntu-14.04':
     stage: level4
     before_script:
@@ -2643,6 +3038,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-14.04'
 'php-nginx:ubuntu-15.04':
     stage: level4
     before_script:
@@ -2654,6 +3051,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-15.04'
 'php-nginx:ubuntu-15.10':
     stage: level4
     before_script:
@@ -2665,6 +3064,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-15.10'
 'php-nginx:ubuntu-16.04':
     stage: level4
     before_script:
@@ -2676,6 +3077,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-16.04'
 'php-nginx:ubuntu-16.10':
     stage: level4
     before_script:
@@ -2687,6 +3090,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-16.10'
 'php-nginx:ubuntu-17.04':
     stage: level4
     before_script:
@@ -2698,6 +3103,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-17.04'
 'php-nginx:ubuntu-17.10':
     stage: level4
     before_script:
@@ -2709,6 +3116,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-17.10'
 'php-nginx:ubuntu-18.04':
     stage: level4
     before_script:
@@ -2720,6 +3129,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php:ubuntu-18.04'
 'mail-sandbox:latest':
     stage: level5
     before_script:
@@ -2731,6 +3142,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:ubuntu-16.04'
 'php-apache-dev:alpine-php5':
     stage: level5
     before_script:
@@ -2742,6 +3155,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:alpine-php5'
 'php-apache-dev:alpine-php7':
     stage: level5
     before_script:
@@ -2753,6 +3168,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:alpine-php7'
 'php-apache-dev:centos-7':
     stage: level5
     before_script:
@@ -2764,6 +3181,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:centos-7'
 'php-apache-dev:centos-7-php56':
     stage: level5
     before_script:
@@ -2775,6 +3194,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:centos-7-php56'
 'php-apache-dev:centos-7-php7':
     stage: level5
     before_script:
@@ -2786,6 +3207,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:centos-7-php7'
 'php-apache-dev:debian-7':
     stage: level5
     before_script:
@@ -2797,6 +3220,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:debian-7'
 'php-apache-dev:debian-8':
     stage: level5
     before_script:
@@ -2808,6 +3233,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:debian-8'
 'php-apache-dev:debian-8-php7':
     stage: level5
     before_script:
@@ -2819,6 +3246,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:debian-8-php7'
 'php-apache-dev:debian-9':
     stage: level5
     before_script:
@@ -2830,6 +3259,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:debian-9'
 'php-apache-dev:ubuntu-12.04':
     stage: level5
     before_script:
@@ -2841,6 +3272,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:ubuntu-12.04'
 'php-apache-dev:ubuntu-14.04':
     stage: level5
     before_script:
@@ -2852,6 +3285,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:ubuntu-14.04'
 'php-apache-dev:ubuntu-15.04':
     stage: level5
     before_script:
@@ -2863,6 +3298,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:ubuntu-15.04'
 'php-apache-dev:ubuntu-15.10':
     stage: level5
     before_script:
@@ -2874,6 +3311,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:ubuntu-15.10'
 'php-apache-dev:ubuntu-16.04':
     stage: level5
     before_script:
@@ -2885,6 +3324,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:ubuntu-16.04'
 'php-apache-dev:ubuntu-16.10':
     stage: level5
     before_script:
@@ -2896,6 +3337,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:ubuntu-16.10'
 'php-apache-dev:ubuntu-17.04':
     stage: level5
     before_script:
@@ -2907,6 +3350,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:ubuntu-17.04'
 'php-apache-dev:ubuntu-17.10':
     stage: level5
     before_script:
@@ -2918,6 +3363,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:ubuntu-17.10'
 'php-apache-dev:ubuntu-18.04':
     stage: level5
     before_script:
@@ -2929,6 +3376,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-apache:ubuntu-18.04'
 'php-nginx-dev:alpine-php5':
     stage: level5
     before_script:
@@ -2940,6 +3389,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:alpine-php5'
 'php-nginx-dev:alpine-php7':
     stage: level5
     before_script:
@@ -2951,6 +3402,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:alpine-php7'
 'php-nginx-dev:centos-7':
     stage: level5
     before_script:
@@ -2962,6 +3415,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:centos-7'
 'php-nginx-dev:centos-7-php56':
     stage: level5
     before_script:
@@ -2973,6 +3428,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:centos-7-php56'
 'php-nginx-dev:centos-7-php7':
     stage: level5
     before_script:
@@ -2984,6 +3441,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:centos-7-php7'
 'php-nginx-dev:debian-7':
     stage: level5
     before_script:
@@ -2995,6 +3454,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:debian-7'
 'php-nginx-dev:debian-8':
     stage: level5
     before_script:
@@ -3006,6 +3467,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:debian-8'
 'php-nginx-dev:debian-8-php7':
     stage: level5
     before_script:
@@ -3017,6 +3480,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:debian-8-php7'
 'php-nginx-dev:debian-9':
     stage: level5
     before_script:
@@ -3028,6 +3493,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:debian-9'
 'php-nginx-dev:ubuntu-12.04':
     stage: level5
     before_script:
@@ -3039,6 +3506,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:ubuntu-12.04'
 'php-nginx-dev:ubuntu-14.04':
     stage: level5
     before_script:
@@ -3050,6 +3519,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:ubuntu-14.04'
 'php-nginx-dev:ubuntu-15.04':
     stage: level5
     before_script:
@@ -3061,6 +3532,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:ubuntu-15.04'
 'php-nginx-dev:ubuntu-15.10':
     stage: level5
     before_script:
@@ -3072,6 +3545,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:ubuntu-15.10'
 'php-nginx-dev:ubuntu-16.04':
     stage: level5
     before_script:
@@ -3083,6 +3558,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:ubuntu-16.04'
 'php-nginx-dev:ubuntu-16.10':
     stage: level5
     before_script:
@@ -3094,6 +3571,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:ubuntu-16.10'
 'php-nginx-dev:ubuntu-17.04':
     stage: level5
     before_script:
@@ -3105,6 +3584,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:ubuntu-17.04'
 'php-nginx-dev:ubuntu-17.10':
     stage: level5
     before_script:
@@ -3116,6 +3597,8 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:ubuntu-17.10'
 'php-nginx-dev:ubuntu-18.04':
     stage: level5
     before_script:
@@ -3127,3 +3610,5 @@ stages:
     retry: 2
     tags:
         - aws
+    dependencies:
+        - 'php-nginx:ubuntu-18.04'

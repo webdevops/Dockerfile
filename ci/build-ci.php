@@ -59,8 +59,14 @@ class DockerfileStruct {
 
 
 $gitlabCi = [
-    'image' => 'webdevops/dockerfile-build-env',
+    'image' => 'docker',
     'stages' => [],
+    'before_script' => [
+        'apk add curl',
+        'curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64',
+        'chmod +x container-structure-test-linux-amd64',
+        'mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test',
+    ]
 ];
 $dockerfiles = [];
 $maxLevel = 0;
@@ -168,11 +174,12 @@ foreach ($dockerfiles as $dockerfile) {
         'tags' => ['aws'],
         //'only' => ['master']
     ];
-    if (!$gitlabCi->dependencyIsExternal && !empty($gitlabCi->dependency)) {
-        $gitlabCi[$dockerfile->jobName]['dependencies'] = [$gitlabCi->dependency];
+    if (!$dockerfile->dependencyIsExternal && !empty($dockerfile->dependency)) {
+        $gitlabCi[$dockerfile->jobName]['dependencies'] = [str_replace('webdevops/', '', $dockerfile->dependency)];
     }
 }
-$gitlabCi['dockerfile-build-env:latest']['stage'] = 'build-env';
+// TODO: fix cyclic dependency
+//$gitlabCi['dockerfile-build-env:latest']['stage'] = 'build-env';
 
 
 /*
