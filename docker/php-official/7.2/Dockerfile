@@ -109,6 +109,7 @@ RUN set -x \
         # Libraries
         libldap-2.4-2 \
         libxslt1.1 \
+        zlibc \
         zlib1g \
         libpng16-16 \
         libmcrypt4 \
@@ -123,6 +124,7 @@ RUN set -x \
         libxml2-dev \
         libxslt1-dev \
         zlib1g-dev \
+        libmemcached-dev \
         libpng-dev \
     # Install extensions
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
@@ -144,11 +146,19 @@ RUN set -x \
         sysvsem \
         sysvshm \
         shmop \
+        xmlrpc \
         xsl \
         zip \
         gd \
         gettext \
         opcache \
+    # Install extensions for PHP 7.x
+    && pecl install apcu \
+    && printf "no --disable-memcached-sasl\n" | pecl install memcached-3.0.4 \
+    && pecl install redis \
+    && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
+    && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
+    && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
         libbz2-dev \
@@ -160,11 +170,6 @@ RUN set -x \
         libxslt1-dev \
         zlib1g-dev \
         libpng-dev \
-    # Install extensions for PHP 7.x
-    && pecl install apcu \
-    && pecl install redis \
-    && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
-    && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services
