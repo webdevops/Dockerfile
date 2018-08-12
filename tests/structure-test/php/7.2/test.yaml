@@ -98,70 +98,70 @@ fileExistenceTests:
   - name: 'bin: bootstrap script'
     path: '/opt/docker/bin/bootstrap.sh'
     shouldExist: true
-    permissions: '-rwxr-xr-x'
+    permissions: '-rwxrwxrwx'
   - name: 'bin: config script'
     path: '/opt/docker/bin/config.sh'
     shouldExist: true
-    permissions: '-rwxr-xr-x'
+    permissions: '-rwxrwxrwx'
   - name: 'bin: control script'
     path: '/opt/docker/bin/control.sh'
     shouldExist: true
-    permissions: '-rwxr-xr-x'
+    permissions: '-rwxrwxrwx'
   - name: 'bin: entrypoint script'
     path: '/opt/docker/bin/entrypoint.sh'
     shouldExist: true
-    permissions: '-rwxr-xr-x'
+    permissions: '-rwxrwxrwx'
   - name: 'bin: supervisor entrypoint script'
     path: '/opt/docker/bin/service.d/supervisor.sh'
     shouldExist: true
-    permissions: '-rwxr-xr-x'
+    permissions: '-rwxrwxrwx'
   - name: 'configfile: supervisor base'
     path: '/opt/docker/etc/supervisor.conf'
     shouldExist: true
-    permissions: '-rw-r--r--'
+    permissions: '-rw-rw-rw-'
   - name: 'configfile: supervisor service cron'
     path: '/opt/docker/etc/supervisor.d/cron.conf'
     shouldExist: true
-    permissions: '-rw-r--r--'
+    permissions: '-rw-rw-rw-'
   - name: 'configfile: supervisor service dnsmasq'
     path: '/opt/docker/etc/supervisor.d/dnsmasq.conf'
     shouldExist: true
-    permissions: '-rw-r--r--'
+    permissions: '-rw-rw-rw-'
   - name: 'configfile: supervisor service postfix'
     path: '/opt/docker/etc/supervisor.d/postfix.conf'
     shouldExist: true
-    permissions: '-rw-r--r--'
+    permissions: '-rw-rw-rw-'
   - name: 'configfile: supervisor service ssh'
     path: '/opt/docker/etc/supervisor.d/ssh.conf'
     shouldExist: true
-    permissions: '-rw-r--r--'
+    permissions: '-rw-rw-rw-'
   - name: 'configfile: supervisor service syslog'
     path: '/opt/docker/etc/supervisor.d/syslog.conf'
     shouldExist: true
-    permissions: '-rw-r--r--'
+    permissions: '-rw-rw-rw-'
   - name: 'configfile: logrotate'
     path: '/opt/docker/etc/logrotate.d/syslog-ng'
     shouldExist: true
-    permissions: '-rw-r--r--'
+    permissions: '-rw-rw-rw-'
   - name: 'configfile: syslog-ng'
     path: '/opt/docker/etc/syslog-ng/syslog-ng.conf'
     shouldExist: true
-    permissions: '-rw-r--r--'
+    permissions: '-rw-rw-rw-'
   - name: 'provisioning: cron'
     path: '/opt/docker/provision/service.d/cron.sh'
     shouldExist: false
   - name: 'provisioning: dnsmasq'
     path: '/opt/docker/provision/service.d/dnsmasq.sh'
     shouldExist: true
-    permissions: '-rw-r--r--'
+    permissions: '-rw-rw-rw-'
   - name: 'provisioning: postfix'
     path: '/opt/docker/provision/service.d/postfix.sh'
     shouldExist: true
-    permissions: '-rw-r--r--'
+    permissions: '-rw-rw-rw-'
   - name: 'provisioning: ssh'
     path: '/opt/docker/provision/service.d/ssh.sh'
     shouldExist: true
-    permissions: '-rw-r--r--'
+    permissions: '-rw-rw-rw-'
   - name: 'provisioning: syslog'
     path: '/opt/docker/provision/service.d/syslog.sh'
     shouldExist: false
