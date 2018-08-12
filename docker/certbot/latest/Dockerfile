@@ -10,13 +10,14 @@ VOLUME /var/www
 
 RUN set -x \
     && apk-install \
-        python \
-        py-crypto \
+        gcc \
+        python2-dev \
+        musl-dev \
+        libffi-dev \
+        openssl-dev \
         py2-pip \
-        py2-dnspython \
-        certbot \
     && pip install --upgrade pip \
     && hash -r \
-    && pip install pyRFC3339 configobj ConfigArgParse \
+    && pip install certbot \
     && docker-run-bootstrap \
     && docker-image-cleanup
