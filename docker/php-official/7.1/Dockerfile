@@ -135,6 +135,7 @@ RUN set -x \
         exif \
         intl \
         gettext \
+        ldap \
         mysqli \
         mcrypt \
         hash \
