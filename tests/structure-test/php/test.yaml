@@ -1,5 +1,6 @@
 schemaVersion: "2.0.0"
 
+# todo: change to metadataTest
 globalEnvVars:
   - key: "WEB_DOCUMENT_ROOT"
     value: "/app"

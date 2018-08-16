@@ -1,5 +1,6 @@
 schemaVersion: "2.0.0"
 
+# todo: change to metadataTest
 globalEnvVars:
   - key: "LC_ALL"
     value: "C.UTF-8"

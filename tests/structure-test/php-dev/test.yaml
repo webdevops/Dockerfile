@@ -1,0 +1,26 @@
+schemaVersion: "2.0.0"
+
+fileExistenceTests:
+  - name: 'blackfire should exist'
+    path: '/usr/bin/blackfire'
+    shouldExist: true
+  - name: 'blackfire agent should exist'
+    path: '/usr/bin/blackfire-agent'
+    shouldExist: true
+
+commandTests:
+  - name: "xdebug enabled by default"
+    setup: [["/entrypoint", "/bin/bash"]]
+    command: "php"
+    args: ["-m"]
+    expectedOutput: ["Xdebug"]
+    excludedOutput: ["blackfire"]
+  - name: "PHP_DEBUGGER change to blackfire"
+    setup: [["/entrypoint", "/bin/bash"]]
+    envVars:
+    - key: "PHP_DEBUGGER"
+      value: "blackfire"
+    command: "php"
+    args: ["-m"]
+    expectedOutput: ["blackfire"]
+    excludedOutput: ["Xdebug"]
