@@ -112,6 +112,7 @@ RUN set -x \
         libxslt1.1 \
         zlibc \
         zlib1g \
+        libpq5 \
         libpng16-16 \
         libmcrypt4 \
         libjpeg62-turbo-dev \
