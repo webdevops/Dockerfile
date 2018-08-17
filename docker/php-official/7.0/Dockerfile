@@ -45,6 +45,7 @@ ENV APPLICATION_USER=application \
     APPLICATION_PATH=/app \
     APPLICATION_UID=1000 \
     APPLICATION_GID=1000
+ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"
 
 
 # Baselayout copy (from staged image)

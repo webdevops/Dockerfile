@@ -56,4 +56,7 @@ if [[ -n "${PHP_OPCACHE_INTERNED_STRINGS_BUFFER+x}" ]]; then
     echo "opcache.interned_strings_buffer = ${PHP_OPCACHE_INTERNED_STRINGS_BUFFER}" >> /opt/docker/etc/php/php.webdevops.ini
 fi
 
-
+# Workaround for official PHP images
+if [[ -n "${PHP_SENDMAIL_PATH+x}" ]]; then
+    echo "sendmail_path = ${PHP_SENDMAIL_PATH}" >> /opt/docker/etc/php/php.webdevops.ini
+fi

@@ -73,3 +73,8 @@ fi
 if [[ -n "${FPM_RLIMIT_CORE+x}" ]]; then
     echo "rlimit_core = ${FPM_RLIMIT_CORE}" >> /opt/docker/etc/php/fpm/pool.d/application.conf
 fi
+
+# Workaround for official PHP images
+if [[ -n "${PHP_SENDMAIL_PATH+x}" ]]; then
+    echo "php_admin_value[sendmail_path] = ${PHP_SENDMAIL_PATH}" >> /opt/docker/etc/php/fpm/pool.d/application.conf
+fi
