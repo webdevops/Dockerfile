@@ -30,6 +30,7 @@ RUN set -x \
         php-memcached \
         php-mcrypt \
         php-gd \
+        php-pgsql \
         php-mbstring \
         php-bcmath \
         php-soap \

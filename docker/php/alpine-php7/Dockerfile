@@ -28,6 +28,7 @@ RUN set -x \
         php7-mysqli \
         php7-mysqlnd \
         php7-pdo_mysql \
+        php7-pdo_pgsql \
         php7-pdo_sqlite \
         php7-mcrypt \
         php7-gd \
@@ -39,6 +40,7 @@ RUN set -x \
         php7-calendar \
         php7-ctype \
         php7-pcntl \
+        php7-pgsql \
         php7-posix \
         php7-sockets \
         php7-sysvmsg \

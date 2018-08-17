@@ -29,6 +29,7 @@ RUN set -x \
         php7.1-mysql \
         php7.1-gd \
         php7.1-sqlite3 \
+        php7.1-pgsql \
         php7.1-ldap \
         php7.1-opcache \
         php7.1-soap \
