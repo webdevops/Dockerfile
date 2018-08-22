@@ -18,13 +18,14 @@ RUN set -x \
     # Install apache
     && apk-install \
         apache2 \
+        apache2-ctl \
         apache2-utils \
         apache2-proxy \
         apache2-ssl \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/httpd.conf \
+    && sed -ri ' \
+        s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+        s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+        ' /etc/apache2/httpd.conf \
     && docker-run-bootstrap \
     && docker-image-cleanup
 

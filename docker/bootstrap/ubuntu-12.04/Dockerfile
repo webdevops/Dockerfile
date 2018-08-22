@@ -46,10 +46,7 @@ COPY --from=baselayout /baselayout /
 RUN set -x \
     # Init bootstrap
     # Add multiverse
-    && echo "deb http://archive.ubuntu.com/ubuntu/ precise-security multiverse" >> /etc/apt/sources.list \
-    && echo "deb-src http://archive.ubuntu.com/ubuntu/ precise-security multiverse" >> /etc/apt/sources.list \
-    && echo "deb http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
-    && echo "deb-src http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list \
+    && sed -i 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list \
     && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \
@@ -59,6 +56,9 @@ RUN set -x \
         python-software-properties \
         ca-certificates \
         apt-transport-https \
+    && apt-add-repository multiverse \
+    && sed -i 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list \
+    && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     && docker-run-bootstrap \
     && docker-image-cleanup

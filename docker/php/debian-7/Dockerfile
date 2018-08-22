@@ -30,6 +30,7 @@ RUN set -x \
         php5-mcrypt \
         php5-gd \
         php5-sqlite \
+        php5-pgsql \
         php5-xmlrpc \
         php5-xsl \
         php5-geoip \

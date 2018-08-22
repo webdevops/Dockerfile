@@ -27,6 +27,7 @@ RUN set -x \
         php56w-pecl-memcached \
         php56w-mcrypt \
         php56w-gd \
+        php56w-pgsql \
         php56w-mbstring \
         php56w-bcmath \
         php56w-soap \
