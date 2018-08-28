@@ -20,6 +20,7 @@ RUN set -x \
         py-yaml \
         py-jinja2 \
         py-paramiko \
+        ssh-client \
     && pip install --upgrade pip \
     && hash -r \
     && pip install --no-cache-dir ansible \
