@@ -19,7 +19,7 @@ RUN set -x \
         libffi \
         python-devel \
         libffi-devel \
-        ssh-clients \
+        openssh-clients \
     && easy_install pip \
     && pip install --upgrade pip \
     && hash -r \
