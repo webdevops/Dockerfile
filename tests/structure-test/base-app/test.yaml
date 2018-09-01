@@ -1,16 +1,17 @@
 schemaVersion: "2.0.0"
 
-globalEnvVars:
-  - key: "APPLICATION_USER"
-    value: "application"
-  - key: "APPLICATION_GROUP"
-    value: "application"
-  - key: "APPLICATION_PATH"
-    value: "/app"
-  - key: "APPLICATION_UID"
-    value: "1000"
-  - key: "APPLICATION_GID"
-    value: "1000"
+metadataTest:
+  env:
+    - key: "APPLICATION_USER"
+      value: "application"
+    - key: "APPLICATION_GROUP"
+      value: "application"
+    - key: "APPLICATION_PATH"
+      value: "/app"
+    - key: "APPLICATION_UID"
+      value: "1000"
+    - key: "APPLICATION_GID"
+      value: "1000"
 
 fileExistenceTests:
   - name: 'provision: add application user script was deleted after execution'

@@ -1,16 +1,15 @@
 schemaVersion: "2.0.0"
 
-globalEnvVars:
-  - key: "DOCKER_CONF_HOME"
-    value: "/opt/docker/"
-  - key: "LOG_STDOUT"
-    value: ""
-  - key: "LOG_STDERR"
-    value: ""
-
 metadataTest:
   entrypoint: ["/entrypoint"]
   cmd: ["supervisord"]
+  env:
+    - key: "DOCKER_CONF_HOME"
+      value: "/opt/docker/"
+    - key: "LOG_STDOUT"
+      value: ""
+    - key: "LOG_STDERR"
+      value: ""
 
 fileExistenceTests:
   - name: 'bin: bootstrap script'

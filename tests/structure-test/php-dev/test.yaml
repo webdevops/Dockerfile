@@ -8,6 +8,17 @@ fileExistenceTests:
     path: '/usr/bin/blackfire-agent'
     shouldExist: true
 
+fileContentTests:
+  - name: 'supervisor: syslog service is enabled'
+    path: '/opt/docker/etc/supervisor.d/syslog.conf'
+    expectedContents: ['autostart = true']
+  - name: 'supervisor: postfix service is enabled'
+    path: '/opt/docker/etc/supervisor.d/postfix.conf'
+    expectedContents: ['autostart = true']
+  - name: 'supervisor: ssh service is enabled'
+    path: '/opt/docker/etc/supervisor.d/ssh.conf'
+    expectedContents: ['autostart = true']
+
 commandTests:
   - name: "xdebug enabled by default"
     setup: [["/entrypoint", "/bin/bash"]]

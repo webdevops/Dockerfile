@@ -1,13 +1,13 @@
 schemaVersion: "2.0.0"
 
-# todo: change to metadataTest
-globalEnvVars:
-  - key: "LC_ALL"
-    value: "C.UTF-8"
-  - key: "LANG"
-    value: "C.UTF-8"
-  - key: "TERM"
-    value: "xterm"
+metadataTest:
+  env:
+    - key: "LC_ALL"
+      value: "C.UTF-8"
+    - key: "LANG"
+      value: "C.UTF-8"
+    - key: "TERM"
+      value: "xterm"
 
 fileExistenceTests:
   - name: 'apk add wrapper'

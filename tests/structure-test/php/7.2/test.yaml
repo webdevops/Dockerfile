@@ -1,36 +1,35 @@
 schemaVersion: "2.0.0"
 
-globalEnvVars:
-# bootstrap
-  - key: "LC_ALL"
-    value: "C.UTF-8"
-  - key: "LANG"
-    value: "C.UTF-8"
-  - key: "TERM"
-    value: "xterm"
-# base
-  - key: "DOCKER_CONF_HOME"
-    value: "/opt/docker/"
-  - key: "LOG_STDOUT"
-    value: ""
-  - key: "LOG_STDERR"
-    value: ""
-# base-app
-  - key: "APPLICATION_USER"
-    value: "application"
-  - key: "APPLICATION_GROUP"
-    value: "application"
-  - key: "APPLICATION_PATH"
-    value: "/app"
-  - key: "APPLICATION_UID"
-    value: "1000"
-  - key: "APPLICATION_GID"
-    value: "1000"
-
 metadataTest:
 # base
   entrypoint: ["/entrypoint"]
   cmd: ["supervisord"]
+  env:
+  # bootstrap
+    - key: "LC_ALL"
+      value: "C.UTF-8"
+    - key: "LANG"
+      value: "C.UTF-8"
+    - key: "TERM"
+      value: "xterm"
+  # base
+    - key: "DOCKER_CONF_HOME"
+      value: "/opt/docker/"
+    - key: "LOG_STDOUT"
+      value: ""
+    - key: "LOG_STDERR"
+      value: ""
+  # base-app
+    - key: "APPLICATION_USER"
+      value: "application"
+    - key: "APPLICATION_GROUP"
+      value: "application"
+    - key: "APPLICATION_PATH"
+      value: "/app"
+    - key: "APPLICATION_UID"
+      value: "1000"
+    - key: "APPLICATION_GID"
+      value: "1000"
 
 fileExistenceTests:
 # bootstrap

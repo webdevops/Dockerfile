@@ -1,17 +1,18 @@
 schemaVersion: "2.0.0"
 
-# todo: change to metadataTest
-globalEnvVars:
-  - key: "WEB_DOCUMENT_ROOT"
-    value: "/app"
-  - key: "WEB_DOCUMENT_INDEX"
-    value: "index.php"
-  - key: "WEB_ALIAS_DOMAIN"
-    value: "*.vm"
-  - key: "WEB_PHP_TIMEOUT"
-    value: "600"
-  - key: "WEB_PHP_SOCKET"
-    value: ""
+metadataTest:
+  exposedPorts: ["9000"]
+  env:
+    - key: "WEB_DOCUMENT_ROOT"
+      value: "/app"
+    - key: "WEB_DOCUMENT_INDEX"
+      value: "index.php"
+    - key: "WEB_ALIAS_DOMAIN"
+      value: "*.vm"
+    - key: "WEB_PHP_TIMEOUT"
+      value: "600"
+    - key: "WEB_PHP_SOCKET"
+      value: ""
 
 fileExistenceTests:
   - name: 'provision: set php version variable script was deleted after execution'
@@ -36,8 +37,13 @@ fileExistenceTests:
     path: '/opt/docker/etc/supervisor.d/php-fpm.conf'
     shouldExist: true
 
-metadataTest:
-  exposedPorts: ["9000"]
+fileContentTests:
+  - name: 'supervisor: syslog service is enabled'
+    path: '/opt/docker/etc/supervisor.d/syslog.conf'
+    expectedContents: ['autostart = true']
+  - name: 'supervisor: cron service is enabled'
+    path: '/opt/docker/etc/supervisor.d/cron.conf'
+    expectedContents: ['autostart = true']
 
 commandTests:
   - name: "imagemagick convert"

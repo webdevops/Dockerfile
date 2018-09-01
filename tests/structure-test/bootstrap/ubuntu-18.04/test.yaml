@@ -1,8 +1,9 @@
 schemaVersion: "2.0.0"
 
-globalEnvVars:
-  - key: "PATH"
-    value: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+metadataTest:
+  env:
+    - key: "PATH"
+      value: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 commandTests:
   - name: "Check OS family"
