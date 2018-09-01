@@ -121,3 +121,4 @@ commandTests:
       - "Zend OPcache"
       - "zip"
       - "zlib"
+# TODO: check if ENV variables are properly available in FPM
