@@ -29,6 +29,7 @@ RUN set -x \
         php5-mysql \
         php5-mysqli \
         php5-pdo_mysql \
+        php5-pdo_pgsql \
         php5-pdo_sqlite \
         php5-mcrypt \
         php5-gd \
@@ -39,6 +40,7 @@ RUN set -x \
         php5-calendar \
         php5-ctype \
         php5-pcntl \
+        php5-pgsql \
         php5-posix \
         php5-sockets \
         php5-sysvmsg \
@@ -59,7 +61,7 @@ RUN set -x \
         geoip \
         php5-ldap \
         # php5-memcache \
-        # php5-redis \
+        php5-redis \
         php5-pear \
         php5-phar \
         php5-openssl \

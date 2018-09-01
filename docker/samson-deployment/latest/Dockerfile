@@ -86,6 +86,7 @@ RUN set -x \
         libffi-dev \
         libssl-dev \
         build-essential \
+        openssh-client \
     && pip install --upgrade pip \
     && hash -r \
     && pip install --no-cache-dir ansible \
@@ -185,8 +186,8 @@ RUN set -x \
         build-essential \
     # Deployer: Ansistratno (https://github.com/ansistrano)
     && ansible-galaxy install --force \
-        carlosbuenosvinos.ansistrano-deploy \
-        carlosbuenosvinos.ansistrano-rollback \
+        ansistrano.deploy \
+        ansistrano.rollback \
     # Deployer: PHP Deployer (http://deployer.org/)
     && wget --quiet -O/usr/local/bin/dep http://deployer.org/deployer.phar \
     && chmod +x /usr/local/bin/dep \

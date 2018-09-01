@@ -18,6 +18,7 @@ RUN set -x \
         libffi-dev \
         libssl-dev \
         build-essential \
+        openssh-client \
     && pip install --upgrade pip \
     && hash -r \
     && pip install --no-cache-dir ansible \

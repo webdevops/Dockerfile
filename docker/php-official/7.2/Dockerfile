@@ -45,6 +45,7 @@ ENV APPLICATION_USER=application \
     APPLICATION_PATH=/app \
     APPLICATION_UID=1000 \
     APPLICATION_GID=1000
+ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"
 
 
 # Baselayout copy (from staged image)
@@ -111,6 +112,7 @@ RUN set -x \
         libxslt1.1 \
         zlibc \
         zlib1g \
+        libpq5 \
         libpng16-16 \
         libmcrypt4 \
         libjpeg62-turbo-dev \
@@ -126,8 +128,10 @@ RUN set -x \
         zlib1g-dev \
         libmemcached-dev \
         libpng-dev \
+        libpq-dev \
     # Install extensions
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-install \
         bcmath \
         bz2 \
@@ -135,10 +139,13 @@ RUN set -x \
         exif \
         intl \
         gettext \
+        ldap \
         mysqli \
         hash \
         pcntl \
         pdo_mysql \
+        pdo_pgsql \
+        pgsql \
         soap \
         sockets \
         tokenizer \
@@ -170,6 +177,7 @@ RUN set -x \
         libxslt1-dev \
         zlib1g-dev \
         libpng-dev \
+        libpq-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services

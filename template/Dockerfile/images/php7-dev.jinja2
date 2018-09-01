@@ -54,22 +54,6 @@
     {{ services.phpDev() }}
 {%- endmacro %}
 
-{% macro debianDotDeb(role='') -%}
-    # Install development environment
-    && apt-install \
-        gnupg \
-    && wget -O - https://packagecloud.io/gpg.key | apt-key add - \
-    && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
-    && apt-install \
-        # Install tools
-        graphviz \
-        # Install php development stuff
-        php7.0-xdebug \
-        blackfire-php \
-        blackfire-agent \
-    {{ services.phpDev() }}
-{%- endmacro %}
-
 {% macro debianSury(role='') -%}
     # Install development environment
     && apt-install \

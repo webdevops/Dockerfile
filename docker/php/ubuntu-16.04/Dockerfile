@@ -30,6 +30,7 @@ RUN set -x \
         php7.0-mcrypt \
         php7.0-gd \
         php7.0-sqlite3 \
+        php7.0-pgsql \
         php7.0-ldap \
         php7.0-opcache \
         php7.0-soap \

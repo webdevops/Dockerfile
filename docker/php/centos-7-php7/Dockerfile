@@ -27,6 +27,7 @@ RUN set -x \
         php70w-pecl-memcached \
         php70w-mcrypt \
         php70w-gd \
+        php70w-pgsql \
         php70w-mbstring \
         php70w-bcmath \
         php70w-soap \

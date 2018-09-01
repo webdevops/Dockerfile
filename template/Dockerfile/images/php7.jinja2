@@ -17,6 +17,7 @@
         php7-mysqli \
         php7-mysqlnd \
         php7-pdo_mysql \
+        php7-pdo_pgsql \
         php7-pdo_sqlite \
         php7-mcrypt \
         php7-gd \
@@ -28,6 +29,7 @@
         php7-calendar \
         php7-ctype \
         php7-pcntl \
+        php7-pgsql \
         php7-posix \
         php7-sockets \
         php7-sysvmsg \
@@ -72,40 +74,6 @@
     {{ services.php() }}
 {%- endmacro %}
 
-{% macro debianDotDeb(distribution,role='') -%}
-    # Install php environment
-    && echo "deb http://packages.dotdeb.org {{ distribution }} all" >> /etc/apt/sources.list \
-    && echo "deb-src http://packages.dotdeb.org {{ distribution }} all" >> /etc/apt/sources.list \
-    && wget -O- https://www.dotdeb.org/dotdeb.gpg | apt-key add  - \
-    && apt-install \
-        # Install tools
-        imagemagick \
-        graphicsmagick \
-        ghostscript \
-        # Install php (cli/fpm)
-        php7.0-cli \
-        php7.0-fpm \
-        php7.0-json \
-        php7.0-intl \
-        php7.0-curl \
-        php7.0-mysql \
-        php7.0-mcrypt \
-        php7.0-gd \
-        php7.0-imagick \
-        php7.0-sqlite3 \
-        php7.0-ldap \
-        php7.0-opcache \
-        php7.0-xmlrpc \
-        php7.0-xsl \
-        php7.0-bz2 \
-        php7.0-redis \
-        php7.0-memcached \
-        php-apcu \
-    && pecl channel-update pecl.php.net \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    {{ services.php() }}
-{%- endmacro %}
-
 {% macro debianSury(distribution,role='') -%}
     && apt-install apt-transport-https lsb-release \
     && echo "deb https://packages.sury.org/php/ {{ distribution }} main" >> /etc/apt/sources.list \
@@ -136,6 +104,7 @@
         php7.0-gd \
         php7.0-imagick \
         php7.0-sqlite3 \
+        php7.0-pgsql \
         php7.0-ldap \
         php7.0-opcache \
         php7.0-xmlrpc \
@@ -172,6 +141,7 @@
         php7.0-gd \
         php7.0-imagick \
         php7.0-sqlite3 \
+        php7.0-pgsql \
         php7.0-ldap \
         php7.0-opcache \
         php7.0-soap \
@@ -210,6 +180,7 @@
 {%- endif %}
         php{{ phpVersion }}-gd \
         php{{ phpVersion }}-sqlite3 \
+        php{{ phpVersion }}-pgsql \
         php{{ phpVersion }}-ldap \
         php{{ phpVersion }}-opcache \
         php{{ phpVersion }}-soap \
@@ -247,6 +218,7 @@
         php70w-pecl-memcached \
         php70w-mcrypt \
         php70w-gd \
+        php70w-pgsql \
         php70w-mbstring \
         php70w-bcmath \
         php70w-soap \

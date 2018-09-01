@@ -19,13 +19,13 @@ RUN set -x \
         apache2 \
         apache2-mpm-worker \
         libapache2-mod-fastcgi \
-	&& sed -ri ' \
-		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /etc/apache2/apache2.conf \
-	&& rm -f /etc/apache2/sites-enabled/* \
-	&& a2enmod actions fastcgi ssl rewrite headers expires \
-	&& docker-run-bootstrap \
+    && sed -ri ' \
+        s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
+        s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
+        ' /etc/apache2/apache2.conf \
+    && rm -f /etc/apache2/sites-enabled/* \
+    && a2enmod actions fastcgi ssl rewrite headers expires \
+    && docker-run-bootstrap \
     && docker-image-cleanup \
     && docker-run-bootstrap \
     && docker-image-cleanup
