@@ -1,7 +1,5 @@
 {{ docker.from("base-app", "alpine") }}
 
-{{ environment.web() }}
-
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \

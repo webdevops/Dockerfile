@@ -1,7 +1,5 @@
 {{ docker.from("base-app", "ubuntu-14.04") }}
 
-{{ environment.web() }}
-
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
