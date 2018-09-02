@@ -2,17 +2,6 @@ schemaVersion: "2.0.0"
 
 metadataTest:
   exposedPorts: ["9000"]
-  env:
-    - key: "WEB_DOCUMENT_ROOT"
-      value: "/app"
-    - key: "WEB_DOCUMENT_INDEX"
-      value: "index.php"
-    - key: "WEB_ALIAS_DOMAIN"
-      value: "*.vm"
-    - key: "WEB_PHP_TIMEOUT"
-      value: "600"
-    - key: "WEB_PHP_SOCKET"
-      value: ""
 
 fileExistenceTests:
   - name: 'provision: set php version variable script was deleted after execution'
@@ -46,6 +35,18 @@ fileContentTests:
     expectedContents: ['autostart = true']
 
 commandTests:
+  - name: "fpm config test"
+    command: "/usr/local/bin/php-fpm"
+    args: ["-t"]
+    expectedError: ["test is successful"]
+  - name: "env variables are available in FPM"
+    setup: [["/entrypoint", "/bin/bash"]]
+    command: "/usr/local/bin/php-fpm"
+    envVars:
+      - key: "SOME_VAR"
+        value: "someval"
+    args: ["-i"]
+    expectedOutput: ["SOME_VAR => someval"]
   - name: "imagemagick convert"
     command: "which"
     args: ["convert"]
@@ -85,6 +86,7 @@ commandTests:
       - "iconv"
       - "intl"
       - "json"
+      - "ldap"
       - "libxml"
       - "mbstring"
       - "memcached"
@@ -95,7 +97,9 @@ commandTests:
       - "pcre"
       - "PDO"
       - "pdo_mysql"
+      - "pdo_pgsql"
       - "pdo_sqlite"
+      - "pgsql"
       - "Phar"
       - "posix"
       - "readline"
@@ -121,4 +125,4 @@ commandTests:
       - "Zend OPcache"
       - "zip"
       - "zlib"
-# TODO: check if ENV variables are properly available in FPM
+

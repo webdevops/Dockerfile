@@ -28,6 +28,11 @@ fileContentTests:
     expectedContents: ['autostart = true']
 
 commandTests:
+  - name: "Nginx configuration test"
+    setup: [["/entrypoint", "/bin/bash"]]
+    command: "nginx"
+    args: ["-t"]
+    expectedError: ["syntax is ok", "test is successful"]
   - name: "WEB_DOCUMENT_ROOT changes according to ENV var"
     setup: [["/entrypoint", "/bin/bash"]]
     envVars:
