@@ -39,6 +39,7 @@ RUN set -x \
         php7-bz2 \
         php7-calendar \
         php7-ctype \
+        php7-mongodb \
         php7-pcntl \
         php7-pgsql \
         php7-posix \

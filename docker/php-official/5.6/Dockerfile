@@ -164,8 +164,10 @@ RUN set -x \
     && pecl install apcu-4.0.11 \
     && printf "no --disable-memcached-sasl\n" | pecl install memcached-2.2.0 \
     && pecl install redis \
+    && pecl install mongodb \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
+    && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \

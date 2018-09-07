@@ -43,6 +43,7 @@ RUN set -x \
         php-pear \
         php-apcu \
         php-igbinary \
+        php-mongodb \
         php-imagick \
         php-redis \
         php-memcached \

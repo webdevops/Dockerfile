@@ -28,6 +28,7 @@
         php7-bz2 \
         php7-calendar \
         php7-ctype \
+        php7-mongodb \
         php7-pcntl \
         php7-pgsql \
         php7-posix \
@@ -116,6 +117,7 @@
         php7.0-soap \
         php7.0-bcmath \
         php7.0-mbstring \
+        php-mongodb \
         php-apcu \
         php-pear \
     && pecl channel-update pecl.php.net \
@@ -154,6 +156,7 @@
         php-pear \
         php-apcu \
         php-redis \
+        php-mongodb \
         php-memcache \
         php-memcached \
     && pecl channel-update pecl.php.net \
@@ -193,6 +196,7 @@
         php-pear \
         php-apcu \
         php-igbinary \
+        php-mongodb \
         php-imagick \
         php-redis \
 {%- if phpVersion == '7.1' %}
@@ -236,6 +240,7 @@
         make \
         php70w-opcache \
         php70w-pecl-imagick \
+        php70w-pecl-mongodb \
     && pecl channel-update pecl.php.net \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     && pecl install redis \

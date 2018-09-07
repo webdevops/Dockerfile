@@ -27,6 +27,7 @@ RUN set -x \
         php-intl \
         php-curl \
         php-mysqlnd \
+        php-mongodb \
         php-memcached \
         php-mcrypt \
         php-gd \

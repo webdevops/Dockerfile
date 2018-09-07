@@ -27,6 +27,7 @@ RUN set -x \
         php5-intl \
         php5-curl \
         php5-mysqlnd \
+        php5-mongodb \
         php5-mcrypt \
         php5-gd \
         php5-sqlite \

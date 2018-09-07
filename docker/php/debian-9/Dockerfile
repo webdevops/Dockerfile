@@ -44,6 +44,7 @@ RUN set -x \
         php-pear \
         php-apcu \
         php-redis \
+        php-mongodb \
         php-memcache \
         php-memcached \
     && pecl channel-update pecl.php.net \

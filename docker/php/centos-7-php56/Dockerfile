@@ -25,6 +25,7 @@ RUN set -x \
         php56w-intl \
         php56w-mysqlnd \
         php56w-pecl-memcached \
+        php56w-mongodb \
         php56w-mcrypt \
         php56w-gd \
         php56w-pgsql \
