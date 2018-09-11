@@ -57,8 +57,6 @@ RUN set -x \
         php7.0-mbstring \
         php-mongodb \
         php-apcu \
-        php-pear \
-    && pecl channel-update pecl.php.net \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services
     && docker-service enable syslog \
