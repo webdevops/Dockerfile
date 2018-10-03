@@ -30,17 +30,6 @@ For adding cronjobs the `docker-cronjob` script can be used in your Dockerfile::
 
 Because this comand is run in shell mode make sure you add appropriate quotes to disable wildcard matching.
 
-docker-php-setting
-------------------
-
-Only available on php images!
-
-This scripts sets php.ini setting globaly::
-
-    RUN docker-php-setting memory_limit 1G
-
-    RUN docker-php-setting --raw error_reporting 'E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED'
-
 docker-provision
 ----------------
 
