@@ -41,7 +41,8 @@ provision:
       php/general       : '(debian|ubuntu|centos|alpine)'
       php/ubuntu-12.04  : ubuntu-12.04
       php/alpine        : alpine
-      php/debian        : debian
+      php/debian-8      : '(debian-7|debian-8)'
+      php/debian-9      : '(debian-8-php7|debian-9)'
   php-apache:
     configuration:
       apache/general    : '*'
