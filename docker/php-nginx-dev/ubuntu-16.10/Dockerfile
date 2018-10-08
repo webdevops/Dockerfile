@@ -28,6 +28,9 @@ RUN set -x \
         php-xdebug \
         blackfire-php \
         blackfire-agent \
+        # Tools
+        nano \
+        vim \
     # Enable php development services
     && docker-service enable syslog \
     && docker-service enable postfix \

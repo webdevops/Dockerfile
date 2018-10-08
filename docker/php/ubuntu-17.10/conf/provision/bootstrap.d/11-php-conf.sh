@@ -9,6 +9,7 @@ if [[ "$(version-compare "$PHP_VERSION" "5.99.999")" == "<" ]]; then
     case "$IMAGE_FAMILY" in
         Debian|Ubuntu)
              PHP_ETC_DIR=/etc/php5
+             PHP_MOD_INI_DIR=/etc/php5/conf.d
              PHP_MAIN_CONF=/etc/php5/fpm/php-fpm.conf
              PHP_POOL_CONF=www.conf
              PHP_POOL_DIR=/etc/php5/fpm/pool.d
@@ -16,6 +17,8 @@ if [[ "$(version-compare "$PHP_VERSION" "5.99.999")" == "<" ]]; then
             ;;
 
         RedHat)
+             PHP_ETC_DIR=/etc/php.d
+             PHP_MOD_INI_DIR=/etc/php.d
              PHP_MAIN_CONF=/etc/php-fpm.conf
              PHP_POOL_CONF=www.conf
              PHP_POOL_DIR=/etc/php-fpm.d
@@ -24,6 +27,7 @@ if [[ "$(version-compare "$PHP_VERSION" "5.99.999")" == "<" ]]; then
 
         Alpine)
              PHP_ETC_DIR=/etc/php5
+             PHP_MOD_INI_DIR=/etc/php5/conf.d
              PHP_MAIN_CONF=/etc/php5/php-fpm.conf
              PHP_POOL_CONF=www.conf
              PHP_POOL_DIR=/etc/php5/fpm.d
@@ -53,16 +57,19 @@ elif [[ "$(version-compare "$PHP_VERSION" "7.99.999")" == "<" ]]; then
         Debian|Ubuntu)
              if [[ "$(version-compare "$PHP_VERSION" "7.2.*")" == "=" ]]; then
                  PHP_ETC_DIR=/etc/php/7.2
+                 PHP_MOD_INI_DIR=/etc/php/7.2/mods-available
                  PHP_MAIN_CONF=/etc/php/7.2/fpm/php-fpm.conf
                  PHP_POOL_DIR=/etc/php/7.2/fpm/pool.d
                  PHP_FPM_BIN=/usr/sbin/php-fpm7.2
              elif [[ "$(version-compare "$PHP_VERSION" "7.1.*")" == "=" ]]; then
                  PHP_ETC_DIR=/etc/php/7.1
+                 PHP_MOD_INI_DIR=/etc/php/7.1/mods-available
                  PHP_MAIN_CONF=/etc/php/7.1/fpm/php-fpm.conf
                  PHP_POOL_DIR=/etc/php/7.1/fpm/pool.d
                  PHP_FPM_BIN=/usr/sbin/php-fpm7.1
              else
                  PHP_ETC_DIR=/etc/php/7.0
+                 PHP_MOD_INI_DIR=/etc/php/7.0/mods-available
                  PHP_MAIN_CONF=/etc/php/7.0/fpm/php-fpm.conf
                  PHP_POOL_DIR=/etc/php/7.0/fpm/pool.d
                  PHP_FPM_BIN=/usr/sbin/php-fpm7.0
@@ -71,6 +78,8 @@ elif [[ "$(version-compare "$PHP_VERSION" "7.99.999")" == "<" ]]; then
             ;;
 
         RedHat)
+             PHP_ETC_DIR="/etc/php.d"
+             PHP_MOD_INI_DIR=/etc/php.d
              PHP_MAIN_CONF=/etc/php-fpm.conf
              PHP_POOL_CONF=www.conf
              PHP_POOL_DIR=/etc/php-fpm.d
@@ -79,6 +88,7 @@ elif [[ "$(version-compare "$PHP_VERSION" "7.99.999")" == "<" ]]; then
 
         Alpine)
              PHP_ETC_DIR=/etc/php7
+             PHP_MOD_INI_DIR=/etc/php7/conf.d
              PHP_MAIN_CONF=/etc/php7/php-fpm.conf
              PHP_POOL_CONF=www.conf
              PHP_POOL_DIR=/etc/php7/php-fpm.d
