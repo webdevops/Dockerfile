@@ -9,7 +9,11 @@ if [[ "$(version-compare "$PHP_VERSION" "5.99.999")" == "<" ]]; then
     case "$IMAGE_FAMILY" in
         Debian|Ubuntu)
              PHP_ETC_DIR=/etc/php5
-             PHP_MOD_INI_DIR=/etc/php5/conf.d
+             if [[ -d "/etc/php5/mods-available" ]]; then
+                PHP_MOD_INI_DIR=/etc/php5/mods-available
+             else
+                PHP_MOD_INI_DIR=/etc/php5/conf.d
+             fi
              PHP_MAIN_CONF=/etc/php5/fpm/php-fpm.conf
              PHP_POOL_CONF=www.conf
              PHP_POOL_DIR=/etc/php5/fpm/pool.d
@@ -57,19 +61,31 @@ elif [[ "$(version-compare "$PHP_VERSION" "7.99.999")" == "<" ]]; then
         Debian|Ubuntu)
              if [[ "$(version-compare "$PHP_VERSION" "7.2.*")" == "=" ]]; then
                  PHP_ETC_DIR=/etc/php/7.2
-                 PHP_MOD_INI_DIR=/etc/php/7.2/mods-available
+                 if [[ -d "/etc/php/7.2/mods-available" ]]; then
+                     PHP_MOD_INI_DIR=/etc/php/7.2/mods-available
+                 else
+                     PHP_MOD_INI_DIR=/etc/php/7.2/conf.d
+                 fi
                  PHP_MAIN_CONF=/etc/php/7.2/fpm/php-fpm.conf
                  PHP_POOL_DIR=/etc/php/7.2/fpm/pool.d
                  PHP_FPM_BIN=/usr/sbin/php-fpm7.2
              elif [[ "$(version-compare "$PHP_VERSION" "7.1.*")" == "=" ]]; then
                  PHP_ETC_DIR=/etc/php/7.1
-                 PHP_MOD_INI_DIR=/etc/php/7.1/mods-available
+                 if [[ -d "/etc/php/7.1/mods-available" ]]; then
+                     PHP_MOD_INI_DIR=/etc/php/7.1/mods-available
+                 else
+                     PHP_MOD_INI_DIR=/etc/php/7.1/conf.d
+                 fi
                  PHP_MAIN_CONF=/etc/php/7.1/fpm/php-fpm.conf
                  PHP_POOL_DIR=/etc/php/7.1/fpm/pool.d
                  PHP_FPM_BIN=/usr/sbin/php-fpm7.1
              else
                  PHP_ETC_DIR=/etc/php/7.0
-                 PHP_MOD_INI_DIR=/etc/php/7.0/mods-available
+                 if [[ -d "/etc/php/7.0/mods-available" ]]; then
+                     PHP_MOD_INI_DIR=/etc/php/7.0/mods-available
+                 else
+                     PHP_MOD_INI_DIR=/etc/php/7.0/conf.d
+                 fi
                  PHP_MAIN_CONF=/etc/php/7.0/fpm/php-fpm.conf
                  PHP_POOL_DIR=/etc/php/7.0/fpm/pool.d
                  PHP_FPM_BIN=/usr/sbin/php-fpm7.0
