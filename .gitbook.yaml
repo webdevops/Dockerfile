@@ -2,5 +2,5 @@ root: ./documentation/gitbook/
 ​
 structure:
   readme: README.md
-  summary: SUMMARY.md
+  summary: ./documentation/gitbook/SUMMARY.md
 ​
