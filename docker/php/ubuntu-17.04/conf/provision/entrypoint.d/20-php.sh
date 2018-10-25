@@ -60,3 +60,13 @@ fi
 if [[ -n "${PHP_SENDMAIL_PATH+x}" ]]; then
     echo "sendmail_path = ${PHP_SENDMAIL_PATH}" >> /opt/docker/etc/php/php.webdevops.ini
 fi
+
+# Disable all PHP mods specified in PHP_DISMOD as comma separated list
+if [[ -n "${PHP_DISMOD+x}" ]]; then
+    ini_dir_cli=$(php -i | grep 'Scan this dir for additional .ini files' | cut -c44-)
+    ini_dir_fpm=$(php-fpm -i | grep 'Scan this dir for additional .ini files' | cut -c44-)
+    for DISABLE_MOD in ${PHP_DISMOD//,/ }; do
+        rm -f ${ini_dir_cli}/*${DISABLE_MOD}*
+        rm -f ${ini_dir_fpm}/*${DISABLE_MOD}*
+    done
+fi

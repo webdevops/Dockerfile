@@ -1,7 +1,14 @@
+PHP modules
+^^^^^^^^^^^^^^^^^
+
+As we build our images containing almost every PHP module and having it activated by default, you might want to deactivate some.
+
+You can specify a comma-separated list of unwanted modules as dynamic env variable ``PHP_DISMOD``, e.g. ``PHP_DISMOD=ioncube,redis``.
+
 PHP.ini variables
 ^^^^^^^^^^^^^^^^^
 
-You can specify eg. ``php.memory_limit=256M`` as dyanmic env variable which will sets ``memory_limit = 256M`` as php setting.
+You can specify eg. ``php.memory_limit=256M`` as dynamic env variable which will set ``memory_limit = 256M`` as php setting.
 
 ============================================= ========================================= ==============================================
 Environment variable                          Description                               Default
