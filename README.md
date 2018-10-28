@@ -4,9 +4,7 @@
 
 ![Dockerfile](https://static.webdevops.io/dockerfile.svg)
 
-Automated build and test running on [WebDevOps CI](https://gitlab.com/webdevops/autobuild/) \(GitLab.com CI custom AWS runner\) sponsored by
-
-![Onedrop GmbH &amp; Co. KG](documentation/gitbook/.gitbook/assets/logo-bildmarke_1drop.svg)
+Automated build and test running on [WebDevOps CI](https://gitlab.com/webdevops/autobuild/) \(GitLab.com CI custom AWS runner\) sponsored by [Onedrop GmbH & Co. KG](https://1drop.de).
 
 [![Docker layout](documentation/gitbook/.gitbook/assets/docker-image-layout.gv.png)](https://github.com/webdevops/Dockerfile/tree/511a870fa90fe53da5c63a95b4254f6980e6d3d2/documentation/docs/resources/images/docker-image-layout.gv.png)
 
