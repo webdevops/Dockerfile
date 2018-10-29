@@ -6,13 +6,27 @@ description: Short overview about what makes WebDevOps images special
 
 ## WebDevOps image features
 
+We're trying to solve the most common problems that everybody stumbles upon while building complex and production-ready docker images.
+
+### Multiple services
+
+We use `supervisord` to run multiple [services](using-the-images/services.md) \(unix processes\) in the background. A real web application needs more than just a webserver. E.g. a cron daemon to run scheduled processes, postfix to send mails, etc.
+
 ### Logging
 
-To be written
+Docker is designed to run only a single process in the foreground and use the console output as logs. You can then [redirect the output](https://docs.docker.com/config/containers/logging/configure/#supported-logging-drivers) of docker containers to gelf, fluentd, splunk or something else.
+
+But when running multiple processes, you must redirect all outputs to stderr/stdout of those processes. We configured all our services not to write container internal files but to output everything on stdout/stderr.
+
+{% hint style="info" %}
+To be written: Chapter about syslog-ng
+{% endhint %}
 
 ### Configuration
 
-To be written
+It's best practice of building Docker images to use ENV variables to control the configuration of the service that is running in a container. We try to provide all common needed configuration options which can by quite tricky if you think about PHP with all the fpm parameters, ini parameters, etc. 
+
+We try to keep you from building your own Docker images as good as possible and not to mount config files or similar. 
 
 ### Provisioning
 
