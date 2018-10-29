@@ -58,7 +58,7 @@ See the [bootstrap image documentation](basic-images/bootstrap.md) for more deta
 
 The base images e.g. `webdevops/base:debian-9` can be considered as the first layer of "real" WebDevOps images. They extend the bootstrap images and add our layer of provisioning scripts together with the supervisor daemon to use multiple service processes inside an image.
 
-From this point on you can use our custom [service commands](using-the-images/service-commands.md), [services](using-the-images/services.md) and [scripts](using-the-images/scripts.md).
+From this point on you can use our custom [service commands](), [services](using-the-images/services.md) and [scripts](using-the-images/scripts.md).
 
 See the [base image documentation](basic-images/base.md) for more details.
 

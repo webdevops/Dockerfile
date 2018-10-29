@@ -5,7 +5,6 @@
 
 ## Using the images
 
-* [Service commands](using-the-images/service-commands.md)
 * [Services](using-the-images/services.md)
 * [Scripts](using-the-images/scripts.md)
 * [Application user mechanism](using-the-images/application-user-mechanism.md)
