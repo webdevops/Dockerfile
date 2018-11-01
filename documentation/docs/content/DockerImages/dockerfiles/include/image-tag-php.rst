@@ -5,6 +5,7 @@ Tag                    Distribution name                   PHP Version
 ``7.0``                *customized official php image*     PHP 7.0
 ``7.1``                *customized official php image*     PHP 7.1
 ``7.2``                *customized official php image*     PHP 7.2
+``7.3``                *customized official php image*     PHP 7.3
 ``alpine``             *link to alpine-php7*               PHP 7.x
 ``alpine-php7``                                            PHP 7.x
 ``alpine-php5``                                            PHP 5.6

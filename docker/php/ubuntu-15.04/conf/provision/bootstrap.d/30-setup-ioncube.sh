@@ -17,25 +17,29 @@ SO_FILE="${PHP_EXTENSION_DIR}/ioncube_loader_lin_${PHP_VERSION}.so"
 
 echo "PHP-VERSION: ${PHP_VERSION}"
 echo "PHP-EXTENSION-DIR: ${PHP_EXTENSION_DIR}"
-echo "Installing ${SO_FILE}"
-cp "/tmp/ioncube/ioncube_loader_lin_${PHP_VERSION}.so" ${SO_FILE}
+if [[ ! -f "/tmp/ioncube/ioncube_loader_lin_${PHP_VERSION}.so" ]]; then
+    echo "There is no ioncube available for PHP${PHP_VERSION}, skipping installation"
+else
+    echo "Installing ${SO_FILE}"
+    cp "/tmp/ioncube/ioncube_loader_lin_${PHP_VERSION}.so" ${SO_FILE}
 
-echo "Writing module ini"
-echo "[ioncube]" > ${MOD_INI}
-echo "zend_extension = ${SO_FILE}" >> ${MOD_INI}
-echo "; priority=01" >> ${MOD_INI}
+    echo "Writing module ini"
+    echo "[ioncube]" > ${MOD_INI}
+    echo "zend_extension = ${SO_FILE}" >> ${MOD_INI}
+    echo "; priority=01" >> ${MOD_INI}
 
-echo "Cleaning up"
-rm -rf $TMP_FILE
-rm -rf /tmp/ioncube
+    echo "Cleaning up"
+    rm -rf $TMP_FILE
+    rm -rf /tmp/ioncube
 
-echo "Enabling ionCube PHP module"
-case "$IMAGE_FAMILY" in
-    Debian|Ubuntu)
-        # Enable ionCube (if available)
-        if [[ -f "${PHP_ETC_DIR}/mods-available/00-ioncube.ini" ]]; then
-            ln -sf "${PHP_ETC_DIR}/mods-available/00-ioncube.ini" "${PHP_ETC_DIR}/cli/conf.d/00-ioncube.ini"
-            ln -sf "${PHP_ETC_DIR}/mods-available/00-ioncube.ini" "${PHP_ETC_DIR}/fpm/conf.d/00-ioncube.ini"
-        fi
-    ;;
-esac
+    echo "Enabling ionCube PHP module"
+    case "$IMAGE_FAMILY" in
+        Debian|Ubuntu)
+            # Enable ionCube (if available)
+            if [[ -f "${PHP_ETC_DIR}/mods-available/00-ioncube.ini" ]]; then
+                ln -sf "${PHP_ETC_DIR}/mods-available/00-ioncube.ini" "${PHP_ETC_DIR}/cli/conf.d/00-ioncube.ini"
+                ln -sf "${PHP_ETC_DIR}/mods-available/00-ioncube.ini" "${PHP_ETC_DIR}/fpm/conf.d/00-ioncube.ini"
+            fi
+        ;;
+    esac
+fi

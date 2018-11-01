@@ -115,6 +115,7 @@ RUN set -x \
         libpq5 \
         libpng16-16 \
         libmcrypt4 \
+        libzip4 \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
         # Dev and headers
@@ -129,6 +130,7 @@ RUN set -x \
         libmemcached-dev \
         libpng-dev \
         libpq-dev \
+        libzip-dev \
     # Install extensions
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
@@ -162,12 +164,12 @@ RUN set -x \
     # Install extensions for PHP 7.x
     && pecl install apcu \
     && printf "no --disable-memcached-sasl\n" | pecl install memcached-3.0.4 \
+    && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     && pecl install redis \
     && pecl install mongodb \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
-    && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
         libbz2-dev \
@@ -180,6 +182,7 @@ RUN set -x \
         zlib1g-dev \
         libpng-dev \
         libpq-dev \
+        libzip-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services

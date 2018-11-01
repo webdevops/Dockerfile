@@ -16,12 +16,15 @@ PHP_CONF_PATHS="
 /etc/php/7.0/mods-available
 /etc/php/7.1/mods-available
 /etc/php/7.2/mods-available
+/etc/php/7.3/mods-available
 /etc/php/7.0/cli/conf.d
 /etc/php/7.1/cli/conf.d
 /etc/php/7.2/cli/conf.d
+/etc/php/7.3/cli/conf.d
 /etc/php/7.0/fpm/conf.d
 /etc/php/7.1/fpm/conf.d
 /etc/php/7.2/fpm/conf.d
+/etc/php/7.3/fpm/conf.d
 /usr/local/etc/php/conf.d/"
 
 function phpModuleRemove() {
