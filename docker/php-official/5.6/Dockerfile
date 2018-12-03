@@ -131,15 +131,19 @@ RUN set -x \
         libpng-dev \
         libpq-dev \
         libzip-dev \
+        libc-client-dev \
+        libkrb5-dev \
     # Install extensions
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
+    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
         bcmath \
         bz2 \
         calendar \
         exif \
         intl \
+        imap \
         gettext \
         ldap \
         mysqli \
@@ -173,6 +177,8 @@ RUN set -x \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
+        libc-client-dev \
+        libkrb5-dev \
         libbz2-dev \
         libicu-dev \
         libldap2-dev \

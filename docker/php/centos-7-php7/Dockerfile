@@ -23,6 +23,7 @@ RUN set -x \
         php70w-fpm \
         php70w-common \
         php70w-intl \
+        php70w-imap \
         php70w-mysqlnd \
         php70w-pecl-memcached \
         php70w-mcrypt \

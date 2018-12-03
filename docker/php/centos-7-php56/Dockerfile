@@ -23,6 +23,7 @@ RUN set -x \
         php56w-fpm \
         php56w-common \
         php56w-intl \
+        php56w-imap \
         php56w-mysqlnd \
         php56w-pecl-memcached \
         php56w-mongodb \

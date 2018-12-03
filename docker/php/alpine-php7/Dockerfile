@@ -33,6 +33,7 @@ RUN set -x \
         php7-mcrypt \
         php7-gd \
         php7-imagick \
+        php7-imap \
         php7-bcmath \
         php7-soap \
         php7-sqlite3 \

@@ -25,6 +25,7 @@ RUN set -x \
         php5-fpm \
         php5-json \
         php5-intl \
+        php5-imap \
         php5-curl \
         php5-mysql \
         php5-mysqli \

@@ -42,6 +42,7 @@ RUN set -x \
         php7.0-mcrypt \
         php7.0-gd \
         php7.0-imagick \
+        php7.0-imap \
         php7.0-sqlite3 \
         php7.0-pgsql \
         php7.0-ldap \
