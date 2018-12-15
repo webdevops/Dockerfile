@@ -27,7 +27,7 @@ RUN mkdir -p \
     && "/baselayout/sbin/gosu" nobody true
 
 
-FROM php:7.3-rc-fpm
+FROM php:7.3-fpm
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
