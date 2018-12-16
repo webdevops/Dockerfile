@@ -83,7 +83,14 @@
 {%- else %}
     # Install extensions for PHP 7.x
     && pecl install apcu \
-    {%- if version != '7.3' %}
+    {%- if version == '7.3' %}
+    # Memcached for 7.3 can currently only be built from master
+    && MEMCACHED="`mktemp -d`" \
+    && curl -skL https://github.com/php-memcached-dev/php-memcached/archive/master.tar.gz | tar zxf - --strip-components 1 -C $MEMCACHED \
+    && docker-php-ext-configure $MEMCACHED \
+    && docker-php-ext-install $MEMCACHED \
+    && rm -rf $MEMCACHED \
+    {%- else %}
     && printf "no --disable-memcached-sasl\n" | pecl install memcached-3.0.4 \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     {%- endif %}
@@ -117,12 +124,16 @@
 {% macro officialDevelopment(role='', version='') -%}
     # Install development environment
     && wget -O - https://packagecloud.io/gpg.key | apt-key add - \
+{%- if version != '7.3' %}
     && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
     && apt-install \
         blackfire-php \
         blackfire-agent \
+{%- endif %}
 {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
+{%- elif version == '7.3' %}
+    && pecl install xdebug-2.7.0beta1 \
 {%- else %}
     && pecl install xdebug \
 {%- endif %}
