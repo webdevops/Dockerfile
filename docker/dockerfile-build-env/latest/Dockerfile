@@ -3,10 +3,11 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base-app:ubuntu-16.04
+FROM webdevops/base-app:ubuntu-18.04
 
 RUN apt-install \
         build-essential \
+        gpg-agent \
         apt-transport-https \
         ca-certificates \
         software-properties-common \

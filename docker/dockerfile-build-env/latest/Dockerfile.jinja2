@@ -1,7 +1,8 @@
-{{ docker.from("base-app","ubuntu-16.04") }}
+{{ docker.from("base-app","ubuntu-18.04") }}
 
 RUN apt-install \
         build-essential \
+        gpg-agent \
         apt-transport-https \
         ca-certificates \
         software-properties-common \
