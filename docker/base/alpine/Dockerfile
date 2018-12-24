@@ -18,6 +18,7 @@ RUN set -x \
         supervisor \
         wget \
         curl \
+        vim \
         sed \
         tzdata \
     && chmod +s /sbin/gosu \

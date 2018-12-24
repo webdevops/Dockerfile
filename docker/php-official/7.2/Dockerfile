@@ -77,6 +77,7 @@ RUN set -x \
         supervisor \
         wget \
         curl \
+        vim \
         net-tools \
         tzdata \
     && chmod +s /sbin/gosu \
@@ -107,6 +108,13 @@ RUN set -x \
         imagemagick \
         graphicsmagick \
         ghostscript \
+        jpegoptim \
+        libjpeg-turbo-progs \
+        pngcrush \
+        optipng \
+        apngopt \
+        pngnq \
+        pngquant \
         # Libraries
         libldap-2.4-2 \
         libxslt1.1 \
@@ -133,6 +141,12 @@ RUN set -x \
         libzip-dev \
         libc-client-dev \
         libkrb5-dev \
+    # Install guetzli
+    && wget https://github.com/google/guetzli/archive/master.zip \
+    && unzip master.zip \
+    && make -C guetzli-master \
+    && cp guetzli-master/bin/Release/guetzli /usr/local/bin/ \
+    && rm -rf master.zip guetzli-master
     # Install extensions
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \

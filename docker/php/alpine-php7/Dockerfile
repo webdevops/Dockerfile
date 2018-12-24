@@ -20,6 +20,11 @@ RUN set -x \
         imagemagick \
         graphicsmagick \
         ghostscript \
+        jpegoptim \
+        pngcrush \
+        libjpeg-turbo-utils \
+        optipng \
+        pngquant \
         # Install php (cli/fpm)
         php7-fpm \
         php7-json \

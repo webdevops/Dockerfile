@@ -106,6 +106,7 @@ RUN set -x \
         supervisor \
         wget \
         curl \
+        vim \
         net-tools \
         tzdata \
     && chmod +s /sbin/gosu \

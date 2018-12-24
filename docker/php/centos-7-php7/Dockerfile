@@ -18,6 +18,12 @@ RUN set -x \
     && yum-install \
         ImageMagick \
         GraphicsMagick \
+        jpegoptim \
+        libjpeg-turbo-utils \
+        optipng \
+        pngcrush \
+        pngnq \
+        pngquant \
         # Install php (cli/fpm)
         php70w-cli \
         php70w-fpm \
