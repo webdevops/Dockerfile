@@ -11,7 +11,7 @@ RUN set -x \
     # Install development environment
     && apt-install \
         gnupg \
-    && wget -O - https://packagecloud.io/gpg.key | apt-key add - \
+    && wget -q -O - https://packages.blackfire.io/gpg.key | apt-key add - \
     && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
     && apt-install \
         # Install tools
