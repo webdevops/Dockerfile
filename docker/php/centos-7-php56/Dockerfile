@@ -45,8 +45,9 @@ RUN set -x \
         gcc \
         make \
         php56w-opcache \
-    && pear channel-update pear.php.net \
-    && pear upgrade-all \
+    # Temporarily disable pear due to https://twitter.com/pear/status/1086634389465956352
+    # && pear channel-update pear.php.net \
+    # && pear upgrade-all \
     && pear config-set auto_discover 1 \
     && sed -i "$ s|\-n||g" /usr/bin/pecl \
     && pecl install imagick \

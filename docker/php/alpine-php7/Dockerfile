@@ -83,8 +83,9 @@ RUN set -x \
         php7-xmlwriter \
     && ln -s /usr/sbin/php-fpm7 /usr/sbin/php-fpm \
     && pecl channel-update pecl.php.net \
-    && pear channel-update pear.php.net \
-    && pear upgrade-all \
+    # Temporarily disable pear due to https://twitter.com/pear/status/1086634389465956352
+    # && pear channel-update pear.php.net \
+    # && pear upgrade-all \
     && pear config-set auto_discover 1 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # PECL workaround, see webdevops/Dockerfile#78
