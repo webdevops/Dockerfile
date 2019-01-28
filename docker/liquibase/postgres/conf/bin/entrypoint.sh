@@ -62,7 +62,7 @@ if [[ "$#" -ge 1 ]]; then
             ## Database Update Commands
         update|updateCount|updateSQL|updateCountSQL) ;&
             ## Database Rollback Commands
-        rollback|rollbackToDate|rollbackCount|rollbackSQL|rollbackToDateSQL|rollbackCountSQL|updateTestingRollback) ;&
+        rollback|rollbackToDate|rollbackCount|rollbackSQL|rollbackToDateSQL|rollbackCountSQL|updateTestingRollback|generateChangeLog) ;&
             ## Diff Commands
         diff|diffChangeLog) ;&
             ## Documentation Commands
