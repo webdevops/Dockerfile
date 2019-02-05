@@ -10,7 +10,7 @@ LABEL maintainer=info@webdevops.io \
       io.webdevops.layout=8 \
       io.webdevops.version=1.5.0
 
-ENV LIQUIBASE_VERSION="3.5.3" \
+ENV LIQUIBASE_VERSION="3.6.3" \
     LIQUIBASE_DRIVER="org.postgresql.Driver" \
     LIQUIBASE_CLASSPATH="/usr/share/java/postgresql.jar" \
     LIQUIBASE_URL="" \
