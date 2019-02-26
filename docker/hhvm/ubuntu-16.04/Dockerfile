@@ -18,7 +18,7 @@ RUN set -x \
     && apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xB4112585D386EB94 \
     && echo "deb http://dl.hhvm.com/ubuntu $(docker-image-info dist-codename) main" >> /etc/apt/sources.list \
     && apt-install \
-        hhvm \
+        hhvm=3.* \
         imagemagick \
         graphicsmagick \
         ghostscript \
