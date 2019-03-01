@@ -55,6 +55,7 @@ RUN set -x \
         php-mongodb \
         php-memcache \
         php-memcached \
+        php-amqp \
     && pecl channel-update pecl.php.net \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services

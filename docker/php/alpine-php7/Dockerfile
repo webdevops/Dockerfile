@@ -82,6 +82,7 @@ RUN set -x \
         php7-simplexml \
         php7-tokenizer \
         php7-xmlwriter \
+        php7-pecl-amqp \
     && ln -s /usr/sbin/php-fpm7 /usr/sbin/php-fpm \
     && pecl channel-update pecl.php.net \
     # Temporarily disable pear due to https://twitter.com/pear/status/1086634389465956352

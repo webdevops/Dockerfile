@@ -44,6 +44,7 @@
         libc-client-dev \
         libkrb5-dev \
         libvips-dev \
+        librabbitmq-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -65,6 +66,7 @@
         gettext \
         ldap \
         mysqli \
+        amqp \
 {%- if version|int == 5 or version == '7.0' or version == '7.1' %}
         mcrypt \
 {%- endif %}

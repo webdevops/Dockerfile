@@ -143,6 +143,7 @@ RUN set -x \
         libc-client-dev \
         libkrb5-dev \
         libvips-dev \
+        librabbitmq-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -162,6 +163,7 @@ RUN set -x \
         gettext \
         ldap \
         mysqli \
+        amqp \
         imap \
         hash \
         pcntl \

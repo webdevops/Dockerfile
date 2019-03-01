@@ -53,6 +53,7 @@ RUN set -x \
         php-mongodb \
         php-imagick \
         php-redis \
+        php-amqp \
         php-libsodium \
         php-memcached \
     && pecl channel-update pecl.php.net \
