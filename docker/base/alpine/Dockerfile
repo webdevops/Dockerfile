@@ -21,6 +21,7 @@ RUN set -x \
         vim \
         sed \
         tzdata \
+        busybox-suid \
     && chmod +s /sbin/gosu \
     && docker-run-bootstrap \
     && docker-image-cleanup
