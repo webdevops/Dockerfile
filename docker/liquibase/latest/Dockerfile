@@ -3,7 +3,7 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM java:latest
+FROM openjdk:8:latest
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
