@@ -37,7 +37,8 @@ RUN set -x \
         php7-pdo_sqlite \
         php7-mcrypt \
         php7-gd \
-        php7-imagick \
+        # disabled until Imagick was compiled against Image Magick version 1799 but version 1800 is loaded is fixed
+        # php7-imagick \
         php7-imap \
         php7-bcmath \
         php7-soap \
