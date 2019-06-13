@@ -9,8 +9,14 @@ LIQUIBASE_OPTS="$LIQUIBASE_OPTS --defaultsFile=/liquibase.properties"
 
 echo -n > /liquibase.properties
 
+## Properties file
+if [[ -f liquibase.properties ]]; then
+    cat liquibase.properties >> /liquibase.properties
+fi
+
 ## Database driver
 if [[ -n "$LIQUIBASE_DRIVER" ]]; then
+    sed -i '/^driver:/d' /liquibase.properties
     echo "driver: ${LIQUIBASE_DRIVER}" >> /liquibase.properties
 fi
 
@@ -41,7 +47,9 @@ fi
 
 ## Database changelog file
 if [[ -n "$LIQUIBASE_CHANGELOG" ]]; then
-    echo "changeLogFile: ${LIQUIBASE_CHANGELOG}" >> /liquibase.properties
+    if ! grep -q '^changeLogFile' /liquibase.properties; then
+        echo "changeLogFile: ${LIQUIBASE_CHANGELOG}" >> /liquibase.properties
+    fi
 fi
 
 function executeLiquibase() {
