@@ -87,7 +87,7 @@
     # Install extensions for PHP 5.x
     && pecl install apcu-4.0.11 \
     && printf "no --disable-memcached-sasl\n" | pecl install memcached-2.2.0 \
-    && pecl install redis \
+    && pecl install redis-4.3.0 \
     && pecl install mongodb \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
