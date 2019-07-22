@@ -27,7 +27,7 @@ RUN mkdir -p \
     && "/baselayout/sbin/gosu" nobody true
 
 
-FROM php:5.6-fpm
+FROM php:5.6-fpm-stretch
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
