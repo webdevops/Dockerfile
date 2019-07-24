@@ -115,6 +115,7 @@ RUN set -x \
         apngopt \
         pngnq \
         pngquant \
+        libvips42 \
         # Libraries
         libldap-2.4-2 \
         libxslt1.1 \
@@ -141,6 +142,7 @@ RUN set -x \
         libzip-dev \
         libc-client-dev \
         libkrb5-dev \
+        libvips-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -187,6 +189,9 @@ RUN set -x \
     && docker-php-ext-configure $MEMCACHED \
     && docker-php-ext-install $MEMCACHED \
     && rm -rf $MEMCACHED \
+    # Install vips (only works with PHP >= 7.0)
+    && printf "\n" | pecl install vips \
+    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
     && pecl install redis \
     && pecl install mongodb \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
@@ -207,6 +212,7 @@ RUN set -x \
         libpng-dev \
         libpq-dev \
         libzip-dev \
+        libvips-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services

@@ -16,6 +16,7 @@
         apngopt \
         pngnq \
         pngquant \
+        libvips42 \
         # Libraries
         libldap-2.4-2 \
         libxslt1.1 \
@@ -42,6 +43,7 @@
         libzip-dev \
         libc-client-dev \
         libkrb5-dev \
+        libvips-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -107,6 +109,9 @@
     && printf "no --disable-memcached-sasl\n" | pecl install memcached-3.0.4 \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     {%- endif %}
+    # Install vips (only works with PHP >= 7.0)
+    && printf "\n" | pecl install vips \
+    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
     && pecl install redis \
     && pecl install mongodb \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
@@ -128,6 +133,7 @@
         libpng-dev \
         libpq-dev \
         libzip-dev \
+        libvips-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     {{ services.php() }}
