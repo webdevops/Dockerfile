@@ -11,8 +11,8 @@ Overview
 
 | Welcome to the documentation pages for the WebDevOps Dockerfiles.
 |
-| Here you will find informations regarding out Dockerfiles and how to use them.
-| This documentation is work in progess and we appeciate every help we can get, so feel free to contribute.
+| Here you will find informations regarding our Dockerfiles and how to use them.
+| This documentation is a work in progess and we appeciate every help we can get, so feel free to contribute.
 |
 |
 
