@@ -1,0 +1,12 @@
+{{ docker.from("php-nginx", "debian-10") }}
+
+{{ environment.web() }}
+{{ environment.webPhp() }}
+{{ environment.webDevelopment() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+RUN set -x \
+    {{ php7dev.debian() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

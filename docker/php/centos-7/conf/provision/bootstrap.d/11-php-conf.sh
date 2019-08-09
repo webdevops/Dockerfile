@@ -59,7 +59,17 @@ elif [[ "$(version-compare "$PHP_VERSION" "7.99.999")" == "<" ]]; then
     #############################
     case "$IMAGE_FAMILY" in
         Debian|Ubuntu)
-             if [[ "$(version-compare "$PHP_VERSION" "7.3.*")" == "=" ]]; then
+             if [[ "$(version-compare "$PHP_VERSION" "7.4.*")" == "=" ]]; then
+                 PHP_ETC_DIR=/etc/php/7.4
+                 if [[ -d "/etc/php/7.4/mods-available" ]]; then
+                     PHP_MOD_INI_DIR=/etc/php/7.4/mods-available
+                 else
+                     PHP_MOD_INI_DIR=/etc/php/7.4/conf.d
+                 fi
+                 PHP_MAIN_CONF=/etc/php/7.4/fpm/php-fpm.conf
+                 PHP_POOL_DIR=/etc/php/7.4/fpm/pool.d
+                 PHP_FPM_BIN=/usr/sbin/php-fpm7.4
+             elif [[ "$(version-compare "$PHP_VERSION" "7.3.*")" == "=" ]]; then
                  PHP_ETC_DIR=/etc/php/7.3
                  if [[ -d "/etc/php/7.3/mods-available" ]]; then
                      PHP_MOD_INI_DIR=/etc/php/7.3/mods-available
