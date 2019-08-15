@@ -53,7 +53,9 @@
     # Install extensions
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
+{%- if version != '7.4' %}
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+{%- endif %}
     && docker-php-ext-install \
         bcmath \
         bz2 \
