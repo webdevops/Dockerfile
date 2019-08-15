@@ -60,14 +60,16 @@
         calendar \
         exif \
         intl \
-        imap \
         gettext \
         ldap \
         mysqli \
 {%- if version|int == 5 or version == '7.0' or version == '7.1' %}
         mcrypt \
 {%- endif %}
+{%- if version != '7.4' %}
+        imap \
         hash \
+{%- endif %}
         pcntl \
         pdo_mysql \
         pdo_pgsql \
@@ -98,7 +100,7 @@
 {%- else %}
     # Install extensions for PHP 7.x
     && pecl install apcu \
-    {%- if version == '7.3' %}
+    {%- if version == '7.3' or version == '7.4' %}
     # Memcached for 7.3 can currently only be built from master
     && MEMCACHED="`mktemp -d`" \
     && curl -skL https://github.com/php-memcached-dev/php-memcached/archive/master.tar.gz | tar zxf - --strip-components 1 -C $MEMCACHED \

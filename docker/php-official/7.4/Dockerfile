@@ -159,11 +159,9 @@ RUN set -x \
         calendar \
         exif \
         intl \
-        imap \
         gettext \
         ldap \
         mysqli \
-        hash \
         pcntl \
         pdo_mysql \
         pdo_pgsql \
