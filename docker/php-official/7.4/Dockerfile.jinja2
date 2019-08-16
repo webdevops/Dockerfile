@@ -14,7 +14,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ bootstrap.debian('stretch') }}
+    {{ bootstrap.debian('buster') }}
 
 RUN set -x \
     {{ base.debian() }} \
@@ -27,7 +27,7 @@ RUN set -x \
     {{ docker.cleanup() }}
 
 RUN set -x \
-    {{ php.official(version='7.3') }} \
+    {{ php.official(version='7.4') }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 
