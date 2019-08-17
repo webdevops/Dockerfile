@@ -36,7 +36,7 @@ misc:      webdevops/mail-sandbox webdevops/sphinx webdevops/liquibase
 setup:     requirements
 
 requirements:
-	pip install --upgrade -I -r ./bin/requirements.txt
+	pip install -vvv --log --upgrade -I -r ./bin/requirements.txt
 	cd tests/serverspec && bundle install --path=vendor
 
 test:

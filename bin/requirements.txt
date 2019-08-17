@@ -12,6 +12,7 @@ funcsigs
 pbr
 six
 mock
+psutil
 pylev
 py
 appdirs
