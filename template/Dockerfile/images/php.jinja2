@@ -145,12 +145,14 @@
 
 
 {% macro officialDevelopment(role='', version='') -%}
+{%- if version != '7.4' %}
     # Install development environment
     && wget -q -O - https://packages.blackfire.io/gpg.key | apt-key add - \
     && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
     && apt-install \
         blackfire-php \
         blackfire-agent \
+{%- endif %}
 {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
 {%- elif version == '7.3' %}
