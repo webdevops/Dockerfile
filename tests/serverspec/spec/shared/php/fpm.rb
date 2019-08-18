@@ -34,6 +34,8 @@ shared_examples 'php-fpm7::layout' do
                 expect(file("/etc/php/7.1/fpm/pool.d")).to be_symlink
             elsif (os[:family] == 'ubuntu' and os[:version] == '18.04')
                 expect(file("/etc/php/7.2/fpm/pool.d")).to be_symlink
+            elsif (os[:family] == 'debian' and os[:version] == '10')
+                expect(file("/etc/php/7.3/fpm/pool.d")).to be_symlink
             else
                 expect(file("/etc/php/7.0/fpm/pool.d")).to be_symlink
             end

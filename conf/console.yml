@@ -60,6 +60,10 @@ dockerTest:
       ':centos-7-php56':
         PHP_APCU: '0'
         PHP_REDIS: '0'
+      'php:7.4':
+        OS_FAMILY: 'debian'
+        OS_VERSION: '10'
+        PHP_OFFICIAL: '1'
       'php[^:]*:[0-9]':
         OS_FAMILY: 'debian'
         OS_VERSION: '9'
