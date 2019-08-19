@@ -1,6 +1,0 @@
-{{ docker.from("bootstrap", "debian-10") }}
-
-RUN set -x \
-    {{ ansible.debian() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
