@@ -150,7 +150,7 @@ RUN set -x \
     && cp guetzli-master/bin/Release/guetzli /usr/local/bin/ \
     && rm -rf master.zip guetzli-master \
     # Install extensions
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
