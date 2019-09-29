@@ -18,6 +18,7 @@ RUN set -x \
     && yum-install \
         ImageMagick \
         GraphicsMagick \
+        ghostscript \
         jpegoptim \
         libjpeg-turbo-utils \
         optipng \
