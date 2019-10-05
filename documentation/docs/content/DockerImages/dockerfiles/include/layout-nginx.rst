@@ -12,7 +12,7 @@ File/Directory                                                     Description
 ``/opt/docker/etc/nginx/ssl`` |badge-customization|                SSL configuration directory for
 
                                                                    certifications and keys
-``/opt/docker/etc/nginx//ssl/server.crt`` |badge-customization|    Example SSL certification (*.vm)
+``/opt/docker/etc/nginx/ssl/server.crt`` |badge-customization|     Example SSL certification (*.vm)
 
 ``/opt/docker/etc/nginx/ssl/server.csr`` |badge-customization|     Example SSL certification request (*.vm)
 
