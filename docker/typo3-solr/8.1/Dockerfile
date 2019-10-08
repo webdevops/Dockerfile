@@ -57,7 +57,6 @@ RUN apt-update \
     && mkdir -p /opt/solr/server/solr/data \
     && chown -R solr:solr /opt/solr/server/solr \
     && chmod 755 /opt/solr/server/solr \
-    && cd / \
     && rm -rf /tmp/solr \
     && docker-image-cleanup
 
