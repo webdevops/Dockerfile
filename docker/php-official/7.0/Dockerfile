@@ -115,8 +115,9 @@ RUN set -x \
         apngopt \
         pngnq \
         pngquant \
-        libvips42 \
         # Libraries
+        libvips42 \
+        librabbitmq4 \
         libldap-2.4-2 \
         libxslt1.1 \
         zlibc \
