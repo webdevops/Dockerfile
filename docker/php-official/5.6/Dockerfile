@@ -163,7 +163,6 @@ RUN set -x \
         gettext \
         ldap \
         mysqli \
-        amqp \
         mcrypt \
         imap \
         hash \
@@ -209,6 +208,7 @@ RUN set -x \
         libpq-dev \
         libzip-dev \
         libvips-dev \
+        librabbitmq-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services

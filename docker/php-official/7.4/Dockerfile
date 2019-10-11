@@ -162,7 +162,6 @@ RUN set -x \
         gettext \
         ldap \
         mysqli \
-        amqp \
         pcntl \
         pdo_mysql \
         pdo_pgsql \
@@ -193,9 +192,11 @@ RUN set -x \
     && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
     && pecl install redis \
     && pecl install mongodb \
+    && pecl install amqp \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
+    && echo extension=amqp.so > /usr/local/etc/php/conf.d/amqp.ini \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
         libc-client-dev \
@@ -212,6 +213,7 @@ RUN set -x \
         libpq-dev \
         libzip-dev \
         libvips-dev \
+        librabbitmq-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services
