@@ -38,7 +38,7 @@ class GitlabCommand extends Command
         }
         $gitlabCi['stages'] = array_map(function($level) {return 'level' . $level;}, range(1, $this->deepestLevel));
         $yaml = Yaml::dump(array_merge($gitlabCi, $this->jobs), 3, 2);
-        file_put_contents('.gitlab-ci.yml', $yaml);
+        file_put_contents(__DIR__ . '/../../../.gitlab-ci.yml', $yaml);
     }
 
     private function traverse(Node $node)
