@@ -23,7 +23,7 @@ class JobBuilder
             'script' => [],
             'retry' => 2,
             'tags' => ['aws'],
-            'only' => ['master'],
+            //'only' => ['master'],
         ];
         if ($node['parent'] !== 0) {
             $job['needs'] = [$node['parent']];
