@@ -43,14 +43,13 @@ class JobBuilder
     private function buildImage(array $node)
     {
         return [
-            'cd ' . dirname($node['file']),
-            'docker build --no-cache -t $CI_REGISTRY_IMAGE/' . $node['image'] . ':' . $node['tag'] . ' .',
+            'cd ' . dirname(str_replace(__DIR__ . '/../../', '', $node['file'])),
+            'docker build --no-cache -t webdevops/' . $node['image'] . ':' . $node['tag'] . ' .',
         ];
     }
 
     private function pushImage(array $node)
     {
-        $script[] = 'docker tag $CI_REGISTRY_IMAGE/' . $node['image'] . ':' . $node['tag'] . ' ' . $node['id'];
         $script[] = 'docker push ' . $node['id'];
         foreach ($node['aliases'] as $alias) {
             $script[] = 'docker tag $CI_REGISTRY_IMAGE/' . $node['image'] . ':' . $node['tag'] . ' ' . $alias;
@@ -61,22 +60,28 @@ class JobBuilder
 
     private function serverSpec(array $node)
     {
+        $specFile = sprintf('spec/docker/%s_spec.rb', $node['image']);
+        if (!file_exists(__DIR__ . '/../../tests/serverspec/' . $specFile)) {
+            return [];
+        }
+
         $testDockerfile = uniqid('Dockerfile_', true);
-        $specConfig = [
-            'DOCKERFILE' => $testDockerfile,
-            'DOCKER_IMAGE' => $node['id'],
-            'DOCKER_IS_TOOLIMAGE' => '0',
-            'DOCKER_TAG' => $node['tag'],
-            'OS_FAMILY' => $node['os'],
-            'OS_VERSION' => $node['os-version'],
-        ];
+        $specConfig = $node['serverspec'];
+        $specConfig['DOCKERFILE'] = $testDockerfile;
         $encodedJsonConfig = base64_encode(json_encode($specConfig));
         $script = [
             'cd $CI_PROJECT_DIR/tests/serverspec',
             'echo "FROM ' . $node['id'] . '" >> ' . $testDockerfile,
             'echo "COPY conf/ /" >> ' . $testDockerfile,
-            'bash serverspec.sh spec/docker/php_spec.rb ' . $node['id'] .' ' . $encodedJsonConfig  . '  ' . $testDockerfile,
         ];
+        if ($node['serverspec']['DOCKER_IS_TOOLIMAGE']) {
+            $script[] = 'echo "RUN chmod +x /loop-entrypoint.sh" >> ' . $testDockerfile;
+            $script[] = 'echo "ENTRYPOINT /loop-entrypoint.sh" >> ' . $testDockerfile;
+        }
+        if ($node['image'] === 'varnish') {
+            $script[] = 'echo "ENV VARNISH_BACKEND_HOST webdevops.io" >> ' . $testDockerfile;
+        }
+        $script[] = 'bash serverspec.sh ' . $specFile . ' ' . $node['id'] .' ' . $encodedJsonConfig  . '  ' . $testDockerfile;
         return $script;
     }
 
