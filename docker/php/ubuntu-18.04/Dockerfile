@@ -53,6 +53,7 @@ RUN set -x \
         php-mongodb \
         php-imagick \
         php-redis \
+        php-amqp \
         php-memcached \
     && pecl channel-update pecl.php.net \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \

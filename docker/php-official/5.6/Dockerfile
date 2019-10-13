@@ -115,8 +115,9 @@ RUN set -x \
         apngopt \
         pngnq \
         pngquant \
-        libvips42 \
         # Libraries
+        libvips42 \
+        librabbitmq4 \
         libldap-2.4-2 \
         libxslt1.1 \
         zlibc \
@@ -125,9 +126,9 @@ RUN set -x \
         libpng16-16 \
         libmcrypt4 \
         libzip4 \
+        # Dev and headers
         libjpeg62-turbo-dev \
         libfreetype6-dev \
-        # Dev and headers
         libbz2-dev \
         libicu-dev \
         libldap2-dev \
@@ -143,6 +144,8 @@ RUN set -x \
         libc-client-dev \
         libkrb5-dev \
         libvips-dev \
+        librabbitmq-dev \
+        libmagick++-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -187,8 +190,10 @@ RUN set -x \
     && printf "no --disable-memcached-sasl\n" | pecl install memcached-2.2.0 \
     && pecl install redis-4.3.0 \
     && pecl install mongodb \
+    && pecl install imagick \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
+    && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     # Uninstall dev and header packages
@@ -207,6 +212,8 @@ RUN set -x \
         libpq-dev \
         libzip-dev \
         libvips-dev \
+        librabbitmq-dev \
+        libmagick++-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     # Enable php services

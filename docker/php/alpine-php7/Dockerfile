@@ -38,7 +38,7 @@ RUN set -x \
         php7-mcrypt \
         php7-gd \
         # disabled until Imagick was compiled against Image Magick version 1799 but version 1800 is loaded is fixed
-        # php7-imagick \
+        php7-imagick \
         php7-imap \
         php7-bcmath \
         php7-soap \
@@ -82,6 +82,7 @@ RUN set -x \
         php7-simplexml \
         php7-tokenizer \
         php7-xmlwriter \
+        php7-pecl-amqp \
     && ln -s /usr/sbin/php-fpm7 /usr/sbin/php-fpm \
     && pecl channel-update pecl.php.net \
     # Temporarily disable pear due to https://twitter.com/pear/status/1086634389465956352
