@@ -16,8 +16,8 @@ ENV WEB_NO_CACHE_PATTERN="\.(css|js|gif|png|jpg|svg|json|xml)$"
 COPY conf/ /opt/docker/
 
 RUN set -x \
-    
-    && pecl install xdebug-2.8.0beta1 \
+
+    && pecl install xdebug \
     && echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
     # Enable php development services
     && docker-service enable syslog \
