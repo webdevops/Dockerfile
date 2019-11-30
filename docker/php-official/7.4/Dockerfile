@@ -27,7 +27,7 @@ RUN mkdir -p \
     && "/baselayout/sbin/gosu" nobody true
 
 
-FROM php:7.4-rc-fpm-buster
+FROM php:7.4-fpm-buster
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
@@ -142,6 +142,7 @@ RUN set -x \
         libpq-dev \
         libzip-dev \
         libc-client-dev \
+        libc-client2007e-dev \
         libkrb5-dev \
         libvips-dev \
         librabbitmq-dev \
@@ -155,6 +156,7 @@ RUN set -x \
     # Install extensions
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
+    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
         bcmath \
         bz2 \
@@ -164,6 +166,7 @@ RUN set -x \
         gettext \
         ldap \
         mysqli \
+        imap \
         pcntl \
         pdo_mysql \
         pdo_pgsql \

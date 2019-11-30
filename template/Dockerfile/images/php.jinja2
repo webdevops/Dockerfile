@@ -43,6 +43,7 @@
         libpq-dev \
         libzip-dev \
         libc-client-dev \
+        libc-client2007e-dev \
         libkrb5-dev \
         libvips-dev \
         librabbitmq-dev \
@@ -56,9 +57,7 @@
     # Install extensions
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-{%- if version != '7.4' %}
-    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-{%- endif %}
+    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
         bcmath \
         bz2 \
@@ -71,8 +70,8 @@
 {%- if version|int == 5 or version == '7.0' or version == '7.1' %}
         mcrypt \
 {%- endif %}
-{%- if version != '7.4' %}
         imap \
+{%- if version != '7.4' %}
         hash \
 {%- endif %}
         pcntl \
@@ -156,14 +155,12 @@
 
 
 {% macro officialDevelopment(role='', version='') -%}
-{% if version != '7.4' -%}
     # Install development environment
     && wget -q -O - https://packages.blackfire.io/gpg.key | apt-key add - \
     && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
     && apt-install \
         blackfire-php \
         blackfire-agent \
-{%- endif %}
 {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
 {%- else %}
