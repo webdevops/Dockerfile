@@ -29,6 +29,7 @@
         libzip4 \
         # Dev and headers
         libjpeg62-turbo-dev \
+        libwebp-dev \
         libfreetype6-dev \
         libbz2-dev \
         libicu-dev \
@@ -55,7 +56,11 @@
     && cp guetzli-master/bin/Release/guetzli /usr/local/bin/ \
     && rm -rf master.zip guetzli-master \
     # Install extensions
-    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+{%- if version != '7.4' %}
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
+{%- else %}
+    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
+{%- endif %}
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
@@ -143,6 +148,7 @@
         libxslt1-dev \
         zlib1g-dev \
         libpng-dev \
+        libwebp-dev \
         libpq-dev \
         libzip-dev \
         libvips-dev \
