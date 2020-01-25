@@ -169,6 +169,8 @@
         blackfire-agent \
 {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
+{% elif version == '7.0' %}
+    && pecl install xdebug-2.8.1 \
 {%- else %}
     && pecl install xdebug \
 {%- endif %}
