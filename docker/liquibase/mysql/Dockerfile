@@ -25,7 +25,7 @@ COPY conf/ /opt/docker/
 RUN set -x \
     && apt-get update \
 	&& apt-get install -yq --no-install-recommends \
-		libmysql-java \
+		libmariadb-java \
     && wget -q -O/tmp/liquibase.tar.gz "https://github.com/liquibase/liquibase/releases/download/liquibase-parent-${LIQUIBASE_VERSION}/liquibase-${LIQUIBASE_VERSION}-bin.tar.gz" \
     && mkdir -p /opt/liquibase \
     && tar -xzf /tmp/liquibase.tar.gz -C /opt/liquibase \
