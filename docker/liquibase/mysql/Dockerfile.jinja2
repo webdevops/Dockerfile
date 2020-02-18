@@ -2,7 +2,7 @@
 
 {{ docker.version() }}
 
-{{ environment.liquibase('3.6.3', 'com.mysql.jdbc.Driver', '/usr/share/java/mysql.jar') }}
+{{ environment.liquibase('3.6.3', 'org.mariadb.jdbc.Driver', '/usr/share/java/mariadb-java-client.jar') }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
