@@ -46,7 +46,7 @@ COPY --from=baselayout /baselayout /
 RUN set -x \
     # Init bootstrap
     # Add community
-    && echo https://dl-4.alpinelinux.org/alpine/v3.8/community/ >> /etc/apk/repositories \
+    && echo https://dl-4.alpinelinux.org/alpine/v3.9/community/ >> /etc/apk/repositories \
     # System update
     && /usr/local/bin/apk-upgrade \
     # Install base stuff

@@ -69,10 +69,11 @@ provision:
       nginx-dev/general : '*'
   php-official:
     configuration:
-      base/general     : '*'
-      base-app/general : '*'
-      php/general      : '*'
-      php/official     : '*'
+      base/general       : '*'
+      base-app/general   : '*'
+      php/general        : '*'
+      php/official       : '*'
+      php/official-alpine: '*-alpine'
   postfix:
     configuration:
       postfix/general   : '*'

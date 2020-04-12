@@ -1,0 +1,37 @@
+{{ baselayout.dockerStage() }}
+
+{{ docker.fromOfficial("php", "7.4-fpm-alpine") }}
+
+{{ docker.version() }}
+
+{{ environment.general() }}
+{{ environment.base() }}
+{{ environment.baseApp() }}
+{{ environment.phpOfficialSendmailWorkaround() }} {# Check if needed #}
+
+{{ baselayout.copy() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+RUN set -x \
+    {{ bootstrap.alpine('3.11') }}
+
+RUN set -x \
+    {{ base.alpine() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
+
+RUN set -x \
+    {{ baseapp.alpine() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
+
+RUN set -x \
+    {{ php.officialAlpine(version='7.4') }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
+
+{{ docker.workdir('/') }}
+{{ docker.expose('9000') }}
+{{ docker.entrypoint("/entrypoint") }}
+{{ docker.cmd("supervisord") }}
