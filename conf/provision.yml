@@ -51,7 +51,7 @@ provision:
     configuration:
       nginx/general     : '*'
       nginx/centos      : centos-*
-      nginx/alpine      : alpine
+      nginx/alpine      : '*-alpine'
       php-nginx/general : '*'
   php-dev:
     configuration:
