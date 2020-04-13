@@ -56,13 +56,13 @@ dockerTest:
       ':centos-7-php56':
         PHP_APCU: '0'
         PHP_REDIS: '0'
-      'php[^:]*:7.(3|4)':
-        OS_FAMILY: 'debian'
-        OS_VERSION: '10'
-        PHP_OFFICIAL: '1'
       'php[^:]*:7.[0-9]-alpine':
         OS_FAMILY: 'alpine'
         OS_VERSION: '3'
+        PHP_OFFICIAL: '1'
+      'php[^:]*:7.(3|4)':
+        OS_FAMILY: 'debian'
+        OS_VERSION: '10'
         PHP_OFFICIAL: '1'
       'php[^:]*:[0-9]':
         OS_FAMILY: 'debian'
