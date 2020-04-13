@@ -1,0 +1,12 @@
+{{ docker.from("php-nginx", "7.2-alpine") }}
+
+{{ environment.web() }}
+{{ environment.webPhp() }}
+{{ environment.webDevelopment() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+RUN set -x \
+    {{ php.officialDevelopmentAlpine(version="7.2") }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

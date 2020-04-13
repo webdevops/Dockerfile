@@ -1,0 +1,12 @@
+{{ docker.from("php-apache", "7.4-alpine") }}
+
+{{ environment.web() }}
+{{ environment.webPhp() }}
+{{ environment.webDevelopment() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+RUN set -x \
+    {{ php.officialDevelopmentAlpine(version="7.4") }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

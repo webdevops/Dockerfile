@@ -2,6 +2,8 @@
 webdevops/samson-deployment
 ===========================
 
+*deprecated*
+
 These image extends ``zendesk/samson`` and is a webbased deployment service with Ansistrano_, Capistrano_ and
 PHP Deployer_.
 

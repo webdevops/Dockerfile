@@ -22,8 +22,8 @@ RUN set -x \
     && apt-install \
         blackfire-php \
         blackfire-agent \
-    && pecl install xdebug \
-    && echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
+    && pecl install xdebug-2.8.1 \
+    && docker-php-ext-enable xdebug \
     # Enable php development services
     && docker-service enable syslog \
     && docker-service enable postfix \

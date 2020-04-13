@@ -1,9 +1,9 @@
 {% import 'Dockerfile/docker.jinja2' as docker %}
 
-{% macro alpine() -%}
+{% macro alpine(version='') -%}
     # Init bootstrap
     # Add community
-    && echo https://dl-4.alpinelinux.org/alpine/v3.8/community/ >> /etc/apk/repositories \
+    && echo https://dl-4.alpinelinux.org/alpine/v{{version}}/community/ >> /etc/apk/repositories \
     # System update
     && /usr/local/bin/apk-upgrade \
     # Install base stuff

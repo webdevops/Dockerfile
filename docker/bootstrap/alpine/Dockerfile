@@ -27,7 +27,7 @@ RUN mkdir -p \
     && "/baselayout/sbin/gosu" nobody true
 
 
-FROM alpine:3.9
+FROM alpine:3.11
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
@@ -46,7 +46,7 @@ COPY --from=baselayout /baselayout /
 RUN set -x \
     # Init bootstrap
     # Add community
-    && echo https://dl-4.alpinelinux.org/alpine/v3.8/community/ >> /etc/apk/repositories \
+    && echo https://dl-4.alpinelinux.org/alpine/v3.11/community/ >> /etc/apk/repositories \
     # System update
     && /usr/local/bin/apk-upgrade \
     # Install base stuff

@@ -1,15 +1,15 @@
 ====================== ==========================
 Tag                    Distribution name
 ====================== ==========================
-``alpine``             Alpine (rolling release)
+``alpine``             Alpine
 ``alpine-3``           *deprecated*
-``ubuntu-12.04``       precise
-``ubuntu-14.04``       trusty (LTS)
-``ubuntu-15.04``       vivid
-``ubuntu-15.10``       wily
-``ubuntu-16.04``       xenial (LTS)
-``debian-7``           wheezy
-``debian-8``           jessie
-``debian-9``           stretch
+``ubuntu-12.04``       *deprecated*
+``ubuntu-14.04``       *deprecated*
+``ubuntu-15.04``       *deprecated*
+``ubuntu-15.10``       *deprecated*
+``ubuntu-16.04``       *deprecated*
+``debian-7``           *deprecated*
+``debian-8``           *deprecated*
+``debian-9``           *deprecated*
 ``centos-7``
 ====================== ==========================

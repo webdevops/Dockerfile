@@ -1,6 +1,6 @@
 {{ baselayout.dockerStage() }}
 
-{{ docker.fromOfficial("php", "7.3-fpm-stretch") }}
+{{ docker.fromOfficial("php", "7.3-fpm-buster") }}
 
 {{ docker.version() }}
 
@@ -14,7 +14,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ bootstrap.debian('stretch') }}
+    {{ bootstrap.debian('buster') }}
 
 RUN set -x \
     {{ base.debian() }} \

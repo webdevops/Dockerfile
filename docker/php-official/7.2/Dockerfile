@@ -128,6 +128,7 @@ RUN set -x \
         libzip4 \
         # Dev and headers
         libjpeg62-turbo-dev \
+        libwebp-dev \
         libfreetype6-dev \
         libbz2-dev \
         libicu-dev \
@@ -142,6 +143,7 @@ RUN set -x \
         libpq-dev \
         libzip-dev \
         libc-client-dev \
+        libc-client2007e-dev \
         libkrb5-dev \
         libvips-dev \
         librabbitmq-dev \
@@ -153,9 +155,9 @@ RUN set -x \
     && cp guetzli-master/bin/Release/guetzli /usr/local/bin/ \
     && rm -rf master.zip guetzli-master \
     # Install extensions
-    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
         bcmath \
         bz2 \
@@ -213,6 +215,7 @@ RUN set -x \
         libxslt1-dev \
         zlib1g-dev \
         libpng-dev \
+        libwebp-dev \
         libpq-dev \
         libzip-dev \
         libvips-dev \

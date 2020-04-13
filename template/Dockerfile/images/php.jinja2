@@ -29,6 +29,7 @@
         libzip4 \
         # Dev and headers
         libjpeg62-turbo-dev \
+        libwebp-dev \
         libfreetype6-dev \
         libbz2-dev \
         libicu-dev \
@@ -43,6 +44,7 @@
         libpq-dev \
         libzip-dev \
         libc-client-dev \
+        libc-client2007e-dev \
         libkrb5-dev \
         libvips-dev \
         librabbitmq-dev \
@@ -54,11 +56,13 @@
     && cp guetzli-master/bin/Release/guetzli /usr/local/bin/ \
     && rm -rf master.zip guetzli-master \
     # Install extensions
-    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
 {%- if version != '7.4' %}
-    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
+{%- else %}
+    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
 {%- endif %}
+    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
+    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
         bcmath \
         bz2 \
@@ -72,8 +76,8 @@
 {%- if version|int == 5 or version == '7.0' or version == '7.1' %}
         mcrypt \
 {%- endif %}
-{%- if version != '7.4' %}
         imap \
+{%- if version != '7.4' %}
         hash \
 {%- endif %}
         pcntl \
@@ -145,6 +149,7 @@
         libxslt1-dev \
         zlib1g-dev \
         libpng-dev \
+        libwebp-dev \
         libpq-dev \
         libzip-dev \
         libvips-dev \
@@ -155,25 +160,200 @@
     {{ services.php() }}
 {%- endmacro %}
 
+{% macro officialAlpine(role='', version='') -%}
+    # Install php environment
+    && apk-install \
+        imagemagick \
+        graphicsmagick \
+        ghostscript \
+        jpegoptim \
+        pngcrush \
+        optipng \
+        pngquant \
+        vips \
+        rabbitmq-c \
+        c-client \
+        # Libraries
+        libldap \
+        icu-libs \
+        libintl \
+        libpq \
+        libxslt \
+        libzip \
+        libmemcached \
+        yaml \
+        # Build dependencies
+        autoconf \
+        g++ \
+        make \
+        pcre-dev \
+        gettext-dev \
+        freetype-dev \
+        libjpeg-turbo-dev \
+        libpng-dev \
+        vips-dev \
+        krb5-dev \
+        openssl-dev \
+        imap-dev \
+        imagemagick-dev \
+        rabbitmq-c-dev \
+        openldap-dev \
+        icu-dev \
+        postgresql-dev \
+        libxml2-dev \
+        ldb-dev \
+        pcre-dev \
+        libxslt-dev \
+        libzip-dev \
+        libmemcached-dev \
+        yaml-dev \
+    # Install guetzli
+    && wget https://github.com/google/guetzli/archive/master.zip \
+    && unzip master.zip \
+    && make -C guetzli-master \
+    && cp guetzli-master/bin/Release/guetzli /usr/local/bin/ \
+    && rm -rf master.zip guetzli-master \
+    # Install extensions
+{%- if version == '7.4' %}
+    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
+{%- else %}
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
+{%- endif %}
+    && docker-php-ext-configure ldap \
+    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install \
+        bcmath \
+        bz2 \
+        calendar \
+        exif \
+{%- if version == '7.4' %}
+        ffi \
+{%- endif %}
+        intl \
+        gettext \
+        ldap \
+        mysqli \
+        imap \
+{%- if version != '7.4' %}
+        hash \
+{%- endif %}
+        pcntl \
+        pdo_mysql \
+        pdo_pgsql \
+        pgsql \
+        soap \
+        sockets \
+        tokenizer \
+        sysvmsg \
+        sysvsem \
+        sysvshm \
+        shmop \
+        xmlrpc \
+        xsl \
+        zip \
+        gd \
+        gettext \
+        opcache \
+    # Install extensions for PHP 7.x
+    && pecl install apcu \
+    {%- if version == '7.3' or version == '7.4' %}
+    # Memcached for 7.3 can currently only be built from master
+    && MEMCACHED="`mktemp -d`" \
+    && curl -skL https://github.com/php-memcached-dev/php-memcached/archive/master.tar.gz | tar zxf - --strip-components 1 -C $MEMCACHED \
+    && docker-php-ext-configure $MEMCACHED \
+    && docker-php-ext-install $MEMCACHED \
+    && rm -rf $MEMCACHED \
+    {%- else %}
+    && printf "no --disable-memcached-sasl\n" | pecl install memcached-3.0.4 \
+    && docker-php-ext-enable memcached \
+    {%- endif %}
+    # Install vips (only works with PHP >= 7.0)
+    && printf "\n" | pecl install vips \
+    && pecl install redis \
+    && pecl install mongodb \
+    && pecl install imagick \
+    && pecl install amqp \
+    && pecl install yaml \
+    && docker-php-ext-enable \
+        apcu \
+        redis \
+        imagick \
+        mongodb \
+        amqp \
+        vips \
+        yaml \
+    # Uninstall dev and header packages
+    && apk del -f --purge \
+        autoconf \
+        g++ \
+        make \
+        pcre-dev \
+        gettext-dev \
+        freetype-dev \
+        libjpeg-turbo-dev \
+        libpng-dev \
+        vips-dev \
+        krb5-dev \
+        openssl-dev \
+        imap-dev \
+        rabbitmq-c-dev \
+        imagemagick-dev \
+        openldap-dev \
+        icu-dev \
+        postgresql-dev \
+        libxml2-dev \
+        ldb-dev \
+        pcre-dev \
+        libxslt-dev \
+        libzip-dev \
+        libmemcached-dev \
+        yaml-dev \
+    && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    {{ services.php() }}
+{%- endmacro %}
 
 {% macro officialDevelopment(role='', version='') -%}
-{% if version != '7.4' -%}
     # Install development environment
     && wget -q -O - https://packages.blackfire.io/gpg.key | apt-key add - \
     && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
     && apt-install \
         blackfire-php \
         blackfire-agent \
-{%- endif %}
 {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
-{%- elif version == '7.3' %}
-    && pecl install xdebug-2.7.0 \
-{%- elif version == '7.4' %}
-    && pecl install xdebug-2.8.0beta1 \
+{% elif version == '7.0' %}
+    && pecl install xdebug-2.8.1 \
 {%- else %}
     && pecl install xdebug \
 {%- endif %}
-    && echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
+    && docker-php-ext-enable xdebug \
+    {{ services.phpDev() }}
+{%- endmacro %}
+
+{% macro officialDevelopmentAlpine(role='', version='') -%}
+    # Install development environment
+    && wget -q -O blackfire-agent https://packages.blackfire.io/binaries/blackfire-agent/1.34.0/blackfire-agent-linux_static_amd64 \
+    && mv blackfire-agent /usr/local/bin/ \
+    && chmod +x /usr/local/bin/blackfire-agent \
+    && wget -q -O blackfire.so https://packages.blackfire.io/binaries/blackfire-php/1.33.0/blackfire-php-alpine_amd64-php-{{ version|replace('.', '') }}.so \
+    && mv blackfire.so "$(php -r "echo ini_get('extension_dir');")/blackfire.so" \
+    && mkdir /var/run/blackfire/ \
+    && apk-install \
+        make \
+        autoconf \
+        g++ \
+{%- if version|int == 5 %}
+    && pecl install xdebug-2.5.5 \
+{% elif version == '7.0' %}
+    && pecl install xdebug-2.8.1 \
+{%- else %}
+    && pecl install xdebug \
+{%- endif %}
+    && apk del -f --purge \
+        autoconf \
+        g++ \
+        make \
+    && docker-php-ext-enable xdebug \
     {{ services.phpDev() }}
 {%- endmacro %}

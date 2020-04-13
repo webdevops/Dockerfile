@@ -2,6 +2,8 @@
 webdevops/typo3-solr
 ====================
 
+*deprecated*
+
 These image extends ``solr`` and provides a prebuild image for TYPO3 solr service.
 
 Docker image tags
