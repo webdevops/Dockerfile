@@ -47,6 +47,7 @@ provision:
       apache/centos     : centos-*
       apache/alpine     : alpine
       php-apache/general: '*'
+      php-apache/alpine : '*-alpine'
   php-nginx:
     configuration:
       nginx/general     : '*'
