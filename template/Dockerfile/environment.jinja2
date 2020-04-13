@@ -29,6 +29,10 @@ ENV WEB_PHP_SOCKET=127.0.0.1:9000
 ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"
 {%- endmacro %}
 
+{% macro phpAlpineIconvWorkaround() -%}
+ENV LD_PRELOAD="/usr/local/lib/preloadable_libiconv.so"
+{%- endmacro %}
+
 
 {% macro webDevelopment() -%}
 ENV WEB_NO_CACHE_PATTERN="\.(css|js|gif|png|jpg|svg|json|xml)$"
