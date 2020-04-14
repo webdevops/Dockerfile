@@ -167,7 +167,7 @@ RUN set -x \
     && make install \
     && libtool --finish /usr/local/lib \
     && cd .. \
-    && rm -rf libiconv-1.14
+    && rm -rf libiconv-1.14 \
     # Install extensions
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
     && docker-php-ext-configure ldap \

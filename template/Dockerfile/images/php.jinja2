@@ -223,7 +223,7 @@
     && make install \
     && libtool --finish /usr/local/lib \
     && cd .. \
-    && rm -rf libiconv-1.14
+    && rm -rf libiconv-1.14 \
     # Install extensions
 {%- if version == '7.4' %}
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
