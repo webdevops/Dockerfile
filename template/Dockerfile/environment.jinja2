@@ -30,7 +30,7 @@ ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"
 {%- endmacro %}
 
 {% macro phpAlpineIconvWorkaround() -%}
-ENV LD_PRELOAD="/usr/local/lib/preloadable_libiconv.so"
+ENV LD_PRELOAD="/usr/lib/preloadable_libiconv.so"
 {%- endmacro %}
 
 

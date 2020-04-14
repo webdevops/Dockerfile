@@ -214,16 +214,7 @@
     && cp guetzli-master/bin/Release/guetzli /usr/local/bin/ \
     && rm -rf master.zip guetzli-master \
     # https://github.com/docker-library/php/issues/240
-    && rm /usr/bin/iconv \
-    && curl -SL http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz | tar -xz -C . \
-    && cd libiconv-1.14 \
-    && ./configure --prefix=/usr/local \
-    && curl -SL https://raw.githubusercontent.com/mxe/mxe/7e231efd245996b886b501dad780761205ecf376/src/libiconv-1-fixes.patch | patch -p1 -u  \
-    && make \
-    && make install \
-    && libtool --finish /usr/local/lib \
-    && cd .. \
-    && rm -rf libiconv-1.14 \
+    && apk add gnu-libiconv --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --allow-untrusted \
     # Install extensions
 {%- if version == '7.4' %}
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \

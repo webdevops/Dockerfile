@@ -46,7 +46,7 @@ ENV APPLICATION_USER=application \
     APPLICATION_UID=1000 \
     APPLICATION_GID=1000
 ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i" 
-ENV LD_PRELOAD="/usr/local/lib/preloadable_libiconv.so"
+ENV LD_PRELOAD="/usr/lib/preloadable_libiconv.so"
 
 
 # Baselayout copy (from staged image)
@@ -158,16 +158,7 @@ RUN set -x \
     && cp guetzli-master/bin/Release/guetzli /usr/local/bin/ \
     && rm -rf master.zip guetzli-master \
     # https://github.com/docker-library/php/issues/240
-    && rm /usr/bin/iconv \
-    && curl -SL http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz | tar -xz -C . \
-    && cd libiconv-1.14 \
-    && ./configure --prefix=/usr/local \
-    && curl -SL https://raw.githubusercontent.com/mxe/mxe/7e231efd245996b886b501dad780761205ecf376/src/libiconv-1-fixes.patch | patch -p1 -u  \
-    && make \
-    && make install \
-    && libtool --finish /usr/local/lib \
-    && cd .. \
-    && rm -rf libiconv-1.14 \
+    && apk add gnu-libiconv --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --allow-untrusted \
     # Install extensions
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
     && docker-php-ext-configure ldap \
