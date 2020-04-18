@@ -40,6 +40,6 @@ function teardownEntrypoint()
     includeScriptDir /opt/docker/provision/entrypoint.d/teardown
 }
 trap 'teardownEntrypoint' SIGTERM
-runEntrypoints "$@" &
+runEntrypoints &
 wait $!
 teardownEntrypoint
