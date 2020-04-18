@@ -70,24 +70,18 @@ function deprecationNotice() {
  # Run "entrypoint" scripts
  ##
 function runEntrypoints() {
-    ###############
-    # Try to find entrypoint
-    ###############
-
-    ENTRYPOINT_SCRIPT="/opt/docker/bin/entrypoint.d/${TASK}.sh"
-
-    if [ -f "$ENTRYPOINT_SCRIPT" ]; then
-        . "$ENTRYPOINT_SCRIPT"
+    # try to find entrypoint task script
+    TASK_SCRIPT="/opt/docker/bin/entrypoint.d/${TASK}.sh"
+    if [ ! -f "$TASK_SCRIPT" ]; then
+        # run default
+        TASK_SCRIPT="/opt/docker/bin/entrypoint.d/default.sh"
     fi
 
-    ###############
-    # Run default
-    ###############
-    if [ -f "/opt/docker/bin/entrypoint.d/default.sh" ]; then
-        . /opt/docker/bin/entrypoint.d/default.sh
+    if [ ! -f "$TASK_SCRIPT" ]; then
+        exit 1
     fi
 
-    exit 1
+    . "$TASK_SCRIPT"
 }
 
  # Run "entrypoint" provisioning
