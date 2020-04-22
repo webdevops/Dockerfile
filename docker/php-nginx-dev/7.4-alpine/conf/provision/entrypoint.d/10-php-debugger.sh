@@ -93,6 +93,8 @@ phpEnvironmentVariable "xdebug.remote_connect_back" "XDEBUG_REMOTE_CONNECT_BACK"
 phpEnvironmentVariable "xdebug.remote_autostart"    "XDEBUG_REMOTE_AUTOSTART"
 phpEnvironmentVariable "xdebug.remote_host"         "XDEBUG_REMOTE_HOST"
 phpEnvironmentVariable "xdebug.remote_port"         "XDEBUG_REMOTE_PORT"
+phpEnvironmentVariable "xdebug.max_nesting_level"   "XDEBUG_MAX_NESTING_LEVEL"
+phpEnvironmentVariable "xdebug.idekey"              "XDEBUG_IDE_KEY"
 
 # profiler
 phpEnvironmentVariable "xdebug.profiler_enable"               "XDEBUG_PROFILER_ENABLE"

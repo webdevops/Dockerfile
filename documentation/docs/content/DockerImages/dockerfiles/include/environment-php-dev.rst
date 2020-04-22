@@ -21,6 +21,10 @@ Environment variable                          Description                       
                                               ``xdebug.remote_host``
 ``XDEBUG_REMOTE_PORT``                        php.ini value for                         ``none``
                                               ``xdebug.remote_port``
+``XDEBUG_MAX_NESTING_LEVEL``                  php.ini value for                         ``none``
+                                              ``xdebug.max_nesting_level``
+``XDEBUG_IDE_KEY``                            php.ini value for                         ``none``
+                                              ``xdebug.idekey``
 ``XDEBUG_PROFILER_ENABLE``                    php.ini value for                         ``none``
                                               ``xdebug.profiler_enable``
 ``XDEBUG_PROFILER_ENABLE_TRIGGER``            php.ini value for                         ``none``
