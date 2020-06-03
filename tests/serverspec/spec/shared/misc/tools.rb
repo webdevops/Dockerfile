@@ -49,6 +49,6 @@ shared_examples 'misc::letsencrypt' do
 
     describe command('/usr/bin/certbot --version') do
         its(:stderr) { should match %r!certbot! }
-        its(:exit_status) { should eq 0 }
+        its(:exit_status) { should eq 1 }
     end
 end
