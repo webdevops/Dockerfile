@@ -30,7 +30,7 @@ Environment variable                          Description                       
 PHP FPM  variables
 ^^^^^^^^^^^^^^^^^^
 
-You can specify eg. ``fpm.pool.pm.max_requests=1000`` as dyanmic env variable which will sets ``pm.max_requests = 1000`` as fpm pool setting.
+You can specify eg. ``fpm.pool.pm.max_requests=1000`` as dynamic env variable which will sets ``pm.max_requests = 1000`` as fpm pool setting.
 The prefix ``fpm.pool`` is for pool settings and ``fpm.global`` for global master process settings.
 
 ============================================= ========================================= ==============================================
