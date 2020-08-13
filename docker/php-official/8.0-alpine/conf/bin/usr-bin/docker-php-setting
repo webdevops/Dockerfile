@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
+# Defaults
+PHP_INI_FILE="/opt/docker/etc/php/php.ini"
+PHP_VALUE_RAW=0
+PHP_KEY=
+PHP_VALUE=
+
+for arg in "$@"; do
+    case "$arg" in
+        --raw)
+            PHP_VALUE_RAW=1
+            shift
+            ;;
+    esac
+done
+
+if [[ "$#" -le 2 ]]; then
+    echo "Usage: $(basename "$0") [--raw] <setting> <value>"
+    exit 1
+fi
+
+PHP_SETTING_KEY=$1
+shift
+PHP_SETTING_VALUE="$@"
+
+if [[ "$PHP_VALUE_RAW" -eq 0 ]]; then
+    case "$PHP_SETTING_VALUE" in
+        ''|*[!0-9]*)
+            # non numeric
+            PHP_SETTING_VALUE="\"${PHP_SETTING_VALUE}\""
+            ;;
+    esac
+fi
+
+
+echo "$(basename "$0"): Setting php setting: ${PHP_SETTING_KEY} = ${PHP_SETTING_VALUE}"
+echo "${PHP_SETTING_KEY} = ${PHP_SETTING_VALUE}" >> "$PHP_INI_FILE"
+
