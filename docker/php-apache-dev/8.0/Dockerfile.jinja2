@@ -1,0 +1,12 @@
+{{ docker.from("php-apache", "8.0") }}
+
+{{ environment.web() }}
+{{ environment.webPhp() }}
+{{ environment.webDevelopment() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+RUN set -x \
+    {{ php.officialDevelopment(version="8.0") }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

@@ -1,0 +1,12 @@
+{{ docker.from("php-nginx", "8.0-alpine") }}
+
+{{ environment.web() }}
+{{ environment.webPhp() }}
+{{ environment.webDevelopment() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+RUN set -x \
+    {{ php.officialDevelopmentAlpine(version="8.0") }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
