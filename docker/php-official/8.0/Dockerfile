@@ -158,8 +158,8 @@ RUN set -x \
     && curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-66-1/icu4c-66_1-src.tgz \
     && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu* \
     # Install extensions
-    && docker-php-ext-configure intl --with-icu-dir=/usr/local \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
+    && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
+    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
@@ -172,7 +172,6 @@ RUN set -x \
         ldap \
         mysqli \
         imap \
-        hash \
         pcntl \
         pdo_mysql \
         pdo_pgsql \
@@ -192,8 +191,12 @@ RUN set -x \
         opcache \
     # Install extensions for PHP 7.x
     && pecl install apcu \
-    && printf "no --disable-memcached-sasl\n" | pecl install memcached-3.0.4 \
-    && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
+    # Memcached for 7.3 can currently only be built from master
+    && MEMCACHED="`mktemp -d`" \
+    && curl -skL https://github.com/php-memcached-dev/php-memcached/archive/master.tar.gz | tar zxf - --strip-components 1 -C $MEMCACHED \
+    && docker-php-ext-configure $MEMCACHED \
+    && docker-php-ext-install $MEMCACHED \
+    && rm -rf $MEMCACHED \
     # Install vips (only works with PHP >= 7.0)
     && printf "\n" | pecl install vips \
     && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
