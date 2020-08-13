@@ -202,6 +202,7 @@ RUN set -x \
     && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
+
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
         libc-client-dev \

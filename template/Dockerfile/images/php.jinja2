@@ -95,7 +95,9 @@
         sysvsem \
         sysvshm \
         shmop \
+{%- if version != '8.0' %}
         xmlrpc \
+{%- endif %}
         xsl \
         zip \
         gd \
@@ -113,6 +115,17 @@
     && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
+{% elif version == '8.0' %}
+    && wget https://github.com/FriendsOfPHP/pickle/releases/download/v0.6.0/pickle.phar \
+    && mv pickle.phar /usr/local/bin/pickle \
+    && chmod +x /usr/local/bin/pickle \
+    && pickle install memcached \
+    && pickle install apcu \
+    && pickle install vips \
+    && pickle install redis \
+    && pickle install mongodb \
+    && pickle install imagick \
+    && pickle install amqp \
 {%- else %}
     # Install extensions for PHP 7.x
     && pecl install apcu \

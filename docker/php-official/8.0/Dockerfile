@@ -183,32 +183,21 @@ RUN set -x \
         sysvsem \
         sysvshm \
         shmop \
-        xmlrpc \
         xsl \
         zip \
         gd \
         gettext \
         opcache \
-    # Install extensions for PHP 7.x
-    && pecl install apcu \
-    # Memcached for 7.3 can currently only be built from master
-    && MEMCACHED="`mktemp -d`" \
-    && curl -skL https://github.com/php-memcached-dev/php-memcached/archive/master.tar.gz | tar zxf - --strip-components 1 -C $MEMCACHED \
-    && docker-php-ext-configure $MEMCACHED \
-    && docker-php-ext-install $MEMCACHED \
-    && rm -rf $MEMCACHED \
-    # Install vips (only works with PHP >= 7.0)
-    && printf "\n" | pecl install vips \
-    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
-    && pecl install redis \
-    && pecl install mongodb \
-    && pecl install imagick \
-    && pecl install amqp \
-    && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
-    && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
-    && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini \
-    && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
-    && echo extension=amqp.so > /usr/local/etc/php/conf.d/amqp.ini \
+    && wget https://github.com/FriendsOfPHP/pickle/releases/download/v0.6.0/pickle.phar \
+    && mv pickle.phar /usr/local/bin/pickle \
+    && chmod +x /usr/local/bin/pickle \
+    && pickle install memcached \
+    && pickle install apcu \
+    && pickle install vips \
+    && pickle install redis \
+    && pickle install mongodb \
+    && pickle install imagick \
+    && pickle install amqp \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
         libc-client-dev \
