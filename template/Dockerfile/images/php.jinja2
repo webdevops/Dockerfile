@@ -300,10 +300,19 @@
     && pickle install memcached \
     && pickle install apcu \
     && pickle install vips \
-    && pickle install redis \
-    && pickle install mongodb \
-    && pickle install imagick \
-    && pickle install amqp \
+    && pickle install yaml \
+    # && pickle install redis \
+    # && pickle install mongodb \
+    # && pickle install imagick \
+    # && pickle install amqp \
+    && docker-php-ext-enable \
+        apcu \
+        vips \
+        yaml \
+        # redis \
+        # imagick \
+        # mongodb \
+        # amqp \
 {%- else %}
     # Install vips (only works with PHP >= 7.0)
     && pecl install apcu \
@@ -313,7 +322,6 @@
     && pecl install imagick \
     && pecl install amqp \
     && pecl install yaml \
-{%- endif %}
     && docker-php-ext-enable \
         apcu \
         redis \
@@ -322,6 +330,7 @@
         amqp \
         vips \
         yaml \
+{%- endif %}
     # Uninstall dev and header packages
     && apk del -f --purge \
         autoconf \
