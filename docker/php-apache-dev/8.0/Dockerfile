@@ -16,9 +16,6 @@ ENV WEB_NO_CACHE_PATTERN="\.(css|js|gif|png|jpg|svg|json|xml)$"
 COPY conf/ /opt/docker/
 
 RUN set -x \
-    
-    && pickle install xdebug \
-    && docker-php-ext-enable xdebug \
     # Enable php development services
     && docker-service enable syslog \
     && docker-service enable postfix \
