@@ -273,7 +273,9 @@
         sysvsem \
         sysvshm \
         shmop \
+{%- if version != '8.0' %}
         xmlrpc \
+{%- endif %}
         xsl \
         zip \
         gd \

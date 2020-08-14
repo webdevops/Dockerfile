@@ -189,7 +189,6 @@ RUN set -x \
         sysvsem \
         sysvshm \
         shmop \
-        xmlrpc \
         xsl \
         zip \
         gd \
