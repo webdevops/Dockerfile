@@ -19,7 +19,7 @@ RUN set -x \
         make \
         autoconf \
         g++ \
-    && pecl install xdebug \
+    && pickle install xdebug \
     && apk del -f --purge \
         autoconf \
         g++ \

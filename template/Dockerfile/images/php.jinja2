@@ -115,7 +115,7 @@
     && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
-{% elif version == '8.0' %}
+{%- elif version == '8.0' %}
     && wget https://github.com/FriendsOfPHP/pickle/releases/download/v0.6.0/pickle.phar \
     && mv pickle.phar /usr/local/bin/pickle \
     && chmod +x /usr/local/bin/pickle \
@@ -282,7 +282,6 @@
         gettext \
         opcache \
     # Install extensions for PHP 7.x
-    && pecl install apcu \
     {%- if version == '7.3' or version == '7.4' or version == '8.0' %}
     # Memcached for 7.3 can currently only be built from master
     && MEMCACHED="`mktemp -d`" \
@@ -294,13 +293,27 @@
     && printf "no --disable-memcached-sasl\n" | pecl install memcached-3.0.4 \
     && docker-php-ext-enable memcached \
     {%- endif %}
+{%- if version == '8.0' %}
+    && wget https://github.com/FriendsOfPHP/pickle/releases/download/v0.6.0/pickle.phar \
+    && mv pickle.phar /usr/local/bin/pickle \
+    && chmod +x /usr/local/bin/pickle \
+    && pickle install memcached \
+    && pickle install apcu \
+    && pickle install vips \
+    && pickle install redis \
+    && pickle install mongodb \
+    && pickle install imagick \
+    && pickle install amqp \
+{%- else %}
     # Install vips (only works with PHP >= 7.0)
+    && pecl install apcu \
     && printf "\n" | pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
     && pecl install imagick \
     && pecl install amqp \
     && pecl install yaml \
+{%- endif %}
     && docker-php-ext-enable \
         apcu \
         redis \
@@ -350,7 +363,9 @@
         blackfire-agent \
 {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
-{% elif version == '7.0' %}
+{%- elif version == '8.0' %}
+    && pickle install xdebug \
+{%- elif version == '7.0' %}
     && pecl install xdebug-2.8.1 \
 {%- else %}
     && pecl install xdebug \
@@ -373,8 +388,10 @@
         g++ \
 {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
-{% elif version == '7.0' %}
+{%- elif version == '7.0' %}
     && pecl install xdebug-2.8.1 \
+{%- elif version == '8.0' %}
+    && pickle install xdebug \
 {%- else %}
     && pecl install xdebug \
 {%- endif %}

@@ -22,7 +22,7 @@ RUN set -x \
     && apt-install \
         blackfire-php \
         blackfire-agent \
-    && pecl install xdebug \
+    && pickle install xdebug \
     && docker-php-ext-enable xdebug \
     # Enable php development services
     && docker-service enable syslog \

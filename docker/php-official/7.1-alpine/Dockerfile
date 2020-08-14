@@ -196,10 +196,10 @@ RUN set -x \
         gettext \
         opcache \
     # Install extensions for PHP 7.x
-    && pecl install apcu \
     && printf "no --disable-memcached-sasl\n" | pecl install memcached-3.0.4 \
     && docker-php-ext-enable memcached \
     # Install vips (only works with PHP >= 7.0)
+    && pecl install apcu \
     && printf "\n" | pecl install vips \
     && pecl install redis \
     && pecl install mongodb \

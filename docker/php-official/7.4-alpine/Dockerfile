@@ -196,7 +196,6 @@ RUN set -x \
         gettext \
         opcache \
     # Install extensions for PHP 7.x
-    && pecl install apcu \
     # Memcached for 7.3 can currently only be built from master
     && MEMCACHED="`mktemp -d`" \
     && curl -skL https://github.com/php-memcached-dev/php-memcached/archive/master.tar.gz | tar zxf - --strip-components 1 -C $MEMCACHED \
@@ -204,6 +203,7 @@ RUN set -x \
     && docker-php-ext-install $MEMCACHED \
     && rm -rf $MEMCACHED \
     # Install vips (only works with PHP >= 7.0)
+    && pecl install apcu \
     && printf "\n" | pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
