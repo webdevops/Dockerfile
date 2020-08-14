@@ -364,12 +364,14 @@
 {%- endmacro %}
 
 {% macro officialDevelopment(role='', version='') -%}
+{%- if version != '8.0' %}
     # Install development environment
     && wget -q -O - https://packages.blackfire.io/gpg.key | apt-key add - \
     && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
     && apt-install \
         blackfire-php \
         blackfire-agent \
+{%- endif %}
 {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
 {%- elif version == '8.0' %}
@@ -384,6 +386,7 @@
 {%- endmacro %}
 
 {% macro officialDevelopmentAlpine(role='', version='') -%}
+{%- if version != '8.0' %}
     # Install development environment
     && wget -q -O blackfire-agent https://packages.blackfire.io/binaries/blackfire-agent/1.34.0/blackfire-agent-linux_static_amd64 \
     && mv blackfire-agent /usr/local/bin/ \
@@ -391,6 +394,7 @@
     && wget -q -O blackfire.so https://packages.blackfire.io/binaries/blackfire-php/1.33.0/blackfire-php-alpine_amd64-php-{{ version|replace('.', '') }}.so \
     && mv blackfire.so "$(php -r "echo ini_get('extension_dir');")/blackfire.so" \
     && mkdir /var/run/blackfire/ \
+{%- endif %}
     && apk-install \
         make \
         autoconf \

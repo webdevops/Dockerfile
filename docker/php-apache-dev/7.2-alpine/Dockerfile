@@ -16,6 +16,7 @@ ENV WEB_NO_CACHE_PATTERN="\.(css|js|gif|png|jpg|svg|json|xml)$"
 COPY conf/ /opt/docker/
 
 RUN set -x \
+    
     # Install development environment
     && wget -q -O blackfire-agent https://packages.blackfire.io/binaries/blackfire-agent/1.34.0/blackfire-agent-linux_static_amd64 \
     && mv blackfire-agent /usr/local/bin/ \
