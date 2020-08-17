@@ -207,7 +207,7 @@ RUN set -x \
     && pickle install memcached \
     && pickle install apcu \
     && pickle install vips \
-    && pickle install yaml \
+    # && pickle install yaml \
     # && pickle install redis \
     # && pickle install mongodb \
     # && pickle install imagick \
@@ -215,7 +215,7 @@ RUN set -x \
     && docker-php-ext-enable \
         apcu \
         vips \
-        yaml \
+        # yaml \
         # redis \
         # imagick \
         # mongodb \
