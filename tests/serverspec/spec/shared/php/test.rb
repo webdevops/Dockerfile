@@ -125,7 +125,7 @@ shared_examples 'php7::fpm::test::version' do
                 expect(cmd.stdout).not_to contain('PHP Warning')
                 expect(cmd.stdout).not_to contain('Warning')
                 expect(cmd.stdout).not_to contain('Fatal Error')
-                expect(cmd.stdout).to match %r!PHP 7\.[0-9]\.[0-9]{1,2}(-[^\(]*)?!
+                expect(cmd.stdout).to match %r!PHP (?:7|8)\.[0-9]\.[0-9]{1,2}(-[^\(]*)?!
                 expect(cmd.exit_status).to eq 0
             end
         end
