@@ -62,7 +62,7 @@ if ((ENV['DOCKER_TAG'].match('php7')) or
     $testConfiguration[:php] = 7
 end
 
-if ((ENV['PHP_VERSION']).match('8.0'))
+if (ENV['DOCKER_TAG'] =~ /^8\.[0-9]+/)
     $testConfiguration[:php] = 8
 end
 
