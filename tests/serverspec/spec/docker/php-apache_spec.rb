@@ -15,6 +15,7 @@ describe "Dockerfile" do
         include_examples 'collection::php5::production'
         include_examples 'collection::php-fpm5'
         include_examples 'collection::php-fpm5::local-only'
+    elsif ($testConfiguration[:php] == 8)
     else
         include_examples 'collection::php7::production'
         include_examples 'collection::php-fpm7'
@@ -25,6 +26,7 @@ describe "Dockerfile" do
 
     if ($testConfiguration[:php] == 5)
         include_examples 'collection::php-fpm5::webserver-test::production'
+    elsif ($testConfiguration[:php] == 8)
     else
         include_examples 'collection::php-fpm7::webserver-test::production'
     end

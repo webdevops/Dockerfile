@@ -62,6 +62,9 @@ if ((ENV['DOCKER_TAG'].match('php7')) or
     $testConfiguration[:php] = 7
 end
 
+if ((ENV['PHP_VERSION']).match('8.0'))
+    $testConfiguration[:php] = 8
+end
 
 if ENV['PHP_OFFICIAL'] and ENV['PHP_OFFICIAL'] == "1"
     $testConfiguration[:phpOfficialImage] = true
