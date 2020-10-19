@@ -194,7 +194,7 @@ RUN set -x \
     && pickle install memcached \
     && pickle install apcu \
     && pickle install vips \
-    && pickle install redis \
+    && pickle install redis@5.3.1 \
     && pickle install mongodb \
     && pickle install imagick \
     && pickle install amqp \
