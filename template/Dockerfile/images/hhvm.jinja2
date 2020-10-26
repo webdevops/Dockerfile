@@ -12,7 +12,8 @@
         graphicsmagick \
         ghostscript \
     && /usr/bin/update-alternatives --install /usr/bin/php php /usr/bin/hhvm 60 \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --version=1.10.16
 {%- endmacro %}
 
 
@@ -26,5 +27,6 @@
         graphicsmagick \
         ghostscript \
     && /usr/bin/update-alternatives --install /usr/bin/php php /usr/bin/hhvm 60 \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --version=1.10.16
 {%- endmacro %}

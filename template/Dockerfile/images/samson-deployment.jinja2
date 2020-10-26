@@ -30,6 +30,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && set -x \
         docker-compose \
         python-dotenv \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --version=1.10.16 \
     ## Enable ansible for deployment user
     && chmod 755 /usr/local/bin/ansible* \
     {{ docker.cleanup() }}
