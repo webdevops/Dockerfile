@@ -173,7 +173,8 @@
         librabbitmq-dev \
         libmagick++-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
     {{ services.php() }}
 {%- endmacro %}
 
@@ -359,7 +360,8 @@
         libmemcached-dev \
         yaml-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
     {{ services.php() }}
 {%- endmacro %}
 

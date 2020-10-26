@@ -10,6 +10,7 @@ ENV WEB_DOCUMENT_ROOT=/app \
     WEB_ALIAS_DOMAIN=*.vm \
     WEB_PHP_TIMEOUT=600 \
     WEB_PHP_SOCKET=""
+ENV COMPOSER_VERSION="2"
 
 COPY conf/ /opt/docker/
 
@@ -57,7 +58,8 @@ RUN set -x \
     # && pear upgrade-all \
     && pear config-set auto_discover 1 \
     && pecl install imagick \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
     # Cleanup
     && yum erase -y php-devel gcc \
     # Enable php services

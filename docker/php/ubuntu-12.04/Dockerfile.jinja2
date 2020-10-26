@@ -1,6 +1,7 @@
 {{ docker.from("base-app", "ubuntu-12.04") }}
 
 {{ environment.web() }}
+{{ environment.phpComposerVersion() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 

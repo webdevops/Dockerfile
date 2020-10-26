@@ -1,6 +1,7 @@
 {{ docker.from("base-app", "debian-8") }}
 
 {{ environment.web() }}
+{{ environment.phpComposerVersion() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 

@@ -51,3 +51,14 @@ Environment variable                          Description                       
 ``FPM_RLIMIT_FILES``                          ``rlimit_files``                          ``distribution default``
 ``FPM_RLIMIT_CORE``                           ``rlimit_core``                           ``distribution default``
 ============================================= ========================================= ==============================================
+
+Composer
+^^^^^^^^
+
+Due to the incompatibilities between composer v1 and v2 we introduce a simple mechanism to switch between composer versions.
+
+============================================= ========================================= ==============================================
+Environment variable                          Description                               Default
+============================================= ========================================= ==============================================
+``COMPOSER_VERSION``                          Specify the composer version to use       ``2``
+============================================= ========================================= ==============================================

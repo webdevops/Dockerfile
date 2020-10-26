@@ -70,3 +70,6 @@ if [[ -n "${PHP_DISMOD+x}" ]]; then
         rm -f ${ini_dir_fpm}/*${DISABLE_MOD}*
     done
 fi
+
+# Link composer version accordingly
+ln -s /usr/local/bin/composer${COMPOSER_VERSION:-2} /usr/local/bin/composer

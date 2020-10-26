@@ -10,6 +10,7 @@ ENV WEB_DOCUMENT_ROOT=/app \
     WEB_ALIAS_DOMAIN=*.vm \
     WEB_PHP_TIMEOUT=600 \
     WEB_PHP_SOCKET=""
+ENV COMPOSER_VERSION="2"
 
 COPY conf/ /opt/docker/
 
@@ -52,7 +53,8 @@ RUN set -x \
     && sed -i "$ s|\-n||g" /usr/bin/pecl \
     && pecl install imagick \
     # && pecl install redis \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
     # Cleanup
     && yum erase -y php-devel gcc \
     # Enable php services

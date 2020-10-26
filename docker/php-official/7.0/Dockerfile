@@ -46,6 +46,7 @@ ENV APPLICATION_USER=application \
     APPLICATION_UID=1000 \
     APPLICATION_GID=1000
 ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"
+ENV COMPOSER_VERSION="2"
 
 
 # Baselayout copy (from staged image)
@@ -227,7 +228,8 @@ RUN set -x \
         librabbitmq-dev \
         libmagick++-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
     # Enable php services
     && docker-service enable syslog \
     && docker-service enable cron \

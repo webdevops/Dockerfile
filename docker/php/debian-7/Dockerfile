@@ -10,6 +10,7 @@ ENV WEB_DOCUMENT_ROOT=/app \
     WEB_ALIAS_DOMAIN=*.vm \
     WEB_PHP_TIMEOUT=600 \
     WEB_PHP_SOCKET=""
+ENV COMPOSER_VERSION="2"
 
 COPY conf/ /opt/docker/
 
@@ -48,7 +49,8 @@ RUN set -x \
     && pear config-set auto_discover 1 \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/cli/conf.d/20-mcrypt.ini \
     && ln -sf /etc/php5/mods-available/mcrypt.in /etc/php5/fpm/conf.d/20-mcrypt.ini \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
     # Enable php services
     && docker-service enable syslog \
     && docker-service enable cron \

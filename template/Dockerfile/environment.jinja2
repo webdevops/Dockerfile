@@ -29,6 +29,12 @@ ENV WEB_PHP_SOCKET=127.0.0.1:9000
 ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"
 {%- endmacro %}
 
+
+{% macro phpComposerVersion() -%}
+ENV COMPOSER_VERSION="2"
+{%- endmacro %}
+
+
 {% macro phpAlpineIconvWorkaround() -%}
 ENV LD_PRELOAD="/usr/lib/preloadable_libiconv.so"
 {%- endmacro %}
