@@ -72,4 +72,4 @@ if [[ -n "${PHP_DISMOD+x}" ]]; then
 fi
 
 # Link composer version accordingly
-ln -s /usr/local/bin/composer${COMPOSER_VERSION:-2} /usr/local/bin/composer
+ln -sf /usr/local/bin/composer${COMPOSER_VERSION:-2} /usr/local/bin/composer
