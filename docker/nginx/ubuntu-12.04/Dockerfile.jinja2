@@ -1,6 +1,7 @@
 {{ docker.from("base", "ubuntu-12.04") }}
 
 {{ environment.web() }}
+{{ environment.nginx() }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 

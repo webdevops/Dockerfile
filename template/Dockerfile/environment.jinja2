@@ -24,6 +24,10 @@ ENV WEB_DOCUMENT_ROOT=/app \
 ENV WEB_PHP_SOCKET=127.0.0.1:9000
 {%- endmacro %}
 
+{% macro nginx() -%}
+ENV SERVICE_NGINX_CLIENT_MAX_BODY_SIZE="50m"
+{%- endmacro %}
+
 
 {% macro phpOfficialSendmailWorkaround() -%}
 ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"

@@ -12,6 +12,7 @@ go-replace \
     -s "<SERVERNAME>" -r "$HOSTNAME" \
     -s "<PHP_SOCKET>" -r "$WEB_PHP_SOCKET" \
     -s "<PHP_TIMEOUT>" -r "$WEB_PHP_TIMEOUT" \
+    -s "<SERVICE_NGINX_CLIENT_MAX_BODY_SIZE>" -r "$SERVICE_NGINX_CLIENT_MAX_BODY_SIZE" \
     --path=/opt/docker/etc/nginx/ \
     --path-pattern='*.conf' \
     --ignore-empty
