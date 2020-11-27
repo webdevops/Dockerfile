@@ -62,3 +62,15 @@ Environment variable                          Description                       
 ============================================= ========================================= ==============================================
 ``COMPOSER_VERSION``                          Specify the composer version to use       ``2``
 ============================================= ========================================= ==============================================
+
+Be aware that this switch is only executed during container start (entrypoint).
+If you want to build your software with a specific composer version, you can do this:
+
+::
+
+    FROM webdevops/php-nginx:7.3
+    COPY ./src /app
+    RUN composer1 install -d /app
+
+
+Or ``composer`` respectively.
