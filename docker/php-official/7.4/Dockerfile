@@ -192,12 +192,8 @@ RUN set -x \
         opcache \
     # Install extensions for PHP 7.x
     && pecl install apcu \
-    # Memcached for 7.3 can currently only be built from master
-    && MEMCACHED="`mktemp -d`" \
-    && curl -skL https://github.com/php-memcached-dev/php-memcached/archive/master.tar.gz | tar zxf - --strip-components 1 -C $MEMCACHED \
-    && docker-php-ext-configure $MEMCACHED \
-    && docker-php-ext-install $MEMCACHED \
-    && rm -rf $MEMCACHED \
+    && printf "no --disable-memcached-sasl\n" | pecl install memcached \
+    && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     # Install vips (only works with PHP >= 7.0)
     && printf "\n" | pecl install vips \
     && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \

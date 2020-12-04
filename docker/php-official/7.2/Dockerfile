@@ -193,7 +193,7 @@ RUN set -x \
         opcache \
     # Install extensions for PHP 7.x
     && pecl install apcu \
-    && printf "no --disable-memcached-sasl\n" | pecl install memcached-3.0.4 \
+    && printf "no --disable-memcached-sasl\n" | pecl install memcached \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     # Install vips (only works with PHP >= 7.0)
     && printf "\n" | pecl install vips \
