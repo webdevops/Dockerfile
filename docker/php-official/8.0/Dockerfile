@@ -27,7 +27,7 @@ RUN mkdir -p \
     && "/baselayout/sbin/gosu" nobody true
 
 
-FROM php:8.0-rc-fpm-buster
+FROM php:8.0-fpm-buster
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
@@ -195,7 +195,7 @@ RUN set -x \
     && pickle install memcached \
     && pickle install apcu \
     && pickle install vips \
-    && pickle install redis@5.3.1 \
+    && pickle install redis \
     && pickle install mongodb \
     && pickle install imagick \
     && pickle install amqp \

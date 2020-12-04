@@ -27,7 +27,7 @@ RUN mkdir -p \
     && "/baselayout/sbin/gosu" nobody true
 
 
-FROM php:8.0-rc-fpm-alpine
+FROM php:8.0-fpm-alpine
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
@@ -208,19 +208,19 @@ RUN set -x \
     && pickle install memcached \
     && pickle install apcu \
     && pickle install vips \
-    # && pickle install yaml \
-    # && pickle install redis \
-    # && pickle install mongodb \
-    # && pickle install imagick \
-    # && pickle install amqp \
+    && pickle install yaml \
+    && pickle install redis \
+    && pickle install mongodb \
+    && pickle install imagick \
+    && pickle install amqp \
     && docker-php-ext-enable \
         apcu \
         vips \
-        # yaml \
-        # redis \
-        # imagick \
-        # mongodb \
-        # amqp \
+        yaml \
+        redis \
+        imagick \
+        mongodb \
+        amqp \
     # Uninstall dev and header packages
     && apk del -f --purge \
         autoconf \

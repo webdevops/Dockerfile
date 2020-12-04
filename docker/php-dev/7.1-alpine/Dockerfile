@@ -19,7 +19,7 @@ RUN set -x \
         make \
         autoconf \
         g++ \
-    && pecl install xdebug \
+    && pecl install xdebug-2.8.1 \
     && apk del -f --purge \
         autoconf \
         g++ \

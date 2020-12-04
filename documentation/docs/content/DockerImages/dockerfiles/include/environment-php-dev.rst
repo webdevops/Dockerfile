@@ -13,10 +13,20 @@ Environment variable                          Description                       
                                               non cacheable to browser
 ``PHP_DEBUGGER``                              Specifies which php debugger              ``xdebug`` (eg. ``xdebug``, ``blackfire`` or
                                               should be active                          ``none``)
+``XDEBUG_MODE``                               php.ini value for                         ``none``
+                                              ``xdebug.mode``
+``XDEBUG_START_WITH_REQUEST``                 php.ini value for                         ``none``
+                                              ``xdebug.start_with_request``
 ``XDEBUG_REMOTE_AUTOSTART``                   php.ini value for                         ``none``
                                               ``xdebug.remote_autostart``
 ``XDEBUG_REMOTE_CONNECT_BACK``                php.ini value for                         ``none``
                                               ``xdebug.remote_connect_back``
+``XDEBUG_DISCOVER_CLIENT_HOST``               php.ini value for                         ``none``
+                                              ``xdebug.discover_client_host``
+``XDEBUG_CLIENT_HOST``                        php.ini value for                         ``none``
+                                              ``xdebug.client_host``
+``XDEBUG_CLIENT_PORT``                        php.ini value for                         ``none``
+                                              ``xdebug.client_port``
 ``XDEBUG_REMOTE_HOST``                        php.ini value for                         ``none``
                                               ``xdebug.remote_host``
 ``XDEBUG_REMOTE_PORT``                        php.ini value for                         ``none``
@@ -29,6 +39,10 @@ Environment variable                          Description                       
                                               ``xdebug.profiler_enable``
 ``XDEBUG_PROFILER_ENABLE_TRIGGER``            php.ini value for                         ``none``
                                               ``xdebug.profiler_enable_trigger``
+``XDEBUG_TRIGGER_VALUE``                      php.ini value for                         ``none``
+                                              ``xdebug.trigger_value``
+``XDEBUG_OUTPUT_DIR``                         php.ini value for                         ``none``
+                                              ``xdebug.output_dir``
 ``XDEBUG_PROFILER_ENABLE_TRIGGER_VALUE``      php.ini value for                         ``none``
                                               ``xdebug.profiler_enable_trigger_value``
 ``XDEBUG_PROFILER_OUTPUT_DIR``                php.ini value for                         ``none``
@@ -41,3 +55,6 @@ Environment variable                          Description                       
                                               ``blackfire.server_token``
 ``SERVICE_BLACKFIRE_AGENT_OPTS``              Blackfire agent command arguments         *empty*
 ============================================= ========================================= ==============================================
+
+Please be aware that depending of the image you are using it can contain either xdebug2 or xdebug3. 
+You can find the necessary configuration options according to your xdebug version here: https://xdebug.org/docs/upgrade_guide

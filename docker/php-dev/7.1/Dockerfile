@@ -14,7 +14,7 @@ RUN set -x \
     && apt-install \
         blackfire-php \
         blackfire-agent \
-    && pecl install xdebug \
+    && pecl install xdebug-2.8.1 \
     && docker-php-ext-enable xdebug \
     # Enable php development services
     && docker-service enable syslog \
