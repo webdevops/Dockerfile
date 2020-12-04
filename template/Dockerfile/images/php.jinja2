@@ -368,7 +368,7 @@
     {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
     {%- elif version == '8.0' %}
-    && pickle install xdebug \
+    && pecl install xdebug \
     {%- elif version == '7.0' or version == '7.1' %}
     && pecl install xdebug-2.8.1 \
     {%- else %}
@@ -395,7 +395,7 @@
     {%- elif version == '7.0' or version == '7.1' %}
     && pecl install xdebug-2.8.1 \
     {%- elif version == '8.0' %}
-    && pickle install xdebug \
+    && pecl install xdebug \
     {%- else %}
     && pecl install xdebug \
     {%- endif %}

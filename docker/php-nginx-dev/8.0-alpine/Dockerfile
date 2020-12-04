@@ -26,7 +26,7 @@ RUN set -x \# Install development environment
         make \
         autoconf \
         g++ \
-    && pickle install xdebug \
+    && pecl install xdebug \
     && apk del -f --purge \
         autoconf \
         g++ \
