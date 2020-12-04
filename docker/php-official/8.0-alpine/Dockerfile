@@ -211,16 +211,16 @@ RUN set -x \
     && pickle install yaml \
     && pickle install redis \
     && pickle install mongodb \
-    && pickle install imagick \
-    && pickle install amqp \
+    #&& pickle install imagick \
+    #&& pickle install amqp \
     && docker-php-ext-enable \
         apcu \
         vips \
         yaml \
         redis \
-        imagick \
+        #imagick \
         mongodb \
-        amqp \
+        #amqp \
     # Uninstall dev and header packages
     && apk del -f --purge \
         autoconf \

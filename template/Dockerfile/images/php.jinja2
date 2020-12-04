@@ -296,16 +296,16 @@
     && pickle install yaml \
     && pickle install redis \
     && pickle install mongodb \
-    && pickle install imagick \
-    && pickle install amqp \
+    #&& pickle install imagick \
+    #&& pickle install amqp \
     && docker-php-ext-enable \
         apcu \
         vips \
         yaml \
         redis \
-        imagick \
+        #imagick \
         mongodb \
-        amqp \
+        #amqp \
 {%- else %}
     # Install vips (only works with PHP >= 7.0)
     && pecl install apcu \
