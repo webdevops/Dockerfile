@@ -7,7 +7,8 @@ FROM webdevops/php:8.0-alpine
 
 COPY conf/ /opt/docker/
 
-RUN set -x \# Install development environment
+RUN set -x \
+    # Install development environment
     && wget -q -O blackfire-agent https://packages.blackfire.io/binaries/blackfire-agent/1.34.0/blackfire-agent-linux_static_amd64 \
     && mv blackfire-agent /usr/local/bin/ \
     && chmod +x /usr/local/bin/blackfire-agent \
