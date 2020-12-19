@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ -z "$CONTAINER_UID" ]]; then
-    export CONTAINER_UID="application"
+    export CONTAINER_UID=1000
 fi
 
 set -o pipefail # trace ERR through pipes
