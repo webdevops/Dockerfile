@@ -79,7 +79,6 @@ function runEntrypoints() {
     fi
 
     if [ ! -f "$ENTRYPOINT_SCRIPT" ]; then
-        echo "not found $ENTRYPOINT_SCRIPT"
         exit 1
     fi
 
