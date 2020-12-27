@@ -126,6 +126,14 @@
     && pickle install mongodb \
     && pickle install imagick \
     && pickle install amqp \
+    && docker-php-ext-enable \
+        memcached \
+        apcu \
+        vips \
+        redis \
+        mongodb \
+        # imagick \
+        # amqp \
 {%- else %}
     # Install extensions for PHP 7.x
     && pecl install apcu \
