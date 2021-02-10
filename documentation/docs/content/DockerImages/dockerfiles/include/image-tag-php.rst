@@ -7,10 +7,12 @@ Tag                    Distribution name                   PHP Version
 ``7.2``                *customized official php image*     PHP 7.2
 ``7.3``                *customized official php image*     PHP 7.3
 ``7.4``                *customized official php image*     PHP 7.4
+``8.0``                *customized official php image*     PHP 8.0
 ``7.1-alpine``         *customized official php image*     PHP 7.1
 ``7.2-alpine``         *customized official php image*     PHP 7.2
 ``7.3-alpine``         *customized official php image*     PHP 7.3
 ``7.4-alpine``         *customized official php image*     PHP 7.4
+``8.0-alpine``         *customized official php image*     PHP 8.0
 ``alpine``             *deprecated*                        PHP 7.x
 ``alpine-php7``        *deprecated*                        PHP 7.x
 ``alpine-php5``        *deprecated*                        PHP 5.6
