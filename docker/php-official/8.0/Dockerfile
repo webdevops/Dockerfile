@@ -189,7 +189,7 @@ RUN set -x \
         gd \
         gettext \
         opcache \
-    && wget https://github.com/FriendsOfPHP/pickle/releases/download/v0.6.0/pickle.phar \
+    && wget https://github.com/FriendsOfPHP/pickle/releases/download/v0.7.2/pickle.phar \
     && mv pickle.phar /usr/local/bin/pickle \
     && chmod +x /usr/local/bin/pickle \
     && pickle install memcached \
