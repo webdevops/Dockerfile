@@ -197,8 +197,16 @@ RUN set -x \
     && pickle install vips \
     && pickle install redis \
     && pickle install mongodb \
-    && pickle install imagick \
-    && pickle install amqp \
+    # && pickle install imagick \
+    # && pickle install amqp \
+    && docker-php-ext-enable \
+        memcached \
+        apcu \
+        vips \
+        redis \
+        mongodb \
+        # imagick \
+        # amqp \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
         libc-client-dev \
