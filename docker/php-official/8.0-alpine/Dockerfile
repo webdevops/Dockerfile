@@ -202,17 +202,14 @@ RUN set -x \
     && docker-php-ext-configure $MEMCACHED \
     && docker-php-ext-install $MEMCACHED \
     && rm -rf $MEMCACHED \
-    && wget https://github.com/FriendsOfPHP/pickle/releases/download/v0.6.0/pickle.phar \
-    && mv pickle.phar /usr/local/bin/pickle \
-    && chmod +x /usr/local/bin/pickle \
-    && pickle install memcached \
-    && pickle install apcu \
-    && pickle install vips \
-    && pickle install yaml \
-    && pickle install redis \
-    && pickle install mongodb \
-    #&& pickle install imagick \
-    #&& pickle install amqp \
+    && pecl install memcached \
+    && pecl install apcu \
+    && pecl install vips \
+    && pecl install yaml \
+    && pecl install redis \
+    && pecl install mongodb \
+    #&& pecl install imagick \
+    #&& pecl install amqp \
     && docker-php-ext-enable \
         apcu \
         vips \

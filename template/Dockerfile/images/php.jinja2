@@ -66,10 +66,19 @@
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
 {%- endif %}
+{%- if version == '8.0' %}
+    && git clone --branch master --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
+    && cd /usr/src/php/ext/amqp && git submodule update --init \
+    && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
+{%- endif %}
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
         bcmath \
+{%- if version == '8.0' %}
+        amqp \
+        imagick \
+{%- endif %}        
         bz2 \
         calendar \
         exif \
@@ -116,16 +125,11 @@
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
 {%- elif version == '8.0' %}
-    && wget https://github.com/FriendsOfPHP/pickle/releases/download/v0.7.2/pickle.phar \
-    && mv pickle.phar /usr/local/bin/pickle \
-    && chmod +x /usr/local/bin/pickle \
-    && pickle install memcached \
-    && pickle install apcu \
-    && pickle install vips \
-    && pickle install redis \
-    && pickle install mongodb \
-    && pickle install imagick \
-    && pickle install amqp \
+    && pecl install memcached \
+    && pecl install apcu \
+    && pecl install vips \
+    && pecl install redis \
+    && pecl install mongodb \
 {%- else %}
     # Install extensions for PHP 7.x
     && pecl install apcu \
@@ -287,17 +291,14 @@
     && docker-php-ext-enable memcached \
     {%- endif %}
 {%- if version == '8.0' %}
-    && wget https://github.com/FriendsOfPHP/pickle/releases/download/v0.6.0/pickle.phar \
-    && mv pickle.phar /usr/local/bin/pickle \
-    && chmod +x /usr/local/bin/pickle \
-    && pickle install memcached \
-    && pickle install apcu \
-    && pickle install vips \
-    && pickle install yaml \
-    && pickle install redis \
-    && pickle install mongodb \
-    #&& pickle install imagick \
-    #&& pickle install amqp \
+    && pecl install memcached \
+    && pecl install apcu \
+    && pecl install vips \
+    && pecl install yaml \
+    && pecl install redis \
+    && pecl install mongodb \
+    #&& pecl install imagick \
+    #&& pecl install amqp \
     && docker-php-ext-enable \
         apcu \
         vips \

@@ -161,10 +161,15 @@ RUN set -x \
     # Install extensions
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
+    && git clone --branch master --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
+    && cd /usr/src/php/ext/amqp && git submodule update --init \
+    && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
         bcmath \
+        amqp \
+        imagick \        
         bz2 \
         calendar \
         exif \
@@ -189,16 +194,11 @@ RUN set -x \
         gd \
         gettext \
         opcache \
-    && wget https://github.com/FriendsOfPHP/pickle/releases/download/v0.7.2/pickle.phar \
-    && mv pickle.phar /usr/local/bin/pickle \
-    && chmod +x /usr/local/bin/pickle \
-    && pickle install memcached \
-    && pickle install apcu \
-    && pickle install vips \
-    && pickle install redis \
-    && pickle install mongodb \
-    && pickle install imagick \
-    && pickle install amqp \
+    && pecl install memcached \
+    && pecl install apcu \
+    && pecl install vips \
+    && pecl install redis \
+    && pecl install mongodb \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
         libc-client-dev \

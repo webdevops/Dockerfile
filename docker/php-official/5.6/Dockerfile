@@ -164,7 +164,7 @@ RUN set -x \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
-        bcmath \
+        bcmath \        
         bz2 \
         calendar \
         exif \
