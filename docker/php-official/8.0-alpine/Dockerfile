@@ -202,7 +202,6 @@ RUN set -x \
     && docker-php-ext-configure $MEMCACHED \
     && docker-php-ext-install $MEMCACHED \
     && rm -rf $MEMCACHED \
-    && pecl install memcached \
     && pecl install apcu \
     && pecl install vips \
     && pecl install yaml \

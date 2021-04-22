@@ -291,7 +291,6 @@
     && docker-php-ext-enable memcached \
     {%- endif %}
 {%- if version == '8.0' %}
-    && pecl install memcached \
     && pecl install apcu \
     && pecl install vips \
     && pecl install yaml \
