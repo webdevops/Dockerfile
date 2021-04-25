@@ -6,7 +6,7 @@ GEM
       excon (>= 0.38.0)
       json
     excon (0.71.0)
-    json (2.1.0)
+    json (2.3.0)
     multi_json (1.12.1)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
