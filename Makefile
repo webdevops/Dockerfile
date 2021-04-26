@@ -64,5 +64,14 @@ documentation:
 		webdevops/sphinx sphinx-autobuild \
 		--poll -H 0.0.0.0 /opt/docs html
 
+build-env:
+	docker run -t -i --rm \
+		--hostname=build-env \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v "$$(pwd)/:/app" \
+		-u "$$(id -u):$$(id -g)" \
+		-e "CLI_SCRIPT=bash" \
+		webdevops/dockerfile-build-env cli
+
 webdevops/%:
 	python ./bin/console docker:build --threads=auto --whitelist=$@
