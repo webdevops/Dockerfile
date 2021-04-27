@@ -68,29 +68,26 @@ function deprecationNotice() {
 
 ###
  # Run "entrypoint" scripts
+ #
  ##
 function runEntrypoints() {
-    ###############
-    # Try to find entrypoint
-    ###############
-
+    # try to find entrypoint task script
     ENTRYPOINT_SCRIPT="/opt/docker/bin/entrypoint.d/${TASK}.sh"
-
-    if [ -f "$ENTRYPOINT_SCRIPT" ]; then
-        . "$ENTRYPOINT_SCRIPT"
+    if [ ! -f "$ENTRYPOINT_SCRIPT" ]; then
+        # use default
+        ENTRYPOINT_SCRIPT="/opt/docker/bin/entrypoint.d/default.sh"
     fi
 
-    ###############
-    # Run default
-    ###############
-    if [ -f "/opt/docker/bin/entrypoint.d/default.sh" ]; then
-        . /opt/docker/bin/entrypoint.d/default.sh
+    if [ ! -f "$ENTRYPOINT_SCRIPT" ]; then
+        exit 1
     fi
 
-    exit 1
+    . "$ENTRYPOINT_SCRIPT"
 }
 
+###
  # Run "entrypoint" provisioning
+ #
  ##
 function runProvisionEntrypoint() {
     includeScriptDir "/opt/docker/provision/entrypoint.d"
@@ -98,7 +95,19 @@ function runProvisionEntrypoint() {
 }
 
 ###
+ # https://stackoverflow.com/questions/41451159/how-to-execute-a-script-when-i-terminate-a-docker-container
+ # https://hynek.me/articles/docker-signals/
+ #
+ ##
+function runTeardownEntrypoint() {
+    echo "Container stopped, performing teardown..."
+    includeScriptDir "/opt/docker/provision/entrypoint.d/teardown"
+    includeScriptDir "/entrypoint.d/teardown"
+}
+
+###
  # List environment variables (based on prefix)
+ #
  ##
 function envListVars() {
     if [[ $# -eq 1 ]]; then
