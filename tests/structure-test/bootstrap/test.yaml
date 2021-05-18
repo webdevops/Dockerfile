@@ -1,0 +1,72 @@
+schemaVersion: "2.0.0"
+
+metadataTest:
+  env:
+    - key: "LC_ALL"
+      value: "C.UTF-8"
+    - key: "LANG"
+      value: "C.UTF-8"
+    - key: "TERM"
+      value: "xterm"
+
+fileExistenceTests:
+  - name: 'apk add wrapper'
+    path: '/usr/local/bin/apk-install'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'apk upgrade wrapper'
+    path: '/usr/local/bin/apk-upgrade'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'apt-add-repository wrapper with auto cleanup'
+    path: '/usr/local/bin/apt-add-repository'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'apt-get install wrapper with auto cleanup'
+    path: '/usr/local/bin/apt-install'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'apt-get update wrapper for multiple apt-install runs'
+    path: '/usr/local/bin/apt-update'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'apt-get upgrade wrapper with auto cleanup'
+    path: '/usr/local/bin/apt-upgrade'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'yum install wrapper with auto cleanup'
+    path: '/usr/local/bin/yum-install'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'yum upgrade wrapper with auto cleanup'
+    path: '/usr/local/bin/yum-upgrade'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'Cleanup for docker images after package installations'
+    path: '/usr/local/bin/docker-image-cleanup'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'Gets information about the current docker images'
+    path: '/usr/local/bin/docker-image-info'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'Generates system locales'
+    path: '/usr/local/bin/generate-locales'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'Generates docker image info'
+    path: '/usr/local/bin/generate-dockerimage-info'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'Bootstrapping script'
+    path: '/usr/local/bin/docker-run-bootstrap'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'go-replace tool'
+    path: '/usr/local/bin/go-replace'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'gosu tool'
+    path: '/sbin/gosu'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'

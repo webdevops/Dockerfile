@@ -1,0 +1,128 @@
+schemaVersion: "2.0.0"
+
+metadataTest:
+  exposedPorts: ["9000"]
+
+fileExistenceTests:
+  - name: 'provision: set php version variable script was deleted after execution'
+    path: '/opt/docker/provision/bootstrap.d/10-php-init.sh'
+    shouldExist: false
+  - name: 'provision: set permission script was deleted after execution'
+    path: '/opt/docker/provision/bootstrap.d/11-php-conf.sh'
+    shouldExist: false
+  - name: 'provision: fpm config was created'
+    path: '/opt/docker/etc/php/fpm/php-fpm.conf'
+    shouldExist: true
+  - name: 'provision: fpm pool config was created'
+    path: '/opt/docker/etc/php/fpm/pool.d/application.conf'
+    shouldExist: true
+  - name: 'entrypoint: fpm config builder exists'
+    path: '/opt/docker/provision/entrypoint.d/20-php-fpm.sh'
+    shouldExist: true
+  - name: 'entrypoint: ini config builder exists'
+    path: '/opt/docker/provision/entrypoint.d/20-php.sh'
+    shouldExist: true
+  - name: 'supervisor: fpm starter exists'
+    path: '/opt/docker/etc/supervisor.d/php-fpm.conf'
+    shouldExist: true
+
+fileContentTests:
+  - name: 'supervisor: syslog service is enabled'
+    path: '/opt/docker/etc/supervisor.d/syslog.conf'
+    expectedContents: ['autostart = true']
+  - name: 'supervisor: cron service is enabled'
+    path: '/opt/docker/etc/supervisor.d/cron.conf'
+    expectedContents: ['autostart = true']
+
+commandTests:
+  - name: "fpm config test"
+    command: "/usr/local/bin/php-fpm"
+    args: ["-t"]
+    expectedError: ["test is successful"]
+  - name: "env variables are available in FPM"
+    setup: [["/entrypoint", "/bin/bash"]]
+    command: "/usr/local/bin/php-fpm"
+    envVars:
+      - key: "SOME_VAR"
+        value: "someval"
+    args: ["-i"]
+    expectedOutput: ["SOME_VAR => someval"]
+  - name: "imagemagick convert"
+    command: "which"
+    args: ["convert"]
+    expectedOutput: ["/usr/bin/convert"]
+  - name: "graphicsmagick"
+    command: "which"
+    args: ["gm"]
+    expectedOutput: ["/usr/bin/gm"]
+  - name: "ghostscript"
+    command: "which"
+    args: ["gs"]
+    expectedOutput: ["/usr/bin/gs"]
+  - name: "composer"
+    command: "which"
+    args: ["composer"]
+    expectedOutput: ["/usr/local/bin/composer"]
+  - name: "php modules"
+    command: "php"
+    args: ["-m"]
+    expectedOutput:
+      - "apcu"
+      - "bcmath"
+      - "bz2"
+      - "calendar"
+      - "Core"
+      - "ctype"
+      - "curl"
+      - "date"
+      - "dom"
+      - "exif"
+      - "fileinfo"
+      - "filter"
+      - "ftp"
+      - "gd"
+      - "gettext"
+      - "hash"
+      - "iconv"
+      - "intl"
+      - "json"
+      - "ldap"
+      - "libxml"
+      - "mbstring"
+      - "memcached"
+      - "mysqli"
+      - "mysqlnd"
+      - "openssl"
+      - "pcntl"
+      - "pcre"
+      - "PDO"
+      - "pdo_mysql"
+      - "pdo_pgsql"
+      - "pdo_sqlite"
+      - "pgsql"
+      - "Phar"
+      - "posix"
+      - "readline"
+      - "redis"
+      - "Reflection"
+      - "session"
+      - "shmop"
+      - "SimpleXML"
+      - "soap"
+      - "sockets"
+      - "SPL"
+      - "sqlite3"
+      - "standard"
+      - "sysvmsg"
+      - "sysvsem"
+      - "sysvshm"
+      - "tokenizer"
+      - "xml"
+      - "xmlreader"
+      - "xmlrpc"
+      - "xmlwriter"
+      - "xsl"
+      - "Zend OPcache"
+      - "zip"
+      - "zlib"
+

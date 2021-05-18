@@ -16,6 +16,7 @@ RUN set -x \
     && chmod +x /opt/docker/bin/* \
     && yum-install \
         supervisor \
+        which \
         wget \
         curl \
         vim \

@@ -1,0 +1,104 @@
+schemaVersion: "2.0.0"
+
+metadataTest:
+  entrypoint: ["/entrypoint"]
+  cmd: ["supervisord"]
+  env:
+    - key: "DOCKER_CONF_HOME"
+      value: "/opt/docker/"
+    - key: "LOG_STDOUT"
+      value: ""
+    - key: "LOG_STDERR"
+      value: ""
+
+fileExistenceTests:
+  - name: 'bin: bootstrap script'
+    path: '/opt/docker/bin/bootstrap.sh'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'bin: config script'
+    path: '/opt/docker/bin/config.sh'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'bin: control script'
+    path: '/opt/docker/bin/control.sh'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'bin: entrypoint script'
+    path: '/opt/docker/bin/entrypoint.sh'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'bin: supervisor entrypoint script'
+    path: '/opt/docker/bin/service.d/supervisor.sh'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'configfile: supervisor base'
+    path: '/opt/docker/etc/supervisor.conf'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'configfile: supervisor service cron'
+    path: '/opt/docker/etc/supervisor.d/cron.conf'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'configfile: supervisor service dnsmasq'
+    path: '/opt/docker/etc/supervisor.d/dnsmasq.conf'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'configfile: supervisor service postfix'
+    path: '/opt/docker/etc/supervisor.d/postfix.conf'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'configfile: supervisor service ssh'
+    path: '/opt/docker/etc/supervisor.d/ssh.conf'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'configfile: supervisor service syslog'
+    path: '/opt/docker/etc/supervisor.d/syslog.conf'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'configfile: logrotate'
+    path: '/opt/docker/etc/logrotate.d/syslog-ng'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'configfile: syslog-ng'
+    path: '/opt/docker/etc/syslog-ng/syslog-ng.conf'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'provisioning: cron'
+    path: '/opt/docker/provision/service.d/cron.sh'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'provisioning: dnsmasq'
+    path: '/opt/docker/provision/service.d/dnsmasq.sh'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'provisioning: postfix'
+    path: '/opt/docker/provision/service.d/postfix.sh'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'provisioning: ssh'
+    path: '/opt/docker/provision/service.d/ssh.sh'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'provisioning: syslog'
+    path: '/opt/docker/provision/service.d/syslog.sh'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+
+commandTests:
+  - name: "supervisord"
+    command: "which"
+    args: ["supervisord"]
+    expectedOutput: ["/usr/bin/supervisord"]
+  - name: "wget"
+    command: "which"
+    args: ["wget"]
+    expectedOutput: ["/usr/bin/wget"]
+  - name: "curl"
+    command: "which"
+    args: ["curl"]
+    expectedOutput: ["/usr/bin/curl"]
+  - name: "zic"
+    command: "which"
+    args: ["zic"]
+    expectedOutput: ["/usr/sbin/zic"]

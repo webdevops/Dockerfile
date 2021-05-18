@@ -1,0 +1,62 @@
+schemaVersion: "2.0.0"
+
+metadataTest:
+  env:
+    - key: "APPLICATION_USER"
+      value: "application"
+    - key: "APPLICATION_GROUP"
+      value: "application"
+    - key: "APPLICATION_PATH"
+      value: "/app"
+    - key: "APPLICATION_UID"
+      value: "1000"
+    - key: "APPLICATION_GID"
+      value: "1000"
+
+fileExistenceTests:
+  - name: 'provision: add application user script was deleted after execution'
+    path: '/opt/docker/provision/bootstrap.d/10-user-application.sh'
+    shouldExist: false
+  - name: 'provision: set permission script was deleted after execution'
+    path: '/opt/docker/provision/bootstrap.d/20-app.sh'
+    shouldExist: false
+  - name: 'app folder exists'
+    path: '/app'
+    shouldExist: true
+    permissions: 'drwxr-xr-x'
+    uid: 1000
+    gid: 1000
+
+commandTests:
+  - name: "application user and group exists"
+    command: "id"
+    args: ["application"]
+    expectedOutput: ['uid\=1000\(application\) gid\=1000\(application\) groups\=1000\(application\)']
+  - name: "zip"
+    command: "which"
+    args: ["zip"]
+    expectedOutput: ["/usr/bin/zip"]
+  - name: "unzip"
+    command: "which"
+    args: ["unzip"]
+    expectedOutput: ["/usr/bin/unzip"]
+  - name: "nslookup"
+    command: "which"
+    args: ["nslookup"]
+    expectedOutput: ["/usr/bin/nslookup"]
+  - name: "ssh"
+    command: "which"
+    args: ["ssh"]
+    expectedOutput: ["/usr/bin/ssh"]
+  - name: "rsync"
+    command: "which"
+    args: ["rsync"]
+    expectedOutput: ["/usr/bin/rsync"]
+  - name: "git"
+    command: "which"
+    args: ["git"]
+    expectedOutput: ["/usr/bin/git"]
+  - name: "patch"
+    command: "which"
+    args: ["patch"]
+    expectedOutput: ["/usr/bin/patch"]

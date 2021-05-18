@@ -1,0 +1,11 @@
+schemaVersion: "2.0.0"
+
+commandTests:
+  - name: "sed"
+    command: "which"
+    args: ["sed"]
+    expectedOutput: ["/usr/bin/sed"]
+  - name: "netstat"
+    command: "which"
+    args: ["netstat"]
+    expectedOutput: ["/usr/bin/netstat"]

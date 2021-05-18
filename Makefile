@@ -42,6 +42,9 @@ requirements:
 test:
 	python bin/console test:serverspec --threads=auto -v
 
+structure-test:
+	cd tests/structure-test && ./run.sh
+
 provision:
 	python bin/console generate:dockerfile
 	python bin/console generate:provision
