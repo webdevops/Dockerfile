@@ -20,10 +20,11 @@ class JobBuilder
                 'docker login -u $DOCKER_USER -p $DOCKER_PASS',
                 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY',
             ],
+            'image' => 'webdevops/dockerfile-build-env',
             'script' => [],
             'retry' => 2,
             'tags' => ['aws'],
-            //'only' => ['master'],
+            // 'only' => ['master'],
         ];
         if ($node['parent'] !== 0) {
             $job['needs'] = [$node['parent']];
@@ -51,6 +52,8 @@ class JobBuilder
     private function pushImage(array $node)
     {
         $script[] = 'docker push ' . $node['id'];
+        $script[] = 'docker tag $CI_REGISTRY_IMAGE/' . $node['image'] . ':' . $node['tag'] . ' ' . $node['id'];
+        $script[] = 'docker push $CI_REGISTRY_IMAGE/' . $node['image'] . ':' . $node['tag'];
         foreach ($node['aliases'] as $alias) {
             $script[] = 'docker tag $CI_REGISTRY_IMAGE/' . $node['image'] . ':' . $node['tag'] . ' ' . $alias;
             $script[] = 'docker push ' . $alias;
@@ -88,16 +91,14 @@ class JobBuilder
     private function structuredTests(array $node)
     {
         $script = [];
-        /*if (file_exists(__DIR__ . '/../tests/structure-test/' . $node['image'] . '/test.yaml')) {
+        if (file_exists(__DIR__ . '/../../tests/structure-test/' . $node['image'] . '/test.yaml')) {
             $script[] = 'cd $CI_PROJECT_DIR/tests/structure-test';
-            if (file_exists(__DIR__ . '/../tests/structure-test/' . $node['image'] . '/' . $distro . '/test.yaml')) {
-                //$script[] = 'container-structure-test test --image ' . $dockerfile->image . ' --config ' . $type . '/test.yaml --config ' . $type . '/' . $distro . '/test.yaml';
-                $script[] = '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/' . $dockerfile->jobName . ' --config ' . $type . '/test.yaml --config ' . $type . '/' . $distro . '/test.yaml';
+            if (file_exists(__DIR__ . '/../../tests/structure-test/' . $node['image'] . '/' . $node['tag'] . '/test.yaml')) {
+                $script[] = '/usr/local/bin/container-structure-test test --image ' . $node['name'] . ' --config ' . $node['image'] . '/test.yaml --config ' . $node['image'] . '/' . $node['tag'] . '/test.yaml';
             } else {
-                //$script[] = 'container-structure-test test --image ' . $dockerfile->image . ' --config ' . $type . '/test.yaml';
-                $script[] = '/usr/local/bin/container-structure-test test --image $CI_REGISTRY_IMAGE/' . $dockerfile->jobName . ' --config ' . $type . '/test.yaml';
+                $script[] = '/usr/local/bin/container-structure-test test --image ' . $node['name'] . ' --config ' . $node['image'] . '/test.yaml';
             }
-        }*/
+        }
         return $script;
     }
 
