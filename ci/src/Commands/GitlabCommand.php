@@ -21,6 +21,7 @@ class GitlabCommand extends Command
     protected $jobs = [];
     protected $deepestLevel = 0;
     protected $blacklist = [];
+    protected $_settings = [];
 
     protected static $defaultName = 'gitlab:generate-ci';
 
@@ -30,6 +31,7 @@ class GitlabCommand extends Command
         $this->jobBuilder = new JobBuilder();
         parent::__construct();
         $this->addOption('blacklist', 'b', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY);
+        $this->_settings = Yaml::parseFile(__DIR__ . '/../../../conf/console.yml');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -59,9 +61,11 @@ class GitlabCommand extends Command
         }
         $this->jobs[$node->getId()] = $this->jobBuilder->getJobDescription($nodeAr);
         if ($this->isNameBlacklisted($nodeAr['id'])) {
-            $this->jobs[$node->getId()] = array_merge($this->jobs[$node->getId()], ['when' => 'manual']);
+//            $this->jobs[$node->getId()] = array_merge($this->jobs[$node->getId()], ['when' => 'manual']);
             $line .= ' *blacklisted*';
-            unset($this->jobs[$node->getId()]);
+            if ($node->get('tag') !== $this->_settings['docker']['autoLatestTag']) {
+                unset($this->jobs[$node->getId()]);
+            }
         }
         $this->output->write([str_pad('', $node->getLevel() - 1, "\t", STR_PAD_LEFT), $line, PHP_EOL]);
         foreach ($node->getChildren() as $childNode) {
