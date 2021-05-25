@@ -66,6 +66,8 @@ class FileReader
                 $parentImage = str_replace(':latest', ':' . $this->_settings['docker']['autoLatestTag'], $parentImage);
             }
             $node['parent'] = $parentImage;
+        } else if ($node['id'] !== 'webdevops/toolbox:latest') {
+            $node['parent'] = 'webdevops/toolbox:latest';
         }
         // Treat *-official images
         if (strpos($id, '-official:') !== false) {
