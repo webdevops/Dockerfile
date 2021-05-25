@@ -33,7 +33,8 @@ class FileReader
         $tagName = $headerMatches[2];
         $id = 'webdevops/' . $imageName . ':' . $tagName;
         $isToolImage = in_array('/' . $imageName, $this->_settings['dockerTest']['toolImages']);
-        preg_match_all('/' . $this->_settings['dockerTest']['configuration']['imageConfigurationRegex'] . '/', $id, $serverSpecMatches);
+        $regex = '/' . $this->_settings['dockerTest']['configuration']['imageConfigurationRegex'] . '/';
+        preg_match_all($regex, $id, $serverSpecMatches);
         $node = [
             'id' => $id,
             'name' => $id,
@@ -50,10 +51,11 @@ class FileReader
                 'OS_VERSION' => $serverSpecMatches['OS_VERSION'][0] ?? $this->_settings['dockerTest']['configuration']['default']['OS_VERSION'],
             ],
         ];
-        // Additional serverSpec variables
+        // Additional serverSpec variables (only first match)
         foreach ($this->_settings['dockerTest']['configuration']['image'] as $regex => $variables) {
             if (preg_match('#' . $regex . '#i', $id)) {
                 $node['serverspec'] = array_merge($node['serverspec'], $variables);
+                break;
             }
         }
         // Only internal images must be contained in build tree
