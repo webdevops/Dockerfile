@@ -60,6 +60,9 @@ class FileReader
         preg_match_all('/FROM (.*)/', $content, $fromMatches);
         $parentImage = array_pop($fromMatches[1]);
         if (strpos($parentImage, 'webdevops/') === 0) {
+            if (str_ends_with($parentImage, ':latest')) {
+                $parentImage = str_replace(':latest', ':' . $this->_settings['docker']['autoLatestTag'], $parentImage);
+            }
             $node['parent'] = $parentImage;
         }
         // Treat *-official images
@@ -67,6 +70,9 @@ class FileReader
             $node['aliases'][] = $id;
             $node['id'] = $node['name'] = str_replace('-official:', ':', $id);
             $node['image'] = str_replace('-official', '', $node['image']);
+        }
+        if ($tagName === $this->_settings['docker']['autoLatestTag']) {
+            $node['aliases'][] = str_replace(':' . $tagName, ':latest', $id);
         }
         return $node;
     }

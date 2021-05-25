@@ -61,6 +61,7 @@ class GitlabCommand extends Command
         if ($this->isNameBlacklisted($nodeAr['id'])) {
             $this->jobs[$node->getId()] = array_merge($this->jobs[$node->getId()], ['when' => 'manual']);
             $line .= ' *blacklisted*';
+            unset($this->jobs[$node->getId()]);
         }
         $this->output->write([str_pad('', $node->getLevel() - 1, "\t", STR_PAD_LEFT), $line, PHP_EOL]);
         foreach ($node->getChildren() as $childNode) {
@@ -84,14 +85,6 @@ class GitlabCommand extends Command
         $dockerFiles = $this->fileReader->collectDockerfiles();
         foreach ($dockerFiles as $file) {
             $data[] = $this->fileReader->getInfo($file[0]);
-        }
-        // Add latest tagged images
-        foreach ($data as $datum) {
-            if (strpos($datum['name'], 'ubuntu-18.04') !== false) {
-                $clone = $datum;
-                $clone['id'] = $clone['name'] = str_replace(':ubuntu-18.04', ':latest', $clone['id']);
-                $data[] = $clone;
-            }
         }
         return new Tree($data);
     }

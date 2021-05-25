@@ -17,7 +17,7 @@ commandTests:
   - name: "Check dist"
     command: "docker-image-info"
     args: ["dist-version"]
-    expectedOutput: ["3.8.0\n"]
+    expectedOutput: ["3.11"]
   - name: "Check dist release"
     command: "docker-image-info"
     args: ["dist-release"]

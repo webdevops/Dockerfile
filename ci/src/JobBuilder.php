@@ -22,9 +22,9 @@ class JobBuilder
             ],
             'image' => 'webdevops/dockerfile-build-env',
             'script' => [],
-            'retry' => 2,
+//            'retry' => 2,
             'tags' => ['aws'],
-            // 'only' => ['master'],
+//             'only' => ['master'],
         ];
         if ($node['parent'] !== 0) {
             $job['needs'] = [$node['parent']];
@@ -52,10 +52,10 @@ class JobBuilder
     private function pushImage(array $node)
     {
         $script[] = 'docker push ' . $node['id'];
-        $script[] = 'docker tag $CI_REGISTRY_IMAGE/' . $node['image'] . ':' . $node['tag'] . ' ' . $node['id'];
+        $script[] = 'docker tag ' . $node['id'] . ' $CI_REGISTRY_IMAGE/' . $node['image'] . ':' . $node['tag'];
         $script[] = 'docker push $CI_REGISTRY_IMAGE/' . $node['image'] . ':' . $node['tag'];
         foreach ($node['aliases'] as $alias) {
-            $script[] = 'docker tag $CI_REGISTRY_IMAGE/' . $node['image'] . ':' . $node['tag'] . ' ' . $alias;
+            $script[] = 'docker tag ' . $alias . ' $CI_REGISTRY_IMAGE/' . $node['image'] . ':' . $node['tag'];
             $script[] = 'docker push ' . $alias;
         }
         return $script;
