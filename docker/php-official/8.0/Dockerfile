@@ -147,7 +147,7 @@ RUN set -x \
     && docker-php-ext-install \
         bcmath \
         amqp \
-        imagick \        
+        imagick \
         bz2 \
         calendar \
         exif \
@@ -155,7 +155,6 @@ RUN set -x \
         gettext \
         ldap \
         mysqli \
-        amqp \
         imap \
         pcntl \
         pdo_mysql \
