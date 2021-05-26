@@ -54,7 +54,7 @@ class JobBuilder
 
     private function pushImage(array $node)
     {
-//        $script[] = 'docker push ' . $node['id'];
+        $script[] = 'docker push ' . $node['id'];
         $script[] = 'docker tag ' . $node['id'] . ' $CI_REGISTRY_IMAGE/' . $node['image'] . ':' . $node['tag'];
         $script[] = 'docker push $CI_REGISTRY_IMAGE/' . $node['image'] . ':' . $node['tag'];
         foreach ($node['aliases'] as $alias) {
