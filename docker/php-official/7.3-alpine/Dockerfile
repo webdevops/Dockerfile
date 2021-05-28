@@ -192,7 +192,6 @@ RUN set -x \
     && docker-php-ext-enable \
         apcu \
         redis \
-        imagick \
         mongodb \
         amqp \
         vips \

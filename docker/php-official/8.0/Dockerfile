@@ -174,9 +174,16 @@ RUN set -x \
         opcache \
     && pecl install memcached \
     && pecl install apcu \
+    && pecl install xmlrpc-1.0.0RC2 \
     && pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
+    && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
+    && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
+    && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
+    && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
+    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
+    && echo extension=xmlrpc.so > /usr/local/etc/php/conf.d/xmlrpc.ini \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
         libc-client-dev \

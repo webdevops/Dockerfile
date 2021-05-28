@@ -144,6 +144,9 @@ RUN set -x \
     # Install extensions
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
+    && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
+    && git clone --branch master --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
+    && cd /usr/src/php/ext/amqp && git submodule update --init \
     && docker-php-ext-configure ldap \
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
@@ -152,6 +155,8 @@ RUN set -x \
         calendar \
         exif \
         ffi \
+        imagick \
+        amqp \
         intl \
         gettext \
         ldap \
@@ -185,16 +190,15 @@ RUN set -x \
     && pecl install yaml \
     && pecl install redis \
     && pecl install mongodb \
-    #&& pecl install imagick \
-    #&& pecl install amqp \
+    && pecl install xmlrpc-1.0.0RC2 \
     && docker-php-ext-enable \
         apcu \
         vips \
         yaml \
         redis \
-        #imagick \
+        xmlrpc \
+        imagick \
         mongodb \
-        #amqp \
     # Uninstall dev and header packages
     && apk del -f --purge \
         autoconf \

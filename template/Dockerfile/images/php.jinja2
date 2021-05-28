@@ -127,9 +127,16 @@
 {%- elif version == '8.0' %}
     && pecl install memcached \
     && pecl install apcu \
+    && pecl install xmlrpc-1.0.0RC2 \
     && pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
+    && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
+    && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
+    && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
+    && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
+    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
+    && echo extension=xmlrpc.so > /usr/local/etc/php/conf.d/xmlrpc.ini \
 {%- else %}
     # Install extensions for PHP 7.x
     && pecl install apcu \
@@ -237,6 +244,9 @@
 {%- if version == '7.4' or version == '8.0' %}
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
+    && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
+    && git clone --branch master --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
+    && cd /usr/src/php/ext/amqp && git submodule update --init \
 {%- else %}
     && docker-php-ext-configure intl --with-icu-dir=/usr/local \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
@@ -250,6 +260,8 @@
         exif \
 {%- if version == '7.4' or version == '8.0' %}
         ffi \
+        imagick \
+        amqp \
 {%- endif %}
         intl \
         gettext \
@@ -296,16 +308,15 @@
     && pecl install yaml \
     && pecl install redis \
     && pecl install mongodb \
-    #&& pecl install imagick \
-    #&& pecl install amqp \
+    && pecl install xmlrpc-1.0.0RC2 \
     && docker-php-ext-enable \
         apcu \
         vips \
         yaml \
         redis \
-        #imagick \
+        xmlrpc \
+        imagick \
         mongodb \
-        #amqp \
 {%- else %}
     # Install vips (only works with PHP >= 7.0)
     && pecl install apcu \
@@ -318,7 +329,6 @@
     && docker-php-ext-enable \
         apcu \
         redis \
-        imagick \
         mongodb \
         amqp \
         vips \
