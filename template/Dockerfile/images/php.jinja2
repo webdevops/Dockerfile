@@ -323,8 +323,10 @@
     && printf "\n" | pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
+    {%- if version != '7.4' %}
     && pecl install imagick \
     && pecl install amqp \
+    {%- endif %}
     && pecl install yaml \
     && docker-php-ext-enable \
         apcu \

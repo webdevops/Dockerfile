@@ -191,8 +191,6 @@ RUN set -x \
     && printf "\n" | pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
-    && pecl install imagick \
-    && pecl install amqp \
     && pecl install yaml \
     && docker-php-ext-enable \
         apcu \
