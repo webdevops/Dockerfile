@@ -13,6 +13,7 @@ go-replace --mode=line --regex --regex-backrefs \
     --  /etc/nginx/nginx.conf
 
 # Enable nginx main config
+mkdir -p /etc/nginx/conf.d/
 ln -sf /opt/docker/etc/nginx/main.conf /etc/nginx/conf.d/10-docker.conf
 
 rm -f \
