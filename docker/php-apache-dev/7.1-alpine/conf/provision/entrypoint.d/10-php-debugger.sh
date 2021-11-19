@@ -88,27 +88,12 @@ function phpEnvironmentVariable() {
 # XDEBUG
 ###################
 
-# xdebug2 remote debugger
-phpEnvironmentVariable "xdebug.remote_connect_back" "XDEBUG_REMOTE_CONNECT_BACK"
-phpEnvironmentVariable "xdebug.remote_autostart"    "XDEBUG_REMOTE_AUTOSTART"
-phpEnvironmentVariable "xdebug.remote_host"         "XDEBUG_REMOTE_HOST"
-phpEnvironmentVariable "xdebug.remote_port"         "XDEBUG_REMOTE_PORT"
-phpEnvironmentVariable "xdebug.max_nesting_level"   "XDEBUG_MAX_NESTING_LEVEL"
-phpEnvironmentVariable "xdebug.idekey"              "XDEBUG_IDE_KEY"
-
 # xdebug3 remote debugger
 phpEnvironmentVariable "xdebug.discover_client_host" "XDEBUG_DISCOVER_CLIENT_HOST"
 phpEnvironmentVariable "xdebug.mode"                 "XDEBUG_MODE"
 phpEnvironmentVariable "xdebug.start_with_request"   "XDEBUG_START_WITH_REQUEST"
 phpEnvironmentVariable "xdebug.client_host"          "XDEBUG_CLIENT_HOST"
 phpEnvironmentVariable "xdebug.client_port"          "XDEBUG_CLIENT_PORT"
-
-# xdebug2 profiler
-phpEnvironmentVariable "xdebug.profiler_enable"               "XDEBUG_PROFILER_ENABLE"
-phpEnvironmentVariable "xdebug.profiler_enable_trigger"       "XDEBUG_PROFILER_ENABLE_TRIGGER"
-phpEnvironmentVariable "xdebug.profiler_enable_trigger_value" "XDEBUG_PROFILER_ENABLE_TRIGGER_VALUE"
-phpEnvironmentVariable "xdebug.profiler_output_dir"           "XDEBUG_PROFILER_OUTPUT_DIR"
-phpEnvironmentVariable "xdebug.profiler_output_name"          "XDEBUG_PROFILER_OUTPUT_NAME"
 
 # xdebug3 profiler
 phpEnvironmentVariable "xdebug.trigger_value"       "XDEBUG_TRIGGER_VALUE"
