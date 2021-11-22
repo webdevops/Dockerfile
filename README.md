@@ -16,7 +16,7 @@ Join us on [Slack](https://webdevops.io/slack/)
 Or write an issue in our [GitHub repository](https://github.com/webdevops/Dockerfile/issues).
 
 ## Documentation
-
+Thank you
 * [Old version of the documentation is available on readthedocs](https://dockerfile.readthedocs.io/)
 * [New version is currently being written on gitbook](https://webdevops.gitbook.io/dockerfile)
 
@@ -131,3 +131,4 @@ You shall use the new images which are based on the official `php:7.(1|2|3|4)-fp
 * `webdevops/php-nginx-dev:7.4-alpine`
 
 *We left out 7.0 because it would vary too much from the current versions*
+Good luck
