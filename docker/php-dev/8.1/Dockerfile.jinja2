@@ -1,0 +1,8 @@
+{{ docker.from("php", "8.1") }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+RUN set -x \
+    {{ php.officialDevelopment(version="8.1") }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

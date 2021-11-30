@@ -59,14 +59,14 @@
     && curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-66-1/icu4c-66_1-src.tgz \
     && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu* \
     # Install extensions
-{%- if version != '7.4' and version != '8.0' %}
+{%- if version != '7.4' and version != '8.0' and version != '8.1' %}
     && docker-php-ext-configure intl --with-icu-dir=/usr/local \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
 {%- else %}
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
 {%- endif %}
-{%- if version == '8.0' %}
+{%- if version == '8.0' or version == '8.1' %}
     && git clone --branch master --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
@@ -75,7 +75,7 @@
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
         bcmath \
-{%- if version == '8.0' %}
+{%- if version == '8.0' or version == '8.1' %}
         amqp \
         imagick \
 {%- endif %}
@@ -90,7 +90,7 @@
         mcrypt \
 {%- endif %}
         imap \
-{%- if version != '7.4' and version != '8.0' %}
+{%- if version != '7.4' and version != '8.0' and version != '8.1' %}
         hash \
 {%- endif %}
         pcntl \
@@ -99,12 +99,14 @@
         pgsql \
         soap \
         sockets \
+{%- if version != '8.1' %}        
         tokenizer \
+{%- endif %}        
         sysvmsg \
         sysvsem \
         sysvshm \
         shmop \
-{%- if version != '8.0' %}
+{%- if version != '8.0' and version != '8.1' %}
         xmlrpc \
 {%- endif %}
         xsl \
@@ -124,10 +126,12 @@
     && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
-{%- elif version == '8.0' %}
+{%- elif version == '8.0' or version == '8.1' %}
     && pecl install memcached \
     && pecl install apcu \
+    {%- if version != '8.1' %}
     && pecl install xmlrpc-1.0.0RC2 \
+    {%- endif %}
     && pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
@@ -136,7 +140,9 @@
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
+    {%- if version != '8.1' %}
     && echo extension=xmlrpc.so > /usr/local/etc/php/conf.d/xmlrpc.ini \
+    {%- endif %}
 {%- else %}
     # Install extensions for PHP 7.x
     && pecl install apcu \
@@ -302,19 +308,23 @@
     && printf "no --disable-memcached-sasl\n" | pecl install memcached-3.0.4 \
     && docker-php-ext-enable memcached \
     {%- endif %}
-{%- if version == '8.0' %}
+{%- if version == '8.0' or version == '8.1' %}
     && pecl install apcu \
     && pecl install vips \
     && pecl install yaml \
     && pecl install redis \
     && pecl install mongodb \
+    {%- if version != '8.1' %}
     && pecl install xmlrpc-1.0.0RC2 \
+    {%- endif %}
     && docker-php-ext-enable \
         apcu \
         vips \
         yaml \
         redis \
+        {%- if version != '8.1' %}
         xmlrpc \
+        {%- endif %}
         imagick \
         mongodb \
 {%- else %}
@@ -372,14 +382,16 @@
 
 {% macro officialDevelopment(role='', version='') -%}
     # Install development environment
+    {%- if version != '8.1' %}
     && wget -q -O - https://packages.blackfire.io/gpg.key | apt-key add - \
     && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
     && apt-install \
         blackfire-php \
         blackfire-agent \
+    {%- endif %}
     {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
-    {%- elif version == '8.0' %}
+    {%- elif version == '8.0' or version == '8.1' %}
     && pecl install xdebug \
     {%- elif version == '7.0' or version == '7.1' %}
     && pecl install xdebug-2.8.1 \
@@ -392,7 +404,7 @@
 
 {% macro officialDevelopmentAlpine(role='', version='') -%}
     # Install development environment
-    {%- if version != '8.0' %}
+    {%- if version != '8.1' %}
     && wget -q -O blackfire-agent https://packages.blackfire.io/binaries/blackfire-agent/1.34.0/blackfire-agent-linux_static_amd64 \
     && mv blackfire-agent /usr/local/bin/ \
     && chmod +x /usr/local/bin/blackfire-agent \
