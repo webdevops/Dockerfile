@@ -7,7 +7,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ nginx.debian() }} \
+    {{ nginx.debian('','jessie') }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 
