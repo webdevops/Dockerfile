@@ -17,7 +17,7 @@ full:      provision build
 all:       build
 
 build:
-	python ./bin/console docker:build --threads=auto
+	python2 ./bin/console docker:build --threads=auto
 
 bootstrap: webdevops/bootstrap webdevops/ansible
 base:      webdevops/base webdevops/base-app webdevops/storage
