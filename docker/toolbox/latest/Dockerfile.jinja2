@@ -1,5 +1,5 @@
 {{ docker.fromOfficial("alpine") }}
-
+ARG TARGETPLATFORM
 RUN apk add --no-cache \
         ca-certificates \
         openssl \

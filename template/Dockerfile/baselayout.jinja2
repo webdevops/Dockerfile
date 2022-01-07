@@ -3,6 +3,7 @@
 {% macro dockerStage() %}
 # Staged baselayout builder
 FROM webdevops/toolbox AS baselayout
+ARG TARGETPLATFORM
 RUN mkdir -p \
         /baselayout/sbin \
         /baselayout/usr/local/bin \

@@ -4,7 +4,7 @@
 #+++++++++++++++++++++++++++++++++++++++
 
 FROM alpine:latest
-
+ARG TARGETPLATFORM
 RUN apk add --no-cache \
         ca-certificates \
         openssl \
@@ -23,6 +23,7 @@ RUN apk add --no-cache \
         git \
         gnupg \
     ## Install go-replace
-    && wget -O "/usr/local/bin/go-replace" "https://github.com/webdevops/goreplace/releases/download/1.1.2/gr-64-linux" \
+    && if [ "$TARGETPLATFORM" = "linux/arm64" ]; then GO_REPLACE="gr-arm64-linux"; else GO_REPLACE="gr-64-linux"; fi \
+    && wget -O "/usr/local/bin/go-replace" "https://github.com/webdevops/goreplace/releases/download/1.1.2/${GO_REPLACE}" \
     && chmod +x "/usr/local/bin/go-replace" \
     && "/usr/local/bin/go-replace" --version

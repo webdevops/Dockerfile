@@ -1,14 +1,16 @@
 {% macro goreplace(path="/usr/local/bin", version="1.1.2") -%}
     ## Install go-replace
-    && wget -O "{{ path }}/go-replace" "https://github.com/webdevops/goreplace/releases/download/{{ version }}/gr-64-linux" \
+    && if [ "$TARGETPLATFORM" = "linux/arm64" ]; then GO_REPLACE="gr-arm64-linux"; else GO_REPLACE="gr-64-linux"; fi \
+    && wget -O "{{ path }}/go-replace" "https://github.com/webdevops/goreplace/releases/download/{{ version }}/${GO_REPLACE}" \
     && chmod +x "{{ path }}/go-replace" \
     && "{{ path }}/go-replace" --version
 {%- endmacro %}
 
-{% macro gosu(path="/sbin", arch="amd64", version="1.10") -%}
+{% macro gosu(path="/sbin", version="1.10") -%}
     # Install gosu
-    && wget -O "{{ path }}/gosu" "https://github.com/tianon/gosu/releases/download/{{ version }}/gosu-{{ arch }}" \
-    && wget -O "/tmp/gosu.asc" "https://github.com/tianon/gosu/releases/download/{{ version }}/gosu-{{ arch }}.asc" \
+    && if [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCH="arm64"; else ARCH="amd64"; fi \
+    && wget -O "{{ path }}/gosu" "https://github.com/tianon/gosu/releases/download/{{ version }}/gosu-${ARCH}" \
+    && wget -O "/tmp/gosu.asc" "https://github.com/tianon/gosu/releases/download/{{ version }}/gosu-${ARCH}.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
     && gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
     && gpg --batch --verify /tmp/gosu.asc "{{ path }}/gosu" \
