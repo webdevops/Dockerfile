@@ -6,6 +6,7 @@
 
 # Staged baselayout builder
 FROM webdevops/toolbox AS baselayout
+ARG TARGETPLATFORM
 RUN mkdir -p \
         /baselayout/sbin \
         /baselayout/usr/local/bin \
@@ -13,12 +14,14 @@ RUN mkdir -p \
     && wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
     && sh /tmp/baselayout-install.sh /baselayout \
     ## Install go-replace
-    && wget -O "/baselayout/usr/local/bin/go-replace" "https://github.com/webdevops/goreplace/releases/download/1.1.2/gr-64-linux" \
+    && if [ "$TARGETPLATFORM" = "linux/arm64" ]; then GO_REPLACE="gr-arm64-linux"; else GO_REPLACE="gr-64-linux"; fi \
+    && wget -O "/baselayout/usr/local/bin/go-replace" "https://github.com/webdevops/goreplace/releases/download/1.1.2/${GO_REPLACE}" \
     && chmod +x "/baselayout/usr/local/bin/go-replace" \
     && "/baselayout/usr/local/bin/go-replace" --version \
     # Install gosu
-    && wget -O "/baselayout/sbin/gosu" "https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64" \
-    && wget -O "/tmp/gosu.asc" "https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64.asc" \
+    && if [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCH="arm64"; else ARCH="amd64"; fi \
+    && wget -O "/baselayout/sbin/gosu" "https://github.com/tianon/gosu/releases/download/1.10/gosu-${ARCH}" \
+    && wget -O "/tmp/gosu.asc" "https://github.com/tianon/gosu/releases/download/1.10/gosu-${ARCH}.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
     && gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
     && gpg --batch --verify /tmp/gosu.asc "/baselayout/sbin/gosu" \
@@ -28,6 +31,7 @@ RUN mkdir -p \
 
 
 FROM php:8.0-fpm-alpine
+ARG TARGETPLATFORM
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
@@ -166,6 +170,7 @@ RUN set -x \
     # Install extensions
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
+    && if [ "$TARGETPLATFORM" = "linux/arm64" ]; then LDAP_LIBDIR="aarch64-linux-gnu"; else LDAP_LIBDIR="x86_64-linux-gnu"; fi \
     && docker-php-ext-configure ldap \
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
