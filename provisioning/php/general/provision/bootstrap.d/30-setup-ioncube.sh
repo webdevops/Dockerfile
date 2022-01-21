@@ -3,9 +3,10 @@
 echo "Installing ionCube loader"
 
 DOWNLOAD_URL="http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz"
+(uname -a | grep -q arm64) && DOWNLOAD_URL="https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_aarch64.tar.gz"
 TMP_FILE="/tmp/ioncube_loaders.tar.gz"
 
-echo "Downloading ..."
+echo "Downloading from ${DOWNLOAD_URL} ..."
 curl -sS ${DOWNLOAD_URL} -o ${TMP_FILE}
 echo "Unpacking ..."
 tar -xzf ${TMP_FILE} -C /tmp

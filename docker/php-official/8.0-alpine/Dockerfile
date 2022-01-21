@@ -170,7 +170,6 @@ RUN set -x \
     # Install extensions
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
-    && if [ "$TARGETPLATFORM" = "linux/arm64" ]; then LDAP_LIBDIR="aarch64-linux-gnu"; else LDAP_LIBDIR="x86_64-linux-gnu"; fi \
     && docker-php-ext-configure ldap \
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \

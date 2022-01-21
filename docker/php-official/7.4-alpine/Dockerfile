@@ -6,6 +6,7 @@
 
 # Staged baselayout builder
 FROM webdevops/toolbox AS baselayout
+ARG TARGETPLATFORM
 RUN mkdir -p \
         /baselayout/sbin \
         /baselayout/usr/local/bin \
@@ -13,7 +14,8 @@ RUN mkdir -p \
     && wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
     && sh /tmp/baselayout-install.sh /baselayout \
     ## Install go-replace
-    && wget -O "/baselayout/usr/local/bin/go-replace" "https://github.com/webdevops/goreplace/releases/download/1.1.2/gr-64-linux" \
+    && if [ "$TARGETPLATFORM" = "linux/arm64" ]; then GO_REPLACE="gr-arm64-linux"; else GO_REPLACE="gr-64-linux"; fi \
+    && wget -O "/baselayout/usr/local/bin/go-replace" "https://github.com/webdevops/goreplace/releases/download/1.1.2/${GO_REPLACE}" \
     && chmod +x "/baselayout/usr/local/bin/go-replace" \
     && "/baselayout/usr/local/bin/go-replace" --version \
     # Install gosu
