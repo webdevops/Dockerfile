@@ -31,7 +31,6 @@ RUN mkdir -p \
 
 
 FROM php:8.0-fpm-alpine
-ARG TARGETPLATFORM
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
