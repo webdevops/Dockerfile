@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -70,8 +70,8 @@ class DockerTestTestinfraTaskLoader(BaseDockerTaskLoader):
             test_opts.extend(['-v'])
 
         if configuration.get('dryRun'):
-            print '         image: %s' % (dockerfile['image']['fullname'])
-            print '          args: %s' % (' '.join(test_opts))
+            print('         image: %s' % (dockerfile['image']['fullname']))
+            print('          args: %s' % (' '.join(test_opts)))
             return True
 
         exitcode = pytest.main(test_opts, plugins=[TestinfraDockerPlugin(configuration=configuration, docker_image=dockerfile['image']['fullname'])])

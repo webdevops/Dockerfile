@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import os, sys
@@ -7,8 +7,8 @@ import os, sys
 sys.dont_write_bytecode = True
 
 # unbuffered stdout / stderr
-sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
-sys.stderr = os.fdopen(sys.stderr.fileno(), 'w', 0)
+sys.stdout = os.fdopen(sys.stdout.fileno(), 'w')
+sys.stderr = os.fdopen(sys.stderr.fileno(), 'w')
 
 import re, yaml
 from cleo import Application
@@ -43,19 +43,19 @@ if __name__ == '__main__':
     # Read console.yml for configuration
     with open(os.path.join(conf_path, 'console.yml'), 'r') as stream:
         try:
-            configuration = yaml.load(stream)
+            configuration = yaml.load(stream, Loader=yaml.FullLoader)
             configuration['confPath'] = conf_path
         except yaml.YAMLError as e:
             configuration = None
-            print ' !!! Exception while loading configuration from %s:' % conf_path
-            print ''
-            print e
-            print ''
+            print(' !!! Exception while loading configuration from %s:' % conf_path)
+            print('')
+            print(e)
+            print('')
             sys.exit(1)
 
     # Check if configuration is valid
     if configuration is None:
-        print ' !!! Configuration not found'
+        print(' !!! Configuration not found')
         sys.exit(1)
 
     # generate full paths

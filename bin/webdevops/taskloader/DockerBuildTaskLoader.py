@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -73,7 +73,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         Pulls dependency images before building
         """
         def pull_image(image):
-            print ' -> Pull base image %s ' % image
+            print(' -> Pull base image %s ' % image)
 
             if configuration.get('dryRun'):
                 return True
@@ -91,9 +91,9 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
                 if pull_status:
                     break
                 elif retry_count < (configuration.get('retry') - 1):
-                    print '    failed, retrying... (try %s)' % (retry_count + 1)
+                    print('    failed, retrying... (try %s)' % (retry_count + 1))
                 else:
-                    print '    failed, giving up'
+                    print('    failed, giving up')
 
             if not pull_status:
                 return False
@@ -130,31 +130,32 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         # check if dockerfile is symlink, skipping tests if just a duplicate image
         # image is using the same hashes
         if dockerfile['image']['duplicate'] and not task.task_dep:
-            print '  Docker image %s is build from symlink but not included in build chain, please include %s' % (dockerfile['image']['fullname'], dockerfile['image']['from'])
-            print '  -> failing build'
+            print('  Docker image %s is build from symlink but not included in build chain, please include %s' % (dockerfile['image']['fullname'], dockerfile['image']['from']))
+            print('  -> failing build')
             return False
 
         if configuration.get('dryRun'):
-            print '      path: %s' % dockerfile['path']
-            print '       dep: %s' % (DockerBuildTaskLoader.human_task_name_list(task.task_dep) if task.task_dep else 'none')
+            print('      path: %s' % dockerfile['path'])
+            print('       dep: %s' % (DockerBuildTaskLoader.human_task_name_list(task.task_dep) if task.task_dep else 'none'))
             return True
 
         ## Build image
-        print ' -> Building image %s ' % dockerfile['image']['fullname']
+        print(' -> Building image %s ' % dockerfile['image']['fullname'])
         build_status = False
         for retry_count in range(0, configuration.get('retry')):
             build_status = docker_client.build_dockerfile(
                 path=dockerfile['path'],
                 name=dockerfile['image']['fullname'],
                 nocache=configuration.get('dockerBuild.noCache'),
+                buildargs={'TARGETPLATFORM': 'linux/arm64'},
             )
 
             if build_status:
                 break
             elif retry_count < (configuration.get('retry')-1):
-                print '    failed, retrying... (try %s)' % (retry_count+1)
+                print('    failed, retrying... (try %s)' % (retry_count+1))
             else:
-                print '    failed, giving up'
+                print('    failed, giving up')
 
         if build_status and dockerfile['image']['duplicate']:
             BaseTaskLoader.set_task_status(task, 'finished (duplicate)', 'success2')

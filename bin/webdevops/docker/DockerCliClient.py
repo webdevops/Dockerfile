@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -31,11 +31,18 @@ class DockerCliClient(DockerBaseClient):
         cmd = ['docker', 'pull', '%s:%s' % (name, tag)]
         return Command.execute(cmd)
 
-    def build_dockerfile(self, path, name, nocache=False):
+    def build_dockerfile(self, path, name, nocache=False, **kwargs):
         """
         Build dockerfile
         """
-        cmd = ['docker', 'build', '--tag', name, os.path.dirname(path)]
+        cmd = ['docker', 'build', '--tag', name]
+        if 'buildargs' in kwargs:
+            cmd.append('--build-arg')
+            args = []
+            for k, v in list(kwargs['buildargs'].items()):
+                args.append("%s=%s" % (k, v))
+            cmd.append(','.join(args))
+        cmd.append(os.path.dirname(path))
 
         if nocache:
             cmd.append('--no-cache')

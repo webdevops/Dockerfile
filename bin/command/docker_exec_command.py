@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -51,11 +51,11 @@ class DockerExecCommand(DoitCommand):
         for dockerfile in dockerfile_list:
             title = dockerfile['image']['fullname']
 
-            print title
-            print '~' * len(title)
+            print(title)
+            print('~' * len(title))
 
             if configuration['dryRun']:
-                print '  exec: %s' % (docker_command)
+                print('  exec: %s' % (docker_command))
             else:
 
                 cmd = [
@@ -71,19 +71,19 @@ class DockerExecCommand(DoitCommand):
                 status = Command.execute(cmd)
 
                 if status:
-                    print colored(' -> successfull', 'green')
+                    print(colored(' -> successfull', 'green'))
                 else:
-                    print colored(' -> failed', 'red')
+                    print(colored(' -> failed', 'red'))
                     image_fail_list.append(dockerfile['image']['fullname'])
-            print ''
-            print ''
+            print('')
+            print('')
 
         if len(image_fail_list) >= 1:
-            print ''
-            print colored(' => failed images (%s):' % (str(len(image_fail_list))), 'red')
+            print('')
+            print(colored(' => failed images (%s):' % (str(len(image_fail_list))), 'red'))
             for image in image_fail_list:
-                print '   - %s ' % image
-            print ''
+                print('   - %s ' % image)
+            print('')
 
             return False
         else:

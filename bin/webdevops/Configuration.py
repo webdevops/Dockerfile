@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -44,7 +44,7 @@ default = {
     'docker': {
         'imagePrefix': '',
         'autoLatestTag': False,
-        'fromRegExp': re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE),
+        'fromRegExp': re.compile(r'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE),
         'pathRegex': False,
         'autoPull': False,
         'autoPullWhitelist': False,
@@ -83,7 +83,7 @@ def merge(configuration):
         Recursively update a dict.
         Subdict's won't be overwritten but also updated.
         """
-        for key, value in original.iteritems():
+        for key, value in original.items():
             if key not in update:
                 update[key] = value
             elif isinstance(value, dict):
@@ -101,7 +101,7 @@ class dotdictify(dict):
             for key in value:
                 self.__setitem_internal__(key, value[key])
         else:
-            raise TypeError, 'expected dict'
+            raise TypeError('expected dict')
 
     def __setitem_internal__(self, key, value):
         """
@@ -116,7 +116,7 @@ class dotdictify(dict):
             myKey, restOfKey = key.split('.', 1)
             target = self.setdefault(myKey, dotdictify())
             if not isinstance(target, dotdictify):
-                raise KeyError, 'cannot set "%s" in "%s" (%s)' % (restOfKey, myKey, repr(target))
+                raise KeyError('cannot set "%s" in "%s" (%s)' % (restOfKey, myKey, repr(target)))
             target[restOfKey] = value
         else:
             if isinstance(value, dict) and not isinstance(value, dotdictify):
@@ -129,7 +129,7 @@ class dotdictify(dict):
         myKey, restOfKey = key.split('.', 1)
         target = dict.get(self, myKey, None)
         if not isinstance(target, dotdictify):
-            raise KeyError, 'cannot get "%s" in "%s" (%s)' % (restOfKey, myKey, repr(target))
+            raise KeyError('cannot get "%s" in "%s" (%s)' % (restOfKey, myKey, repr(target)))
         return target[restOfKey]
 
     def __contains__(self, key):

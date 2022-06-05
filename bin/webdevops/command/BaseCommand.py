@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -49,11 +49,11 @@ class BaseCommand(Command):
         try:
             exitcode = self.run_task(configuration=self.configuration)
         except KeyboardInterrupt as e:
-            print ' !!! Execution aborted by user'
+            print(' !!! Execution aborted by user')
             exitcode = 1
         except SystemExit as e:
-            print ' !!! Execution aborted by SystemExit'
-            print ''
+            print(' !!! Execution aborted by SystemExit')
+            print('')
             traceback.print_exc(file=sys.stdout)
             exitcode = 1
 
@@ -90,26 +90,26 @@ class BaseCommand(Command):
             DoitReporter.simulation_mode = True
 
 
-        print 'Executing %s (%s)' % (self.name, ', '.join(options))
-        print ''
+        print('Executing %s (%s)' % (self.name, ', '.join(options)))
+        print('')
 
         try:
             whitelist = self.get_whitelist()
             if whitelist:
-                print 'WHITELIST active:'
+                print('WHITELIST active:')
                 for item in whitelist:
-                    print ' - %s' % item
-                print ''
+                    print(' - %s' % item)
+                print('')
         except:
             pass
 
         try:
             blacklist = self.get_blacklist()
             if blacklist:
-                print 'BLACKLIST active:'
+                print('BLACKLIST active:')
                 for item in blacklist:
-                    print ' - %s' % item
-                print ''
+                    print(' - %s' % item)
+                print('')
         except:
             pass
 
@@ -128,11 +128,11 @@ class BaseCommand(Command):
 
         self.teardown(exitcode)
 
-        print ''
+        print('')
         if exitcode == 0:
-            print '> finished execution in %s successfully' % (duration)
+            print('> finished execution in %s successfully' % (duration))
         else:
-            print '> finished execution in %s with errors (exitcode %s)' % (duration, exitcode)
+            print('> finished execution in %s with errors (exitcode %s)' % (duration, exitcode))
 
     def build_configuration(self):
         """
@@ -207,7 +207,7 @@ class BaseCommand(Command):
         # static BLACKLIST file
         if os.path.isfile(self.configuration.get('blacklistFile')):
             lines = [line.rstrip('\n').lstrip('\n') for line in open(self.configuration.get('blacklistFile'))]
-            lines = filter(bool, lines)
+            lines = list(filter(bool, lines))
 
             if lines:
                 ret.extend(lines)

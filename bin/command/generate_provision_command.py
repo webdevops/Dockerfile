@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -22,7 +22,7 @@ import os
 import yaml
 import yamlordereddictloader
 import time
-import Queue
+import queue
 import shutil
 import grp
 from cleo import Output
@@ -46,7 +46,7 @@ class GenerateProvisionCommand(BaseCommand):
     __queue = ''
 
     def run_task(self, configuration):
-        self.__queue = Queue.Queue()
+        self.__queue = queue.Queue()
         if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
             self.line('<info>provision :</info> %s' % configuration.get('provisionPath'))
             self.line('<info>dockerfile :</info> %s' % configuration.get('dockerPath'))

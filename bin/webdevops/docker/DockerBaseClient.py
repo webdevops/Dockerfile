@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -29,19 +29,19 @@ class DockerBaseClient:
         """
         Build dockerfile
         """
-        print 'Pull image %s:%s' % (name, tag)
+        print('Pull image %s:%s' % (name, tag))
         return True
 
     def build_dockerfile(self, path, name, nocache=False):
         """
         Build dockerfile
         """
-        print 'Build Dockerfile %s with name %s' % (path, name)
+        print('Build Dockerfile %s with name %s' % (path, name))
         return True
 
     def push_image(self, name):
         """
         Push one Docker image to registry
         """
-        print 'Build image %s' % (name)
+        print('Build image %s' % (name))
         return True

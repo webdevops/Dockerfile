@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -21,8 +21,8 @@
 import os
 import re
 
-DOCKERFILE_STATEMENT_FROM_RE = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>[^\s:]+))?(?!.*\s+AS)', re.MULTILINE)
-DOCKERFILE_STATEMENT_FROM_MULTISTAGE_RE = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>[^\s:]+))?(\s+AS)', re.MULTILINE)
+DOCKERFILE_STATEMENT_FROM_RE = re.compile(r'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>[^\s:]+))?(?!.*\s+AS)', re.MULTILINE)
+DOCKERFILE_STATEMENT_FROM_MULTISTAGE_RE = re.compile(r'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>[^\s:]+))?(\s+AS)', re.MULTILINE)
 
 def find_file_in_path(dockerfile_path, filename="Dockerfile", whitelist=False, blacklist=False):
     """
@@ -64,7 +64,7 @@ def find_file_in_path(dockerfile_path, filename="Dockerfile", whitelist=False, b
 
     if blacklist:
         for term in blacklist:
-            file_list = filter(lambda x: term not in x, file_list)
+            file_list = [x for x in file_list if term not in x]
 
     return file_list
 
@@ -143,7 +143,7 @@ def filter_dockerfile(dockerfile_list, whitelist=False, blacklist=False):
 
     if blacklist:
         for term in blacklist:
-            dockerfile_list = filter(lambda x: term not in x['image']['fullname'], dockerfile_list)
+            dockerfile_list = [x for x in dockerfile_list if term not in x['image']['fullname']]
 
     return dockerfile_list
 
