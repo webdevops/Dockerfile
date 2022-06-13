@@ -161,7 +161,7 @@ RUN set -x \
         pdo_pgsql \
         pgsql \
         soap \
-        sockets \        
+        sockets \
         sysvmsg \
         sysvsem \
         sysvshm \
@@ -173,6 +173,7 @@ RUN set -x \
         opcache \
     && pecl install memcached \
     && pecl install apcu \
+    && pecl install xmlrpc-1.0.0RC3 \
     && pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
@@ -181,6 +182,7 @@ RUN set -x \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
+    && echo extension=xmlrpc.so > /usr/local/etc/php/conf.d/xmlrpc.ini \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
         libc-client-dev \

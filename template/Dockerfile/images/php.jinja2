@@ -98,10 +98,10 @@
         pdo_pgsql \
         pgsql \
         soap \
-        sockets \
-{%- if version != '8.1' %}        
-        tokenizer \
-{%- endif %}        
+        sockets \       
+{%- if version != '8.1' %}  
+        tokenizer \       
+{%- endif %}
         sysvmsg \
         sysvsem \
         sysvshm \
@@ -129,9 +129,7 @@
 {%- elif version == '8.0' or version == '8.1' %}
     && pecl install memcached \
     && pecl install apcu \
-    {%- if version != '8.1' %}
-    && pecl install xmlrpc-1.0.0RC2 \
-    {%- endif %}
+    && pecl install xmlrpc-1.0.0RC3 \
     && pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
@@ -140,9 +138,7 @@
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
-    {%- if version != '8.1' %}
     && echo extension=xmlrpc.so > /usr/local/etc/php/conf.d/xmlrpc.ini \
-    {%- endif %}
 {%- else %}
     # Install extensions for PHP 7.x
     && pecl install apcu \
