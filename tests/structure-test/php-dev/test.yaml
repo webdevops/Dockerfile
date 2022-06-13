@@ -4,9 +4,6 @@ fileExistenceTests:
   - name: 'blackfire should exist'
     path: '/usr/bin/blackfire'
     shouldExist: true
-  - name: 'blackfire agent should exist'
-    path: '/usr/bin/blackfire-agent'
-    shouldExist: true
 
 fileContentTests:
   - name: 'supervisor: syslog service is enabled'
