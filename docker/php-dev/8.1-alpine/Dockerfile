@@ -9,6 +9,8 @@ COPY conf/ /opt/docker/
 
 RUN set -x \
     # Install development environment
+    && bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
+    && blackfire php:install \
     && apk-install \
         make \
         autoconf \

@@ -17,12 +17,8 @@ COPY conf/ /opt/docker/
 
 RUN set -x \
     # Install development environment
-    && wget -q -O blackfire-agent https://packages.blackfire.io/binaries/blackfire-agent/1.34.0/blackfire-agent-linux_static_amd64 \
-    && mv blackfire-agent /usr/local/bin/ \
-    && chmod +x /usr/local/bin/blackfire-agent \
-    && wget -q -O blackfire.so https://packages.blackfire.io/binaries/blackfire-php/1.33.0/blackfire-php-alpine_amd64-php-73.so \
-    && mv blackfire.so "$(php -r "echo ini_get('extension_dir');")/blackfire.so" \
-    && mkdir /var/run/blackfire/ \
+    && bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
+    && blackfire php:install \
     && apk-install \
         make \
         autoconf \

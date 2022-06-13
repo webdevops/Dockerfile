@@ -380,13 +380,11 @@
 
 {% macro officialDevelopment(role='', version='') -%}
     # Install development environment
-    {%- if version != '8.1' %}
-    && wget -q -O - https://packages.blackfire.io/gpg.key | apt-key add - \
-    && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
-    && apt-install \
-        blackfire-php \
-        blackfire-agent \
-    {%- endif %}
+    && bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
+    && blackfire php:install \
+    && echo 'deb https://packages.tideways.com/apt-packages-main any-version main' | tee /etc/apt/sources.list.d/tideways.list \
+    && wget -qO - https://packages.tideways.com/key.gpg | apt-key add - \
+    && apt-install tideways-php tideways-daemon \
     {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
     {%- elif version == '8.0' or version == '8.1' %}
@@ -402,14 +400,8 @@
 
 {% macro officialDevelopmentAlpine(role='', version='') -%}
     # Install development environment
-    {%- if version != '8.1' %}
-    && wget -q -O blackfire-agent https://packages.blackfire.io/binaries/blackfire-agent/1.34.0/blackfire-agent-linux_static_amd64 \
-    && mv blackfire-agent /usr/local/bin/ \
-    && chmod +x /usr/local/bin/blackfire-agent \
-    && wget -q -O blackfire.so https://packages.blackfire.io/binaries/blackfire-php/1.33.0/blackfire-php-alpine_amd64-php-{{ version|replace('.', '') }}.so \
-    && mv blackfire.so "$(php -r "echo ini_get('extension_dir');")/blackfire.so" \
-    && mkdir /var/run/blackfire/ \
-    {%- endif %}
+    && bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
+    && blackfire php:install \
     && apk-install \
         make \
         autoconf \
