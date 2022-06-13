@@ -312,17 +312,13 @@
     && pecl install yaml \
     && pecl install redis \
     && pecl install mongodb \
-    {%- if version != '8.1' %}
-    && pecl install xmlrpc-1.0.0RC2 \
-    {%- endif %}
+    && pecl install xmlrpc-1.0.0RC3 \
     && docker-php-ext-enable \
         apcu \
         vips \
         yaml \
         redis \
-        {%- if version != '8.1' %}
         xmlrpc \
-        {%- endif %}
         imagick \
         mongodb \
 {%- else %}

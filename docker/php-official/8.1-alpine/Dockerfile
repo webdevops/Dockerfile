@@ -189,11 +189,13 @@ RUN set -x \
     && pecl install yaml \
     && pecl install redis \
     && pecl install mongodb \
+    && pecl install xmlrpc-1.0.0RC3 \
     && docker-php-ext-enable \
         apcu \
         vips \
         yaml \
         redis \
+        xmlrpc \
         imagick \
         mongodb \
     # Uninstall dev and header packages
