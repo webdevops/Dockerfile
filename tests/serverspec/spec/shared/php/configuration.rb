@@ -95,12 +95,12 @@ shared_examples 'php::cli::configuration::development' do
         ####################################
         # XDEBUG
         ####################################
-        context php_config('xdebug.remote_enable') do
-            its(:value) { should eq 1 }
+        context php_config('xdebug.mode') do
+            its(:value) { should eq 'debug' }
         end
 
-        context php_config('xdebug.remote_connect_back') do
-            its(:value) { should eq 1 }
+        context php_config('xdebug.start_with_request') do
+            its(:value) { should eq 'trigger' }
         end
 
         ####################################
