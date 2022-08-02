@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -18,7 +18,7 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import os, sys, time, datetime, StringIO
+import os, sys, time, datetime, io
 import termcolor
 from termcolor import colored
 from ..taskloader.BaseTaskLoader import BaseTaskLoader
@@ -121,9 +121,9 @@ class DoitReporter(object):
         # than the data. so anything that is sent to stdout/err needs to
         # be captured.
         self._old_out = sys.stdout
-        sys.stdout = StringIO.StringIO()
+        sys.stdout = io.StringIO()
         self._old_err = sys.stderr
-        sys.stderr = StringIO.StringIO()
+        sys.stderr = io.StringIO()
         self.outstream = outstream
         # runtime and cleanup errors
         self.errors = []
@@ -246,7 +246,7 @@ class DoitReporter(object):
         if self.errors:
             log_err += "\n".join(self.errors)
 
-        task_result_list = [tr.to_dict() for tr in self.t_results.values()]
+        task_result_list = [tr.to_dict() for tr in list(self.t_results.values())]
 
         self.writeln('')
         self.writeln('-> finished %s tasks' % (len(task_result_list)))

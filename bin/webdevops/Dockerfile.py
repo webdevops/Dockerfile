@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -40,7 +40,7 @@ def finder(dockerfile_path, filename="Dockerfile", filter=[]):
     :rtype: list
     """
     dockerfile_stack = []
-    filter_regex = re.compile(ur'.*(%s).*' % "|".join(filter), re.IGNORECASE)
+    filter_regex = re.compile(r'.*(%s).*' % "|".join(filter), re.IGNORECASE)
     # pprint(filter_regex.pattern)
     for root, dirs, files in os.walk(dockerfile_path):
         for file in files:

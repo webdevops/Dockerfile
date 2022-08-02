@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -61,7 +61,7 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
         Push one Docker image to registry
         """
         if configuration.get('dryRun'):
-            print '      push: %s' % (dockerfile['image']['fullname'])
+            print('      push: %s' % (dockerfile['image']['fullname']))
             return True
 
         push_status = False
@@ -73,10 +73,10 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
             if push_status:
                 break
             elif retry_count < (configuration.get('retry') - 1):
-                print '    failed, retrying... (try %s)' % (retry_count+1)
+                print('    failed, retrying... (try %s)' % (retry_count+1))
                 time.sleep(randint(10, 30))
             else:
-                print '    failed, giving up'
+                print('    failed, giving up')
 
         return push_status
 

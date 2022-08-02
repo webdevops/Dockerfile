@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -18,9 +18,9 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from DockerBaseClient import DockerBaseClient
-from DockerPyClient import DockerPyClient
-from DockerCliClient import DockerCliClient
+from .DockerBaseClient import DockerBaseClient
+from .DockerPyClient import DockerPyClient
+from .DockerCliClient import DockerCliClient
 
 __all__ = [
     'DockerBaseClient',

@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -43,7 +43,7 @@ class GenerateGraphCommand(BaseCommand):
         '--format': Enum(['png', 'jpg', 'pdf', 'svg'])
     }
 
-    from_regex = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE)
+    from_regex = re.compile(r'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE)
 
     containers = {}
 
@@ -116,7 +116,7 @@ class GenerateGraphCommand(BaseCommand):
 
         :return: self
         """
-        if not self.tags.has_key(docker_image):
+        if docker_image not in self.tags:
             self.tags[docker_image] = {}
         self.tags[docker_image][tag] = tag
         return self
@@ -133,7 +133,7 @@ class GenerateGraphCommand(BaseCommand):
         :return: the selected diagram
         :rtype: Digraph
         """
-        for group, group_attr in self.conf['diagram']['groups'].items():
+        for group, group_attr in list(self.conf['diagram']['groups'].items()):
             for dockerRegex in group_attr['docker']:
                 if re.match(dockerRegex, name):
                     return group, self.subgraph[group]
@@ -190,7 +190,7 @@ class GenerateGraphCommand(BaseCommand):
         rank_group_list = {}
 
         # Create subgraph
-        for group, group_attr in self.conf['diagram']['groups'].items():
+        for group, group_attr in list(self.conf['diagram']['groups'].items()):
             self.subgraph[group] = Digraph('cluster_%s' % group)
             self.subgraph[group].body.append(r'label = "%s"' % group_attr['name'])
             self.subgraph[group] = self.__apply_styles(self.subgraph[group], group_attr['styles'])
@@ -198,7 +198,7 @@ class GenerateGraphCommand(BaseCommand):
             if 'rank' in group_attr:
                 rank_group_list[group] = group_attr['rank']
 
-        for image, base in self.containers.items():
+        for image, base in list(self.containers.items()):
             group_image, graph_image = self.__get_graph(dia, image)
             group_base, graph_base = self.__get_graph(dia, base)
             if not "scratch" in base:
@@ -221,15 +221,15 @@ class GenerateGraphCommand(BaseCommand):
                 rank_image_list[image_rank].append(image)
 
         # add repositories (subgraph/cluster)
-        for name, subgraph in self.subgraph.items():
+        for name, subgraph in list(self.subgraph.items()):
             dia.subgraph(subgraph)
 
         # add images (node)
-        for image, base in self.edges.items():
+        for image, base in list(self.edges.items()):
             dia.edge(base, image)
 
         # add invisible constraints to add ranked groups
-        for rank, imagelist in rank_image_list.items():
+        for rank, imagelist in list(rank_image_list.items()):
             rank_next = rank + 1
 
             if rank_next in rank_image_list:

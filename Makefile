@@ -17,7 +17,7 @@ full:      provision build
 all:       build
 
 build:
-	python2 ./bin/console docker:build --threads=auto
+	bin/console docker:build --threads=auto
 
 bootstrap: webdevops/bootstrap webdevops/ansible
 base:      webdevops/base webdevops/base-app webdevops/storage
@@ -40,20 +40,20 @@ requirements:
 	cd tests/serverspec && bundle install --path=vendor
 
 test:
-	python2 bin/console test:serverspec --threads=auto -v
+	bin/console test:serverspec --threads=auto -v
 
 provision:
-	python2 bin/console generate:dockerfile
-	python2 bin/console generate:provision
+	bin/console generate:dockerfile
+	bin/console generate:provision
 
 push:
-	python2 ./bin/console docker:push --threads=auto
+	bin/console docker:push --threads=auto
 
 graph:
-	python2 ./bin/console generate:graph
+	bin/console generate:graph
 
 graph-full:
-	python2 ./bin/console generate:graph --all\
+	bin/console generate:graph --all\
 		--filename docker-image-full-layout.gv
 
 documentation:
@@ -65,4 +65,4 @@ documentation:
 		--poll -H 0.0.0.0 /opt/docs html
 
 webdevops/%:
-	python2 ./bin/console docker:build --threads=auto --whitelist=$@
+	bin/console docker:build --threads=auto --whitelist=$@

@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -18,13 +18,13 @@
 # OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from BaseTaskLoader import BaseTaskLoader
-from BaseDockerTaskLoader import BaseDockerTaskLoader
-from DockerBuildTaskLoader import DockerBuildTaskLoader
-from DockerPushTaskLoader import DockerPushTaskLoader
-from DockerPullTaskLoader import DockerPullTaskLoader
-from DockerTestTestinfraTaskLoader import DockerTestTestinfraTaskLoader
-from DockerTestServerspecTaskLoader import DockerTestServerspecTaskLoader
+from .BaseTaskLoader import BaseTaskLoader
+from .BaseDockerTaskLoader import BaseDockerTaskLoader
+from .DockerBuildTaskLoader import DockerBuildTaskLoader
+from .DockerPushTaskLoader import DockerPushTaskLoader
+from .DockerPullTaskLoader import DockerPullTaskLoader
+from .DockerTestTestinfraTaskLoader import DockerTestTestinfraTaskLoader
+from .DockerTestServerspecTaskLoader import DockerTestServerspecTaskLoader
 
 __all__ = [
     'BaseTaskLoader',

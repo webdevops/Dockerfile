@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -24,7 +24,7 @@ from webdevops import Dockerfile
 import os
 from distutils.dir_util import copy_tree, remove_tree
 from threading import Thread
-import Queue
+import queue
 import shutil
 
 
@@ -92,7 +92,7 @@ class Provisioner(Thread):
                 if 'configuration' in self.image_config:
                     self.__deploy_configuration()
                 self.__done_item()
-            except Queue.Empty:
+            except queue.Empty:
                 if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
                     self.line("<fg=magenta>End</>")
                 break
@@ -114,7 +114,7 @@ class Provisioner(Thread):
         """
         Deploy the configuration to the container
         """
-        for src, tag in self.image_config['configuration'].iteritems():
+        for src, tag in self.image_config['configuration'].items():
             if Output.VERBOSITY_NORMAL <= self.output.get_verbosity():
                 self.line("<fg=cyan>%s</> <info>=></info> %s:%s" % (src, self.image_name, tag))
             if isinstance(tag, list):

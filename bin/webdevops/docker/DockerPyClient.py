@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -50,7 +50,7 @@ class DockerPyClient(DockerBaseClient):
 
         return self.process_client_response(response)
 
-    def build_dockerfile(self, path, name, nocache=False):
+    def build_dockerfile(self, path, name, nocache=False, **kwargs):
         """
         Build dockerfile
         """
@@ -60,7 +60,8 @@ class DockerPyClient(DockerBaseClient):
             pull=False,
             nocache=nocache,
             quiet=False,
-            decode=True
+            decode=True,
+            **kwargs
         )
 
         return self.process_client_response(response)
@@ -110,5 +111,5 @@ class DockerPyClient(DockerBaseClient):
                 if 'id' in line:
                     message += ' ' + line['id']
                 output_message(message)
-        print ''
+        print('')
         return ret
