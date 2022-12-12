@@ -3,7 +3,7 @@
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM webdevops/base-app:ubuntu-18.04
+FROM webdevops/base-app:ubuntu-20.04
 
 RUN apt-install \
         build-essential \
@@ -12,14 +12,15 @@ RUN apt-install \
         ca-certificates \
         software-properties-common \
         git \
-        python \
-        python-dev \
+        python2 \
+        python2-dev \
         python-setuptools \
-        python-pip \
         graphviz \
         ruby \
         ruby-dev \
         ruby-bundler \
+    && curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py \
+    && python2 get-pip.py \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
     && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu    $(lsb_release -cs)    stable" \
     && apt-install docker-ce \
@@ -31,6 +32,8 @@ RUN apt-install \
     && hash -r pip \
     && pip install --upgrade setuptools \
     && git clone --depth 1 https://github.com/webdevops/Dockerfile.git /tmp/Dockerfile \
+    && cd /tmp/Dockerfile/tests/serverspec \
+    && bundle update --bundler \
     && cd /tmp/Dockerfile \
     && make setup \
     && docker-image-cleanup

@@ -4,29 +4,6 @@
 #+++++++++++++++++++++++++++++++++++++++
 
 
-# Staged baselayout builder
-FROM webdevops/toolbox AS baselayout
-RUN mkdir -p \
-        /baselayout/sbin \
-        /baselayout/usr/local/bin \
-    # Baselayout scripts
-    && wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
-    && sh /tmp/baselayout-install.sh /baselayout \
-    ## Install go-replace
-    && wget -O "/baselayout/usr/local/bin/go-replace" "https://github.com/webdevops/goreplace/releases/download/1.1.2/gr-64-linux" \
-    && chmod +x "/baselayout/usr/local/bin/go-replace" \
-    && "/baselayout/usr/local/bin/go-replace" --version \
-    # Install gosu
-    && wget -O "/baselayout/sbin/gosu" "https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64" \
-    && wget -O "/tmp/gosu.asc" "https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64.asc" \
-    && export GNUPGHOME="$(mktemp -d)" \
-    && gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-    && gpg --batch --verify /tmp/gosu.asc "/baselayout/sbin/gosu" \
-    && rm -rf "$GNUPGHOME" /tmp/gosu.asc \
-    && chmod +x "/baselayout/sbin/gosu" \
-    && "/baselayout/sbin/gosu" nobody true
-
-
 FROM php:8.0-fpm-buster
 
 LABEL maintainer=info@webdevops.io \
@@ -50,7 +27,8 @@ ENV COMPOSER_VERSION="2"
 
 
 # Baselayout copy (from staged image)
-COPY --from=baselayout /baselayout /
+COPY --from=webdevops/toolbox /baselayout/sbin/* /sbin/
+COPY --from=webdevops/toolbox /baselayout/usr/local/bin/* /usr/local/bin/
 
 
 COPY conf/ /opt/docker/
@@ -169,7 +147,7 @@ RUN set -x \
     && docker-php-ext-install \
         bcmath \
         amqp \
-        imagick \        
+        imagick \
         bz2 \
         calendar \
         exif \
@@ -183,7 +161,7 @@ RUN set -x \
         pdo_pgsql \
         pgsql \
         soap \
-        sockets \
+        sockets \  
         tokenizer \
         sysvmsg \
         sysvsem \
@@ -196,9 +174,16 @@ RUN set -x \
         opcache \
     && pecl install memcached \
     && pecl install apcu \
+    && pecl install xmlrpc-1.0.0RC3 \
     && pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
+    && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
+    && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
+    && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
+    && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
+    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
+    && echo extension=xmlrpc.so > /usr/local/etc/php/conf.d/xmlrpc.ini \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
         libc-client-dev \

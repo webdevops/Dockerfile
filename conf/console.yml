@@ -12,7 +12,7 @@ blacklistFile: 'BLACKLIST'
 
 docker:
   imagePrefix: 'webdevops'
-  autoLatestTag: 'ubuntu-18.04'
+  autoLatestTag: 'ubuntu-20.04'
   pathRegex: '/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'
   autoPull: True
   autoPullBlacklist: '^webdevops/.*'
@@ -40,7 +40,7 @@ dockerTest:
     imageConfigurationRegex: ':(?P<OS_FAMILY>alpine|debian|ubuntu|centos)-?(?P<OS_VERSION>[^-]+)?'
     default:
       OS_FAMILY: 'ubuntu'
-      OS_VERSION: '18.04'
+      OS_VERSION: '20.04'
     image:
       ':centos':
         OS_FAMILY: 'redhat'

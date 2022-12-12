@@ -1,0 +1,51 @@
+schemaVersion: "2.0.0"
+
+metadataTest:
+  env:
+    - key: "WEB_DOCUMENT_ROOT"
+      value: "/app"
+    - key: "WEB_DOCUMENT_INDEX"
+      value: "index.php"
+    - key: "WEB_ALIAS_DOMAIN"
+      value: "*.vm"
+    - key: "WEB_PHP_TIMEOUT"
+      value: "600"
+    - key: "WEB_PHP_SOCKET"
+      value: "127.0.0.1:9000"
+  exposedPorts: ["80", "443"]
+
+fileExistenceTests:
+  - name: 'nginx service script should exist'
+    path: '/opt/docker/bin/service.d/nginx.sh'
+    shouldExist: true
+  - name: 'nginx configs should exist'
+    path: '/opt/docker/etc/nginx/vhost.conf'
+    shouldExist: true
+
+fileContentTests:
+  - name: 'supervisor: nginx service is enabled'
+    path: '/opt/docker/etc/supervisor.d/nginx.conf'
+    expectedContents: ['autostart = true']
+
+commandTests:
+  - name: "Nginx configuration test"
+    setup: [["/entrypoint", "/bin/bash"]]
+    command: "nginx"
+    args: ["-t"]
+    expectedError: ["syntax is ok", "test is successful"]
+  - name: "WEB_DOCUMENT_ROOT changes according to ENV var"
+    setup: [["/entrypoint", "/bin/bash"]]
+    envVars:
+      - key: "WEB_DOCUMENT_ROOT"
+        value: "/some/test/dir"
+    command: "nginx"
+    args: ["-T"]
+    expectedOutput: ['root "/some/test/dir";']
+  - name: "WEB_DOCUMENT_INDEX changes according to ENV var"
+    setup: [["/entrypoint", "/bin/bash"]]
+    envVars:
+      - key: "WEB_DOCUMENT_INDEX"
+        value: "somefile.php"
+    command: "nginx"
+    args: ["-T"]
+    expectedOutput: ["index somefile.php;"]

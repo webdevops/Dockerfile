@@ -1,0 +1,36 @@
+schemaVersion: "2.0.0"
+
+metadataTest:
+  env:
+    - key: "PATH"
+      value: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+commandTests:
+  - name: "Check OS family"
+    command: "docker-image-info"
+    args: ["family"]
+    expectedOutput: ["Alpine\n"]
+  - name: "Check dist"
+    command: "docker-image-info"
+    args: ["dist"]
+    expectedOutput: ["Alpine\n"]
+  - name: "Check dist"
+    command: "docker-image-info"
+    args: ["dist-version"]
+    expectedOutput: ["3.11"]
+  - name: "Check dist release"
+    command: "docker-image-info"
+    args: ["dist-release"]
+    expectedOutput: [""]
+  - name: "Check dist codename"
+    command: "docker-image-info"
+    args: ["dist-codename"]
+    expectedOutput: [""]
+  - name: "Check lsb"
+    command: "docker-image-info"
+    args: ["lsb"]
+    expectedOutput: [""]
+  - name: "Check lsb desc"
+    command: "docker-image-info"
+    args: ["lsb-desc"]
+    expectedOutput: [""]

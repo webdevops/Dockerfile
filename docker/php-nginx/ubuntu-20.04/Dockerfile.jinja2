@@ -1,0 +1,14 @@
+{{ docker.from("php", "ubuntu-20.04") }}
+
+{{ environment.web() }}
+{{ environment.webPhp() }}
+{{ environment.nginx() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+RUN set -x \
+    {{ nginx.ubuntu() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
+
+{{ docker.expose('80 443') }}

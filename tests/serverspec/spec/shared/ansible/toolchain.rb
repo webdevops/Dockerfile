@@ -18,8 +18,8 @@ shared_examples 'ansible::toolchain' do
 
             # Write test
             it { should be_writable.by('owner') }
-            it { should_not be_writable.by('group') }
-            it { should_not be_writable.by('others') }
+            # it { should_not be_writable.by('group') }
+            # it { should_not be_writable.by('others') }
 
             # Exectuable test
             it { should be_executable.by('owner') }
@@ -61,8 +61,8 @@ shared_examples 'ansible::toolchain::public' do
 
             # Write test
             it { should be_writable.by('owner') }
-            it { should_not be_writable.by('group') }
-            it { should_not be_writable.by('others') }
+            # it { should_not be_writable.by('group') }
+            # it { should_not be_writable.by('others') }
 
             # Exectuable test
             it { should be_executable.by('owner') }

@@ -1,0 +1,231 @@
+schemaVersion: "2.0.0"
+
+metadataTest:
+# base
+  entrypoint: ["/entrypoint"]
+  cmd: ["supervisord"]
+  env:
+  # bootstrap
+    - key: "LC_ALL"
+      value: "C.UTF-8"
+    - key: "LANG"
+      value: "C.UTF-8"
+    - key: "TERM"
+      value: "xterm"
+  # base
+    - key: "DOCKER_CONF_HOME"
+      value: "/opt/docker/"
+    - key: "LOG_STDOUT"
+      value: ""
+    - key: "LOG_STDERR"
+      value: ""
+  # base-app
+    - key: "APPLICATION_USER"
+      value: "application"
+    - key: "APPLICATION_GROUP"
+      value: "application"
+    - key: "APPLICATION_PATH"
+      value: "/app"
+    - key: "APPLICATION_UID"
+      value: "1000"
+    - key: "APPLICATION_GID"
+      value: "1000"
+
+fileExistenceTests:
+# bootstrap
+  - name: 'apk add wrapper'
+    path: '/usr/local/bin/apk-install'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'apk upgrade wrapper'
+    path: '/usr/local/bin/apk-upgrade'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'apt-add-repository wrapper with auto cleanup'
+    path: '/usr/local/bin/apt-add-repository'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'apt-get install wrapper with auto cleanup'
+    path: '/usr/local/bin/apt-install'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'apt-get update wrapper for multiple apt-install runs'
+    path: '/usr/local/bin/apt-update'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'apt-get upgrade wrapper with auto cleanup'
+    path: '/usr/local/bin/apt-upgrade'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'yum install wrapper with auto cleanup'
+    path: '/usr/local/bin/yum-install'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'yum upgrade wrapper with auto cleanup'
+    path: '/usr/local/bin/yum-upgrade'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'Cleanup for docker images after package installations'
+    path: '/usr/local/bin/docker-image-cleanup'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'Gets information about the current docker images'
+    path: '/usr/local/bin/docker-image-info'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'Generates system locales'
+    path: '/usr/local/bin/generate-locales'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'Generates docker image info'
+    path: '/usr/local/bin/generate-dockerimage-info'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'Bootstrapping script'
+    path: '/usr/local/bin/docker-run-bootstrap'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'go-replace tool'
+    path: '/usr/local/bin/go-replace'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  - name: 'gosu tool'
+    path: '/sbin/gosu'
+    shouldExist: true
+    permissions: 'ugrwxr-xr-x'
+# base
+  - name: 'bin: bootstrap script'
+    path: '/opt/docker/bin/bootstrap.sh'
+    shouldExist: true
+    permissions: '-rwxrwxrwx'
+  - name: 'bin: config script'
+    path: '/opt/docker/bin/config.sh'
+    shouldExist: true
+    permissions: '-rwxrwxrwx'
+  - name: 'bin: control script'
+    path: '/opt/docker/bin/control.sh'
+    shouldExist: true
+    permissions: '-rwxrwxrwx'
+  - name: 'bin: entrypoint script'
+    path: '/opt/docker/bin/entrypoint.sh'
+    shouldExist: true
+    permissions: '-rwxrwxrwx'
+  - name: 'bin: supervisor entrypoint script'
+    path: '/opt/docker/bin/service.d/supervisor.sh'
+    shouldExist: true
+    permissions: '-rwxrwxrwx'
+  - name: 'configfile: supervisor base'
+    path: '/opt/docker/etc/supervisor.conf'
+    shouldExist: true
+    permissions: '-rw-rw-rw-'
+  - name: 'configfile: supervisor service cron'
+    path: '/opt/docker/etc/supervisor.d/cron.conf'
+    shouldExist: true
+    permissions: '-rw-rw-rw-'
+  - name: 'configfile: supervisor service dnsmasq'
+    path: '/opt/docker/etc/supervisor.d/dnsmasq.conf'
+    shouldExist: true
+    permissions: '-rw-rw-rw-'
+  - name: 'configfile: supervisor service postfix'
+    path: '/opt/docker/etc/supervisor.d/postfix.conf'
+    shouldExist: true
+    permissions: '-rw-rw-rw-'
+  - name: 'configfile: supervisor service ssh'
+    path: '/opt/docker/etc/supervisor.d/ssh.conf'
+    shouldExist: true
+    permissions: '-rw-rw-rw-'
+  - name: 'configfile: supervisor service syslog'
+    path: '/opt/docker/etc/supervisor.d/syslog.conf'
+    shouldExist: true
+    permissions: '-rw-rw-rw-'
+  - name: 'configfile: logrotate'
+    path: '/opt/docker/etc/logrotate.d/syslog-ng'
+    shouldExist: true
+    permissions: '-rw-rw-rw-'
+  - name: 'configfile: syslog-ng'
+    path: '/opt/docker/etc/syslog-ng/syslog-ng.conf'
+    shouldExist: true
+    permissions: '-rw-rw-rw-'
+  - name: 'provisioning: cron'
+    path: '/opt/docker/provision/service.d/cron.sh'
+    shouldExist: false
+  - name: 'provisioning: dnsmasq'
+    path: '/opt/docker/provision/service.d/dnsmasq.sh'
+    shouldExist: true
+    permissions: '-rw-rw-rw-'
+  - name: 'provisioning: postfix'
+    path: '/opt/docker/provision/service.d/postfix.sh'
+    shouldExist: true
+    permissions: '-rw-rw-rw-'
+  - name: 'provisioning: ssh'
+    path: '/opt/docker/provision/service.d/ssh.sh'
+    shouldExist: true
+    permissions: '-rw-rw-rw-'
+  - name: 'provisioning: syslog'
+    path: '/opt/docker/provision/service.d/syslog.sh'
+    shouldExist: false
+# base-app
+  - name: 'provision: add application user script was deleted after execution'
+    path: '/opt/docker/provision/bootstrap.d/10-user-application.sh'
+    shouldExist: false
+  - name: 'provision: set permission script was deleted after execution'
+    path: '/opt/docker/provision/bootstrap.d/20-app.sh'
+    shouldExist: false
+  - name: 'app folder exists'
+    path: '/app'
+    shouldExist: true
+    permissions: 'drwxr-xr-x'
+    uid: 1000
+    gid: 1000
+
+commandTests:
+# base
+  - name: "supervisord"
+    command: "which"
+    args: ["supervisord"]
+    expectedOutput: ["/usr/bin/supervisord"]
+  - name: "wget"
+    command: "which"
+    args: ["wget"]
+    expectedOutput: ["/usr/bin/wget"]
+  - name: "curl"
+    command: "which"
+    args: ["curl"]
+    expectedOutput: ["/usr/bin/curl"]
+  - name: "zic"
+    command: "which"
+    args: ["zic"]
+    expectedOutput: ["/usr/sbin/zic"]
+# base-app
+  - name: "application user and group exists"
+    command: "id"
+    args: ["application"]
+    expectedOutput: ['uid\=1000\(application\) gid\=1000\(application\) groups\=1000\(application\)']
+  - name: "zip"
+    command: "which"
+    args: ["zip"]
+    expectedOutput: ["/usr/bin/zip"]
+  - name: "unzip"
+    command: "which"
+    args: ["unzip"]
+    expectedOutput: ["/usr/bin/unzip"]
+  - name: "nslookup"
+    command: "which"
+    args: ["nslookup"]
+    expectedOutput: ["/usr/bin/nslookup"]
+  - name: "ssh"
+    command: "which"
+    args: ["ssh"]
+    expectedOutput: ["/usr/bin/ssh"]
+  - name: "rsync"
+    command: "which"
+    args: ["rsync"]
+    expectedOutput: ["/usr/bin/rsync"]
+  - name: "git"
+    command: "which"
+    args: ["git"]
+    expectedOutput: ["/usr/bin/git"]
+  - name: "patch"
+    command: "which"
+    args: ["patch"]
+    expectedOutput: ["/usr/bin/patch"]

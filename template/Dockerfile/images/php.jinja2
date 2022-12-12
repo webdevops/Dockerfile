@@ -59,14 +59,14 @@
     && curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-66-1/icu4c-66_1-src.tgz \
     && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu* \
     # Install extensions
-{%- if version != '7.4' and version != '8.0' %}
+{%- if version != '7.4' and version != '8.0' and version != '8.1' and version != '8.2' %}
     && docker-php-ext-configure intl --with-icu-dir=/usr/local \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
 {%- else %}
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
 {%- endif %}
-{%- if version == '8.0' %}
+{%- if version == '8.0' or version == '8.1' or version == '8.2' %}
     && git clone --branch master --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
@@ -75,10 +75,10 @@
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
         bcmath \
-{%- if version == '8.0' %}
+{%- if version == '8.0' or version == '8.1' or version == '8.2' %}
         amqp \
         imagick \
-{%- endif %}        
+{%- endif %}
         bz2 \
         calendar \
         exif \
@@ -90,7 +90,7 @@
         mcrypt \
 {%- endif %}
         imap \
-{%- if version != '7.4' and version != '8.0' %}
+{%- if version != '7.4' and version != '8.0' and version != '8.1' and version != '8.2' %}
         hash \
 {%- endif %}
         pcntl \
@@ -98,13 +98,15 @@
         pdo_pgsql \
         pgsql \
         soap \
-        sockets \
-        tokenizer \
+        sockets \       
+{%- if version != '8.1' and version != '8.2' %}  
+        tokenizer \       
+{%- endif %}
         sysvmsg \
         sysvsem \
         sysvshm \
         shmop \
-{%- if version != '8.0' %}
+{%- if version != '8.0' and version != '8.1' and version != '8.2' %}
         xmlrpc \
 {%- endif %}
         xsl \
@@ -124,12 +126,19 @@
     && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
-{%- elif version == '8.0' %}
+{%- elif version == '8.0' or version == '8.1' or version == '8.2' %}
     && pecl install memcached \
     && pecl install apcu \
+    && pecl install xmlrpc-1.0.0RC3 \
     && pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
+    && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
+    && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
+    && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
+    && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
+    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
+    && echo extension=xmlrpc.so > /usr/local/etc/php/conf.d/xmlrpc.ini \
 {%- else %}
     # Install extensions for PHP 7.x
     && pecl install apcu \
@@ -234,9 +243,12 @@
     && curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-66-1/icu4c-66_1-src.tgz \
     && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu* \
     # Install extensions
-{%- if version == '7.4' or version == '8.0' %}
+{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' %}
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
+    && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
+    && git clone --branch master --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
+    && cd /usr/src/php/ext/amqp && git submodule update --init \
 {%- else %}
     && docker-php-ext-configure intl --with-icu-dir=/usr/local \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
@@ -248,15 +260,17 @@
         bz2 \
         calendar \
         exif \
-{%- if version == '7.4' or version == '8.0' %}
+{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' %}
         ffi \
+        imagick \
+        amqp \
 {%- endif %}
         intl \
         gettext \
         ldap \
         mysqli \
         imap \
-{%- if version != '7.4' and version != '8.0' %}
+{%- if version != '7.4' and version != '8.0' and version != '8.1' and version != '8.2' %}
         hash \
 {%- endif %}
         pcntl \
@@ -265,12 +279,14 @@
         pgsql \
         soap \
         sockets \
+{%- if version != '8.1' and version != '8.2' %}        
         tokenizer \
+{%- endif %}        
         sysvmsg \
         sysvsem \
         sysvshm \
         shmop \
-{%- if version != '8.0' %}
+{%- if version != '8.0' and version != '8.1' and version != '8.2' %}
         xmlrpc \
 {%- endif %}
         xsl \
@@ -279,7 +295,7 @@
         gettext \
         opcache \
     # Install extensions for PHP 7.x
-    {%- if version == '7.3' or version == '7.4' or version == '8.0' %}
+    {%- if version == '7.3' or version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' %}
     # Memcached for 7.3 can currently only be built from master
     && MEMCACHED="`mktemp -d`" \
     && curl -skL https://github.com/php-memcached-dev/php-memcached/archive/master.tar.gz | tar zxf - --strip-components 1 -C $MEMCACHED \
@@ -290,35 +306,35 @@
     && printf "no --disable-memcached-sasl\n" | pecl install memcached-3.0.4 \
     && docker-php-ext-enable memcached \
     {%- endif %}
-{%- if version == '8.0' %}
+{%- if version == '8.0' or version == '8.1' or version == '8.2' %}
     && pecl install apcu \
     && pecl install vips \
     && pecl install yaml \
     && pecl install redis \
     && pecl install mongodb \
-    #&& pecl install imagick \
-    #&& pecl install amqp \
+    && pecl install xmlrpc-1.0.0RC3 \
     && docker-php-ext-enable \
         apcu \
         vips \
         yaml \
         redis \
-        #imagick \
+        xmlrpc \
+        imagick \
         mongodb \
-        #amqp \
 {%- else %}
     # Install vips (only works with PHP >= 7.0)
     && pecl install apcu \
     && printf "\n" | pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
+    {%- if version != '7.4' %}
     && pecl install imagick \
     && pecl install amqp \
+    {%- endif %}
     && pecl install yaml \
     && docker-php-ext-enable \
         apcu \
         redis \
-        imagick \
         mongodb \
         amqp \
         vips \
@@ -360,14 +376,14 @@
 
 {% macro officialDevelopment(role='', version='') -%}
     # Install development environment
-    && wget -q -O - https://packages.blackfire.io/gpg.key | apt-key add - \
-    && echo "deb https://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
-    && apt-install \
-        blackfire-php \
-        blackfire-agent \
+    && bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
+    && blackfire php:install \
+    && echo 'deb https://packages.tideways.com/apt-packages-main any-version main' | tee /etc/apt/sources.list.d/tideways.list \
+    && wget -qO - https://packages.tideways.com/key.gpg | apt-key add - \
+    && apt-install tideways-php tideways-daemon \
     {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
-    {%- elif version == '8.0' %}
+    {%- elif version == '8.0' or version == '8.1' or version == '8.2' %}
     && pecl install xdebug \
     {%- elif version == '7.0' or version == '7.1' %}
     && pecl install xdebug-2.8.1 \
@@ -380,14 +396,8 @@
 
 {% macro officialDevelopmentAlpine(role='', version='') -%}
     # Install development environment
-    {%- if version != '8.0' %}
-    && wget -q -O blackfire-agent https://packages.blackfire.io/binaries/blackfire-agent/1.34.0/blackfire-agent-linux_static_amd64 \
-    && mv blackfire-agent /usr/local/bin/ \
-    && chmod +x /usr/local/bin/blackfire-agent \
-    && wget -q -O blackfire.so https://packages.blackfire.io/binaries/blackfire-php/1.33.0/blackfire-php-alpine_amd64-php-{{ version|replace('.', '') }}.so \
-    && mv blackfire.so "$(php -r "echo ini_get('extension_dir');")/blackfire.so" \
-    && mkdir /var/run/blackfire/ \
-    {%- endif %}
+    && bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
+    && blackfire php:install \
     && apk-install \
         make \
         autoconf \
@@ -396,8 +406,6 @@
     && pecl install xdebug-2.5.5 \
     {%- elif version == '7.0' or version == '7.1' %}
     && pecl install xdebug-2.8.1 \
-    {%- elif version == '8.0' %}
-    && pecl install xdebug \
     {%- else %}
     && pecl install xdebug \
     {%- endif %}

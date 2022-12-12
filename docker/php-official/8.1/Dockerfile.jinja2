@@ -1,0 +1,37 @@
+
+{{ docker.fromOfficial("php", "8.1-fpm-buster") }}
+
+{{ docker.version() }}
+
+{{ environment.general() }}
+{{ environment.base() }}
+{{ environment.baseApp() }}
+{{ environment.phpOfficialSendmailWorkaround() }}
+{{ environment.phpComposerVersion() }}
+
+{{ baselayout.copy() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+RUN set -x \
+    {{ bootstrap.debian('buster') }}
+
+RUN set -x \
+    {{ base.debian() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
+
+RUN set -x \
+    {{ baseapp.debian() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
+
+RUN set -x \
+    {{ php.official(version='8.1') }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
+
+{{ docker.workdir('/') }}
+{{ docker.expose('9000') }}
+{{ docker.entrypoint("/entrypoint") }}
+{{ docker.cmd("supervisord") }}
