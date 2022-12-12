@@ -39,45 +39,35 @@ The following images are DEPRECATED and not longer built automatically:
 * `webdevops/php-nginx-dev:ubuntu-*`
 * `webdevops/php-nginx-dev:debian-*`
 
-You shall use the new images which are based on the official `php:7.(1|2|3|4)-fpm` images.
+Also only supported PHP versions are built automatically.
+
+You shall use the new images which are based on the official `php:(7|8).(0|1|2|3|4)-fpm` images.
 The official PHP images are based on debian.
 
-* `webdevops/php:5.6`
-* `webdevops/php:7.0`
-* `webdevops/php:7.1`
-* `webdevops/php:7.2`
-* `webdevops/php:7.3`
 * `webdevops/php:7.4`
-* `webdevops/php-dev:5.6`
-* `webdevops/php-dev:7.0`
-* `webdevops/php-dev:7.1`
-* `webdevops/php-dev:7.2`
-* `webdevops/php-dev:7.3`
+* `webdevops/php:8.0`
+* `webdevops/php:8.1`
+* `webdevops/php:8.2`
 * `webdevops/php-dev:7.4`
-* `webdevops/php-apache:5.6`
-* `webdevops/php-apache:7.0`
-* `webdevops/php-apache:7.1`
-* `webdevops/php-apache:7.2`
-* `webdevops/php-apache:7.3`
+* `webdevops/php-dev:8.0`
+* `webdevops/php-dev:8.1`
+* `webdevops/php-dev:8.2`
 * `webdevops/php-apache:7.4`
-* `webdevops/php-apache-dev:5.6`
-* `webdevops/php-apache-dev:7.0`
-* `webdevops/php-apache-dev:7.1`
-* `webdevops/php-apache-dev:7.2`
-* `webdevops/php-apache-dev:7.3`
+* `webdevops/php-apache:8.0`
+* `webdevops/php-apache:8.1`
+* `webdevops/php-apache:8.2`
 * `webdevops/php-apache-dev:7.4`
-* `webdevops/php-nginx:5.6`
-* `webdevops/php-nginx:7.0`
-* `webdevops/php-nginx:7.1`
-* `webdevops/php-nginx:7.2`
-* `webdevops/php-nginx:7.3`
+* `webdevops/php-apache-dev:8.0`
+* `webdevops/php-apache-dev:8.1`
+* `webdevops/php-apache-dev:8.2`
 * `webdevops/php-nginx:7.4`
-* `webdevops/php-nginx-dev:5.6`
-* `webdevops/php-nginx-dev:7.0`
-* `webdevops/php-nginx-dev:7.1`
-* `webdevops/php-nginx-dev:7.2`
-* `webdevops/php-nginx-dev:7.3`
+* `webdevops/php-nginx:8.0`
+* `webdevops/php-nginx:8.1`
+* `webdevops/php-nginx:8.2`
 * `webdevops/php-nginx-dev:7.4`
+* `webdevops/php-nginx-dev:8.0`
+* `webdevops/php-nginx-dev:8.1`
+* `webdevops/php-nginx-dev:8.2`
 
 
 ### Alpine PHP
@@ -105,29 +95,29 @@ The following images are DEPRECATED and not longer built automatically:
 
 You shall use the new images which are based on the official `php:7.(1|2|3|4)-fpm-alpine` images.
 
-* `webdevops/php:7.1-alpine`
-* `webdevops/php:7.2-alpine`
-* `webdevops/php:7.3-alpine`
 * `webdevops/php:7.4-alpine`
-* `webdevops/php-dev:7.1-alpine`
-* `webdevops/php-dev:7.2-alpine`
-* `webdevops/php-dev:7.3-alpine`
+* `webdevops/php:8.0-alpine`
+* `webdevops/php:8.1-alpine`
+* `webdevops/php:8.2-alpine`
 * `webdevops/php-dev:7.4-alpine`
-* `webdevops/php-apache:7.1-alpine`
-* `webdevops/php-apache:7.2-alpine`
-* `webdevops/php-apache:7.3-alpine`
+* `webdevops/php-dev:8.0-alpine`
+* `webdevops/php-dev:8.1-alpine`
+* `webdevops/php-dev:8.2-alpine`
 * `webdevops/php-apache:7.4-alpine`
-* `webdevops/php-apache-dev:7.1-alpine`
-* `webdevops/php-apache-dev:7.2-alpine`
-* `webdevops/php-apache-dev:7.3-alpine`
+* `webdevops/php-apache:8.0-alpine`
+* `webdevops/php-apache:8.1-alpine`
+* `webdevops/php-apache:8.2-alpine`
 * `webdevops/php-apache-dev:7.4-alpine`
-* `webdevops/php-nginx:7.1-alpine`
-* `webdevops/php-nginx:7.2-alpine`
-* `webdevops/php-nginx:7.3-alpine`
+* `webdevops/php-apache-dev:8.0-alpine`
+* `webdevops/php-apache-dev:8.1-alpine`
+* `webdevops/php-apache-dev:8.2-alpine`
 * `webdevops/php-nginx:7.4-alpine`
-* `webdevops/php-nginx-dev:7.1-alpine`
-* `webdevops/php-nginx-dev:7.2-alpine`
-* `webdevops/php-nginx-dev:7.3-alpine`
+* `webdevops/php-nginx:8.0-alpine`
+* `webdevops/php-nginx:8.1-alpine`
+* `webdevops/php-nginx:8.2-alpine`
 * `webdevops/php-nginx-dev:7.4-alpine`
+* `webdevops/php-nginx-dev:8.0-alpine`
+* `webdevops/php-nginx-dev:8.1-alpine`
+* `webdevops/php-nginx-dev:8.2-alpine`
 
 *We left out 7.0 because it would vary too much from the current versions*

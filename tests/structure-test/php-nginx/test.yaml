@@ -1,7 +1,7 @@
 schemaVersion: "2.0.0"
 
 metadataTest:
-  env:
+  envVars:
     - key: "WEB_DOCUMENT_ROOT"
       value: "/app"
     - key: "WEB_DOCUMENT_INDEX"
