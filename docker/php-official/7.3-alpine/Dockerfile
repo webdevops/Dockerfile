@@ -105,6 +105,7 @@ RUN set -x \
         libmemcached \
         yaml \
         # Build dependencies
+        linux-headers \
         autoconf \
         g++ \
         make \
@@ -199,6 +200,7 @@ RUN set -x \
     # Uninstall dev and header packages
     && apk del -f --purge \
         autoconf \
+        linux-headers \
         g++ \
         make \
         libtool \

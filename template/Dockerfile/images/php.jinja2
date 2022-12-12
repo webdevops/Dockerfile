@@ -206,6 +206,7 @@
         libmemcached \
         yaml \
         # Build dependencies
+        linux-headers \
         autoconf \
         g++ \
         make \
@@ -343,6 +344,7 @@
     # Uninstall dev and header packages
     && apk del -f --purge \
         autoconf \
+        linux-headers \
         g++ \
         make \
         libtool \
@@ -387,6 +389,8 @@
     && pecl install xdebug \
     {%- elif version == '7.0' or version == '7.1' %}
     && pecl install xdebug-2.8.1 \
+    {%- elif version == '7.4' %}
+    && pecl install xdebug-3.1.6 \
     {%- else %}
     && pecl install xdebug \
     {%- endif %}
@@ -406,6 +410,8 @@
     && pecl install xdebug-2.5.5 \
     {%- elif version == '7.0' or version == '7.1' %}
     && pecl install xdebug-2.8.1 \
+    {%- elif version == '7.4' %}
+    && pecl install xdebug-3.1.6 \
     {%- else %}
     && pecl install xdebug \
     {%- endif %}
