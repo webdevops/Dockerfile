@@ -1,7 +1,7 @@
 schemaVersion: "2.0.0"
 
 metadataTest:
-  env:
+  envVars:
     - key: "APPLICATION_USER"
       value: "application"
     - key: "APPLICATION_GROUP"

@@ -4,7 +4,7 @@ metadataTest:
 # base
   entrypoint: ["/entrypoint"]
   cmd: ["supervisord"]
-  env:
+  envVars:
   # bootstrap
     - key: "LC_ALL"
       value: "C.UTF-8"

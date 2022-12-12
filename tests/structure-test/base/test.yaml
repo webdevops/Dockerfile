@@ -3,7 +3,7 @@ schemaVersion: "2.0.0"
 metadataTest:
   entrypoint: ["/entrypoint"]
   cmd: ["supervisord"]
-  env:
+  envVars:
     - key: "DOCKER_CONF_HOME"
       value: "/opt/docker/"
     - key: "LOG_STDOUT"
