@@ -4,7 +4,7 @@
 #+++++++++++++++++++++++++++++++++++++++
 
 
-FROM php:8.2-rc-fpm-alpine
+FROM php:8.2-fpm-alpine
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \

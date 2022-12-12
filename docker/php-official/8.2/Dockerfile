@@ -4,7 +4,7 @@
 #+++++++++++++++++++++++++++++++++++++++
 
 
-FROM php:8.2-rc-fpm-buster
+FROM php:8.2-fpm-buster
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \

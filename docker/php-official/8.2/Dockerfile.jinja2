@@ -1,5 +1,5 @@
 
-{{ docker.fromOfficial("php", "8.2-rc-fpm-buster") }}
+{{ docker.fromOfficial("php", "8.2-fpm-buster") }}
 
 {{ docker.version() }}
 
@@ -27,7 +27,7 @@ RUN set -x \
     {{ docker.cleanup() }}
 
 RUN set -x \
-    {{ php.official(version='8.1') }} \
+    {{ php.official(version='8.2') }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 
