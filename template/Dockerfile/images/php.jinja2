@@ -403,6 +403,7 @@
     && bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
     && blackfire php:install \
     && apk-install \
+        linux-headers \
         make \
         autoconf \
         g++ \
@@ -417,6 +418,7 @@
     {%- endif %}
     && apk del -f --purge \
         autoconf \
+        linux-headers \
         g++ \
         make \
     && docker-php-ext-enable xdebug \
