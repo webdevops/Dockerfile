@@ -28,8 +28,8 @@ dockerTest:
   configuration:
     imageConfigurationRegex: ':(?P<OS_FAMILY>alpine|debian|ubuntu|centos)-?(?P<OS_VERSION>[^-]+)?'
     default:
-      OS_FAMILY: 'debian'
-      OS_VERSION: '11'
+      OS_FAMILY: 'ubuntu'
+      OS_VERSION: '22.04'
     image:
       'php[^:]*:[0-9].[0-9]-alpine$':
         OS_FAMILY: 'alpine'
