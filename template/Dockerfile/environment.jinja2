@@ -72,16 +72,3 @@ ENV APPLICATION_USER=application \
     APPLICATION_UID=1000 \
     APPLICATION_GID=1000
 {%- endmacro %}
-
-
-{% macro liquibase(version, driver, classpath) -%}
-ENV LIQUIBASE_VERSION="{{ version }}" \
-    LIQUIBASE_DRIVER="{{ driver }}" \
-    LIQUIBASE_CLASSPATH="{{ classpath }}" \
-    LIQUIBASE_URL="" \
-    LIQUIBASE_USERNAME="" \
-    LIQUIBASE_PASSWORD="" \
-    LIQUIBASE_CHANGELOG="liquibase.xml" \
-    LIQUIBASE_CONTEXTS="" \
-    LIQUIBASE_OPTS=""
-{%- endmacro %}

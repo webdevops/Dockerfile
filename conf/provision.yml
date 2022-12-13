@@ -13,29 +13,11 @@ provision:
       apache/general    : '*'
       apache/centos     : centos-*
       apache/alpine     : alpine
-  apache-dev:
-    configuration:
-      apache-dev/general: '*'
   nginx:
     configuration:
       nginx/general     : '*'
       nginx/centos      : centos-*
       nginx/alpine      : alpine
-  nginx-dev:
-    configuration:
-      nginx-dev/general : '*'
-  hhvm:
-    configuration:
-      hhvm/general      : '*'
-  hhvm-apache:
-    configuration:
-      apache/general      : '*'
-      hhvm-apache/general : '*'
-  hhvm-nginx:
-    configuration:
-      nginx/general     : '*'
-      nginx/centos      : centos-*
-      hhvm-nginx/general: '*'
   php:
     configuration:
       php/general       : '(debian|ubuntu|centos|alpine)'
@@ -75,29 +57,6 @@ provision:
       php/general        : '*'
       php/official       : '*'
       php/official-alpine: '*-alpine'
-  postfix:
-    configuration:
-      postfix/general   : '*'
-  mail-sandbox:
-    configuration:
-      mail-sandbox/general: '*'
   vsftp:
     configuration:
       vsftp/general     : '*'
-  typo3:
-    configuration:
-      typo3/general     : '*'
-  piwik:
-    configuration:
-      piwik/general     : '*'
-  varnish:
-    configuration:
-      varnish/general   : '*'
-  liquibase:
-    configuration:
-      liquibase/general   : '*'
-  samson-deployment:
-    configuration:
-      base/general      : latest
-      base-app/general  : latest
-      samson-deployment/general: latest

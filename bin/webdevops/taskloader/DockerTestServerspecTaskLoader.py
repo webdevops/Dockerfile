@@ -190,7 +190,6 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         ret['DOCKER_IMAGE'] = dockerfile['image']['fullname']
         ret['DOCKER_TAG'] = dockerfile['image']['tag']
         ret['DOCKERFILE'] = path
-        ret['DOCKER_IS_TOOLIMAGE'] = str(int(is_toolimage))
 
         return ret
 

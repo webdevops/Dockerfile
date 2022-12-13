@@ -80,10 +80,6 @@ class JobBuilder
             'echo "FROM ' . $node['id'] . '" >> ' . $testDockerfile,
             'echo "COPY conf/ /" >> ' . $testDockerfile,
         ];
-        if ($node['serverspec']['DOCKER_IS_TOOLIMAGE']) {
-            $script[] = 'echo "RUN chmod +x /loop-entrypoint.sh" >> ' . $testDockerfile;
-            $script[] = 'echo "ENTRYPOINT /loop-entrypoint.sh" >> ' . $testDockerfile;
-        }
         if ($node['image'] === 'varnish') {
             $script[] = 'echo "ENV VARNISH_BACKEND_HOST webdevops.io" >> ' . $testDockerfile;
         }

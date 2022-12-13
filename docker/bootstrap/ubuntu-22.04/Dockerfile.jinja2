@@ -1,0 +1,13 @@
+
+{{ docker.fromOfficial("ubuntu", "22.04") }}
+
+{{ docker.version() }}
+
+{{ environment.general() }}
+
+{{ baselayout.copy() }}
+
+RUN set -x \
+    {{ bootstrap.ubuntu() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}

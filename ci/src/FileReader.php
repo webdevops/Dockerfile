@@ -32,7 +32,6 @@ class FileReader
         $imageName = $headerMatches[1];
         $tagName = $headerMatches[2];
         $id = 'webdevops/' . $imageName . ':' . $tagName;
-        $isToolImage = in_array('/' . $imageName, $this->_settings['dockerTest']['toolImages']);
         $regex = '/' . $this->_settings['dockerTest']['configuration']['imageConfigurationRegex'] . '/';
         preg_match_all($regex, $id, $serverSpecMatches);
         $node = [
@@ -45,7 +44,6 @@ class FileReader
             'parent' => 0,
             'serverspec' => [
                 'DOCKER_IMAGE' => $id,
-                'DOCKER_IS_TOOLIMAGE' => $isToolImage ? '1' : '0',
                 'DOCKER_TAG' => $tagName,
                 'OS_FAMILY' => $serverSpecMatches['OS_FAMILY'][0] ?? $this->_settings['dockerTest']['configuration']['default']['OS_FAMILY'],
                 'OS_VERSION' => $serverSpecMatches['OS_VERSION'][0] ?? $this->_settings['dockerTest']['configuration']['default']['OS_VERSION'],

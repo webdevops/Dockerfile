@@ -12,7 +12,7 @@ blacklistFile: 'BLACKLIST'
 
 docker:
   imagePrefix: 'webdevops'
-  autoLatestTag: 'ubuntu-20.04'
+  autoLatestTag: 'ubuntu-22.04'
   pathRegex: '/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'
   autoPull: True
   autoPullBlacklist: '^webdevops/.*'
@@ -21,41 +21,16 @@ docker:
 graph:
     label: 'Webdevops Images\n%s'
 
-
 dockerTest:
-  toolImages:
-    - '/bootstrap'
-    - '/ansible'
-    - '/liquibase'
-    - '/certbot'
-
   serverspec:
     specPath: 'spec/docker/%s_spec.rb'
-
-  dockerfile:
-    '/varnish':
-      - 'ENV VARNISH_BACKEND_HOST webdevops.io'
 
   configuration:
     imageConfigurationRegex: ':(?P<OS_FAMILY>alpine|debian|ubuntu|centos)-?(?P<OS_VERSION>[^-]+)?'
     default:
-      OS_FAMILY: 'ubuntu'
-      OS_VERSION: '20.04'
+      OS_FAMILY: 'debian'
+      OS_VERSION: '11'
     image:
-      ':centos':
-        OS_FAMILY: 'redhat'
-      ':alpine':
-        OS_FAMILY: 'alpine'
-        OS_VERSION: '3'
-      ':ubuntu-12.04':
-        PHP_REDIS: '0'
-        PHP_APCU: '0'
-      ':debian-7':
-        PHP_REDIS: '0'
-        PHP_APCU: '0'
-      ':centos-7-php56':
-        PHP_APCU: '0'
-        PHP_REDIS: '0'
       'php[^:]*:[0-9].[0-9]-alpine$':
         OS_FAMILY: 'alpine'
         OS_VERSION: '3'
@@ -72,62 +47,3 @@ dockerTest:
         OS_FAMILY: 'debian'
         OS_VERSION: '10'
         PHP_OFFICIAL: '1'
-      '/liquibase':
-        OS_FAMILY: 'alpine'
-        OS_VERSION: '3'
-      '/certbot':
-        OS_FAMILY: 'alpine'
-        OS_VERSION: '3'
-      '/sphinx':
-        OS_FAMILY: 'alpine'
-        OS_VERSION: '3'
-      '/varnish':
-        OS_FAMILY: 'alpine'
-        OS_VERSION: '3'
-      '/samson-deployment':
-        OS_FAMILY: 'debian'
-        OS_VERSION: '9'
-      '/typo3-solr:3':
-        SOLR_VERSION: '4.10.4'
-        OS_FAMILY: 'arch'
-        OS_VERSION: ''
-      '/typo3-solr:4':
-        SOLR_VERSION: '4.10.4'
-        OS_FAMILY: 'arch'
-        OS_VERSION: ''
-      '/typo3-solr:5':
-        SOLR_VERSION: '4.10.4'
-        OS_FAMILY: 'arch'
-        OS_VERSION: ''
-      '/typo3-solr:6.0':
-        SOLR_VERSION: '6.3.0'
-        OS_FAMILY: 'debian'
-        OS_VERSION: '9'
-      '/typo3-solr:6.1':
-        SOLR_VERSION: '6.3.0'
-        OS_FAMILY: 'debian'
-        OS_VERSION: '9'
-      '/typo3-solr:6.5':
-        SOLR_VERSION: '6.6.2'
-        OS_FAMILY: 'debian'
-        OS_VERSION: '9'
-      '/typo3-solr:7.0':
-        SOLR_VERSION: '6.3.0'
-        OS_FAMILY: 'debian'
-        OS_VERSION: '9'
-      '/typo3-solr:7.5':
-        SOLR_VERSION: '6.6.2'
-        OS_FAMILY: 'debian'
-        OS_VERSION: '9'
-      '/typo3-solr:8.0':
-        SOLR_VERSION: '6.6.2'
-        OS_FAMILY: 'debian'
-        OS_VERSION: '9'
-      '/typo3-solr:8.1':
-        SOLR_VERSION: '6.6.3'
-        OS_FAMILY: 'debian'
-        OS_VERSION: '9'
-      '/typo3-solr:latest':
-        SOLR_VERSION: '6.6.3'
-        OS_FAMILY: 'debian'
-        OS_VERSION: '9'

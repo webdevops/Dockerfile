@@ -5,33 +5,15 @@
 {% import 'Dockerfile/tools.jinja2'       as tools %}
 {% import 'Dockerfile/baselayout.jinja2'  as baselayout %}
 
-{% import 'Dockerfile/images/ansible.jinja2'            as ansible %}
 {% import 'Dockerfile/images/bootstrap.jinja2'          as bootstrap %}
 {% import 'Dockerfile/images/base.jinja2'               as base %}
 {% import 'Dockerfile/images/baseapp.jinja2'            as baseapp %}
 {% import 'Dockerfile/images/apache.jinja2'             as apache %}
-{% import 'Dockerfile/images/apache-dev.jinja2'         as apachedev %}
 {% import 'Dockerfile/images/nginx.jinja2'              as nginx %}
-{% import 'Dockerfile/images/nginx-dev.jinja2'          as nginxdev %}
-{% import 'Dockerfile/images/hhvm.jinja2'               as hhvm %}
-{% import 'Dockerfile/images/postfix.jinja2'            as postfix %}
-{% import 'Dockerfile/images/liquidsoap.jinja2'         as liquidsoap %}
-{% import 'Dockerfile/images/mail-sandbox.jinja2'       as mailsandbox %}
 {% import 'Dockerfile/images/php.jinja2'                as php %}
-{% import 'Dockerfile/images/php5.jinja2'               as php5 %}
-{% import 'Dockerfile/images/php7.jinja2'               as php7 %}
-{% import 'Dockerfile/images/php5-dev.jinja2'           as php5dev %}
-{% import 'Dockerfile/images/php7-dev.jinja2'           as php7dev %}
-{% import 'Dockerfile/images/piwik.jinja2'              as piwik %}
-{% import 'Dockerfile/images/sphinx.jinja2'             as sphinx %}
 {% import 'Dockerfile/images/ssh.jinja2'                as ssh %}
 {% import 'Dockerfile/images/vsftp.jinja2'              as vsftp %}
-{% import 'Dockerfile/images/samson-deployment.jinja2'  as samsonDeployment %}
-{% import 'Dockerfile/images/typo3.jinja2'              as typo3 %}
-{% import 'Dockerfile/images/typo3-solr.jinja2'         as typo3Solr %}
-{% import 'Dockerfile/images/varnish.jinja2'            as varnish %}
-{% import 'Dockerfile/images/certbot.jinja2'            as certbot %}
-{% import 'Dockerfile/images/liquibase.jinja2'          as liquibase %}
+
 #+++++++++++++++++++++++++++++++++++++++
 # Dockerfile for webdevops/{{ Dockerfile.image }}:{{ Dockerfile.tag }}
 #    -- automatically generated  --

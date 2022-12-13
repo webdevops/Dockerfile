@@ -106,39 +106,6 @@ diagram:
           fillcolor: "#78c445"
       docker:
         - webdevops/php.*-dev
-    hhvm:
-      name: HHVM images
-      rank: 3
-      styles:
-        graph:
-          style: filled
-          fillcolor: "#c1c3f2"
-        nodes:
-          fontname: Helvetica
-          shape: box
-          fontcolor: black
-          color: black
-          style: filled
-          fillcolor: "#7f84f1"
-      docker:
-        - webdevops/hhvm.*
-    application:
-      name: Application images
-      rank: 3
-      styles:
-        graph:
-          style: filled
-          fillcolor: "#f2e3b5"
-        nodes:
-          fontname: Helvetica
-          shape: box
-          fontcolor: black
-          color: black
-          style: filled
-          fillcolor: "#e5b931"
-      docker:
-        - webdevops/typo3
-        - webdevops/piwik
     service:
       name: Service images
       rank: 3
@@ -154,29 +121,7 @@ diagram:
           style: filled
           fillcolor: "#ffa35f"
       docker:
-        - webdevops/apache.*
-        - webdevops/nginx.*
+        - webdevops/apache
+        - webdevops/nginx
         - webdevops/ssh
         - webdevops/vsftp
-        - webdevops/postfix
-        - webdevops/mail-sandbox
-        - webdevops/varnish
-        - webdevops/samson-deployment
-    tools:
-      name: Tools images
-      rank: 3
-      styles:
-        graph:
-          style: filled
-          fillcolor: "#c0e5a8"
-        nodes:
-          fontname: Helvetica
-          shape: box
-          fontcolor: black
-          color: black
-          style: filled
-          fillcolor: "#78c445"
-      docker:
-        - webdevops/sphinx
-        - webdevops/certbot
-        - webdevops/liquibase

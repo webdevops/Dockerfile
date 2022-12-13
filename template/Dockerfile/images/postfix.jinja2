@@ -1,7 +1,0 @@
-{% import 'Dockerfile/docker.jinja2' as docker %}
-{% import 'Dockerfile/provision.jinja2' as provision %}
-
-{% macro ubuntu(role='') -%}
-    && docker-service enable syslog \
-    && docker-service enable postfix
-{%- endmacro %}

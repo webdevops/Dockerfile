@@ -66,6 +66,3 @@ documentation:
 		-e "VIRTUAL_PORT=8000" \
 		webdevops/sphinx sphinx-autobuild \
 		--poll -H 0.0.0.0 /opt/docs html
-
-webdevops/%:
-	python2 ./bin/console docker:build --threads=auto --whitelist=$@
