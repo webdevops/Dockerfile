@@ -80,9 +80,6 @@ class JobBuilder
             'echo "FROM ' . $node['id'] . '" >> ' . $testDockerfile,
             'echo "COPY conf/ /" >> ' . $testDockerfile,
         ];
-        if ($node['image'] === 'varnish') {
-            $script[] = 'echo "ENV VARNISH_BACKEND_HOST webdevops.io" >> ' . $testDockerfile;
-        }
         $script[] = 'bundle install';
         $script[] = 'bash serverspec.sh ' . $specFile . ' ' . $node['id'] .' ' . $encodedJsonConfig  . '  ' . $testDockerfile;
         return $script;
