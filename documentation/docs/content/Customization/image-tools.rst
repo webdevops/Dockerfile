@@ -33,7 +33,7 @@ Because this comand is run in shell mode make sure you add appropriate quotes to
 docker-provision
 ----------------
 
-The `docker-provision` script crontols the ansible provision system. See provision for more details.
+The `docker-provision` script controls the ansible provision system. See provision for more details.
 
 (Will be replaced in future)
 
