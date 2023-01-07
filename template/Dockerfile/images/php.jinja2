@@ -49,6 +49,7 @@
         libvips-dev \
         librabbitmq-dev \
         libmagick++-dev \
+        libgmp-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -82,6 +83,7 @@
         bz2 \
         calendar \
         exif \
+        gmp \
         intl \
         gettext \
         ldap \
@@ -176,6 +178,7 @@
         libvips-dev \
         librabbitmq-dev \
         libmagick++-dev \
+        libgmp-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
@@ -214,6 +217,7 @@
         pcre-dev \
         gettext-dev \
         freetype-dev \
+        libgmp-dev \
         libjpeg-turbo-dev \
         libpng-dev \
         vips-dev \
@@ -261,6 +265,7 @@
         bz2 \
         calendar \
         exif \
+        gmp \
 {%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' %}
         ffi \
         imagick \
@@ -351,6 +356,7 @@
         pcre-dev \
         gettext-dev \
         freetype-dev \
+        libgmp-dev \
         libjpeg-turbo-dev \
         libpng-dev \
         vips-dev \
