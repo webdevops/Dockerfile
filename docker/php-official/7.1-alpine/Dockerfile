@@ -113,6 +113,7 @@ RUN set -x \
         pcre-dev \
         gettext-dev \
         freetype-dev \
+        gmp-dev \
         libjpeg-turbo-dev \
         libpng-dev \
         vips-dev \
@@ -152,6 +153,7 @@ RUN set -x \
         bz2 \
         calendar \
         exif \
+        gmp \
         intl \
         gettext \
         ldap \
@@ -203,6 +205,7 @@ RUN set -x \
         pcre-dev \
         gettext-dev \
         freetype-dev \
+        gmp-dev \
         libjpeg-turbo-dev \
         libpng-dev \
         vips-dev \

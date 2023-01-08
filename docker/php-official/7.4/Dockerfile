@@ -127,6 +127,7 @@ RUN set -x \
         libvips-dev \
         librabbitmq-dev \
         libmagick++-dev \
+        libgmp-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -146,6 +147,7 @@ RUN set -x \
         bz2 \
         calendar \
         exif \
+        gmp \
         intl \
         gettext \
         ldap \
@@ -203,6 +205,7 @@ RUN set -x \
         libvips-dev \
         librabbitmq-dev \
         libmagick++-dev \
+        libgmp-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
