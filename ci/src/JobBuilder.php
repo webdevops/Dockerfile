@@ -21,9 +21,6 @@ class JobBuilder
                 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY',
             ],
             'image' => 'webdevops/dockerfile-build-env',
-            'variables' => [
-                'DOCKER_BUILDKIT' => '1',
-            ],
             'script' => [],
 //            'retry' => 2,
             'tags' => ['aws'],

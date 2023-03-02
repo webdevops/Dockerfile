@@ -10,8 +10,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/toolbox/latest'
     - 'docker build --no-cache -t webdevops/toolbox:latest .'
@@ -26,8 +24,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/storage/latest'
     - 'docker build --no-cache -t webdevops/storage:latest .'
@@ -44,8 +40,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/bootstrap/ubuntu-22.04'
     - 'docker build --no-cache -t webdevops/bootstrap:ubuntu-22.04 .'
@@ -71,8 +65,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/base/ubuntu-22.04'
     - 'docker build --no-cache -t webdevops/base:ubuntu-22.04 .'
@@ -98,8 +90,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/base-app/ubuntu-22.04'
     - 'docker build --no-cache -t webdevops/base-app:ubuntu-22.04 .'
@@ -125,8 +115,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/dockerfile-build-env/latest'
     - 'docker build --no-cache -t webdevops/dockerfile-build-env:latest .'
@@ -143,8 +131,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/vsftp/latest'
     - 'docker build --no-cache -t webdevops/vsftp:latest .'
@@ -166,8 +152,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/bootstrap/alpine'
     - 'docker build --no-cache -t webdevops/bootstrap:alpine .'
@@ -191,8 +175,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/base/alpine'
     - 'docker build --no-cache -t webdevops/base:alpine .'
@@ -216,8 +198,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/base-app/alpine'
     - 'docker build --no-cache -t webdevops/base-app:alpine .'
@@ -241,8 +221,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/nginx/alpine'
     - 'docker build --no-cache -t webdevops/nginx:alpine .'
@@ -264,8 +242,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/apache/alpine'
     - 'docker build --no-cache -t webdevops/apache:alpine .'
@@ -287,8 +263,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-official/8.1'
     - 'docker build --no-cache -t webdevops/php:8.1 .'
@@ -314,8 +288,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache/8.1'
     - 'docker build --no-cache -t webdevops/php-apache:8.1 .'
@@ -337,8 +309,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache-dev/8.1'
     - 'docker build --no-cache -t webdevops/php-apache-dev:8.1 .'
@@ -360,8 +330,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx/8.1'
     - 'docker build --no-cache -t webdevops/php-nginx:8.1 .'
@@ -385,8 +353,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx-dev/8.1'
     - 'docker build --no-cache -t webdevops/php-nginx-dev:8.1 .'
@@ -408,8 +374,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-dev/8.1'
     - 'docker build --no-cache -t webdevops/php-dev:8.1 .'
@@ -433,8 +397,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-official/7.4-alpine'
     - 'docker build --no-cache -t webdevops/php:7.4-alpine .'
@@ -460,8 +422,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache/7.4-alpine'
     - 'docker build --no-cache -t webdevops/php-apache:7.4-alpine .'
@@ -483,8 +443,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache-dev/7.4-alpine'
     - 'docker build --no-cache -t webdevops/php-apache-dev:7.4-alpine .'
@@ -506,8 +464,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx/7.4-alpine'
     - 'docker build --no-cache -t webdevops/php-nginx:7.4-alpine .'
@@ -531,8 +487,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx-dev/7.4-alpine'
     - 'docker build --no-cache -t webdevops/php-nginx-dev:7.4-alpine .'
@@ -554,8 +508,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-dev/7.4-alpine'
     - 'docker build --no-cache -t webdevops/php-dev:7.4-alpine .'
@@ -579,8 +531,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-official/7.4'
     - 'docker build --no-cache -t webdevops/php:7.4 .'
@@ -606,8 +556,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache/7.4'
     - 'docker build --no-cache -t webdevops/php-apache:7.4 .'
@@ -629,8 +577,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache-dev/7.4'
     - 'docker build --no-cache -t webdevops/php-apache-dev:7.4 .'
@@ -652,8 +598,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx/7.4'
     - 'docker build --no-cache -t webdevops/php-nginx:7.4 .'
@@ -677,8 +621,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx-dev/7.4'
     - 'docker build --no-cache -t webdevops/php-nginx-dev:7.4 .'
@@ -700,8 +642,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-dev/7.4'
     - 'docker build --no-cache -t webdevops/php-dev:7.4 .'
@@ -725,8 +665,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-official/8.2-alpine'
     - 'docker build --no-cache -t webdevops/php:8.2-alpine .'
@@ -752,8 +690,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache/8.2-alpine'
     - 'docker build --no-cache -t webdevops/php-apache:8.2-alpine .'
@@ -775,8 +711,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache-dev/8.2-alpine'
     - 'docker build --no-cache -t webdevops/php-apache-dev:8.2-alpine .'
@@ -798,8 +732,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx/8.2-alpine'
     - 'docker build --no-cache -t webdevops/php-nginx:8.2-alpine .'
@@ -823,8 +755,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx-dev/8.2-alpine'
     - 'docker build --no-cache -t webdevops/php-nginx-dev:8.2-alpine .'
@@ -846,8 +776,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-dev/8.2-alpine'
     - 'docker build --no-cache -t webdevops/php-dev:8.2-alpine .'
@@ -871,8 +799,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-official/8.1-alpine'
     - 'docker build --no-cache -t webdevops/php:8.1-alpine .'
@@ -898,8 +824,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache/8.1-alpine'
     - 'docker build --no-cache -t webdevops/php-apache:8.1-alpine .'
@@ -921,8 +845,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache-dev/8.1-alpine'
     - 'docker build --no-cache -t webdevops/php-apache-dev:8.1-alpine .'
@@ -944,8 +866,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx/8.1-alpine'
     - 'docker build --no-cache -t webdevops/php-nginx:8.1-alpine .'
@@ -969,8 +889,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx-dev/8.1-alpine'
     - 'docker build --no-cache -t webdevops/php-nginx-dev:8.1-alpine .'
@@ -992,8 +910,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-dev/8.1-alpine'
     - 'docker build --no-cache -t webdevops/php-dev:8.1-alpine .'
@@ -1017,8 +933,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-official/8.2'
     - 'docker build --no-cache -t webdevops/php:8.2 .'
@@ -1044,8 +958,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache/8.2'
     - 'docker build --no-cache -t webdevops/php-apache:8.2 .'
@@ -1067,8 +979,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache-dev/8.2'
     - 'docker build --no-cache -t webdevops/php-apache-dev:8.2 .'
@@ -1090,8 +1000,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx/8.2'
     - 'docker build --no-cache -t webdevops/php-nginx:8.2 .'
@@ -1115,8 +1023,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx-dev/8.2'
     - 'docker build --no-cache -t webdevops/php-nginx-dev:8.2 .'
@@ -1138,8 +1044,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-dev/8.2'
     - 'docker build --no-cache -t webdevops/php-dev:8.2 .'
@@ -1163,8 +1067,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-official/8.0-alpine'
     - 'docker build --no-cache -t webdevops/php:8.0-alpine .'
@@ -1190,8 +1092,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache/8.0-alpine'
     - 'docker build --no-cache -t webdevops/php-apache:8.0-alpine .'
@@ -1213,8 +1113,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache-dev/8.0-alpine'
     - 'docker build --no-cache -t webdevops/php-apache-dev:8.0-alpine .'
@@ -1236,8 +1134,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx/8.0-alpine'
     - 'docker build --no-cache -t webdevops/php-nginx:8.0-alpine .'
@@ -1261,8 +1157,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx-dev/8.0-alpine'
     - 'docker build --no-cache -t webdevops/php-nginx-dev:8.0-alpine .'
@@ -1284,8 +1178,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-dev/8.0-alpine'
     - 'docker build --no-cache -t webdevops/php-dev:8.0-alpine .'
@@ -1309,8 +1201,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-official/8.0'
     - 'docker build --no-cache -t webdevops/php:8.0 .'
@@ -1336,8 +1226,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache/8.0'
     - 'docker build --no-cache -t webdevops/php-apache:8.0 .'
@@ -1359,8 +1247,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-apache-dev/8.0'
     - 'docker build --no-cache -t webdevops/php-apache-dev:8.0 .'
@@ -1382,8 +1268,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx/8.0'
     - 'docker build --no-cache -t webdevops/php-nginx:8.0 .'
@@ -1407,8 +1291,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-nginx-dev/8.0'
     - 'docker build --no-cache -t webdevops/php-nginx-dev:8.0 .'
@@ -1430,8 +1312,6 @@ stages:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
-  variables:
-    DOCKER_BUILDKIT: '1'
   script:
     - 'cd docker/php-dev/8.0'
     - 'docker build --no-cache -t webdevops/php-dev:8.0 .'
