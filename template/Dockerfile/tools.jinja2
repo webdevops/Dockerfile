@@ -1,11 +1,11 @@
-{% macro goreplace(path="/usr/local/bin", version="1.1.2") -%}
+{% macro goreplace(path="/usr/local/bin", version="22.10.0") -%}
     ## Install go-replace
-    && wget -O "{{ path }}/go-replace" "https://github.com/webdevops/goreplace/releases/download/{{ version }}/gr-64-linux" \
+    && wget -O "{{ path }}/go-replace" "https://github.com/webdevops/go-replace/releases/download/{{ version }}/go-replace.linux.amd64" \
     && chmod +x "{{ path }}/go-replace" \
     && "{{ path }}/go-replace" --version
 {%- endmacro %}
 
-{% macro gosu(path="/sbin", arch="amd64", version="1.10") -%}
+{% macro gosu(path="/sbin", arch="amd64", version="1.16") -%}
     # Install gosu
     && wget -O "{{ path }}/gosu" "https://github.com/tianon/gosu/releases/download/{{ version }}/gosu-{{ arch }}" \
     && wget -O "/tmp/gosu.asc" "https://github.com/tianon/gosu/releases/download/{{ version }}/gosu-{{ arch }}.asc" \
