@@ -34,8 +34,8 @@ RUN apk add --no-cache \
     && "/baselayout/usr/local/bin/go-replace" --version \
         && ln -s /baselayout/usr/local/bin/go-replace /usr/local/bin/ \
         # Install gosu
-    && wget -O "/baselayout/sbin/gosu" "https://github.com/tianon/gosu/releases/download/1.16/gosu-amd64" \
-    && wget -O "/tmp/gosu.asc" "https://github.com/tianon/gosu/releases/download/1.16/gosu-amd64.asc" \
+    && wget -O "/baselayout/sbin/gosu" "https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64" \
+    && wget -O "/tmp/gosu.asc" "https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
     && gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
     && gpg --batch --verify /tmp/gosu.asc "/baselayout/sbin/gosu" \

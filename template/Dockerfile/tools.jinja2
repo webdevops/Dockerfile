@@ -5,7 +5,7 @@
     && "{{ path }}/go-replace" --version
 {%- endmacro %}
 
-{% macro gosu(path="/sbin", arch="amd64", version="1.16") -%}
+{% macro gosu(path="/sbin", arch="amd64", version="1.10") -%}
     # Install gosu
     && wget -O "{{ path }}/gosu" "https://github.com/tianon/gosu/releases/download/{{ version }}/gosu-{{ arch }}" \
     && wget -O "/tmp/gosu.asc" "https://github.com/tianon/gosu/releases/download/{{ version }}/gosu-{{ arch }}.asc" \
