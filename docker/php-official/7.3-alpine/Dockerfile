@@ -101,6 +101,7 @@ RUN set -x \
         libintl \
         libpq \
         libxslt \
+        libgomp \
         libzip \
         libmemcached \
         yaml \
