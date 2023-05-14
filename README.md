@@ -20,6 +20,8 @@ Automated build and test running on [Gitlab CI](https://gitlab.com/webdevops/doc
 
 Or write an issue in our [GitHub repository](https://github.com/webdevops/Dockerfile/issues).
 
+Or join our discord https://discord.gg/gnYPfZhX
+
 ## Build process
 
 ### File generation
@@ -38,6 +40,7 @@ config files from the `provisioning` directory.
 **The files in the `docker` directory are never modified manually**
 
 *This will be replaced with PHP twig templates in the future to streamline everything.*
+
 ### Building in CI
 
 We generate a multi stage Gitlab-CI configuration using PHP:
