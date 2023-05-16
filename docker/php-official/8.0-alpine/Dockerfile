@@ -22,7 +22,7 @@ ENV APPLICATION_USER=application \
     APPLICATION_PATH=/app \
     APPLICATION_UID=1000 \
     APPLICATION_GID=1000
-ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i" 
+ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"
 ENV LD_PRELOAD="/usr/lib/preloadable_libiconv.so"
 ENV COMPOSER_VERSION="2"
 
@@ -142,7 +142,7 @@ RUN set -x \
     # https://github.com/docker-library/php/issues/240
     && apk add gnu-libiconv --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --allow-untrusted \
     # Install new version of ICU
-    && curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-73-1/icu4c-73_1-src.tgz
+    && curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-73-1/icu4c-73_1-src.tgz \
     && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu* \
     # Install extensions
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
@@ -171,8 +171,8 @@ RUN set -x \
         pdo_pgsql \
         pgsql \
         soap \
-        sockets \        
-        tokenizer \        
+        sockets \
+        tokenizer \
         sysvmsg \
         sysvsem \
         sysvshm \
