@@ -6,4 +6,4 @@ This image has two directories for configuration files which will be automatic l
 For global configuration options the directory ``/opt/docker/etc/nginx/conf.d`` can be used.
 For vhost configuration options the directory ``/opt/docker/etc/nginx/vhost.common.conf`` can be used.
 
-Any ``*.conf`` files inside these direcories will be included either global or the vhost section.
+Any ``*.conf`` files inside these directories will be included either global or the vhost section.
