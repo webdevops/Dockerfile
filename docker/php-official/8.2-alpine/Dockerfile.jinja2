@@ -15,7 +15,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ bootstrap.alpine('3.12') }}
+    {{ bootstrap.alpine('3.18') }}
 
 RUN set -x \
     {{ base.alpine() }} \
@@ -28,7 +28,7 @@ RUN set -x \
     {{ docker.cleanup() }}
 
 RUN set -x \
-    {{ php.officialAlpine(version='8.1') }} \
+    {{ php.officialAlpine(version='8.2') }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 

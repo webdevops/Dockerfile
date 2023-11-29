@@ -38,7 +38,7 @@ RUN set -x \
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
-    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list \
+    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list \    
     && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \
@@ -96,10 +96,10 @@ RUN set -x \
         pngquant \
         # Libraries
         libvips42 \
-        librabbitmq4 \
+        librabbitmq4 \        
         libldap-2.4-2 \
-        libxslt1.1 \
         zlibc \
+        libxslt1.1 \
         zlib1g \
         libpq5 \
         libpng16-16 \

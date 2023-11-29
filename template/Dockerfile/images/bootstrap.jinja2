@@ -35,7 +35,11 @@
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
+{%- if distribution == 'bookworm' %}
+    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list.d/debian.sources \
+{%- else %}
     && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list \
+{%- endif %}    
     && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \

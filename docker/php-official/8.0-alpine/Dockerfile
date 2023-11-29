@@ -22,7 +22,7 @@ ENV APPLICATION_USER=application \
     APPLICATION_PATH=/app \
     APPLICATION_UID=1000 \
     APPLICATION_GID=1000
-ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"
+ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i" 
 ENV LD_PRELOAD="/usr/lib/preloadable_libiconv.so"
 ENV COMPOSER_VERSION="2"
 
@@ -37,7 +37,7 @@ COPY conf/ /opt/docker/
 RUN set -x \
     # Init bootstrap
     # Add community
-    && echo https://dl-4.alpinelinux.org/alpine/v3.12/community/ >> /etc/apk/repositories \
+    && echo https://dl-4.alpinelinux.org/alpine/v3.16/community/ >> /etc/apk/repositories \
     # System update
     && /usr/local/bin/apk-upgrade \
     # Install base stuff

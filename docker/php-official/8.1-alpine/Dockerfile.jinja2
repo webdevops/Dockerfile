@@ -15,7 +15,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ bootstrap.alpine('3.12') }}
+    {{ bootstrap.alpine('3.18') }}
 
 RUN set -x \
     {{ base.alpine() }} \
