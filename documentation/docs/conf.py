@@ -63,7 +63,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Dockerfile Documentation'
-copyright = u'2016, Team WebDevOps'
+copyright = u'2016-2023, Team WebDevOps'
 author = u'Team WebDevOps'
 
 # The version info for the project you're documenting, acts as replacement for
