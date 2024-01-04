@@ -18,6 +18,117 @@ stages:
     - 'docker push $CI_REGISTRY_IMAGE/toolbox:latest'
   tags:
     - aws
+'webdevops/bootstrap:alpine':
+  stage: level2
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/bootstrap/alpine'
+    - 'docker build --no-cache -t webdevops/bootstrap:alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/bootstrap:alpine" >> Dockerfile_65969e81a9fbe7.15220176'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81a9fbe7.15220176'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/bootstrap_spec.rb webdevops/bootstrap:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jvb3RzdHJhcDphbHBpbmUiLCJET0NLRVJfVEFHIjoiYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IiIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYTlmYmU3LjE1MjIwMTc2In0=  Dockerfile_65969e81a9fbe7.15220176'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/bootstrap:alpine --config bootstrap/test.yaml --config bootstrap/alpine/test.yaml'
+    - 'docker push webdevops/bootstrap:alpine'
+    - 'docker tag webdevops/bootstrap:alpine $CI_REGISTRY_IMAGE/bootstrap:alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/bootstrap:alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/toolbox:latest'
+'webdevops/base:alpine':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/base/alpine'
+    - 'docker build --no-cache -t webdevops/base:alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/base:alpine" >> Dockerfile_65969e81a9fe36.86754873'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81a9fe36.86754873'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/base_spec.rb webdevops/base:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2U6YWxwaW5lIiwiRE9DS0VSX1RBRyI6ImFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWE5ZmUzNi44Njc1NDg3MyJ9  Dockerfile_65969e81a9fe36.86754873'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/base:alpine --config base/test.yaml --config base/alpine/test.yaml'
+    - 'docker push webdevops/base:alpine'
+    - 'docker tag webdevops/base:alpine $CI_REGISTRY_IMAGE/base:alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/base:alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/bootstrap:alpine'
+'webdevops/nginx:alpine':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/nginx/alpine'
+    - 'docker build --no-cache -t webdevops/nginx:alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/nginx:alpine" >> Dockerfile_65969e81a9ffb3.78311157'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81a9ffb3.78311157'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/nginx_spec.rb webdevops/nginx:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL25naW54OmFscGluZSIsIkRPQ0tFUl9UQUciOiJhbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhOWZmYjMuNzgzMTExNTcifQ==  Dockerfile_65969e81a9ffb3.78311157'
+    - 'docker push webdevops/nginx:alpine'
+    - 'docker tag webdevops/nginx:alpine $CI_REGISTRY_IMAGE/nginx:alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/nginx:alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/base:alpine'
+'webdevops/apache:alpine':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/apache/alpine'
+    - 'docker build --no-cache -t webdevops/apache:alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/apache:alpine" >> Dockerfile_65969e81aa0137.94179778'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa0137.94179778'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/apache_spec.rb webdevops/apache:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2FwYWNoZTphbHBpbmUiLCJET0NLRVJfVEFHIjoiYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IiIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWEwMTM3Ljk0MTc5Nzc4In0=  Dockerfile_65969e81aa0137.94179778'
+    - 'docker push webdevops/apache:alpine'
+    - 'docker tag webdevops/apache:alpine $CI_REGISTRY_IMAGE/apache:alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/apache:alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/base:alpine'
+'webdevops/base-app:alpine':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/base-app/alpine'
+    - 'docker build --no-cache -t webdevops/base-app:alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/base-app:alpine" >> Dockerfile_65969e81aa0323.30434210'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa0323.30434210'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/base-app_spec.rb webdevops/base-app:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2UtYXBwOmFscGluZSIsIkRPQ0tFUl9UQUciOiJhbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTAzMjMuMzA0MzQyMTAifQ==  Dockerfile_65969e81aa0323.30434210'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/base-app:alpine --config base-app/test.yaml --config base-app/alpine/test.yaml'
+    - 'docker push webdevops/base-app:alpine'
+    - 'docker tag webdevops/base-app:alpine $CI_REGISTRY_IMAGE/base-app:alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/base-app:alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/base:alpine'
 'webdevops/bootstrap:ubuntu-22.04':
   stage: level2
   before_script:
@@ -28,10 +139,10 @@ stages:
     - 'cd docker/bootstrap/ubuntu-22.04'
     - 'docker build --no-cache -t webdevops/bootstrap:ubuntu-22.04 .'
     - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/bootstrap:ubuntu-22.04" >> Dockerfile_65677b23e6c259.26525060'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6c259.26525060'
+    - 'echo "FROM webdevops/bootstrap:ubuntu-22.04" >> Dockerfile_65969e81aa05b0.92099237'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa05b0.92099237'
     - 'bundle install'
-    - 'bash serverspec.sh spec/docker/bootstrap_spec.rb webdevops/bootstrap:ubuntu-22.04 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jvb3RzdHJhcDp1YnVudHUtMjIuMDQiLCJET0NLRVJfVEFHIjoidWJ1bnR1LTIyLjA0IiwiT1NfRkFNSUxZIjoidWJ1bnR1IiwiT1NfVkVSU0lPTiI6IjIyLjA0IiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNmMyNTkuMjY1MjUwNjAifQ==  Dockerfile_65677b23e6c259.26525060'
+    - 'bash serverspec.sh spec/docker/bootstrap_spec.rb webdevops/bootstrap:ubuntu-22.04 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jvb3RzdHJhcDp1YnVudHUtMjIuMDQiLCJET0NLRVJfVEFHIjoidWJ1bnR1LTIyLjA0IiwiT1NfRkFNSUxZIjoidWJ1bnR1IiwiT1NfVkVSU0lPTiI6IjIyLjA0IiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTA1YjAuOTIwOTkyMzcifQ==  Dockerfile_65969e81aa05b0.92099237'
     - 'cd $CI_PROJECT_DIR/tests/structure-test'
     - '/usr/local/bin/container-structure-test test --image webdevops/bootstrap:ubuntu-22.04 --config bootstrap/test.yaml'
     - 'docker push webdevops/bootstrap:ubuntu-22.04'
@@ -53,10 +164,10 @@ stages:
     - 'cd docker/base/ubuntu-22.04'
     - 'docker build --no-cache -t webdevops/base:ubuntu-22.04 .'
     - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/base:ubuntu-22.04" >> Dockerfile_65677b23e6c552.17410451'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6c552.17410451'
+    - 'echo "FROM webdevops/base:ubuntu-22.04" >> Dockerfile_65969e81aa0759.94045219'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa0759.94045219'
     - 'bundle install'
-    - 'bash serverspec.sh spec/docker/base_spec.rb webdevops/base:ubuntu-22.04 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2U6dWJ1bnR1LTIyLjA0IiwiRE9DS0VSX1RBRyI6InVidW50dS0yMi4wNCIsIk9TX0ZBTUlMWSI6InVidW50dSIsIk9TX1ZFUlNJT04iOiIyMi4wNCIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTZjNTUyLjE3NDEwNDUxIn0=  Dockerfile_65677b23e6c552.17410451'
+    - 'bash serverspec.sh spec/docker/base_spec.rb webdevops/base:ubuntu-22.04 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2U6dWJ1bnR1LTIyLjA0IiwiRE9DS0VSX1RBRyI6InVidW50dS0yMi4wNCIsIk9TX0ZBTUlMWSI6InVidW50dSIsIk9TX1ZFUlNJT04iOiIyMi4wNCIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWEwNzU5Ljk0MDQ1MjE5In0=  Dockerfile_65969e81aa0759.94045219'
     - 'cd $CI_PROJECT_DIR/tests/structure-test'
     - '/usr/local/bin/container-structure-test test --image webdevops/base:ubuntu-22.04 --config base/test.yaml'
     - 'docker push webdevops/base:ubuntu-22.04'
@@ -78,10 +189,10 @@ stages:
     - 'cd docker/base-app/ubuntu-22.04'
     - 'docker build --no-cache -t webdevops/base-app:ubuntu-22.04 .'
     - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/base-app:ubuntu-22.04" >> Dockerfile_65677b23e6c787.65875403'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6c787.65875403'
+    - 'echo "FROM webdevops/base-app:ubuntu-22.04" >> Dockerfile_65969e81aa08b7.18673792'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa08b7.18673792'
     - 'bundle install'
-    - 'bash serverspec.sh spec/docker/base-app_spec.rb webdevops/base-app:ubuntu-22.04 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2UtYXBwOnVidW50dS0yMi4wNCIsIkRPQ0tFUl9UQUciOiJ1YnVudHUtMjIuMDQiLCJPU19GQU1JTFkiOiJ1YnVudHUiLCJPU19WRVJTSU9OIjoiMjIuMDQiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U2Yzc4Ny42NTg3NTQwMyJ9  Dockerfile_65677b23e6c787.65875403'
+    - 'bash serverspec.sh spec/docker/base-app_spec.rb webdevops/base-app:ubuntu-22.04 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2UtYXBwOnVidW50dS0yMi4wNCIsIkRPQ0tFUl9UQUciOiJ1YnVudHUtMjIuMDQiLCJPU19GQU1JTFkiOiJ1YnVudHUiLCJPU19WRVJTSU9OIjoiMjIuMDQiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhMDhiNy4xODY3Mzc5MiJ9  Dockerfile_65969e81aa08b7.18673792'
     - 'cd $CI_PROJECT_DIR/tests/structure-test'
     - '/usr/local/bin/container-structure-test test --image webdevops/base-app:ubuntu-22.04 --config base-app/test.yaml'
     - 'docker push webdevops/base-app:ubuntu-22.04'
@@ -119,10 +230,10 @@ stages:
     - 'cd docker/vsftp/latest'
     - 'docker build --no-cache -t webdevops/vsftp:latest .'
     - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/vsftp:latest" >> Dockerfile_65677b23e6cd99.95762797'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6cd99.95762797'
+    - 'echo "FROM webdevops/vsftp:latest" >> Dockerfile_65969e81aa0ea2.54872229'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa0ea2.54872229'
     - 'bundle install'
-    - 'bash serverspec.sh spec/docker/vsftp_spec.rb webdevops/vsftp:latest eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3ZzZnRwOmxhdGVzdCIsIkRPQ0tFUl9UQUciOiJsYXRlc3QiLCJPU19GQU1JTFkiOiJ1YnVudHUiLCJPU19WRVJTSU9OIjoiMjIuMDQiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U2Y2Q5OS45NTc2Mjc5NyJ9  Dockerfile_65677b23e6cd99.95762797'
+    - 'bash serverspec.sh spec/docker/vsftp_spec.rb webdevops/vsftp:latest eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3ZzZnRwOmxhdGVzdCIsIkRPQ0tFUl9UQUciOiJsYXRlc3QiLCJPU19GQU1JTFkiOiJ1YnVudHUiLCJPU19WRVJTSU9OIjoiMjIuMDQiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhMGVhMi41NDg3MjIyOSJ9  Dockerfile_65969e81aa0ea2.54872229'
     - 'docker push webdevops/vsftp:latest'
     - 'docker tag webdevops/vsftp:latest $CI_REGISTRY_IMAGE/vsftp:latest'
     - 'docker push $CI_REGISTRY_IMAGE/vsftp:latest'
@@ -130,1323 +241,22 @@ stages:
     - aws
   needs:
     - 'webdevops/base:ubuntu-22.04'
-'webdevops/bootstrap:alpine':
+'webdevops/storage:latest':
   stage: level2
   before_script:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
   script:
-    - 'cd docker/bootstrap/alpine'
-    - 'docker build --no-cache -t webdevops/bootstrap:alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/bootstrap:alpine" >> Dockerfile_65677b23e6cf81.10900355'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6cf81.10900355'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/bootstrap_spec.rb webdevops/bootstrap:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jvb3RzdHJhcDphbHBpbmUiLCJET0NLRVJfVEFHIjoiYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IiIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTZjZjgxLjEwOTAwMzU1In0=  Dockerfile_65677b23e6cf81.10900355'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/bootstrap:alpine --config bootstrap/test.yaml --config bootstrap/alpine/test.yaml'
-    - 'docker push webdevops/bootstrap:alpine'
-    - 'docker tag webdevops/bootstrap:alpine $CI_REGISTRY_IMAGE/bootstrap:alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/bootstrap:alpine'
+    - 'cd docker/storage/latest'
+    - 'docker build --no-cache -t webdevops/storage:latest .'
+    - 'docker push webdevops/storage:latest'
+    - 'docker tag webdevops/storage:latest $CI_REGISTRY_IMAGE/storage:latest'
+    - 'docker push $CI_REGISTRY_IMAGE/storage:latest'
   tags:
     - aws
   needs:
     - 'webdevops/toolbox:latest'
-'webdevops/base:alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/base/alpine'
-    - 'docker build --no-cache -t webdevops/base:alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/base:alpine" >> Dockerfile_65677b23e6d184.41222584'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6d184.41222584'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/base_spec.rb webdevops/base:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2U6YWxwaW5lIiwiRE9DS0VSX1RBRyI6ImFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U2ZDE4NC40MTIyMjU4NCJ9  Dockerfile_65677b23e6d184.41222584'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/base:alpine --config base/test.yaml --config base/alpine/test.yaml'
-    - 'docker push webdevops/base:alpine'
-    - 'docker tag webdevops/base:alpine $CI_REGISTRY_IMAGE/base:alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/base:alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/bootstrap:alpine'
-'webdevops/base-app:alpine':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/base-app/alpine'
-    - 'docker build --no-cache -t webdevops/base-app:alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/base-app:alpine" >> Dockerfile_65677b23e6d377.72003085'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6d377.72003085'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/base-app_spec.rb webdevops/base-app:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2UtYXBwOmFscGluZSIsIkRPQ0tFUl9UQUciOiJhbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNmQzNzcuNzIwMDMwODUifQ==  Dockerfile_65677b23e6d377.72003085'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/base-app:alpine --config base-app/test.yaml --config base-app/alpine/test.yaml'
-    - 'docker push webdevops/base-app:alpine'
-    - 'docker tag webdevops/base-app:alpine $CI_REGISTRY_IMAGE/base-app:alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/base-app:alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/base:alpine'
-'webdevops/nginx:alpine':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/nginx/alpine'
-    - 'docker build --no-cache -t webdevops/nginx:alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/nginx:alpine" >> Dockerfile_65677b23e6d575.66284535'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6d575.66284535'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/nginx_spec.rb webdevops/nginx:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL25naW54OmFscGluZSIsIkRPQ0tFUl9UQUciOiJhbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNmQ1NzUuNjYyODQ1MzUifQ==  Dockerfile_65677b23e6d575.66284535'
-    - 'docker push webdevops/nginx:alpine'
-    - 'docker tag webdevops/nginx:alpine $CI_REGISTRY_IMAGE/nginx:alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/nginx:alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/base:alpine'
-'webdevops/apache:alpine':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/apache/alpine'
-    - 'docker build --no-cache -t webdevops/apache:alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/apache:alpine" >> Dockerfile_65677b23e6d735.03258235'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6d735.03258235'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/apache_spec.rb webdevops/apache:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2FwYWNoZTphbHBpbmUiLCJET0NLRVJfVEFHIjoiYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IiIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTZkNzM1LjAzMjU4MjM1In0=  Dockerfile_65677b23e6d735.03258235'
-    - 'docker push webdevops/apache:alpine'
-    - 'docker tag webdevops/apache:alpine $CI_REGISTRY_IMAGE/apache:alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/apache:alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/base:alpine'
-'webdevops/php:8.1':
-  stage: level2
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-official/8.1'
-    - 'docker build --no-cache -t webdevops/php:8.1 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php:8.1" >> Dockerfile_65677b23e6d8f3.30092321'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6d8f3.30092321'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjEiLCJET0NLRVJfVEFHIjoiOC4xIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEwIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTZkOGYzLjMwMDkyMzIxIn0=  Dockerfile_65677b23e6d8f3.30092321'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.1 --config php/test.yaml'
-    - 'docker push webdevops/php:8.1'
-    - 'docker tag webdevops/php:8.1 $CI_REGISTRY_IMAGE/php:8.1'
-    - 'docker push $CI_REGISTRY_IMAGE/php:8.1'
-    - 'docker tag webdevops/php:8.1 webdevops/php-official:8.1'
-    - 'docker push webdevops/php-official:8.1'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/toolbox:latest'
-'webdevops/php-nginx:8.1':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx/8.1'
-    - 'docker build --no-cache -t webdevops/php-nginx:8.1 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx:8.1" >> Dockerfile_65677b23e6daf0.69858044'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6daf0.69858044'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjEiLCJET0NLRVJfVEFHIjoiOC4xIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEwIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTZkYWYwLjY5ODU4MDQ0In0=  Dockerfile_65677b23e6daf0.69858044'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.1 --config php-nginx/test.yaml'
-    - 'docker push webdevops/php-nginx:8.1'
-    - 'docker tag webdevops/php-nginx:8.1 $CI_REGISTRY_IMAGE/php-nginx:8.1'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.1'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.1'
-'webdevops/php-nginx-dev:8.1':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx-dev/8.1'
-    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.1 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx-dev:8.1" >> Dockerfile_65677b23e6dcf9.06659290'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6dcf9.06659290'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4xIiwiRE9DS0VSX1RBRyI6IjguMSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U2ZGNmOS4wNjY1OTI5MCJ9  Dockerfile_65677b23e6dcf9.06659290'
-    - 'docker push webdevops/php-nginx-dev:8.1'
-    - 'docker tag webdevops/php-nginx-dev:8.1 $CI_REGISTRY_IMAGE/php-nginx-dev:8.1'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.1'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-nginx:8.1'
-'webdevops/php-dev:8.1':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-dev/8.1'
-    - 'docker build --no-cache -t webdevops/php-dev:8.1 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-dev:8.1" >> Dockerfile_65677b23e6dec5.43013696'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6dec5.43013696'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4xIiwiRE9DS0VSX1RBRyI6IjguMSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U2ZGVjNS40MzAxMzY5NiJ9  Dockerfile_65677b23e6dec5.43013696'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.1 --config php-dev/test.yaml'
-    - 'docker push webdevops/php-dev:8.1'
-    - 'docker tag webdevops/php-dev:8.1 $CI_REGISTRY_IMAGE/php-dev:8.1'
-    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.1'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.1'
-'webdevops/php-apache:8.1':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache/8.1'
-    - 'docker build --no-cache -t webdevops/php-apache:8.1 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache:8.1" >> Dockerfile_65677b23e6e0b9.61070574'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6e0b9.61070574'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4xIiwiRE9DS0VSX1RBRyI6IjguMSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U2ZTBiOS42MTA3MDU3NCJ9  Dockerfile_65677b23e6e0b9.61070574'
-    - 'docker push webdevops/php-apache:8.1'
-    - 'docker tag webdevops/php-apache:8.1 $CI_REGISTRY_IMAGE/php-apache:8.1'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.1'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.1'
-'webdevops/php-apache-dev:8.1':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache-dev/8.1'
-    - 'docker build --no-cache -t webdevops/php-apache-dev:8.1 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache-dev:8.1" >> Dockerfile_65677b23e6e276.12046313'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6e276.12046313'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMSIsIkRPQ0tFUl9UQUciOiI4LjEiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTAiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNmUyNzYuMTIwNDYzMTMifQ==  Dockerfile_65677b23e6e276.12046313'
-    - 'docker push webdevops/php-apache-dev:8.1'
-    - 'docker tag webdevops/php-apache-dev:8.1 $CI_REGISTRY_IMAGE/php-apache-dev:8.1'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.1'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-apache:8.1'
-'webdevops/php:7.4-alpine':
-  stage: level2
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-official/7.4-alpine'
-    - 'docker build --no-cache -t webdevops/php:7.4-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php:7.4-alpine" >> Dockerfile_65677b23e6f215.27309005'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6f215.27309005'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:7.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo3LjQtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjcuNC1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U2ZjIxNS4yNzMwOTAwNSJ9  Dockerfile_65677b23e6f215.27309005'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php:7.4-alpine --config php/test.yaml'
-    - 'docker push webdevops/php:7.4-alpine'
-    - 'docker tag webdevops/php:7.4-alpine $CI_REGISTRY_IMAGE/php:7.4-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php:7.4-alpine'
-    - 'docker tag webdevops/php:7.4-alpine webdevops/php-official:7.4-alpine'
-    - 'docker push webdevops/php-official:7.4-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/toolbox:latest'
-'webdevops/php-nginx:7.4-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx/7.4-alpine'
-    - 'docker build --no-cache -t webdevops/php-nginx:7.4-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx:7.4-alpine" >> Dockerfile_65677b23e6f3a5.95880141'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6f3a5.95880141'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:7.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo3LjQtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjcuNC1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U2ZjNhNS45NTg4MDE0MSJ9  Dockerfile_65677b23e6f3a5.95880141'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:7.4-alpine --config php-nginx/test.yaml'
-    - 'docker push webdevops/php-nginx:7.4-alpine'
-    - 'docker tag webdevops/php-nginx:7.4-alpine $CI_REGISTRY_IMAGE/php-nginx:7.4-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:7.4-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:7.4-alpine'
-'webdevops/php-nginx-dev:7.4-alpine':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx-dev/7.4-alpine'
-    - 'docker build --no-cache -t webdevops/php-nginx-dev:7.4-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx-dev:7.4-alpine" >> Dockerfile_65677b23e6f549.42405065'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6f549.42405065'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:7.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6Ny40LWFscGluZSIsIkRPQ0tFUl9UQUciOiI3LjQtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNmY1NDkuNDI0MDUwNjUifQ==  Dockerfile_65677b23e6f549.42405065'
-    - 'docker push webdevops/php-nginx-dev:7.4-alpine'
-    - 'docker tag webdevops/php-nginx-dev:7.4-alpine $CI_REGISTRY_IMAGE/php-nginx-dev:7.4-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:7.4-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-nginx:7.4-alpine'
-'webdevops/php-dev:7.4-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-dev/7.4-alpine'
-    - 'docker build --no-cache -t webdevops/php-dev:7.4-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-dev:7.4-alpine" >> Dockerfile_65677b23e6f6c9.31761318'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6f6c9.31761318'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:7.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6Ny40LWFscGluZSIsIkRPQ0tFUl9UQUciOiI3LjQtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNmY2YzkuMzE3NjEzMTgifQ==  Dockerfile_65677b23e6f6c9.31761318'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:7.4-alpine --config php-dev/test.yaml'
-    - 'docker push webdevops/php-dev:7.4-alpine'
-    - 'docker tag webdevops/php-dev:7.4-alpine $CI_REGISTRY_IMAGE/php-dev:7.4-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-dev:7.4-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:7.4-alpine'
-'webdevops/php-apache:7.4-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache/7.4-alpine'
-    - 'docker build --no-cache -t webdevops/php-apache:7.4-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache:7.4-alpine" >> Dockerfile_65677b23e6f850.96051196'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6f850.96051196'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:7.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6Ny40LWFscGluZSIsIkRPQ0tFUl9UQUciOiI3LjQtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNmY4NTAuOTYwNTExOTYifQ==  Dockerfile_65677b23e6f850.96051196'
-    - 'docker push webdevops/php-apache:7.4-alpine'
-    - 'docker tag webdevops/php-apache:7.4-alpine $CI_REGISTRY_IMAGE/php-apache:7.4-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache:7.4-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:7.4-alpine'
-'webdevops/php-apache-dev:7.4-alpine':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache-dev/7.4-alpine'
-    - 'docker build --no-cache -t webdevops/php-apache-dev:7.4-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache-dev:7.4-alpine" >> Dockerfile_65677b23e6f9e4.96907608'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e6f9e4.96907608'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:7.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjcuNC1hbHBpbmUiLCJET0NLRVJfVEFHIjoiNy40LWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTZmOWU0Ljk2OTA3NjA4In0=  Dockerfile_65677b23e6f9e4.96907608'
-    - 'docker push webdevops/php-apache-dev:7.4-alpine'
-    - 'docker tag webdevops/php-apache-dev:7.4-alpine $CI_REGISTRY_IMAGE/php-apache-dev:7.4-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:7.4-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-apache:7.4-alpine'
-'webdevops/php:8.1-alpine':
-  stage: level2
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-official/8.1-alpine'
-    - 'docker build --no-cache -t webdevops/php:8.1-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php:8.1-alpine" >> Dockerfile_65677b23e70f15.68263114'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e70f15.68263114'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjEtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMS1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3MGYxNS42ODI2MzExNCJ9  Dockerfile_65677b23e70f15.68263114'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.1-alpine --config php/test.yaml'
-    - 'docker push webdevops/php:8.1-alpine'
-    - 'docker tag webdevops/php:8.1-alpine $CI_REGISTRY_IMAGE/php:8.1-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php:8.1-alpine'
-    - 'docker tag webdevops/php:8.1-alpine webdevops/php-official:8.1-alpine'
-    - 'docker push webdevops/php-official:8.1-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/toolbox:latest'
-'webdevops/php-nginx:8.1-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx/8.1-alpine'
-    - 'docker build --no-cache -t webdevops/php-nginx:8.1-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx:8.1-alpine" >> Dockerfile_65677b23e710a8.23288515'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e710a8.23288515'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjEtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMS1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3MTBhOC4yMzI4ODUxNSJ9  Dockerfile_65677b23e710a8.23288515'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.1-alpine --config php-nginx/test.yaml'
-    - 'docker push webdevops/php-nginx:8.1-alpine'
-    - 'docker tag webdevops/php-nginx:8.1-alpine $CI_REGISTRY_IMAGE/php-nginx:8.1-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.1-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.1-alpine'
-'webdevops/php-nginx-dev:8.1-alpine':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx-dev/8.1-alpine'
-    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.1-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx-dev:8.1-alpine" >> Dockerfile_65677b23e71241.00406742'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e71241.00406742'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4xLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjEtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzEyNDEuMDA0MDY3NDIifQ==  Dockerfile_65677b23e71241.00406742'
-    - 'docker push webdevops/php-nginx-dev:8.1-alpine'
-    - 'docker tag webdevops/php-nginx-dev:8.1-alpine $CI_REGISTRY_IMAGE/php-nginx-dev:8.1-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.1-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-nginx:8.1-alpine'
-'webdevops/php-dev:8.1-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-dev/8.1-alpine'
-    - 'docker build --no-cache -t webdevops/php-dev:8.1-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-dev:8.1-alpine" >> Dockerfile_65677b23e713b6.22511736'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e713b6.22511736'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4xLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjEtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzEzYjYuMjI1MTE3MzYifQ==  Dockerfile_65677b23e713b6.22511736'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.1-alpine --config php-dev/test.yaml'
-    - 'docker push webdevops/php-dev:8.1-alpine'
-    - 'docker tag webdevops/php-dev:8.1-alpine $CI_REGISTRY_IMAGE/php-dev:8.1-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.1-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.1-alpine'
-'webdevops/php-apache:8.1-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache/8.1-alpine'
-    - 'docker build --no-cache -t webdevops/php-apache:8.1-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache:8.1-alpine" >> Dockerfile_65677b23e71560.31633181'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e71560.31633181'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4xLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjEtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzE1NjAuMzE2MzMxODEifQ==  Dockerfile_65677b23e71560.31633181'
-    - 'docker push webdevops/php-apache:8.1-alpine'
-    - 'docker tag webdevops/php-apache:8.1-alpine $CI_REGISTRY_IMAGE/php-apache:8.1-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.1-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.1-alpine'
-'webdevops/php-apache-dev:8.1-alpine':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache-dev/8.1-alpine'
-    - 'docker build --no-cache -t webdevops/php-apache-dev:8.1-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache-dev:8.1-alpine" >> Dockerfile_65677b23e716e3.89220132'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e716e3.89220132'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMS1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4xLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTcxNmUzLjg5MjIwMTMyIn0=  Dockerfile_65677b23e716e3.89220132'
-    - 'docker push webdevops/php-apache-dev:8.1-alpine'
-    - 'docker tag webdevops/php-apache-dev:8.1-alpine $CI_REGISTRY_IMAGE/php-apache-dev:8.1-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.1-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-apache:8.1-alpine'
-'webdevops/php:8.3-alpine':
-  stage: level2
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-official/8.3-alpine'
-    - 'docker build --no-cache -t webdevops/php:8.3-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php:8.3-alpine" >> Dockerfile_65677b23e71860.26103217'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e71860.26103217'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjMtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMy1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3MTg2MC4yNjEwMzIxNyJ9  Dockerfile_65677b23e71860.26103217'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.3-alpine --config php/test.yaml'
-    - 'docker push webdevops/php:8.3-alpine'
-    - 'docker tag webdevops/php:8.3-alpine $CI_REGISTRY_IMAGE/php:8.3-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php:8.3-alpine'
-    - 'docker tag webdevops/php:8.3-alpine webdevops/php-official:8.3-alpine'
-    - 'docker push webdevops/php-official:8.3-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/toolbox:latest'
-'webdevops/php-nginx:8.3-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx/8.3-alpine'
-    - 'docker build --no-cache -t webdevops/php-nginx:8.3-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx:8.3-alpine" >> Dockerfile_65677b23e71a13.73750395'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e71a13.73750395'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjMtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMy1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3MWExMy43Mzc1MDM5NSJ9  Dockerfile_65677b23e71a13.73750395'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.3-alpine --config php-nginx/test.yaml'
-    - 'docker push webdevops/php-nginx:8.3-alpine'
-    - 'docker tag webdevops/php-nginx:8.3-alpine $CI_REGISTRY_IMAGE/php-nginx:8.3-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.3-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.3-alpine'
-'webdevops/php-dev:8.3-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-dev/8.3-alpine'
-    - 'docker build --no-cache -t webdevops/php-dev:8.3-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-dev:8.3-alpine" >> Dockerfile_65677b23e71b94.49438482'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e71b94.49438482'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzFiOTQuNDk0Mzg0ODIifQ==  Dockerfile_65677b23e71b94.49438482'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.3-alpine --config php-dev/test.yaml'
-    - 'docker push webdevops/php-dev:8.3-alpine'
-    - 'docker tag webdevops/php-dev:8.3-alpine $CI_REGISTRY_IMAGE/php-dev:8.3-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.3-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.3-alpine'
-'webdevops/php-apache:8.3-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache/8.3-alpine'
-    - 'docker build --no-cache -t webdevops/php-apache:8.3-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache:8.3-alpine" >> Dockerfile_65677b23e71d22.36892336'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e71d22.36892336'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzFkMjIuMzY4OTIzMzYifQ==  Dockerfile_65677b23e71d22.36892336'
-    - 'docker push webdevops/php-apache:8.3-alpine'
-    - 'docker tag webdevops/php-apache:8.3-alpine $CI_REGISTRY_IMAGE/php-apache:8.3-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.3-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.3-alpine'
-'webdevops/php-apache-dev:8.3-alpine':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache-dev/8.3-alpine'
-    - 'docker build --no-cache -t webdevops/php-apache-dev:8.3-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache-dev:8.3-alpine" >> Dockerfile_65677b23e71e95.46967213'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e71e95.46967213'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMy1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4zLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTcxZTk1LjQ2OTY3MjEzIn0=  Dockerfile_65677b23e71e95.46967213'
-    - 'docker push webdevops/php-apache-dev:8.3-alpine'
-    - 'docker tag webdevops/php-apache-dev:8.3-alpine $CI_REGISTRY_IMAGE/php-apache-dev:8.3-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.3-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-apache:8.3-alpine'
-'webdevops/php:8.0':
-  stage: level2
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-official/8.0'
-    - 'docker build --no-cache -t webdevops/php:8.0 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php:8.0" >> Dockerfile_65677b23e71ff3.88695175'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e71ff3.88695175'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.0 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjAiLCJET0NLRVJfVEFHIjoiOC4wIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEwIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTcxZmYzLjg4Njk1MTc1In0=  Dockerfile_65677b23e71ff3.88695175'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.0 --config php/test.yaml'
-    - 'docker push webdevops/php:8.0'
-    - 'docker tag webdevops/php:8.0 $CI_REGISTRY_IMAGE/php:8.0'
-    - 'docker push $CI_REGISTRY_IMAGE/php:8.0'
-    - 'docker tag webdevops/php:8.0 webdevops/php-official:8.0'
-    - 'docker push webdevops/php-official:8.0'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/toolbox:latest'
-'webdevops/php-nginx:8.0':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx/8.0'
-    - 'docker build --no-cache -t webdevops/php-nginx:8.0 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx:8.0" >> Dockerfile_65677b23e72189.35141561'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e72189.35141561'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.0 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjAiLCJET0NLRVJfVEFHIjoiOC4wIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEwIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTcyMTg5LjM1MTQxNTYxIn0=  Dockerfile_65677b23e72189.35141561'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.0 --config php-nginx/test.yaml'
-    - 'docker push webdevops/php-nginx:8.0'
-    - 'docker tag webdevops/php-nginx:8.0 $CI_REGISTRY_IMAGE/php-nginx:8.0'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.0'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.0'
-'webdevops/php-nginx-dev:8.0':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx-dev/8.0'
-    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.0 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx-dev:8.0" >> Dockerfile_65677b23e72312.31508370'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e72312.31508370'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.0 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4wIiwiRE9DS0VSX1RBRyI6IjguMCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3MjMxMi4zMTUwODM3MCJ9  Dockerfile_65677b23e72312.31508370'
-    - 'docker push webdevops/php-nginx-dev:8.0'
-    - 'docker tag webdevops/php-nginx-dev:8.0 $CI_REGISTRY_IMAGE/php-nginx-dev:8.0'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.0'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-nginx:8.0'
-'webdevops/php-dev:8.0':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-dev/8.0'
-    - 'docker build --no-cache -t webdevops/php-dev:8.0 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-dev:8.0" >> Dockerfile_65677b23e72484.46060559'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e72484.46060559'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.0 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4wIiwiRE9DS0VSX1RBRyI6IjguMCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3MjQ4NC40NjA2MDU1OSJ9  Dockerfile_65677b23e72484.46060559'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.0 --config php-dev/test.yaml'
-    - 'docker push webdevops/php-dev:8.0'
-    - 'docker tag webdevops/php-dev:8.0 $CI_REGISTRY_IMAGE/php-dev:8.0'
-    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.0'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.0'
-'webdevops/php-apache:8.0':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache/8.0'
-    - 'docker build --no-cache -t webdevops/php-apache:8.0 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache:8.0" >> Dockerfile_65677b23e72611.81425169'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e72611.81425169'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.0 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4wIiwiRE9DS0VSX1RBRyI6IjguMCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3MjYxMS44MTQyNTE2OSJ9  Dockerfile_65677b23e72611.81425169'
-    - 'docker push webdevops/php-apache:8.0'
-    - 'docker tag webdevops/php-apache:8.0 $CI_REGISTRY_IMAGE/php-apache:8.0'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.0'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.0'
-'webdevops/php-apache-dev:8.0':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache-dev/8.0'
-    - 'docker build --no-cache -t webdevops/php-apache-dev:8.0 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache-dev:8.0" >> Dockerfile_65677b23e72784.00497428'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e72784.00497428'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.0 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMCIsIkRPQ0tFUl9UQUciOiI4LjAiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTAiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzI3ODQuMDA0OTc0MjgifQ==  Dockerfile_65677b23e72784.00497428'
-    - 'docker push webdevops/php-apache-dev:8.0'
-    - 'docker tag webdevops/php-apache-dev:8.0 $CI_REGISTRY_IMAGE/php-apache-dev:8.0'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.0'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-apache:8.0'
-'webdevops/php:8.2-alpine':
-  stage: level2
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-official/8.2-alpine'
-    - 'docker build --no-cache -t webdevops/php:8.2-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php:8.2-alpine" >> Dockerfile_65677b23e75783.17157563'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e75783.17157563'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjItYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMi1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3NTc4My4xNzE1NzU2MyJ9  Dockerfile_65677b23e75783.17157563'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.2-alpine --config php/test.yaml'
-    - 'docker push webdevops/php:8.2-alpine'
-    - 'docker tag webdevops/php:8.2-alpine $CI_REGISTRY_IMAGE/php:8.2-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php:8.2-alpine'
-    - 'docker tag webdevops/php:8.2-alpine webdevops/php-official:8.2-alpine'
-    - 'docker push webdevops/php-official:8.2-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/toolbox:latest'
-'webdevops/php-nginx:8.2-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx/8.2-alpine'
-    - 'docker build --no-cache -t webdevops/php-nginx:8.2-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx:8.2-alpine" >> Dockerfile_65677b23e75910.73069979'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e75910.73069979'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjItYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMi1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3NTkxMC43MzA2OTk3OSJ9  Dockerfile_65677b23e75910.73069979'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.2-alpine --config php-nginx/test.yaml'
-    - 'docker push webdevops/php-nginx:8.2-alpine'
-    - 'docker tag webdevops/php-nginx:8.2-alpine $CI_REGISTRY_IMAGE/php-nginx:8.2-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.2-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.2-alpine'
-'webdevops/php-nginx-dev:8.3-alpine':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx-dev/8.3-alpine'
-    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.3-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx-dev:8.3-alpine" >> Dockerfile_65677b23e75aa0.01798223'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e75aa0.01798223'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzVhYTAuMDE3OTgyMjMifQ==  Dockerfile_65677b23e75aa0.01798223'
-    - 'docker push webdevops/php-nginx-dev:8.3-alpine'
-    - 'docker tag webdevops/php-nginx-dev:8.3-alpine $CI_REGISTRY_IMAGE/php-nginx-dev:8.3-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.3-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-nginx:8.2-alpine'
-'webdevops/php-nginx-dev:8.2-alpine':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx-dev/8.2-alpine'
-    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.2-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx-dev:8.2-alpine" >> Dockerfile_65677b23e75c10.65191020'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e75c10.65191020'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzVjMTAuNjUxOTEwMjAifQ==  Dockerfile_65677b23e75c10.65191020'
-    - 'docker push webdevops/php-nginx-dev:8.2-alpine'
-    - 'docker tag webdevops/php-nginx-dev:8.2-alpine $CI_REGISTRY_IMAGE/php-nginx-dev:8.2-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.2-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-nginx:8.2-alpine'
-'webdevops/php-dev:8.2-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-dev/8.2-alpine'
-    - 'docker build --no-cache -t webdevops/php-dev:8.2-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-dev:8.2-alpine" >> Dockerfile_65677b23e75d83.42823726'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e75d83.42823726'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzVkODMuNDI4MjM3MjYifQ==  Dockerfile_65677b23e75d83.42823726'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.2-alpine --config php-dev/test.yaml'
-    - 'docker push webdevops/php-dev:8.2-alpine'
-    - 'docker tag webdevops/php-dev:8.2-alpine $CI_REGISTRY_IMAGE/php-dev:8.2-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.2-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.2-alpine'
-'webdevops/php-apache:8.2-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache/8.2-alpine'
-    - 'docker build --no-cache -t webdevops/php-apache:8.2-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache:8.2-alpine" >> Dockerfile_65677b23e75f52.30815515'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e75f52.30815515'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzVmNTIuMzA4MTU1MTUifQ==  Dockerfile_65677b23e75f52.30815515'
-    - 'docker push webdevops/php-apache:8.2-alpine'
-    - 'docker tag webdevops/php-apache:8.2-alpine $CI_REGISTRY_IMAGE/php-apache:8.2-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.2-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.2-alpine'
-'webdevops/php-apache-dev:8.2-alpine':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache-dev/8.2-alpine'
-    - 'docker build --no-cache -t webdevops/php-apache-dev:8.2-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache-dev:8.2-alpine" >> Dockerfile_65677b23e760d5.50458681'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e760d5.50458681'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMi1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4yLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTc2MGQ1LjUwNDU4NjgxIn0=  Dockerfile_65677b23e760d5.50458681'
-    - 'docker push webdevops/php-apache-dev:8.2-alpine'
-    - 'docker tag webdevops/php-apache-dev:8.2-alpine $CI_REGISTRY_IMAGE/php-apache-dev:8.2-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.2-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-apache:8.2-alpine'
-'webdevops/php:8.0-alpine':
-  stage: level2
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-official/8.0-alpine'
-    - 'docker build --no-cache -t webdevops/php:8.0-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php:8.0-alpine" >> Dockerfile_65677b23e76267.14905847'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e76267.14905847'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.0-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjAtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMC1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3NjI2Ny4xNDkwNTg0NyJ9  Dockerfile_65677b23e76267.14905847'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.0-alpine --config php/test.yaml'
-    - 'docker push webdevops/php:8.0-alpine'
-    - 'docker tag webdevops/php:8.0-alpine $CI_REGISTRY_IMAGE/php:8.0-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php:8.0-alpine'
-    - 'docker tag webdevops/php:8.0-alpine webdevops/php-official:8.0-alpine'
-    - 'docker push webdevops/php-official:8.0-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/toolbox:latest'
-'webdevops/php-nginx:8.0-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx/8.0-alpine'
-    - 'docker build --no-cache -t webdevops/php-nginx:8.0-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx:8.0-alpine" >> Dockerfile_65677b23e76407.55116146'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e76407.55116146'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.0-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjAtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMC1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3NjQwNy41NTExNjE0NiJ9  Dockerfile_65677b23e76407.55116146'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.0-alpine --config php-nginx/test.yaml'
-    - 'docker push webdevops/php-nginx:8.0-alpine'
-    - 'docker tag webdevops/php-nginx:8.0-alpine $CI_REGISTRY_IMAGE/php-nginx:8.0-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.0-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.0-alpine'
-'webdevops/php-nginx-dev:8.0-alpine':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx-dev/8.0-alpine'
-    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.0-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx-dev:8.0-alpine" >> Dockerfile_65677b23e76594.46949276'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e76594.46949276'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.0-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4wLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjAtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzY1OTQuNDY5NDkyNzYifQ==  Dockerfile_65677b23e76594.46949276'
-    - 'docker push webdevops/php-nginx-dev:8.0-alpine'
-    - 'docker tag webdevops/php-nginx-dev:8.0-alpine $CI_REGISTRY_IMAGE/php-nginx-dev:8.0-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.0-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-nginx:8.0-alpine'
-'webdevops/php-dev:8.0-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-dev/8.0-alpine'
-    - 'docker build --no-cache -t webdevops/php-dev:8.0-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-dev:8.0-alpine" >> Dockerfile_65677b23e76706.32606695'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e76706.32606695'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.0-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4wLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjAtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzY3MDYuMzI2MDY2OTUifQ==  Dockerfile_65677b23e76706.32606695'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.0-alpine --config php-dev/test.yaml'
-    - 'docker push webdevops/php-dev:8.0-alpine'
-    - 'docker tag webdevops/php-dev:8.0-alpine $CI_REGISTRY_IMAGE/php-dev:8.0-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.0-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.0-alpine'
-'webdevops/php-apache:8.0-alpine':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache/8.0-alpine'
-    - 'docker build --no-cache -t webdevops/php-apache:8.0-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache:8.0-alpine" >> Dockerfile_65677b23e76893.16939386'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e76893.16939386'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.0-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4wLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjAtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzY4OTMuMTY5MzkzODYifQ==  Dockerfile_65677b23e76893.16939386'
-    - 'docker push webdevops/php-apache:8.0-alpine'
-    - 'docker tag webdevops/php-apache:8.0-alpine $CI_REGISTRY_IMAGE/php-apache:8.0-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.0-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.0-alpine'
-'webdevops/php-apache-dev:8.0-alpine':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache-dev/8.0-alpine'
-    - 'docker build --no-cache -t webdevops/php-apache-dev:8.0-alpine .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache-dev:8.0-alpine" >> Dockerfile_65677b23e76a48.00931548'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e76a48.00931548'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.0-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMC1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4wLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTc2YTQ4LjAwOTMxNTQ4In0=  Dockerfile_65677b23e76a48.00931548'
-    - 'docker push webdevops/php-apache-dev:8.0-alpine'
-    - 'docker tag webdevops/php-apache-dev:8.0-alpine $CI_REGISTRY_IMAGE/php-apache-dev:8.0-alpine'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.0-alpine'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-apache:8.0-alpine'
-'webdevops/php:8.3':
-  stage: level2
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-official/8.3'
-    - 'docker build --no-cache -t webdevops/php:8.3 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php:8.3" >> Dockerfile_65677b23e76bc3.43806470'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e76bc3.43806470'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjMiLCJET0NLRVJfVEFHIjoiOC4zIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTc2YmMzLjQzODA2NDcwIn0=  Dockerfile_65677b23e76bc3.43806470'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.3 --config php/test.yaml'
-    - 'docker push webdevops/php:8.3'
-    - 'docker tag webdevops/php:8.3 $CI_REGISTRY_IMAGE/php:8.3'
-    - 'docker push $CI_REGISTRY_IMAGE/php:8.3'
-    - 'docker tag webdevops/php:8.3 webdevops/php-official:8.3'
-    - 'docker push webdevops/php-official:8.3'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/toolbox:latest'
-'webdevops/php-nginx:8.3':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx/8.3'
-    - 'docker build --no-cache -t webdevops/php-nginx:8.3 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx:8.3" >> Dockerfile_65677b23e76d50.45305752'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e76d50.45305752'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjMiLCJET0NLRVJfVEFHIjoiOC4zIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTc2ZDUwLjQ1MzA1NzUyIn0=  Dockerfile_65677b23e76d50.45305752'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.3 --config php-nginx/test.yaml'
-    - 'docker push webdevops/php-nginx:8.3'
-    - 'docker tag webdevops/php-nginx:8.3 $CI_REGISTRY_IMAGE/php-nginx:8.3'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.3'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.3'
-'webdevops/php-nginx-dev:8.3':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx-dev/8.3'
-    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.3 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx-dev:8.3" >> Dockerfile_65677b23e76ee6.59644674'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e76ee6.59644674'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3NmVlNi41OTY0NDY3NCJ9  Dockerfile_65677b23e76ee6.59644674'
-    - 'docker push webdevops/php-nginx-dev:8.3'
-    - 'docker tag webdevops/php-nginx-dev:8.3 $CI_REGISTRY_IMAGE/php-nginx-dev:8.3'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.3'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-nginx:8.3'
-'webdevops/php-dev:8.3':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-dev/8.3'
-    - 'docker build --no-cache -t webdevops/php-dev:8.3 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-dev:8.3" >> Dockerfile_65677b23e77056.09020184'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e77056.09020184'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3NzA1Ni4wOTAyMDE4NCJ9  Dockerfile_65677b23e77056.09020184'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.3 --config php-dev/test.yaml'
-    - 'docker push webdevops/php-dev:8.3'
-    - 'docker tag webdevops/php-dev:8.3 $CI_REGISTRY_IMAGE/php-dev:8.3'
-    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.3'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.3'
-'webdevops/php-apache:8.3':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache/8.3'
-    - 'docker build --no-cache -t webdevops/php-apache:8.3 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache:8.3" >> Dockerfile_65677b23e771f8.35724032'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e771f8.35724032'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3NzFmOC4zNTcyNDAzMiJ9  Dockerfile_65677b23e771f8.35724032'
-    - 'docker push webdevops/php-apache:8.3'
-    - 'docker tag webdevops/php-apache:8.3 $CI_REGISTRY_IMAGE/php-apache:8.3'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.3'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.3'
-'webdevops/php-apache-dev:8.3':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache-dev/8.3'
-    - 'docker build --no-cache -t webdevops/php-apache-dev:8.3 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache-dev:8.3" >> Dockerfile_65677b23e77390.32824419'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e77390.32824419'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMyIsIkRPQ0tFUl9UQUciOiI4LjMiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzczOTAuMzI4MjQ0MTkifQ==  Dockerfile_65677b23e77390.32824419'
-    - 'docker push webdevops/php-apache-dev:8.3'
-    - 'docker tag webdevops/php-apache-dev:8.3 $CI_REGISTRY_IMAGE/php-apache-dev:8.3'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.3'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-apache:8.3'
-'webdevops/php:7.4':
-  stage: level2
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-official/7.4'
-    - 'docker build --no-cache -t webdevops/php:7.4 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php:7.4" >> Dockerfile_65677b23e77506.29962173'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e77506.29962173'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:7.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo3LjQiLCJET0NLRVJfVEFHIjoiNy40IiwiT1NfRkFNSUxZIjoidWJ1bnR1IiwiT1NfVkVSU0lPTiI6IjIyLjA0IiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzc1MDYuMjk5NjIxNzMifQ==  Dockerfile_65677b23e77506.29962173'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php:7.4 --config php/test.yaml'
-    - 'docker push webdevops/php:7.4'
-    - 'docker tag webdevops/php:7.4 $CI_REGISTRY_IMAGE/php:7.4'
-    - 'docker push $CI_REGISTRY_IMAGE/php:7.4'
-    - 'docker tag webdevops/php:7.4 webdevops/php-official:7.4'
-    - 'docker push webdevops/php-official:7.4'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/toolbox:latest'
-'webdevops/php-nginx:7.4':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx/7.4'
-    - 'docker build --no-cache -t webdevops/php-nginx:7.4 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx:7.4" >> Dockerfile_65677b23e77698.48530519'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e77698.48530519'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:7.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo3LjQiLCJET0NLRVJfVEFHIjoiNy40IiwiT1NfRkFNSUxZIjoidWJ1bnR1IiwiT1NfVkVSU0lPTiI6IjIyLjA0IiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzc2OTguNDg1MzA1MTkifQ==  Dockerfile_65677b23e77698.48530519'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:7.4 --config php-nginx/test.yaml'
-    - 'docker push webdevops/php-nginx:7.4'
-    - 'docker tag webdevops/php-nginx:7.4 $CI_REGISTRY_IMAGE/php-nginx:7.4'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:7.4'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:7.4'
-'webdevops/php-nginx-dev:7.4':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-nginx-dev/7.4'
-    - 'docker build --no-cache -t webdevops/php-nginx-dev:7.4 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx-dev:7.4" >> Dockerfile_65677b23e77816.12202993'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e77816.12202993'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:7.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6Ny40IiwiRE9DS0VSX1RBRyI6IjcuNCIsIk9TX0ZBTUlMWSI6InVidW50dSIsIk9TX1ZFUlNJT04iOiIyMi4wNCIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTc3ODE2LjEyMjAyOTkzIn0=  Dockerfile_65677b23e77816.12202993'
-    - 'docker push webdevops/php-nginx-dev:7.4'
-    - 'docker tag webdevops/php-nginx-dev:7.4 $CI_REGISTRY_IMAGE/php-nginx-dev:7.4'
-    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:7.4'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-nginx:7.4'
-'webdevops/php-dev:7.4':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-dev/7.4'
-    - 'docker build --no-cache -t webdevops/php-dev:7.4 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-dev:7.4" >> Dockerfile_65677b23e77988.98366370'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e77988.98366370'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:7.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6Ny40IiwiRE9DS0VSX1RBRyI6IjcuNCIsIk9TX0ZBTUlMWSI6InVidW50dSIsIk9TX1ZFUlNJT04iOiIyMi4wNCIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTc3OTg4Ljk4MzY2MzcwIn0=  Dockerfile_65677b23e77988.98366370'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:7.4 --config php-dev/test.yaml'
-    - 'docker push webdevops/php-dev:7.4'
-    - 'docker tag webdevops/php-dev:7.4 $CI_REGISTRY_IMAGE/php-dev:7.4'
-    - 'docker push $CI_REGISTRY_IMAGE/php-dev:7.4'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:7.4'
-'webdevops/php-apache:7.4':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache/7.4'
-    - 'docker build --no-cache -t webdevops/php-apache:7.4 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache:7.4" >> Dockerfile_65677b23e77b14.91732814'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e77b14.91732814'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:7.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6Ny40IiwiRE9DS0VSX1RBRyI6IjcuNCIsIk9TX0ZBTUlMWSI6InVidW50dSIsIk9TX1ZFUlNJT04iOiIyMi4wNCIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTc3YjE0LjkxNzMyODE0In0=  Dockerfile_65677b23e77b14.91732814'
-    - 'docker push webdevops/php-apache:7.4'
-    - 'docker tag webdevops/php-apache:7.4 $CI_REGISTRY_IMAGE/php-apache:7.4'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache:7.4'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:7.4'
-'webdevops/php-apache-dev:7.4':
-  stage: level4
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-apache-dev/7.4'
-    - 'docker build --no-cache -t webdevops/php-apache-dev:7.4 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache-dev:7.4" >> Dockerfile_65677b23e77ca4.72751423'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e77ca4.72751423'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:7.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjcuNCIsIkRPQ0tFUl9UQUciOiI3LjQiLCJPU19GQU1JTFkiOiJ1YnVudHUiLCJPU19WRVJTSU9OIjoiMjIuMDQiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3N2NhNC43Mjc1MTQyMyJ9  Dockerfile_65677b23e77ca4.72751423'
-    - 'docker push webdevops/php-apache-dev:7.4'
-    - 'docker tag webdevops/php-apache-dev:7.4 $CI_REGISTRY_IMAGE/php-apache-dev:7.4'
-    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:7.4'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php-apache:7.4'
 'webdevops/php:8.2':
   stage: level2
   before_script:
@@ -1457,10 +267,10 @@ stages:
     - 'cd docker/php-official/8.2'
     - 'docker build --no-cache -t webdevops/php:8.2 .'
     - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php:8.2" >> Dockerfile_65677b23e77e26.73064673'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e77e26.73064673'
+    - 'echo "FROM webdevops/php:8.2" >> Dockerfile_65969e81aa22e5.03607832'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa22e5.03607832'
     - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjIiLCJET0NLRVJfVEFHIjoiOC4yIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEwIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTc3ZTI2LjczMDY0NjczIn0=  Dockerfile_65677b23e77e26.73064673'
+    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjIiLCJET0NLRVJfVEFHIjoiOC4yIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEwIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWEyMmU1LjAzNjA3ODMyIn0=  Dockerfile_65969e81aa22e5.03607832'
     - 'cd $CI_PROJECT_DIR/tests/structure-test'
     - '/usr/local/bin/container-structure-test test --image webdevops/php:8.2 --config php/test.yaml'
     - 'docker push webdevops/php:8.2'
@@ -1472,6 +282,29 @@ stages:
     - aws
   needs:
     - 'webdevops/toolbox:latest'
+'webdevops/php-dev:8.2':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-dev/8.2'
+    - 'docker build --no-cache -t webdevops/php-dev:8.2 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-dev:8.2" >> Dockerfile_65969e81aa2474.20871582'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa2474.20871582'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhMjQ3NC4yMDg3MTU4MiJ9  Dockerfile_65969e81aa2474.20871582'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.2 --config php-dev/test.yaml'
+    - 'docker push webdevops/php-dev:8.2'
+    - 'docker tag webdevops/php-dev:8.2 $CI_REGISTRY_IMAGE/php-dev:8.2'
+    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.2'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.2'
 'webdevops/php-nginx:8.2':
   stage: level3
   before_script:
@@ -1482,10 +315,10 @@ stages:
     - 'cd docker/php-nginx/8.2'
     - 'docker build --no-cache -t webdevops/php-nginx:8.2 .'
     - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx:8.2" >> Dockerfile_65677b23e77fd1.86944714'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e77fd1.86944714'
+    - 'echo "FROM webdevops/php-nginx:8.2" >> Dockerfile_65969e81aa25f1.32995116'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa25f1.32995116'
     - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjIiLCJET0NLRVJfVEFHIjoiOC4yIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEwIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1Njc3YjIzZTc3ZmQxLjg2OTQ0NzE0In0=  Dockerfile_65677b23e77fd1.86944714'
+    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjIiLCJET0NLRVJfVEFHIjoiOC4yIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEwIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWEyNWYxLjMyOTk1MTE2In0=  Dockerfile_65969e81aa25f1.32995116'
     - 'cd $CI_PROJECT_DIR/tests/structure-test'
     - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.2 --config php-nginx/test.yaml'
     - 'docker push webdevops/php-nginx:8.2'
@@ -1505,10 +338,10 @@ stages:
     - 'cd docker/php-nginx-dev/8.2'
     - 'docker build --no-cache -t webdevops/php-nginx-dev:8.2 .'
     - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-nginx-dev:8.2" >> Dockerfile_65677b23e78167.85451092'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e78167.85451092'
+    - 'echo "FROM webdevops/php-nginx-dev:8.2" >> Dockerfile_65969e81aa2798.35883166'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa2798.35883166'
     - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3ODE2Ny44NTQ1MTA5MiJ9  Dockerfile_65677b23e78167.85451092'
+    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhMjc5OC4zNTg4MzE2NiJ9  Dockerfile_65969e81aa2798.35883166'
     - 'docker push webdevops/php-nginx-dev:8.2'
     - 'docker tag webdevops/php-nginx-dev:8.2 $CI_REGISTRY_IMAGE/php-nginx-dev:8.2'
     - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.2'
@@ -1516,29 +349,6 @@ stages:
     - aws
   needs:
     - 'webdevops/php-nginx:8.2'
-'webdevops/php-dev:8.2':
-  stage: level3
-  before_script:
-    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
-  image: webdevops/dockerfile-build-env
-  script:
-    - 'cd docker/php-dev/8.2'
-    - 'docker build --no-cache -t webdevops/php-dev:8.2 .'
-    - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-dev:8.2" >> Dockerfile_65677b23e782d9.53822770'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e782d9.53822770'
-    - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3ODJkOS41MzgyMjc3MCJ9  Dockerfile_65677b23e782d9.53822770'
-    - 'cd $CI_PROJECT_DIR/tests/structure-test'
-    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.2 --config php-dev/test.yaml'
-    - 'docker push webdevops/php-dev:8.2'
-    - 'docker tag webdevops/php-dev:8.2 $CI_REGISTRY_IMAGE/php-dev:8.2'
-    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.2'
-  tags:
-    - aws
-  needs:
-    - 'webdevops/php:8.2'
 'webdevops/php-apache:8.2':
   stage: level3
   before_script:
@@ -1549,10 +359,10 @@ stages:
     - 'cd docker/php-apache/8.2'
     - 'docker build --no-cache -t webdevops/php-apache:8.2 .'
     - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache:8.2" >> Dockerfile_65677b23e78455.15837566'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e78455.15837566'
+    - 'echo "FROM webdevops/php-apache:8.2" >> Dockerfile_65969e81aa28e3.42650509'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa28e3.42650509'
     - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTY3N2IyM2U3ODQ1NS4xNTgzNzU2NiJ9  Dockerfile_65677b23e78455.15837566'
+    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhMjhlMy40MjY1MDUwOSJ9  Dockerfile_65969e81aa28e3.42650509'
     - 'docker push webdevops/php-apache:8.2'
     - 'docker tag webdevops/php-apache:8.2 $CI_REGISTRY_IMAGE/php-apache:8.2'
     - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.2'
@@ -1570,10 +380,10 @@ stages:
     - 'cd docker/php-apache-dev/8.2'
     - 'docker build --no-cache -t webdevops/php-apache-dev:8.2 .'
     - 'cd $CI_PROJECT_DIR/tests/serverspec'
-    - 'echo "FROM webdevops/php-apache-dev:8.2" >> Dockerfile_65677b23e785c0.88716046'
-    - 'echo "COPY conf/ /" >> Dockerfile_65677b23e785c0.88716046'
+    - 'echo "FROM webdevops/php-apache-dev:8.2" >> Dockerfile_65969e81aa2a56.91619924'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa2a56.91619924'
     - 'bundle install'
-    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMiIsIkRPQ0tFUl9UQUciOiI4LjIiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTAiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU2NzdiMjNlNzg1YzAuODg3MTYwNDYifQ==  Dockerfile_65677b23e785c0.88716046'
+    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMiIsIkRPQ0tFUl9UQUciOiI4LjIiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTAiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTJhNTYuOTE2MTk5MjQifQ==  Dockerfile_65969e81aa2a56.91619924'
     - 'docker push webdevops/php-apache-dev:8.2'
     - 'docker tag webdevops/php-apache-dev:8.2 $CI_REGISTRY_IMAGE/php-apache-dev:8.2'
     - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.2'
@@ -1581,19 +391,941 @@ stages:
     - aws
   needs:
     - 'webdevops/php-apache:8.2'
-'webdevops/storage:latest':
+'webdevops/php:8.3':
   stage: level2
   before_script:
     - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
     - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
   image: webdevops/dockerfile-build-env
   script:
-    - 'cd docker/storage/latest'
-    - 'docker build --no-cache -t webdevops/storage:latest .'
-    - 'docker push webdevops/storage:latest'
-    - 'docker tag webdevops/storage:latest $CI_REGISTRY_IMAGE/storage:latest'
-    - 'docker push $CI_REGISTRY_IMAGE/storage:latest'
+    - 'cd docker/php-official/8.3'
+    - 'docker build --no-cache -t webdevops/php:8.3 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php:8.3" >> Dockerfile_65969e81aa2c00.96913904'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa2c00.96913904'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjMiLCJET0NLRVJfVEFHIjoiOC4zIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWEyYzAwLjk2OTEzOTA0In0=  Dockerfile_65969e81aa2c00.96913904'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.3 --config php/test.yaml'
+    - 'docker push webdevops/php:8.3'
+    - 'docker tag webdevops/php:8.3 $CI_REGISTRY_IMAGE/php:8.3'
+    - 'docker push $CI_REGISTRY_IMAGE/php:8.3'
+    - 'docker tag webdevops/php:8.3 webdevops/php-official:8.3'
+    - 'docker push webdevops/php-official:8.3'
   tags:
     - aws
   needs:
     - 'webdevops/toolbox:latest'
+'webdevops/php-dev:8.3':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-dev/8.3'
+    - 'docker build --no-cache -t webdevops/php-dev:8.3 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-dev:8.3" >> Dockerfile_65969e81aa2dc5.21195258'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa2dc5.21195258'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhMmRjNS4yMTE5NTI1OCJ9  Dockerfile_65969e81aa2dc5.21195258'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.3 --config php-dev/test.yaml'
+    - 'docker push webdevops/php-dev:8.3'
+    - 'docker tag webdevops/php-dev:8.3 $CI_REGISTRY_IMAGE/php-dev:8.3'
+    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.3'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.3'
+'webdevops/php-nginx:8.3':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx/8.3'
+    - 'docker build --no-cache -t webdevops/php-nginx:8.3 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx:8.3" >> Dockerfile_65969e81aa30f3.78486684'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa30f3.78486684'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjMiLCJET0NLRVJfVEFHIjoiOC4zIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWEzMGYzLjc4NDg2Njg0In0=  Dockerfile_65969e81aa30f3.78486684'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.3 --config php-nginx/test.yaml'
+    - 'docker push webdevops/php-nginx:8.3'
+    - 'docker tag webdevops/php-nginx:8.3 $CI_REGISTRY_IMAGE/php-nginx:8.3'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.3'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.3'
+'webdevops/php-nginx-dev:8.3':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx-dev/8.3'
+    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.3 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx-dev:8.3" >> Dockerfile_65969e81aa32b7.36398353'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa32b7.36398353'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhMzJiNy4zNjM5ODM1MyJ9  Dockerfile_65969e81aa32b7.36398353'
+    - 'docker push webdevops/php-nginx-dev:8.3'
+    - 'docker tag webdevops/php-nginx-dev:8.3 $CI_REGISTRY_IMAGE/php-nginx-dev:8.3'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.3'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-nginx:8.3'
+'webdevops/php-apache:8.3':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache/8.3'
+    - 'docker build --no-cache -t webdevops/php-apache:8.3 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache:8.3" >> Dockerfile_65969e81aa3413.33167586'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa3413.33167586'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhMzQxMy4zMzE2NzU4NiJ9  Dockerfile_65969e81aa3413.33167586'
+    - 'docker push webdevops/php-apache:8.3'
+    - 'docker tag webdevops/php-apache:8.3 $CI_REGISTRY_IMAGE/php-apache:8.3'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.3'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.3'
+'webdevops/php-apache-dev:8.3':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache-dev/8.3'
+    - 'docker build --no-cache -t webdevops/php-apache-dev:8.3 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache-dev:8.3" >> Dockerfile_65969e81aa3595.03706036'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa3595.03706036'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMyIsIkRPQ0tFUl9UQUciOiI4LjMiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTM1OTUuMDM3MDYwMzYifQ==  Dockerfile_65969e81aa3595.03706036'
+    - 'docker push webdevops/php-apache-dev:8.3'
+    - 'docker tag webdevops/php-apache-dev:8.3 $CI_REGISTRY_IMAGE/php-apache-dev:8.3'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.3'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-apache:8.3'
+'webdevops/php:8.2-alpine':
+  stage: level2
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-official/8.2-alpine'
+    - 'docker build --no-cache -t webdevops/php:8.2-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php:8.2-alpine" >> Dockerfile_65969e81aa4c48.63440216'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa4c48.63440216'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjItYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMi1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhNGM0OC42MzQ0MDIxNiJ9  Dockerfile_65969e81aa4c48.63440216'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.2-alpine --config php/test.yaml'
+    - 'docker push webdevops/php:8.2-alpine'
+    - 'docker tag webdevops/php:8.2-alpine $CI_REGISTRY_IMAGE/php:8.2-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php:8.2-alpine'
+    - 'docker tag webdevops/php:8.2-alpine webdevops/php-official:8.2-alpine'
+    - 'docker push webdevops/php-official:8.2-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/toolbox:latest'
+'webdevops/php-dev:8.2-alpine':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-dev/8.2-alpine'
+    - 'docker build --no-cache -t webdevops/php-dev:8.2-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-dev:8.2-alpine" >> Dockerfile_65969e81aa4de7.33195445'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa4de7.33195445'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTRkZTcuMzMxOTU0NDUifQ==  Dockerfile_65969e81aa4de7.33195445'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.2-alpine --config php-dev/test.yaml'
+    - 'docker push webdevops/php-dev:8.2-alpine'
+    - 'docker tag webdevops/php-dev:8.2-alpine $CI_REGISTRY_IMAGE/php-dev:8.2-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.2-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.2-alpine'
+'webdevops/php-nginx:8.2-alpine':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx/8.2-alpine'
+    - 'docker build --no-cache -t webdevops/php-nginx:8.2-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx:8.2-alpine" >> Dockerfile_65969e81aa4f93.58890182'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa4f93.58890182'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjItYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMi1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhNGY5My41ODg5MDE4MiJ9  Dockerfile_65969e81aa4f93.58890182'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.2-alpine --config php-nginx/test.yaml'
+    - 'docker push webdevops/php-nginx:8.2-alpine'
+    - 'docker tag webdevops/php-nginx:8.2-alpine $CI_REGISTRY_IMAGE/php-nginx:8.2-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.2-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.2-alpine'
+'webdevops/php-nginx-dev:8.2-alpine':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx-dev/8.2-alpine'
+    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.2-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx-dev:8.2-alpine" >> Dockerfile_65969e81aa5164.98447807'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa5164.98447807'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTUxNjQuOTg0NDc4MDcifQ==  Dockerfile_65969e81aa5164.98447807'
+    - 'docker push webdevops/php-nginx-dev:8.2-alpine'
+    - 'docker tag webdevops/php-nginx-dev:8.2-alpine $CI_REGISTRY_IMAGE/php-nginx-dev:8.2-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.2-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-nginx:8.2-alpine'
+'webdevops/php-nginx-dev:8.3-alpine':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx-dev/8.3-alpine'
+    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.3-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx-dev:8.3-alpine" >> Dockerfile_65969e81aa52c4.21199013'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa52c4.21199013'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTUyYzQuMjExOTkwMTMifQ==  Dockerfile_65969e81aa52c4.21199013'
+    - 'docker push webdevops/php-nginx-dev:8.3-alpine'
+    - 'docker tag webdevops/php-nginx-dev:8.3-alpine $CI_REGISTRY_IMAGE/php-nginx-dev:8.3-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.3-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-nginx:8.2-alpine'
+'webdevops/php-apache:8.2-alpine':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache/8.2-alpine'
+    - 'docker build --no-cache -t webdevops/php-apache:8.2-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache:8.2-alpine" >> Dockerfile_65969e81aa5416.86506770'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa5416.86506770'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTU0MTYuODY1MDY3NzAifQ==  Dockerfile_65969e81aa5416.86506770'
+    - 'docker push webdevops/php-apache:8.2-alpine'
+    - 'docker tag webdevops/php-apache:8.2-alpine $CI_REGISTRY_IMAGE/php-apache:8.2-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.2-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.2-alpine'
+'webdevops/php-apache-dev:8.2-alpine':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache-dev/8.2-alpine'
+    - 'docker build --no-cache -t webdevops/php-apache-dev:8.2-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache-dev:8.2-alpine" >> Dockerfile_65969e81aa5562.54359563'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa5562.54359563'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMi1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4yLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWE1NTYyLjU0MzU5NTYzIn0=  Dockerfile_65969e81aa5562.54359563'
+    - 'docker push webdevops/php-apache-dev:8.2-alpine'
+    - 'docker tag webdevops/php-apache-dev:8.2-alpine $CI_REGISTRY_IMAGE/php-apache-dev:8.2-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.2-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-apache:8.2-alpine'
+'webdevops/php:8.0-alpine':
+  stage: level2
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-official/8.0-alpine'
+    - 'docker build --no-cache -t webdevops/php:8.0-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php:8.0-alpine" >> Dockerfile_65969e81aa7783.30504506'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa7783.30504506'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.0-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjAtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMC1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhNzc4My4zMDUwNDUwNiJ9  Dockerfile_65969e81aa7783.30504506'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.0-alpine --config php/test.yaml'
+    - 'docker push webdevops/php:8.0-alpine'
+    - 'docker tag webdevops/php:8.0-alpine $CI_REGISTRY_IMAGE/php:8.0-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php:8.0-alpine'
+    - 'docker tag webdevops/php:8.0-alpine webdevops/php-official:8.0-alpine'
+    - 'docker push webdevops/php-official:8.0-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/toolbox:latest'
+'webdevops/php-dev:8.0-alpine':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-dev/8.0-alpine'
+    - 'docker build --no-cache -t webdevops/php-dev:8.0-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-dev:8.0-alpine" >> Dockerfile_65969e81aa7a03.16807747'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa7a03.16807747'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.0-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4wLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjAtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTdhMDMuMTY4MDc3NDcifQ==  Dockerfile_65969e81aa7a03.16807747'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.0-alpine --config php-dev/test.yaml'
+    - 'docker push webdevops/php-dev:8.0-alpine'
+    - 'docker tag webdevops/php-dev:8.0-alpine $CI_REGISTRY_IMAGE/php-dev:8.0-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.0-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.0-alpine'
+'webdevops/php-nginx:8.0-alpine':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx/8.0-alpine'
+    - 'docker build --no-cache -t webdevops/php-nginx:8.0-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx:8.0-alpine" >> Dockerfile_65969e81aa7be3.43250156'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa7be3.43250156'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.0-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjAtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMC1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhN2JlMy40MzI1MDE1NiJ9  Dockerfile_65969e81aa7be3.43250156'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.0-alpine --config php-nginx/test.yaml'
+    - 'docker push webdevops/php-nginx:8.0-alpine'
+    - 'docker tag webdevops/php-nginx:8.0-alpine $CI_REGISTRY_IMAGE/php-nginx:8.0-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.0-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.0-alpine'
+'webdevops/php-nginx-dev:8.0-alpine':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx-dev/8.0-alpine'
+    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.0-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx-dev:8.0-alpine" >> Dockerfile_65969e81aa7d86.66793645'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa7d86.66793645'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.0-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4wLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjAtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTdkODYuNjY3OTM2NDUifQ==  Dockerfile_65969e81aa7d86.66793645'
+    - 'docker push webdevops/php-nginx-dev:8.0-alpine'
+    - 'docker tag webdevops/php-nginx-dev:8.0-alpine $CI_REGISTRY_IMAGE/php-nginx-dev:8.0-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.0-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-nginx:8.0-alpine'
+'webdevops/php-apache:8.0-alpine':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache/8.0-alpine'
+    - 'docker build --no-cache -t webdevops/php-apache:8.0-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache:8.0-alpine" >> Dockerfile_65969e81aa7f81.41127162'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa7f81.41127162'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.0-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4wLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjAtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTdmODEuNDExMjcxNjIifQ==  Dockerfile_65969e81aa7f81.41127162'
+    - 'docker push webdevops/php-apache:8.0-alpine'
+    - 'docker tag webdevops/php-apache:8.0-alpine $CI_REGISTRY_IMAGE/php-apache:8.0-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.0-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.0-alpine'
+'webdevops/php-apache-dev:8.0-alpine':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache-dev/8.0-alpine'
+    - 'docker build --no-cache -t webdevops/php-apache-dev:8.0-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache-dev:8.0-alpine" >> Dockerfile_65969e81aa80f5.58702224'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa80f5.58702224'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.0-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMC1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4wLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWE4MGY1LjU4NzAyMjI0In0=  Dockerfile_65969e81aa80f5.58702224'
+    - 'docker push webdevops/php-apache-dev:8.0-alpine'
+    - 'docker tag webdevops/php-apache-dev:8.0-alpine $CI_REGISTRY_IMAGE/php-apache-dev:8.0-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.0-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-apache:8.0-alpine'
+'webdevops/php:8.1-alpine':
+  stage: level2
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-official/8.1-alpine'
+    - 'docker build --no-cache -t webdevops/php:8.1-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php:8.1-alpine" >> Dockerfile_65969e81aa8276.62506533'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa8276.62506533'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjEtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMS1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhODI3Ni42MjUwNjUzMyJ9  Dockerfile_65969e81aa8276.62506533'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.1-alpine --config php/test.yaml'
+    - 'docker push webdevops/php:8.1-alpine'
+    - 'docker tag webdevops/php:8.1-alpine $CI_REGISTRY_IMAGE/php:8.1-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php:8.1-alpine'
+    - 'docker tag webdevops/php:8.1-alpine webdevops/php-official:8.1-alpine'
+    - 'docker push webdevops/php-official:8.1-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/toolbox:latest'
+'webdevops/php-dev:8.1-alpine':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-dev/8.1-alpine'
+    - 'docker build --no-cache -t webdevops/php-dev:8.1-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-dev:8.1-alpine" >> Dockerfile_65969e81aa8427.09198127'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa8427.09198127'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4xLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjEtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTg0MjcuMDkxOTgxMjcifQ==  Dockerfile_65969e81aa8427.09198127'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.1-alpine --config php-dev/test.yaml'
+    - 'docker push webdevops/php-dev:8.1-alpine'
+    - 'docker tag webdevops/php-dev:8.1-alpine $CI_REGISTRY_IMAGE/php-dev:8.1-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.1-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.1-alpine'
+'webdevops/php-nginx:8.1-alpine':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx/8.1-alpine'
+    - 'docker build --no-cache -t webdevops/php-nginx:8.1-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx:8.1-alpine" >> Dockerfile_65969e81aa8605.38624016'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa8605.38624016'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjEtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMS1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhODYwNS4zODYyNDAxNiJ9  Dockerfile_65969e81aa8605.38624016'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.1-alpine --config php-nginx/test.yaml'
+    - 'docker push webdevops/php-nginx:8.1-alpine'
+    - 'docker tag webdevops/php-nginx:8.1-alpine $CI_REGISTRY_IMAGE/php-nginx:8.1-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.1-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.1-alpine'
+'webdevops/php-nginx-dev:8.1-alpine':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx-dev/8.1-alpine'
+    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.1-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx-dev:8.1-alpine" >> Dockerfile_65969e81aa87a7.17178267'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa87a7.17178267'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4xLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjEtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTg3YTcuMTcxNzgyNjcifQ==  Dockerfile_65969e81aa87a7.17178267'
+    - 'docker push webdevops/php-nginx-dev:8.1-alpine'
+    - 'docker tag webdevops/php-nginx-dev:8.1-alpine $CI_REGISTRY_IMAGE/php-nginx-dev:8.1-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.1-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-nginx:8.1-alpine'
+'webdevops/php-apache:8.1-alpine':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache/8.1-alpine'
+    - 'docker build --no-cache -t webdevops/php-apache:8.1-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache:8.1-alpine" >> Dockerfile_65969e81aa8921.55210754'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa8921.55210754'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4xLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjEtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYTg5MjEuNTUyMTA3NTQifQ==  Dockerfile_65969e81aa8921.55210754'
+    - 'docker push webdevops/php-apache:8.1-alpine'
+    - 'docker tag webdevops/php-apache:8.1-alpine $CI_REGISTRY_IMAGE/php-apache:8.1-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.1-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.1-alpine'
+'webdevops/php-apache-dev:8.1-alpine':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache-dev/8.1-alpine'
+    - 'docker build --no-cache -t webdevops/php-apache-dev:8.1-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache-dev:8.1-alpine" >> Dockerfile_65969e81aa8ac9.88472855'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aa8ac9.88472855'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMS1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4xLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWE4YWM5Ljg4NDcyODU1In0=  Dockerfile_65969e81aa8ac9.88472855'
+    - 'docker push webdevops/php-apache-dev:8.1-alpine'
+    - 'docker tag webdevops/php-apache-dev:8.1-alpine $CI_REGISTRY_IMAGE/php-apache-dev:8.1-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.1-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-apache:8.1-alpine'
+'webdevops/php:8.3-alpine':
+  stage: level2
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-official/8.3-alpine'
+    - 'docker build --no-cache -t webdevops/php:8.3-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php:8.3-alpine" >> Dockerfile_65969e81aaa4e7.42601644'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aaa4e7.42601644'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjMtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMy1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhYTRlNy40MjYwMTY0NCJ9  Dockerfile_65969e81aaa4e7.42601644'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.3-alpine --config php/test.yaml'
+    - 'docker push webdevops/php:8.3-alpine'
+    - 'docker tag webdevops/php:8.3-alpine $CI_REGISTRY_IMAGE/php:8.3-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php:8.3-alpine'
+    - 'docker tag webdevops/php:8.3-alpine webdevops/php-official:8.3-alpine'
+    - 'docker push webdevops/php-official:8.3-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/toolbox:latest'
+'webdevops/php-dev:8.3-alpine':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-dev/8.3-alpine'
+    - 'docker build --no-cache -t webdevops/php-dev:8.3-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-dev:8.3-alpine" >> Dockerfile_65969e81aaa7f8.89428890'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aaa7f8.89428890'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYWE3ZjguODk0Mjg4OTAifQ==  Dockerfile_65969e81aaa7f8.89428890'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.3-alpine --config php-dev/test.yaml'
+    - 'docker push webdevops/php-dev:8.3-alpine'
+    - 'docker tag webdevops/php-dev:8.3-alpine $CI_REGISTRY_IMAGE/php-dev:8.3-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.3-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.3-alpine'
+'webdevops/php-nginx:8.3-alpine':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx/8.3-alpine'
+    - 'docker build --no-cache -t webdevops/php-nginx:8.3-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx:8.3-alpine" >> Dockerfile_65969e81aaab30.24147828'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aaab30.24147828'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjMtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMy1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhYWIzMC4yNDE0NzgyOCJ9  Dockerfile_65969e81aaab30.24147828'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.3-alpine --config php-nginx/test.yaml'
+    - 'docker push webdevops/php-nginx:8.3-alpine'
+    - 'docker tag webdevops/php-nginx:8.3-alpine $CI_REGISTRY_IMAGE/php-nginx:8.3-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.3-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.3-alpine'
+'webdevops/php-apache:8.3-alpine':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache/8.3-alpine'
+    - 'docker build --no-cache -t webdevops/php-apache:8.3-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache:8.3-alpine" >> Dockerfile_65969e81aaaf12.92675578'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aaaf12.92675578'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYWFmMTIuOTI2NzU1NzgifQ==  Dockerfile_65969e81aaaf12.92675578'
+    - 'docker push webdevops/php-apache:8.3-alpine'
+    - 'docker tag webdevops/php-apache:8.3-alpine $CI_REGISTRY_IMAGE/php-apache:8.3-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.3-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.3-alpine'
+'webdevops/php-apache-dev:8.3-alpine':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache-dev/8.3-alpine'
+    - 'docker build --no-cache -t webdevops/php-apache-dev:8.3-alpine .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache-dev:8.3-alpine" >> Dockerfile_65969e81aab221.09271346'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aab221.09271346'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMy1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4zLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWFiMjIxLjA5MjcxMzQ2In0=  Dockerfile_65969e81aab221.09271346'
+    - 'docker push webdevops/php-apache-dev:8.3-alpine'
+    - 'docker tag webdevops/php-apache-dev:8.3-alpine $CI_REGISTRY_IMAGE/php-apache-dev:8.3-alpine'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.3-alpine'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-apache:8.3-alpine'
+'webdevops/php:8.1':
+  stage: level2
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-official/8.1'
+    - 'docker build --no-cache -t webdevops/php:8.1 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php:8.1" >> Dockerfile_65969e81aab589.41021901'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aab589.41021901'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjEiLCJET0NLRVJfVEFHIjoiOC4xIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEwIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWFiNTg5LjQxMDIxOTAxIn0=  Dockerfile_65969e81aab589.41021901'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.1 --config php/test.yaml'
+    - 'docker push webdevops/php:8.1'
+    - 'docker tag webdevops/php:8.1 $CI_REGISTRY_IMAGE/php:8.1'
+    - 'docker push $CI_REGISTRY_IMAGE/php:8.1'
+    - 'docker tag webdevops/php:8.1 webdevops/php-official:8.1'
+    - 'docker push webdevops/php-official:8.1'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/toolbox:latest'
+'webdevops/php-dev:8.1':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-dev/8.1'
+    - 'docker build --no-cache -t webdevops/php-dev:8.1 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-dev:8.1" >> Dockerfile_65969e81aab8d8.02649728'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aab8d8.02649728'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4xIiwiRE9DS0VSX1RBRyI6IjguMSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhYjhkOC4wMjY0OTcyOCJ9  Dockerfile_65969e81aab8d8.02649728'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.1 --config php-dev/test.yaml'
+    - 'docker push webdevops/php-dev:8.1'
+    - 'docker tag webdevops/php-dev:8.1 $CI_REGISTRY_IMAGE/php-dev:8.1'
+    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.1'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.1'
+'webdevops/php-nginx:8.1':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx/8.1'
+    - 'docker build --no-cache -t webdevops/php-nginx:8.1 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx:8.1" >> Dockerfile_65969e81aabc30.36776190'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aabc30.36776190'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjEiLCJET0NLRVJfVEFHIjoiOC4xIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEwIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWFiYzMwLjM2Nzc2MTkwIn0=  Dockerfile_65969e81aabc30.36776190'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.1 --config php-nginx/test.yaml'
+    - 'docker push webdevops/php-nginx:8.1'
+    - 'docker tag webdevops/php-nginx:8.1 $CI_REGISTRY_IMAGE/php-nginx:8.1'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.1'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.1'
+'webdevops/php-nginx-dev:8.1':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx-dev/8.1'
+    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.1 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx-dev:8.1" >> Dockerfile_65969e81aabea0.64919119'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aabea0.64919119'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4xIiwiRE9DS0VSX1RBRyI6IjguMSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhYmVhMC42NDkxOTExOSJ9  Dockerfile_65969e81aabea0.64919119'
+    - 'docker push webdevops/php-nginx-dev:8.1'
+    - 'docker tag webdevops/php-nginx-dev:8.1 $CI_REGISTRY_IMAGE/php-nginx-dev:8.1'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.1'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-nginx:8.1'
+'webdevops/php-apache:8.1':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache/8.1'
+    - 'docker build --no-cache -t webdevops/php-apache:8.1 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache:8.1" >> Dockerfile_65969e81aac041.54500485'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aac041.54500485'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4xIiwiRE9DS0VSX1RBRyI6IjguMSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhYzA0MS41NDUwMDQ4NSJ9  Dockerfile_65969e81aac041.54500485'
+    - 'docker push webdevops/php-apache:8.1'
+    - 'docker tag webdevops/php-apache:8.1 $CI_REGISTRY_IMAGE/php-apache:8.1'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.1'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.1'
+'webdevops/php-apache-dev:8.1':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache-dev/8.1'
+    - 'docker build --no-cache -t webdevops/php-apache-dev:8.1 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache-dev:8.1" >> Dockerfile_65969e81aac277.34648619'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aac277.34648619'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMSIsIkRPQ0tFUl9UQUciOiI4LjEiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTAiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYWMyNzcuMzQ2NDg2MTkifQ==  Dockerfile_65969e81aac277.34648619'
+    - 'docker push webdevops/php-apache-dev:8.1'
+    - 'docker tag webdevops/php-apache-dev:8.1 $CI_REGISTRY_IMAGE/php-apache-dev:8.1'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.1'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-apache:8.1'
+'webdevops/php:8.0':
+  stage: level2
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-official/8.0'
+    - 'docker build --no-cache -t webdevops/php:8.0 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php:8.0" >> Dockerfile_65969e81aac4f1.09200919'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aac4f1.09200919'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.0 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjAiLCJET0NLRVJfVEFHIjoiOC4wIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEwIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWFjNGYxLjA5MjAwOTE5In0=  Dockerfile_65969e81aac4f1.09200919'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php:8.0 --config php/test.yaml'
+    - 'docker push webdevops/php:8.0'
+    - 'docker tag webdevops/php:8.0 $CI_REGISTRY_IMAGE/php:8.0'
+    - 'docker push $CI_REGISTRY_IMAGE/php:8.0'
+    - 'docker tag webdevops/php:8.0 webdevops/php-official:8.0'
+    - 'docker push webdevops/php-official:8.0'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/toolbox:latest'
+'webdevops/php-dev:8.0':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-dev/8.0'
+    - 'docker build --no-cache -t webdevops/php-dev:8.0 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-dev:8.0" >> Dockerfile_65969e81aac786.86881703'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aac786.86881703'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.0 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4wIiwiRE9DS0VSX1RBRyI6IjguMCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhYzc4Ni44Njg4MTcwMyJ9  Dockerfile_65969e81aac786.86881703'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-dev:8.0 --config php-dev/test.yaml'
+    - 'docker push webdevops/php-dev:8.0'
+    - 'docker tag webdevops/php-dev:8.0 $CI_REGISTRY_IMAGE/php-dev:8.0'
+    - 'docker push $CI_REGISTRY_IMAGE/php-dev:8.0'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.0'
+'webdevops/php-nginx:8.0':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx/8.0'
+    - 'docker build --no-cache -t webdevops/php-nginx:8.0 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx:8.0" >> Dockerfile_65969e81aac9c1.86208219'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aac9c1.86208219'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.0 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjAiLCJET0NLRVJfVEFHIjoiOC4wIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEwIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlXzY1OTY5ZTgxYWFjOWMxLjg2MjA4MjE5In0=  Dockerfile_65969e81aac9c1.86208219'
+    - 'cd $CI_PROJECT_DIR/tests/structure-test'
+    - '/usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.0 --config php-nginx/test.yaml'
+    - 'docker push webdevops/php-nginx:8.0'
+    - 'docker tag webdevops/php-nginx:8.0 $CI_REGISTRY_IMAGE/php-nginx:8.0'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx:8.0'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.0'
+'webdevops/php-nginx-dev:8.0':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-nginx-dev/8.0'
+    - 'docker build --no-cache -t webdevops/php-nginx-dev:8.0 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-nginx-dev:8.0" >> Dockerfile_65969e81aacd19.15906247'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aacd19.15906247'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.0 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4wIiwiRE9DS0VSX1RBRyI6IjguMCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhY2QxOS4xNTkwNjI0NyJ9  Dockerfile_65969e81aacd19.15906247'
+    - 'docker push webdevops/php-nginx-dev:8.0'
+    - 'docker tag webdevops/php-nginx-dev:8.0 $CI_REGISTRY_IMAGE/php-nginx-dev:8.0'
+    - 'docker push $CI_REGISTRY_IMAGE/php-nginx-dev:8.0'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-nginx:8.0'
+'webdevops/php-apache:8.0':
+  stage: level3
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache/8.0'
+    - 'docker build --no-cache -t webdevops/php-apache:8.0 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache:8.0" >> Dockerfile_65969e81aacf95.68202676'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aacf95.68202676'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.0 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4wIiwiRE9DS0VSX1RBRyI6IjguMCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMCIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV82NTk2OWU4MWFhY2Y5NS42ODIwMjY3NiJ9  Dockerfile_65969e81aacf95.68202676'
+    - 'docker push webdevops/php-apache:8.0'
+    - 'docker tag webdevops/php-apache:8.0 $CI_REGISTRY_IMAGE/php-apache:8.0'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache:8.0'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php:8.0'
+'webdevops/php-apache-dev:8.0':
+  stage: level4
+  before_script:
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+    - 'docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY'
+  image: webdevops/dockerfile-build-env
+  script:
+    - 'cd docker/php-apache-dev/8.0'
+    - 'docker build --no-cache -t webdevops/php-apache-dev:8.0 .'
+    - 'cd $CI_PROJECT_DIR/tests/serverspec'
+    - 'echo "FROM webdevops/php-apache-dev:8.0" >> Dockerfile_65969e81aad196.17719885'
+    - 'echo "COPY conf/ /" >> Dockerfile_65969e81aad196.17719885'
+    - 'bundle install'
+    - 'bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.0 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMCIsIkRPQ0tFUl9UQUciOiI4LjAiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTAiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfNjU5NjllODFhYWQxOTYuMTc3MTk4ODUifQ==  Dockerfile_65969e81aad196.17719885'
+    - 'docker push webdevops/php-apache-dev:8.0'
+    - 'docker tag webdevops/php-apache-dev:8.0 $CI_REGISTRY_IMAGE/php-apache-dev:8.0'
+    - 'docker push $CI_REGISTRY_IMAGE/php-apache-dev:8.0'
+  tags:
+    - aws
+  needs:
+    - 'webdevops/php-apache:8.0'
