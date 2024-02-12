@@ -157,6 +157,7 @@ RUN set -x \
         bz2 \
         calendar \
         exif \
+        ftp \
         gmp \
         ffi \
         imagick \
