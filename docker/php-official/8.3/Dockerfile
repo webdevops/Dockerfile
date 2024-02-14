@@ -151,6 +151,7 @@ RUN set -x \
         bz2 \
         calendar \
         exif \
+        ftp \
         gmp \
         intl \
         gettext \
