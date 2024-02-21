@@ -100,6 +100,7 @@ RUN set -x \
         libldap-2.4-2 \
         zlibc \
         libxslt1.1 \
+        libldap-common \
         zlib1g \
         libpq5 \
         libpng16-16 \

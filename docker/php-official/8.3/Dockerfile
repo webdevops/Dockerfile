@@ -99,6 +99,7 @@ RUN set -x \
         librabbitmq4 \
         libldap-2.5-0 \
         libxslt1.1 \
+        libldap-common \
         zlib1g \
         libpq5 \
         libpng16-16 \
