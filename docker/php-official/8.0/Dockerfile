@@ -4,7 +4,7 @@
 #+++++++++++++++++++++++++++++++++++++++
 
 
-FROM php:8.0-fpm-buster
+FROM php:8.0-fpm-bookworm
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
@@ -38,7 +38,7 @@ RUN set -x \
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
-    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list \    
+    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list.d/debian.sources \    
     && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \
@@ -96,9 +96,8 @@ RUN set -x \
         pngquant \
         # Libraries
         libvips42 \
-        librabbitmq4 \        
-        libldap-2.4-2 \
-        zlibc \
+        librabbitmq4 \
+        libldap-2.5-0 \
         libxslt1.1 \
         libldap-common \
         zlib1g \

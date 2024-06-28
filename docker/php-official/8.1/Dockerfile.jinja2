@@ -1,5 +1,5 @@
 
-{{ docker.fromOfficial("php", "8.1-fpm-buster") }}
+{{ docker.fromOfficial("php", "8.1-fpm-bookworm") }}
 
 {{ docker.version() }}
 
@@ -14,7 +14,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ bootstrap.debian('buster') }}
+    {{ bootstrap.debian('bookworm') }}
 
 RUN set -x \
     {{ base.debian() }} \
@@ -27,7 +27,7 @@ RUN set -x \
     {{ docker.cleanup() }}
 
 RUN set -x \
-    {{ php.official(version='8.1') }} \
+    {{ php.official(version='8.1',distribution='bookworm') }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 

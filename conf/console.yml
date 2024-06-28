@@ -43,11 +43,7 @@ dockerTest:
         OS_FAMILY: 'debian'
         OS_VERSION: '9'
         PHP_OFFICIAL: '1'
-      'php[^:]*:8.(0|1|2)':
-        OS_FAMILY: 'debian'
-        OS_VERSION: '10'
-        PHP_OFFICIAL: '1'
-      'php[^:]*:8.3':
+      'php[^:]*:8.(0|1|2|3)':
         OS_FAMILY: 'debian'
         OS_VERSION: '12'
         PHP_OFFICIAL: '1'
