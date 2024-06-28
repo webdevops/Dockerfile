@@ -37,7 +37,7 @@ COPY conf/ /opt/docker/
 RUN set -x \
     # Init bootstrap
     # Add community
-    && echo https://dl-4.alpinelinux.org/alpine/v3.18/community/ >> /etc/apk/repositories \
+    && echo https://dl-4.alpinelinux.org/alpine/v3.20/community/ >> /etc/apk/repositories \
     # System update
     && /usr/local/bin/apk-upgrade \
     # Install base stuff
@@ -63,8 +63,7 @@ RUN set -x \
         tzdata \
         busybox-suid \
     && chmod +s /sbin/gosu \
-    && docker-run-bootstrap \
-    && docker-image-cleanup
+    && docker-run-bootstrap
 
 RUN set -x \
     && apk-install shadow \
@@ -79,8 +78,7 @@ RUN set -x \
         rsync \
         patch \
         git \
-    && docker-run-bootstrap \
-    && docker-image-cleanup
+    && docker-run-bootstrap
 
 RUN set -x \
     # Install php environment
@@ -239,8 +237,7 @@ RUN set -x \
     # Enable php services
     && docker-service enable syslog \
     && docker-service enable cron \
-    && docker-run-bootstrap \
-    && docker-image-cleanup
+    && docker-run-bootstrap
 
 WORKDIR /
 EXPOSE 9000

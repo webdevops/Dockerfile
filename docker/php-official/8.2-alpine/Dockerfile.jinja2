@@ -15,22 +15,19 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ bootstrap.alpine('3.18') }}
+    {{ bootstrap.alpine('3.20') }}
 
 RUN set -x \
     {{ base.alpine() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ provision.runBootstrap() }}
 
 RUN set -x \
     {{ baseapp.alpine() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ provision.runBootstrap() }}
 
 RUN set -x \
     {{ php.officialAlpine(version='8.2') }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ provision.runBootstrap() }}
 
 {{ docker.workdir('/') }}
 {{ docker.expose('9000') }}
