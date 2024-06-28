@@ -7,7 +7,6 @@
 
 RUN set -x \
     {{ apache.alpine() }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ provision.runBootstrap() }}
 
 {{ docker.expose('80 443') }}

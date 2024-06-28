@@ -35,5 +35,4 @@ RUN set -x \
     && docker-service enable syslog \
     && docker-service enable postfix \
     && docker-service enable ssh \
-    && docker-run-bootstrap \
-    && docker-image-cleanup
+    && docker-run-bootstrap

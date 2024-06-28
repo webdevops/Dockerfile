@@ -8,5 +8,4 @@
 
 RUN set -x \
     {{ php.officialDevelopmentAlpine(version="8.0") }} \
-    {{ provision.runBootstrap() }} \
-    {{ docker.cleanup() }}
+    {{ provision.runBootstrap() }}
