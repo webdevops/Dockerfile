@@ -149,6 +149,7 @@ RUN set -x \
         bcmath \
         amqp \
         imagick \
+        ffi \
         bz2 \
         calendar \
         exif \
@@ -177,11 +178,17 @@ RUN set -x \
         opcache \
     && pecl install memcached \
     && pecl install apcu \
+    && pecl install excimer \
+    && pecl install opentelemetry \
+    && pecl install protobuf \
     && pecl install xmlrpc-1.0.0RC3 \
     && pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
+    && echo extension=excimer.so > /usr/local/etc/php/conf.d/excimer.ini \
+    && echo extension=opentelemetry.so > /usr/local/etc/php/conf.d/opentelemetry.ini \
+    && echo extension=protobuf.so > /usr/local/etc/php/conf.d/protobuf.ini \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \

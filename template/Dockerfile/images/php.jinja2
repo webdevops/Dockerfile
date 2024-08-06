@@ -84,6 +84,7 @@
 {%- if version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' %}
         amqp \
         imagick \
+        ffi \
 {%- endif %}
         bz2 \
         calendar \
@@ -137,11 +138,17 @@
 {%- elif version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' %}
     && pecl install memcached \
     && pecl install apcu \
+    && pecl install excimer \
+    && pecl install opentelemetry \
+    && pecl install protobuf \
     && pecl install xmlrpc-1.0.0RC3 \
     && pecl install vips \
     && pecl install redis \
     && pecl install mongodb \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
+    && echo extension=excimer.so > /usr/local/etc/php/conf.d/excimer.ini \
+    && echo extension=opentelemetry.so > /usr/local/etc/php/conf.d/opentelemetry.ini \
+    && echo extension=protobuf.so > /usr/local/etc/php/conf.d/protobuf.ini \
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
@@ -322,6 +329,9 @@
     {%- endif %}
 {%- if version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' %}
     && pecl install apcu \
+    && pecl install excimer \
+    && pecl install opentelemetry \
+    && pecl install protobuf \
     && pecl install vips \
     && pecl install yaml \
     && pecl install redis \
@@ -329,6 +339,9 @@
     && pecl install xmlrpc-1.0.0RC3 \
     && docker-php-ext-enable \
         apcu \
+        excimer \
+        opentelemetry \
+        protobuf \
         vips \
         yaml \
         redis \

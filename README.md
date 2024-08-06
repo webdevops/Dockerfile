@@ -64,57 +64,57 @@ As in many projects the documentation is kind of up to date 😅.
 
 The following images which are currently supported are based on `php:{VER}-fpm-buster`.
 
-* `webdevops/php:7.4`
 * `webdevops/php:8.0`
 * `webdevops/php:8.1`
 * `webdevops/php:8.2`
-* `webdevops/php-dev:7.4`
+* `webdevops/php:8.3`
 * `webdevops/php-dev:8.0`
 * `webdevops/php-dev:8.1`
 * `webdevops/php-dev:8.2`
-* `webdevops/php-apache:7.4`
+* `webdevops/php-dev:8.3`
 * `webdevops/php-apache:8.0`
 * `webdevops/php-apache:8.1`
 * `webdevops/php-apache:8.2`
-* `webdevops/php-apache-dev:7.4`
+* `webdevops/php-apache:8.3`
 * `webdevops/php-apache-dev:8.0`
 * `webdevops/php-apache-dev:8.1`
 * `webdevops/php-apache-dev:8.2`
-* `webdevops/php-nginx:7.4`
+* `webdevops/php-apache-dev:8.3`
 * `webdevops/php-nginx:8.0`
 * `webdevops/php-nginx:8.1`
 * `webdevops/php-nginx:8.2`
-* `webdevops/php-nginx-dev:7.4`
+* `webdevops/php-nginx:8.3`
 * `webdevops/php-nginx-dev:8.0`
 * `webdevops/php-nginx-dev:8.1`
 * `webdevops/php-nginx-dev:8.2`
+* `webdevops/php-nginx-dev:8.3`
 
 
 ### Alpine PHP
 
 The following images which are currently supported are based on `php:{VER}-fpm-alpine`.
 
-* `webdevops/php:7.4-alpine`
 * `webdevops/php:8.0-alpine`
 * `webdevops/php:8.1-alpine`
 * `webdevops/php:8.2-alpine`
-* `webdevops/php-dev:7.4-alpine`
+* `webdevops/php:8.3-alpine`
 * `webdevops/php-dev:8.0-alpine`
 * `webdevops/php-dev:8.1-alpine`
 * `webdevops/php-dev:8.2-alpine`
-* `webdevops/php-apache:7.4-alpine`
+* `webdevops/php-dev:8.3-alpine`
 * `webdevops/php-apache:8.0-alpine`
 * `webdevops/php-apache:8.1-alpine`
 * `webdevops/php-apache:8.2-alpine`
-* `webdevops/php-apache-dev:7.4-alpine`
+* `webdevops/php-apache:8.3-alpine`
 * `webdevops/php-apache-dev:8.0-alpine`
 * `webdevops/php-apache-dev:8.1-alpine`
 * `webdevops/php-apache-dev:8.2-alpine`
-* `webdevops/php-nginx:7.4-alpine`
+* `webdevops/php-apache-dev:8.3-alpine`
 * `webdevops/php-nginx:8.0-alpine`
 * `webdevops/php-nginx:8.1-alpine`
 * `webdevops/php-nginx:8.2-alpine`
-* `webdevops/php-nginx-dev:7.4-alpine`
+* `webdevops/php-nginx:8.3-alpine`
 * `webdevops/php-nginx-dev:8.0-alpine`
 * `webdevops/php-nginx-dev:8.1-alpine`
 * `webdevops/php-nginx-dev:8.2-alpine`
+* `webdevops/php-nginx-dev:8.3-alpine`

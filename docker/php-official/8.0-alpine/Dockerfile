@@ -191,6 +191,9 @@ RUN set -x \
     && docker-php-ext-install $MEMCACHED \
     && rm -rf $MEMCACHED \
     && pecl install apcu \
+    && pecl install excimer \
+    && pecl install opentelemetry \
+    && pecl install protobuf \
     && pecl install vips \
     && pecl install yaml \
     && pecl install redis \
@@ -198,6 +201,9 @@ RUN set -x \
     && pecl install xmlrpc-1.0.0RC3 \
     && docker-php-ext-enable \
         apcu \
+        excimer \
+        opentelemetry \
+        protobuf \
         vips \
         yaml \
         redis \
