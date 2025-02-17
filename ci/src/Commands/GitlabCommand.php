@@ -46,6 +46,12 @@ class GitlabCommand extends Command
             $this->traverse($rootNode);
         }
         $gitlabCi['stages'] = array_map(function($level) {return 'level' . $level;}, range(1, $this->deepestLevel));
+
+        ksort($this->jobs); // system independent order of jobs (sorted by stage)
+        uasort($this->jobs, function($a, $b) {
+            return $a['stage'] <=> $b['stage'];
+        });
+
         $yaml = Yaml::dump(array_merge($gitlabCi, $this->jobs), 3, 2);
         file_put_contents(__DIR__ . '/../../../.gitlab-ci.yml', $yaml);
         return 0;

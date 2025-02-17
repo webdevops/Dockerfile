@@ -1,0 +1,35 @@
+
+{{ docker.fromOfficial("php", "8.4-fpm-alpine") }}
+
+{{ docker.version() }}
+
+{{ environment.general() }}
+{{ environment.base() }}
+{{ environment.baseApp() }}
+{{ environment.phpOfficialSendmailWorkaround() }} {# Check if needed #}
+{{ environment.phpAlpineIconvWorkaround() }}
+{{ environment.phpComposerVersion() }}
+
+{{ baselayout.copy() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+RUN set -x \
+    {{ bootstrap.alpine('3.20') }}
+
+RUN set -x \
+    {{ base.alpine() }} \
+    {{ provision.runBootstrap() }}
+
+RUN set -x \
+    {{ baseapp.alpine() }} \
+    {{ provision.runBootstrap() }}
+
+RUN set -x \
+    {{ php.officialAlpine(version='8.4') }} \
+    {{ provision.runBootstrap() }}
+
+{{ docker.workdir('/') }}
+{{ docker.expose('9000') }}
+{{ docker.entrypoint("/entrypoint") }}
+{{ docker.cmd("supervisord") }}
