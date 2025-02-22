@@ -78,7 +78,9 @@
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
 {%- endif %}
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
+{%- if version != '8.4' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+{%- endif %}    
     && docker-php-ext-install \
         bcmath \
 {%- if version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
@@ -98,7 +100,9 @@
 {%- if version|int == 5 or version == '7.0' or version == '7.1' %}
         mcrypt \
 {%- endif %}
+{%- if version != '8.4' %}
         imap \
+{%- endif %}
 {%- if version != '7.4' and version != '8.0' and version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' %}
         hash \
 {%- endif %}
@@ -273,7 +277,9 @@
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
 {%- endif %}
     && docker-php-ext-configure ldap \
+{%- if version != '8.4' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+{%- endif %}    
     && docker-php-ext-install \
         bcmath \
         bz2 \
@@ -290,7 +296,9 @@
         gettext \
         ldap \
         mysqli \
+{%- if version != '8.4' %}        
         imap \
+{%- endif %}     
 {%- if version != '7.4' and version != '8.0' and version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' %}
         hash \
 {%- endif %}

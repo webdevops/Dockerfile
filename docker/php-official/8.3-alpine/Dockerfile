@@ -149,7 +149,7 @@ RUN set -x \
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && docker-php-ext-configure ldap \
-    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \    
     && docker-php-ext-install \
         bcmath \
         bz2 \
@@ -163,7 +163,7 @@ RUN set -x \
         intl \
         gettext \
         ldap \
-        mysqli \
+        mysqli \        
         imap \
         pcntl \
         pdo_mysql \
