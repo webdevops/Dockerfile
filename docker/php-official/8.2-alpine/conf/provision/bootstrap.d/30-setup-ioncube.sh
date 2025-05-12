@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [ $IMAGE_FAMILY == "Alpine" ]; then
+    echo "Skipping ionCube installation on Alpine"
+    return
+fi
+
 echo "Installing ionCube loader"
 
 DOWNLOAD_URL="https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz"
