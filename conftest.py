@@ -13,8 +13,8 @@ check_output = testinfra.get_host(
 
 
 @pytest.fixture
-def TestinfraBackend(request):
-    # Override the TestinfraBackend fixture,
+def testinfra_backend(request):
+    # Override the testinfra_backend fixture,
     # all testinfra fixtures (i.e. modules) depend on it.
 
     docker_command = ''

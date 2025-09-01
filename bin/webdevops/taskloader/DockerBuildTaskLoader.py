@@ -23,7 +23,7 @@ from .BaseTaskLoader import BaseTaskLoader
 from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from webdevops import DockerfileUtility
 
-def run_dependency_puller_task(dockerfileList, configuration_dict, task):
+def run_dependency_puller_task(dockerfile_list, configuration_dict, task):
     """
     Standalone function for dependency puller task
     """
@@ -34,7 +34,7 @@ def run_dependency_puller_task(dockerfileList, configuration_dict, task):
     docker_client = DockerCliClient()
     configuration = dotdictify(configuration_dict)
     
-    return DockerBuildTaskLoader.task_dependency_puller(docker_client, dockerfileList, configuration, task)
+    return DockerBuildTaskLoader.task_dependency_puller(docker_client, dockerfile_list, configuration, task)
 
 def run_build_task(dockerfile, configuration_dict, task):
     """
@@ -52,7 +52,7 @@ def run_build_task(dockerfile, configuration_dict, task):
 class DockerBuildTaskLoader(BaseDockerTaskLoader):
     cmd_options = ()
 
-    def generate_task_list(self, dockerfileList):
+    def generate_task_list(self, dockerfile_list):
         """
         Generate task list for docker build
         """
@@ -65,13 +65,13 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         task = {
             'name': 'DockerBuild|DependencyPuller',
             'title': DockerBuildTaskLoader.task_title_dependency_puller,
-            'actions': [(run_dependency_puller_task, [dockerfileList, configuration_dict])],
+            'actions': [(run_dependency_puller_task, [dockerfile_list, configuration_dict])],
             'task_dep': []
         }
         tasklist.append(task)
 
         # TASK: dockerfile build
-        for dockerfile in dockerfileList:
+        for dockerfile in dockerfile_list:
             task = {
                 'name': 'DockerBuild|%s' % dockerfile['image']['fullname'],
                 'title': DockerBuildTaskLoader.task_title,
@@ -97,7 +97,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         return tasklist
 
     @staticmethod
-    def task_dependency_puller(docker_client, dockerfileList, configuration, task):
+    def task_dependency_puller(docker_client, dockerfile_list, configuration, task):
         """
         Pulls dependency images before building
         """
@@ -130,7 +130,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
             return True
 
         image_list = []
-        for dockerfile in dockerfileList:
+        for dockerfile in dockerfile_list:
             # Pull base image (FROM: xxx) first
             if DockerfileUtility.check_if_base_image_needs_pull(dockerfile['image']['from'], configuration):
                 image_list.append(dockerfile['image']['from'])

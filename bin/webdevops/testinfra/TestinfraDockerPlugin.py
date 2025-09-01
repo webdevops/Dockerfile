@@ -80,7 +80,7 @@ class TestinfraDockerPlugin:
         """
         Generate tests
         """
-        if "TestinfraBackend" in metafunc.fixturenames:
+        if "testinfra_backend" in metafunc.fixturenames:
             images = []
 
             # Lookup "docker_images" marker
@@ -103,7 +103,7 @@ class TestinfraDockerPlugin:
             if marker is not None:
                 images = ['{}#loop'.format(item) for item in images]
 
-            # If the test has a destructive marker, we scope TestinfraBackend
+            # If the test has a destructive marker, we scope testinfra_backend
             # at function level (i.e. executing for each test). If not we scope
             # at session level (i.e. all tests will share the same container)
             if getattr(metafunc.function, "destructive", None) is not None:
@@ -112,5 +112,5 @@ class TestinfraDockerPlugin:
                 scope = "session"
 
             metafunc.parametrize(
-                "TestinfraBackend", images, indirect=True, scope=scope
+                "testinfra_backend", images, indirect=True, scope=scope
             )

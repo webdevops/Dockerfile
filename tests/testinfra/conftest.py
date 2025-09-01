@@ -27,7 +27,7 @@ def pytest_generate_tests(metafunc):
     """
     Generate tests using TestinfraDockerPlugin
     """
-    if "TestinfraBackend" in metafunc.fixturenames:
+    if "testinfra_backend" in metafunc.fixturenames:
         # This will be handled by the TestinfraDockerPlugin when running through the console
         # For direct pytest runs, we need to handle this differently
         pass
