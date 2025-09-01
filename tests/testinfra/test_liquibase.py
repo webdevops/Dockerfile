@@ -4,7 +4,9 @@ import re
 
 @pytest.mark.docker_loop()
 @pytest.mark.docker_images('webdevops/liquibase')
-def test_liquibase_cmd(Command, File):
+def test_liquibase_cmd(TestinfraBackend):
+    Command = TestinfraBackend.run
+    File = TestinfraBackend.file
     assert File('/usr/local/bin/liquibase').exists
     assert File('/usr/local/bin/liquibase').mode == 0o777
 

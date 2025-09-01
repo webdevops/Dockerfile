@@ -23,7 +23,34 @@ from .BaseTaskLoader import BaseTaskLoader
 from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from webdevops import DockerfileUtility
 
+def run_dependency_puller_task(dockerfileList, configuration_dict, task):
+    """
+    Standalone function for dependency puller task
+    """
+    from webdevops.docker.DockerCliClient import DockerCliClient
+    from webdevops.Configuration import dotdictify
+    
+    # Recreate objects in worker process
+    docker_client = DockerCliClient()
+    configuration = dotdictify(configuration_dict)
+    
+    return DockerBuildTaskLoader.task_dependency_puller(docker_client, dockerfileList, configuration, task)
+
+def run_build_task(dockerfile, configuration_dict, task):
+    """
+    Standalone function for docker build task
+    """
+    from webdevops.docker.DockerCliClient import DockerCliClient
+    from webdevops.Configuration import dotdictify
+    
+    # Recreate objects in worker process
+    docker_client = DockerCliClient()
+    configuration = dotdictify(configuration_dict)
+    
+    return DockerBuildTaskLoader.task_run(docker_client, dockerfile, configuration, task)
+
 class DockerBuildTaskLoader(BaseDockerTaskLoader):
+    cmd_options = ()
 
     def generate_task_list(self, dockerfileList):
         """
@@ -31,12 +58,14 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         """
         tasklist = []
 
+        # Convert configuration to dict for serialization
+        configuration_dict = self.configuration.to_dict()
+
         # TASK: dependency puller
         task = {
             'name': 'DockerBuild|DependencyPuller',
             'title': DockerBuildTaskLoader.task_title_dependency_puller,
-            'actions': [(BaseTaskLoader.task_runner,
-                         [DockerBuildTaskLoader.task_dependency_puller, [self.docker_client, dockerfileList, self.configuration]])],
+            'actions': [(run_dependency_puller_task, [dockerfileList, configuration_dict])],
             'task_dep': []
         }
         tasklist.append(task)
@@ -46,7 +75,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
             task = {
                 'name': 'DockerBuild|%s' % dockerfile['image']['fullname'],
                 'title': DockerBuildTaskLoader.task_title,
-                'actions': [(BaseTaskLoader.task_runner, [DockerBuildTaskLoader.task_run, [self.docker_client, dockerfile, self.configuration]])],
+                'actions': [(run_build_task, [dockerfile, configuration_dict])],
                 'task_dep': ['DockerBuild|DependencyPuller']
             }
 
@@ -73,7 +102,7 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         Pulls dependency images before building
         """
         def pull_image(image):
-            print ' -> Pull base image %s ' % image
+            print(') -> Pull base image %s ' % image)
 
             if configuration.get('dryRun'):
                 return True
@@ -91,9 +120,9 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
                 if pull_status:
                     break
                 elif retry_count < (configuration.get('retry') - 1):
-                    print '    failed, retrying... (try %s)' % (retry_count + 1)
+                    print(')    failed, retrying... (try %s)' % (retry_count + 1))
                 else:
-                    print '    failed, giving up'
+                    print(')    failed, giving up')
 
             if not pull_status:
                 return False
@@ -130,17 +159,17 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         # check if dockerfile is symlink, skipping tests if just a duplicate image
         # image is using the same hashes
         if dockerfile['image']['duplicate'] and not task.task_dep:
-            print '  Docker image %s is build from symlink but not included in build chain, please include %s' % (dockerfile['image']['fullname'], dockerfile['image']['from'])
-            print '  -> failing build'
+            print(')  Docker image %s is build from symlink but not included in build chain, please include %s' % (dockerfile['image']['fullname'], dockerfile['image']['from']))
+            print(')  -> failing build')
             return False
 
         if configuration.get('dryRun'):
-            print '      path: %s' % dockerfile['path']
-            print '       dep: %s' % (DockerBuildTaskLoader.human_task_name_list(task.task_dep) if task.task_dep else 'none')
+            print(')      path: %s' % dockerfile['path'])
+            print(')       dep: %s' % (DockerBuildTaskLoader.human_task_name_list(task.task_dep) if task.task_dep else 'none'))
             return True
 
         ## Build image
-        print ' -> Building image %s ' % dockerfile['image']['fullname']
+        print(') -> Building image %s ' % dockerfile['image']['fullname'])
         build_status = False
         for retry_count in range(0, configuration.get('retry')):
             build_status = docker_client.build_dockerfile(
@@ -152,9 +181,9 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
             if build_status:
                 break
             elif retry_count < (configuration.get('retry')-1):
-                print '    failed, retrying... (try %s)' % (retry_count+1)
+                print(')    failed, retrying... (try %s)' % (retry_count+1))
             else:
-                print '    failed, giving up'
+                print(')    failed, giving up')
 
         if build_status and dockerfile['image']['duplicate']:
             BaseTaskLoader.set_task_status(task, 'finished (duplicate)', 'success2')

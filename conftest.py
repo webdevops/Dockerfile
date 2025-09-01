@@ -7,9 +7,9 @@ test_conf_path = os.path.join(test_path, 'conf')
 test_conf_app_path = os.path.join(test_conf_path, 'app')
 
 # Use testinfra to get a handy function to run commands locally
-check_output = testinfra.get_backend(
+check_output = testinfra.get_host(
     "local://"
-).get_module("Command").check_output
+).run
 
 
 @pytest.fixture
@@ -35,15 +35,14 @@ def TestinfraBackend(request):
         docker_image
     )
 
-    def teardown():
-        check_output("docker rm -f %s", docker_id)
-
-    # Destroy the container at the end of the fixture life
-    request.addfinalizer(teardown)
-
     # wait for getting the image up
     if docker_sleeptime:
         time.sleep(docker_sleeptime)
 
     # Return a dynamic created backend
-    return testinfra.get_backend("docker://" + docker_id)
+    backend = testinfra.get_host("docker://" + docker_id)
+    
+    yield backend
+    
+    # Cleanup after the test
+    check_output("docker rm -f %s", docker_id)

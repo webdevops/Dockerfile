@@ -22,7 +22,7 @@ import os
 import yaml
 import yamlordereddictloader
 import time
-import Queue
+import queue as Queue
 import shutil
 import grp
 from cleo import Output
