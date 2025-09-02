@@ -97,55 +97,68 @@ class DockerBuildTaskLoader(BaseDockerTaskLoader):
         return tasklist
 
     @staticmethod
+    def _should_pull_image(image, configuration):
+        """
+        Check if an image should be pulled based on configuration
+        """
+        return DockerfileUtility.check_if_base_image_needs_pull(image, configuration)
+
+    @staticmethod
+    def _extract_images_to_pull(dockerfile_list, configuration):
+        """
+        Extract all images that need to be pulled from dockerfile list
+        """
+        image_list = []
+        for dockerfile in dockerfile_list:
+            # Pull base image (FROM: xxx) first
+            if DockerBuildTaskLoader._should_pull_image(dockerfile['image']['from'], configuration):
+                image_list.append(dockerfile['image']['from'])
+
+            # Pull staged images (multi-stage dockerfiles)
+            for multiStageImage in dockerfile['image']['multiStageImages']:
+                if DockerBuildTaskLoader._should_pull_image(multiStageImage, configuration):
+                    image_list.append(multiStageImage)
+
+        return list(set(image_list))  # filter only unique image names
+
+    @staticmethod
+    def _pull_single_image(image, configuration, docker_client):
+        """
+        Pull a single image with retry logic
+        """
+        print(') -> Pull base image %s ' % image)
+
+        if configuration.get('dryRun'):
+            return True
+
+        pull_image_name = DockerfileUtility.image_basename(image)
+        pull_image_tag = DockerfileUtility.extract_image_name_tag(image)
+
+        for retry_count in range(0, configuration.get('retry')):
+            pull_status = docker_client.pull_image(
+                name=pull_image_name,
+                tag=pull_image_tag,
+            )
+
+            if pull_status:
+                return True
+            elif retry_count < (configuration.get('retry') - 1):
+                print(')    failed, retrying... (try %s)' % (retry_count + 1))
+            else:
+                print(')    failed, giving up')
+
+        return False
+
+    @staticmethod
     def task_dependency_puller(docker_client, dockerfile_list, configuration, task):
         """
         Pulls dependency images before building
         """
-        def pull_image(image):
-            print(') -> Pull base image %s ' % image)
-
-            if configuration.get('dryRun'):
-                return True
-
-            pull_image_name = DockerfileUtility.image_basename(image)
-            pull_image_tag = DockerfileUtility.extract_image_name_tag(image)
-
-            pull_status = False
-            for retry_count in range(0, configuration.get('retry')):
-                pull_status = docker_client.pull_image(
-                    name=pull_image_name,
-                    tag=pull_image_tag,
-                )
-
-                if pull_status:
-                    break
-                elif retry_count < (configuration.get('retry') - 1):
-                    print(')    failed, retrying... (try %s)' % (retry_count + 1))
-                else:
-                    print(')    failed, giving up')
-
-            if not pull_status:
-                return False
-
-            return True
-
-        image_list = []
-        for dockerfile in dockerfile_list:
-            # Pull base image (FROM: xxx) first
-            if DockerfileUtility.check_if_base_image_needs_pull(dockerfile['image']['from'], configuration):
-                image_list.append(dockerfile['image']['from'])
-
-            # Pull straged images (multi-stage dockerfiles)
-            for multiStageImage in dockerfile['image']['multiStageImages']:
-                if DockerfileUtility.check_if_base_image_needs_pull(multiStageImage, configuration):
-                    image_list.append(multiStageImage)
-
-        # filter only unique image names
-        image_list = set(image_list)
+        image_list = DockerBuildTaskLoader._extract_images_to_pull(dockerfile_list, configuration)
 
         # pull images
-        for image in set(image_list):
-            if not pull_image(image):
+        for image in image_list:
+            if not DockerBuildTaskLoader._pull_single_image(image, configuration, docker_client):
                 return False
 
         return True
