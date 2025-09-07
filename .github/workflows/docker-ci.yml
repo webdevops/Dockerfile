@@ -1,0 +1,31 @@
+# .github/workflows/docker-ci.yml
+name: CI (build only)
+
+on:
+  pull_request:
+  push:
+    branches: [ "**" ]
+
+env:
+  PLATFORMS: linux/amd64,linux/arm64
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Build all Dockerfiles (no push)
+        run: |
+          set -euo pipefail
+          find ./docker -type f -name Dockerfile | sort | while read -r f; do
+            dir=$(dirname "$f")
+            echo "==> Building $dir"
+            docker buildx build \
+              --platform "${PLATFORMS}" \
+              --cache-from type=gha \
+              --cache-to type=gha,mode=max \
+              --load \
+              "$dir"
+          done
