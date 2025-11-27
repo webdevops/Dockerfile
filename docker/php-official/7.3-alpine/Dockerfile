@@ -148,7 +148,7 @@ RUN set -x \
     && docker-php-ext-configure intl --with-icu-dir=/usr/local \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
     && docker-php-ext-configure ldap \
-    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \    
+    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
         bcmath \
         bz2 \
@@ -159,7 +159,7 @@ RUN set -x \
         intl \
         gettext \
         ldap \
-        mysqli \        
+        mysqli \
         imap \
         hash \
         pcntl \

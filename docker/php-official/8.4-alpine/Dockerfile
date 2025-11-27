@@ -125,7 +125,7 @@ RUN set -x \
         icu-dev \
         postgresql-dev \
         libxml2-dev \
-        ldb-dev \
+        samba-dev \
         pcre-dev \
         libxslt-dev \
         libzip-dev \
@@ -148,7 +148,7 @@ RUN set -x \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
-    && docker-php-ext-configure ldap \    
+    && docker-php-ext-configure ldap \
     && docker-php-ext-install \
         bcmath \
         bz2 \
@@ -228,7 +228,7 @@ RUN set -x \
         icu-dev \
         postgresql-dev \
         libxml2-dev \
-        ldb-dev \
+        samba-dev \
         pcre-dev \
         libxslt-dev \
         libzip-dev \
