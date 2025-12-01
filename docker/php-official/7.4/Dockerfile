@@ -145,6 +145,7 @@ RUN set -x \
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
         bcmath \
+        amqp \
         bz2 \
         calendar \
         exif \
@@ -170,7 +171,6 @@ RUN set -x \
         xsl \
         zip \
         gd \
-        gettext \
         opcache \
     # Install extensions for PHP 7.x
     && pecl install apcu \

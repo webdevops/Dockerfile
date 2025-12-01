@@ -24,7 +24,10 @@ RUN set -x \
         make \
         autoconf \
         g++ \
-    && pecl install xdebug \
+    && wget https://github.com/php/pie/releases/download/1.3.1/pie.phar -O /usr/local/bin/pie \
+    && chmod +x /usr/local/bin/pie \
+    && pie install xdebug/xdebug:^3.5.0@alpha \
+    && rm -f /usr/local/bin/pie \
     && apk del -f --purge \
         autoconf \
         linux-headers \

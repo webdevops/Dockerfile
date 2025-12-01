@@ -174,7 +174,6 @@ RUN set -x \
         xsl \
         zip \
         gd \
-        gettext \
         opcache \
     && pecl install memcached \
     && pecl install apcu \

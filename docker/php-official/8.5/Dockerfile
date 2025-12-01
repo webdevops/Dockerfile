@@ -38,7 +38,7 @@ RUN set -x \
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
-    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list.d/debian.sources \
+    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list.d/debian.sources \    
     && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \
@@ -146,7 +146,6 @@ RUN set -x \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-install \
         bcmath \
-        amqp \
         imagick \
         ffi \
         bz2 \
@@ -171,8 +170,6 @@ RUN set -x \
         xsl \
         zip \
         gd \
-        gettext \
-        opcache \
     && pecl install memcached \
     && pecl install apcu \
     && pecl install excimer \

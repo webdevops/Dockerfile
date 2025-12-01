@@ -177,7 +177,6 @@ RUN set -x \
         xsl \
         zip \
         gd \
-        gettext \
         opcache \
     # Install extensions for PHP 7.x
     && printf "no --disable-memcached-sasl\n" | pecl install memcached-3.0.4 \

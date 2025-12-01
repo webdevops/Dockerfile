@@ -83,8 +83,10 @@
 {%- endif %}
     && docker-php-ext-install \
         bcmath \
-{%- if version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
+{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
         amqp \
+{%- endif %}
+{%- if version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         imagick \
         ffi \
 {%- endif %}
@@ -125,8 +127,9 @@
         xsl \
         zip \
         gd \
-        gettext \
+{%- if version != '8.5' %}
         opcache \
+{%- endif %}
 {%- if version|int == 5 %}
     # Install extensions for PHP 5.x
     && pecl install apcu-4.0.11 \
@@ -294,6 +297,8 @@
 {%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         ffi \
         imagick \
+{%- endif %}
+{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
         amqp \
 {%- endif %}
         intl \
@@ -325,8 +330,9 @@
         xsl \
         zip \
         gd \
-        gettext \
+{%- if version != '8.5' %}
         opcache \
+{%- endif %}
     # Install extensions for PHP 7.x
     {%- if version == '7.3' or version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
     # Memcached for 7.3 can currently only be built from master
@@ -428,7 +434,12 @@
     && apt-install tideways-php tideways-daemon \
     {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
-    {%- elif version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
+    {%- elif version == '8.5' %}
+    && wget https://github.com/php/pie/releases/download/1.3.1/pie.phar -O /usr/local/bin/pie \
+    && chmod +x /usr/local/bin/pie \
+    && pie install xdebug/xdebug:^3.5.0@alpha \
+    && rm -f /usr/local/bin/pie \
+    {%- elif version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
     && pecl install xdebug \
     {%- elif version == '7.0' or version == '7.1' %}
     && pecl install xdebug-2.8.1 \
@@ -454,6 +465,11 @@
     && pecl install xdebug-2.5.5 \
     {%- elif version == '7.0' or version == '7.1' %}
     && pecl install xdebug-2.8.1 \
+    {%- elif version == '8.5' %}
+    && wget https://github.com/php/pie/releases/download/1.3.1/pie.phar -O /usr/local/bin/pie \
+    && chmod +x /usr/local/bin/pie \
+    && pie install xdebug/xdebug:^3.5.0@alpha \
+    && rm -f /usr/local/bin/pie \
     {%- elif version == '7.4' %}
     && pecl install xdebug-3.1.6 \
     {%- else %}
