@@ -23,7 +23,7 @@ class JobBuilder
             'image' => 'webdevops/dockerfile-build-env',
             'script' => [],
 //            'retry' => 2,
-            'tags' => ['aws'],
+//            'tags' => ['aws'],
 //             'only' => ['master'],
         ];
         if ($node['parent'] !== 0) {
