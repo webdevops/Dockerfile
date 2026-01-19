@@ -47,7 +47,7 @@ We generate a multi stage Gitlab-CI configuration using PHP:
 
 ```
 docker run --rm -ti -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install
-docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console gitlab:generate
+docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate
 ```
 
 Gitlab CI builds every image independent and runs serverspec and structure tests on every
@@ -64,37 +64,31 @@ As in many projects the documentation is kind of up to date 😅.
 
 The following images which are currently supported are based on `php:{VER}-fpm-buster`.
 
-* `webdevops/php:8.0`
 * `webdevops/php:8.1`
 * `webdevops/php:8.2`
 * `webdevops/php:8.3`
 * `webdevops/php:8.4`
 * `webdevops/php:8.5`
-* `webdevops/php-dev:8.0`
 * `webdevops/php-dev:8.1`
 * `webdevops/php-dev:8.2`
 * `webdevops/php-dev:8.3`
 * `webdevops/php-dev:8.4`
 * `webdevops/php-dev:8.5`
-* `webdevops/php-apache:8.0`
 * `webdevops/php-apache:8.1`
 * `webdevops/php-apache:8.2`
 * `webdevops/php-apache:8.3`
 * `webdevops/php-apache:8.4`
 * `webdevops/php-apache:8.5`
-* `webdevops/php-apache-dev:8.0`
 * `webdevops/php-apache-dev:8.1`
 * `webdevops/php-apache-dev:8.2`
 * `webdevops/php-apache-dev:8.3`
 * `webdevops/php-apache-dev:8.4`
 * `webdevops/php-apache-dev:8.5`
-* `webdevops/php-nginx:8.0`
 * `webdevops/php-nginx:8.1`
 * `webdevops/php-nginx:8.2`
 * `webdevops/php-nginx:8.3`
 * `webdevops/php-nginx:8.4`
 * `webdevops/php-nginx:8.5`
-* `webdevops/php-nginx-dev:8.0`
 * `webdevops/php-nginx-dev:8.1`
 * `webdevops/php-nginx-dev:8.2`
 * `webdevops/php-nginx-dev:8.3`
@@ -106,37 +100,31 @@ The following images which are currently supported are based on `php:{VER}-fpm-b
 
 The following images which are currently supported are based on `php:{VER}-fpm-alpine`.
 
-* `webdevops/php:8.0-alpine`
 * `webdevops/php:8.1-alpine`
 * `webdevops/php:8.2-alpine`
 * `webdevops/php:8.3-alpine`
 * `webdevops/php:8.4-alpine`
 * `webdevops/php:8.5-alpine`
-* `webdevops/php-dev:8.0-alpine`
 * `webdevops/php-dev:8.1-alpine`
 * `webdevops/php-dev:8.2-alpine`
 * `webdevops/php-dev:8.3-alpine`
 * `webdevops/php-dev:8.4-alpine`
 * `webdevops/php-dev:8.5-alpine`
-* `webdevops/php-apache:8.0-alpine`
 * `webdevops/php-apache:8.1-alpine`
 * `webdevops/php-apache:8.2-alpine`
 * `webdevops/php-apache:8.3-alpine`
 * `webdevops/php-apache:8.4-alpine`
 * `webdevops/php-apache:8.5-alpine`
-* `webdevops/php-apache-dev:8.0-alpine`
 * `webdevops/php-apache-dev:8.1-alpine`
 * `webdevops/php-apache-dev:8.2-alpine`
 * `webdevops/php-apache-dev:8.3-alpine`
 * `webdevops/php-apache-dev:8.4-alpine`
 * `webdevops/php-apache-dev:8.5-alpine`
-* `webdevops/php-nginx:8.0-alpine`
 * `webdevops/php-nginx:8.1-alpine`
 * `webdevops/php-nginx:8.2-alpine`
 * `webdevops/php-nginx:8.3-alpine`
 * `webdevops/php-nginx:8.4-alpine`
 * `webdevops/php-nginx:8.5-alpine`
-* `webdevops/php-nginx-dev:8.0-alpine`
 * `webdevops/php-nginx-dev:8.1-alpine`
 * `webdevops/php-nginx-dev:8.2-alpine`
 * `webdevops/php-nginx-dev:8.3-alpine`

@@ -1,0 +1,3981 @@
+name: build
+'on':
+  schedule:
+    -
+      cron: '0 0 * * 2'
+  push: null
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch: null
+jobs:
+  apache_alpine:
+    name: 'webdevops/apache:alpine'
+    needs:
+      - base_alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/apache/alpine
+          load: true
+          tags: 'ghcr.io/webdevops/apache:alpine,webdevops/apache:alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/apache:alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/apache_spec.rb webdevops/apache:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2FwYWNoZTphbHBpbmUiLCJET0NLRVJfVEFHIjoiYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IiIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/apache/alpine
+          push: true
+          tags: 'ghcr.io/webdevops/apache:alpine,webdevops/apache:alpine'
+          platforms: linux/amd64
+  base-app_alpine:
+    name: 'webdevops/base-app:alpine'
+    needs:
+      - base_alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/base-app/alpine
+          load: true
+          tags: 'ghcr.io/webdevops/base-app:alpine,webdevops/base-app:alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/base-app:alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/base-app_spec.rb webdevops/base-app:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2UtYXBwOmFscGluZSIsIkRPQ0tFUl9UQUciOiJhbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/base-app:alpine --config base-app/test.yaml --config base-app/alpine/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/base-app/alpine
+          push: true
+          tags: 'ghcr.io/webdevops/base-app:alpine,webdevops/base-app:alpine'
+          platforms: linux/amd64
+  base-app_ubuntu-22-04:
+    name: 'webdevops/base-app:ubuntu-22.04'
+    needs:
+      - base_ubuntu-22-04
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/base-app/ubuntu-22.04
+          load: true
+          tags: 'ghcr.io/webdevops/base-app:ubuntu-22.04,webdevops/base-app:ubuntu-22.04'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/base-app:ubuntu-22.04" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/base-app_spec.rb webdevops/base-app:ubuntu-22.04 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2UtYXBwOnVidW50dS0yMi4wNCIsIkRPQ0tFUl9UQUciOiJ1YnVudHUtMjIuMDQiLCJPU19GQU1JTFkiOiJ1YnVudHUiLCJPU19WRVJTSU9OIjoiMjIuMDQiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/base-app:ubuntu-22.04 --config base-app/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/base-app/ubuntu-22.04
+          push: true
+          tags: 'ghcr.io/webdevops/base-app:ubuntu-22.04,webdevops/base-app:ubuntu-22.04'
+          platforms: linux/amd64
+  base_alpine:
+    name: 'webdevops/base:alpine'
+    needs:
+      - bootstrap_alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/base/alpine
+          load: true
+          tags: 'ghcr.io/webdevops/base:alpine,webdevops/base:alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/base:alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/base_spec.rb webdevops/base:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2U6YWxwaW5lIiwiRE9DS0VSX1RBRyI6ImFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/base:alpine --config base/test.yaml --config base/alpine/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/base/alpine
+          push: true
+          tags: 'ghcr.io/webdevops/base:alpine,webdevops/base:alpine'
+          platforms: linux/amd64
+  base_ubuntu-22-04:
+    name: 'webdevops/base:ubuntu-22.04'
+    needs:
+      - bootstrap_ubuntu-22-04
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/base/ubuntu-22.04
+          load: true
+          tags: 'ghcr.io/webdevops/base:ubuntu-22.04,webdevops/base:ubuntu-22.04'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/base:ubuntu-22.04" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/base_spec.rb webdevops/base:ubuntu-22.04 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2U6dWJ1bnR1LTIyLjA0IiwiRE9DS0VSX1RBRyI6InVidW50dS0yMi4wNCIsIk9TX0ZBTUlMWSI6InVidW50dSIsIk9TX1ZFUlNJT04iOiIyMi4wNCIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/base:ubuntu-22.04 --config base/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/base/ubuntu-22.04
+          push: true
+          tags: 'ghcr.io/webdevops/base:ubuntu-22.04,webdevops/base:ubuntu-22.04'
+          platforms: linux/amd64
+  bootstrap_alpine:
+    name: 'webdevops/bootstrap:alpine'
+    needs:
+      - toolbox_latest
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/bootstrap/alpine
+          load: true
+          tags: 'ghcr.io/webdevops/bootstrap:alpine,webdevops/bootstrap:alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/bootstrap:alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/bootstrap_spec.rb webdevops/bootstrap:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jvb3RzdHJhcDphbHBpbmUiLCJET0NLRVJfVEFHIjoiYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IiIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/bootstrap:alpine --config bootstrap/test.yaml --config bootstrap/alpine/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/bootstrap/alpine
+          push: true
+          tags: 'ghcr.io/webdevops/bootstrap:alpine,webdevops/bootstrap:alpine'
+          platforms: linux/amd64
+  bootstrap_ubuntu-22-04:
+    name: 'webdevops/bootstrap:ubuntu-22.04'
+    needs:
+      - toolbox_latest
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/bootstrap/ubuntu-22.04
+          load: true
+          tags: 'ghcr.io/webdevops/bootstrap:ubuntu-22.04,webdevops/bootstrap:ubuntu-22.04'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/bootstrap:ubuntu-22.04" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/bootstrap_spec.rb webdevops/bootstrap:ubuntu-22.04 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jvb3RzdHJhcDp1YnVudHUtMjIuMDQiLCJET0NLRVJfVEFHIjoidWJ1bnR1LTIyLjA0IiwiT1NfRkFNSUxZIjoidWJ1bnR1IiwiT1NfVkVSU0lPTiI6IjIyLjA0IiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/bootstrap:ubuntu-22.04 --config bootstrap/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/bootstrap/ubuntu-22.04
+          push: true
+          tags: 'ghcr.io/webdevops/bootstrap:ubuntu-22.04,webdevops/bootstrap:ubuntu-22.04'
+          platforms: linux/amd64
+  dockerfile-build-env_latest:
+    name: 'webdevops/dockerfile-build-env:latest'
+    needs:
+      - base-app_ubuntu-22-04
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/dockerfile-build-env/latest
+          load: true
+          tags: 'ghcr.io/webdevops/dockerfile-build-env:latest,webdevops/dockerfile-build-env:latest'
+          platforms: linux/amd64
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/dockerfile-build-env/latest
+          push: true
+          tags: 'ghcr.io/webdevops/dockerfile-build-env:latest,webdevops/dockerfile-build-env:latest'
+          platforms: linux/amd64
+  nginx_alpine:
+    name: 'webdevops/nginx:alpine'
+    needs:
+      - base_alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/nginx/alpine
+          load: true
+          tags: 'ghcr.io/webdevops/nginx:alpine,webdevops/nginx:alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/nginx:alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/nginx_spec.rb webdevops/nginx:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL25naW54OmFscGluZSIsIkRPQ0tFUl9UQUciOiJhbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/nginx/alpine
+          push: true
+          tags: 'ghcr.io/webdevops/nginx:alpine,webdevops/nginx:alpine'
+          platforms: linux/amd64
+  php-apache-dev_8-1:
+    name: 'webdevops/php-apache-dev:8.1'
+    needs:
+      - php-apache_8-1
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.1
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.1,webdevops/php-apache-dev:8.1'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache-dev:8.1" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMSIsIkRPQ0tFUl9UQUciOiI4LjEiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.1
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.1,webdevops/php-apache-dev:8.1'
+          platforms: linux/amd64
+  php-apache-dev_8-1-alpine:
+    name: 'webdevops/php-apache-dev:8.1-alpine'
+    needs:
+      - php-apache_8-1-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.1-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.1-alpine,webdevops/php-apache-dev:8.1-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache-dev:8.1-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMS1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4xLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.1-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.1-alpine,webdevops/php-apache-dev:8.1-alpine'
+          platforms: linux/amd64
+  php-apache-dev_8-2:
+    name: 'webdevops/php-apache-dev:8.2'
+    needs:
+      - php-apache_8-2
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.2
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.2,webdevops/php-apache-dev:8.2'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache-dev:8.2" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMiIsIkRPQ0tFUl9UQUciOiI4LjIiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.2
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.2,webdevops/php-apache-dev:8.2'
+          platforms: linux/amd64
+  php-apache-dev_8-2-alpine:
+    name: 'webdevops/php-apache-dev:8.2-alpine'
+    needs:
+      - php-apache_8-2-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.2-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.2-alpine,webdevops/php-apache-dev:8.2-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache-dev:8.2-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMi1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4yLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.2-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.2-alpine,webdevops/php-apache-dev:8.2-alpine'
+          platforms: linux/amd64
+  php-apache-dev_8-3:
+    name: 'webdevops/php-apache-dev:8.3'
+    needs:
+      - php-apache_8-3
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.3
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.3,webdevops/php-apache-dev:8.3'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache-dev:8.3" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMyIsIkRPQ0tFUl9UQUciOiI4LjMiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.3
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.3,webdevops/php-apache-dev:8.3'
+          platforms: linux/amd64
+  php-apache-dev_8-3-alpine:
+    name: 'webdevops/php-apache-dev:8.3-alpine'
+    needs:
+      - php-apache_8-3-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.3-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.3-alpine,webdevops/php-apache-dev:8.3-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache-dev:8.3-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMy1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4zLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.3-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.3-alpine,webdevops/php-apache-dev:8.3-alpine'
+          platforms: linux/amd64
+  php-apache-dev_8-4:
+    name: 'webdevops/php-apache-dev:8.4'
+    needs:
+      - php-apache_8-4
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.4
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.4,webdevops/php-apache-dev:8.4'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache-dev:8.4" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguNCIsIkRPQ0tFUl9UQUciOiI4LjQiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.4
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.4,webdevops/php-apache-dev:8.4'
+          platforms: linux/amd64
+  php-apache-dev_8-4-alpine:
+    name: 'webdevops/php-apache-dev:8.4-alpine'
+    needs:
+      - php-apache_8-4-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.4-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.4-alpine,webdevops/php-apache-dev:8.4-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache-dev:8.4-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguNC1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC40LWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.4-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.4-alpine,webdevops/php-apache-dev:8.4-alpine'
+          platforms: linux/amd64
+  php-apache-dev_8-5:
+    name: 'webdevops/php-apache-dev:8.5'
+    needs:
+      - php-apache_8-5
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.5
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.5,webdevops/php-apache-dev:8.5'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache-dev:8.5" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguNSIsIkRPQ0tFUl9UQUciOiI4LjUiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.5
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.5,webdevops/php-apache-dev:8.5'
+          platforms: linux/amd64
+  php-apache-dev_8-5-alpine:
+    name: 'webdevops/php-apache-dev:8.5-alpine'
+    needs:
+      - php-apache_8-5-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.5-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.5-alpine,webdevops/php-apache-dev:8.5-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache-dev:8.5-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguNS1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC41LWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache-dev/8.5-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:8.5-alpine,webdevops/php-apache-dev:8.5-alpine'
+          platforms: linux/amd64
+  php-apache_8-1:
+    name: 'webdevops/php-apache:8.1'
+    needs:
+      - php_8-1
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.1
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:8.1,webdevops/php-apache:8.1'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache:8.1" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4xIiwiRE9DS0VSX1RBRyI6IjguMSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.1
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache:8.1,webdevops/php-apache:8.1'
+          platforms: linux/amd64
+  php-apache_8-1-alpine:
+    name: 'webdevops/php-apache:8.1-alpine'
+    needs:
+      - php_8-1-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.1-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:8.1-alpine,webdevops/php-apache:8.1-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache:8.1-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4xLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjEtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.1-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache:8.1-alpine,webdevops/php-apache:8.1-alpine'
+          platforms: linux/amd64
+  php-apache_8-2:
+    name: 'webdevops/php-apache:8.2'
+    needs:
+      - php_8-2
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.2
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:8.2,webdevops/php-apache:8.2'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache:8.2" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.2
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache:8.2,webdevops/php-apache:8.2'
+          platforms: linux/amd64
+  php-apache_8-2-alpine:
+    name: 'webdevops/php-apache:8.2-alpine'
+    needs:
+      - php_8-2-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.2-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:8.2-alpine,webdevops/php-apache:8.2-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache:8.2-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.2-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache:8.2-alpine,webdevops/php-apache:8.2-alpine'
+          platforms: linux/amd64
+  php-apache_8-3:
+    name: 'webdevops/php-apache:8.3'
+    needs:
+      - php_8-3
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.3
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:8.3,webdevops/php-apache:8.3'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache:8.3" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.3
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache:8.3,webdevops/php-apache:8.3'
+          platforms: linux/amd64
+  php-apache_8-3-alpine:
+    name: 'webdevops/php-apache:8.3-alpine'
+    needs:
+      - php_8-3-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.3-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:8.3-alpine,webdevops/php-apache:8.3-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache:8.3-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.3-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache:8.3-alpine,webdevops/php-apache:8.3-alpine'
+          platforms: linux/amd64
+  php-apache_8-4:
+    name: 'webdevops/php-apache:8.4'
+    needs:
+      - php_8-4
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.4
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:8.4,webdevops/php-apache:8.4'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache:8.4" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC40IiwiRE9DS0VSX1RBRyI6IjguNCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.4
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache:8.4,webdevops/php-apache:8.4'
+          platforms: linux/amd64
+  php-apache_8-4-alpine:
+    name: 'webdevops/php-apache:8.4-alpine'
+    needs:
+      - php_8-4-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.4-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:8.4-alpine,webdevops/php-apache:8.4-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache:8.4-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC40LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjQtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.4-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache:8.4-alpine,webdevops/php-apache:8.4-alpine'
+          platforms: linux/amd64
+  php-apache_8-5:
+    name: 'webdevops/php-apache:8.5'
+    needs:
+      - php_8-5
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.5
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:8.5,webdevops/php-apache:8.5'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache:8.5" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC41IiwiRE9DS0VSX1RBRyI6IjguNSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.5
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache:8.5,webdevops/php-apache:8.5'
+          platforms: linux/amd64
+  php-apache_8-5-alpine:
+    name: 'webdevops/php-apache:8.5-alpine'
+    needs:
+      - php_8-5-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.5-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:8.5-alpine,webdevops/php-apache:8.5-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-apache:8.5-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC41LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjUtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-apache/8.5-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-apache:8.5-alpine,webdevops/php-apache:8.5-alpine'
+          platforms: linux/amd64
+  php-dev_8-1:
+    name: 'webdevops/php-dev:8.1'
+    needs:
+      - php_8-1
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.1
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:8.1,webdevops/php-dev:8.1'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-dev:8.1" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4xIiwiRE9DS0VSX1RBRyI6IjguMSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.1 --config php-dev/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.1
+          push: true
+          tags: 'ghcr.io/webdevops/php-dev:8.1,webdevops/php-dev:8.1'
+          platforms: linux/amd64
+  php-dev_8-1-alpine:
+    name: 'webdevops/php-dev:8.1-alpine'
+    needs:
+      - php_8-1-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.1-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:8.1-alpine,webdevops/php-dev:8.1-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-dev:8.1-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4xLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjEtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.1-alpine --config php-dev/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.1-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-dev:8.1-alpine,webdevops/php-dev:8.1-alpine'
+          platforms: linux/amd64
+  php-dev_8-2:
+    name: 'webdevops/php-dev:8.2'
+    needs:
+      - php_8-2
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.2
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:8.2,webdevops/php-dev:8.2'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-dev:8.2" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.2 --config php-dev/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.2
+          push: true
+          tags: 'ghcr.io/webdevops/php-dev:8.2,webdevops/php-dev:8.2'
+          platforms: linux/amd64
+  php-dev_8-2-alpine:
+    name: 'webdevops/php-dev:8.2-alpine'
+    needs:
+      - php_8-2-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.2-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:8.2-alpine,webdevops/php-dev:8.2-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-dev:8.2-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.2-alpine --config php-dev/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.2-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-dev:8.2-alpine,webdevops/php-dev:8.2-alpine'
+          platforms: linux/amd64
+  php-dev_8-3:
+    name: 'webdevops/php-dev:8.3'
+    needs:
+      - php_8-3
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.3
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:8.3,webdevops/php-dev:8.3'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-dev:8.3" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.3 --config php-dev/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.3
+          push: true
+          tags: 'ghcr.io/webdevops/php-dev:8.3,webdevops/php-dev:8.3'
+          platforms: linux/amd64
+  php-dev_8-3-alpine:
+    name: 'webdevops/php-dev:8.3-alpine'
+    needs:
+      - php_8-3-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.3-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:8.3-alpine,webdevops/php-dev:8.3-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-dev:8.3-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.3-alpine --config php-dev/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.3-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-dev:8.3-alpine,webdevops/php-dev:8.3-alpine'
+          platforms: linux/amd64
+  php-dev_8-4:
+    name: 'webdevops/php-dev:8.4'
+    needs:
+      - php_8-4
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.4
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:8.4,webdevops/php-dev:8.4'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-dev:8.4" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC40IiwiRE9DS0VSX1RBRyI6IjguNCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.4 --config php-dev/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.4
+          push: true
+          tags: 'ghcr.io/webdevops/php-dev:8.4,webdevops/php-dev:8.4'
+          platforms: linux/amd64
+  php-dev_8-4-alpine:
+    name: 'webdevops/php-dev:8.4-alpine'
+    needs:
+      - php_8-4-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.4-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:8.4-alpine,webdevops/php-dev:8.4-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-dev:8.4-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC40LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjQtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.4-alpine --config php-dev/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.4-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-dev:8.4-alpine,webdevops/php-dev:8.4-alpine'
+          platforms: linux/amd64
+  php-dev_8-5:
+    name: 'webdevops/php-dev:8.5'
+    needs:
+      - php_8-5
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.5
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:8.5,webdevops/php-dev:8.5'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-dev:8.5" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC41IiwiRE9DS0VSX1RBRyI6IjguNSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.5 --config php-dev/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.5
+          push: true
+          tags: 'ghcr.io/webdevops/php-dev:8.5,webdevops/php-dev:8.5'
+          platforms: linux/amd64
+  php-dev_8-5-alpine:
+    name: 'webdevops/php-dev:8.5-alpine'
+    needs:
+      - php_8-5-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.5-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:8.5-alpine,webdevops/php-dev:8.5-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-dev:8.5-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC41LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjUtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.5-alpine --config php-dev/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-dev/8.5-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-dev:8.5-alpine,webdevops/php-dev:8.5-alpine'
+          platforms: linux/amd64
+  php-nginx-dev_8-1:
+    name: 'webdevops/php-nginx-dev:8.1'
+    needs:
+      - php-nginx_8-1
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.1
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.1,webdevops/php-nginx-dev:8.1'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx-dev:8.1" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4xIiwiRE9DS0VSX1RBRyI6IjguMSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.1
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.1,webdevops/php-nginx-dev:8.1'
+          platforms: linux/amd64
+  php-nginx-dev_8-1-alpine:
+    name: 'webdevops/php-nginx-dev:8.1-alpine'
+    needs:
+      - php-nginx_8-1-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.1-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.1-alpine,webdevops/php-nginx-dev:8.1-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx-dev:8.1-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4xLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjEtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.1-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.1-alpine,webdevops/php-nginx-dev:8.1-alpine'
+          platforms: linux/amd64
+  php-nginx-dev_8-2:
+    name: 'webdevops/php-nginx-dev:8.2'
+    needs:
+      - php-nginx_8-2
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.2
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.2,webdevops/php-nginx-dev:8.2'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx-dev:8.2" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.2
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.2,webdevops/php-nginx-dev:8.2'
+          platforms: linux/amd64
+  php-nginx-dev_8-2-alpine:
+    name: 'webdevops/php-nginx-dev:8.2-alpine'
+    needs:
+      - php-nginx_8-2-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.2-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.2-alpine,webdevops/php-nginx-dev:8.2-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx-dev:8.2-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.2-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.2-alpine,webdevops/php-nginx-dev:8.2-alpine'
+          platforms: linux/amd64
+  php-nginx-dev_8-3:
+    name: 'webdevops/php-nginx-dev:8.3'
+    needs:
+      - php-nginx_8-3
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.3
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.3,webdevops/php-nginx-dev:8.3'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx-dev:8.3" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.3
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.3,webdevops/php-nginx-dev:8.3'
+          platforms: linux/amd64
+  php-nginx-dev_8-3-alpine:
+    name: 'webdevops/php-nginx-dev:8.3-alpine'
+    needs:
+      - php-nginx_8-3-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.3-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.3-alpine,webdevops/php-nginx-dev:8.3-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx-dev:8.3-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.3-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.3-alpine,webdevops/php-nginx-dev:8.3-alpine'
+          platforms: linux/amd64
+  php-nginx-dev_8-4:
+    name: 'webdevops/php-nginx-dev:8.4'
+    needs:
+      - php-nginx_8-4
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.4
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.4,webdevops/php-nginx-dev:8.4'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx-dev:8.4" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC40IiwiRE9DS0VSX1RBRyI6IjguNCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.4
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.4,webdevops/php-nginx-dev:8.4'
+          platforms: linux/amd64
+  php-nginx-dev_8-4-alpine:
+    name: 'webdevops/php-nginx-dev:8.4-alpine'
+    needs:
+      - php-nginx_8-4-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.4-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.4-alpine,webdevops/php-nginx-dev:8.4-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx-dev:8.4-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC40LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjQtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.4-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.4-alpine,webdevops/php-nginx-dev:8.4-alpine'
+          platforms: linux/amd64
+  php-nginx-dev_8-5:
+    name: 'webdevops/php-nginx-dev:8.5'
+    needs:
+      - php-nginx_8-5
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.5
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.5,webdevops/php-nginx-dev:8.5'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx-dev:8.5" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC41IiwiRE9DS0VSX1RBRyI6IjguNSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.5
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.5,webdevops/php-nginx-dev:8.5'
+          platforms: linux/amd64
+  php-nginx-dev_8-5-alpine:
+    name: 'webdevops/php-nginx-dev:8.5-alpine'
+    needs:
+      - php-nginx_8-5-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.5-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.5-alpine,webdevops/php-nginx-dev:8.5-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx-dev:8.5-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC41LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjUtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx-dev/8.5-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:8.5-alpine,webdevops/php-nginx-dev:8.5-alpine'
+          platforms: linux/amd64
+  php-nginx_8-1:
+    name: 'webdevops/php-nginx:8.1'
+    needs:
+      - php_8-1
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.1
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.1,webdevops/php-nginx:8.1'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx:8.1" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjEiLCJET0NLRVJfVEFHIjoiOC4xIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.1 --config php-nginx/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.1
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.1,webdevops/php-nginx:8.1'
+          platforms: linux/amd64
+  php-nginx_8-1-alpine:
+    name: 'webdevops/php-nginx:8.1-alpine'
+    needs:
+      - php_8-1-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.1-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.1-alpine,webdevops/php-nginx:8.1-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx:8.1-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjEtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMS1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.1-alpine --config php-nginx/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.1-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.1-alpine,webdevops/php-nginx:8.1-alpine'
+          platforms: linux/amd64
+  php-nginx_8-2:
+    name: 'webdevops/php-nginx:8.2'
+    needs:
+      - php_8-2
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.2
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.2,webdevops/php-nginx:8.2'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx:8.2" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjIiLCJET0NLRVJfVEFHIjoiOC4yIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.2 --config php-nginx/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.2
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.2,webdevops/php-nginx:8.2'
+          platforms: linux/amd64
+  php-nginx_8-2-alpine:
+    name: 'webdevops/php-nginx:8.2-alpine'
+    needs:
+      - php_8-2-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.2-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.2-alpine,webdevops/php-nginx:8.2-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx:8.2-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjItYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMi1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.2-alpine --config php-nginx/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.2-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.2-alpine,webdevops/php-nginx:8.2-alpine'
+          platforms: linux/amd64
+  php-nginx_8-3:
+    name: 'webdevops/php-nginx:8.3'
+    needs:
+      - php_8-3
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.3
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.3,webdevops/php-nginx:8.3'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx:8.3" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjMiLCJET0NLRVJfVEFHIjoiOC4zIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.3 --config php-nginx/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.3
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.3,webdevops/php-nginx:8.3'
+          platforms: linux/amd64
+  php-nginx_8-3-alpine:
+    name: 'webdevops/php-nginx:8.3-alpine'
+    needs:
+      - php_8-3-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.3-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.3-alpine,webdevops/php-nginx:8.3-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx:8.3-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjMtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMy1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.3-alpine --config php-nginx/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.3-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.3-alpine,webdevops/php-nginx:8.3-alpine'
+          platforms: linux/amd64
+  php-nginx_8-4:
+    name: 'webdevops/php-nginx:8.4'
+    needs:
+      - php_8-4
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.4
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.4,webdevops/php-nginx:8.4'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx:8.4" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjQiLCJET0NLRVJfVEFHIjoiOC40IiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.4 --config php-nginx/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.4
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.4,webdevops/php-nginx:8.4'
+          platforms: linux/amd64
+  php-nginx_8-4-alpine:
+    name: 'webdevops/php-nginx:8.4-alpine'
+    needs:
+      - php_8-4-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.4-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.4-alpine,webdevops/php-nginx:8.4-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx:8.4-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjQtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguNC1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.4-alpine --config php-nginx/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.4-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.4-alpine,webdevops/php-nginx:8.4-alpine'
+          platforms: linux/amd64
+  php-nginx_8-5:
+    name: 'webdevops/php-nginx:8.5'
+    needs:
+      - php_8-5
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.5
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.5,webdevops/php-nginx:8.5'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx:8.5" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjUiLCJET0NLRVJfVEFHIjoiOC41IiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.5 --config php-nginx/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.5
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.5,webdevops/php-nginx:8.5'
+          platforms: linux/amd64
+  php-nginx_8-5-alpine:
+    name: 'webdevops/php-nginx:8.5-alpine'
+    needs:
+      - php_8-5-alpine
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.5-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.5-alpine,webdevops/php-nginx:8.5-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php-nginx:8.5-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjUtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguNS1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.5-alpine --config php-nginx/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-nginx/8.5-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php-nginx:8.5-alpine,webdevops/php-nginx:8.5-alpine'
+          platforms: linux/amd64
+  php_8-1:
+    name: 'webdevops/php:8.1'
+    needs:
+      - toolbox_latest
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.1
+          load: true
+          tags: 'ghcr.io/webdevops/php:8.1,webdevops/php:8.1'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php:8.1" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjEiLCJET0NLRVJfVEFHIjoiOC4xIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php:8.1 --config php/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.1
+          push: true
+          tags: 'ghcr.io/webdevops/php:8.1,webdevops/php:8.1'
+          platforms: linux/amd64
+  php_8-1-alpine:
+    name: 'webdevops/php:8.1-alpine'
+    needs:
+      - toolbox_latest
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.1-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php:8.1-alpine,webdevops/php:8.1-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php:8.1-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjEtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMS1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php:8.1-alpine --config php/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.1-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php:8.1-alpine,webdevops/php:8.1-alpine'
+          platforms: linux/amd64
+  php_8-2:
+    name: 'webdevops/php:8.2'
+    needs:
+      - toolbox_latest
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.2
+          load: true
+          tags: 'ghcr.io/webdevops/php:8.2,webdevops/php:8.2'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php:8.2" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjIiLCJET0NLRVJfVEFHIjoiOC4yIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php:8.2 --config php/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.2
+          push: true
+          tags: 'ghcr.io/webdevops/php:8.2,webdevops/php:8.2'
+          platforms: linux/amd64
+  php_8-2-alpine:
+    name: 'webdevops/php:8.2-alpine'
+    needs:
+      - toolbox_latest
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.2-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php:8.2-alpine,webdevops/php:8.2-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php:8.2-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjItYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMi1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php:8.2-alpine --config php/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.2-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php:8.2-alpine,webdevops/php:8.2-alpine'
+          platforms: linux/amd64
+  php_8-3:
+    name: 'webdevops/php:8.3'
+    needs:
+      - toolbox_latest
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.3
+          load: true
+          tags: 'ghcr.io/webdevops/php:8.3,webdevops/php:8.3'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php:8.3" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjMiLCJET0NLRVJfVEFHIjoiOC4zIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php:8.3 --config php/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.3
+          push: true
+          tags: 'ghcr.io/webdevops/php:8.3,webdevops/php:8.3'
+          platforms: linux/amd64
+  php_8-3-alpine:
+    name: 'webdevops/php:8.3-alpine'
+    needs:
+      - toolbox_latest
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.3-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php:8.3-alpine,webdevops/php:8.3-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php:8.3-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjMtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMy1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php:8.3-alpine --config php/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.3-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php:8.3-alpine,webdevops/php:8.3-alpine'
+          platforms: linux/amd64
+  php_8-4:
+    name: 'webdevops/php:8.4'
+    needs:
+      - toolbox_latest
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.4
+          load: true
+          tags: 'ghcr.io/webdevops/php:8.4,webdevops/php:8.4'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php:8.4" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjQiLCJET0NLRVJfVEFHIjoiOC40IiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php:8.4 --config php/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.4
+          push: true
+          tags: 'ghcr.io/webdevops/php:8.4,webdevops/php:8.4'
+          platforms: linux/amd64
+  php_8-4-alpine:
+    name: 'webdevops/php:8.4-alpine'
+    needs:
+      - toolbox_latest
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.4-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php:8.4-alpine,webdevops/php:8.4-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php:8.4-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjQtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguNC1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php:8.4-alpine --config php/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.4-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php:8.4-alpine,webdevops/php:8.4-alpine'
+          platforms: linux/amd64
+  php_8-5:
+    name: 'webdevops/php:8.5'
+    needs:
+      - toolbox_latest
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.5
+          load: true
+          tags: 'ghcr.io/webdevops/php:8.5,webdevops/php:8.5'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php:8.5" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjUiLCJET0NLRVJfVEFHIjoiOC41IiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php:8.5 --config php/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.5
+          push: true
+          tags: 'ghcr.io/webdevops/php:8.5,webdevops/php:8.5'
+          platforms: linux/amd64
+  php_8-5-alpine:
+    name: 'webdevops/php:8.5-alpine'
+    needs:
+      - toolbox_latest
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.5-alpine
+          load: true
+          tags: 'ghcr.io/webdevops/php:8.5-alpine,webdevops/php:8.5-alpine'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/php:8.5-alpine" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjUtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguNS1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image webdevops/php:8.5-alpine --config php/test.yaml
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/php-official/8.5-alpine
+          push: true
+          tags: 'ghcr.io/webdevops/php:8.5-alpine,webdevops/php:8.5-alpine'
+          platforms: linux/amd64
+  storage_latest:
+    name: 'webdevops/storage:latest'
+    needs:
+      - toolbox_latest
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/storage/latest
+          load: true
+          tags: 'ghcr.io/webdevops/storage:latest,webdevops/storage:latest'
+          platforms: linux/amd64
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/storage/latest
+          push: true
+          tags: 'ghcr.io/webdevops/storage:latest,webdevops/storage:latest'
+          platforms: linux/amd64
+  toolbox_latest:
+    name: 'webdevops/toolbox:latest'
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/toolbox/latest
+          load: true
+          tags: 'ghcr.io/webdevops/toolbox:latest,webdevops/toolbox:latest'
+          platforms: linux/amd64
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/toolbox/latest
+          push: true
+          tags: 'ghcr.io/webdevops/toolbox:latest,webdevops/toolbox:latest'
+          platforms: linux/amd64
+  vsftp_latest:
+    name: 'webdevops/vsftp:latest'
+    needs:
+      - base_ubuntu-22-04
+    runs-on: ubuntu-latest
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        uses: docker/setup-qemu-action@v3
+      -
+        uses: docker/setup-buildx-action@v3
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/vsftp/latest
+          load: true
+          tags: 'ghcr.io/webdevops/vsftp:latest,webdevops/vsftp:latest'
+          platforms: linux/amd64
+      -
+        name: 'run serverspec'
+        run: |-
+          cd tests/serverspec
+          echo "FROM webdevops/vsftp:latest" >> Dockerfile_test
+          echo "COPY conf/ /" >> Dockerfile_test
+          bundle install
+          bash serverspec.sh spec/docker/vsftp_spec.rb webdevops/vsftp:latest eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3ZzZnRwOmxhdGVzdCIsIkRPQ0tFUl9UQUciOiJsYXRlc3QiLCJPU19GQU1JTFkiOiJ1YnVudHUiLCJPU19WRVJTSU9OIjoiMjIuMDQiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "github.ref == 'refs/heads/github-actions'"
+        name: Push
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/vsftp/latest
+          push: true
+          tags: 'ghcr.io/webdevops/vsftp:latest,webdevops/vsftp:latest'
+          platforms: linux/amd64

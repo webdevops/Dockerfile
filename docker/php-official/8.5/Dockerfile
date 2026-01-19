@@ -146,6 +146,7 @@ RUN set -x \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-install \
         bcmath \
+        amqp \
         imagick \
         ffi \
         bz2 \

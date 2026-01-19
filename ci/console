@@ -5,11 +5,11 @@
 require __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use Webdevops\Build\Commands\GitlabCommand;
+use Webdevops\Build\Commands\GithubCommand;
 
 $application = new Application();
 
 // ... register commands
-$application->add(new GitlabCommand());
+$application->add(new GithubCommand());
 
 $application->run();
