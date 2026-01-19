@@ -12,6 +12,7 @@ Tag                    Distribution name                   PHP Version
 ``8.2``                *customized official php image*     PHP 8.2
 ``8.3``                *customized official php image*     PHP 8.3
 ``8.4``                *customized official php image*     PHP 8.4
+``8.5``                *customized official php image*     PHP 8.5
 ``7.1-alpine``         *deprecated*                        PHP 7.1
 ``7.2-alpine``         *deprecated*                        PHP 7.2
 ``7.3-alpine``         *deprecated*                        PHP 7.3
@@ -21,6 +22,7 @@ Tag                    Distribution name                   PHP Version
 ``8.2-alpine``         *customized official php image*     PHP 8.2
 ``8.3-alpine``         *customized official php image*     PHP 8.3
 ``8.4-alpine``         *customized official php image*     PHP 8.4
+``8.5-alpine``         *customized official php image*     PHP 8.5
 ``alpine``             *deprecated*                        PHP 7.x
 ``alpine-php7``        *deprecated*                        PHP 7.x
 ``alpine-php5``        *deprecated*                        PHP 5.6

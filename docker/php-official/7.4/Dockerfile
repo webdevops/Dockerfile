@@ -142,9 +142,10 @@ RUN set -x \
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \    
+    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install \
         bcmath \
+        amqp \
         bz2 \
         calendar \
         exif \
@@ -170,7 +171,6 @@ RUN set -x \
         xsl \
         zip \
         gd \
-        gettext \
         opcache \
     # Install extensions for PHP 7.x
     && pecl install apcu \

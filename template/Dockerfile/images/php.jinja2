@@ -65,26 +65,28 @@
     && curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-73-1/icu4c-73_1-src.tgz \
     && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu* \
     # Install extensions
-{%- if version != '7.4' and version != '8.0' and version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' %}
+{%- if version != '7.4' and version != '8.0' and version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' and version != '8.5' %}
     && docker-php-ext-configure intl --with-icu-dir=/usr/local \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
 {%- else %}
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
 {%- endif %}
-{%- if version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
+{%- if version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
 {%- endif %}
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-{%- if version != '8.4' %}
+{%- if version != '8.4' and version != '8.5' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-{%- endif %}    
+{%- endif %}
     && docker-php-ext-install \
         bcmath \
-{%- if version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
+{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
         amqp \
+{%- endif %}
+{%- if version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         imagick \
         ffi \
 {%- endif %}
@@ -100,10 +102,10 @@
 {%- if version|int == 5 or version == '7.0' or version == '7.1' %}
         mcrypt \
 {%- endif %}
-{%- if version != '8.4' %}
+{%- if version != '8.4' and version != '8.5' %}
         imap \
 {%- endif %}
-{%- if version != '7.4' and version != '8.0' and version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' %}
+{%- if version != '7.4' and version != '8.0' and version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' and version != '8.5' %}
         hash \
 {%- endif %}
         pcntl \
@@ -112,21 +114,22 @@
         pgsql \
         soap \
         sockets \
-{%- if version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' %}
+{%- if version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' and version != '8.5' %}
         tokenizer \
 {%- endif %}
         sysvmsg \
         sysvsem \
         sysvshm \
         shmop \
-{%- if version != '8.0' and version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' %}
+{%- if version != '8.0' and version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' and version != '8.5' %}
         xmlrpc \
 {%- endif %}
         xsl \
         zip \
         gd \
-        gettext \
+{%- if version != '8.5' %}
         opcache \
+{%- endif %}
 {%- if version|int == 5 %}
     # Install extensions for PHP 5.x
     && pecl install apcu-4.0.11 \
@@ -139,7 +142,7 @@
     && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
-{%- elif version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
+{%- elif version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
     && pecl install memcached \
     && pecl install apcu \
     && pecl install excimer \
@@ -248,7 +251,11 @@
         icu-dev \
         postgresql-dev \
         libxml2-dev \
+    {%- if version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
+        samba-dev \
+    {%- else %}
         ldb-dev \
+    {%- endif %}
         pcre-dev \
         libxslt-dev \
         libzip-dev \
@@ -266,7 +273,7 @@
     && curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-73-1/icu4c-73_1-src.tgz \
     && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu* \
     # Install extensions
-{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
+{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
@@ -277,9 +284,9 @@
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
 {%- endif %}
     && docker-php-ext-configure ldap \
-{%- if version != '8.4' %}
+{%- if version != '8.4' and version != '8.5' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-{%- endif %}    
+{%- endif %}
     && docker-php-ext-install \
         bcmath \
         bz2 \
@@ -287,19 +294,21 @@
         exif \
         ftp \
         gmp \
-{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
+{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         ffi \
         imagick \
+{%- endif %}
+{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
         amqp \
 {%- endif %}
         intl \
         gettext \
         ldap \
         mysqli \
-{%- if version != '8.4' %}        
+{%- if version != '8.4' and version != '8.5' %}
         imap \
-{%- endif %}     
-{%- if version != '7.4' and version != '8.0' and version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' %}
+{%- endif %}
+{%- if version != '7.4' and version != '8.0' and version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' and version != '8.5' %}
         hash \
 {%- endif %}
         pcntl \
@@ -308,23 +317,24 @@
         pgsql \
         soap \
         sockets \
-{%- if version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' %}
+{%- if version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' and version != '8.5' %}
         tokenizer \
 {%- endif %}
         sysvmsg \
         sysvsem \
         sysvshm \
         shmop \
-{%- if version != '8.0' and version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' %}
+{%- if version != '8.0' and version != '8.1' and version != '8.2' and version != '8.3' and version != '8.4' and version != '8.5' %}
         xmlrpc \
 {%- endif %}
         xsl \
         zip \
         gd \
-        gettext \
+{%- if version != '8.5' %}
         opcache \
+{%- endif %}
     # Install extensions for PHP 7.x
-    {%- if version == '7.3' or version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3'  or version == '8.4' %}
+    {%- if version == '7.3' or version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
     # Memcached for 7.3 can currently only be built from master
     && MEMCACHED="`mktemp -d`" \
     && curl -skL https://github.com/php-memcached-dev/php-memcached/archive/master.tar.gz | tar zxf - --strip-components 1 -C $MEMCACHED \
@@ -335,7 +345,7 @@
     && printf "no --disable-memcached-sasl\n" | pecl install memcached-3.0.4 \
     && docker-php-ext-enable memcached \
     {%- endif %}
-{%- if version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
+{%- if version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
     && pecl install apcu \
     && pecl install excimer \
     && pecl install opentelemetry \
@@ -398,7 +408,11 @@
         icu-dev \
         postgresql-dev \
         libxml2-dev \
+    {%- if version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
+        samba-dev \
+    {%- else %}
         ldb-dev \
+    {%- endif %}
         pcre-dev \
         libxslt-dev \
         libzip-dev \
@@ -420,7 +434,7 @@
     && apt-install tideways-php tideways-daemon \
     {%- if version|int == 5 %}
     && pecl install xdebug-2.5.5 \
-    {%- elif version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
+    {%- elif version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
     && pecl install xdebug \
     {%- elif version == '7.0' or version == '7.1' %}
     && pecl install xdebug-2.8.1 \
@@ -446,6 +460,11 @@
     && pecl install xdebug-2.5.5 \
     {%- elif version == '7.0' or version == '7.1' %}
     && pecl install xdebug-2.8.1 \
+    {%- elif version == '8.5' %}
+    && wget https://github.com/php/pie/releases/download/1.3.1/pie.phar -O /usr/local/bin/pie \
+    && chmod +x /usr/local/bin/pie \
+    && pie install xdebug/xdebug:^3.5.0@alpha \
+    && rm -f /usr/local/bin/pie \
     {%- elif version == '7.4' %}
     && pecl install xdebug-3.1.6 \
     {%- else %}

@@ -7,5 +7,5 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ php.officialDevelopmentAlpine(version="8.2") }} \
+    {{ php.officialDevelopmentAlpine(version="8.3") }} \
     {{ provision.runBootstrap() }}
