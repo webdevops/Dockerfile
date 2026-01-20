@@ -28,7 +28,7 @@ class GithubJobBuilder
                         ['uses' => 'docker/setup-qemu-action@v3'],
                         ['uses' => 'docker/setup-buildx-action@v3'],
                         [
-                            'if' => "github.ref == 'refs/heads/master'",
+                            'if' => '${{github.ref == \'refs/heads/master\'}}',
                             'name' => 'Login to ghcr.io',
                             'uses' => 'docker/login-action@v3',
                             'with' => [
@@ -38,7 +38,7 @@ class GithubJobBuilder
                             ],
                         ],
                         [
-                            'if' => "github.ref == 'refs/heads/master'",
+                            'if' => '${{github.ref == \'refs/heads/master\'}}',
                             'name' => 'Login to hub.docker.com',
                             'uses' => 'docker/login-action@v3',
                             'with' => [
@@ -65,7 +65,7 @@ class GithubJobBuilder
                             'run' => implode("\n", $structuredTests),
                         ] : null,
                         [
-                            'if' => "github.ref == 'refs/heads/master'",
+                            'if' => '${{github.ref == \'refs/heads/master\'}}',
                             'name' => 'Push',
 //                            'name' => 'Build ARM + Push',
                             'uses' => 'docker/build-push-action@v6',
