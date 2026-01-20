@@ -4,16 +4,17 @@ namespace Webdevops\Build\Commands;
 
 use BlueM\Tree;
 use BlueM\Tree\Node;
-use BlueM\Tree\Serializer\HierarchicalTreeJsonSerializer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 use Webdevops\Build\FileReader;
-use Webdevops\Build\JobBuilder;
+use Webdevops\Build\GithubJobBuilder;
 
-class GitlabCommand extends Command
+use function ksort;
+
+class GithubCommand extends Command
 {
     protected $output;
     protected $fileReader;
@@ -23,12 +24,12 @@ class GitlabCommand extends Command
     protected $blacklist = [];
     protected $_settings = [];
 
-    protected static $defaultName = 'gitlab:generate-ci';
+    protected static $defaultName = 'github:generate-ci';
 
     public function __construct()
     {
         $this->fileReader = new FileReader();
-        $this->jobBuilder = new JobBuilder();
+        $this->jobBuilder = new GithubJobBuilder();
         parent::__construct();
         $this->addOption('blacklist', 'b', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY);
         $this->_settings = Yaml::parseFile(__DIR__ . '/../../../conf/console.yml');
@@ -45,19 +46,38 @@ class GitlabCommand extends Command
         foreach ($tree->getRootNodes() as $rootNode) {
             $this->traverse($rootNode);
         }
-        $gitlabCi['stages'] = array_map(function($level) {return 'level' . $level;}, range(1, $this->deepestLevel));
 
-        ksort($this->jobs); // system independent order of jobs (sorted by stage)
-        uasort($this->jobs, function($a, $b) {
-            return $a['stage'] <=> $b['stage'];
-        });
+        ksort($this->jobs); // system independent order of jobs
 
-        $yaml = Yaml::dump(array_merge($gitlabCi, $this->jobs), 3, 2);
-        file_put_contents(__DIR__ . '/../../../.gitlab-ci.yml', $yaml);
+        $this->jobs = [
+            'validate-automation' => $this->jobBuilder->getValidationConfig(),
+            ...$this->jobs,
+        ];;
+        $buildYaml = [
+            'name' => 'build',
+            'on' => [
+                'schedule' => [
+                    ['cron' => '0 0 * * 2'], // every week on Tuesday
+                ],
+                'push' => null,
+                'pull_request' => [
+                    'branches' => ['master'],
+                ],
+                'workflow_dispatch' => null,
+            ],
+            'jobs' => $this->jobs,
+        ];
+        $yamlString = Yaml::dump(
+            $buildYaml,
+            99,
+            2,
+            Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK,
+        );
+        file_put_contents(__DIR__ . '/../../../.github/workflows/build.yaml', $yamlString);
         return 0;
     }
 
-    private function traverse(Node $node)
+    private function traverse(Node $node): void
     {
         $line = 'Processing ' . $node->getName();
         $nodeAr = $node->toArray();
@@ -65,12 +85,12 @@ class GitlabCommand extends Command
         if ($node->getLevel() > $this->deepestLevel) {
             $this->deepestLevel = $node->getLevel();
         }
-        $this->jobs[$node->getId()] = $this->jobBuilder->getJobDescription($nodeAr);
+        $this->jobs[GithubJobBuilder::toJobId($node->getId())] = $this->jobBuilder->getJobDescription($nodeAr);
         if ($this->isNameBlacklisted($nodeAr['id'])) {
-//            $this->jobs[$node->getId()] = array_merge($this->jobs[$node->getId()], ['when' => 'manual']);
+//            $this->jobs[GithubJobBuilder::toJobId($node->getId())] = array_merge($this->jobs[GithubJobBuilder::toJobId($node->getId())], ['when' => 'manual']);
             $line .= ' *blacklisted*';
             if ($node->get('tag') !== $this->_settings['docker']['autoLatestTag']) {
-                unset($this->jobs[$node->getId()]);
+                unset($this->jobs[GithubJobBuilder::toJobId($node->getId())]);
             }
         }
         $this->output->write([str_pad('', $node->getLevel() - 1, "\t", STR_PAD_LEFT), $line, PHP_EOL]);
@@ -79,7 +99,7 @@ class GitlabCommand extends Command
         }
     }
 
-    private function isNameBlacklisted(string $name)
+    private function isNameBlacklisted(string $name): bool
     {
         foreach ($this->blacklist as $blacklistItem) {
             if (strpos($name, $blacklistItem)) {
@@ -89,7 +109,7 @@ class GitlabCommand extends Command
         return false;
     }
 
-    private function buildTree()
+    private function buildTree(): Tree
     {
         $data = [];
         $dockerFiles = $this->fileReader->collectDockerfiles();
@@ -98,5 +118,4 @@ class GitlabCommand extends Command
         }
         return new Tree($data);
     }
-
 }

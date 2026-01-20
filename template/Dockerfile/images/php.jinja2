@@ -83,7 +83,7 @@
 {%- endif %}
     && docker-php-ext-install \
         bcmath \
-{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
+{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         amqp \
 {%- endif %}
 {%- if version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
@@ -298,7 +298,7 @@
         ffi \
         imagick \
 {%- endif %}
-{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' %}
+{%- if version == '7.4' or version == '8.0' or version == '8.1' or version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         amqp \
 {%- endif %}
         intl \

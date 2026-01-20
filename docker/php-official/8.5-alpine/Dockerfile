@@ -158,6 +158,7 @@ RUN set -x \
         gmp \
         ffi \
         imagick \
+        amqp \
         intl \
         gettext \
         ldap \
