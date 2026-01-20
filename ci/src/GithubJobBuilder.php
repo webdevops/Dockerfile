@@ -11,41 +11,20 @@ class GithubJobBuilder
     {
         $serverSpec = $this->serverSpec($node);
         $structuredTests = $this->structuredTests($node);
-        $job = [];
-        if ($node['parent'] ?? false) {
-            // put needs at the beginning
-            $job['needs'] = [GithubJobBuilder::toJobId($node['parent'])];
-        }
-        $job = [
+
+        return [
             'name' => $node['name'],
-            ...$job,
+            'needs' => [
+                ($node['parent'] ?? null) ? GithubJobBuilder::toJobId($node['parent']) : 'validate-automation',
+            ],
             'runs-on' => 'ubuntu-latest',
             'container' => 'webdevops/dockerfile-build-env',
             'steps' => array_values(
                 array_filter(
                     [
                         ['uses' => 'actions/checkout@v4'],
-                        ['uses' => 'docker/setup-qemu-action@v3'],
+//                        ['uses' => 'docker/setup-qemu-action@v3'], // only needed for ARM builds
                         ['uses' => 'docker/setup-buildx-action@v3'],
-                        [
-                            'if' => '${{github.ref == \'refs/heads/master\'}}',
-                            'name' => 'Login to ghcr.io',
-                            'uses' => 'docker/login-action@v3',
-                            'with' => [
-                                'registry' => 'ghcr.io',
-                                'username' => '${{ github.actor }}',
-                                'password' => '${{ secrets.GITHUB_TOKEN }}',
-                            ],
-                        ],
-                        [
-                            'if' => '${{github.ref == \'refs/heads/master\'}}',
-                            'name' => 'Login to hub.docker.com',
-                            'uses' => 'docker/login-action@v3',
-                            'with' => [
-                                'username' => '${{ secrets.DOCKERHUB_USERNAME }}',
-                                'password' => '${{ secrets.DOCKERHUB_TOKEN }}',
-                            ],
-                        ],
                         [
                             'name' => 'Build x64',
                             'uses' => 'docker/build-push-action@v6',
@@ -66,6 +45,26 @@ class GithubJobBuilder
                         ] : null,
                         [
                             'if' => '${{github.ref == \'refs/heads/master\'}}',
+                            'name' => 'Login to ghcr.io',
+                            'uses' => 'docker/login-action@v3',
+                            'with' => [
+                                'registry' => 'ghcr.io',
+                                'username' => '${{ github.actor }}',
+                                'password' => '${{ secrets.GITHUB_TOKEN }}',
+                            ],
+                        ],
+                        [
+                            // login after the build so the rate limit of github is used and not from our login Token.
+                            'if' => '${{github.ref == \'refs/heads/master\'}}',
+                            'name' => 'Login to hub.docker.com',
+                            'uses' => 'docker/login-action@v3',
+                            'with' => [
+                                'username' => '${{ secrets.DOCKERHUB_USERNAME }}',
+                                'password' => '${{ secrets.DOCKERHUB_TOKEN }}',
+                            ],
+                        ],
+                        [
+                            'if' => '${{github.ref == \'refs/heads/master\'}}',
                             'name' => 'Push',
 //                            'name' => 'Build ARM + Push',
                             'uses' => 'docker/build-push-action@v6',
@@ -81,7 +80,6 @@ class GithubJobBuilder
                 ),
             ),
         ];
-        return $job;
     }
 
     public static function toJobId(string $name): string
@@ -129,4 +127,29 @@ class GithubJobBuilder
         return $script;
     }
 
+    public function getValidationConfig(): array
+    {
+        return [
+            'name' => 'Validate Automation',
+            'runs-on' => 'ubuntu-latest',
+            'steps' => [
+                ['uses' => 'actions/checkout@v4'],
+                [
+                    'name' => 'Validate that template/* are used to generate Dockerfiles',
+                    'run' => implode("\n", [
+                        'docker run --rm -v $PWD:/app -w /app webdevops/dockerfile-build-env make provision',
+                        'git diff --exit-code --color=always',
+                    ]),
+                ],
+                [
+                    'name' => 'Validate .github/workflows/build.yaml is up to date',
+                    'run' => implode("\n", [
+                        'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install',
+                        'docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci',
+                        'git diff --exit-code --color=always',
+                    ]),
+                ],
+            ],
+        ];
+    }
 }

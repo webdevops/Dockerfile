@@ -9,6 +9,23 @@ name: build
       - master
   workflow_dispatch: null
 jobs:
+  validate-automation:
+    name: 'Validate Automation'
+    runs-on: ubuntu-latest
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        name: 'Validate that template/* are used to generate Dockerfiles'
+        run: |-
+          docker run --rm -v $PWD:/app -w /app webdevops/dockerfile-build-env make provision
+          git diff --exit-code --color=always
+      -
+        name: 'Validate .github/workflows/build.yaml is up to date'
+        run: |-
+          docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install
+          docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci
+          git diff --exit-code --color=always
   apache_alpine:
     name: 'webdevops/apache:alpine'
     needs:
@@ -19,24 +36,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -53,6 +53,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/apache_spec.rb webdevops/apache:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2FwYWNoZTphbHBpbmUiLCJET0NLRVJfVEFHIjoiYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IiIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -72,24 +87,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -113,6 +111,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/base-app:alpine --config base-app/test.yaml --config base-app/alpine/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -130,24 +143,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -171,6 +167,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/base-app:ubuntu-22.04 --config base-app/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -188,24 +199,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -229,6 +223,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/base:alpine --config base/test.yaml --config base/alpine/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -246,24 +255,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -287,6 +279,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/base:ubuntu-22.04 --config base/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -304,24 +311,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -345,6 +335,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/bootstrap:alpine --config bootstrap/test.yaml --config bootstrap/alpine/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -362,24 +367,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -403,6 +391,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/bootstrap:ubuntu-22.04 --config bootstrap/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -420,9 +423,15 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/dockerfile-build-env/latest
+          load: true
+          tags: 'ghcr.io/webdevops/dockerfile-build-env:latest,webdevops/dockerfile-build-env:latest'
+          platforms: linux/amd64
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -438,14 +447,6 @@ jobs:
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
-      -
-        name: 'Build x64'
-        uses: docker/build-push-action@v6
-        with:
-          context: docker/dockerfile-build-env/latest
-          load: true
-          tags: 'ghcr.io/webdevops/dockerfile-build-env:latest,webdevops/dockerfile-build-env:latest'
-          platforms: linux/amd64
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -465,24 +466,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -499,6 +483,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/nginx_spec.rb webdevops/nginx:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL25naW54OmFscGluZSIsIkRPQ0tFUl9UQUciOiJhbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -518,24 +517,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -552,6 +534,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMSIsIkRPQ0tFUl9UQUciOiI4LjEiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -571,24 +568,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -605,6 +585,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMS1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4xLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -624,24 +619,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -658,6 +636,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMiIsIkRPQ0tFUl9UQUciOiI4LjIiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -677,24 +670,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -711,6 +687,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMi1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4yLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -730,24 +721,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -764,6 +738,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMyIsIkRPQ0tFUl9UQUciOiI4LjMiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -783,24 +772,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -817,6 +789,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMy1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4zLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -836,24 +823,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -870,6 +840,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguNCIsIkRPQ0tFUl9UQUciOiI4LjQiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -889,24 +874,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -923,6 +891,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguNC1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC40LWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -942,24 +925,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -976,6 +942,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguNSIsIkRPQ0tFUl9UQUciOiI4LjUiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -995,24 +976,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1029,6 +993,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguNS1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC41LWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -1048,24 +1027,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1082,6 +1044,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4xIiwiRE9DS0VSX1RBRyI6IjguMSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -1101,24 +1078,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1135,6 +1095,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4xLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjEtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -1154,24 +1129,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1188,6 +1146,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -1207,24 +1180,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1241,6 +1197,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -1260,24 +1231,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1294,6 +1248,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -1313,24 +1282,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1347,6 +1299,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -1366,24 +1333,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1400,6 +1350,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC40IiwiRE9DS0VSX1RBRyI6IjguNCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -1419,24 +1384,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1453,6 +1401,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC40LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjQtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -1472,24 +1435,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1506,6 +1452,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC41IiwiRE9DS0VSX1RBRyI6IjguNSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -1525,24 +1486,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1559,6 +1503,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC41LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjUtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -1578,24 +1537,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1619,6 +1561,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.1 --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -1636,24 +1593,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1677,6 +1617,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.1-alpine --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -1694,24 +1649,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1735,6 +1673,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.2 --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -1752,24 +1705,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1793,6 +1729,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.2-alpine --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -1810,24 +1761,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1851,6 +1785,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.3 --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -1868,24 +1817,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1909,6 +1841,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.3-alpine --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -1926,24 +1873,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -1967,6 +1897,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.4 --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -1984,24 +1929,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2025,6 +1953,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.4-alpine --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -2042,24 +1985,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2083,6 +2009,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.5 --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -2100,24 +2041,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2141,6 +2065,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-dev:8.5-alpine --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -2158,24 +2097,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2192,6 +2114,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.1 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4xIiwiRE9DS0VSX1RBRyI6IjguMSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -2211,24 +2148,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2245,6 +2165,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.1-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4xLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjEtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -2264,24 +2199,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2298,6 +2216,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -2317,24 +2250,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2351,6 +2267,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -2370,24 +2301,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2404,6 +2318,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -2423,24 +2352,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2457,6 +2369,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -2476,24 +2403,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2510,6 +2420,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC40IiwiRE9DS0VSX1RBRyI6IjguNCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -2529,24 +2454,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2563,6 +2471,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC40LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjQtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -2582,24 +2505,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2616,6 +2522,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC41IiwiRE9DS0VSX1RBRyI6IjguNSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -2635,24 +2556,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2669,6 +2573,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC41LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjUtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -2688,24 +2607,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2729,6 +2631,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.1 --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -2746,24 +2663,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2787,6 +2687,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.1-alpine --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -2804,24 +2719,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2845,6 +2743,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.2 --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -2862,24 +2775,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2903,6 +2799,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.2-alpine --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -2920,24 +2831,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -2961,6 +2855,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.3 --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -2978,24 +2887,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3019,6 +2911,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.3-alpine --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3036,24 +2943,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3077,6 +2967,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.4 --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3094,24 +2999,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3135,6 +3023,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.4-alpine --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3152,24 +3055,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3193,6 +3079,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.5 --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3210,24 +3111,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3251,6 +3135,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php-nginx:8.5-alpine --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3268,24 +3167,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3309,6 +3191,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php:8.1 --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3326,24 +3223,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3367,6 +3247,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php:8.1-alpine --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3384,24 +3279,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3425,6 +3303,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php:8.2 --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3442,24 +3335,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3483,6 +3359,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php:8.2-alpine --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3500,24 +3391,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3541,6 +3415,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php:8.3 --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3558,24 +3447,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3599,6 +3471,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php:8.3-alpine --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3616,24 +3503,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3657,6 +3527,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php:8.4 --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3674,24 +3559,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3715,6 +3583,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php:8.4-alpine --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3732,24 +3615,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3773,6 +3639,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php:8.5 --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3790,24 +3671,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3831,6 +3695,21 @@ jobs:
           /usr/local/bin/container-structure-test test --image webdevops/php:8.5-alpine --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
         uses: docker/build-push-action@v6
         with:
@@ -3848,9 +3727,15 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/storage/latest
+          load: true
+          tags: 'ghcr.io/webdevops/storage:latest,webdevops/storage:latest'
+          platforms: linux/amd64
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -3866,14 +3751,6 @@ jobs:
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
-      -
-        name: 'Build x64'
-        uses: docker/build-push-action@v6
-        with:
-          context: docker/storage/latest
-          load: true
-          tags: 'ghcr.io/webdevops/storage:latest,webdevops/storage:latest'
-          platforms: linux/amd64
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -3885,15 +3762,23 @@ jobs:
           platforms: linux/amd64
   toolbox_latest:
     name: 'webdevops/toolbox:latest'
+    needs:
+      - validate-automation
     runs-on: ubuntu-latest
     container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
+      -
+        name: 'Build x64'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/toolbox/latest
+          load: true
+          tags: 'ghcr.io/webdevops/toolbox:latest,webdevops/toolbox:latest'
+          platforms: linux/amd64
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -3909,14 +3794,6 @@ jobs:
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
-      -
-        name: 'Build x64'
-        uses: docker/build-push-action@v6
-        with:
-          context: docker/toolbox/latest
-          load: true
-          tags: 'ghcr.io/webdevops/toolbox:latest,webdevops/toolbox:latest'
-          platforms: linux/amd64
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push
@@ -3936,24 +3813,7 @@ jobs:
       -
         uses: actions/checkout@v4
       -
-        uses: docker/setup-qemu-action@v3
-      -
         uses: docker/setup-buildx-action@v3
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         name: 'Build x64'
         uses: docker/build-push-action@v6
@@ -3970,6 +3830,21 @@ jobs:
           echo "COPY conf/ /" >> Dockerfile_test
           bundle install
           bash serverspec.sh spec/docker/vsftp_spec.rb webdevops/vsftp:latest eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3ZzZnRwOmxhdGVzdCIsIkRPQ0tFUl9UQUciOiJsYXRlc3QiLCJPU19GQU1JTFkiOiJ1YnVudHUiLCJPU19WRVJTSU9OIjoiMjIuMDQiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v3
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: Push

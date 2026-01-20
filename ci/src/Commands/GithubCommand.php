@@ -13,7 +13,6 @@ use Webdevops\Build\FileReader;
 use Webdevops\Build\GithubJobBuilder;
 
 use function ksort;
-use function var_dump;
 
 class GithubCommand extends Command
 {
@@ -50,6 +49,10 @@ class GithubCommand extends Command
 
         ksort($this->jobs); // system independent order of jobs
 
+        $this->jobs = [
+            'validate-automation' => $this->jobBuilder->getValidationConfig(),
+            ...$this->jobs,
+        ];;
         $buildYaml = [
             'name' => 'build',
             'on' => [
@@ -115,5 +118,4 @@ class GithubCommand extends Command
         }
         return new Tree($data);
     }
-
 }
