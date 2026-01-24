@@ -22,7 +22,7 @@ ENV APPLICATION_USER=application \
     APPLICATION_PATH=/app \
     APPLICATION_UID=1000 \
     APPLICATION_GID=1000
-ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"
+ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i" 
 ENV LD_PRELOAD="/usr/lib/preloadable_libiconv.so"
 ENV COMPOSER_VERSION="2"
 
