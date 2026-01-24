@@ -1,0 +1,7 @@
+{{ docker.from("php", "8.5-alpine") }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+RUN set -x \
+    {{ php.officialDevelopmentAlpine(version="8.5") }} \
+    {{ provision.runBootstrap() }}

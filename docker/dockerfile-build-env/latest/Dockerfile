@@ -32,8 +32,9 @@ RUN apt-install \
     && hash -r pip \
     && pip install --upgrade setuptools \
     && git clone --depth 1 https://github.com/webdevops/Dockerfile.git /tmp/Dockerfile \
+    && gem install bundler -v 2.1.4 --no-document \
     && cd /tmp/Dockerfile/tests/serverspec \
-    && bundle update --bundler \
+    && bundle _2.1.4_ update --bundler \
     && cd /tmp/Dockerfile \
     && make setup \
     && docker-image-cleanup

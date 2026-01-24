@@ -3,7 +3,7 @@
 set -exuo pipefail
 
 ROOT_DIR=$(pwd)
-PHP_VERSION=8.4
+PHP_VERSION=8.5
 
 #docker run --rm -ti -v $PWD:/app -w /app webdevops/dockerfile-build-env make provision
 
