@@ -50,7 +50,7 @@ class GithubJobBuilder
                 'name' => $node['name'] . ' (${{ matrix.arch }})',
                 'needs' => $needs,
                 // even run if previous job skipped
-                'if' => '${{ !failure() }}',
+                'if' => '${{ !failure() && !cancelled() }}',
                 'runs-on' => '${{ matrix.runner }}',
                 'container' => 'webdevops/dockerfile-build-env',
                 'steps' => array_values(
