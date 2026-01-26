@@ -8,6 +8,6 @@ source /opt/docker/bin/config.sh
 includeScriptDir "/opt/docker/bin/service.d/httpd.d/"
 
 # Apache gets grumpy about PID files pre-existing
-rm -f /var/run/httpd/httpd.pid
+rm -f /var/run/apache2/httpd.pid
 
 exec /usr/sbin/apachectl -DFOREGROUND $SERVICE_APACHE_OPTS
