@@ -1,4 +1,5 @@
 {{ docker.fromOfficial("alpine") }}
+ARG TARGETARCH
 
 RUN apk add --no-cache \
         ca-certificates \

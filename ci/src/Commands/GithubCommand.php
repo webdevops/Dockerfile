@@ -85,12 +85,16 @@ class GithubCommand extends Command
         if ($node->getLevel() > $this->deepestLevel) {
             $this->deepestLevel = $node->getLevel();
         }
-        $this->jobs[GithubJobBuilder::toJobId($node->getId())] = $this->jobBuilder->getJobDescription($nodeAr);
+        $this->jobs = [
+            ...$this->jobs,
+            ...$this->jobBuilder->getJobsDescription($nodeAr),
+        ];
         if ($this->isNameBlacklisted($nodeAr['id'])) {
 //            $this->jobs[GithubJobBuilder::toJobId($node->getId())] = array_merge($this->jobs[GithubJobBuilder::toJobId($node->getId())], ['when' => 'manual']);
             $line .= ' *blacklisted*';
             if ($node->get('tag') !== $this->_settings['docker']['autoLatestTag']) {
                 unset($this->jobs[GithubJobBuilder::toJobId($node->getId())]);
+                unset($this->jobs[GithubJobBuilder::toJobId($node->getId()) . '_publish']);
             }
         }
         $this->output->write([str_pad('', $node->getLevel() - 1, "\t", STR_PAD_LEFT), $line, PHP_EOL]);
