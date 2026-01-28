@@ -24,7 +24,28 @@ from .BaseTaskLoader import BaseTaskLoader
 from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from webdevops import DockerfileUtility
 
+# Define standalone functions for better multiprocessing compatibility
+def task_run_wrapper(dockerfile, configuration_dict, task):
+    """
+    Wrapper for docker push task that recreates objects in worker process
+    """
+    from webdevops.docker.DockerCliClient import DockerCliClient
+    from webdevops.Configuration import dotdictify
+    
+    # Recreate objects in worker process
+    docker_client = DockerCliClient()
+    configuration = dotdictify(configuration_dict)
+    
+    return DockerPushTaskLoader.task_run(docker_client, dockerfile, configuration, task)
+
+def task_runner_wrapper(func, args, task):
+    """
+    Wrapper for task runner
+    """
+    return BaseTaskLoader.task_runner(func, args, task)
+
 class DockerPushTaskLoader(BaseDockerTaskLoader):
+    cmd_options = ()
 
     def generate_task_list(self, dockerfile_list):
         """
@@ -32,11 +53,14 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
         """
         tasklist = []
 
+        # Convert configuration to dict for serialization
+        configuration_dict = self.configuration.to_dict()
+
         for dockerfile in dockerfile_list:
             task = {
                 'name': 'DockerPush|%s' % dockerfile['image']['fullname'],
                 'title': DockerPushTaskLoader.task_title,
-                'actions': [(BaseTaskLoader.task_runner, [DockerPushTaskLoader.task_run, [self.docker_client, dockerfile, self.configuration]])],
+                'actions': [(task_runner_wrapper, [task_run_wrapper, [dockerfile, configuration_dict]])],
                 'task_dep': []
             }
 
@@ -61,7 +85,7 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
         Push one Docker image to registry
         """
         if configuration.get('dryRun'):
-            print '      push: %s' % (dockerfile['image']['fullname'])
+            print(')      push: %s' % (dockerfile['image']['fullname']))
             return True
 
         push_status = False
@@ -73,10 +97,10 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
             if push_status:
                 break
             elif retry_count < (configuration.get('retry') - 1):
-                print '    failed, retrying... (try %s)' % (retry_count+1)
+                print(')    failed, retrying... (try %s)' % (retry_count+1))
                 time.sleep(randint(10, 30))
             else:
-                print '    failed, giving up'
+                print(')    failed, giving up')
 
         return push_status
 
@@ -86,4 +110,3 @@ class DockerPushTaskLoader(BaseDockerTaskLoader):
         Push task title function
         """
         return "Docker push %s" % (BaseTaskLoader.human_task_name(task.name))
-0

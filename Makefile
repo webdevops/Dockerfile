@@ -17,7 +17,7 @@ full:      provision build
 all:       build
 
 build:
-	python2 ./bin/console docker:build --threads=auto
+	python3 ./bin/console docker:build --threads=auto
 
 bootstrap: webdevops/bootstrap webdevops/ansible
 base:      webdevops/base webdevops/base-app webdevops/storage
@@ -36,27 +36,27 @@ misc:      webdevops/mail-sandbox webdevops/sphinx webdevops/liquibase
 setup:     requirements
 
 requirements:
-	pip install --upgrade -I -r ./bin/requirements.txt
+	pip3 install --upgrade -I -r ./bin/requirements.txt
 	cd tests/serverspec && bundle install --path=vendor
 
 test:
-	python2 bin/console test:serverspec --threads=auto -v
+	python3 bin/console test:serverspec --threads=auto -v
 
 structure-test:
 	cd tests/structure-test && ./run.sh
 
 provision:
-	python2 bin/console generate:dockerfile
-	python2 bin/console generate:provision
+	python3 bin/console generate:dockerfile
+	python3 bin/console generate:provision
 
 push:
-	python2 ./bin/console docker:push --threads=auto
+	python3 ./bin/console docker:push --threads=auto
 
 graph:
-	python2 ./bin/console generate:graph
+	python3 ./bin/console generate:graph
 
 graph-full:
-	python2 ./bin/console generate:graph --all\
+	python3 ./bin/console generate:graph --all\
 		--filename docker-image-full-layout.gv
 
 documentation:

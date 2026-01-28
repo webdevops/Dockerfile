@@ -43,7 +43,7 @@ class GenerateGraphCommand(BaseCommand):
         '--format': Enum(['png', 'jpg', 'pdf', 'svg'])
     }
 
-    from_regex = re.compile(ur'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE)
+    from_regex = re.compile(r'FROM\s+(?P<image>[^\s:]+)(:(?P<tag>.+))?', re.MULTILINE)
 
     containers = {}
 
@@ -116,7 +116,7 @@ class GenerateGraphCommand(BaseCommand):
 
         :return: self
         """
-        if not self.tags.has_key(docker_image):
+        if docker_image not in self.tags:
             self.tags[docker_image] = {}
         self.tags[docker_image][tag] = tag
         return self

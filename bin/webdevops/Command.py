@@ -25,7 +25,7 @@ def execute(cmd, cwd=False, env=None):
     Execute cmd and output stdout/stderr
     """
 
-    print 'Execute: %s' % ' '.join(cmd)
+    print('Execute: %s' % ' '.join(cmd))
 
     if env is not None:
         env = copy.deepcopy(env)
@@ -56,7 +56,6 @@ def execute(cmd, cwd=False, env=None):
         cmd,
         stdout=file_stdout,
         stderr=file_stdout,
-        bufsize=-1,
         env=env
     )
 
@@ -67,7 +66,7 @@ def execute(cmd, cwd=False, env=None):
     # output stdout
     with open(file_stdout.name, 'r') as f:
         for line in f:
-            print line.rstrip('\n')
+            print(line.rstrip('\n'))
 
     # restore current work directory
     os.chdir(path_current)
@@ -75,5 +74,5 @@ def execute(cmd, cwd=False, env=None):
     if proc.returncode == 0:
         return True
     else:
-        print '>> failed command with return code %s' % proc.returncode
+        print(')>> failed command with return code %s' % proc.returncode)
         return False

@@ -23,7 +23,28 @@ from .BaseTaskLoader import BaseTaskLoader
 from .BaseDockerTaskLoader import BaseDockerTaskLoader
 from webdevops import DockerfileUtility
 
+# Define standalone functions for better multiprocessing compatibility
+def task_run_wrapper(dockerfile, configuration_dict, task):
+    """
+    Wrapper for docker pull task that recreates objects in worker process
+    """
+    from webdevops.docker.DockerCliClient import DockerCliClient
+    from webdevops.Configuration import dotdictify
+    
+    # Recreate objects in worker process
+    docker_client = DockerCliClient()
+    configuration = dotdictify(configuration_dict)
+    
+    return DockerPullTaskLoader.task_run(docker_client, dockerfile, configuration, task)
+
+def task_runner_wrapper(func, args, task):
+    """
+    Wrapper for task runner
+    """
+    return BaseTaskLoader.task_runner(func, args, task)
+
 class DockerPullTaskLoader(BaseDockerTaskLoader):
+    cmd_options = ()
 
     def generate_task_list(self, dockerfile_list):
         """
@@ -31,11 +52,14 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
         """
         tasklist = []
 
+        # Convert configuration to dict for serialization
+        configuration_dict = self.configuration.to_dict()
+
         for dockerfile in dockerfile_list:
             task = {
                 'name': 'DockerPull|%s' % dockerfile['image']['fullname'],
                 'title': DockerPullTaskLoader.task_title,
-                'actions': [(BaseTaskLoader.task_runner, [DockerPullTaskLoader.task_run, [self.docker_client, dockerfile, self.configuration]])],
+                'actions': [(task_runner_wrapper, [task_run_wrapper, [dockerfile, configuration_dict]])],
                 'task_dep': []
             }
             tasklist.append(task)
@@ -56,7 +80,7 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
         Pull one Docker image from registry
         """
         if configuration.get('dryRun'):
-            print '      pull: %s' % (dockerfile['image']['fullname'])
+            print(')      pull: %s' % (dockerfile['image']['fullname']))
             return True
 
         pull_status = False
@@ -69,9 +93,9 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
             if pull_status:
                 break
             elif retry_count < (configuration.get('retry') - 1):
-                print '    failed, retrying... (try %s)' % (retry_count+1)
+                print(')    failed, retrying... (try %s)' % (retry_count+1))
             else:
-                print '    failed, giving up'
+                print(')    failed, giving up')
 
         return pull_status
 
@@ -81,4 +105,3 @@ class DockerPullTaskLoader(BaseDockerTaskLoader):
         Pull task title function
         """
         return "Docker pull %s" % (BaseTaskLoader.human_task_name(task.name))
-0
