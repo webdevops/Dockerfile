@@ -29,8 +29,12 @@ RUN apk add --no-cache \
         # Baselayout scripts
         && wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
         && sh /tmp/baselayout-install.sh /baselayout \
-        ## Install go-replace
-    && wget -O "/baselayout/usr/local/bin/go-replace" "https://github.com/webdevops/go-replace/releases/download/22.10.0/go-replace.linux.$TARGETARCH" \
+        ## Install go-replace (build from source to ensure up-to-date Go stdlib, fixing CVEs in pre-built binaries)
+    && apk add --no-cache --virtual .build-deps-go go \
+    && GOPATH=/tmp/go-build GOCACHE=/tmp/go-cache GOARCH=$TARGETARCH GOOS=linux CGO_ENABLED=0 go install "github.com/webdevops/go-replace@22.10.0" \
+    && find /tmp/go-build/bin -name "go-replace" -exec mv {} "/baselayout/usr/local/bin/go-replace" \; \
+    && apk del .build-deps-go \
+    && rm -rf /tmp/go-build /tmp/go-cache \
     && chmod +x "/baselayout/usr/local/bin/go-replace" \
     && "/baselayout/usr/local/bin/go-replace" --version \
         && ln -s /baselayout/usr/local/bin/go-replace /usr/local/bin/ \

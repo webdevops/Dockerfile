@@ -1,6 +1,10 @@
 {% macro goreplace(path="/usr/local/bin", version="22.10.0") -%}
-    ## Install go-replace
-    && wget -O "{{ path }}/go-replace" "https://github.com/webdevops/go-replace/releases/download/{{ version }}/go-replace.linux.$TARGETARCH" \
+    ## Install go-replace (build from source to ensure up-to-date Go stdlib, fixing CVEs in pre-built binaries)
+    && apk add --no-cache --virtual .build-deps-go go \
+    && GOPATH=/tmp/go-build GOCACHE=/tmp/go-cache GOARCH=$TARGETARCH GOOS=linux CGO_ENABLED=0 go install "github.com/webdevops/go-replace@{{ version }}" \
+    && find /tmp/go-build/bin -name "go-replace" -exec mv {} "{{ path }}/go-replace" \; \
+    && apk del .build-deps-go \
+    && rm -rf /tmp/go-build /tmp/go-cache \
     && chmod +x "{{ path }}/go-replace" \
     && "{{ path }}/go-replace" --version
 {%- endmacro %}
