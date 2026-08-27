@@ -16,6 +16,7 @@ describe "Dockerfile" do
         include_examples 'collection::php-fpm5'
         include_examples 'collection::php-fpm5::public'
     elsif ($testConfiguration[:php] == 8)
+        include_examples 'php::cli::test::avif'
     else
         include_examples 'collection::php7::production'
         include_examples 'collection::php-fpm7'
