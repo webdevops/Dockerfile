@@ -95,6 +95,7 @@ RUN set -x \
         pngnq \
         pngquant \
         # Libraries
+        libavif15 \
         libvips42 \
         librabbitmq4 \
         libldap-2.5-0 \
@@ -106,6 +107,7 @@ RUN set -x \
         libmcrypt4 \
         libzip4 \
         # Dev and headers
+        libavif-dev \
         libjpeg62-turbo-dev \
         libwebp-dev \
         libfreetype6-dev \
@@ -139,7 +141,7 @@ RUN set -x \
     && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu* \
     # Install extensions
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
-    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
+    && docker-php-ext-configure gd --with-avif --with-jpeg --with-freetype --with-webp \
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
@@ -194,6 +196,7 @@ RUN set -x \
         libc-client-dev \
         libkrb5-dev \
         libbz2-dev \
+        libavif-dev \
         libicu-dev \
         libldap2-dev \
         libldb-dev \

@@ -94,6 +94,7 @@ RUN set -x \
         rabbitmq-c \
         c-client \
         # Libraries
+        libavif \
         libldap \
         icu-libs \
         libintl \
@@ -111,6 +112,7 @@ RUN set -x \
         libtool \
         pcre-dev \
         gettext-dev \
+        libavif-dev \
         freetype-dev \
         gmp-dev \
         libjpeg-turbo-dev \
@@ -144,7 +146,7 @@ RUN set -x \
     && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu* \
     # Install extensions
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
-    && docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
+    && docker-php-ext-configure gd --with-avif --with-jpeg --with-freetype --with-webp \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
@@ -213,6 +215,7 @@ RUN set -x \
         libtool \
         pcre-dev \
         gettext-dev \
+        libavif-dev \
         freetype-dev \
         gmp-dev \
         libjpeg-turbo-dev \

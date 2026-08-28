@@ -13,6 +13,12 @@ shared_examples 'php::cli::test::sha1' do
     end
 end
 
+shared_examples 'php::cli::test::avif' do
+    describe command('php -r \'exit((gd_info()["AVIF Support"] ?? false) ? 0 : 1);\'') do
+        its(:exit_status) { should eq 0 }
+    end
+end
+
 shared_examples 'php::cli::test::php_ini_scanned_files' do
     describe command('php -r "echo php_ini_scanned_files();"') do
         its(:stdout) { should contain('-docker.ini') }
