@@ -30,7 +30,7 @@ RUN apk add --no-cache \
         && wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
         && sh /tmp/baselayout-install.sh /baselayout \
         ## Install go-replace
-    && wget -O "/baselayout/usr/local/bin/go-replace" "https://github.com/webdevops/go-replace/releases/download/27.7.1/go-replace.linux.$TARGETARCH" \
+    && wget -O "/baselayout/usr/local/bin/go-replace" "https://github.com/webdevops/go-replace/releases/download/27.9.0/go-replace.linux.$TARGETARCH" \
     && chmod +x "/baselayout/usr/local/bin/go-replace" \
     && "/baselayout/usr/local/bin/go-replace" --version \
         && ln -s /baselayout/usr/local/bin/go-replace /usr/local/bin/ \
