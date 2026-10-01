@@ -60,7 +60,7 @@ class FileReader
             }
         }
         // Only internal images must be contained in build tree
-        preg_match_all('/FROM (.*)/', $content, $fromMatches);
+        preg_match_all('/^FROM\s+(\S+)(?:\s+AS\s+\S+)?\s*$/mi', $content, $fromMatches);
         $parentImage = array_pop($fromMatches[1]);
         if (strpos($parentImage, 'webdevops/') === 0) {
             // Real Docker image inheritance: the Dockerfile's FROM references
