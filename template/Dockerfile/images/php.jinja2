@@ -57,6 +57,9 @@
         librabbitmq-dev \
         libmagick++-dev \
         libgmp-dev \
+{%- if version|float >= 8.2 %}
+        libssl-dev \
+{%- endif %}
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -73,6 +76,11 @@
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && docker-php-ext-configure ldap \
+{%- if version|float >= 8.2 and version|float < 8.4 %}
+    && docker-php-ext-configure ftp --with-openssl-dir \
+{%- elif version|float >= 8.4 %}
+    && docker-php-ext-configure ftp --with-ftp-ssl \
+{%- endif %}
 {%- if version != '8.4' and version != '8.5' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
 {%- endif %}
@@ -152,6 +160,9 @@
         librabbitmq-dev \
         libmagick++-dev \
         libgmp-dev \
+{%- if version|float >= 8.2 %}
+        libssl-dev \
+{%- endif %}
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
@@ -234,6 +245,11 @@
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && docker-php-ext-configure ldap \
+{%- if version|float >= 8.2 and version|float < 8.4 %}
+    && docker-php-ext-configure ftp --with-openssl-dir \
+{%- elif version|float >= 8.4 %}
+    && docker-php-ext-configure ftp --with-ftp-ssl \
+{%- endif %}
 {%- if version != '8.4' and version != '8.5' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
 {%- endif %}
