@@ -43,7 +43,7 @@ class FileReader
             'file' => $dockerfilePath,
             'parent' => 0,
             'imageParent' => 0,
-            'imageParentRef' => 0,
+            'imageParentRef' => null,
             'imageDependencies' => [],
             'serverspec' => [
                 'DOCKER_IMAGE' => $id,
@@ -110,15 +110,16 @@ class FileReader
      * that is actually built by this repository's CI pipeline (i.e. the id
      * backed by a real `docker/<image>/<tag>/Dockerfile`).
      *
-     * Most images do not have a literal "latest" subdirectory: `:latest` is
-     * only a published alias for whichever folder `autoLatestTag` points to
-     * (see the alias handling above), so a reference like
-     * "webdevops/base:latest" must resolve to "webdevops/base:ubuntu-22.04"
-     * to match the job that actually builds and exports it. A few images
-     * (e.g. toolbox, ssh, vsftp) *do* have a literal "latest" subdirectory
-     * and must be left untouched. Checking the filesystem directly, rather
-     * than assuming the "latest" alias substitution always applies, keeps
-     * this correct for both cases.
+     * This is the single source of truth for resolving a `:latest` (or
+     * untagged, which Docker treats identically) reference: most images do
+     * not have a literal "latest" subdirectory, so `:latest` is only a
+     * published alias for whichever folder `autoLatestTag` points to, and a
+     * reference like "webdevops/base:latest" must resolve to
+     * "webdevops/base:ubuntu-22.04" to match the job that actually builds
+     * and exports it. A few images (e.g. toolbox, ssh, vsftp) *do* have a
+     * literal "latest" subdirectory and must be left untouched. Checking the
+     * filesystem directly, rather than assuming the "latest" alias
+     * substitution always applies, keeps this correct for both cases.
      */
     private function resolveInternalImageReference(string $reference): string
     {
