@@ -29,6 +29,13 @@ class GithubJobBuilder
     private const PR_ONLY_IF = '${{ github.event_name == \'pull_request\' }}';
 
     /**
+     * Logical negation of {@see self::PR_ONLY_IF}, kept as its own constant
+     * (rather than an inline literal) so the two conditions can never drift
+     * out of sync if the gating logic above ever changes.
+     */
+    private const PR_ONLY_IF_NOT = '${{ github.event_name != \'pull_request\' }}';
+
+    /**
      * @return array<string, array<string, mixed>>
      */
     public function getJobsDescription(array $node): array
@@ -84,7 +91,7 @@ class GithubJobBuilder
                             ...$this->downloadParentImageSteps($imageDependencies),
                             array_filter([
                                 'name' => 'Build (load locally)',
-                                'if' => $hasImageDependencies ? '${{ github.event_name != \'pull_request\' }}' : null,
+                                'if' => $hasImageDependencies ? self::PR_ONLY_IF_NOT : null,
                                 'uses' => 'docker/build-push-action@v6',
                                 'with' => $this->buildPushWith($node),
                             ]),
