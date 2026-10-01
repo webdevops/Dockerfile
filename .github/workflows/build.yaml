@@ -54,7 +54,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/base_alpine'
@@ -165,7 +165,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/base_alpine'
@@ -281,7 +281,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/base_ubuntu-22-04'
@@ -420,7 +420,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-bootstrap_alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/bootstrap_alpine'
@@ -557,7 +557,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-bootstrap_ubuntu-22-04-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/bootstrap_ubuntu-22-04'
@@ -696,7 +696,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
@@ -833,7 +833,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
@@ -972,7 +972,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base-app_ubuntu-22-04-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/base-app_ubuntu-22-04'
@@ -1075,7 +1075,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/base_alpine'
@@ -1186,7 +1186,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-1-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-apache_8-1'
@@ -1263,7 +1263,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-1-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-apache_8-1-alpine'
@@ -1408,7 +1408,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-2-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-apache_8-2'
@@ -1485,7 +1485,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-2-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-apache_8-2-alpine'
@@ -1630,7 +1630,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-3-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-apache_8-3'
@@ -1707,7 +1707,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-3-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-apache_8-3-alpine'
@@ -1852,7 +1852,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-4-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-apache_8-4'
@@ -1929,7 +1929,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-4-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-apache_8-4-alpine'
@@ -2074,7 +2074,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-5-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-apache_8-5'
@@ -2151,7 +2151,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-5-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-apache_8-5-alpine'
@@ -2296,7 +2296,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-1'
@@ -2394,7 +2394,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-1-alpine'
@@ -2560,7 +2560,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-2'
@@ -2658,7 +2658,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-2-alpine'
@@ -2824,7 +2824,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-3'
@@ -2922,7 +2922,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-3-alpine'
@@ -3088,7 +3088,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-4'
@@ -3186,7 +3186,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-4-alpine'
@@ -3352,7 +3352,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-5'
@@ -3450,7 +3450,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-5-alpine'
@@ -3616,7 +3616,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-1'
@@ -3698,7 +3698,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-1-alpine'
@@ -3848,7 +3848,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-2'
@@ -3930,7 +3930,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-2-alpine'
@@ -4080,7 +4080,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-3'
@@ -4162,7 +4162,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-3-alpine'
@@ -4312,7 +4312,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-4'
@@ -4394,7 +4394,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-4-alpine'
@@ -4544,7 +4544,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-5'
@@ -4626,7 +4626,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-5-alpine'
@@ -4776,7 +4776,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-1-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-1'
@@ -4853,7 +4853,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-1-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-1-alpine'
@@ -4998,7 +4998,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-2-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-2'
@@ -5075,7 +5075,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-2-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-2-alpine'
@@ -5220,7 +5220,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-3-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-3'
@@ -5297,7 +5297,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-3-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-3-alpine'
@@ -5442,7 +5442,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-4-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-4'
@@ -5519,7 +5519,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-4-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-4-alpine'
@@ -5664,7 +5664,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-5-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-5'
@@ -5741,7 +5741,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-5-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-5-alpine'
@@ -5886,7 +5886,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-1'
@@ -5989,7 +5989,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-1-alpine'
@@ -6160,7 +6160,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-2'
@@ -6263,7 +6263,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-2-alpine'
@@ -6434,7 +6434,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-3'
@@ -6537,7 +6537,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-3-alpine'
@@ -6708,7 +6708,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-4'
@@ -6811,7 +6811,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-4-alpine'
@@ -6982,7 +6982,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-5'
@@ -7085,7 +7085,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/php_8-5-alpine'
@@ -7256,7 +7256,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
@@ -7359,7 +7359,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
@@ -7534,7 +7534,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
@@ -7637,7 +7637,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
@@ -7812,7 +7812,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
@@ -7915,7 +7915,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
@@ -8090,7 +8090,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
@@ -8193,7 +8193,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
@@ -8368,7 +8368,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
@@ -8471,7 +8471,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
@@ -8646,7 +8646,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
@@ -8850,7 +8850,7 @@ jobs:
       -
         name: 'Download parent image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
           path: '${{ runner.temp }}/ci-oci-image/base_ubuntu-22-04'

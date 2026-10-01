@@ -71,7 +71,7 @@ class GithubJobBuilder
                             $hasParent ? [
                                 'name' => 'Download parent image (OCI layout)',
                                 'if' => '${{ github.ref != \'refs/heads/master\' }}',
-                                'uses' => 'actions/download-artifact@v4',
+                                'uses' => 'actions/download-artifact@v4.1.9',
                                 'with' => [
                                     'name' => $this->getCiImageArtifactName($node['parent']),
                                     'path' => $this->getCiImagePath($node['parent']),
