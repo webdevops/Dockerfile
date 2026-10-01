@@ -62,6 +62,13 @@ shared_examples 'php::modules' do
 
         its(:exit_status) { should eq 0 }
     end
+
+end
+
+shared_examples 'php::modules::ftp_ssl' do
+    describe command('php -r \'exit(function_exists("ftp_ssl_connect") ? 0 : 1);\'') do
+        its(:exit_status) { should eq 0 }
+    end
 end
 
 shared_examples 'php::modules::production' do
@@ -237,4 +244,3 @@ shared_examples 'php-fpm7::modules' do
         its(:exit_status) { should eq 0 }
     end
 end
-

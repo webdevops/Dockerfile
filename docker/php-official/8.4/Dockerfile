@@ -130,6 +130,7 @@ RUN set -x \
         librabbitmq-dev \
         libmagick++-dev \
         libgmp-dev \
+        libssl-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -146,6 +147,7 @@ RUN set -x \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && docker-php-ext-configure ldap \
+    && docker-php-ext-configure ftp --with-ftp-ssl \
     && docker-php-ext-install \
         bcmath \
         amqp \
@@ -213,6 +215,7 @@ RUN set -x \
         librabbitmq-dev \
         libmagick++-dev \
         libgmp-dev \
+        libssl-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
