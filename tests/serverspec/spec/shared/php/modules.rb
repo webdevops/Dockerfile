@@ -98,21 +98,7 @@ shared_examples 'php::modules::development' do
     end
 end
 
-shared_examples 'php5::modules' do
-    describe command('php -m') do
-        its(:stdout) { should     contain('shmop') }
-
-        if ( $testConfiguration[:phpRedis] )
-            its(:stdout) { should     contain('redis') }
-        else
-            its(:stdout) { should_not contain('redis') }
-        end
-
-        its(:exit_status) { should eq 0 }
-    end
-end
-
-shared_examples 'php7::modules' do
+shared_examples 'php8::modules' do
     describe command('php -m') do
         its(:stdout) { should     contain('Zend OPcache') }
 
@@ -217,21 +203,7 @@ shared_examples 'php-fpm::modules::development' do
     end
 end
 
-shared_examples 'php-fpm5::modules' do
-    describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
-        its(:stdout) { should     contain('shmop') }
-
-        if ( $testConfiguration[:phpRedis] )
-            its(:stdout) { should     contain('redis') }
-        else
-            its(:stdout) { should_not contain('redis') }
-        end
-
-        its(:exit_status) { should eq 0 }
-    end
-end
-
-shared_examples 'php-fpm7::modules' do
+shared_examples 'php-fpm8::modules' do
     describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
         its(:stdout) { should     contain('Zend OPcache') }
 

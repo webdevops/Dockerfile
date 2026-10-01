@@ -10,26 +10,14 @@ describe "Dockerfile" do
     include_examples 'collection::bootstrap'
     include_examples 'collection::base'
     include_examples 'collection::base-app'
-    include_examples 'php::modules::ftp_ssl' if $testConfiguration[:php] == 8
-
-    if ($testConfiguration[:php] == 5)
-        include_examples 'collection::php5::production'
-        include_examples 'collection::php-fpm5'
-        include_examples 'collection::php-fpm5::local-only'
-    elsif ($testConfiguration[:php] == 8)
-    else
-        include_examples 'collection::php7::production'
-        include_examples 'collection::php-fpm7'
-        include_examples 'collection::php-fpm7::local-only'
-    end
+    include_examples 'php::modules::ftp_ssl'
+    include_examples 'collection::php8::production'
+    include_examples 'collection::php-fpm8'
+    include_examples 'collection::php-fpm8::local-only'
+    include_examples 'php::cli::test::avif'
 
     include_examples 'collection::nginx'
 
-    if ($testConfiguration[:php] == 5)
-        include_examples 'collection::php-fpm5::webserver-test::production'
-    elsif ($testConfiguration[:php] == 8)
-    else
-        include_examples 'collection::php-fpm7::webserver-test::production'
-    end
+    include_examples 'collection::php-fpm8::webserver-test::production'
 
 end

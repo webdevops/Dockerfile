@@ -98,7 +98,7 @@ shared_examples 'php::fpm::test::php_ini_scanned_files' do
     end
 end
 
-shared_examples 'php5::fpm::test::version' do
+shared_examples 'php8::fpm::test::version' do
     [
         'http://localhost/php-test.php?test=version',
         'https://localhost/php-test.php?test=version'
@@ -111,27 +111,7 @@ shared_examples 'php5::fpm::test::version' do
                 expect(cmd.stdout).not_to contain('PHP Warning')
                 expect(cmd.stdout).not_to contain('Warning')
                 expect(cmd.stdout).not_to contain('Fatal Error')
-                expect(cmd.stdout).to match %r!PHP 5\.[3-9]\.[0-9]{1,2}(-[^\(]*)?!
-                expect(cmd.exit_status).to eq 0
-            end
-        end
-    end
-end
-
-shared_examples 'php7::fpm::test::version' do
-    [
-        'http://localhost/php-test.php?test=version',
-        'https://localhost/php-test.php?test=version'
-    ].each do |url|
-        describe url do
-            it "should have running and answering webserver", :retry => 20, :retry_wait => 3 do
-                cmd = command("curl --insecure --silent --retry 10 --fail #{url}")
-                expect(cmd.stdout).not_to contain('PHP Notice')
-                expect(cmd.stdout).not_to contain('Notice')
-                expect(cmd.stdout).not_to contain('PHP Warning')
-                expect(cmd.stdout).not_to contain('Warning')
-                expect(cmd.stdout).not_to contain('Fatal Error')
-                expect(cmd.stdout).to match %r!PHP (?:7|8)\.[0-9]\.[0-9]{1,2}(-[^\(]*)?!
+                expect(cmd.stdout).to match %r!PHP 8\.(?:[1-9][0-9]*)\.[0-9]+(-[^\(]*)?!
                 expect(cmd.exit_status).to eq 0
             end
         end
