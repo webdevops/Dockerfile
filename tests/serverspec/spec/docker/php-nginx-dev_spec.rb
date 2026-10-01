@@ -10,6 +10,7 @@ describe "Dockerfile" do
     include_examples 'collection::bootstrap'
     include_examples 'collection::base'
     include_examples 'collection::base-app'
+    include_examples 'php::modules::ftp_ssl' if $testConfiguration[:php] == 8
 
     if ($testConfiguration[:php] == 5)
         include_examples 'collection::php5::development'
