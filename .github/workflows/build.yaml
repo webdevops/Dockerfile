@@ -53,14 +53,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/base:alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/base_alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/apache/alpine
@@ -72,7 +72,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/apache/alpine
@@ -162,14 +162,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/base:alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/base_alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/base-app/alpine
@@ -181,7 +181,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/base-app/alpine
@@ -276,14 +276,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/base:ubuntu-22.04'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/base_ubuntu-22-04
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/base-app/ubuntu-22.04
@@ -295,7 +295,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/base-app/ubuntu-22.04
@@ -333,7 +333,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}"-ubuntu-22.04'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/base-app/ubuntu-22.04
@@ -345,7 +345,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/base-app_ubuntu-22-04'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-base-app_ubuntu-22-04-${{ matrix.arch }}'
@@ -414,14 +414,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/bootstrap:alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-bootstrap_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/bootstrap_alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/base/alpine
@@ -433,7 +433,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/base/alpine
@@ -471,7 +471,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/base/alpine
@@ -483,7 +483,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/base_alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
@@ -550,14 +550,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/bootstrap:ubuntu-22.04'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-bootstrap_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/bootstrap_ubuntu-22-04
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/base/ubuntu-22.04
@@ -569,7 +569,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/base/ubuntu-22.04
@@ -607,7 +607,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}"-ubuntu-22.04'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/base/ubuntu-22.04
@@ -619,7 +619,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/base_ubuntu-22-04'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
@@ -688,14 +688,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/bootstrap/alpine
@@ -707,7 +707,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/bootstrap/alpine
@@ -745,7 +745,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/bootstrap/alpine
@@ -757,7 +757,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/bootstrap_alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-bootstrap_alpine-${{ matrix.arch }}'
@@ -824,14 +824,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/bootstrap/ubuntu-22.04
@@ -843,7 +843,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/bootstrap/ubuntu-22.04
@@ -881,7 +881,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}"-ubuntu-22.04'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/bootstrap/ubuntu-22.04
@@ -893,7 +893,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/bootstrap_ubuntu-22-04'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-bootstrap_ubuntu-22-04-${{ matrix.arch }}'
@@ -962,14 +962,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/base-app:ubuntu-22.04'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base-app_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/base-app_ubuntu-22-04
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/dockerfile-build-env/latest
@@ -981,7 +981,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/dockerfile-build-env/latest
@@ -1063,14 +1063,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/base:alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/base_alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/nginx/alpine
@@ -1082,7 +1082,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/nginx/alpine
@@ -1172,14 +1172,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.1'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-1-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-1
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.1
@@ -1191,7 +1191,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.1
@@ -1247,14 +1247,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.1-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-1-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-1-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.1-alpine
@@ -1266,7 +1266,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.1-alpine
@@ -1390,14 +1390,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.2'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-2
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.2
@@ -1409,7 +1409,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.2
@@ -1465,14 +1465,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.2-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-2-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.2-alpine
@@ -1484,7 +1484,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.2-alpine
@@ -1608,14 +1608,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.3'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-3
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.3
@@ -1627,7 +1627,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.3
@@ -1683,14 +1683,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.3-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-3-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.3-alpine
@@ -1702,7 +1702,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.3-alpine
@@ -1826,14 +1826,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.4'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-4
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.4
@@ -1845,7 +1845,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.4
@@ -1901,14 +1901,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.4-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-4-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.4-alpine
@@ -1920,7 +1920,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.4-alpine
@@ -2044,14 +2044,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.5'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-5
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.5
@@ -2063,7 +2063,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.5
@@ -2119,14 +2119,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.5-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-5-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.5-alpine
@@ -2138,7 +2138,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache-dev/8.5-alpine
@@ -2262,14 +2262,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.1'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-1
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.1
@@ -2281,7 +2281,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.1
@@ -2314,7 +2314,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.1'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.1
@@ -2326,7 +2326,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-1'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-1-${{ matrix.arch }}'
@@ -2359,14 +2359,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.1-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-1-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.1-alpine
@@ -2378,7 +2378,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.1-alpine
@@ -2411,7 +2411,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.1-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.1-alpine
@@ -2423,7 +2423,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-1-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-1-alpine-${{ matrix.arch }}'
@@ -2524,14 +2524,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.2
@@ -2543,7 +2543,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.2
@@ -2576,7 +2576,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.2
@@ -2588,7 +2588,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-2'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-2-${{ matrix.arch }}'
@@ -2621,14 +2621,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.2-alpine
@@ -2640,7 +2640,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.2-alpine
@@ -2673,7 +2673,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.2-alpine
@@ -2685,7 +2685,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-2-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-2-alpine-${{ matrix.arch }}'
@@ -2786,14 +2786,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.3
@@ -2805,7 +2805,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.3
@@ -2838,7 +2838,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.3
@@ -2850,7 +2850,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-3'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-3-${{ matrix.arch }}'
@@ -2883,14 +2883,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.3-alpine
@@ -2902,7 +2902,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.3-alpine
@@ -2935,7 +2935,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.3-alpine
@@ -2947,7 +2947,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-3-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-3-alpine-${{ matrix.arch }}'
@@ -3048,14 +3048,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.4
@@ -3067,7 +3067,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.4
@@ -3100,7 +3100,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.4
@@ -3112,7 +3112,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-4'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-4-${{ matrix.arch }}'
@@ -3145,14 +3145,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.4-alpine
@@ -3164,7 +3164,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.4-alpine
@@ -3197,7 +3197,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.4-alpine
@@ -3209,7 +3209,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-4-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-4-alpine-${{ matrix.arch }}'
@@ -3310,14 +3310,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.5
@@ -3329,7 +3329,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.5
@@ -3362,7 +3362,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.5
@@ -3374,7 +3374,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-5'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-5-${{ matrix.arch }}'
@@ -3407,14 +3407,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.5-alpine
@@ -3426,7 +3426,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.5-alpine
@@ -3459,7 +3459,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-apache/8.5-alpine
@@ -3471,7 +3471,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-5-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-5-alpine-${{ matrix.arch }}'
@@ -3572,14 +3572,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.1'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-1
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.1
@@ -3591,7 +3591,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.1
@@ -3652,14 +3652,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.1-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-1-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.1-alpine
@@ -3671,7 +3671,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.1-alpine
@@ -3800,14 +3800,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.2
@@ -3819,7 +3819,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.2
@@ -3880,14 +3880,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.2-alpine
@@ -3899,7 +3899,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.2-alpine
@@ -4028,14 +4028,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.3
@@ -4047,7 +4047,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.3
@@ -4108,14 +4108,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.3-alpine
@@ -4127,7 +4127,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.3-alpine
@@ -4256,14 +4256,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.4
@@ -4275,7 +4275,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.4
@@ -4336,14 +4336,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.4-alpine
@@ -4355,7 +4355,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.4-alpine
@@ -4484,14 +4484,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.5
@@ -4503,7 +4503,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.5
@@ -4564,14 +4564,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.5-alpine
@@ -4583,7 +4583,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-dev/8.5-alpine
@@ -4712,14 +4712,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.1'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-1-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-1
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.1
@@ -4731,7 +4731,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.1
@@ -4787,14 +4787,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.1-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-1-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-1-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.1-alpine
@@ -4806,7 +4806,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.1-alpine
@@ -4930,14 +4930,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.2'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-2
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.2
@@ -4949,7 +4949,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.2
@@ -5005,14 +5005,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.2-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-2-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.2-alpine
@@ -5024,7 +5024,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.2-alpine
@@ -5148,14 +5148,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.3'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-3
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.3
@@ -5167,7 +5167,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.3
@@ -5223,14 +5223,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.3-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-3-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.3-alpine
@@ -5242,7 +5242,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.3-alpine
@@ -5366,14 +5366,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.4'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-4
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.4
@@ -5385,7 +5385,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.4
@@ -5441,14 +5441,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.4-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-4-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.4-alpine
@@ -5460,7 +5460,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.4-alpine
@@ -5584,14 +5584,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.5'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-5
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.5
@@ -5603,7 +5603,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.5
@@ -5659,14 +5659,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.5-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-5-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.5-alpine
@@ -5678,7 +5678,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx-dev/8.5-alpine
@@ -5802,14 +5802,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.1'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-1
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.1
@@ -5821,7 +5821,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.1
@@ -5859,7 +5859,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.1'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.1
@@ -5871,7 +5871,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-1'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-1-${{ matrix.arch }}'
@@ -5904,14 +5904,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.1-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-1-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.1-alpine
@@ -5923,7 +5923,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.1-alpine
@@ -5961,7 +5961,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.1-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.1-alpine
@@ -5973,7 +5973,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-1-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-1-alpine-${{ matrix.arch }}'
@@ -6074,14 +6074,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.2
@@ -6093,7 +6093,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.2
@@ -6131,7 +6131,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.2
@@ -6143,7 +6143,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-2'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-2-${{ matrix.arch }}'
@@ -6176,14 +6176,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.2-alpine
@@ -6195,7 +6195,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.2-alpine
@@ -6233,7 +6233,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.2-alpine
@@ -6245,7 +6245,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-2-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-2-alpine-${{ matrix.arch }}'
@@ -6346,14 +6346,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.3
@@ -6365,7 +6365,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.3
@@ -6403,7 +6403,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.3
@@ -6415,7 +6415,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-3'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-3-${{ matrix.arch }}'
@@ -6448,14 +6448,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.3-alpine
@@ -6467,7 +6467,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.3-alpine
@@ -6505,7 +6505,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.3-alpine
@@ -6517,7 +6517,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-3-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-3-alpine-${{ matrix.arch }}'
@@ -6618,14 +6618,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.4
@@ -6637,7 +6637,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.4
@@ -6675,7 +6675,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.4
@@ -6687,7 +6687,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-4'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-4-${{ matrix.arch }}'
@@ -6720,14 +6720,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.4-alpine
@@ -6739,7 +6739,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.4-alpine
@@ -6777,7 +6777,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.4-alpine
@@ -6789,7 +6789,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-4-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-4-alpine-${{ matrix.arch }}'
@@ -6890,14 +6890,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.5
@@ -6909,7 +6909,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.5
@@ -6947,7 +6947,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.5
@@ -6959,7 +6959,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-5'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-5-${{ matrix.arch }}'
@@ -6992,14 +6992,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5-alpine'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5-alpine
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.5-alpine
@@ -7011,7 +7011,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.5-alpine
@@ -7049,7 +7049,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-nginx/8.5-alpine
@@ -7061,7 +7061,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-5-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-5-alpine-${{ matrix.arch }}'
@@ -7162,14 +7162,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.1
@@ -7181,7 +7181,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.1
@@ -7219,7 +7219,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.1'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.1
@@ -7231,7 +7231,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-1'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
@@ -7264,14 +7264,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.1-alpine
@@ -7283,7 +7283,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.1-alpine
@@ -7321,7 +7321,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.1-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.1-alpine
@@ -7333,7 +7333,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-1-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
@@ -7438,14 +7438,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.2
@@ -7457,7 +7457,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.2
@@ -7495,7 +7495,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.2
@@ -7507,7 +7507,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-2'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
@@ -7540,14 +7540,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.2-alpine
@@ -7559,7 +7559,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.2-alpine
@@ -7597,7 +7597,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.2-alpine
@@ -7609,7 +7609,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-2-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
@@ -7714,14 +7714,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.3
@@ -7733,7 +7733,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.3
@@ -7771,7 +7771,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.3
@@ -7783,7 +7783,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-3'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
@@ -7816,14 +7816,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.3-alpine
@@ -7835,7 +7835,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.3-alpine
@@ -7873,7 +7873,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.3-alpine
@@ -7885,7 +7885,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-3-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
@@ -7990,14 +7990,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.4
@@ -8009,7 +8009,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.4
@@ -8047,7 +8047,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.4
@@ -8059,7 +8059,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-4'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
@@ -8092,14 +8092,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.4-alpine
@@ -8111,7 +8111,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.4-alpine
@@ -8149,7 +8149,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.4-alpine
@@ -8161,7 +8161,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-4-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
@@ -8266,14 +8266,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.5
@@ -8285,7 +8285,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.5
@@ -8323,7 +8323,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.5
@@ -8335,7 +8335,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-5'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
@@ -8368,14 +8368,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.5-alpine
@@ -8387,7 +8387,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.5-alpine
@@ -8425,7 +8425,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/php-official/8.5-alpine
@@ -8437,7 +8437,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-5-alpine'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
@@ -8645,7 +8645,7 @@ jobs:
         run: 'docker push "ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}"-latest'
       -
         name: 'Export image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/toolbox/latest
@@ -8656,7 +8656,7 @@ jobs:
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/toolbox_latest'
       -
         name: 'Upload image (OCI layout)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
@@ -8723,14 +8723,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: 'Download parent image (OCI layout): webdevops/base:ubuntu-22.04'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/base_ubuntu-22-04
       -
         name: 'Build (load locally)'
-        if: "${{ github.event_name != 'pull_request' }}"
+        if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/vsftp/latest
@@ -8742,7 +8742,7 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.event_name == 'pull_request' }}"
+        if: "${{ github.ref != 'refs/heads/master' }}"
         uses: docker/build-push-action@v6
         with:
           context: docker/vsftp/latest

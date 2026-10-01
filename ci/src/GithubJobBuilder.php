@@ -18,24 +18,6 @@ class GithubJobBuilder
     private const PARENT_OCI_TAG = 'ci-parent-image';
 
     /**
-     * Same-run parent artifact propagation (download/build-contexts
-     * override/export/upload) only ever runs for `pull_request` builds.
-     * Plain branch pushes (including master) and other trigger types (cron,
-     * workflow_dispatch) fall back to pulling the published parent image, to
-     * avoid doubling OCI artifact storage/network cost on every commit that
-     * is covered by both a `push` and a `pull_request` workflow run. Master
-     * publishing is unaffected, since master is only ever reached by `push`.
-     */
-    private const PR_ONLY_IF = '${{ github.event_name == \'pull_request\' }}';
-
-    /**
-     * Logical negation of {@see self::PR_ONLY_IF}, kept as its own constant
-     * (rather than an inline literal) so the two conditions can never drift
-     * out of sync if the gating logic above ever changes.
-     */
-    private const PR_ONLY_IF_NOT = '${{ github.event_name != \'pull_request\' }}';
-
-    /**
      * @return array<string, array<string, mixed>>
      */
     public function getJobsDescription(array $node): array
@@ -91,13 +73,13 @@ class GithubJobBuilder
                             ...$this->downloadParentImageSteps($imageDependencies),
                             array_filter([
                                 'name' => 'Build (load locally)',
-                                'if' => $hasImageDependencies ? self::PR_ONLY_IF_NOT : null,
+                                'if' => $hasImageDependencies ? '${{ github.ref == \'refs/heads/master\' }}' : null,
                                 'uses' => 'docker/build-push-action@v6',
                                 'with' => $this->buildPushWith($node),
                             ], fn ($value): bool => $value !== null),
                             $hasImageDependencies ? [
                                 'name' => 'Build (load locally, from parent artifact)',
-                                'if' => self::PR_ONLY_IF,
+                                'if' => '${{ github.ref != \'refs/heads/master\' }}',
                                 'uses' => 'docker/build-push-action@v6',
                                 'with' => array_merge(
                                     $this->buildPushWith($node),
@@ -129,7 +111,7 @@ class GithubJobBuilder
                             ],
                             $hasChildren ? [
                                 'name' => 'Export image (OCI layout)',
-                                'if' => self::PR_ONLY_IF,
+                                'if' => '${{ github.ref != \'refs/heads/master\' }}',
                                 'uses' => 'docker/build-push-action@v6',
                                 'with' => array_merge(
                                     [
@@ -152,7 +134,7 @@ class GithubJobBuilder
                             ] : null,
                             $hasChildren ? [
                                 'name' => 'Upload image (OCI layout)',
-                                'if' => self::PR_ONLY_IF,
+                                'if' => '${{ github.ref != \'refs/heads/master\' }}',
                                 'uses' => 'actions/upload-artifact@v4',
                                 'with' => [
                                     'name' => $this->getCiImageArtifactName($node['id']),
@@ -280,7 +262,7 @@ class GithubJobBuilder
         $imageIds = array_unique(array_values($imageDependencies));
         return array_map(fn (string $imageId): array => [
             'name' => 'Download parent image (OCI layout): ' . $imageId,
-            'if' => self::PR_ONLY_IF,
+            'if' => '${{ github.ref != \'refs/heads/master\' }}',
             'uses' => 'actions/download-artifact@v4.1.9',
             'with' => [
                 'name' => $this->getCiImageArtifactName($imageId),
@@ -321,7 +303,7 @@ class GithubJobBuilder
      * Buildx `build-contexts` value mapping every literal FROM/COPY --from
      * reference in $imageDependencies to the OCI layout downloaded from the
      * corresponding parent job's artifact, so BuildKit never needs to pull
-     * any of those images from Docker Hub during a pull_request build. Must
+     * any of those images from Docker Hub during a non-master build. Must
      * be reused unchanged for every Buildx invocation of this node (tested
      * build and OCI export alike), otherwise a later invocation silently
      * resolves a dependency from the registry again.
