@@ -30,7 +30,7 @@ class GithubJobBuilder
         $hasImageParent = $this->hasInternalParent($node);
         $hasChildren = !empty($node['hasChildren']);
         $parentJobId = $hasParent ? GithubJobBuilder::toJobId($node['parent']) : null;
-        $needs = $hasParent ? [$parentJobId, $parentJobId . '_publish'] : 'validate-automation';
+        $needs = $hasParent ? $parentJobId . '_publish' : 'validate-automation';
 
         $pushTags = [];
         $pushTags[] = '-t "' . $node['id'] . '"';

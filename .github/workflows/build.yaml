@@ -40,9 +40,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/apache:alpine (${{ matrix.arch }})'
-    needs:
-      - base_alpine
-      - base_alpine_publish
+    needs: base_alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -151,9 +149,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/base-app:alpine (${{ matrix.arch }})'
-    needs:
-      - base_alpine
-      - base_alpine_publish
+    needs: base_alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -267,9 +263,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/base-app:ubuntu-22.04 (${{ matrix.arch }})'
-    needs:
-      - base_ubuntu-22-04
-      - base_ubuntu-22-04_publish
+    needs: base_ubuntu-22-04_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -407,9 +401,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/base:alpine (${{ matrix.arch }})'
-    needs:
-      - bootstrap_alpine
-      - bootstrap_alpine_publish
+    needs: bootstrap_alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -545,9 +537,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/base:ubuntu-22.04 (${{ matrix.arch }})'
-    needs:
-      - bootstrap_ubuntu-22-04
-      - bootstrap_ubuntu-22-04_publish
+    needs: bootstrap_ubuntu-22-04_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -685,9 +675,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/bootstrap:alpine (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest
-      - toolbox_latest_publish
+    needs: toolbox_latest_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -801,9 +789,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/bootstrap:ubuntu-22.04 (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest
-      - toolbox_latest_publish
+    needs: toolbox_latest_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -919,9 +905,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/dockerfile-build-env:latest (${{ matrix.arch }})'
-    needs:
-      - base-app_ubuntu-22-04
-      - base-app_ubuntu-22-04_publish
+    needs: base-app_ubuntu-22-04_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1022,9 +1006,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/nginx:alpine (${{ matrix.arch }})'
-    needs:
-      - base_alpine
-      - base_alpine_publish
+    needs: base_alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1133,9 +1115,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.1 (${{ matrix.arch }})'
-    needs:
-      - php-apache_8-1
-      - php-apache_8-1_publish
+    needs: php-apache_8-1_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1210,9 +1190,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.1-alpine (${{ matrix.arch }})'
-    needs:
-      - php-apache_8-1-alpine
-      - php-apache_8-1-alpine_publish
+    needs: php-apache_8-1-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1355,9 +1333,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.2 (${{ matrix.arch }})'
-    needs:
-      - php-apache_8-2
-      - php-apache_8-2_publish
+    needs: php-apache_8-2_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1432,9 +1408,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.2-alpine (${{ matrix.arch }})'
-    needs:
-      - php-apache_8-2-alpine
-      - php-apache_8-2-alpine_publish
+    needs: php-apache_8-2-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1577,9 +1551,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.3 (${{ matrix.arch }})'
-    needs:
-      - php-apache_8-3
-      - php-apache_8-3_publish
+    needs: php-apache_8-3_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1654,9 +1626,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.3-alpine (${{ matrix.arch }})'
-    needs:
-      - php-apache_8-3-alpine
-      - php-apache_8-3-alpine_publish
+    needs: php-apache_8-3-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1799,9 +1769,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.4 (${{ matrix.arch }})'
-    needs:
-      - php-apache_8-4
-      - php-apache_8-4_publish
+    needs: php-apache_8-4_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1876,9 +1844,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.4-alpine (${{ matrix.arch }})'
-    needs:
-      - php-apache_8-4-alpine
-      - php-apache_8-4-alpine_publish
+    needs: php-apache_8-4-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2021,9 +1987,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.5 (${{ matrix.arch }})'
-    needs:
-      - php-apache_8-5
-      - php-apache_8-5_publish
+    needs: php-apache_8-5_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2098,9 +2062,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.5-alpine (${{ matrix.arch }})'
-    needs:
-      - php-apache_8-5-alpine
-      - php-apache_8-5-alpine_publish
+    needs: php-apache_8-5-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2243,9 +2205,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.1 (${{ matrix.arch }})'
-    needs:
-      - php_8-1
-      - php_8-1_publish
+    needs: php_8-1_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2342,9 +2302,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.1-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-1-alpine
-      - php_8-1-alpine_publish
+    needs: php_8-1-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2509,9 +2467,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.2 (${{ matrix.arch }})'
-    needs:
-      - php_8-2
-      - php_8-2_publish
+    needs: php_8-2_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2608,9 +2564,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.2-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-2-alpine
-      - php_8-2-alpine_publish
+    needs: php_8-2-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2775,9 +2729,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.3 (${{ matrix.arch }})'
-    needs:
-      - php_8-3
-      - php_8-3_publish
+    needs: php_8-3_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2874,9 +2826,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.3-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-3-alpine
-      - php_8-3-alpine_publish
+    needs: php_8-3-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3041,9 +2991,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.4 (${{ matrix.arch }})'
-    needs:
-      - php_8-4
-      - php_8-4_publish
+    needs: php_8-4_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3140,9 +3088,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.4-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-4-alpine
-      - php_8-4-alpine_publish
+    needs: php_8-4-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3307,9 +3253,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.5 (${{ matrix.arch }})'
-    needs:
-      - php_8-5
-      - php_8-5_publish
+    needs: php_8-5_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3406,9 +3350,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.5-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-5-alpine
-      - php_8-5-alpine_publish
+    needs: php_8-5-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3573,9 +3515,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.1 (${{ matrix.arch }})'
-    needs:
-      - php_8-1
-      - php_8-1_publish
+    needs: php_8-1_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3655,9 +3595,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.1-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-1-alpine
-      - php_8-1-alpine_publish
+    needs: php_8-1-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3805,9 +3743,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.2 (${{ matrix.arch }})'
-    needs:
-      - php_8-2
-      - php_8-2_publish
+    needs: php_8-2_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3887,9 +3823,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.2-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-2-alpine
-      - php_8-2-alpine_publish
+    needs: php_8-2-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4037,9 +3971,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.3 (${{ matrix.arch }})'
-    needs:
-      - php_8-3
-      - php_8-3_publish
+    needs: php_8-3_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4119,9 +4051,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.3-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-3-alpine
-      - php_8-3-alpine_publish
+    needs: php_8-3-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4269,9 +4199,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.4 (${{ matrix.arch }})'
-    needs:
-      - php_8-4
-      - php_8-4_publish
+    needs: php_8-4_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4351,9 +4279,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.4-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-4-alpine
-      - php_8-4-alpine_publish
+    needs: php_8-4-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4501,9 +4427,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.5 (${{ matrix.arch }})'
-    needs:
-      - php_8-5
-      - php_8-5_publish
+    needs: php_8-5_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4583,9 +4507,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.5-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-5-alpine
-      - php_8-5-alpine_publish
+    needs: php_8-5-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4733,9 +4655,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.1 (${{ matrix.arch }})'
-    needs:
-      - php-nginx_8-1
-      - php-nginx_8-1_publish
+    needs: php-nginx_8-1_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4810,9 +4730,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.1-alpine (${{ matrix.arch }})'
-    needs:
-      - php-nginx_8-1-alpine
-      - php-nginx_8-1-alpine_publish
+    needs: php-nginx_8-1-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4955,9 +4873,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.2 (${{ matrix.arch }})'
-    needs:
-      - php-nginx_8-2
-      - php-nginx_8-2_publish
+    needs: php-nginx_8-2_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5032,9 +4948,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.2-alpine (${{ matrix.arch }})'
-    needs:
-      - php-nginx_8-2-alpine
-      - php-nginx_8-2-alpine_publish
+    needs: php-nginx_8-2-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5177,9 +5091,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.3 (${{ matrix.arch }})'
-    needs:
-      - php-nginx_8-3
-      - php-nginx_8-3_publish
+    needs: php-nginx_8-3_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5254,9 +5166,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.3-alpine (${{ matrix.arch }})'
-    needs:
-      - php-nginx_8-3-alpine
-      - php-nginx_8-3-alpine_publish
+    needs: php-nginx_8-3-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5399,9 +5309,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.4 (${{ matrix.arch }})'
-    needs:
-      - php-nginx_8-4
-      - php-nginx_8-4_publish
+    needs: php-nginx_8-4_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5476,9 +5384,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.4-alpine (${{ matrix.arch }})'
-    needs:
-      - php-nginx_8-4-alpine
-      - php-nginx_8-4-alpine_publish
+    needs: php-nginx_8-4-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5621,9 +5527,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.5 (${{ matrix.arch }})'
-    needs:
-      - php-nginx_8-5
-      - php-nginx_8-5_publish
+    needs: php-nginx_8-5_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5698,9 +5602,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.5-alpine (${{ matrix.arch }})'
-    needs:
-      - php-nginx_8-5-alpine
-      - php-nginx_8-5-alpine_publish
+    needs: php-nginx_8-5-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5843,9 +5745,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.1 (${{ matrix.arch }})'
-    needs:
-      - php_8-1
-      - php_8-1_publish
+    needs: php_8-1_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5947,9 +5847,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.1-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-1-alpine
-      - php_8-1-alpine_publish
+    needs: php_8-1-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6119,9 +6017,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.2 (${{ matrix.arch }})'
-    needs:
-      - php_8-2
-      - php_8-2_publish
+    needs: php_8-2_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6223,9 +6119,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.2-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-2-alpine
-      - php_8-2-alpine_publish
+    needs: php_8-2-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6395,9 +6289,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.3 (${{ matrix.arch }})'
-    needs:
-      - php_8-3
-      - php_8-3_publish
+    needs: php_8-3_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6499,9 +6391,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.3-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-3-alpine
-      - php_8-3-alpine_publish
+    needs: php_8-3-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6671,9 +6561,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.4 (${{ matrix.arch }})'
-    needs:
-      - php_8-4
-      - php_8-4_publish
+    needs: php_8-4_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6775,9 +6663,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.4-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-4-alpine
-      - php_8-4-alpine_publish
+    needs: php_8-4-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6947,9 +6833,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.5 (${{ matrix.arch }})'
-    needs:
-      - php_8-5
-      - php_8-5_publish
+    needs: php_8-5_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7051,9 +6935,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.5-alpine (${{ matrix.arch }})'
-    needs:
-      - php_8-5-alpine
-      - php_8-5-alpine_publish
+    needs: php_8-5-alpine_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7223,9 +7105,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.1 (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest
-      - toolbox_latest_publish
+    needs: toolbox_latest_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7305,9 +7185,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.1-alpine (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest
-      - toolbox_latest_publish
+    needs: toolbox_latest_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7459,9 +7337,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.2 (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest
-      - toolbox_latest_publish
+    needs: toolbox_latest_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7541,9 +7417,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.2-alpine (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest
-      - toolbox_latest_publish
+    needs: toolbox_latest_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7695,9 +7569,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.3 (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest
-      - toolbox_latest_publish
+    needs: toolbox_latest_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7777,9 +7649,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.3-alpine (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest
-      - toolbox_latest_publish
+    needs: toolbox_latest_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7931,9 +7801,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.4 (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest
-      - toolbox_latest_publish
+    needs: toolbox_latest_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -8013,9 +7881,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.4-alpine (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest
-      - toolbox_latest_publish
+    needs: toolbox_latest_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -8167,9 +8033,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.5 (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest
-      - toolbox_latest_publish
+    needs: toolbox_latest_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -8249,9 +8113,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.5-alpine (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest
-      - toolbox_latest_publish
+    needs: toolbox_latest_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -8403,9 +8265,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/storage:latest (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest
-      - toolbox_latest_publish
+    needs: toolbox_latest_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -8586,9 +8446,7 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/vsftp:latest (${{ matrix.arch }})'
-    needs:
-      - base_ubuntu-22-04
-      - base_ubuntu-22-04_publish
+    needs: base_ubuntu-22-04_publish
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
