@@ -88,6 +88,8 @@ class GithubCommand extends Command
         // Restore the expected casing here, once, for consumers like
         // GithubJobBuilder.
         $nodeAr['imageParent'] = $nodeAr['imageparent'] ?? 0;
+        $nodeAr['imageParentRef'] = $nodeAr['imageparentref'] ?? 0;
+        $nodeAr['imageDependencies'] = $nodeAr['imagedependencies'] ?? [];
         if ($node->getLevel() > $this->deepestLevel) {
             $this->deepestLevel = $node->getLevel();
         }

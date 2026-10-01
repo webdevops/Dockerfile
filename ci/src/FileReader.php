@@ -43,6 +43,8 @@ class FileReader
             'file' => $dockerfilePath,
             'parent' => 0,
             'imageParent' => 0,
+            'imageParentRef' => 0,
+            'imageDependencies' => [],
             'serverspec' => [
                 'DOCKER_IMAGE' => $id,
                 'DOCKER_TAG' => $tagName,
@@ -61,20 +63,34 @@ class FileReader
         preg_match_all('/FROM (.*)/', $content, $fromMatches);
         $parentImage = array_pop($fromMatches[1]);
         if (strpos($parentImage, 'webdevops/') === 0) {
-            if (str_ends_with($parentImage, ':latest')) {
-                $parentImage = str_replace(':latest', ':' . $this->_settings['docker']['autoLatestTag'], $parentImage);
-            }
             // Real Docker image inheritance: the Dockerfile's FROM references
             // another internal webdevops/* image. This is the only case where
-            // OCI artifact propagation (build-contexts override) is valid.
-            $node['parent'] = $parentImage;
-            $node['imageParent'] = $parentImage;
+            // 'imageParent' driven OCI artifact propagation (build-contexts
+            // override) is valid. 'imageParentRef' keeps the *exact* literal
+            // text used in the FROM statement (e.g. "webdevops/base:latest"),
+            // because that is the key BuildKit matches against when a
+            // `build-contexts` override is supplied; it must NOT be the
+            // resolved/aliased image id, or the override silently fails to
+            // apply and the build falls back to pulling the published image.
+            $node['parent'] = $this->resolveInternalImageReference($parentImage);
+            $node['imageParent'] = $node['parent'];
+            $node['imageParentRef'] = $parentImage;
         } else if ($node['id'] !== 'webdevops/toolbox:latest') {
             // Synthetic scheduling dependency only (e.g. to serialize CI
             // against the Toolbox job). The Dockerfile does NOT actually
             // build FROM this image, so it must never drive OCI artifact
             // download/upload or build-contexts overrides.
             $node['parent'] = 'webdevops/toolbox:latest';
+        }
+        // Additional internal image dependencies referenced via
+        // `COPY --from=webdevops/...` (not a FROM parent). BuildKit's named
+        // build-context override mechanism applies identically to
+        // `COPY --from=<name>` references, so these need the exact same OCI
+        // artifact propagation as a real FROM parent, otherwise the copied
+        // files still come from the published registry image.
+        preg_match_all('/^COPY\s+--from=(webdevops\/\S+)/m', $content, $copyFromMatches);
+        foreach (array_unique($copyFromMatches[1]) as $dependencyRef) {
+            $node['imageDependencies'][$dependencyRef] = $this->resolveInternalImageReference($dependencyRef);
         }
         // Treat *-official images
         if (strpos($id, '-official:') !== false) {
@@ -86,6 +102,42 @@ class FileReader
             $node['aliases'][] = str_replace(':' . $tagName, ':latest', $id);
         }
         return $node;
+    }
+
+    /**
+     * Resolve a literal internal `webdevops/<image>[:<tag>]` reference, as it
+     * appears in a `FROM` or `COPY --from=` statement, to the exact image id
+     * that is actually built by this repository's CI pipeline (i.e. the id
+     * backed by a real `docker/<image>/<tag>/Dockerfile`).
+     *
+     * Most images do not have a literal "latest" subdirectory: `:latest` is
+     * only a published alias for whichever folder `autoLatestTag` points to
+     * (see the alias handling above), so a reference like
+     * "webdevops/base:latest" must resolve to "webdevops/base:ubuntu-22.04"
+     * to match the job that actually builds and exports it. A few images
+     * (e.g. toolbox, ssh, vsftp) *do* have a literal "latest" subdirectory
+     * and must be left untouched. Checking the filesystem directly, rather
+     * than assuming the "latest" alias substitution always applies, keeps
+     * this correct for both cases.
+     */
+    private function resolveInternalImageReference(string $reference): string
+    {
+        $imageAndTag = substr($reference, strlen('webdevops/'));
+        if (strpos($imageAndTag, ':') !== false) {
+            [$image, $tag] = explode(':', $imageAndTag, 2);
+        } else {
+            // `COPY --from=webdevops/toolbox` has no explicit tag; Docker
+            // treats an untagged reference as `:latest`.
+            $image = $imageAndTag;
+            $tag = 'latest';
+        }
+        $dockerfileExists = fn (string $tag): bool => file_exists(
+            __DIR__ . '/../../docker/' . $image . '/' . $tag . '/Dockerfile',
+        );
+        if ($tag === 'latest' && !$dockerfileExists($tag) && $dockerfileExists($this->_settings['docker']['autoLatestTag'])) {
+            $tag = $this->_settings['docker']['autoLatestTag'];
+        }
+        return 'webdevops/' . $image . ':' . $tag;
     }
 
 }

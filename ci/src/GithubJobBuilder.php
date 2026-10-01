@@ -18,6 +18,17 @@ class GithubJobBuilder
     private const PARENT_OCI_TAG = 'ci-parent-image';
 
     /**
+     * Same-run parent artifact propagation (download/build-contexts
+     * override/export/upload) only ever runs for `pull_request` builds.
+     * Plain branch pushes (including master) and other trigger types (cron,
+     * workflow_dispatch) fall back to pulling the published parent image, to
+     * avoid doubling OCI artifact storage/network cost on every commit that
+     * is covered by both a `push` and a `pull_request` workflow run. Master
+     * publishing is unaffected, since master is only ever reached by `push`.
+     */
+    private const PR_ONLY_IF = '${{ github.event_name == \'pull_request\' }}';
+
+    /**
      * @return array<string, array<string, mixed>>
      */
     public function getJobsDescription(array $node): array
@@ -27,7 +38,8 @@ class GithubJobBuilder
 
         $jobId = GithubJobBuilder::toJobId($node['name']);
         $hasParent = (bool)($node['parent'] ?? null);
-        $hasImageParent = $this->hasInternalParent($node);
+        $imageDependencies = $this->imageDependencies($node);
+        $hasImageDependencies = !empty($imageDependencies);
         $hasChildren = !empty($node['hasChildren']);
         $parentJobId = $hasParent ? GithubJobBuilder::toJobId($node['parent']) : null;
         $needs = $hasParent ? $parentJobId . '_publish' : 'validate-automation';
@@ -69,28 +81,20 @@ class GithubJobBuilder
                         [
                             ['uses' => 'actions/checkout@v6'],
                             ['uses' => 'docker/setup-buildx-action@v3'],
-                            $hasImageParent ? [
-                                'name' => 'Download parent image (OCI layout)',
-                                'if' => '${{ github.ref != \'refs/heads/master\' }}',
-                                'uses' => 'actions/download-artifact@v4.1.9',
-                                'with' => [
-                                    'name' => $this->getCiImageArtifactName($node['imageParent']),
-                                    'path' => $this->getCiImagePath($node['imageParent']),
-                                ],
-                            ] : null,
+                            ...$this->downloadParentImageSteps($imageDependencies),
                             array_filter([
                                 'name' => 'Build (load locally)',
-                                'if' => $hasImageParent ? '${{ github.ref == \'refs/heads/master\' }}' : null,
+                                'if' => $hasImageDependencies ? '${{ github.event_name != \'pull_request\' }}' : null,
                                 'uses' => 'docker/build-push-action@v6',
                                 'with' => $this->buildPushWith($node),
                             ]),
-                            $hasImageParent ? [
+                            $hasImageDependencies ? [
                                 'name' => 'Build (load locally, from parent artifact)',
-                                'if' => '${{ github.ref != \'refs/heads/master\' }}',
+                                'if' => self::PR_ONLY_IF,
                                 'uses' => 'docker/build-push-action@v6',
                                 'with' => array_merge(
                                     $this->buildPushWith($node),
-                                    ['build-contexts' => $this->parentBuildContext($node)],
+                                    ['build-contexts' => $this->buildContexts($imageDependencies)],
                                 ),
                             ] : null,
                             $serverSpec ? [
@@ -118,7 +122,7 @@ class GithubJobBuilder
                             ],
                             $hasChildren ? [
                                 'name' => 'Export image (OCI layout)',
-                                'if' => '${{ github.ref != \'refs/heads/master\' }}',
+                                'if' => self::PR_ONLY_IF,
                                 'uses' => 'docker/build-push-action@v6',
                                 'with' => array_merge(
                                     [
@@ -130,17 +134,18 @@ class GithubJobBuilder
                                             'TARGETARCH=${{ matrix.arch }}',
                                         ]),
                                     ],
-                                    // Must use the exact same parent build-context override as the
+                                    // Must use the exact same build-contexts override as the
                                     // tested build above, otherwise this second Buildx invocation
-                                    // silently re-resolves FROM against the published registry image
-                                    // and the exported artifact no longer reflects the tested result.
-                                    $hasImageParent ? ['build-contexts' => $this->parentBuildContext($node)] : [],
+                                    // silently re-resolves FROM/COPY --from references against the
+                                    // published registry images and the exported artifact no
+                                    // longer reflects the tested result.
+                                    $hasImageDependencies ? ['build-contexts' => $this->buildContexts($imageDependencies)] : [],
                                     ['outputs' => 'type=oci,tar=false,name=' . self::PARENT_OCI_TAG . ',dest=' . $this->getCiImagePath($node['id'])],
                                 ),
                             ] : null,
                             $hasChildren ? [
                                 'name' => 'Upload image (OCI layout)',
-                                'if' => '${{ github.ref != \'refs/heads/master\' }}',
+                                'if' => self::PR_ONLY_IF,
                                 'uses' => 'actions/upload-artifact@v4',
                                 'with' => [
                                     'name' => $this->getCiImageArtifactName($node['id']),
@@ -230,15 +235,51 @@ class GithubJobBuilder
     }
 
     /**
-     * Whether the node's Dockerfile actually contains a `FROM` statement
-     * referencing another internal webdevops/* image built by this same
-     * workflow (as opposed to `parent`, which may be a purely synthetic
-     * scheduling dependency, e.g. on the Toolbox job). Only an image
-     * parent is a valid source for OCI artifact propagation.
+     * All internal webdevops/* images this node needs a same-run OCI
+     * artifact override for: its real FROM parent (if any) plus any images
+     * referenced via `COPY --from=webdevops/...`. Keyed by the *literal*
+     * reference text as written in the Dockerfile (the key a Buildx
+     * `build-contexts` override must match exactly), valued by the resolved
+     * image id that identifies the job/artifact actually producing it.
+     *
+     * `node['parent']` is NOT used here on its own: it may be a purely
+     * synthetic scheduling dependency (e.g. on the Toolbox job for images
+     * whose Dockerfile does not actually FROM/COPY an internal image), which
+     * must never drive OCI artifact propagation.
      */
-    private function hasInternalParent(array $node): bool
+    private function imageDependencies(array $node): array
     {
-        return (bool)($node['imageParent'] ?? null);
+        $dependencies = [];
+        if (!empty($node['imageParent'])) {
+            $literalRef = $node['imageParentRef'] ?: $node['imageParent'];
+            $dependencies[$literalRef] = $node['imageParent'];
+        }
+        foreach ($node['imageDependencies'] ?? [] as $literalRef => $resolvedImage) {
+            $dependencies[$literalRef] = $resolvedImage;
+        }
+        return $dependencies;
+    }
+
+    /**
+     * One "Download parent image (OCI layout)" step per distinct image id
+     * referenced in $imageDependencies, deduplicated so the same artifact is
+     * never downloaded twice (e.g. if an image happens to be both the FROM
+     * parent and a COPY --from target).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function downloadParentImageSteps(array $imageDependencies): array
+    {
+        $imageIds = array_unique(array_values($imageDependencies));
+        return array_map(fn (string $imageId): array => [
+            'name' => 'Download parent image (OCI layout): ' . $imageId,
+            'if' => self::PR_ONLY_IF,
+            'uses' => 'actions/download-artifact@v4.1.9',
+            'with' => [
+                'name' => $this->getCiImageArtifactName($imageId),
+                'path' => $this->getCiImagePath($imageId),
+            ],
+        ], $imageIds);
     }
 
     /**
@@ -270,18 +311,23 @@ class GithubJobBuilder
     }
 
     /**
-     * Buildx `build-contexts` entry that maps the exact parent reference used
-     * in the Dockerfile's `FROM` statement (`imageParent`) to the OCI layout
-     * downloaded from the parent job's artifact, so BuildKit never needs to
-     * pull the parent image from Docker Hub during non-master builds. Must
+     * Buildx `build-contexts` value mapping every literal FROM/COPY --from
+     * reference in $imageDependencies to the OCI layout downloaded from the
+     * corresponding parent job's artifact, so BuildKit never needs to pull
+     * any of those images from Docker Hub during a pull_request build. Must
      * be reused unchanged for every Buildx invocation of this node (tested
      * build and OCI export alike), otherwise a later invocation silently
-     * resolves the parent from the registry again.
+     * resolves a dependency from the registry again.
      */
-    private function parentBuildContext(array $node): string
+    private function buildContexts(array $imageDependencies): string
     {
-        return $node['imageParent'] . '=oci-layout://' . $this->getCiImagePath($node['imageParent']) . ':' . self::PARENT_OCI_TAG;
+        $lines = [];
+        foreach ($imageDependencies as $literalRef => $imageId) {
+            $lines[] = $literalRef . '=oci-layout://' . $this->getCiImagePath($imageId) . ':' . self::PARENT_OCI_TAG;
+        }
+        return implode("\n", $lines);
     }
+
 
     private function serverSpec(array $node): array
     {
