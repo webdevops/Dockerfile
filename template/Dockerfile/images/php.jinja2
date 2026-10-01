@@ -57,7 +57,7 @@
         librabbitmq-dev \
         libmagick++-dev \
         libgmp-dev \
-{%- if version.split('.')[0]|int > 8 or (version.split('.')[0]|int == 8 and version.split('.')[1]|int >= 2) %}
+{%- if version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         libssl-dev \
 {%- endif %}
     # Install guetzli
@@ -76,9 +76,9 @@
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && docker-php-ext-configure ldap \
-{%- if version.split('.')[0]|int == 8 and version.split('.')[1]|int >= 2 and version.split('.')[1]|int < 4 %}
+{%- if version == '8.2' or version == '8.3' %}
     && docker-php-ext-configure ftp --with-openssl-dir \
-{%- elif version.split('.')[0]|int > 8 or (version.split('.')[0]|int == 8 and version.split('.')[1]|int >= 4) %}
+{%- elif version == '8.4' or version == '8.5' %}
     && docker-php-ext-configure ftp --with-ftp-ssl \
 {%- endif %}
 {%- if version != '8.4' and version != '8.5' %}
@@ -160,7 +160,7 @@
         librabbitmq-dev \
         libmagick++-dev \
         libgmp-dev \
-{%- if version.split('.')[0]|int > 8 or (version.split('.')[0]|int == 8 and version.split('.')[1]|int >= 2) %}
+{%- if version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         libssl-dev \
 {%- endif %}
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
@@ -245,9 +245,9 @@
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && docker-php-ext-configure ldap \
-{%- if version.split('.')[0]|int == 8 and version.split('.')[1]|int >= 2 and version.split('.')[1]|int < 4 %}
+{%- if version == '8.2' or version == '8.3' %}
     && docker-php-ext-configure ftp --with-openssl-dir \
-{%- elif version.split('.')[0]|int > 8 or (version.split('.')[0]|int == 8 and version.split('.')[1]|int >= 4) %}
+{%- elif version == '8.4' or version == '8.5' %}
     && docker-php-ext-configure ftp --with-ftp-ssl \
 {%- endif %}
 {%- if version != '8.4' and version != '8.5' %}
