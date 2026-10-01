@@ -11,6 +11,13 @@ use function str_replace;
 class GithubJobBuilder
 {
     /**
+     * Tag/annotation used when exporting a parent image as an OCI layout so
+     * that child jobs can deterministically reference the exported manifest
+     * instead of relying on Buildx picking an arbitrary entry from index.json.
+     */
+    private const PARENT_OCI_TAG = 'ci-parent-image';
+
+    /**
      * @return array<string, array<string, mixed>>
      */
     public function getJobsDescription(array $node): array
@@ -19,7 +26,10 @@ class GithubJobBuilder
         $structuredTests = $this->structuredTests($node);
 
         $jobId = GithubJobBuilder::toJobId($node['name']);
-        $needs = ($node['parent'] ?? null) ? GithubJobBuilder::toJobId($node['parent']) . '_publish' : 'validate-automation';
+        $hasParent = $this->hasInternalParent($node);
+        $hasChildren = !empty($node['hasChildren']);
+        $parentJobId = $hasParent ? GithubJobBuilder::toJobId($node['parent']) : null;
+        $needs = $hasParent ? [$parentJobId, $parentJobId . '_publish'] : 'validate-automation';
 
         $pushTags = [];
         $pushTags[] = '-t "' . $node['id'] . '"';
@@ -58,21 +68,30 @@ class GithubJobBuilder
                         [
                             ['uses' => 'actions/checkout@v6'],
                             ['uses' => 'docker/setup-buildx-action@v3'],
-                            [
-                                'name' => 'Build (load locally)',
-                                'uses' => 'docker/build-push-action@v6',
+                            $hasParent ? [
+                                'name' => 'Download parent image (OCI layout)',
+                                'if' => '${{ github.ref != \'refs/heads/master\' }}',
+                                'uses' => 'actions/download-artifact@v4',
                                 'with' => [
-                                    'context' => dirname(str_replace(__DIR__ . '/../../', '', $node['file'])),
-                                    'platforms' => '${{ matrix.platform }}',
-                                    'load' => true,
-                                    'tags' => 'ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'],
-                                    'cache-from' => 'type=gha',
-                                    'cache-to' => 'type=gha,mode=max',
-                                    'build-args' => implode("\n", [
-                                        'TARGETARCH=${{ matrix.arch }}',
-                                    ]),
+                                    'name' => $this->getCiImageArtifactName($node['parent']),
+                                    'path' => $this->getCiImagePath($node['parent']),
                                 ],
-                            ],
+                            ] : null,
+                            array_filter([
+                                'name' => 'Build (load locally)',
+                                'if' => $hasParent ? '${{ github.ref == \'refs/heads/master\' }}' : null,
+                                'uses' => 'docker/build-push-action@v6',
+                                'with' => $this->buildPushWith($node),
+                            ]),
+                            $hasParent ? [
+                                'name' => 'Build (load locally, from parent artifact)',
+                                'if' => '${{ github.ref != \'refs/heads/master\' }}',
+                                'uses' => 'docker/build-push-action@v6',
+                                'with' => array_merge(
+                                    $this->buildPushWith($node),
+                                    ['build-contexts' => $this->parentBuildContext($node)],
+                                ),
+                            ] : null,
                             $serverSpec ? [
                                 'name' => 'run serverspec',
                                 'run' => implode("\n", $serverSpec),
@@ -96,6 +115,33 @@ class GithubJobBuilder
                                 'if' => '${{github.ref == \'refs/heads/master\'}}',
                                 'run' => 'docker push "ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}"-' . $node['tag'],
                             ],
+                            $hasChildren ? [
+                                'name' => 'Export image (OCI layout)',
+                                'if' => '${{ github.ref != \'refs/heads/master\' }}',
+                                'uses' => 'docker/build-push-action@v6',
+                                'with' => [
+                                    'context' => dirname(str_replace(__DIR__ . '/../../', '', $node['file'])),
+                                    'platforms' => '${{ matrix.platform }}',
+                                    'cache-from' => 'type=gha',
+                                    'cache-to' => 'type=gha,mode=max',
+                                    'build-args' => implode("\n", [
+                                        'TARGETARCH=${{ matrix.arch }}',
+                                    ]),
+                                    'outputs' => 'type=oci,tar=false,name=' . self::PARENT_OCI_TAG . ',dest=' . $this->getCiImagePath($node['id']),
+                                ],
+                            ] : null,
+                            $hasChildren ? [
+                                'name' => 'Upload image (OCI layout)',
+                                'if' => '${{ github.ref != \'refs/heads/master\' }}',
+                                'uses' => 'actions/upload-artifact@v4',
+                                'with' => [
+                                    'name' => $this->getCiImageArtifactName($node['id']),
+                                    'path' => $this->getCiImagePath($node['id']),
+                                    'retention-days' => 1,
+                                    'compression-level' => 0,
+                                    'if-no-files-found' => 'error',
+                                ],
+                            ] : null,
                         ],
                     ),
                 ),
@@ -154,6 +200,64 @@ class GithubJobBuilder
         $name = str_replace(['/', '.'], '-', $name);
         $name = str_replace(':', '_', $name);
         return $name;
+    }
+
+    /**
+     * Common `docker/build-push-action` inputs shared by the local build step
+     * and the additional per-node variants (parent-context build, OCI export).
+     */
+    private function buildPushWith(array $node): array
+    {
+        return [
+            'context' => dirname(str_replace(__DIR__ . '/../../', '', $node['file'])),
+            'platforms' => '${{ matrix.platform }}',
+            'load' => true,
+            'tags' => 'ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'],
+            'cache-from' => 'type=gha',
+            'cache-to' => 'type=gha,mode=max',
+            'build-args' => implode("\n", [
+                'TARGETARCH=${{ matrix.arch }}',
+            ]),
+        ];
+    }
+
+    /**
+     * Whether the node's `FROM` statement points to another internal
+     * webdevops/* image built by this same workflow.
+     */
+    private function hasInternalParent(array $node): bool
+    {
+        return (bool)($node['parent'] ?? null);
+    }
+
+    /**
+     * Deterministic, filesystem/artifact-safe name for the image identified
+     * by $imageId (e.g. "webdevops/php:8.4"), unique per architecture so
+     * amd64/arm64 artifacts can never collide or be cross-consumed.
+     */
+    private function getCiImageArtifactName(string $imageId): string
+    {
+        return 'docker-parent-' . GithubJobBuilder::toJobId($imageId) . '-${{ matrix.arch }}';
+    }
+
+    /**
+     * Predictable, collision-free extraction/export directory for the OCI
+     * layout of the image identified by $imageId.
+     */
+    private function getCiImagePath(string $imageId): string
+    {
+        return '${{ runner.temp }}/ci-oci-image/' . GithubJobBuilder::toJobId($imageId);
+    }
+
+    /**
+     * Buildx `build-contexts` entry that maps the exact parent reference used
+     * in the Dockerfile's `FROM` statement to the OCI layout downloaded from
+     * the parent job's artifact, so BuildKit never needs to pull the parent
+     * image from Docker Hub during non-master builds.
+     */
+    private function parentBuildContext(array $node): string
+    {
+        return $node['parent'] . '=oci-layout://' . $this->getCiImagePath($node['parent']) . ':' . self::PARENT_OCI_TAG;
     }
 
     private function serverSpec(array $node): array

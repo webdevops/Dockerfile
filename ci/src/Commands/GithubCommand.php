@@ -82,6 +82,7 @@ class GithubCommand extends Command
         $line = 'Processing ' . $node->getName();
         $nodeAr = $node->toArray();
         $nodeAr['level'] = $node->getLevel();
+        $nodeAr['hasChildren'] = $node->hasChildren();
         if ($node->getLevel() > $this->deepestLevel) {
             $this->deepestLevel = $node->getLevel();
         }
