@@ -35,6 +35,10 @@ fileContentTests:
     expectedContents: ['autostart = true']
 
 commandTests:
+  - name: "PHP version is 8.1 or newer"
+    command: "php"
+    args: ["-v"]
+    expectedOutput: ['PHP 8\.[1-9][0-9]*\.']
   - name: "fpm config test"
     command: "/usr/local/bin/php-fpm"
     args: ["-t"]
@@ -125,4 +129,3 @@ commandTests:
       - "Zend OPcache"
       - "zip"
       - "zlib"
-

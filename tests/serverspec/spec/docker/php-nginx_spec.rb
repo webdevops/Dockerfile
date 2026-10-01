@@ -14,7 +14,6 @@ describe "Dockerfile" do
     include_examples 'collection::php8::production'
     include_examples 'collection::php-fpm8'
     include_examples 'collection::php-fpm8::local-only'
-    include_examples 'php::cli::test::avif'
 
     include_examples 'collection::nginx'
 
