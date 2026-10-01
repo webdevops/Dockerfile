@@ -63,10 +63,8 @@ shared_examples 'php::modules' do
         its(:exit_status) { should eq 0 }
     end
 
-    if (ENV['DOCKER_TAG'] =~ /^8\.(?:[2-9]|[1-9][0-9]+)(?:\D|$)/)
-        describe command('php -r \'exit(function_exists("ftp_ssl_connect") ? 0 : 1);\'') do
-            its(:exit_status) { should eq 0 }
-        end
+    describe command('php -r \'exit(function_exists("ftp_ssl_connect") ? 0 : 1);\'') do
+        its(:exit_status) { should eq 0 }
     end
 end
 
