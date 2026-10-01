@@ -83,6 +83,11 @@ class GithubCommand extends Command
         $nodeAr = $node->toArray();
         $nodeAr['level'] = $node->getLevel();
         $nodeAr['hasChildren'] = $node->hasChildren();
+        // BlueM\Tree\Node lowercases all property keys internally, so the
+        // 'imageParent' key set by FileReader comes back as 'imageparent'.
+        // Restore the expected casing here, once, for consumers like
+        // GithubJobBuilder.
+        $nodeAr['imageParent'] = $nodeAr['imageparent'] ?? 0;
         if ($node->getLevel() > $this->deepestLevel) {
             $this->deepestLevel = $node->getLevel();
         }

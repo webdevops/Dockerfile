@@ -42,6 +42,7 @@ class FileReader
             'aliases' => [],
             'file' => $dockerfilePath,
             'parent' => 0,
+            'imageParent' => 0,
             'serverspec' => [
                 'DOCKER_IMAGE' => $id,
                 'DOCKER_TAG' => $tagName,
@@ -63,8 +64,16 @@ class FileReader
             if (str_ends_with($parentImage, ':latest')) {
                 $parentImage = str_replace(':latest', ':' . $this->_settings['docker']['autoLatestTag'], $parentImage);
             }
+            // Real Docker image inheritance: the Dockerfile's FROM references
+            // another internal webdevops/* image. This is the only case where
+            // OCI artifact propagation (build-contexts override) is valid.
             $node['parent'] = $parentImage;
+            $node['imageParent'] = $parentImage;
         } else if ($node['id'] !== 'webdevops/toolbox:latest') {
+            // Synthetic scheduling dependency only (e.g. to serialize CI
+            // against the Toolbox job). The Dockerfile does NOT actually
+            // build FROM this image, so it must never drive OCI artifact
+            // download/upload or build-contexts overrides.
             $node['parent'] = 'webdevops/toolbox:latest';
         }
         // Treat *-official images
