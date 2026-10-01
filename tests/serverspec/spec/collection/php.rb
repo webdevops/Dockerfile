@@ -1,9 +1,9 @@
-shared_examples 'collection::php8' do
+shared_examples 'collection::php' do
     include_examples 'php::layout'
     include_examples 'php::cli'
-    include_examples 'php8::cli::version'
+    include_examples 'php::cli::version'
     include_examples 'php::modules'
-    include_examples 'php8::modules'
+    include_examples 'php::modules::versioned'
     include_examples 'php::cli::configuration'
     include_examples 'php::cli::test::sha1'
     include_examples 'php::cli::test::php_ini_scanned_files'
@@ -15,14 +15,14 @@ shared_examples 'collection::php8' do
     include_examples 'misc::ghostscript'
 end
 
-shared_examples 'collection::php8::production' do
-    include_examples 'collection::php8'
+shared_examples 'collection::php::production' do
+    include_examples 'collection::php'
     include_examples 'php::modules::production'
     include_examples 'php::cli::configuration::production'
 end
 
-shared_examples 'collection::php8::development' do
-    include_examples 'collection::php8'
+shared_examples 'collection::php::development' do
+    include_examples 'collection::php'
     include_examples 'php::modules::development'
     include_examples 'php::cli::configuration::development'
 end

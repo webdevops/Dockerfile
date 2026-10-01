@@ -98,7 +98,7 @@ shared_examples 'php::fpm::test::php_ini_scanned_files' do
     end
 end
 
-shared_examples 'php8::fpm::test::version' do
+shared_examples 'php::fpm::test::version' do
     [
         'http://localhost/php-test.php?test=version',
         'https://localhost/php-test.php?test=version'

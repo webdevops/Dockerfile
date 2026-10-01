@@ -11,13 +11,13 @@ describe "Dockerfile" do
     include_examples 'collection::base'
     include_examples 'collection::base-app'
     include_examples 'php::modules::ftp_ssl'
-    include_examples 'collection::php8::development'
-    include_examples 'collection::php-fpm8'
-    include_examples 'collection::php-fpm8::public'
+    include_examples 'collection::php::development'
+    include_examples 'collection::php-fpm'
+    include_examples 'collection::php-fpm::public'
 
     include_examples 'collection::php-tools'
     include_examples 'collection::nginx'
 
-    include_examples 'collection::php-fpm8::webserver-test::development'
+    include_examples 'collection::php-fpm::webserver-test::development'
 
 end

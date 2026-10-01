@@ -11,9 +11,9 @@ describe "Dockerfile" do
     include_examples 'collection::base'
     include_examples 'collection::base-app'
     include_examples 'php::modules::ftp_ssl'
-    include_examples 'collection::php8::production'
-    include_examples 'collection::php-fpm8'
-    include_examples 'collection::php-fpm8::public'
+    include_examples 'collection::php::production'
+    include_examples 'collection::php-fpm'
+    include_examples 'collection::php-fpm::public'
     include_examples 'php::cli::test::avif'
 
 end

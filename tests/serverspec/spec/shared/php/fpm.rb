@@ -10,7 +10,7 @@ shared_examples 'php-fpm::layout' do
     end
 end
 
-shared_examples 'php-fpm8::layout' do
+shared_examples 'php-fpm::versioned::layout' do
     it "should have local php-fpm 8.x layout" do
         if $testConfiguration[:phpOfficialImage]
             expect(file("/usr/local/etc/php-fpm.d")).to be_symlink
