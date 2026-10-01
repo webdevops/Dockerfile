@@ -55,7 +55,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/base_alpine'
+          path: .ci-oci-image/base_alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -80,7 +80,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/base:alpine=oci-layout://${{ runner.temp }}/ci-oci-image/base_alpine:ci-parent-image'
+          build-contexts: 'webdevops/base:alpine=oci-layout://.ci-oci-image/base_alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -164,7 +164,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/base_alpine'
+          path: .ci-oci-image/base_alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -189,7 +189,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/base:alpine=oci-layout://${{ runner.temp }}/ci-oci-image/base_alpine:ci-parent-image'
+          build-contexts: 'webdevops/base:alpine=oci-layout://.ci-oci-image/base_alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -278,7 +278,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/base_ubuntu-22-04'
+          path: .ci-oci-image/base_ubuntu-22-04
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -303,7 +303,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/base:ubuntu-22.04=oci-layout://${{ runner.temp }}/ci-oci-image/base_ubuntu-22-04:ci-parent-image'
+          build-contexts: 'webdevops/base:ubuntu-22.04=oci-layout://.ci-oci-image/base_ubuntu-22-04:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -339,15 +339,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/base:ubuntu-22.04=oci-layout://${{ runner.temp }}/ci-oci-image/base_ubuntu-22-04:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/base-app_ubuntu-22-04'
+          build-contexts: 'webdevops/base:ubuntu-22.04=oci-layout://.ci-oci-image/base_ubuntu-22-04:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/base-app_ubuntu-22-04'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-base-app_ubuntu-22-04-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/base-app_ubuntu-22-04'
+          path: .ci-oci-image/base-app_ubuntu-22-04
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -416,7 +416,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-bootstrap_alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/bootstrap_alpine'
+          path: .ci-oci-image/bootstrap_alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -441,7 +441,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/bootstrap:alpine=oci-layout://${{ runner.temp }}/ci-oci-image/bootstrap_alpine:ci-parent-image'
+          build-contexts: 'webdevops/bootstrap:alpine=oci-layout://.ci-oci-image/bootstrap_alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -477,15 +477,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/bootstrap:alpine=oci-layout://${{ runner.temp }}/ci-oci-image/bootstrap_alpine:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/base_alpine'
+          build-contexts: 'webdevops/bootstrap:alpine=oci-layout://.ci-oci-image/bootstrap_alpine:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/base_alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/base_alpine'
+          path: .ci-oci-image/base_alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -552,7 +552,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-bootstrap_ubuntu-22-04-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/bootstrap_ubuntu-22-04'
+          path: .ci-oci-image/bootstrap_ubuntu-22-04
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -577,7 +577,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/bootstrap:ubuntu-22.04=oci-layout://${{ runner.temp }}/ci-oci-image/bootstrap_ubuntu-22-04:ci-parent-image'
+          build-contexts: 'webdevops/bootstrap:ubuntu-22.04=oci-layout://.ci-oci-image/bootstrap_ubuntu-22-04:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -613,15 +613,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/bootstrap:ubuntu-22.04=oci-layout://${{ runner.temp }}/ci-oci-image/bootstrap_ubuntu-22-04:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/base_ubuntu-22-04'
+          build-contexts: 'webdevops/bootstrap:ubuntu-22.04=oci-layout://.ci-oci-image/bootstrap_ubuntu-22-04:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/base_ubuntu-22-04'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/base_ubuntu-22-04'
+          path: .ci-oci-image/base_ubuntu-22-04
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -730,14 +730,14 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/bootstrap_alpine'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/bootstrap_alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-bootstrap_alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/bootstrap_alpine'
+          path: .ci-oci-image/bootstrap_alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -844,14 +844,14 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/bootstrap_ubuntu-22-04'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/bootstrap_ubuntu-22-04'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-bootstrap_ubuntu-22-04-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/bootstrap_ubuntu-22-04'
+          path: .ci-oci-image/bootstrap_ubuntu-22-04
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -920,7 +920,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base-app_ubuntu-22-04-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/base-app_ubuntu-22-04'
+          path: .ci-oci-image/base-app_ubuntu-22-04
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -945,7 +945,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/base-app:ubuntu-22.04=oci-layout://${{ runner.temp }}/ci-oci-image/base-app_ubuntu-22-04:ci-parent-image'
+          build-contexts: 'webdevops/base-app:ubuntu-22.04=oci-layout://.ci-oci-image/base-app_ubuntu-22-04:ci-parent-image'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1021,7 +1021,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/base_alpine'
+          path: .ci-oci-image/base_alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1046,7 +1046,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/base:alpine=oci-layout://${{ runner.temp }}/ci-oci-image/base_alpine:ci-parent-image'
+          build-contexts: 'webdevops/base:alpine=oci-layout://.ci-oci-image/base_alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -1130,7 +1130,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-1-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-1'
+          path: .ci-oci-image/php-apache_8-1
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1155,7 +1155,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-apache:8.1=oci-layout://${{ runner.temp }}/ci-oci-image/php-apache_8-1:ci-parent-image'
+          build-contexts: 'webdevops/php-apache:8.1=oci-layout://.ci-oci-image/php-apache_8-1:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -1205,7 +1205,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-1-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-1-alpine'
+          path: .ci-oci-image/php-apache_8-1-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1230,7 +1230,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-apache:8.1-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php-apache_8-1-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php-apache:8.1-alpine=oci-layout://.ci-oci-image/php-apache_8-1-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -1348,7 +1348,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-2-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-2'
+          path: .ci-oci-image/php-apache_8-2
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1373,7 +1373,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-apache:8.2=oci-layout://${{ runner.temp }}/ci-oci-image/php-apache_8-2:ci-parent-image'
+          build-contexts: 'webdevops/php-apache:8.2=oci-layout://.ci-oci-image/php-apache_8-2:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -1423,7 +1423,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-2-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-2-alpine'
+          path: .ci-oci-image/php-apache_8-2-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1448,7 +1448,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-apache:8.2-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php-apache_8-2-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php-apache:8.2-alpine=oci-layout://.ci-oci-image/php-apache_8-2-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -1566,7 +1566,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-3-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-3'
+          path: .ci-oci-image/php-apache_8-3
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1591,7 +1591,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-apache:8.3=oci-layout://${{ runner.temp }}/ci-oci-image/php-apache_8-3:ci-parent-image'
+          build-contexts: 'webdevops/php-apache:8.3=oci-layout://.ci-oci-image/php-apache_8-3:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -1641,7 +1641,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-3-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-3-alpine'
+          path: .ci-oci-image/php-apache_8-3-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1666,7 +1666,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-apache:8.3-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php-apache_8-3-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php-apache:8.3-alpine=oci-layout://.ci-oci-image/php-apache_8-3-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -1784,7 +1784,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-4-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-4'
+          path: .ci-oci-image/php-apache_8-4
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1809,7 +1809,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-apache:8.4=oci-layout://${{ runner.temp }}/ci-oci-image/php-apache_8-4:ci-parent-image'
+          build-contexts: 'webdevops/php-apache:8.4=oci-layout://.ci-oci-image/php-apache_8-4:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -1859,7 +1859,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-4-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-4-alpine'
+          path: .ci-oci-image/php-apache_8-4-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1884,7 +1884,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-apache:8.4-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php-apache_8-4-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php-apache:8.4-alpine=oci-layout://.ci-oci-image/php-apache_8-4-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -2002,7 +2002,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-5-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-5'
+          path: .ci-oci-image/php-apache_8-5
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2027,7 +2027,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-apache:8.5=oci-layout://${{ runner.temp }}/ci-oci-image/php-apache_8-5:ci-parent-image'
+          build-contexts: 'webdevops/php-apache:8.5=oci-layout://.ci-oci-image/php-apache_8-5:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -2077,7 +2077,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-apache_8-5-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-5-alpine'
+          path: .ci-oci-image/php-apache_8-5-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2102,7 +2102,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-apache:8.5-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php-apache_8-5-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php-apache:8.5-alpine=oci-layout://.ci-oci-image/php-apache_8-5-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -2220,7 +2220,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-1'
+          path: .ci-oci-image/php_8-1
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2245,7 +2245,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.1=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-1:ci-parent-image'
+          build-contexts: 'webdevops/php:8.1=oci-layout://.ci-oci-image/php_8-1:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -2276,15 +2276,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.1=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-1:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-apache_8-1'
+          build-contexts: 'webdevops/php:8.1=oci-layout://.ci-oci-image/php_8-1:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-1'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-1-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-1'
+          path: .ci-oci-image/php-apache_8-1
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -2317,7 +2317,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-1-alpine'
+          path: .ci-oci-image/php_8-1-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2342,7 +2342,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.1-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-1-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.1-alpine=oci-layout://.ci-oci-image/php_8-1-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -2373,15 +2373,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.1-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-1-alpine:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-apache_8-1-alpine'
+          build-contexts: 'webdevops/php:8.1-alpine=oci-layout://.ci-oci-image/php_8-1-alpine:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-1-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-1-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-1-alpine'
+          path: .ci-oci-image/php-apache_8-1-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -2482,7 +2482,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-2'
+          path: .ci-oci-image/php_8-2
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2507,7 +2507,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.2=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-2:ci-parent-image'
+          build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -2538,15 +2538,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.2=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-2:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-apache_8-2'
+          build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-2'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-2-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-2'
+          path: .ci-oci-image/php-apache_8-2
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -2579,7 +2579,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-2-alpine'
+          path: .ci-oci-image/php_8-2-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2604,7 +2604,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.2-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-2-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -2635,15 +2635,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.2-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-2-alpine:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-apache_8-2-alpine'
+          build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-2-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-2-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-2-alpine'
+          path: .ci-oci-image/php-apache_8-2-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -2744,7 +2744,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-3'
+          path: .ci-oci-image/php_8-3
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2769,7 +2769,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.3=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-3:ci-parent-image'
+          build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -2800,15 +2800,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.3=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-3:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-apache_8-3'
+          build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-3'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-3-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-3'
+          path: .ci-oci-image/php-apache_8-3
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -2841,7 +2841,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-3-alpine'
+          path: .ci-oci-image/php_8-3-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2866,7 +2866,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.3-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-3-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -2897,15 +2897,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.3-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-3-alpine:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-apache_8-3-alpine'
+          build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-3-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-3-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-3-alpine'
+          path: .ci-oci-image/php-apache_8-3-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -3006,7 +3006,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-4'
+          path: .ci-oci-image/php_8-4
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3031,7 +3031,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.4=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-4:ci-parent-image'
+          build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -3062,15 +3062,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.4=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-4:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-apache_8-4'
+          build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-4'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-4-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-4'
+          path: .ci-oci-image/php-apache_8-4
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -3103,7 +3103,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-4-alpine'
+          path: .ci-oci-image/php_8-4-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3128,7 +3128,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.4-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-4-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -3159,15 +3159,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.4-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-4-alpine:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-apache_8-4-alpine'
+          build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-4-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-4-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-4-alpine'
+          path: .ci-oci-image/php-apache_8-4-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -3268,7 +3268,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-5'
+          path: .ci-oci-image/php_8-5
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3293,7 +3293,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.5=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-5:ci-parent-image'
+          build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -3324,15 +3324,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.5=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-5:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-apache_8-5'
+          build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-5'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-5-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-5'
+          path: .ci-oci-image/php-apache_8-5
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -3365,7 +3365,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-5-alpine'
+          path: .ci-oci-image/php_8-5-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3390,7 +3390,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.5-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-5-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -3421,15 +3421,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.5-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-5-alpine:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-apache_8-5-alpine'
+          build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-5-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-apache_8-5-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-apache_8-5-alpine'
+          path: .ci-oci-image/php-apache_8-5-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -3530,7 +3530,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-1'
+          path: .ci-oci-image/php_8-1
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3555,7 +3555,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.1=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-1:ci-parent-image'
+          build-contexts: 'webdevops/php:8.1=oci-layout://.ci-oci-image/php_8-1:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -3610,7 +3610,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-1-alpine'
+          path: .ci-oci-image/php_8-1-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3635,7 +3635,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.1-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-1-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.1-alpine=oci-layout://.ci-oci-image/php_8-1-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -3758,7 +3758,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-2'
+          path: .ci-oci-image/php_8-2
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3783,7 +3783,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.2=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-2:ci-parent-image'
+          build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -3838,7 +3838,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-2-alpine'
+          path: .ci-oci-image/php_8-2-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3863,7 +3863,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.2-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-2-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -3986,7 +3986,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-3'
+          path: .ci-oci-image/php_8-3
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4011,7 +4011,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.3=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-3:ci-parent-image'
+          build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -4066,7 +4066,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-3-alpine'
+          path: .ci-oci-image/php_8-3-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4091,7 +4091,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.3-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-3-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -4214,7 +4214,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-4'
+          path: .ci-oci-image/php_8-4
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4239,7 +4239,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.4=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-4:ci-parent-image'
+          build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -4294,7 +4294,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-4-alpine'
+          path: .ci-oci-image/php_8-4-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4319,7 +4319,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.4-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-4-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -4442,7 +4442,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-5'
+          path: .ci-oci-image/php_8-5
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4467,7 +4467,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.5=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-5:ci-parent-image'
+          build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -4522,7 +4522,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-5-alpine'
+          path: .ci-oci-image/php_8-5-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4547,7 +4547,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.5-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-5-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -4670,7 +4670,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-1-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-1'
+          path: .ci-oci-image/php-nginx_8-1
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4695,7 +4695,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-nginx:8.1=oci-layout://${{ runner.temp }}/ci-oci-image/php-nginx_8-1:ci-parent-image'
+          build-contexts: 'webdevops/php-nginx:8.1=oci-layout://.ci-oci-image/php-nginx_8-1:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -4745,7 +4745,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-1-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-1-alpine'
+          path: .ci-oci-image/php-nginx_8-1-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4770,7 +4770,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-nginx:8.1-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php-nginx_8-1-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php-nginx:8.1-alpine=oci-layout://.ci-oci-image/php-nginx_8-1-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -4888,7 +4888,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-2-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-2'
+          path: .ci-oci-image/php-nginx_8-2
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4913,7 +4913,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-nginx:8.2=oci-layout://${{ runner.temp }}/ci-oci-image/php-nginx_8-2:ci-parent-image'
+          build-contexts: 'webdevops/php-nginx:8.2=oci-layout://.ci-oci-image/php-nginx_8-2:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -4963,7 +4963,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-2-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-2-alpine'
+          path: .ci-oci-image/php-nginx_8-2-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4988,7 +4988,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-nginx:8.2-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php-nginx_8-2-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php-nginx:8.2-alpine=oci-layout://.ci-oci-image/php-nginx_8-2-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -5106,7 +5106,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-3-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-3'
+          path: .ci-oci-image/php-nginx_8-3
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5131,7 +5131,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-nginx:8.3=oci-layout://${{ runner.temp }}/ci-oci-image/php-nginx_8-3:ci-parent-image'
+          build-contexts: 'webdevops/php-nginx:8.3=oci-layout://.ci-oci-image/php-nginx_8-3:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -5181,7 +5181,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-3-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-3-alpine'
+          path: .ci-oci-image/php-nginx_8-3-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5206,7 +5206,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-nginx:8.3-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php-nginx_8-3-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php-nginx:8.3-alpine=oci-layout://.ci-oci-image/php-nginx_8-3-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -5324,7 +5324,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-4-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-4'
+          path: .ci-oci-image/php-nginx_8-4
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5349,7 +5349,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-nginx:8.4=oci-layout://${{ runner.temp }}/ci-oci-image/php-nginx_8-4:ci-parent-image'
+          build-contexts: 'webdevops/php-nginx:8.4=oci-layout://.ci-oci-image/php-nginx_8-4:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -5399,7 +5399,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-4-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-4-alpine'
+          path: .ci-oci-image/php-nginx_8-4-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5424,7 +5424,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-nginx:8.4-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php-nginx_8-4-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php-nginx:8.4-alpine=oci-layout://.ci-oci-image/php-nginx_8-4-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -5542,7 +5542,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-5-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-5'
+          path: .ci-oci-image/php-nginx_8-5
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5567,7 +5567,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-nginx:8.5=oci-layout://${{ runner.temp }}/ci-oci-image/php-nginx_8-5:ci-parent-image'
+          build-contexts: 'webdevops/php-nginx:8.5=oci-layout://.ci-oci-image/php-nginx_8-5:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -5617,7 +5617,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php-nginx_8-5-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-5-alpine'
+          path: .ci-oci-image/php-nginx_8-5-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5642,7 +5642,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php-nginx:8.5-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php-nginx_8-5-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php-nginx:8.5-alpine=oci-layout://.ci-oci-image/php-nginx_8-5-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -5760,7 +5760,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-1'
+          path: .ci-oci-image/php_8-1
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5785,7 +5785,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.1=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-1:ci-parent-image'
+          build-contexts: 'webdevops/php:8.1=oci-layout://.ci-oci-image/php_8-1:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -5821,15 +5821,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.1=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-1:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-nginx_8-1'
+          build-contexts: 'webdevops/php:8.1=oci-layout://.ci-oci-image/php_8-1:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-1'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-1-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-1'
+          path: .ci-oci-image/php-nginx_8-1
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -5862,7 +5862,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-1-alpine'
+          path: .ci-oci-image/php_8-1-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5887,7 +5887,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.1-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-1-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.1-alpine=oci-layout://.ci-oci-image/php_8-1-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -5923,15 +5923,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.1-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-1-alpine:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-nginx_8-1-alpine'
+          build-contexts: 'webdevops/php:8.1-alpine=oci-layout://.ci-oci-image/php_8-1-alpine:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-1-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-1-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-1-alpine'
+          path: .ci-oci-image/php-nginx_8-1-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -6032,7 +6032,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-2'
+          path: .ci-oci-image/php_8-2
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6057,7 +6057,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.2=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-2:ci-parent-image'
+          build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -6093,15 +6093,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.2=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-2:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-nginx_8-2'
+          build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-2'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-2-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-2'
+          path: .ci-oci-image/php-nginx_8-2
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -6134,7 +6134,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-2-alpine'
+          path: .ci-oci-image/php_8-2-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6159,7 +6159,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.2-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-2-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -6195,15 +6195,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.2-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-2-alpine:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-nginx_8-2-alpine'
+          build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-2-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-2-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-2-alpine'
+          path: .ci-oci-image/php-nginx_8-2-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -6304,7 +6304,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-3'
+          path: .ci-oci-image/php_8-3
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6329,7 +6329,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.3=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-3:ci-parent-image'
+          build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -6365,15 +6365,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.3=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-3:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-nginx_8-3'
+          build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-3'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-3-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-3'
+          path: .ci-oci-image/php-nginx_8-3
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -6406,7 +6406,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-3-alpine'
+          path: .ci-oci-image/php_8-3-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6431,7 +6431,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.3-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-3-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -6467,15 +6467,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.3-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-3-alpine:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-nginx_8-3-alpine'
+          build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-3-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-3-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-3-alpine'
+          path: .ci-oci-image/php-nginx_8-3-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -6576,7 +6576,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-4'
+          path: .ci-oci-image/php_8-4
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6601,7 +6601,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.4=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-4:ci-parent-image'
+          build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -6637,15 +6637,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.4=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-4:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-nginx_8-4'
+          build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-4'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-4-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-4'
+          path: .ci-oci-image/php-nginx_8-4
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -6678,7 +6678,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-4-alpine'
+          path: .ci-oci-image/php_8-4-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6703,7 +6703,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.4-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-4-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -6739,15 +6739,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.4-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-4-alpine:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-nginx_8-4-alpine'
+          build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-4-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-4-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-4-alpine'
+          path: .ci-oci-image/php-nginx_8-4-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -6848,7 +6848,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-5'
+          path: .ci-oci-image/php_8-5
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6873,7 +6873,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.5=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-5:ci-parent-image'
+          build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -6909,15 +6909,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.5=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-5:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-nginx_8-5'
+          build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-5'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-5-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-5'
+          path: .ci-oci-image/php-nginx_8-5
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -6950,7 +6950,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-5-alpine'
+          path: .ci-oci-image/php_8-5-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6975,7 +6975,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.5-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-5-alpine:ci-parent-image'
+          build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-
@@ -7011,15 +7011,15 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/php:8.5-alpine=oci-layout://${{ runner.temp }}/ci-oci-image/php_8-5-alpine:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php-nginx_8-5-alpine'
+          build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-5-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php-nginx_8-5-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php-nginx_8-5-alpine'
+          path: .ci-oci-image/php-nginx_8-5-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -7160,14 +7160,14 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php_8-1'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-1'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-1'
+          path: .ci-oci-image/php_8-1
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -7240,14 +7240,14 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php_8-1-alpine'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-1-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-1-alpine'
+          path: .ci-oci-image/php_8-1-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -7392,14 +7392,14 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php_8-2'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-2'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-2'
+          path: .ci-oci-image/php_8-2
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -7472,14 +7472,14 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php_8-2-alpine'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-2-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-2-alpine'
+          path: .ci-oci-image/php_8-2-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -7624,14 +7624,14 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php_8-3'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-3'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-3'
+          path: .ci-oci-image/php_8-3
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -7704,14 +7704,14 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php_8-3-alpine'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-3-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-3-alpine'
+          path: .ci-oci-image/php_8-3-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -7856,14 +7856,14 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php_8-4'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-4'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-4'
+          path: .ci-oci-image/php_8-4
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -7936,14 +7936,14 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php_8-4-alpine'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-4-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-4-alpine'
+          path: .ci-oci-image/php_8-4-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -8088,14 +8088,14 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php_8-5'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-5'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-5'
+          path: .ci-oci-image/php_8-5
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -8168,14 +8168,14 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/php_8-5-alpine'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-5-alpine'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/php_8-5-alpine'
+          path: .ci-oci-image/php_8-5-alpine
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -8387,14 +8387,14 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=${{ runner.temp }}/ci-oci-image/toolbox_latest'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/toolbox_latest'
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
         uses: actions/upload-artifact@v4
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/toolbox_latest'
+          path: .ci-oci-image/toolbox_latest
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
@@ -8461,7 +8461,7 @@ jobs:
         uses: actions/download-artifact@v4.1.9
         with:
           name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
-          path: '${{ runner.temp }}/ci-oci-image/base_ubuntu-22-04'
+          path: .ci-oci-image/base_ubuntu-22-04
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -8486,7 +8486,7 @@ jobs:
           cache-from: type=gha
           cache-to: 'type=gha,mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
-          build-contexts: 'webdevops/base:ubuntu-22.04=oci-layout://${{ runner.temp }}/ci-oci-image/base_ubuntu-22-04:ci-parent-image'
+          build-contexts: 'webdevops/base:ubuntu-22.04=oci-layout://.ci-oci-image/base_ubuntu-22-04:ci-parent-image'
       -
         name: 'run serverspec'
         run: |-

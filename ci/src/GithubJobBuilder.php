@@ -254,10 +254,19 @@ class GithubJobBuilder
     /**
      * Predictable, collision-free extraction/export directory for the OCI
      * layout of the image identified by $imageId.
+     *
+     * Intentionally a path relative to the job's working directory (the
+     * checked-out repository) rather than an absolute `${{ runner.temp }}`
+     * path: every job in this workflow runs inside a `container:`, and
+     * `${{ runner.temp }}` is evaluated by the Actions runner against the
+     * *host* filesystem, which is only bind-mounted into the container under
+     * `/__w/_temp`, not under the literal host path. A relative path is
+     * resolved consistently by every step (checkout, Buildx, up-/download-artifact)
+     * against the same container working directory, avoiding that mismatch.
      */
     private function getCiImagePath(string $imageId): string
     {
-        return '${{ runner.temp }}/ci-oci-image/' . GithubJobBuilder::toJobId($imageId);
+        return '.ci-oci-image/' . GithubJobBuilder::toJobId($imageId);
     }
 
     /**
