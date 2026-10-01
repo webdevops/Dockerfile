@@ -151,6 +151,7 @@ RUN set -x \
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && docker-php-ext-configure ldap \
+    && docker-php-ext-configure ftp --with-ftp-ssl \
     && docker-php-ext-install \
         bcmath \
         bz2 \
