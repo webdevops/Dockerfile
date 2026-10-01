@@ -33,6 +33,9 @@
         libpng16-16 \
         libmcrypt4 \
         libzip4 \
+{%- if version == '8.2' or version == '8.3' %}
+        libc-client2007e \
+{%- endif %}
         # Dev and headers
         libavif-dev \
         libjpeg62-turbo-dev \
@@ -142,6 +145,7 @@
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
         libc-client-dev \
+        libc-client2007e-dev \
         libkrb5-dev \
         libbz2-dev \
         libavif-dev \
