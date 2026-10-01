@@ -94,7 +94,7 @@ class GithubJobBuilder
                                 'if' => $hasImageDependencies ? self::PR_ONLY_IF_NOT : null,
                                 'uses' => 'docker/build-push-action@v6',
                                 'with' => $this->buildPushWith($node),
-                            ]),
+                            ], fn ($value): bool => $value !== null),
                             $hasImageDependencies ? [
                                 'name' => 'Build (load locally, from parent artifact)',
                                 'if' => self::PR_ONLY_IF,
