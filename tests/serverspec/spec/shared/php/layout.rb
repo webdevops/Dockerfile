@@ -36,6 +36,13 @@ shared_examples 'php::layout' do
     [
         "/opt/docker/bin/service.d/php-fpm.sh",
         "/opt/docker/bin/service.d/php-fpm.d/10-init.sh",
+        "/usr/local/bin/apt-add-repository",
+        "/usr/local/bin/apt-update",
+        "/usr/local/bin/docker-image-cleanup",
+        "/usr/local/bin/generate-locales",
+        "/usr/local/bin/generate-dockerimage-info",
+        "/usr/local/bin/docker-run-bootstrap",
+        "/sbin/gosu",
     ].each do |file|
         describe file("#{file}") do
             # Type check
@@ -61,5 +68,10 @@ shared_examples 'php::layout' do
             it { should be_executable.by('group') }
             it { should be_executable.by('others') }
         end
+    end
+
+    describe file('/usr/sbin/zic'), :if => os[:family] == 'debian' do
+        it { should be_file }
+        it { should be_executable }
     end
 end

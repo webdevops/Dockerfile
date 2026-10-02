@@ -35,6 +35,12 @@ fileExistenceTests:
   - name: 'provision: set permission script was deleted after execution'
     path: '/opt/docker/provision/bootstrap.d/11-php-conf.sh'
     shouldExist: false
+  - name: 'provision: cron installer was deleted after enabling the service'
+    path: '/opt/docker/provision/service.d/cron.sh'
+    shouldExist: false
+  - name: 'provision: syslog installer was deleted after enabling the service'
+    path: '/opt/docker/provision/service.d/syslog.sh'
+    shouldExist: false
   - name: 'provision: fpm config was created'
     path: '/opt/docker/etc/php/fpm/php-fpm.conf'
     shouldExist: true
@@ -50,6 +56,18 @@ fileExistenceTests:
   - name: 'supervisor: fpm starter exists'
     path: '/opt/docker/etc/supervisor.d/php-fpm.conf'
     shouldExist: true
+  - name: 'provision: dnsmasq installer is retained'
+    path: '/opt/docker/provision/service.d/dnsmasq.sh'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'provision: postfix installer is retained'
+    path: '/opt/docker/provision/service.d/postfix.sh'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'provision: ssh installer is retained'
+    path: '/opt/docker/provision/service.d/ssh.sh'
+    shouldExist: true
+    permissions: '-rw-r--r--'
   - name: 'provision: add application user script was deleted after execution'
     path: '/opt/docker/provision/bootstrap.d/10-user-application.sh'
     shouldExist: false
