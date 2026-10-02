@@ -59,7 +59,18 @@ class GithubCommand extends Command
                 'schedule' => [
                     ['cron' => '0 0 * * *'], // every week on Tuesday
                 ],
-                'push' => null,
+                // Restricted to 'master' so a PR branch's commits are only
+                // ever built once, via the 'pull_request' event below. A
+                // broad `push: null` trigger (any branch) would otherwise
+                // fire a second, fully duplicate run of the whole pipeline
+                // (build, test, and the OCI artifact dance) for the exact
+                // same commit as its corresponding pull_request run. Master
+                // itself is never reached by 'pull_request' (it has no PR
+                // targeting itself), so its push-triggered publish path is
+                // unaffected.
+                'push' => [
+                    'branches' => ['master'],
+                ],
                 'pull_request' => [
                     'branches' => ['master'],
                 ],
@@ -82,6 +93,14 @@ class GithubCommand extends Command
         $line = 'Processing ' . $node->getName();
         $nodeAr = $node->toArray();
         $nodeAr['level'] = $node->getLevel();
+        $nodeAr['hasChildren'] = $node->hasChildren();
+        // BlueM\Tree\Node lowercases all property keys internally, so the
+        // 'imageParent' key set by FileReader comes back as 'imageparent'.
+        // Restore the expected casing here, once, for consumers like
+        // GithubJobBuilder.
+        $nodeAr['imageParent'] = $nodeAr['imageparent'] ?? 0;
+        $nodeAr['imageParentRef'] = $nodeAr['imageparentref'] ?? 0;
+        $nodeAr['imageDependencies'] = $nodeAr['imagedependencies'] ?? [];
         if ($node->getLevel() > $this->deepestLevel) {
             $this->deepestLevel = $node->getLevel();
         }

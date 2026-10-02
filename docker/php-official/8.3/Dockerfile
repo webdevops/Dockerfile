@@ -106,6 +106,7 @@ RUN set -x \
         libpng16-16 \
         libmcrypt4 \
         libzip4 \
+        libc-client2007e \
         # Dev and headers
         libavif-dev \
         libjpeg62-turbo-dev \
@@ -199,6 +200,7 @@ RUN set -x \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
         libc-client-dev \
+        libc-client2007e-dev \
         libkrb5-dev \
         libbz2-dev \
         libavif-dev \

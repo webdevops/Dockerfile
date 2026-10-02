@@ -8,6 +8,7 @@ shared_examples 'collection::php' do
     include_examples 'php::cli::configuration'
     include_examples 'php::cli::test::sha1'
     include_examples 'php::cli::test::avif'
+    include_examples 'php::cli::test::imap' if $testConfiguration[:phpImap]
     include_examples 'php::cli::test::php_ini_scanned_files'
     include_examples 'php::cli::test::php_sapi_name'
     include_examples 'php::composer'

@@ -40,6 +40,7 @@ $testConfiguration[:phpApcu] = true
 $testConfiguration[:phpRedis] = true
 $testConfiguration[:phpBlackfire] = false
 $testConfiguration[:phpOfficialImage] = false
+$testConfiguration[:phpImap] = !!(ENV['DOCKER_TAG'] =~ /^8\.[23](-|$)/)
 
 if ENV['PHP_OFFICIAL'] and ENV['PHP_OFFICIAL'] == "1"
     $testConfiguration[:phpOfficialImage] = true

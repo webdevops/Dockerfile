@@ -19,6 +19,21 @@ shared_examples 'php::cli::test::avif' do
     end
 end
 
+shared_examples 'php::cli::test::imap' do
+    describe command('php -m') do
+        its(:stdout) { should     contain('imap') }
+        its(:stderr) { should_not contain('Unable to load dynamic library') }
+        its(:stderr) { should_not contain('libc-client.so.2007e') }
+        its(:exit_status) { should eq 0 }
+    end
+
+    describe command('php -r \'exit(extension_loaded("imap") ? 0 : 1);\'') do
+        its(:stderr) { should_not contain('Unable to load dynamic library') }
+        its(:stderr) { should_not contain('libc-client.so.2007e') }
+        its(:exit_status) { should eq 0 }
+    end
+end
+
 shared_examples 'php::cli::test::php_ini_scanned_files' do
     describe command('php -r "echo php_ini_scanned_files();"') do
         its(:stdout) { should contain('-docker.ini') }
