@@ -126,7 +126,7 @@ shared_examples 'php::fpm::test::version' do
                 expect(cmd.stdout).not_to contain('PHP Warning')
                 expect(cmd.stdout).not_to contain('Warning')
                 expect(cmd.stdout).not_to contain('Fatal Error')
-                expect(cmd.stdout).to match %r!PHP 8\.(?:[1-9][0-9]*)\.[0-9]+(-[^\(]*)?!
+                expect(cmd.stdout).to match %r!PHP #{Regexp.escape(ENV.fetch('DOCKER_TAG').split('-', 2).first)}\.[0-9]+(-[^\(]*)?!
                 expect(cmd.exit_status).to eq 0
             end
         end
