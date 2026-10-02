@@ -18,7 +18,7 @@ else
     # listen on public IPv6 port
     go-replace --mode=line --regex \
         -s '^[\s;]*listen[\s]*=' -r 'listen = [::]:9000' \
-        -- /opt/docker/etc/php/fpm/pool.d/application.conf \
-           /opt/docker/etc/php/fpm/php-fpm.conf
+        --path=/opt/docker/etc/php/fpm/ \
+        --path-pattern='*.conf'
 
 fi

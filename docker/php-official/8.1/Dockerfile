@@ -106,6 +106,7 @@ RUN set -x \
         libpng16-16 \
         libmcrypt4 \
         libzip4 \
+        libc-client2007e \
         # Dev and headers
         libavif-dev \
         libjpeg62-turbo-dev \
