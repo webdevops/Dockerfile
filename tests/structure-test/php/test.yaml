@@ -1,7 +1,32 @@
 schemaVersion: "2.0.0"
 
 metadataTest:
+  entrypoint: ["/entrypoint"]
+  cmd: ["supervisord"]
   exposedPorts: ["9000"]
+  envVars:
+    - key: "LC_ALL"
+      value: "C.UTF-8"
+    - key: "LANG"
+      value: "C.UTF-8"
+    - key: "TERM"
+      value: "xterm"
+    - key: "DOCKER_CONF_HOME"
+      value: "/opt/docker/"
+    - key: "LOG_STDOUT"
+      value: ""
+    - key: "LOG_STDERR"
+      value: ""
+    - key: "APPLICATION_USER"
+      value: "application"
+    - key: "APPLICATION_GROUP"
+      value: "application"
+    - key: "APPLICATION_PATH"
+      value: "/app"
+    - key: "APPLICATION_UID"
+      value: "1000"
+    - key: "APPLICATION_GID"
+      value: "1000"
 
 fileExistenceTests:
   - name: 'provision: set php version variable script was deleted after execution'
@@ -9,6 +34,12 @@ fileExistenceTests:
     shouldExist: false
   - name: 'provision: set permission script was deleted after execution'
     path: '/opt/docker/provision/bootstrap.d/11-php-conf.sh'
+    shouldExist: false
+  - name: 'provision: cron installer was deleted after enabling the service'
+    path: '/opt/docker/provision/service.d/cron.sh'
+    shouldExist: false
+  - name: 'provision: syslog installer was deleted after enabling the service'
+    path: '/opt/docker/provision/service.d/syslog.sh'
     shouldExist: false
   - name: 'provision: fpm config was created'
     path: '/opt/docker/etc/php/fpm/php-fpm.conf'
@@ -25,6 +56,30 @@ fileExistenceTests:
   - name: 'supervisor: fpm starter exists'
     path: '/opt/docker/etc/supervisor.d/php-fpm.conf'
     shouldExist: true
+  - name: 'provision: dnsmasq installer is retained'
+    path: '/opt/docker/provision/service.d/dnsmasq.sh'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'provision: postfix installer is retained'
+    path: '/opt/docker/provision/service.d/postfix.sh'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'provision: ssh installer is retained'
+    path: '/opt/docker/provision/service.d/ssh.sh'
+    shouldExist: true
+    permissions: '-rw-r--r--'
+  - name: 'provision: add application user script was deleted after execution'
+    path: '/opt/docker/provision/bootstrap.d/10-user-application.sh'
+    shouldExist: false
+  - name: 'provision: set permission script was deleted after execution'
+    path: '/opt/docker/provision/bootstrap.d/20-app.sh'
+    shouldExist: false
+  - name: 'app folder exists and is owned by the application user'
+    path: '/app'
+    shouldExist: true
+    permissions: 'drwxr-xr-x'
+    uid: 1000
+    gid: 1000
 
 fileContentTests:
   - name: 'supervisor: syslog service is enabled'
@@ -35,6 +90,38 @@ fileContentTests:
     expectedContents: ['autostart = true']
 
 commandTests:
+  - name: "zip"
+    command: "which"
+    args: ["zip"]
+    expectedOutput: ["/usr/bin/zip"]
+  - name: "unzip"
+    command: "which"
+    args: ["unzip"]
+    expectedOutput: ["/usr/bin/unzip"]
+  - name: "nslookup"
+    command: "which"
+    args: ["nslookup"]
+    expectedOutput: ["/usr/bin/nslookup"]
+  - name: "ssh"
+    command: "which"
+    args: ["ssh"]
+    expectedOutput: ["/usr/bin/ssh"]
+  - name: "rsync"
+    command: "which"
+    args: ["rsync"]
+    expectedOutput: ["/usr/bin/rsync"]
+  - name: "git"
+    command: "which"
+    args: ["git"]
+    expectedOutput: ["/usr/bin/git"]
+  - name: "patch"
+    command: "which"
+    args: ["patch"]
+    expectedOutput: ["/usr/bin/patch"]
+  - name: "PHP version is 8.1 or newer"
+    command: "php"
+    args: ["-v"]
+    expectedOutput: ['PHP 8\.[1-9][0-9]*\.']
   - name: "fpm config test"
     command: "/usr/local/bin/php-fpm"
     args: ["-t"]
@@ -66,7 +153,8 @@ commandTests:
   - name: "php modules"
     command: "php"
     args: ["-m"]
-    expectedOutput:
+    expectedOutput: &phpModules
+      - "amqp"
       - "apcu"
       - "bcmath"
       - "bz2"
@@ -77,22 +165,28 @@ commandTests:
       - "date"
       - "dom"
       - "exif"
+      - "excimer"
+      - "FFI"
       - "fileinfo"
       - "filter"
       - "ftp"
       - "gd"
       - "gettext"
+      - "gmp"
       - "hash"
       - "iconv"
+      - "imagick"
       - "intl"
       - "json"
       - "ldap"
       - "libxml"
       - "mbstring"
       - "memcached"
+      - "mongodb"
       - "mysqli"
       - "mysqlnd"
       - "openssl"
+      - "opentelemetry"
       - "pcntl"
       - "pcre"
       - "PDO"
@@ -102,6 +196,7 @@ commandTests:
       - "pgsql"
       - "Phar"
       - "posix"
+      - "protobuf"
       - "readline"
       - "redis"
       - "Reflection"
@@ -117,12 +212,17 @@ commandTests:
       - "sysvsem"
       - "sysvshm"
       - "tokenizer"
+      - "vips"
       - "xml"
       - "xmlreader"
       - "xmlrpc"
       - "xmlwriter"
       - "xsl"
+      - "yaml"
       - "Zend OPcache"
       - "zip"
       - "zlib"
-
+  - name: "fpm modules"
+    command: "/usr/local/bin/php-fpm"
+    args: ["-m"]
+    expectedOutput: *phpModules

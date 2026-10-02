@@ -106,6 +106,7 @@ RUN set -x \
         libpng16-16 \
         libmcrypt4 \
         libzip4 \
+        libyaml-0-2 \
         libc-client2007e \
         # Dev and headers
         libavif-dev \
@@ -131,6 +132,7 @@ RUN set -x \
         librabbitmq-dev \
         libmagick++-dev \
         libgmp-dev \
+        libyaml-dev \
         libssl-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
@@ -186,6 +188,7 @@ RUN set -x \
     && pecl install protobuf \
     && pecl install xmlrpc-1.0.0RC3 \
     && pecl install vips \
+    && pecl install yaml \
     && pecl install redis \
     && pecl install mongodb \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
@@ -196,6 +199,7 @@ RUN set -x \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
+    && echo extension=yaml.so > /usr/local/etc/php/conf.d/yaml.ini \
     && echo extension=xmlrpc.so > /usr/local/etc/php/conf.d/xmlrpc.ini \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
@@ -219,6 +223,7 @@ RUN set -x \
         librabbitmq-dev \
         libmagick++-dev \
         libgmp-dev \
+        libyaml-dev \
         libssl-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \

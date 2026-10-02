@@ -35,41 +35,12 @@ else
     $testConfiguration[:ansiblePath] = "/usr/local/bin"
 end
 
-$testConfiguration[:php] = 7
 $testConfiguration[:phpXdebug] = true
 $testConfiguration[:phpApcu] = true
 $testConfiguration[:phpRedis] = true
 $testConfiguration[:phpBlackfire] = false
 $testConfiguration[:phpOfficialImage] = false
-
-if ((os[:family] == 'ubuntu' and os[:version] == '12.04') or
-    (os[:family] == 'ubuntu' and os[:version] == '14.04') or
-    (os[:family] == 'ubuntu' and os[:version] == '15.04') or
-    (os[:family] == 'ubuntu' and os[:version] == '15.10') or
-    (os[:family] == 'redhat' and os[:version] == '7') or
-    (os[:family] == 'debian' and os[:version] == '7') or
-    (os[:family] == 'debian' and os[:version] == '8') or
-    (ENV['DOCKER_TAG'].match('php5')) or
-    (ENV['DOCKER_TAG'].match('alpine-3')) or
-    (ENV['DOCKER_TAG'] =~ /^5\.[0-9]+/)
-   )
-    $testConfiguration[:php] = 5
-end
-
-if ((ENV['DOCKER_TAG'].match('php7')) or
-    (ENV['DOCKER_TAG'] =~ /^7\.[0-9]+/)
-   )
-    $testConfiguration[:php] = 7
-end
-
-if (ENV['DOCKER_TAG'] =~ /^8\.[0-9]+/)
-    $testConfiguration[:php] = 8
-end
-
-$testConfiguration[:phpImap] = false
-if (ENV['DOCKER_TAG'] =~ /^8\.[23](-|$)/)
-    $testConfiguration[:phpImap] = true
-end
+$testConfiguration[:phpImap] = !!(ENV['DOCKER_TAG'] =~ /^8\.[123](-|$)/)
 
 if ENV['PHP_OFFICIAL'] and ENV['PHP_OFFICIAL'] == "1"
     $testConfiguration[:phpOfficialImage] = true

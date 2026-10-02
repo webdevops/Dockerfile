@@ -33,7 +33,8 @@
         libpng16-16 \
         libmcrypt4 \
         libzip4 \
-{%- if version == '8.2' or version == '8.3' %}
+        libyaml-0-2 \
+{%- if version == '8.1' or version == '8.2' or version == '8.3' %}
         libc-client2007e \
 {%- endif %}
         # Dev and headers
@@ -60,6 +61,7 @@
         librabbitmq-dev \
         libmagick++-dev \
         libgmp-dev \
+        libyaml-dev \
 {%- if version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         libssl-dev \
 {%- endif %}
@@ -131,6 +133,7 @@
 {%- endif %}
     && pecl install xmlrpc-1.0.0RC3 \
     && pecl install vips \
+    && pecl install yaml \
     && pecl install redis \
     && pecl install mongodb \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
@@ -141,6 +144,7 @@
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
     && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
+    && echo extension=yaml.so > /usr/local/etc/php/conf.d/yaml.ini \
     && echo extension=xmlrpc.so > /usr/local/etc/php/conf.d/xmlrpc.ini \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
@@ -164,6 +168,7 @@
         librabbitmq-dev \
         libmagick++-dev \
         libgmp-dev \
+        libyaml-dev \
 {%- if version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         libssl-dev \
 {%- endif %}
