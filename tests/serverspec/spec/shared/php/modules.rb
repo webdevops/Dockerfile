@@ -4,6 +4,7 @@
 
 shared_examples 'php::modules' do
     describe command('php -m') do
+        its(:stdout) { should     contain('amqp') }
         its(:stdout) { should     contain('bcmath') }
         its(:stdout) { should     contain('bz2') }
         its(:stdout) { should     contain('calendar') }
@@ -13,26 +14,38 @@ shared_examples 'php::modules' do
         its(:stdout) { should     contain('date') }
         its(:stdout) { should     contain('dom') }
         its(:stdout) { should     contain('exif') }
+        its(:stdout) { should     contain('excimer') }
+        its(:stdout) { should     contain('FFI') }
         its(:stdout) { should     contain('fileinfo') }
         its(:stdout) { should     contain('filter') }
         its(:stdout) { should     contain('ftp') }
         its(:stdout) { should     contain('gettext') }
+        its(:stdout) { should     contain('gmp') }
         its(:stdout) { should     contain('hash') }
         its(:stdout) { should     contain('iconv') }
+        its(:stdout) { should     contain('imagick') }
+        its(:stdout) { should     contain('imap') } if $testConfiguration[:phpImap]
+        its(:stdout) { should     contain('intl') }
         its(:stdout) { should     contain('json') }
-        #its(:stdout) { should     contain('ldap') }
+        its(:stdout) { should     contain('ldap') }
         its(:stdout) { should     contain('libxml') }
         its(:stdout) { should     contain('mbstring') }
+        its(:stdout) { should     contain('memcached') }
+        its(:stdout) { should     contain('mongodb') }
         its(:stdout) { should     contain('mysqli') }
         its(:stdout) { should     contain('mysqlnd') }
         its(:stdout) { should     contain('openssl') }
+        its(:stdout) { should     contain('opentelemetry') }
         its(:stdout) { should     contain('pcntl') }
         its(:stdout) { should     contain('pcre') }
         its(:stdout) { should     contain('PDO') }
         its(:stdout) { should     contain('pdo_mysql') }
+        its(:stdout) { should     contain('pdo_pgsql') }
         its(:stdout) { should     contain('pdo_sqlite') }
+        its(:stdout) { should     contain('pgsql') }
         its(:stdout) { should     contain('Phar') }
         its(:stdout) { should     contain('posix') }
+        its(:stdout) { should     contain('protobuf') }
         its(:stdout) { should     contain('Reflection') }
         its(:stdout) { should     contain('session') }
         its(:stdout) { should     contain('SimpleXML') }
@@ -45,11 +58,13 @@ shared_examples 'php::modules' do
         its(:stdout) { should     contain('sysvsem') }
         its(:stdout) { should     contain('sysvshm') }
         its(:stdout) { should     contain('tokenizer') }
+        its(:stdout) { should     contain('vips') }
         its(:stdout) { should     contain('xml') }
         its(:stdout) { should     contain('xmlreader') }
-        #its(:stdout) { should     contain('xmlrpc') }
+        its(:stdout) { should     contain('xmlrpc') }
         its(:stdout) { should     contain('xmlwriter') }
         its(:stdout) { should     contain('xsl') }
+        its(:stdout) { should     contain('yaml') }
         its(:stdout) { should     contain('zip') }
         its(:stdout) { should     contain('zlib') }
         its(:stdout) { should     contain('gd') }
@@ -119,6 +134,7 @@ end
 
 shared_examples 'php-fpm::modules' do
     describe command('curl --insecure --silent --retry 10 --fail http://localhost/php-test.php?test=get_loaded_extensions') do
+        its(:stdout) { should     contain('amqp') }
         its(:stdout) { should     contain('bcmath') }
         its(:stdout) { should     contain('bz2') }
         its(:stdout) { should     contain('calendar') }
@@ -128,26 +144,38 @@ shared_examples 'php-fpm::modules' do
         its(:stdout) { should     contain('date') }
         its(:stdout) { should     contain('dom') }
         its(:stdout) { should     contain('exif') }
+        its(:stdout) { should     contain('excimer') }
+        its(:stdout) { should     contain('FFI') }
         its(:stdout) { should     contain('fileinfo') }
         its(:stdout) { should     contain('filter') }
         its(:stdout) { should     contain('ftp') }
         its(:stdout) { should     contain('gettext') }
+        its(:stdout) { should     contain('gmp') }
         its(:stdout) { should     contain('hash') }
         its(:stdout) { should     contain('iconv') }
+        its(:stdout) { should     contain('imagick') }
+        its(:stdout) { should     contain('imap') } if $testConfiguration[:phpImap]
+        its(:stdout) { should     contain('intl') }
         its(:stdout) { should     contain('json') }
-        #its(:stdout) { should     contain('ldap') }
+        its(:stdout) { should     contain('ldap') }
         its(:stdout) { should     contain('libxml') }
         its(:stdout) { should     contain('mbstring') }
+        its(:stdout) { should     contain('memcached') }
+        its(:stdout) { should     contain('mongodb') }
         its(:stdout) { should     contain('mysqli') }
         its(:stdout) { should     contain('mysqlnd') }
         its(:stdout) { should     contain('openssl') }
+        its(:stdout) { should     contain('opentelemetry') }
         #its(:stdout) { should_not contain('pcntl') }   # disabled by fpm
         its(:stdout) { should     contain('pcre') }
         its(:stdout) { should     contain('PDO') }
         its(:stdout) { should     contain('pdo_mysql') }
+        its(:stdout) { should     contain('pdo_pgsql') }
         its(:stdout) { should     contain('pdo_sqlite') }
+        its(:stdout) { should     contain('pgsql') }
         its(:stdout) { should     contain('Phar') }
         its(:stdout) { should     contain('posix') }
+        its(:stdout) { should     contain('protobuf') }
         its(:stdout) { should     contain('Reflection') }
         its(:stdout) { should     contain('session') }
         its(:stdout) { should     contain('SimpleXML') }
@@ -160,11 +188,13 @@ shared_examples 'php-fpm::modules' do
         its(:stdout) { should     contain('sysvsem') }
         its(:stdout) { should     contain('sysvshm') }
         its(:stdout) { should     contain('tokenizer') }
+        its(:stdout) { should     contain('vips') }
         its(:stdout) { should     contain('xml') }
         its(:stdout) { should     contain('xmlreader') }
-        # its(:stdout) { should     contain('xmlrpc') }
+        its(:stdout) { should     contain('xmlrpc') }
         its(:stdout) { should     contain('xmlwriter') }
         its(:stdout) { should     contain('xsl') }
+        its(:stdout) { should     contain('yaml') }
         its(:stdout) { should     contain('zip') }
         its(:stdout) { should     contain('zlib') }
         its(:stdout) { should     contain('gd') }

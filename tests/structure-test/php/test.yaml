@@ -59,6 +59,7 @@ fileExistenceTests:
   - name: 'app folder exists and is owned by the application user'
     path: '/app'
     shouldExist: true
+    permissions: 'drwxr-xr-x'
     uid: 1000
     gid: 1000
 
@@ -134,7 +135,8 @@ commandTests:
   - name: "php modules"
     command: "php"
     args: ["-m"]
-    expectedOutput:
+    expectedOutput: &phpModules
+      - "amqp"
       - "apcu"
       - "bcmath"
       - "bz2"
@@ -145,22 +147,28 @@ commandTests:
       - "date"
       - "dom"
       - "exif"
+      - "excimer"
+      - "FFI"
       - "fileinfo"
       - "filter"
       - "ftp"
       - "gd"
       - "gettext"
+      - "gmp"
       - "hash"
       - "iconv"
+      - "imagick"
       - "intl"
       - "json"
       - "ldap"
       - "libxml"
       - "mbstring"
       - "memcached"
+      - "mongodb"
       - "mysqli"
       - "mysqlnd"
       - "openssl"
+      - "opentelemetry"
       - "pcntl"
       - "pcre"
       - "PDO"
@@ -170,6 +178,7 @@ commandTests:
       - "pgsql"
       - "Phar"
       - "posix"
+      - "protobuf"
       - "readline"
       - "redis"
       - "Reflection"
@@ -185,11 +194,17 @@ commandTests:
       - "sysvsem"
       - "sysvshm"
       - "tokenizer"
+      - "vips"
       - "xml"
       - "xmlreader"
       - "xmlrpc"
       - "xmlwriter"
       - "xsl"
+      - "yaml"
       - "Zend OPcache"
       - "zip"
       - "zlib"
+  - name: "fpm modules"
+    command: "/usr/local/bin/php-fpm"
+    args: ["-m"]
+    expectedOutput: *phpModules
