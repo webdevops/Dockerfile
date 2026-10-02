@@ -66,6 +66,11 @@ if (ENV['DOCKER_TAG'] =~ /^8\.[0-9]+/)
     $testConfiguration[:php] = 8
 end
 
+$testConfiguration[:phpImap] = false
+if (ENV['DOCKER_TAG'] =~ /^8\.[23](-|$)/)
+    $testConfiguration[:phpImap] = true
+end
+
 if ENV['PHP_OFFICIAL'] and ENV['PHP_OFFICIAL'] == "1"
     $testConfiguration[:phpOfficialImage] = true
 end
