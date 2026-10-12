@@ -1,3 +1,5 @@
+require 'digest'
+
 shared_examples 'php::cli::test::sha1' do
     describe command('php -r \'echo sha1("webdevops");\'') do
         its(:stdout) { should_not contain('PHP Notice') }
@@ -148,6 +150,29 @@ shared_examples 'php::fpm::test::process_user_id' do
                 expect(cmd.stdout).not_to contain('Fatal Error')
                 expect(cmd.stdout).to contain('UID:1000#')
                 expect(cmd.exit_status).to eq 0
+            end
+        end
+    end
+end
+
+shared_examples 'php::fpm::test::large_body' do
+    ['http', 'https'].each do |scheme|
+        describe "#{scheme} large request body" do
+            it "should receive a 1 MiB body intact", :retry => 20, :retry_wait => 3 do
+                body_size = 1024 * 1024
+                checksum = Digest::SHA256.hexdigest("\0" * body_size)
+                cmd = command(<<-SH)
+                    set -eu
+                    payload=$(mktemp)
+                    trap 'rm -f "$payload"' EXIT
+                    head -c #{body_size} /dev/zero > "$payload"
+                    curl --insecure --silent --show-error --fail --max-time 15 \
+                        -H 'Content-Type: application/octet-stream' \
+                        --data-binary @"$payload" \
+                        '#{scheme}://localhost/php-test.php?test=request_body'
+                SH
+                expect(cmd.exit_status).to eq 0
+                expect(cmd.stdout).to eq "#{body_size}:#{checksum}"
             end
         end
     end

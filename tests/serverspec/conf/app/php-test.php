@@ -5,6 +5,11 @@ switch($_GET['test']) {
         echo sha1('webdevops');
         break;
 
+    case 'request_body':
+        $body = file_get_contents('php://input');
+        echo strlen($body), ':', hash('sha256', $body);
+        break;
+
     case 'version':
         echo 'PHP ' . phpversion();
         break;
