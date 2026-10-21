@@ -26,7 +26,8 @@ RUN set -x \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 
-RUN set -x \
+RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
+    set -x \
     {{ php.official(version='8.2',distribution='bookworm') }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}

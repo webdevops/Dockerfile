@@ -80,7 +80,8 @@ RUN set -x \
     && docker-run-bootstrap \
     && docker-image-cleanup
 
-RUN set -x \
+RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
+    set -x \
     # Install php environment
     && apt-install \
         # Install tools
@@ -178,16 +179,39 @@ RUN set -x \
         zip \
         gd \
         opcache \
-    && pecl install memcached \
-    && pecl install apcu \
-    && pecl install excimer \
-    && pecl install opentelemetry \
-    && pecl install protobuf \
-    && pecl install xmlrpc-1.0.0RC3 \
-    && pecl install vips \
-    && pecl install yaml \
-    && pecl install redis \
-    && pecl install mongodb \
+    && cd / \
+    && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
+        --skip-enable-extension --make-parallel-jobs="$(nproc)" \
+        apcu/apcu \
+        wikimedia/excimer \
+        open-telemetry/ext-opentelemetry \
+        php-memcached/php-memcached \
+        pecl/yaml \
+        phpredis/phpredis \
+        mongodb/mongodb-extension \
+    && rm -rf /tmp/pie \
+    && PROTOBUF_RELEASE_URL="$(curl -fsSLI --proto '=https' --proto-redir '=https' --retry 3 -o /dev/null -w '%{url_effective}' https://github.com/protocolbuffers/protobuf/releases/latest)" \
+    && PROTOBUF_VERSION="${PROTOBUF_RELEASE_URL##*/}" \
+    && mkdir -p /tmp/protobuf \
+    && curl -fsSL --proto '=https' --proto-redir '=https' --retry 3 "https://codeload.github.com/protocolbuffers/protobuf/tar.gz/refs/tags/${PROTOBUF_VERSION}" -o /tmp/protobuf.tar.gz \
+    && tar -xzf /tmp/protobuf.tar.gz --strip-components=1 -C /tmp/protobuf \
+    && cd /tmp/protobuf/php/ext/google/protobuf \
+    && mkdir -p third_party \
+    && cp -R /tmp/protobuf/third_party/utf8_range third_party/ \
+    && phpize && ./configure --enable-protobuf \
+    && make -j"$(nproc)" && make install \
+    && cd / && rm -rf /tmp/protobuf /tmp/protobuf.tar.gz \
+    # Vips' GitHub tags lag behind PECL releases; use the upstream branch.
+    && git clone --depth 1 https://github.com/libvips/php-vips-ext.git /tmp/vips \
+    && cd /tmp/vips \
+    && phpize && ./configure --with-vips \
+    && make -j"$(nproc)" && make install \
+    && cd / && rm -rf /tmp/vips \
+    && git clone --depth 1 --branch xmlrpc-1.0.0RC3 https://github.com/php/pecl-networking-xmlrpc.git /tmp/xmlrpc \
+    && cd /tmp/xmlrpc \
+    && phpize && ./configure --with-xmlrpc \
+    && make -j"$(nproc)" && make install \
+    && cd / && rm -rf /tmp/xmlrpc \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=excimer.so > /usr/local/etc/php/conf.d/excimer.ini \
     && echo extension=opentelemetry.so > /usr/local/etc/php/conf.d/opentelemetry.ini \

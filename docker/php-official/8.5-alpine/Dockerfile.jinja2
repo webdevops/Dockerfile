@@ -25,7 +25,8 @@ RUN set -x \
     {{ baseapp.alpine() }} \
     {{ provision.runBootstrap() }}
 
-RUN set -x \
+RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
+    set -x \
     {{ php.officialAlpine(version='8.5') }} \
     {{ provision.runBootstrap() }}
 

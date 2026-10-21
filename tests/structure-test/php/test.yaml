@@ -29,6 +29,12 @@ metadataTest:
       value: "1000"
 
 fileExistenceTests:
+  - name: 'PIE is only mounted during builds'
+    path: '/usr/local/bin/pie'
+    shouldExist: false
+  - name: 'PIE working directory was removed after the build'
+    path: '/tmp/pie'
+    shouldExist: false
   - name: 'provision: set php version variable script was deleted after execution'
     path: '/opt/docker/provision/bootstrap.d/10-php-init.sh'
     shouldExist: false
