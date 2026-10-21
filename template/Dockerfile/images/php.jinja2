@@ -2,6 +2,42 @@
 {% import 'Dockerfile/provision.jinja2' as provision %}
 {% import 'Dockerfile/services.jinja2'  as services %}
 
+{% macro externalExtensions() -%}
+    && cd / \
+    && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
+        --skip-enable-extension --make-parallel-jobs="$(nproc)" \
+        apcu/apcu \
+        wikimedia/excimer \
+        open-telemetry/ext-opentelemetry \
+        php-memcached/php-memcached \
+        pecl/yaml \
+        phpredis/phpredis \
+        mongodb/mongodb-extension \
+    && rm -rf /tmp/pie \
+    && PROTOBUF_RELEASE_URL="$(curl -fsSLI --proto '=https' --proto-redir '=https' --retry 3 -o /dev/null -w '%{url_effective}' https://github.com/protocolbuffers/protobuf/releases/latest)" \
+    && PROTOBUF_VERSION="${PROTOBUF_RELEASE_URL##*/}" \
+    && mkdir -p /tmp/protobuf \
+    && curl -fsSL --proto '=https' --proto-redir '=https' --retry 3 "https://codeload.github.com/protocolbuffers/protobuf/tar.gz/refs/tags/${PROTOBUF_VERSION}" -o /tmp/protobuf.tar.gz \
+    && tar -xzf /tmp/protobuf.tar.gz --strip-components=1 -C /tmp/protobuf \
+    && cd /tmp/protobuf/php/ext/google/protobuf \
+    && mkdir -p third_party \
+    && cp -R /tmp/protobuf/third_party/utf8_range third_party/ \
+    && phpize && ./configure --enable-protobuf \
+    && make -j"$(nproc)" && make install \
+    && cd / && rm -rf /tmp/protobuf /tmp/protobuf.tar.gz \
+    # Vips' GitHub tags lag behind PECL releases; use the upstream branch.
+    && git clone --depth 1 https://github.com/libvips/php-vips-ext.git /tmp/vips \
+    && cd /tmp/vips \
+    && phpize && ./configure --with-vips \
+    && make -j"$(nproc)" && make install \
+    && cd / && rm -rf /tmp/vips \
+    && git clone --depth 1 --branch xmlrpc-1.0.0RC3 https://github.com/php/pecl-networking-xmlrpc.git /tmp/xmlrpc \
+    && cd /tmp/xmlrpc \
+    && phpize && ./configure --with-xmlrpc \
+    && make -j"$(nproc)" && make install \
+    && cd / && rm -rf /tmp/xmlrpc
+{%- endmacro %}
+
 {% macro official(role='', version='', distribution='') -%}
     # Install php environment
     && apt-install \
@@ -34,7 +70,7 @@
         libmcrypt4 \
         libzip4 \
         libyaml-0-2 \
-{%- if version == '8.1' or version == '8.2' or version == '8.3' %}
+{%- if version == '8.2' or version == '8.3' %}
         libc-client2007e \
 {%- endif %}
         # Dev and headers
@@ -62,9 +98,7 @@
         libmagick++-dev \
         libgmp-dev \
         libyaml-dev \
-{%- if version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         libssl-dev \
-{%- endif %}
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -73,7 +107,7 @@
     && rm -rf master.zip guetzli-master \
     # Install new version of ICU
     && curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-73-1/icu4c-73_1-src.tgz \
-    && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu* \
+    && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make -j"$(nproc)" && make install && cd / && rm -rf /tmp/icu* \
     # Install extensions
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-avif --with-jpeg --with-freetype --with-webp \
@@ -89,7 +123,7 @@
 {%- if version != '8.4' and version != '8.5' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
 {%- endif %}
-    && docker-php-ext-install \
+    && docker-php-ext-install -j"$(nproc)" \
         bcmath \
         amqp \
         imagick \
@@ -122,20 +156,7 @@
 {%- if version != '8.5' %}
         opcache \
 {%- endif %}
-    && pecl install memcached \
-    && pecl install apcu \
-    && pecl install excimer \
-    && pecl install opentelemetry \
-{%- if version == '8.1' %}
-    && pecl install protobuf-4.33.5 \
-{%- else %}
-    && pecl install protobuf \
-{%- endif %}
-    && pecl install xmlrpc-1.0.0RC3 \
-    && pecl install vips \
-    && pecl install yaml \
-    && pecl install redis \
-    && pecl install mongodb \
+    {{ externalExtensions() }} \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=excimer.so > /usr/local/etc/php/conf.d/excimer.ini \
     && echo extension=opentelemetry.so > /usr/local/etc/php/conf.d/opentelemetry.ini \
@@ -169,9 +190,7 @@
         libmagick++-dev \
         libgmp-dev \
         libyaml-dev \
-{%- if version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         libssl-dev \
-{%- endif %}
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
@@ -226,11 +245,7 @@
         icu-dev \
         postgresql-dev \
         libxml2-dev \
-    {%- if version == '8.1' %}
-        ldb-dev \
-    {%- else %}
         samba-dev \
-    {%- endif %}
         pcre-dev \
         libxslt-dev \
         libzip-dev \
@@ -246,7 +261,7 @@
     && apk add gnu-libiconv --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --allow-untrusted \
     # Install new version of ICU
     && curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-73-1/icu4c-73_1-src.tgz \
-    && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu* \
+    && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make -j"$(nproc)" && make install && cd / && rm -rf /tmp/icu* \
     # Install extensions
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-avif --with-jpeg --with-freetype --with-webp \
@@ -262,7 +277,7 @@
 {%- if version != '8.4' and version != '8.5' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
 {%- endif %}
-    && docker-php-ext-install \
+    && docker-php-ext-install -j"$(nproc)" \
         bcmath \
         bz2 \
         calendar \
@@ -295,26 +310,7 @@
 {%- if version != '8.5' %}
         opcache \
 {%- endif %}
-    # Install extensions for PHP 7.x
-    # Memcached for 7.3 can currently only be built from master
-    && MEMCACHED="`mktemp -d`" \
-    && curl -skL https://github.com/php-memcached-dev/php-memcached/archive/master.tar.gz | tar zxf - --strip-components 1 -C $MEMCACHED \
-    && docker-php-ext-configure $MEMCACHED \
-    && docker-php-ext-install $MEMCACHED \
-    && rm -rf $MEMCACHED \
-    && pecl install apcu \
-    && pecl install excimer \
-    && pecl install opentelemetry \
-{%- if version == '8.1' %}
-    && pecl install protobuf-4.33.5 \
-{%- else %}
-    && pecl install protobuf \
-{%- endif %}
-    && pecl install vips \
-    && pecl install yaml \
-    && pecl install redis \
-    && pecl install mongodb \
-    && pecl install xmlrpc-1.0.0RC3 \
+    {{ externalExtensions() }} \
     && docker-php-ext-enable \
         apcu \
         excimer \
@@ -326,6 +322,7 @@
         xmlrpc \
         imagick \
         mongodb \
+        memcached \
     # Uninstall dev and header packages
     && apk del -f --purge \
         autoconf \
@@ -350,11 +347,7 @@
         icu-dev \
         postgresql-dev \
         libxml2-dev \
-    {%- if version == '8.1' %}
-        ldb-dev \
-    {%- else %}
         samba-dev \
-    {%- endif %}
         pcre-dev \
         libxslt-dev \
         libzip-dev \
@@ -374,7 +367,9 @@
     && echo 'deb https://packages.tideways.com/apt-packages-main any-version main' | tee /etc/apt/sources.list.d/tideways.list \
     && wget -qO - https://packages.tideways.com/key.gpg | apt-key add - \
     && apt-install tideways-php tideways-daemon \
-    && pecl install xdebug \
+    && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
+        --skip-enable-extension --make-parallel-jobs="$(nproc)" xdebug/xdebug \
+    && rm -rf /tmp/pie \
     && docker-php-ext-enable xdebug \
     {{ services.phpDev() }}
 {%- endmacro %}
@@ -388,12 +383,18 @@
         make \
         autoconf \
         g++ \
-    && pecl install xdebug \
+        libtool \
+        pkgconf \
+    && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
+        --skip-enable-extension --make-parallel-jobs="$(nproc)" xdebug/xdebug \
+    && rm -rf /tmp/pie \
     && apk del -f --purge \
         autoconf \
         linux-headers \
         g++ \
         make \
+        libtool \
+        pkgconf \
     && docker-php-ext-enable xdebug \
     {{ services.phpDev() }}
 {%- endmacro %}

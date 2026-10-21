@@ -10,6 +10,13 @@ shared_examples 'php-fpm::layout' do
     end
 end
 
+shared_examples 'php-fpm::configuration' do
+    describe command('php-fpm -i') do
+        its(:stdout) { should match(/^session\.upload_progress\.enabled => Off => Off$/) }
+        its(:exit_status) { should eq 0 }
+    end
+end
+
 shared_examples 'php-fpm::versioned::layout' do
     it "should have local php-fpm 8.x layout" do
         if $testConfiguration[:phpOfficialImage]

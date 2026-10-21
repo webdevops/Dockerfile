@@ -6,7 +6,8 @@
 
 {{ docker.copy('conf/', '/opt/docker/') }}
 
-RUN set -x \
+RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
+    set -x \
     {{ php.officialDevelopment(version="8.5") }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}

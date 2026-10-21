@@ -20,7 +20,7 @@ Automated build and test running on [Gitlab CI](https://gitlab.com/webdevops/doc
 
 Or write an issue in our [GitHub repository](https://github.com/webdevops/Dockerfile/issues).
 
-Or join our discord https://discord.gg/gnYPfZhX
+Or join our discord https://discord.gg/BpBZtXAgJz
 
 ## Build process
 
@@ -53,6 +53,26 @@ docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console git
 Gitlab CI builds every image independent and runs serverspec and structure tests on every
 image before pushing them to the registry.
 
+### PHP extension builds
+
+PHP images require Docker BuildKit. The official `ghcr.io/php/pie:bin` image
+supplies PIE through a build-only mount; the existing INI configuration still
+controls extension loading. PIE requests remain unpinned, and compilation uses
+`nproc` parallel jobs.
+
+Protobuf, Vips and XML-RPC are built directly from their official upstream sources.
+The existing XML-RPC **1.0.0RC3** pin is preserved on all supported PHP versions.
+Protobuf on PHP 8.2–8.5 uses the latest upstream release. If a future release raises its minimum PHP
+version, older PHP image builds can fail; there is no automatic fallback to an
+older release. The existing CI matrix checks compatibility across PHP versions.
+
+The native Vips extension is deprecated and no longer maintained upstream. It is
+retained for existing applications, using the upstream default branch (currently
+`master`): GitHub tags predate the PECL 1.0.13 release and would downgrade the
+extension. This includes changes beyond the last PECL release.
+No extension installation needs `pecl.php.net`; Serverspec and container structure
+tests retain their existing image matrix.
+
 ## Documentation
 
 As in many projects the documentation is kind of up to date 😅.
@@ -64,32 +84,26 @@ As in many projects the documentation is kind of up to date 😅.
 
 The following images which are currently supported are based on `php:{VER}-fpm-buster`.
 
-* `webdevops/php:8.1`
 * `webdevops/php:8.2`
 * `webdevops/php:8.3`
 * `webdevops/php:8.4`
 * `webdevops/php:8.5`
-* `webdevops/php-dev:8.1`
 * `webdevops/php-dev:8.2`
 * `webdevops/php-dev:8.3`
 * `webdevops/php-dev:8.4`
 * `webdevops/php-dev:8.5`
-* `webdevops/php-apache:8.1`
 * `webdevops/php-apache:8.2`
 * `webdevops/php-apache:8.3`
 * `webdevops/php-apache:8.4`
 * `webdevops/php-apache:8.5`
-* `webdevops/php-apache-dev:8.1`
 * `webdevops/php-apache-dev:8.2`
 * `webdevops/php-apache-dev:8.3`
 * `webdevops/php-apache-dev:8.4`
 * `webdevops/php-apache-dev:8.5`
-* `webdevops/php-nginx:8.1`
 * `webdevops/php-nginx:8.2`
 * `webdevops/php-nginx:8.3`
 * `webdevops/php-nginx:8.4`
 * `webdevops/php-nginx:8.5`
-* `webdevops/php-nginx-dev:8.1`
 * `webdevops/php-nginx-dev:8.2`
 * `webdevops/php-nginx-dev:8.3`
 * `webdevops/php-nginx-dev:8.4`
@@ -100,32 +114,26 @@ The following images which are currently supported are based on `php:{VER}-fpm-b
 
 The following images which are currently supported are based on `php:{VER}-fpm-alpine`.
 
-* `webdevops/php:8.1-alpine`
 * `webdevops/php:8.2-alpine`
 * `webdevops/php:8.3-alpine`
 * `webdevops/php:8.4-alpine`
 * `webdevops/php:8.5-alpine`
-* `webdevops/php-dev:8.1-alpine`
 * `webdevops/php-dev:8.2-alpine`
 * `webdevops/php-dev:8.3-alpine`
 * `webdevops/php-dev:8.4-alpine`
 * `webdevops/php-dev:8.5-alpine`
-* `webdevops/php-apache:8.1-alpine`
 * `webdevops/php-apache:8.2-alpine`
 * `webdevops/php-apache:8.3-alpine`
 * `webdevops/php-apache:8.4-alpine`
 * `webdevops/php-apache:8.5-alpine`
-* `webdevops/php-apache-dev:8.1-alpine`
 * `webdevops/php-apache-dev:8.2-alpine`
 * `webdevops/php-apache-dev:8.3-alpine`
 * `webdevops/php-apache-dev:8.4-alpine`
 * `webdevops/php-apache-dev:8.5-alpine`
-* `webdevops/php-nginx:8.1-alpine`
 * `webdevops/php-nginx:8.2-alpine`
 * `webdevops/php-nginx:8.3-alpine`
 * `webdevops/php-nginx:8.4-alpine`
 * `webdevops/php-nginx:8.5-alpine`
-* `webdevops/php-nginx-dev:8.1-alpine`
 * `webdevops/php-nginx-dev:8.2-alpine`
 * `webdevops/php-nginx-dev:8.3-alpine`
 * `webdevops/php-nginx-dev:8.4-alpine`

@@ -116,12 +116,12 @@ class GithubJobBuilder
                                 'name' => 'Export image (OCI layout)',
                                 'if' => '${{ github.ref != \'refs/heads/master\' }}',
                                 'uses' => 'docker/build-push-action@v7',
+                                // Reuse the tested local build, including on no-cache reruns.
                                 'with' => array_merge(
                                     [
                                         'context' => dirname(str_replace(__DIR__ . '/../../', '', $node['file'])),
                                         'platforms' => '${{ matrix.platform }}',
-                                        'cache-from' => 'type=gha',
-                                        'cache-to' => 'type=gha,mode=max',
+                                        ...$this->buildCacheWith($node),
                                         'build-args' => implode("\n", [
                                             'TARGETARCH=${{ matrix.arch }}',
                                         ]),
@@ -143,6 +143,8 @@ class GithubJobBuilder
                                     'name' => $this->getCiImageArtifactName($node['id']),
                                     'path' => $this->getCiImagePath($node['id']),
                                     'retention-days' => 1,
+                                    // A rerun must replace the previous attempt's parent image.
+                                    'overwrite' => true,
                                     'compression-level' => 0,
                                     'if-no-files-found' => 'error',
                                 ],
@@ -218,11 +220,23 @@ class GithubJobBuilder
             'platforms' => '${{ matrix.platform }}',
             'load' => true,
             'tags' => 'ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'],
-            'cache-from' => 'type=gha',
-            'cache-to' => 'type=gha,mode=max',
+            // Re-run all jobs to test a fresh build of the full image chain.
+            'no-cache' => '${{ github.event_name == \'schedule\' || github.run_attempt > 1 }}',
+            ...$this->buildCacheWith($node),
             'build-args' => implode("\n", [
                 'TARGETARCH=${{ matrix.arch }}',
             ]),
+        ];
+    }
+
+    private function buildCacheWith(array $node): array
+    {
+        // Full image/tag and architecture keep scopes unique and reusable
+        // across commits, branches and reruns.
+        $cache = 'type=gha,scope=' . $node['id'] . '-${{ matrix.arch }}';
+        return [
+            'cache-from' => $cache,
+            'cache-to' => $cache . ',mode=max',
         ];
     }
 

@@ -29,6 +29,12 @@ metadataTest:
       value: "1000"
 
 fileExistenceTests:
+  - name: 'PIE is only mounted during builds'
+    path: '/usr/local/bin/pie'
+    shouldExist: false
+  - name: 'PIE working directory was removed after the build'
+    path: '/tmp/pie'
+    shouldExist: false
   - name: 'provision: set php version variable script was deleted after execution'
     path: '/opt/docker/provision/bootstrap.d/10-php-init.sh'
     shouldExist: false
@@ -90,6 +96,24 @@ fileContentTests:
     expectedContents: ['autostart = true']
 
 commandTests:
+  - name: "session upload progress can be enabled explicitly for CLI"
+    setup: [["/entrypoint", "/bin/bash"]]
+    envVars:
+      - key: "php.session.upload_progress.enabled"
+        value: "On"
+    command: "php"
+    args: ["-r", "echo ini_get('session.upload_progress.enabled') ? 'enabled' : 'disabled';"]
+    expectedOutput: ['^enabled$']
+    exitCode: 0
+  - name: "session upload progress can be enabled explicitly for FPM"
+    setup: [["/entrypoint", "/bin/bash"]]
+    envVars:
+      - key: "php.session.upload_progress.enabled"
+        value: "On"
+    command: "/usr/local/bin/php-fpm"
+    args: ["-i"]
+    expectedOutput: ['session\.upload_progress\.enabled => On => On']
+    exitCode: 0
   - name: "zip"
     command: "which"
     args: ["zip"]
@@ -118,10 +142,10 @@ commandTests:
     command: "which"
     args: ["patch"]
     expectedOutput: ["/usr/bin/patch"]
-  - name: "PHP version is 8.1 or newer"
+  - name: "PHP version is 8.2 or newer"
     command: "php"
     args: ["-v"]
-    expectedOutput: ['PHP 8\.[1-9][0-9]*\.']
+    expectedOutput: ['PHP 8\.([2-9]|[1-9][0-9]+)\.']
   - name: "fpm config test"
     command: "/usr/local/bin/php-fpm"
     args: ["-t"]

@@ -4,6 +4,7 @@
 
 shared_examples 'php::modules' do
     describe command('php -m') do
+        its(:stderr) { should eq '' }
         its(:stdout) { should     contain('amqp') }
         its(:stdout) { should     contain('bcmath') }
         its(:stdout) { should     contain('bz2') }
@@ -97,6 +98,7 @@ end
 
 shared_examples 'php::modules::development' do
     describe command('php -m') do
+        its(:stderr) { should eq '' }
         if ( $testConfiguration[:phpXdebug] )
             its(:stdout) { should     contain('xdebug') }
         else
