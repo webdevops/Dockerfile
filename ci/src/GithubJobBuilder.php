@@ -17,6 +17,8 @@ class GithubJobBuilder
      */
     private const PARENT_OCI_TAG = 'ci-parent-image';
 
+    private const CACHE_MAX_AGE_SECONDS = 2 * 24 * 60 * 60;
+
     /**
      * @return array<string, array<string, mixed>>
      */
@@ -70,6 +72,11 @@ class GithubJobBuilder
                         [
                             ['uses' => 'actions/checkout@v6'],
                             ['uses' => 'docker/setup-buildx-action@v3'],
+                            [
+                                'name' => 'Set BuildKit cache window',
+                                'id' => 'build-cache',
+                                'run' => 'echo "window=$(($(date -u +%s) / ' . self::CACHE_MAX_AGE_SECONDS . '))" >> "$GITHUB_OUTPUT"',
+                            ],
                             ...$this->downloadParentImageSteps($imageDependencies),
                             array_filter([
                                 'name' => 'Build (load locally)',
@@ -225,8 +232,12 @@ class GithubJobBuilder
     {
         // Keep the full image/tag to avoid normalization collisions, and omit
         // commit/branch identifiers so repeated builds can reuse the same cache.
-        $cache = 'type=gha,scope=' . $node['id'] . '-${{ matrix.arch }}';
+        // GHA has no TTL option: rotate scopes every 48 hours without falling
+        // back to older windows, so old layers cannot be kept alive by exports.
+        $cache = 'type=gha,scope=' . $node['id'] . '-${{ matrix.arch }}-${{ steps.build-cache.outputs.window }}';
         return [
+            // Scheduled builds recompile and refresh the current cache window.
+            'no-cache' => '${{ github.event_name == \'schedule\' }}',
             'cache-from' => $cache,
             'cache-to' => $cache . ',mode=max',
         ];
