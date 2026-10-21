@@ -270,8 +270,6 @@ class GithubJobBuilder
             'with' => [
                 'name' => $this->getCiImageArtifactName($imageId),
                 'path' => $this->getCiImagePath($imageId),
-                // keep the pre-v8 warn-only behaviour so a transient artifact corruption cannot break the image chain
-                'digest-mismatch' => 'warn',
             ],
         ], $imageIds);
     }
