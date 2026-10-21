@@ -7,7 +7,8 @@ FROM webdevops/php:8.4-alpine
 
 COPY conf/ /opt/docker/
 
-RUN set -x \
+RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
+    set -x \
     # Install development environment
     && bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
     && blackfire php:install \
@@ -16,12 +17,18 @@ RUN set -x \
         make \
         autoconf \
         g++ \
-    && pecl install xdebug \
+        libtool \
+        pkgconf \
+    && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
+        --skip-enable-extension --make-parallel-jobs="$(nproc)" xdebug/xdebug \
+    && rm -rf /tmp/pie \
     && apk del -f --purge \
         autoconf \
         linux-headers \
         g++ \
         make \
+        libtool \
+        pkgconf \
     && docker-php-ext-enable xdebug \
     # Enable php development services
     && docker-service enable syslog \
