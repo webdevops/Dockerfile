@@ -62,7 +62,6 @@ jobs:
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/base_alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -174,7 +173,6 @@ jobs:
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/base_alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -291,7 +289,6 @@ jobs:
         with:
           name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/base_ubuntu-22-04
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -432,7 +429,6 @@ jobs:
         with:
           name: 'docker-parent-bootstrap_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/bootstrap_alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -571,7 +567,6 @@ jobs:
         with:
           name: 'docker-parent-bootstrap_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/bootstrap_ubuntu-22-04
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -712,7 +707,6 @@ jobs:
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -851,7 +845,6 @@ jobs:
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -992,7 +985,6 @@ jobs:
         with:
           name: 'docker-parent-base-app_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/base-app_ubuntu-22-04
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1096,7 +1088,6 @@ jobs:
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/base_alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1208,7 +1199,6 @@ jobs:
         with:
           name: 'docker-parent-php-apache_8-1-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-1
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1286,7 +1276,6 @@ jobs:
         with:
           name: 'docker-parent-php-apache_8-1-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-1-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1432,7 +1421,6 @@ jobs:
         with:
           name: 'docker-parent-php-apache_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-2
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1510,7 +1498,6 @@ jobs:
         with:
           name: 'docker-parent-php-apache_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-2-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1656,7 +1643,6 @@ jobs:
         with:
           name: 'docker-parent-php-apache_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-3
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1734,7 +1720,6 @@ jobs:
         with:
           name: 'docker-parent-php-apache_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-3-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1880,7 +1865,6 @@ jobs:
         with:
           name: 'docker-parent-php-apache_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-4
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -1958,7 +1942,6 @@ jobs:
         with:
           name: 'docker-parent-php-apache_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-4-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2104,7 +2087,6 @@ jobs:
         with:
           name: 'docker-parent-php-apache_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-5
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2182,7 +2164,6 @@ jobs:
         with:
           name: 'docker-parent-php-apache_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-5-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2328,7 +2309,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-1
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2428,7 +2408,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-1-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2596,7 +2575,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2696,7 +2674,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2864,7 +2841,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -2964,7 +2940,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3132,7 +3107,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3232,7 +3206,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3400,7 +3373,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3500,7 +3472,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3668,7 +3639,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-1
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3751,7 +3721,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-1-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3902,7 +3871,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -3985,7 +3953,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4136,7 +4103,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4219,7 +4185,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4370,7 +4335,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4453,7 +4417,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4604,7 +4567,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4687,7 +4649,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4838,7 +4799,6 @@ jobs:
         with:
           name: 'docker-parent-php-nginx_8-1-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-1
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -4916,7 +4876,6 @@ jobs:
         with:
           name: 'docker-parent-php-nginx_8-1-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-1-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5062,7 +5021,6 @@ jobs:
         with:
           name: 'docker-parent-php-nginx_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-2
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5140,7 +5098,6 @@ jobs:
         with:
           name: 'docker-parent-php-nginx_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-2-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5286,7 +5243,6 @@ jobs:
         with:
           name: 'docker-parent-php-nginx_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-3
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5364,7 +5320,6 @@ jobs:
         with:
           name: 'docker-parent-php-nginx_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-3-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5510,7 +5465,6 @@ jobs:
         with:
           name: 'docker-parent-php-nginx_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-4
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5588,7 +5542,6 @@ jobs:
         with:
           name: 'docker-parent-php-nginx_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-4-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5734,7 +5687,6 @@ jobs:
         with:
           name: 'docker-parent-php-nginx_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-5
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5812,7 +5764,6 @@ jobs:
         with:
           name: 'docker-parent-php-nginx_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-5-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -5958,7 +5909,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-1-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-1
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6063,7 +6013,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-1-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-1-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6236,7 +6185,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6341,7 +6289,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6514,7 +6461,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6619,7 +6565,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6792,7 +6737,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -6897,7 +6841,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -7070,7 +7013,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -7175,7 +7117,6 @@ jobs:
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5-alpine
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -7348,7 +7289,6 @@ jobs:
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -7453,7 +7393,6 @@ jobs:
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -7630,7 +7569,6 @@ jobs:
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -7735,7 +7673,6 @@ jobs:
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -7912,7 +7849,6 @@ jobs:
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -8017,7 +7953,6 @@ jobs:
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -8194,7 +8129,6 @@ jobs:
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -8299,7 +8233,6 @@ jobs:
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -8476,7 +8409,6 @@ jobs:
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -8581,7 +8513,6 @@ jobs:
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
@@ -8943,7 +8874,6 @@ jobs:
         with:
           name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/base_ubuntu-22-04
-          digest-mismatch: warn
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
