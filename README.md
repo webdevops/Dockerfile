@@ -20,7 +20,7 @@ Automated build and test running on [Gitlab CI](https://gitlab.com/webdevops/doc
 
 Or write an issue in our [GitHub repository](https://github.com/webdevops/Dockerfile/issues).
 
-Or join our discord https://discord.gg/gnYPfZhX
+Or join our discord https://discord.gg/BpBZtXAgJz
 
 ## Build process
 
