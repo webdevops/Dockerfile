@@ -16,7 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
         name: 'Validate that template/* are used to generate Dockerfiles'
         run: |-
@@ -48,20 +50,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/base:alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/base_alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/apache/alpine
           platforms: '${{ matrix.platform }}'
@@ -74,7 +78,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/apache/alpine
           platforms: '${{ matrix.platform }}'
@@ -96,7 +100,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -112,17 +116,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -159,20 +163,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/base:alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/base_alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/base-app/alpine
           platforms: '${{ matrix.platform }}'
@@ -185,7 +191,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/base-app/alpine
           platforms: '${{ matrix.platform }}'
@@ -212,7 +218,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -228,17 +234,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -275,20 +281,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/base:ubuntu-22.04'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/base_ubuntu-22-04
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/base-app/ubuntu-22.04
           platforms: '${{ matrix.platform }}'
@@ -301,7 +309,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/base-app/ubuntu-22.04
           platforms: '${{ matrix.platform }}'
@@ -328,7 +336,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -340,7 +348,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/base-app/ubuntu-22.04
           platforms: '${{ matrix.platform }}'
@@ -352,7 +360,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-base-app_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/base-app_ubuntu-22-04
@@ -367,17 +375,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -416,20 +424,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/bootstrap:alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-bootstrap_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/bootstrap_alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/base/alpine
           platforms: '${{ matrix.platform }}'
@@ -442,7 +452,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/base/alpine
           platforms: '${{ matrix.platform }}'
@@ -469,7 +479,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -481,7 +491,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/base/alpine
           platforms: '${{ matrix.platform }}'
@@ -493,7 +503,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/base_alpine
@@ -508,17 +518,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -555,20 +565,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/bootstrap:ubuntu-22.04'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-bootstrap_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/bootstrap_ubuntu-22-04
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/base/ubuntu-22.04
           platforms: '${{ matrix.platform }}'
@@ -581,7 +593,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/base/ubuntu-22.04
           platforms: '${{ matrix.platform }}'
@@ -608,7 +620,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -620,7 +632,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/base/ubuntu-22.04
           platforms: '${{ matrix.platform }}'
@@ -632,7 +644,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/base_ubuntu-22-04
@@ -647,17 +659,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -696,20 +708,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/bootstrap/alpine
           platforms: '${{ matrix.platform }}'
@@ -722,7 +736,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/bootstrap/alpine
           platforms: '${{ matrix.platform }}'
@@ -749,7 +763,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -761,7 +775,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/bootstrap/alpine
           platforms: '${{ matrix.platform }}'
@@ -773,7 +787,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-bootstrap_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/bootstrap_alpine
@@ -788,17 +802,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -835,20 +849,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/bootstrap/ubuntu-22.04
           platforms: '${{ matrix.platform }}'
@@ -861,7 +877,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/bootstrap/ubuntu-22.04
           platforms: '${{ matrix.platform }}'
@@ -888,7 +904,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -900,7 +916,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/bootstrap/ubuntu-22.04
           platforms: '${{ matrix.platform }}'
@@ -912,7 +928,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-bootstrap_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/bootstrap_ubuntu-22-04
@@ -927,17 +943,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -976,20 +992,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/base-app:ubuntu-22.04'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-base-app_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/base-app_ubuntu-22-04
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/dockerfile-build-env/latest
           platforms: '${{ matrix.platform }}'
@@ -1002,7 +1020,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/dockerfile-build-env/latest
           platforms: '${{ matrix.platform }}'
@@ -1016,7 +1034,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -1032,17 +1050,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -1079,20 +1097,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/base:alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-base_alpine-${{ matrix.arch }}'
           path: .ci-oci-image/base_alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/nginx/alpine
           platforms: '${{ matrix.platform }}'
@@ -1105,7 +1125,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/nginx/alpine
           platforms: '${{ matrix.platform }}'
@@ -1127,7 +1147,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -1143,17 +1163,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -1190,20 +1210,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.2'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-apache_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-2
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.2
           platforms: '${{ matrix.platform }}'
@@ -1216,7 +1238,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.2
           platforms: '${{ matrix.platform }}'
@@ -1238,7 +1260,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -1267,20 +1289,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.2-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-apache_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-2-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -1293,7 +1317,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -1315,7 +1339,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -1331,17 +1355,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -1365,17 +1389,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -1412,20 +1436,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.3'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-apache_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-3
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.3
           platforms: '${{ matrix.platform }}'
@@ -1438,7 +1464,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.3
           platforms: '${{ matrix.platform }}'
@@ -1460,7 +1486,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -1489,20 +1515,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.3-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-apache_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-3-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -1515,7 +1543,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -1537,7 +1565,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -1553,17 +1581,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -1587,17 +1615,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -1634,20 +1662,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.4'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-apache_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-4
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.4
           platforms: '${{ matrix.platform }}'
@@ -1660,7 +1690,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.4
           platforms: '${{ matrix.platform }}'
@@ -1682,7 +1712,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -1711,20 +1741,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.4-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-apache_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-4-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -1737,7 +1769,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -1759,7 +1791,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -1775,17 +1807,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -1809,17 +1841,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -1856,20 +1888,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.5'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-apache_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-5
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.5
           platforms: '${{ matrix.platform }}'
@@ -1882,7 +1916,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.5
           platforms: '${{ matrix.platform }}'
@@ -1904,7 +1938,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -1933,20 +1967,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.5-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-apache_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-5-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -1959,7 +1995,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache-dev/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -1981,7 +2017,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -1997,17 +2033,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -2031,17 +2067,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -2078,20 +2114,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.2
           platforms: '${{ matrix.platform }}'
@@ -2104,7 +2142,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.2
           platforms: '${{ matrix.platform }}'
@@ -2126,7 +2164,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -2138,7 +2176,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.2
           platforms: '${{ matrix.platform }}'
@@ -2150,7 +2188,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-apache_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-2
@@ -2178,20 +2216,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -2204,7 +2244,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -2226,7 +2266,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -2238,7 +2278,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -2250,7 +2290,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-apache_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-2-alpine
@@ -2265,17 +2305,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -2299,17 +2339,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -2346,20 +2386,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.3
           platforms: '${{ matrix.platform }}'
@@ -2372,7 +2414,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.3
           platforms: '${{ matrix.platform }}'
@@ -2394,7 +2436,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -2406,7 +2448,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.3
           platforms: '${{ matrix.platform }}'
@@ -2418,7 +2460,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-apache_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-3
@@ -2446,20 +2488,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -2472,7 +2516,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -2494,7 +2538,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -2506,7 +2550,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -2518,7 +2562,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-apache_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-3-alpine
@@ -2533,17 +2577,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -2567,17 +2611,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -2614,20 +2658,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.4
           platforms: '${{ matrix.platform }}'
@@ -2640,7 +2686,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.4
           platforms: '${{ matrix.platform }}'
@@ -2662,7 +2708,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -2674,7 +2720,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.4
           platforms: '${{ matrix.platform }}'
@@ -2686,7 +2732,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-apache_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-4
@@ -2714,20 +2760,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -2740,7 +2788,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -2762,7 +2810,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -2774,7 +2822,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -2786,7 +2834,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-apache_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-4-alpine
@@ -2801,17 +2849,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -2835,17 +2883,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -2882,20 +2930,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.5
           platforms: '${{ matrix.platform }}'
@@ -2908,7 +2958,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.5
           platforms: '${{ matrix.platform }}'
@@ -2930,7 +2980,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -2942,7 +2992,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.5
           platforms: '${{ matrix.platform }}'
@@ -2954,7 +3004,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-apache_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-5
@@ -2982,20 +3032,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -3008,7 +3060,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -3030,7 +3082,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -3042,7 +3094,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-apache/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -3054,7 +3106,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-apache_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-apache_8-5-alpine
@@ -3069,17 +3121,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -3103,17 +3155,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -3150,20 +3202,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.2
           platforms: '${{ matrix.platform }}'
@@ -3176,7 +3230,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.2
           platforms: '${{ matrix.platform }}'
@@ -3203,7 +3257,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -3232,20 +3286,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -3258,7 +3314,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -3285,7 +3341,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -3301,17 +3357,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -3335,17 +3391,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -3382,20 +3438,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.3
           platforms: '${{ matrix.platform }}'
@@ -3408,7 +3466,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.3
           platforms: '${{ matrix.platform }}'
@@ -3435,7 +3493,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -3464,20 +3522,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -3490,7 +3550,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -3517,7 +3577,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -3533,17 +3593,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -3567,17 +3627,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -3614,20 +3674,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.4
           platforms: '${{ matrix.platform }}'
@@ -3640,7 +3702,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.4
           platforms: '${{ matrix.platform }}'
@@ -3667,7 +3729,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -3696,20 +3758,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -3722,7 +3786,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -3749,7 +3813,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -3765,17 +3829,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -3799,17 +3863,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -3846,20 +3910,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.5
           platforms: '${{ matrix.platform }}'
@@ -3872,7 +3938,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.5
           platforms: '${{ matrix.platform }}'
@@ -3899,7 +3965,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -3928,20 +3994,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -3954,7 +4022,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-dev/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -3981,7 +4049,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -3997,17 +4065,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -4031,17 +4099,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -4078,20 +4146,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.2'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-nginx_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-2
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.2
           platforms: '${{ matrix.platform }}'
@@ -4104,7 +4174,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.2
           platforms: '${{ matrix.platform }}'
@@ -4126,7 +4196,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -4155,20 +4225,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.2-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-nginx_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-2-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -4181,7 +4253,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -4203,7 +4275,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -4219,17 +4291,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -4253,17 +4325,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -4300,20 +4372,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.3'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-nginx_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-3
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.3
           platforms: '${{ matrix.platform }}'
@@ -4326,7 +4400,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.3
           platforms: '${{ matrix.platform }}'
@@ -4348,7 +4422,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -4377,20 +4451,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.3-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-nginx_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-3-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -4403,7 +4479,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -4425,7 +4501,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -4441,17 +4517,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -4475,17 +4551,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -4522,20 +4598,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.4'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-nginx_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-4
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.4
           platforms: '${{ matrix.platform }}'
@@ -4548,7 +4626,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.4
           platforms: '${{ matrix.platform }}'
@@ -4570,7 +4648,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -4599,20 +4677,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.4-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-nginx_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-4-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -4625,7 +4705,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -4647,7 +4727,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -4663,17 +4743,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -4697,17 +4777,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -4744,20 +4824,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.5'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-nginx_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-5
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.5
           platforms: '${{ matrix.platform }}'
@@ -4770,7 +4852,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.5
           platforms: '${{ matrix.platform }}'
@@ -4792,7 +4874,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -4821,20 +4903,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.5-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php-nginx_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-5-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -4847,7 +4931,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx-dev/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -4869,7 +4953,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -4885,17 +4969,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -4919,17 +5003,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -4966,20 +5050,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.2
           platforms: '${{ matrix.platform }}'
@@ -4992,7 +5078,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.2
           platforms: '${{ matrix.platform }}'
@@ -5019,7 +5105,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -5031,7 +5117,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.2
           platforms: '${{ matrix.platform }}'
@@ -5043,7 +5129,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-nginx_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-2
@@ -5071,20 +5157,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -5097,7 +5185,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -5124,7 +5212,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -5136,7 +5224,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -5148,7 +5236,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-nginx_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-2-alpine
@@ -5163,17 +5251,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -5197,17 +5285,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -5244,20 +5332,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.3
           platforms: '${{ matrix.platform }}'
@@ -5270,7 +5360,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.3
           platforms: '${{ matrix.platform }}'
@@ -5297,7 +5387,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -5309,7 +5399,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.3
           platforms: '${{ matrix.platform }}'
@@ -5321,7 +5411,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-nginx_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-3
@@ -5349,20 +5439,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -5375,7 +5467,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -5402,7 +5494,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -5414,7 +5506,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -5426,7 +5518,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-nginx_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-3-alpine
@@ -5441,17 +5533,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -5475,17 +5567,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -5522,20 +5614,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.4
           platforms: '${{ matrix.platform }}'
@@ -5548,7 +5642,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.4
           platforms: '${{ matrix.platform }}'
@@ -5575,7 +5669,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -5587,7 +5681,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.4
           platforms: '${{ matrix.platform }}'
@@ -5599,7 +5693,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-nginx_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-4
@@ -5627,20 +5721,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -5653,7 +5749,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -5680,7 +5776,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -5692,7 +5788,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -5704,7 +5800,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-nginx_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-4-alpine
@@ -5719,17 +5815,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -5753,17 +5849,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -5800,20 +5896,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.5
           platforms: '${{ matrix.platform }}'
@@ -5826,7 +5924,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.5
           platforms: '${{ matrix.platform }}'
@@ -5853,7 +5951,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -5865,7 +5963,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.5
           platforms: '${{ matrix.platform }}'
@@ -5877,7 +5975,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-nginx_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-5
@@ -5905,20 +6003,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5-alpine
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -5931,7 +6031,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -5958,7 +6058,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -5970,7 +6070,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-nginx/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -5982,7 +6082,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php-nginx_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php-nginx_8-5-alpine
@@ -5997,17 +6097,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -6031,17 +6131,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -6078,20 +6178,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.2
           platforms: '${{ matrix.platform }}'
@@ -6104,7 +6206,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.2
           platforms: '${{ matrix.platform }}'
@@ -6131,7 +6233,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -6143,7 +6245,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.2
           platforms: '${{ matrix.platform }}'
@@ -6155,7 +6257,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php_8-2-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2
@@ -6183,20 +6285,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -6209,7 +6313,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -6236,7 +6340,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -6248,7 +6352,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.2-alpine
           platforms: '${{ matrix.platform }}'
@@ -6260,7 +6364,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php_8-2-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-2-alpine
@@ -6275,17 +6379,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -6311,17 +6415,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -6360,20 +6464,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.3
           platforms: '${{ matrix.platform }}'
@@ -6386,7 +6492,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.3
           platforms: '${{ matrix.platform }}'
@@ -6413,7 +6519,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -6425,7 +6531,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.3
           platforms: '${{ matrix.platform }}'
@@ -6437,7 +6543,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php_8-3-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3
@@ -6465,20 +6571,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -6491,7 +6599,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -6518,7 +6626,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -6530,7 +6638,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.3-alpine
           platforms: '${{ matrix.platform }}'
@@ -6542,7 +6650,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php_8-3-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-3-alpine
@@ -6557,17 +6665,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -6593,17 +6701,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -6642,20 +6750,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.4
           platforms: '${{ matrix.platform }}'
@@ -6668,7 +6778,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.4
           platforms: '${{ matrix.platform }}'
@@ -6695,7 +6805,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -6707,7 +6817,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.4
           platforms: '${{ matrix.platform }}'
@@ -6719,7 +6829,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php_8-4-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4
@@ -6747,20 +6857,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -6773,7 +6885,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -6800,7 +6912,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -6812,7 +6924,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.4-alpine
           platforms: '${{ matrix.platform }}'
@@ -6824,7 +6936,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php_8-4-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-4-alpine
@@ -6839,17 +6951,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -6875,17 +6987,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -6924,20 +7036,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.5
           platforms: '${{ matrix.platform }}'
@@ -6950,7 +7064,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.5
           platforms: '${{ matrix.platform }}'
@@ -6977,7 +7091,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -6989,7 +7103,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.5
           platforms: '${{ matrix.platform }}'
@@ -7001,7 +7115,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php_8-5-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5
@@ -7029,20 +7143,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -7055,7 +7171,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -7082,7 +7198,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -7094,7 +7210,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/php-official/8.5-alpine
           platforms: '${{ matrix.platform }}'
@@ -7106,7 +7222,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-php_8-5-alpine-${{ matrix.arch }}'
           path: .ci-oci-image/php_8-5-alpine
@@ -7121,17 +7237,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -7157,17 +7273,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -7206,12 +7322,14 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Build (load locally)'
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/storage/latest
           platforms: '${{ matrix.platform }}'
@@ -7224,7 +7342,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -7240,17 +7358,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -7287,12 +7405,14 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Build (load locally)'
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/toolbox/latest
           platforms: '${{ matrix.platform }}'
@@ -7305,7 +7425,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -7317,7 +7437,7 @@ jobs:
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/toolbox/latest
           platforms: '${{ matrix.platform }}'
@@ -7328,7 +7448,7 @@ jobs:
       -
         name: 'Upload image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
           path: .ci-oci-image/toolbox_latest
@@ -7343,17 +7463,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
@@ -7390,20 +7510,22 @@ jobs:
     container: webdevops/dockerfile-build-env
     steps:
       -
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Download parent image (OCI layout): webdevops/base:ubuntu-22.04'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v8
         with:
           name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
           path: .ci-oci-image/base_ubuntu-22-04
       -
         name: 'Build (load locally)'
         if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/vsftp/latest
           platforms: '${{ matrix.platform }}'
@@ -7416,7 +7538,7 @@ jobs:
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: docker/vsftp/latest
           platforms: '${{ matrix.platform }}'
@@ -7438,7 +7560,7 @@ jobs:
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
@@ -7454,17 +7576,17 @@ jobs:
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
       -
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: 'Login to ghcr.io'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Login to hub.docker.com'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: '${{ secrets.DOCKERHUB_USERNAME }}'
           password: '${{ secrets.DOCKERHUB_TOKEN }}'
