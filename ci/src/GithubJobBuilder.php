@@ -117,8 +117,7 @@ class GithubJobBuilder
                                     [
                                         'context' => dirname(str_replace(__DIR__ . '/../../', '', $node['file'])),
                                         'platforms' => '${{ matrix.platform }}',
-                                        'cache-from' => 'type=gha',
-                                        'cache-to' => 'type=gha,mode=max',
+                                        ...$this->buildCacheWith($node),
                                         'build-args' => implode("\n", [
                                             'TARGETARCH=${{ matrix.arch }}',
                                         ]),
@@ -215,11 +214,21 @@ class GithubJobBuilder
             'platforms' => '${{ matrix.platform }}',
             'load' => true,
             'tags' => 'ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'],
-            'cache-from' => 'type=gha',
-            'cache-to' => 'type=gha,mode=max',
+            ...$this->buildCacheWith($node),
             'build-args' => implode("\n", [
                 'TARGETARCH=${{ matrix.arch }}',
             ]),
+        ];
+    }
+
+    private function buildCacheWith(array $node): array
+    {
+        // Keep the full image/tag to avoid normalization collisions, and omit
+        // commit/branch identifiers so repeated builds can reuse the same cache.
+        $cache = 'type=gha,scope=' . $node['id'] . '-${{ matrix.arch }}';
+        return [
+            'cache-from' => $cache,
+            'cache-to' => $cache . ',mode=max',
         ];
     }
 
@@ -372,6 +381,7 @@ class GithubJobBuilder
                     'run' => implode("\n", [
                         'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install',
                         'docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci',
+                        'docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine php ci/tests/cache-scopes.php',
                         'git diff --exit-code --color=always',
                     ]),
                 ],

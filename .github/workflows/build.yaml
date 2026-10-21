@@ -27,6 +27,7 @@ jobs:
         run: |-
           docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install
           docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci
+          docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine php ci/tests/cache-scopes.php
           git diff --exit-code --color=always
   apache_alpine:
     strategy:
@@ -67,8 +68,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/apache:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/apache:alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/apache:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -79,8 +80,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/apache:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/apache:alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/apache:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/base:alpine=oci-layout://.ci-oci-image/base_alpine:ci-parent-image'
       -
@@ -176,8 +177,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/base-app:alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/base-app:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -188,8 +189,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/base-app:alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/base-app:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/base:alpine=oci-layout://.ci-oci-image/base_alpine:ci-parent-image'
       -
@@ -290,8 +291,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -302,8 +303,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/base:ubuntu-22.04=oci-layout://.ci-oci-image/base_ubuntu-22-04:ci-parent-image'
       -
@@ -338,8 +339,8 @@ jobs:
         with:
           context: docker/base-app/ubuntu-22.04
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/base:ubuntu-22.04=oci-layout://.ci-oci-image/base_ubuntu-22-04:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/base-app_ubuntu-22-04'
@@ -428,8 +429,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/base:alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/base:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -440,8 +441,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/base:alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/base:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/bootstrap:alpine=oci-layout://.ci-oci-image/bootstrap_alpine:ci-parent-image'
       -
@@ -476,8 +477,8 @@ jobs:
         with:
           context: docker/base/alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/base:alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/base:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/bootstrap:alpine=oci-layout://.ci-oci-image/bootstrap_alpine:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/base_alpine'
@@ -564,8 +565,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -576,8 +577,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/bootstrap:ubuntu-22.04=oci-layout://.ci-oci-image/bootstrap_ubuntu-22-04:ci-parent-image'
       -
@@ -612,8 +613,8 @@ jobs:
         with:
           context: docker/base/ubuntu-22.04
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/bootstrap:ubuntu-22.04=oci-layout://.ci-oci-image/bootstrap_ubuntu-22-04:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/base_ubuntu-22-04'
@@ -702,8 +703,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/bootstrap:alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/bootstrap:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -714,8 +715,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/bootstrap:alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/bootstrap:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
@@ -750,8 +751,8 @@ jobs:
         with:
           context: docker/bootstrap/alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/bootstrap:alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/bootstrap:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/bootstrap_alpine'
@@ -838,8 +839,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -850,8 +851,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
@@ -886,8 +887,8 @@ jobs:
         with:
           context: docker/bootstrap/ubuntu-22.04
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/bootstrap_ubuntu-22-04'
@@ -976,8 +977,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -988,8 +989,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/base-app:ubuntu-22.04=oci-layout://.ci-oci-image/base-app_ubuntu-22-04:ci-parent-image'
       -
@@ -1077,8 +1078,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/nginx:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/nginx:alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/nginx:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -1089,8 +1090,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/nginx:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/nginx:alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/nginx:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/base:alpine=oci-layout://.ci-oci-image/base_alpine:ci-parent-image'
       -
@@ -1186,8 +1187,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -1198,8 +1199,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.2=oci-layout://.ci-oci-image/php-apache_8-2:ci-parent-image'
       -
@@ -1261,8 +1262,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -1273,8 +1274,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.2-alpine=oci-layout://.ci-oci-image/php-apache_8-2-alpine:ci-parent-image'
       -
@@ -1404,8 +1405,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -1416,8 +1417,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.3=oci-layout://.ci-oci-image/php-apache_8-3:ci-parent-image'
       -
@@ -1479,8 +1480,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -1491,8 +1492,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.3-alpine=oci-layout://.ci-oci-image/php-apache_8-3-alpine:ci-parent-image'
       -
@@ -1622,8 +1623,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -1634,8 +1635,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.4=oci-layout://.ci-oci-image/php-apache_8-4:ci-parent-image'
       -
@@ -1697,8 +1698,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -1709,8 +1710,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.4-alpine=oci-layout://.ci-oci-image/php-apache_8-4-alpine:ci-parent-image'
       -
@@ -1840,8 +1841,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -1852,8 +1853,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.5=oci-layout://.ci-oci-image/php-apache_8-5:ci-parent-image'
       -
@@ -1915,8 +1916,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -1927,8 +1928,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.5-alpine=oci-layout://.ci-oci-image/php-apache_8-5-alpine:ci-parent-image'
       -
@@ -2058,8 +2059,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -2070,8 +2071,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
       -
@@ -2101,8 +2102,8 @@ jobs:
         with:
           context: docker/php-apache/8.2
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-2'
@@ -2155,8 +2156,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -2167,8 +2168,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
       -
@@ -2198,8 +2199,8 @@ jobs:
         with:
           context: docker/php-apache/8.2-alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-2-alpine'
@@ -2320,8 +2321,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -2332,8 +2333,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
       -
@@ -2363,8 +2364,8 @@ jobs:
         with:
           context: docker/php-apache/8.3
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-3'
@@ -2417,8 +2418,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -2429,8 +2430,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
       -
@@ -2460,8 +2461,8 @@ jobs:
         with:
           context: docker/php-apache/8.3-alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-3-alpine'
@@ -2582,8 +2583,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -2594,8 +2595,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
       -
@@ -2625,8 +2626,8 @@ jobs:
         with:
           context: docker/php-apache/8.4
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-4'
@@ -2679,8 +2680,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -2691,8 +2692,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
       -
@@ -2722,8 +2723,8 @@ jobs:
         with:
           context: docker/php-apache/8.4-alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-4-alpine'
@@ -2844,8 +2845,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -2856,8 +2857,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
       -
@@ -2887,8 +2888,8 @@ jobs:
         with:
           context: docker/php-apache/8.5
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-5'
@@ -2941,8 +2942,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -2953,8 +2954,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
       -
@@ -2984,8 +2985,8 @@ jobs:
         with:
           context: docker/php-apache/8.5-alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-5-alpine'
@@ -3106,8 +3107,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -3118,8 +3119,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
       -
@@ -3186,8 +3187,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -3198,8 +3199,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
       -
@@ -3334,8 +3335,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -3346,8 +3347,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
       -
@@ -3414,8 +3415,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -3426,8 +3427,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
       -
@@ -3562,8 +3563,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -3574,8 +3575,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
       -
@@ -3642,8 +3643,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -3654,8 +3655,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
       -
@@ -3790,8 +3791,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -3802,8 +3803,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
       -
@@ -3870,8 +3871,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -3882,8 +3883,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
       -
@@ -4018,8 +4019,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -4030,8 +4031,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.2=oci-layout://.ci-oci-image/php-nginx_8-2:ci-parent-image'
       -
@@ -4093,8 +4094,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -4105,8 +4106,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.2-alpine=oci-layout://.ci-oci-image/php-nginx_8-2-alpine:ci-parent-image'
       -
@@ -4236,8 +4237,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -4248,8 +4249,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.3=oci-layout://.ci-oci-image/php-nginx_8-3:ci-parent-image'
       -
@@ -4311,8 +4312,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -4323,8 +4324,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.3-alpine=oci-layout://.ci-oci-image/php-nginx_8-3-alpine:ci-parent-image'
       -
@@ -4454,8 +4455,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -4466,8 +4467,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.4=oci-layout://.ci-oci-image/php-nginx_8-4:ci-parent-image'
       -
@@ -4529,8 +4530,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -4541,8 +4542,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.4-alpine=oci-layout://.ci-oci-image/php-nginx_8-4-alpine:ci-parent-image'
       -
@@ -4672,8 +4673,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -4684,8 +4685,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.5=oci-layout://.ci-oci-image/php-nginx_8-5:ci-parent-image'
       -
@@ -4747,8 +4748,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -4759,8 +4760,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.5-alpine=oci-layout://.ci-oci-image/php-nginx_8-5-alpine:ci-parent-image'
       -
@@ -4890,8 +4891,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -4902,8 +4903,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
       -
@@ -4938,8 +4939,8 @@ jobs:
         with:
           context: docker/php-nginx/8.2
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-2'
@@ -4992,8 +4993,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -5004,8 +5005,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
       -
@@ -5040,8 +5041,8 @@ jobs:
         with:
           context: docker/php-nginx/8.2-alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-2-alpine'
@@ -5162,8 +5163,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -5174,8 +5175,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
       -
@@ -5210,8 +5211,8 @@ jobs:
         with:
           context: docker/php-nginx/8.3
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-3'
@@ -5264,8 +5265,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -5276,8 +5277,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
       -
@@ -5312,8 +5313,8 @@ jobs:
         with:
           context: docker/php-nginx/8.3-alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-3-alpine'
@@ -5434,8 +5435,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -5446,8 +5447,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
       -
@@ -5482,8 +5483,8 @@ jobs:
         with:
           context: docker/php-nginx/8.4
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-4'
@@ -5536,8 +5537,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -5548,8 +5549,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
       -
@@ -5584,8 +5585,8 @@ jobs:
         with:
           context: docker/php-nginx/8.4-alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-4-alpine'
@@ -5706,8 +5707,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -5718,8 +5719,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
       -
@@ -5754,8 +5755,8 @@ jobs:
         with:
           context: docker/php-nginx/8.5
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-5'
@@ -5808,8 +5809,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -5820,8 +5821,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
       -
@@ -5856,8 +5857,8 @@ jobs:
         with:
           context: docker/php-nginx/8.5-alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-5-alpine'
@@ -5978,8 +5979,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -5990,8 +5991,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
@@ -6026,8 +6027,8 @@ jobs:
         with:
           context: docker/php-official/8.2
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.2-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-2'
@@ -6080,8 +6081,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -6092,8 +6093,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
@@ -6128,8 +6129,8 @@ jobs:
         with:
           context: docker/php-official/8.2-alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.2-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-2-alpine'
@@ -6254,8 +6255,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -6266,8 +6267,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
@@ -6302,8 +6303,8 @@ jobs:
         with:
           context: docker/php-official/8.3
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.3-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-3'
@@ -6356,8 +6357,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -6368,8 +6369,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
@@ -6404,8 +6405,8 @@ jobs:
         with:
           context: docker/php-official/8.3-alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.3-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-3-alpine'
@@ -6530,8 +6531,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -6542,8 +6543,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
@@ -6578,8 +6579,8 @@ jobs:
         with:
           context: docker/php-official/8.4
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.4-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-4'
@@ -6632,8 +6633,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -6644,8 +6645,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
@@ -6680,8 +6681,8 @@ jobs:
         with:
           context: docker/php-official/8.4-alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.4-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-4-alpine'
@@ -6806,8 +6807,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -6818,8 +6819,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
@@ -6854,8 +6855,8 @@ jobs:
         with:
           context: docker/php-official/8.5
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.5-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-5'
@@ -6908,8 +6909,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -6920,8 +6921,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
@@ -6956,8 +6957,8 @@ jobs:
         with:
           context: docker/php-official/8.5-alpine
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/php:8.5-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-5-alpine'
@@ -7074,8 +7075,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/storage:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/storage:latest-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/storage:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -7154,8 +7155,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/toolbox:latest-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/toolbox:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -7176,8 +7177,8 @@ jobs:
         with:
           context: docker/toolbox/latest
           platforms: '${{ matrix.platform }}'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/toolbox:latest-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/toolbox:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/toolbox_latest'
       -
@@ -7263,8 +7264,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/vsftp:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/vsftp:latest-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/vsftp:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
       -
         name: 'Build (load locally, from parent artifact)'
@@ -7275,8 +7276,8 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/vsftp:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          cache-from: type=gha
-          cache-to: 'type=gha,mode=max'
+          cache-from: 'type=gha,scope=webdevops/vsftp:latest-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/vsftp:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/base:latest=oci-layout://.ci-oci-image/base_ubuntu-22-04:ci-parent-image'
       -

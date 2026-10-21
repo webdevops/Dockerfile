@@ -142,7 +142,7 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     && rm -rf master.zip guetzli-master \
     # Install new version of ICU
     && curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-73-1/icu4c-73_1-src.tgz \
-    && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu* \
+    && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make -j"$(nproc)" && make install && cd / && rm -rf /tmp/icu* \
     # Install extensions
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-avif --with-jpeg --with-freetype --with-webp \
@@ -151,7 +151,7 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && docker-php-ext-configure ldap \
     && docker-php-ext-configure ftp --with-ftp-ssl \
-    && docker-php-ext-install \
+    && docker-php-ext-install -j"$(nproc)" \
         bcmath \
         amqp \
         imagick \
