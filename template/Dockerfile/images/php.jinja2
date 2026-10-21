@@ -34,7 +34,7 @@
         libmcrypt4 \
         libzip4 \
         libyaml-0-2 \
-{%- if version == '8.1' or version == '8.2' or version == '8.3' %}
+{%- if version == '8.2' or version == '8.3' %}
         libc-client2007e \
 {%- endif %}
         # Dev and headers
@@ -62,9 +62,7 @@
         libmagick++-dev \
         libgmp-dev \
         libyaml-dev \
-{%- if version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         libssl-dev \
-{%- endif %}
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -126,11 +124,7 @@
     && pecl install apcu \
     && pecl install excimer \
     && pecl install opentelemetry \
-{%- if version == '8.1' %}
-    && pecl install protobuf-4.33.5 \
-{%- else %}
     && pecl install protobuf \
-{%- endif %}
     && pecl install xmlrpc-1.0.0RC3 \
     && pecl install vips \
     && pecl install yaml \
@@ -169,9 +163,7 @@
         libmagick++-dev \
         libgmp-dev \
         libyaml-dev \
-{%- if version == '8.2' or version == '8.3' or version == '8.4' or version == '8.5' %}
         libssl-dev \
-{%- endif %}
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
@@ -226,11 +218,7 @@
         icu-dev \
         postgresql-dev \
         libxml2-dev \
-    {%- if version == '8.1' %}
-        ldb-dev \
-    {%- else %}
         samba-dev \
-    {%- endif %}
         pcre-dev \
         libxslt-dev \
         libzip-dev \
@@ -305,11 +293,7 @@
     && pecl install apcu \
     && pecl install excimer \
     && pecl install opentelemetry \
-{%- if version == '8.1' %}
-    && pecl install protobuf-4.33.5 \
-{%- else %}
     && pecl install protobuf \
-{%- endif %}
     && pecl install vips \
     && pecl install yaml \
     && pecl install redis \
@@ -350,11 +334,7 @@
         icu-dev \
         postgresql-dev \
         libxml2-dev \
-    {%- if version == '8.1' %}
-        ldb-dev \
-    {%- else %}
         samba-dev \
-    {%- endif %}
         pcre-dev \
         libxslt-dev \
         libzip-dev \
