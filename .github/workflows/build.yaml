@@ -67,7 +67,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/apache:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/apache:alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/apache:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -80,7 +80,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/apache:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/apache:alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/apache:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -178,7 +178,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/base-app:alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/base-app:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -191,7 +191,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/base-app:alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/base-app:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -294,7 +294,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -307,7 +307,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -435,7 +435,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/base:alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/base:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -448,7 +448,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/base:alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/base:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -574,7 +574,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -587,7 +587,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -715,7 +715,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/bootstrap:alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/bootstrap:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -728,7 +728,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/bootstrap:alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/bootstrap:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -854,7 +854,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -867,7 +867,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -995,7 +995,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1008,7 +1008,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1098,7 +1098,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/nginx:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/nginx:alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/nginx:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1111,7 +1111,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/nginx:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/nginx:alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/nginx:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1209,7 +1209,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.2-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1222,7 +1222,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.2-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1286,7 +1286,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.2-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1299,7 +1299,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.2-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1431,7 +1431,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.3-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1444,7 +1444,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.3-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1508,7 +1508,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.3-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1521,7 +1521,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.3-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1653,7 +1653,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.4-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1666,7 +1666,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.4-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1730,7 +1730,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.4-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1743,7 +1743,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.4-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1875,7 +1875,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.5-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1888,7 +1888,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.5-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1952,7 +1952,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.5-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -1965,7 +1965,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.5-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2097,7 +2097,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.2-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2110,7 +2110,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.2-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2197,7 +2197,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.2-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2210,7 +2210,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.2-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2365,7 +2365,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.3-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2378,7 +2378,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.3-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2465,7 +2465,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.3-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2478,7 +2478,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.3-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2633,7 +2633,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.4-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2646,7 +2646,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.4-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2733,7 +2733,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.4-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2746,7 +2746,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.4-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2901,7 +2901,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.5-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -2914,7 +2914,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.5-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3001,7 +3001,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.5-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3014,7 +3014,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-apache:8.5-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-apache:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3169,7 +3169,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.2-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3182,7 +3182,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.2-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3251,7 +3251,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.2-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3264,7 +3264,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.2-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3401,7 +3401,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.3-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3414,7 +3414,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.3-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3483,7 +3483,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.3-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3496,7 +3496,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.3-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3633,7 +3633,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.4-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3646,7 +3646,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.4-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3715,7 +3715,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.4-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3728,7 +3728,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.4-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3865,7 +3865,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.5-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3878,7 +3878,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.5-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3947,7 +3947,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.5-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -3960,7 +3960,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-dev:8.5-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4097,7 +4097,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.2-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4110,7 +4110,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.2-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4174,7 +4174,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.2-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4187,7 +4187,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.2-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4319,7 +4319,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.3-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4332,7 +4332,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.3-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4396,7 +4396,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.3-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4409,7 +4409,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.3-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4541,7 +4541,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.4-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4554,7 +4554,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.4-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4618,7 +4618,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.4-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4631,7 +4631,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.4-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4763,7 +4763,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.5-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4776,7 +4776,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.5-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4840,7 +4840,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.5-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4853,7 +4853,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.5-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4985,7 +4985,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.2-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -4998,7 +4998,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.2-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5090,7 +5090,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.2-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5103,7 +5103,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.2-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5263,7 +5263,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.3-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5276,7 +5276,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.3-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5368,7 +5368,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.3-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5381,7 +5381,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.3-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5541,7 +5541,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.4-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5554,7 +5554,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.4-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5646,7 +5646,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.4-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5659,7 +5659,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.4-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5819,7 +5819,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.5-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5832,7 +5832,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.5-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5924,7 +5924,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.5-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -5937,7 +5937,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php-nginx:8.5-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6097,7 +6097,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.2-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6110,7 +6110,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.2-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6202,7 +6202,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.2-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6215,7 +6215,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.2-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6379,7 +6379,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.3-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6392,7 +6392,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.3-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6484,7 +6484,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.3-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6497,7 +6497,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.3-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6661,7 +6661,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.4-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6674,7 +6674,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.4-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6766,7 +6766,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.4-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6779,7 +6779,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.4-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6943,7 +6943,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.5-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -6956,7 +6956,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.5-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -7048,7 +7048,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.5-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -7061,7 +7061,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/php:8.5-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -7217,7 +7217,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/storage:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/storage:latest-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/storage:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -7298,7 +7298,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/toolbox:latest-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/toolbox:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -7409,7 +7409,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/vsftp:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/vsftp:latest-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/vsftp:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
@@ -7422,7 +7422,7 @@ jobs:
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/vsftp:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          no-cache: "${{ github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.run_attempt > 1) }}"
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
           cache-from: 'type=gha,scope=webdevops/vsftp:latest-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/vsftp:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'

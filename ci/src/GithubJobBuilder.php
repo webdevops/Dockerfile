@@ -217,8 +217,8 @@ class GithubJobBuilder
             'platforms' => '${{ matrix.platform }}',
             'load' => true,
             'tags' => 'ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'],
-            // Re-run all jobs on a PR to test a fresh build of the full image chain.
-            'no-cache' => '${{ github.event_name == \'schedule\' || (github.event_name == \'pull_request\' && github.run_attempt > 1) }}',
+            // Re-run all jobs to test a fresh build of the full image chain.
+            'no-cache' => '${{ github.event_name == \'schedule\' || github.run_attempt > 1 }}',
             ...$this->buildCacheWith($node),
             'build-args' => implode("\n", [
                 'TARGETARCH=${{ matrix.arch }}',
