@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # (c) 2016 WebDevOps.io
@@ -25,7 +25,26 @@ from webdevops.testinfra import TestinfraDockerPlugin
 from doit.task import dict_to_task
 import pytest
 
+# Define standalone functions for better multiprocessing compatibility
+def task_run_wrapper(dockerfile, configuration_dict, task):
+    """
+    Wrapper for docker test testinfra task that recreates objects in worker process
+    """
+    from webdevops.Configuration import dotdictify
+    
+    # Recreate objects in worker process
+    configuration = dotdictify(configuration_dict)
+    
+    return DockerTestTestinfraTaskLoader.task_run(dockerfile, configuration, task)
+
+def task_runner_wrapper(func, args, task):
+    """
+    Wrapper for task runner
+    """
+    return BaseTaskLoader.task_runner(func, args, task)
+
 class DockerTestTestinfraTaskLoader(BaseDockerTaskLoader):
+    cmd_options = ()
 
     def generate_task_list(self, dockerfile_list):
         """
@@ -33,11 +52,14 @@ class DockerTestTestinfraTaskLoader(BaseDockerTaskLoader):
         """
         tasklist = []
 
+        # Convert configuration to dict for serialization
+        configuration_dict = self.configuration.to_dict()
+
         for dockerfile in dockerfile_list:
             task = {
                 'name': 'DockerTestTestinfra|%s' % dockerfile['image']['fullname'],
                 'title': DockerTestTestinfraTaskLoader.task_title,
-                'actions': [(BaseTaskLoader.task_runner, [DockerTestTestinfraTaskLoader.task_run, [dockerfile, self.configuration]])],
+                'actions': [(task_runner_wrapper, [task_run_wrapper, [dockerfile, configuration_dict]])],
                 'task_dep': []
             }
 
@@ -70,8 +92,8 @@ class DockerTestTestinfraTaskLoader(BaseDockerTaskLoader):
             test_opts.extend(['-v'])
 
         if configuration.get('dryRun'):
-            print '         image: %s' % (dockerfile['image']['fullname'])
-            print '          args: %s' % (' '.join(test_opts))
+            print(')         image: %s' % (dockerfile['image']['fullname']))
+            print(')          args: %s' % (' '.join(test_opts)))
             return True
 
         exitcode = pytest.main(test_opts, plugins=[TestinfraDockerPlugin(configuration=configuration, docker_image=dockerfile['image']['fullname'])])

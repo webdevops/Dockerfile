@@ -110,5 +110,5 @@ class DockerPyClient(DockerBaseClient):
                 if 'id' in line:
                     message += ' ' + line['id']
                 output_message(message)
-        print ''
+        print('')
         return ret
