@@ -68,19 +68,22 @@ class GithubJobBuilder
                 'steps' => array_values(
                     array_filter(
                         [
-                            ['uses' => 'actions/checkout@v6'],
-                            ['uses' => 'docker/setup-buildx-action@v3'],
+                            [
+                                'uses' => 'actions/checkout@v7',
+                                'with' => ['persist-credentials' => false],
+                            ],
+                            ['uses' => 'docker/setup-buildx-action@v4'],
                             ...$this->downloadParentImageSteps($imageDependencies),
                             array_filter([
                                 'name' => 'Build (load locally)',
                                 'if' => $hasImageDependencies ? '${{ github.ref == \'refs/heads/master\' }}' : null,
-                                'uses' => 'docker/build-push-action@v6',
+                                'uses' => 'docker/build-push-action@v7',
                                 'with' => $this->buildPushWith($node),
                             ], fn ($value): bool => $value !== null),
                             $hasImageDependencies ? [
                                 'name' => 'Build (load locally, from parent artifact)',
                                 'if' => '${{ github.ref != \'refs/heads/master\' }}',
-                                'uses' => 'docker/build-push-action@v6',
+                                'uses' => 'docker/build-push-action@v7',
                                 'with' => array_merge(
                                     $this->buildPushWith($node),
                                     ['build-contexts' => $this->buildContexts($imageDependencies)],
@@ -97,7 +100,7 @@ class GithubJobBuilder
                             [
                                 'if' => '${{github.ref == \'refs/heads/master\'}}',
                                 'name' => 'Login to ghcr.io',
-                                'uses' => 'docker/login-action@v3',
+                                'uses' => 'docker/login-action@v4',
                                 'with' => [
                                     'registry' => 'ghcr.io',
                                     'username' => '${{ github.actor }}',
@@ -112,7 +115,7 @@ class GithubJobBuilder
                             $hasChildren ? [
                                 'name' => 'Export image (OCI layout)',
                                 'if' => '${{ github.ref != \'refs/heads/master\' }}',
-                                'uses' => 'docker/build-push-action@v6',
+                                'uses' => 'docker/build-push-action@v7',
                                 'with' => array_merge(
                                     [
                                         'context' => dirname(str_replace(__DIR__ . '/../../', '', $node['file'])),
@@ -135,7 +138,7 @@ class GithubJobBuilder
                             $hasChildren ? [
                                 'name' => 'Upload image (OCI layout)',
                                 'if' => '${{ github.ref != \'refs/heads/master\' }}',
-                                'uses' => 'actions/upload-artifact@v4',
+                                'uses' => 'actions/upload-artifact@v7',
                                 'with' => [
                                     'name' => $this->getCiImageArtifactName($node['id']),
                                     'path' => $this->getCiImagePath($node['id']),
@@ -154,10 +157,10 @@ class GithubJobBuilder
                 'needs' => $jobId,
                 'if' => '${{github.ref == \'refs/heads/master\'}}',
                 'steps' => [
-                    ['uses' => 'docker/setup-buildx-action@v3'],
+                    ['uses' => 'docker/setup-buildx-action@v4'],
                     [
                         'name' => 'Login to ghcr.io',
-                        'uses' => 'docker/login-action@v3',
+                        'uses' => 'docker/login-action@v4',
                         'with' => [
                             'registry' => 'ghcr.io',
                             'username' => '${{ github.actor }}',
@@ -166,7 +169,7 @@ class GithubJobBuilder
                     ],
                     [
                         'name' => 'Login to hub.docker.com',
-                        'uses' => 'docker/login-action@v3',
+                        'uses' => 'docker/login-action@v4',
                         'with' => [
                             'username' => '${{ secrets.DOCKERHUB_USERNAME }}',
                             'password' => '${{ secrets.DOCKERHUB_TOKEN }}',
@@ -263,10 +266,12 @@ class GithubJobBuilder
         return array_map(fn (string $imageId): array => [
             'name' => 'Download parent image (OCI layout): ' . $imageId,
             'if' => '${{ github.ref != \'refs/heads/master\' }}',
-            'uses' => 'actions/download-artifact@v4.1.9',
+            'uses' => 'actions/download-artifact@v8',
             'with' => [
                 'name' => $this->getCiImageArtifactName($imageId),
                 'path' => $this->getCiImagePath($imageId),
+                // keep the pre-v8 warn-only behaviour so a transient artifact corruption cannot break the image chain
+                'digest-mismatch' => 'warn',
             ],
         ], $imageIds);
     }
@@ -359,7 +364,10 @@ class GithubJobBuilder
             'name' => 'Validate Automation',
             'runs-on' => 'ubuntu-latest',
             'steps' => [
-                ['uses' => 'actions/checkout@v6'],
+                [
+                    'uses' => 'actions/checkout@v7',
+                    'with' => ['persist-credentials' => false],
+                ],
                 [
                     'name' => 'Validate that template/* are used to generate Dockerfiles',
                     'run' => implode("\n", [
