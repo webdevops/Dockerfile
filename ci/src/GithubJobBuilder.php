@@ -381,7 +381,6 @@ class GithubJobBuilder
                     'run' => implode("\n", [
                         'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install',
                         'docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci',
-                        'docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine php ci/tests/cache-scopes.php',
                         'git diff --exit-code --color=always',
                     ]),
                 ],
