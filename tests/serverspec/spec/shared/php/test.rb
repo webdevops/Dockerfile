@@ -51,6 +51,24 @@ shared_examples 'php::cli::test::php_sapi_name' do
     end
 end
 
+shared_examples 'php::fpm::test::session_upload_progress' do
+    ['http', 'https'].each do |scheme|
+        describe "#{scheme} multipart upload with session upload progress disabled" do
+            it 'preserves file uploads and application sessions', :retry => 20, :retry_wait => 3 do
+                cmd = command("curl --insecure --silent --show-error --fail " \
+                    "--form PHP_SESSION_UPLOAD_PROGRESS=serverspec --form file=@/app/pi-number.html " \
+                    "#{scheme}://localhost/php-test.php?test=session_upload_progress")
+                expect(cmd.exit_status).to eq 0
+                expect(JSON.parse(cmd.stdout)).to eq(
+                    'upload_progress_enabled' => false,
+                    'file_uploaded' => true,
+                    'session_persisted' => true
+                )
+            end
+        end
+    end
+end
+
 shared_examples 'php::fpm::test::sha1' do
     [
         'http://localhost/php-test.php?test=sha1',
