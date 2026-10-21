@@ -27,6 +27,24 @@ Environment variable                          Description                       
 ``PHP_OPCACHE_INTERNED_STRINGS_BUFFER``       ``opcache.interned_strings_buffer``       ``16``
 ============================================= ========================================= ==============================================
 
+Session upload progress
+^^^^^^^^^^^^^^^^^^^^^^^
+
+All PHP image variants set ``session.upload_progress.enabled = Off`` by default.
+This reduces session processing triggered by multipart uploads before application
+code runs. Continue to install PHP security updates.
+
+Regular file uploads (``$_FILES``) and application sessions continue to work.
+Applications using ``PHP_SESSION_UPLOAD_PROGRESS`` to track uploads in
+``$_SESSION`` must opt in, including applications that cancel uploads through
+that progress data. Browser-side upload progress is unaffected.
+
+Enable the feature with the environment variable
+``php.session.upload_progress.enabled=On`` or set
+``session.upload_progress.enabled = On`` in ``/opt/docker/etc/php/php.ini``.
+Restart the container after changing the setting. It cannot be enabled with
+``ini_set()`` because upload parsing happens before application code runs.
+
 PHP FPM  variables
 ^^^^^^^^^^^^^^^^^^
 

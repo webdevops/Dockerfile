@@ -1,6 +1,7 @@
 shared_examples 'collection::php-fpm' do
     include_examples 'php-fpm::layout'
     include_examples 'php-fpm::versioned::layout'
+    include_examples 'php-fpm::configuration'
 end
 
 shared_examples 'collection::php-fpm::public' do
@@ -22,6 +23,7 @@ end
 
 
 shared_examples 'collection::php-fpm::webserver-test::development' do
+    include_examples 'php::fpm::test::session_upload_progress'
     include_examples 'php-fpm::modules'
     include_examples 'php-fpm::versioned::modules'
     include_examples 'php-fpm::modules::development'
@@ -34,6 +36,7 @@ end
 
 
 shared_examples 'collection::php-fpm::webserver-test::production' do
+    include_examples 'php::fpm::test::session_upload_progress'
     include_examples 'php-fpm::modules'
     include_examples 'php-fpm::versioned::modules'
     include_examples 'php-fpm::modules::production'

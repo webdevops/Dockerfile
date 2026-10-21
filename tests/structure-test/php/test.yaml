@@ -90,6 +90,24 @@ fileContentTests:
     expectedContents: ['autostart = true']
 
 commandTests:
+  - name: "session upload progress can be enabled explicitly for CLI"
+    setup: [["/entrypoint", "/bin/bash"]]
+    envVars:
+      - key: "php.session.upload_progress.enabled"
+        value: "On"
+    command: "php"
+    args: ["-r", "echo ini_get('session.upload_progress.enabled') ? 'enabled' : 'disabled';"]
+    expectedOutput: ['^enabled$']
+    exitCode: 0
+  - name: "session upload progress can be enabled explicitly for FPM"
+    setup: [["/entrypoint", "/bin/bash"]]
+    envVars:
+      - key: "php.session.upload_progress.enabled"
+        value: "On"
+    command: "/usr/local/bin/php-fpm"
+    args: ["-i"]
+    expectedOutput: ['session\.upload_progress\.enabled => On => On']
+    exitCode: 0
   - name: "zip"
     command: "which"
     args: ["zip"]

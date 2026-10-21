@@ -44,6 +44,10 @@ shared_examples 'php::cli::configuration' do
             its(:value) { should eq '' }
         end
 
+        context php_config('session.upload_progress.enabled') do
+            its(:value) { should eq '' }
+        end
+
         context php_config('expose_php') do
             its(:value) { should eq '' }
         end
