@@ -136,10 +136,10 @@ commandTests:
     command: "which"
     args: ["patch"]
     expectedOutput: ["/usr/bin/patch"]
-  - name: "PHP version is 8.1 or newer"
+  - name: "PHP version is 8.2 or newer"
     command: "php"
     args: ["-v"]
-    expectedOutput: ['PHP 8\.[1-9][0-9]*\.']
+    expectedOutput: ['PHP 8\.([2-9]|[1-9][0-9]+)\.']
   - name: "fpm config test"
     command: "/usr/local/bin/php-fpm"
     args: ["-t"]
