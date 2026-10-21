@@ -17,8 +17,6 @@ class GithubJobBuilder
      */
     private const PARENT_OCI_TAG = 'ci-parent-image';
 
-    private const CACHE_MAX_AGE_SECONDS = 2 * 24 * 60 * 60;
-
     /**
      * @return array<string, array<string, mixed>>
      */
@@ -72,11 +70,6 @@ class GithubJobBuilder
                         [
                             ['uses' => 'actions/checkout@v6'],
                             ['uses' => 'docker/setup-buildx-action@v3'],
-                            [
-                                'name' => 'Set BuildKit cache window',
-                                'id' => 'build-cache',
-                                'run' => 'echo "window=$(($(date -u +%s) / ' . self::CACHE_MAX_AGE_SECONDS . '))" >> "$GITHUB_OUTPUT"',
-                            ],
                             ...$this->downloadParentImageSteps($imageDependencies),
                             array_filter([
                                 'name' => 'Build (load locally)',
@@ -120,6 +113,7 @@ class GithubJobBuilder
                                 'name' => 'Export image (OCI layout)',
                                 'if' => '${{ github.ref != \'refs/heads/master\' }}',
                                 'uses' => 'docker/build-push-action@v6',
+                                // Reuse the tested local build, including on no-cache reruns.
                                 'with' => array_merge(
                                     [
                                         'context' => dirname(str_replace(__DIR__ . '/../../', '', $node['file'])),
@@ -146,6 +140,8 @@ class GithubJobBuilder
                                     'name' => $this->getCiImageArtifactName($node['id']),
                                     'path' => $this->getCiImagePath($node['id']),
                                     'retention-days' => 1,
+                                    // A rerun must replace the previous attempt's parent image.
+                                    'overwrite' => true,
                                     'compression-level' => 0,
                                     'if-no-files-found' => 'error',
                                 ],
@@ -221,6 +217,8 @@ class GithubJobBuilder
             'platforms' => '${{ matrix.platform }}',
             'load' => true,
             'tags' => 'ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'],
+            // Re-run all jobs on a PR to test a fresh build of the full image chain.
+            'no-cache' => '${{ github.event_name == \'schedule\' || (github.event_name == \'pull_request\' && github.run_attempt > 1) }}',
             ...$this->buildCacheWith($node),
             'build-args' => implode("\n", [
                 'TARGETARCH=${{ matrix.arch }}',
@@ -230,14 +228,10 @@ class GithubJobBuilder
 
     private function buildCacheWith(array $node): array
     {
-        // Keep the full image/tag to avoid normalization collisions, and omit
-        // commit/branch identifiers so repeated builds can reuse the same cache.
-        // GHA has no TTL option: rotate scopes every 48 hours without falling
-        // back to older windows, so old layers cannot be kept alive by exports.
-        $cache = 'type=gha,scope=' . $node['id'] . '-${{ matrix.arch }}-${{ steps.build-cache.outputs.window }}';
+        // Full image/tag and architecture keep scopes unique and reusable
+        // across commits, branches and reruns.
+        $cache = 'type=gha,scope=' . $node['id'] . '-${{ matrix.arch }}';
         return [
-            // Scheduled builds recompile and refresh the current cache window.
-            'no-cache' => '${{ github.event_name == \'schedule\' }}',
             'cache-from' => $cache,
             'cache-to' => $cache . ',mode=max',
         ];
