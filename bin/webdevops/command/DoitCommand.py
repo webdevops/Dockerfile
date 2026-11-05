@@ -28,7 +28,7 @@ class DoitCommand(BaseCommand):
         extra_configuration = {}
 
         if 'threads' in configuration and configuration.get('threads') > 1:
-            arguments.extend(['-n', str(configuration.get('threads')), '--parallel-type', 'process'])
+            arguments.extend(['-n', str(configuration.get('threads')), '--parallel-type', 'thread'])
 
         if 'doitConfig' in configuration:
             extra_configuration = configuration.get('doitConfig')

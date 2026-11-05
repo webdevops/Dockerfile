@@ -27,6 +27,7 @@ from doit.task import dict_to_task
 class BaseDockerTaskLoader(BaseTaskLoader):
 
     docker_client = False
+    cmd_options = ()
 
     def __init__(self, configuration):
         """
@@ -37,12 +38,10 @@ class BaseDockerTaskLoader(BaseTaskLoader):
         # Init docker client
         self.docker_client = configuration.get('dockerClient')
 
-    def load_tasks(self, cmd, opt_values, pos_args):
+    def load_tasks(self, cmd, pos_args):
         """
         DOIT task list generator
         """
-        config = {'verbosity': self.configuration.get('verbosity')}
-
         dockerfile_list = DockerfileUtility.find_dockerfiles_in_path(
             base_path=self.configuration.get('dockerPath'),
             path_regex=self.configuration.get('docker.pathRegex'),
@@ -52,7 +51,7 @@ class BaseDockerTaskLoader(BaseTaskLoader):
         )
         dockerfile_list = self.process_dockerfile_list(dockerfile_list)
 
-        #import json,sys;print json.dumps(dockerfile_list, sort_keys=True, indent = 4, separators = (',', ': '));sys.exit(0);
+        #import json,sys;print(j)son.dumps(dockerfile_list, sort_keys=True, indent = 4, separators = (',', ': '));sys.exit(0);
 
         tasklist = self.generate_task_list(dockerfile_list)
 
@@ -61,7 +60,7 @@ class BaseDockerTaskLoader(BaseTaskLoader):
 
         tasklist = self.process_tasklist(tasklist)
 
-        return tasklist, config
+        return tasklist
 
     def process_dockerfile_list(self, dockerfile_list):
         """

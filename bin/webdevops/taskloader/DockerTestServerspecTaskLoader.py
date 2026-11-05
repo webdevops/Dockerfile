@@ -25,7 +25,26 @@ from .BaseTaskLoader import BaseTaskLoader
 from doit.task import dict_to_task
 import pytest
 
+# Define standalone functions for better multiprocessing compatibility
+def task_run_wrapper(dockerfile, configuration_dict, task):
+    """
+    Wrapper for docker test serverspec task that recreates objects in worker process
+    """
+    from webdevops.Configuration import dotdictify
+    
+    # Recreate objects in worker process
+    configuration = dotdictify(configuration_dict)
+    
+    return DockerTestServerspecTaskLoader.task_run(dockerfile, configuration, task)
+
+def task_runner_wrapper(func, args, task):
+    """
+    Wrapper for task runner
+    """
+    return BaseTaskLoader.task_runner(func, args, task)
+
 class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
+    cmd_options = ()
 
     def generate_task_list(self, dockerfile_list):
         """
@@ -33,11 +52,14 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         """
         tasklist = []
 
+        # Convert configuration to dict for serialization
+        configuration_dict = self.configuration.to_dict()
+
         for dockerfile in dockerfile_list:
             task = {
                 'name': 'DockerTestServerspec|%s' % dockerfile['image']['fullname'],
                 'title': DockerTestServerspecTaskLoader.task_title,
-                'actions': [(BaseTaskLoader.task_runner, [DockerTestServerspecTaskLoader.task_run, [dockerfile, self.configuration]])],
+                'actions': [(task_runner_wrapper, [task_run_wrapper, [dockerfile, configuration_dict]])],
                 'task_dep': []
             }
 
@@ -65,8 +87,8 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         # check if dockerfile is symlink, skipping tests if just a duplicate image
         # image is using the same hashes
         if dockerfile['image']['duplicate']:
-            print '  Docker image %s is build from symlink and duplicate of %s' % (dockerfile['image']['fullname'], dockerfile['image']['from'])
-            print '  -> skipping tests'
+            print(')  Docker image %s is build from symlink and duplicate of %s' % (dockerfile['image']['fullname'], dockerfile['image']['from']))
+            print(')  -> skipping tests')
             BaseTaskLoader.set_task_status(task, 'skipped (symlink)', 'skipped')
             return True
 
@@ -83,7 +105,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         # create dockerfile
         tmp_suffix = '.%s_%s_%s.tmp' % (dockerfile['image']['repository'], dockerfile['image']['imageName'], dockerfile['image']['tag'])
         tmp_suffix = tmp_suffix.replace('/', '_')
-        test_dockerfile = tempfile.NamedTemporaryFile(prefix='Dockerfile.', suffix=tmp_suffix, dir=configuration.get('serverspecPath'), bufsize=0, delete=False)
+        test_dockerfile = tempfile.NamedTemporaryFile(prefix='Dockerfile.', suffix=tmp_suffix, dir=configuration.get('serverspecPath'), delete=False)
 
         # serverspec conf
         serverspec_conf = DockerTestServerspecTaskLoader.generate_serverspec_configuration(
@@ -95,7 +117,7 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
 
         # serverspec options
         serverspec_opts = []
-        serverspec_opts.extend([spec_path, dockerfile['image']['fullname'], base64.b64encode(json.dumps(serverspec_conf)), os.path.basename(test_dockerfile.name)])
+        serverspec_opts.extend([spec_path, dockerfile['image']['fullname'], base64.b64encode(json.dumps(serverspec_conf).encode('utf-8')).decode('utf-8'), os.path.basename(test_dockerfile.name)])
 
         # dockerfile content
         dockerfile_content = DockerTestServerspecTaskLoader.generate_dockerfile(
@@ -107,24 +129,24 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         # DryRun
         if configuration.get('dryRun'):
             if not os.path.isfile(spec_abs_path):
-                print '                no tests found'
+                print(')                no tests found')
 
-            print '         image: %s' % (dockerfile['image']['fullname'])
-            print '          path: %s' % (spec_path)
-            print '          args: %s' % (' '.join(serverspec_opts))
-            print ''
-            print 'spec configuration:'
-            print '-------------------'
-            print json.dumps(serverspec_conf, indent=4, sort_keys=True)
-            print ''
-            print 'Dockerfile:'
-            print '-----------'
-            print dockerfile_content
+            print(')         image: %s' % (dockerfile['image']['fullname']))
+            print(')          path: %s' % (spec_path))
+            print(')          args: %s' % (' '.join(serverspec_opts)))
+            print(')')
+            print(')spec configuration:')
+            print(')-------------------')
+            print(json.dumps(serverspec_conf, indent=4, sort_keys=True))
+            print(')')
+            print(')Dockerfile:')
+            print(')-----------')
+            print(dockerfile_content)
             return True
 
         # check if we have any tests
         if not os.path.isfile(spec_abs_path):
-            print '         no tests defined (%s)' % (spec_path)
+            print(')         no tests defined (%s)' % (spec_path))
             BaseTaskLoader.set_task_status(task, 'skipped (no test)', 'skipped')
             return True
 
@@ -133,26 +155,25 @@ class DockerTestServerspecTaskLoader(BaseDockerTaskLoader):
         cmd.extend(serverspec_opts)
 
         # create Dockerfile
-        with open(test_dockerfile.name, mode='w', buffering=0) as f:
+        with open(test_dockerfile.name, mode='w') as f:
             f.write(dockerfile_content)
             f.flush()
             os.fsync(f.fileno())
-            f.close()
 
         test_status = False
         for retry_count in range(0, configuration.get('retry')):
             try:
                 test_status = Command.execute(cmd, cwd=configuration.get('serverspecPath'))
             except Exception as e:
-                print e
+                print(e)
                 pass
 
             if test_status:
                 break
             elif retry_count < (configuration.get('retry') - 1):
-                print '    failed, retrying... (try %s)' % (retry_count + 1)
+                print(')    failed, retrying... (try %s)' % (retry_count + 1))
             else:
-                print '    failed, giving up'
+                print(')    failed, giving up')
 
         return test_status
 
