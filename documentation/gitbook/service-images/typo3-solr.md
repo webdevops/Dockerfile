@@ -1,2 +1,0 @@
-# TYPO3-Solr
-

@@ -1,6 +1,6 @@
 ARGS = $(filter-out $@,$(MAKECMDGOALS))
 MAKEFLAGS += --silent
-.PHONY: test documentation provision
+.PHONY: test provision
 
 DOCKER_REPOSITORY=`cat DOCKER_REPOSITORY`
 DOCKER_TAG_LATEST=`cat DOCKER_TAG_LATEST`
@@ -58,11 +58,3 @@ graph:
 graph-full:
 	python2 ./bin/console generate:graph --all\
 		--filename docker-image-full-layout.gv
-
-documentation:
-	docker run -t -i --rm -p 8000 \
-		-v "$$(pwd)/documentation/docs/:/opt/docs" \
-		-e "VIRTUAL_HOST=documentation.docker" \
-		-e "VIRTUAL_PORT=8000" \
-		webdevops/sphinx sphinx-autobuild \
-		--poll -H 0.0.0.0 /opt/docs html
