@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -o pipefail  ## trace ERR through pipes
+set -o errtrace  ## trace ERR through 'time command' and other functions
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
+if [[ "$#" -ne 1 ]]; then
+    echo "Usage: $0 <file>"
+    exit 1
+fi
+
+SOURCE_FILE="$1"
+BACKUP_FILE="$(dirname "$1")/.$(basename "$1").bak"
+
+if [[ -f "$BACKUP_FILE" ]]; then
+    ## Backup file exists
+    ## -> container was restarted
+    ## -> restoring configuration
+    cp -a -- "$BACKUP_FILE" "$SOURCE_FILE"
+else
+    ## Backup file DOESN'T exists
+    ## -> container first startup
+    ## -> backup configuration
+    cp -a -- "$SOURCE_FILE" "$BACKUP_FILE"
+fi

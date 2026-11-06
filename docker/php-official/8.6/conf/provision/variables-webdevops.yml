@@ -1,0 +1,7 @@
+---
+
+docker_image_info_family:                "{{ lookup('pipe', 'docker-image-info family') }}"
+docker_image_info_distribution:          "{{ lookup('pipe', 'docker-image-info dist') }}"
+docker_image_info_distribution_version:  "{{ lookup('pipe', 'docker-image-info dist-version') }}"
+docker_image_info_distribution_release:  "{{ lookup('pipe', 'docker-image-info dist-release') }}"
+docker_image_info_distribution_codename: "{{ lookup('pipe', 'docker-image-info dist-codename') }}"

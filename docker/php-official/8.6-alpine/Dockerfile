@@ -1,0 +1,271 @@
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/php-official:8.6-alpine
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
+
+
+FROM php:8.6-rc-fpm-alpine
+
+LABEL maintainer=info@webdevops.io \
+      vendor=WebDevOps.io \
+      io.webdevops.layout=8 \
+      io.webdevops.version=1.5.0
+
+ENV TERM="xterm" \
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
+ENV DOCKER_CONF_HOME=/opt/docker/ \
+    LOG_STDOUT="" \
+    LOG_STDERR=""
+ENV APPLICATION_USER=application \
+    APPLICATION_GROUP=application \
+    APPLICATION_PATH=/app \
+    APPLICATION_UID=1000 \
+    APPLICATION_GID=1000
+ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i" 
+ENV LD_PRELOAD="/usr/lib/preloadable_libiconv.so"
+ENV COMPOSER_VERSION="2"
+
+
+# Baselayout copy (from staged image)
+COPY --from=webdevops/toolbox /baselayout/sbin/* /sbin/
+COPY --from=webdevops/toolbox /baselayout/usr/local/bin/* /usr/local/bin/
+
+
+COPY conf/ /opt/docker/
+
+RUN set -x \
+    # Init bootstrap
+    # Add community
+    && echo https://dl-4.alpinelinux.org/alpine/v3.20/community/ >> /etc/apk/repositories \
+    # System update
+    && /usr/local/bin/apk-upgrade \
+    # Install base stuff
+    && apk-install \
+        bash \
+        ca-certificates \
+        openssl \
+    && update-ca-certificates \
+    && /usr/local/bin/generate-dockerimage-info \
+    ## Fix su execution (eg for tests)
+    && mkdir -p /etc/pam.d/ \
+    && echo 'auth sufficient pam_rootok.so' >> /etc/pam.d/su
+
+RUN set -x \
+    # Install services
+    && chmod +x /opt/docker/bin/* \
+    && apk-install \
+        supervisor \
+        wget \
+        curl \
+        vim \
+        sed \
+        tzdata \
+        busybox-suid \
+    && chmod +s /sbin/gosu \
+    && docker-run-bootstrap
+
+RUN set -x \
+    && apk-install shadow \
+    && apk-install \
+        # Install common tools
+        zip \
+        unzip \
+        bzip2 \
+        drill \
+        ldns \
+        openssh-client \
+        rsync \
+        patch \
+        git \
+    && docker-run-bootstrap
+
+RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
+    set -x \
+    # Install php environment
+    && apk-install \
+        imagemagick \
+        graphicsmagick \
+        ghostscript \
+        jpegoptim \
+        pngcrush \
+        optipng \
+        pngquant \
+        vips \
+        rabbitmq-c \
+        c-client \
+        # Libraries
+        libavif \
+        libldap \
+        icu-libs \
+        libintl \
+        libpq \
+        libxslt \
+        libgomp \
+        libzip \
+        libmemcached \
+        yaml \
+        oniguruma \
+        # Build dependencies
+        linux-headers \
+        autoconf \
+        g++ \
+        make \
+        libtool \
+        pcre-dev \
+        gettext-dev \
+        libavif-dev \
+        freetype-dev \
+        gmp-dev \
+        libjpeg-turbo-dev \
+        libpng-dev \
+        vips-dev \
+        krb5-dev \
+        openssl-dev \
+        imap-dev \
+        imagemagick-dev \
+        rabbitmq-c-dev \
+        openldap-dev \
+        icu-dev \
+        postgresql-dev \
+        libxml2-dev \
+        samba-dev \
+        pcre-dev \
+        libxslt-dev \
+        libzip-dev \
+        libmemcached-dev \
+        yaml-dev \
+        oniguruma-dev \
+    # Install guetzli
+    && wget https://github.com/google/guetzli/archive/master.zip \
+    && unzip master.zip \
+    && make -C guetzli-master \
+    && cp guetzli-master/bin/Release/guetzli /usr/local/bin/ \
+    && rm -rf master.zip guetzli-master \
+    # https://github.com/docker-library/php/issues/240
+    && apk add gnu-libiconv --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --allow-untrusted \
+    # Install new version of ICU
+    && curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-73-1/icu4c-73_1-src.tgz \
+    && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make -j"$(nproc)" && make install && cd / && rm -rf /tmp/icu* \
+    # Install extensions
+    && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
+    && docker-php-ext-configure gd --with-avif --with-jpeg --with-freetype --with-webp \
+    && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
+    && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
+    # TODO PHP 8.6: php-amqp has no release supporting PHP 8.6 yet; build the
+    # unmerged upstream fix https://github.com/php-amqp/php-amqp/pull/638 (pinned commit)
+    && cd /usr/src/php/ext/amqp \
+    && git fetch --depth 1 origin 58edfb5e51a49cd10174cdfb18c73a539892d53d \
+    && git checkout -q FETCH_HEAD \
+    && git submodule update --init \
+    && docker-php-ext-configure ldap \
+    && docker-php-ext-configure ftp --with-ftp-ssl \
+    && docker-php-ext-install -j"$(nproc)" \
+        bcmath \
+        bz2 \
+        calendar \
+        exif \
+        ftp \
+        gmp \
+        ffi \
+        imagick \
+        amqp \
+        intl \
+        gettext \
+        ldap \
+        mysqli \
+        mbstring \
+        pcntl \
+        pdo_mysql \
+        pdo_pgsql \
+        pgsql \
+        soap \
+        sockets \
+        sysvmsg \
+        sysvsem \
+        sysvshm \
+        shmop \
+        xsl \
+        zip \
+        gd \
+    && cd / \
+    && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
+        --skip-enable-extension --make-parallel-jobs="$(nproc)" \
+        # TODO PHP 8.6: the PHP 8.6 fixes of these extensions are merged upstream but not
+        # released yet; build their development branches until a release supports PHP 8.6
+        "apcu/apcu:dev-master" \
+        "wikimedia/excimer:dev-master" \
+        open-telemetry/ext-opentelemetry \
+        "php-memcached/php-memcached:dev-master" \
+        "pecl/yaml:dev-php7" \
+        "phpredis/phpredis:dev-develop" \
+        mongodb/mongodb-extension \
+    && rm -rf /tmp/pie \
+    && PROTOBUF_RELEASE_URL="$(curl -fsSLI --proto '=https' --proto-redir '=https' --retry 3 -o /dev/null -w '%{url_effective}' https://github.com/protocolbuffers/protobuf/releases/latest)" \
+    && PROTOBUF_VERSION="${PROTOBUF_RELEASE_URL##*/}" \
+    && mkdir -p /tmp/protobuf \
+    && curl -fsSL --proto '=https' --proto-redir '=https' --retry 3 "https://codeload.github.com/protocolbuffers/protobuf/tar.gz/refs/tags/${PROTOBUF_VERSION}" -o /tmp/protobuf.tar.gz \
+    && tar -xzf /tmp/protobuf.tar.gz --strip-components=1 -C /tmp/protobuf \
+    && cd /tmp/protobuf/php/ext/google/protobuf \
+    && mkdir -p third_party \
+    && cp -R /tmp/protobuf/third_party/utf8_range third_party/ \
+    # TODO PHP 8.6: protobuf still calls the zval_dtor() alias removed in PHP 8.6
+    # https://github.com/protocolbuffers/protobuf/issues/29723
+    && grep -rl 'zval_dtor(' . | xargs -r sed -i 's/\([^_a-z]\)zval_dtor(/\1zval_ptr_dtor_nogc(/g' \
+    && phpize && ./configure --enable-protobuf \
+    && make -j"$(nproc)" && make install \
+    && cd / && rm -rf /tmp/protobuf /tmp/protobuf.tar.gz \
+    && docker-php-ext-enable \
+        apcu \
+        excimer \
+        opentelemetry \
+        protobuf \
+        yaml \
+        redis \
+        imagick \
+        mongodb \
+        memcached \
+    # Uninstall dev and header packages
+    && apk del -f --purge \
+        autoconf \
+        linux-headers \
+        g++ \
+        make \
+        libtool \
+        pcre-dev \
+        gettext-dev \
+        libavif-dev \
+        freetype-dev \
+        gmp-dev \
+        libjpeg-turbo-dev \
+        libpng-dev \
+        vips-dev \
+        krb5-dev \
+        openssl-dev \
+        imap-dev \
+        rabbitmq-c-dev \
+        imagemagick-dev \
+        openldap-dev \
+        icu-dev \
+        postgresql-dev \
+        libxml2-dev \
+        samba-dev \
+        pcre-dev \
+        libxslt-dev \
+        libzip-dev \
+        libmemcached-dev \
+        yaml-dev \
+        oniguruma-dev \
+    && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
+    && ln -sf /usr/local/bin/composer2 /usr/local/bin/composer \
+    # Enable php services
+    && docker-service enable syslog \
+    && docker-service enable cron \
+    && docker-run-bootstrap
+
+WORKDIR /
+EXPOSE 9000
+ENTRYPOINT ["/entrypoint"]
+CMD ["supervisord"]
