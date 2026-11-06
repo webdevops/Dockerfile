@@ -26,4 +26,4 @@ The document root must exist: the image does not contain `/app`, and Apache does
 
 Ports: `80` and `443`. Started by default: `apache`.
 
-Settings: [Web server](../environment-variables.md#web-server) (`WEB_PHP_SOCKET` is empty, there is no PHP; `WEB_DOCUMENT_INDEX` has no effect), hooks in `/opt/docker/bin/service.d/httpd.d`, see [Customization](../customization.md).
+Settings: [Web server](../environment-variables.md#web-server) (`WEB_PHP_SOCKET` is empty, there is no PHP; an existing `index.html` takes precedence over `WEB_DOCUMENT_INDEX`), hooks in `/opt/docker/bin/service.d/httpd.d`, see [Customization](../customization.md).

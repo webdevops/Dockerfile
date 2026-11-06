@@ -64,8 +64,8 @@ docker run --rm -ti -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer in
 docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci
 ```
 
-GitHub Actions builds every image independently and runs serverspec and structure tests on every
-image before pushing it to the registry.
+GitHub Actions builds every image independently and runs the serverspec and structure tests
+defined for it before pushing it to the registry.
 
 ### PHP extension builds
 

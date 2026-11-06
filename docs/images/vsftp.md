@@ -21,8 +21,10 @@ services:
       FTP_USER: upload
       FTP_PASSWORD: change-me
     volumes:
-      - ./ftp:/data/ftp
+      - ./ftp:/home/upload
 ```
+
+The FTP user's home directory is `/home/<FTP_USER>`; uploads are stored there.
 
 Exposed ports: `20`, `21` and `12020` to `12025`. Started by default: `vsftp`.
 

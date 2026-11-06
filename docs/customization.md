@@ -11,7 +11,7 @@ The first argument of the container command selects what the entrypoint does:
 | `supervisord` | Default command. Starts `supervisord`, which runs all enabled [services](#services). |
 | `noop` | Keeps the container running without starting services (`tail -f /dev/null`). |
 | `root` | Runs the remaining arguments as `root`; without arguments it opens `bash`. |
-| `cli` | Runs `CLI_SCRIPT` as `APPLICATION_USER` (default `application`); the remaining arguments are passed on. |
+| `cli` | Runs `CLI_SCRIPT` as `APPLICATION_USER` (default `application`); the remaining arguments are passed on. Only in `base-app` and `php-*` images; elsewhere it fails because `APPLICATION_USER` is not set. |
 | anything else (`default`) | Runs the command as given, as `root`. |
 
 ```yaml
@@ -108,10 +108,36 @@ Options for each service are set with environment variables, see [Services](envi
 
 ```dockerfile
 FROM webdevops/php:8.5
-RUN docker-cronjob '*/5 * * * * application php /app/bin/console app:cleanup'
+RUN docker-cronjob '*/5 * * * * application /usr/local/bin/php /app/bin/console app:cleanup'
 ```
 
+Cron runs jobs with a minimal `PATH` that does not contain `/usr/local/bin`, so use absolute paths such as `/usr/local/bin/php`.
+
 This works in the Debian- and Ubuntu-based images only. Alpine's `crond` does not read `/etc/cron.d`.
+
+## Configuration files
+
+Add your own configuration files at these places. A mounted file or a `COPY` in your Dockerfile both work.
+
+| What | Where |
+| --- | --- |
+| Nginx, server level | `/opt/docker/etc/nginx/conf.d/*.conf` |
+| Nginx, inside the default virtual host | `/opt/docker/etc/nginx/vhost.common.d/*.conf` |
+| Apache, server level | `/opt/docker/etc/httpd/conf.d/*.conf` |
+| Apache, inside the default virtual host | `/opt/docker/etc/httpd/vhost.common.d/*.conf` |
+| PHP settings | `/opt/docker/etc/php/php.ini`, loaded last as `99-docker.ini` |
+| Additional `supervisord` programs | `/opt/docker/etc/supervisor.d/*.conf` |
+| TLS certificate for port 443 | `server.crt` and `server.key` in `/opt/docker/etc/nginx/ssl/` (Nginx) or `/opt/docker/etc/httpd/ssl/` (Apache) |
+
+```yaml
+services:
+  app:
+    image: webdevops/php-nginx:8.5
+    volumes:
+      - ./:/app
+      - ./docker/nginx/10-headers.conf:/opt/docker/etc/nginx/vhost.common.d/10-headers.conf:ro
+      - ./docker/ssl:/opt/docker/etc/nginx/ssl:ro
+```
 
 ## Application user
 

@@ -20,7 +20,7 @@ services:
       - ./:/app
 ```
 
-Ports: `80` (HTTP) and `443` (HTTPS). HTTPS uses a self-signed certificate for `*.vm` that ships with the image; it expired on 2025-05-01.
+Ports: `80` (HTTP) and `443` (HTTPS). HTTPS uses a self-signed certificate for `*.vm` that ships with the image; it expired on 2025-05-01. To use your own certificate, see [Configuration files](../customization.md#configuration-files).
 
 ## Services
 
@@ -28,7 +28,7 @@ Started by default: `apache`, `php-fpm`, `cron`, `syslog`. The `-dev` variant al
 
 ## Configuration
 
-- Web server settings: [Web server](../environment-variables.md#web-server). `WEB_DOCUMENT_ROOT`, `WEB_ALIAS_DOMAIN` and `WEB_PHP_TIMEOUT` apply to Apache. `WEB_DOCUMENT_INDEX` only takes effect in `php-apache` on Alpine.
+- Web server settings: [Web server](../environment-variables.md#web-server). `WEB_DOCUMENT_ROOT`, `WEB_DOCUMENT_INDEX`, `WEB_ALIAS_DOMAIN` and `WEB_PHP_TIMEOUT` apply to Apache. Apache's own index files (for example `index.html` and, on Debian, `index.php`) take precedence over `WEB_DOCUMENT_INDEX`.
 - PHP and PHP-FPM settings: see [`webdevops/php`](php.md) and [Environment variables](../environment-variables.md#php).
 - Scripts and hooks: [Customization](../customization.md). Apache's hook directory is `/opt/docker/bin/service.d/httpd.d`.
 

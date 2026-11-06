@@ -45,11 +45,11 @@ Update the documentation whenever a change touches any of these:
    - Service options: the command line of the running process
    - Hooks: a script that writes a marker file, then check the marker
 
-   Check both the Debian and the Alpine variant whenever their implementation differs (separate files under `provisioning/*/alpine`, apk vs. apt, `httpd` vs. `apache2`, `crond` vs. `cron`).
+   Check every image a statement names, not just one representative: images differ in what they inherit (for example `cli` only works where `APPLICATION_USER` is set). Check both the Debian and the Alpine variant whenever their implementation differs (separate files under `provisioning/*/alpine`, apk vs. apt, `httpd` vs. `apache2`, `crond` vs. `cron`). Test examples with the exact command you document, and make sure a check cannot pass on an error message.
 
 4. **Document only what works.** Never describe an option that has no effect as working. Fix it, or leave it out and open an issue. If it works only in some images, say exactly which.
 
-5. **Keep lists in sync.** The tag lists in `README.md` and in `docs/images/*.md` must match the tags pushed by `.github/workflows/build.yaml`. The defaults in `docs/environment-variables.md` must match what a container reports.
+5. **Keep lists in sync.** The tag lists in `README.md` and in `docs/images/*.md` must match the tags pushed by `.github/workflows/build.yaml`. `webdevops/php-official` is not listed in the README; it is built from the same Dockerfiles as `webdevops/php`. The defaults in `docs/environment-variables.md` must match what a container reports.
 
 6. **Follow the style.**
    - English, GitHub Markdown, relative links, diagrams as Mermaid. No documentation tooling.

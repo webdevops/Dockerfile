@@ -32,7 +32,7 @@ Images: `base`, `base-app`, `apache`, `nginx`, `vsftp`, `php-*`.
 
 | Variable | Default | Effect |
 | --- | --- | --- |
-| `CLI_SCRIPT` | not set | Command the `cli` entrypoint runs as `APPLICATION_USER`. See [Customization](customization.md#commands). |
+| `CLI_SCRIPT` | not set | Command the `cli` entrypoint runs as `APPLICATION_USER`. Works in `base-app` and `php-*` only; in the other images `cli` fails because `APPLICATION_USER` is not set. See [Customization](customization.md#commands). |
 | `LOG_STDOUT` | container stdout | File that `/docker.stdout` points to. Nginx, PHP-FPM and syslog-ng write their logs to `/docker.stdout` and `/docker.stderr`. |
 | `LOG_STDERR` | container stderr | File that `/docker.stderr` points to. |
 
@@ -43,7 +43,7 @@ Images: `php-nginx`, `php-nginx-dev`, `php-apache`, `php-apache-dev`, `nginx`, `
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `WEB_DOCUMENT_ROOT` | `/app` | Document root of the default virtual host. |
-| `WEB_DOCUMENT_INDEX` | `index.php` | Directory index. Only reliable in the Nginx-based images; most Apache-based images ignore it (only `php-apache` on Alpine applies it). |
+| `WEB_DOCUMENT_INDEX` | `index.php` | Directory index. Nginx uses only this file. Apache adds it after the distribution's own index files (Debian: `index.html`, `index.cgi`, `index.pl`, `index.php`, `index.xhtml`, `index.htm`; Alpine: `index.html`); if one of those exists, Apache serves it instead. |
 | `WEB_ALIAS_DOMAIN` | `*.vm` | Additional host names of the default virtual host (`server_name` in Nginx, `ServerAlias` in Apache). |
 | `WEB_PHP_SOCKET` | `127.0.0.1:9000` (empty in `nginx` and `apache`) | Address of PHP-FPM that PHP requests are passed to. |
 | `WEB_PHP_TIMEOUT` | `600` | Timeout in seconds for PHP requests (`fastcgi_read_timeout` in Nginx, proxy timeout in Apache). |
@@ -77,14 +77,14 @@ Two more variables control PHP itself:
 
 | Variable | Default | Effect |
 | --- | --- | --- |
-| `PHP_DISMOD` | not set | Comma-separated list of extensions to disable, for example `redis,apcu`. |
+| `PHP_DISMOD` | not set | Comma-separated list of extensions to disable, for example `redis,apcu`. Each entry matches part of an extension's ini file name, so `pgsql` also disables `pdo_pgsql`. Extensions compiled into PHP, such as `json`, cannot be disabled. |
 | `COMPOSER_VERSION` | `2` | Major version the `composer` command runs: `2` or `1`. Composer 1 prints deprecation notices on PHP 8.4 and newer. |
 
 ## PHP-FPM
 
 Images: `php-*`.
 
-`fpm.global.<key>` sets a directive in the `[global]` section of the PHP-FPM configuration, for example `fpm.global.log_level: debug`. `fpm.pool.<key>` sets a directive in the `application` pool, for example `fpm.pool.pm.max_requests: "500"`.
+`fpm.global.<key>` sets a directive in the `[global]` section of the PHP-FPM configuration, for example `fpm.global.log_level: debug`. `fpm.pool.<key>` sets a directive in the pool (section `[www]` in `/opt/docker/etc/php/fpm/pool.d/application.conf`), for example `fpm.pool.pm.max_requests: "500"`.
 
 The following shortcuts set a single directive:
 
@@ -138,7 +138,7 @@ Each service reads its options when it starts. A service only runs if it is enab
 | `SERVICE_VSFTP_OPTS` | Extra arguments for `vsftpd`. |
 | `POSTFIX_RELAYHOST` | Postfix `relayhost`, for example `[mail.example.com]:587`. |
 | `POSTFIX_MYNETWORKS` | Postfix `mynetworks`. |
-| `VIRTUAL_HOST` | Comma-separated host names. When `dnsmasq` starts, each one is added to its configuration as `address=/<host>/127.0.0.1`; `*.example.com` becomes `address=/.example.com/127.0.0.1`. |
+| `VIRTUAL_HOST` | Comma-separated host names. When `dnsmasq` starts, each one is added to its configuration as `address=/<host>/127.0.0.1`; `*.example.com` becomes `address=/.example.com/127.0.0.1`. Only the first wildcard entry is kept; further `*.` entries are dropped. |
 
 ## FTP
 
@@ -150,4 +150,5 @@ Image: `vsftp`.
 | `FTP_PASSWORD` | `application` | FTP password |
 | `FTP_UID` | `1000` | UID of the FTP user |
 | `FTP_GID` | `1000` | GID of the FTP user |
-| `FTP_PATH` | `/data/ftp/` | Directory the FTP user works in |
+
+The FTP user's home directory is `/home/<FTP_USER>`; uploads are stored there.
