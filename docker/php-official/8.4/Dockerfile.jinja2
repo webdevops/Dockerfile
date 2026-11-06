@@ -14,7 +14,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ bootstrap.debian('bookworm') }}
+    {{ bootstrap.debian() }}
 
 RUN set -x \
     {{ base.debian() }} \

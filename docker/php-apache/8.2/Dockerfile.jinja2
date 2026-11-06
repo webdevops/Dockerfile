@@ -6,7 +6,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ apache.debian9() }} \
+    {{ apache.debian() }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 
