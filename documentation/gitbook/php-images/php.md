@@ -31,3 +31,24 @@ set `session.upload_progress.enabled = On` in a custom
 it cannot be enabled with `ini_set()` because PHP parses uploads before running
 the application.
 
+## PHP 8.6: removed extensions
+
+The PHP 8.6 images no longer contain the `vips` and `xmlrpc` extensions. Both are
+abandoned upstream and do not build against PHP 8.6. They remain available in the
+PHP 8.2–8.5 images.
+
+* **vips:** use [`jcupitt/vips`](https://github.com/libvips/php-vips) 2.x, which
+  talks to libvips through FFI. `libvips` and the `ffi` extension are still part of
+  the images. FFI is limited to preloading by default; to use it in PHP-FPM, enable it
+  when starting the container:
+
+  ```yaml
+  services:
+    app:
+      image: webdevops/php:8.6
+      environment:
+        php.ffi.enable: "true"
+  ```
+
+* **xmlrpc:** use a userland XML-RPC library, for example
+  [`phpxmlrpc/phpxmlrpc`](https://github.com/gggeek/phpxmlrpc).

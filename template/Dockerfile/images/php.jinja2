@@ -2,16 +2,49 @@
 {% import 'Dockerfile/provision.jinja2' as provision %}
 {% import 'Dockerfile/services.jinja2'  as services %}
 
-{% macro externalExtensions() -%}
+{% macro amqpCheckout(version='') -%}
+{%- if version == '8.6' -%}
+    # TODO PHP 8.6: php-amqp has no release supporting PHP 8.6 yet; build the
+    # unmerged upstream fix https://github.com/php-amqp/php-amqp/pull/638 (pinned commit)
+    && cd /usr/src/php/ext/amqp \
+    && git fetch --depth 1 origin 58edfb5e51a49cd10174cdfb18c73a539892d53d \
+    && git checkout -q FETCH_HEAD \
+    && git submodule update --init
+{%- else -%}
+    && cd /usr/src/php/ext/amqp && git submodule update --init
+{%- endif %}
+{%- endmacro %}
+
+{% macro xdebugPackage(version='') -%}
+{%- if version == '8.6' -%}
+{#- TODO PHP 8.6: no stable Xdebug supports PHP 8.6 yet (3.5.x requires php <8.6) -#}
+"xdebug/xdebug:^3.6@alpha"
+{%- else -%}
+xdebug/xdebug
+{%- endif -%}
+{%- endmacro %}
+
+{% macro externalExtensions(version='') -%}
     && cd / \
     && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
         --skip-enable-extension --make-parallel-jobs="$(nproc)" \
+{%- if version == '8.6' %}
+        # TODO PHP 8.6: the PHP 8.6 fixes of these extensions are merged upstream but not
+        # released yet; build their development branches until a release supports PHP 8.6
+        "apcu/apcu:dev-master" \
+        "wikimedia/excimer:dev-master" \
+        open-telemetry/ext-opentelemetry \
+        "php-memcached/php-memcached:dev-master" \
+        "pecl/yaml:dev-php7" \
+        "phpredis/phpredis:dev-develop" \
+{%- else %}
         apcu/apcu \
         wikimedia/excimer \
         open-telemetry/ext-opentelemetry \
         php-memcached/php-memcached \
         pecl/yaml \
         phpredis/phpredis \
+{%- endif %}
         mongodb/mongodb-extension \
     && rm -rf /tmp/pie \
     && PROTOBUF_RELEASE_URL="$(curl -fsSLI --proto '=https' --proto-redir '=https' --retry 3 -o /dev/null -w '%{url_effective}' https://github.com/protocolbuffers/protobuf/releases/latest)" \
@@ -22,9 +55,17 @@
     && cd /tmp/protobuf/php/ext/google/protobuf \
     && mkdir -p third_party \
     && cp -R /tmp/protobuf/third_party/utf8_range third_party/ \
+{%- if version == '8.6' %}
+    # TODO PHP 8.6: protobuf still calls the zval_dtor() alias removed in PHP 8.6
+    # https://github.com/protocolbuffers/protobuf/issues/29723
+    && grep -rl 'zval_dtor(' . | xargs -r sed -i 's/\([^_a-z]\)zval_dtor(/\1zval_ptr_dtor_nogc(/g' \
+{%- endif %}
     && phpize && ./configure --enable-protobuf \
     && make -j"$(nproc)" && make install \
-    && cd / && rm -rf /tmp/protobuf /tmp/protobuf.tar.gz \
+    && cd / && rm -rf /tmp/protobuf /tmp/protobuf.tar.gz
+{%- if version != '8.6' %} \
+    # Vips and XML-RPC are only built up to PHP 8.5: both are abandoned upstream and
+    # do not build against PHP 8.6.
     # Vips' GitHub tags lag behind PECL releases; use the upstream branch.
     && git clone --depth 1 https://github.com/libvips/php-vips-ext.git /tmp/vips \
     && cd /tmp/vips \
@@ -36,6 +77,7 @@
     && phpize && ./configure --with-xmlrpc \
     && make -j"$(nproc)" && make install \
     && cd / && rm -rf /tmp/xmlrpc
+{%- endif %}
 {%- endmacro %}
 
 {% macro official(role='', version='', distribution='') -%}
@@ -53,31 +95,39 @@
         pngnq \
         pngquant \
         # Libraries
+{%- if distribution == 'trixie' %}
+        libavif16 \
+        libvips42t64 \
+        libldap2 \
+        libpng16-16t64 \
+        libzip5 \
+        libmemcached11t64 \
+{%- else %}
         libavif15 \
         libvips42 \
-        librabbitmq4 \
-{%- if distribution == 'bookworm' %}
         libldap-2.5-0 \
-{%- else %}
-        libldap-2.4-2 \
-        zlibc \
+        libpng16-16 \
+        libzip4 \
+        libmemcached11 \
 {%- endif %}
+        librabbitmq4 \
         libxslt1.1 \
         libldap-common \
         zlib1g \
         libpq5 \
-        libpng16-16 \
         libmcrypt4 \
-        libzip4 \
         libyaml-0-2 \
+        libonig5 \
 {%- if version == '8.2' or version == '8.3' %}
         libc-client2007e \
+        libc-client-dev \
+        libc-client2007e-dev \
 {%- endif %}
         # Dev and headers
         libavif-dev \
         libjpeg62-turbo-dev \
         libwebp-dev \
-        libfreetype6-dev \
+        libfreetype-dev \
         libbz2-dev \
         libicu-dev \
         libldap2-dev \
@@ -90,8 +140,6 @@
         libpng-dev \
         libpq-dev \
         libzip-dev \
-        libc-client-dev \
-        libc-client2007e-dev \
         libkrb5-dev \
         libvips-dev \
         librabbitmq-dev \
@@ -99,6 +147,7 @@
         libgmp-dev \
         libyaml-dev \
         libssl-dev \
+        libonig-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -112,15 +161,15 @@
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-avif --with-jpeg --with-freetype --with-webp \
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
-    && cd /usr/src/php/ext/amqp && git submodule update --init \
+    {{ amqpCheckout(version) }} \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && docker-php-ext-configure ldap \
 {%- if version == '8.2' or version == '8.3' %}
     && docker-php-ext-configure ftp --with-openssl-dir \
-{%- elif version == '8.4' or version == '8.5' %}
+{%- elif version == '8.4' or version == '8.5' or version == '8.6' %}
     && docker-php-ext-configure ftp --with-ftp-ssl \
 {%- endif %}
-{%- if version != '8.4' and version != '8.5' %}
+{%- if version != '8.4' and version != '8.5' and version != '8.6' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
 {%- endif %}
     && docker-php-ext-install -j"$(nproc)" \
@@ -137,7 +186,10 @@
         gettext \
         ldap \
         mysqli \
-{%- if version != '8.4' and version != '8.5' %}
+{%- if version == '8.6' %}
+        mbstring \
+{%- endif %}
+{%- if version != '8.4' and version != '8.5' and version != '8.6' %}
         imap \
 {%- endif %}
         pcntl \
@@ -153,10 +205,10 @@
         xsl \
         zip \
         gd \
-{%- if version != '8.5' %}
+{%- if version != '8.5' and version != '8.6' %}
         opcache \
 {%- endif %}
-    {{ externalExtensions() }} \
+    {{ externalExtensions(version) }} \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=excimer.so > /usr/local/etc/php/conf.d/excimer.ini \
     && echo extension=opentelemetry.so > /usr/local/etc/php/conf.d/opentelemetry.ini \
@@ -164,13 +216,17 @@
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
-    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
     && echo extension=yaml.so > /usr/local/etc/php/conf.d/yaml.ini \
+{%- if version != '8.6' %}
+    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
     && echo extension=xmlrpc.so > /usr/local/etc/php/conf.d/xmlrpc.ini \
+{%- endif %}
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
+{%- if version == '8.2' or version == '8.3' %}
         libc-client-dev \
         libc-client2007e-dev \
+{%- endif %}
         libkrb5-dev \
         libbz2-dev \
         libavif-dev \
@@ -191,6 +247,7 @@
         libgmp-dev \
         libyaml-dev \
         libssl-dev \
+        libonig-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
@@ -222,6 +279,7 @@
         libzip \
         libmemcached \
         yaml \
+        oniguruma \
         # Build dependencies
         linux-headers \
         autoconf \
@@ -251,6 +309,7 @@
         libzip-dev \
         libmemcached-dev \
         yaml-dev \
+        oniguruma-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -267,14 +326,14 @@
     && docker-php-ext-configure gd --with-avif --with-jpeg --with-freetype --with-webp \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
-    && cd /usr/src/php/ext/amqp && git submodule update --init \
+    {{ amqpCheckout(version) }} \
     && docker-php-ext-configure ldap \
 {%- if version == '8.2' or version == '8.3' %}
     && docker-php-ext-configure ftp --with-openssl-dir \
-{%- elif version == '8.4' or version == '8.5' %}
+{%- elif version == '8.4' or version == '8.5' or version == '8.6' %}
     && docker-php-ext-configure ftp --with-ftp-ssl \
 {%- endif %}
-{%- if version != '8.4' and version != '8.5' %}
+{%- if version != '8.4' and version != '8.5' and version != '8.6' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
 {%- endif %}
     && docker-php-ext-install -j"$(nproc)" \
@@ -291,7 +350,10 @@
         gettext \
         ldap \
         mysqli \
-{%- if version != '8.4' and version != '8.5' %}
+{%- if version == '8.6' %}
+        mbstring \
+{%- endif %}
+{%- if version != '8.4' and version != '8.5' and version != '8.6' %}
         imap \
 {%- endif %}
         pcntl \
@@ -307,22 +369,24 @@
         xsl \
         zip \
         gd \
-{%- if version != '8.5' %}
+{%- if version != '8.5' and version != '8.6' %}
         opcache \
 {%- endif %}
-    {{ externalExtensions() }} \
+    {{ externalExtensions(version) }} \
     && docker-php-ext-enable \
         apcu \
         excimer \
         opentelemetry \
         protobuf \
-        vips \
         yaml \
         redis \
-        xmlrpc \
         imagick \
         mongodb \
         memcached \
+{%- if version != '8.6' %}
+        vips \
+        xmlrpc \
+{%- endif %}
     # Uninstall dev and header packages
     && apk del -f --purge \
         autoconf \
@@ -353,6 +417,7 @@
         libzip-dev \
         libmemcached-dev \
         yaml-dev \
+        oniguruma-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
@@ -364,11 +429,17 @@
     # Install development environment
     && BLACKFIRE_INSTALL_METHOD=raw bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
     && blackfire php:install \
-    && echo 'deb https://packages.tideways.com/apt-packages-main any-version main' | tee /etc/apt/sources.list.d/tideways.list \
-    && wget -qO - https://packages.tideways.com/key.gpg | apt-key add - \
+{%- if version == '8.6' %}
+    # TODO PHP 8.6: Tideways is not installed yet, tideways-php 5.47.0 crashes
+    # PHP 8.6.0RC4 (ZTS) on startup
+{%- else %}
+    && install -d -m 0755 /etc/apt/keyrings \
+    && curl -fsSL https://packages.tideways.com/key.gpg -o /etc/apt/keyrings/tideways.asc \
+    && echo 'deb [signed-by=/etc/apt/keyrings/tideways.asc] https://packages.tideways.com/apt-packages-main any-version main' | tee /etc/apt/sources.list.d/tideways.list \
     && apt-install tideways-php tideways-daemon \
+{%- endif %}
     && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
-        --skip-enable-extension --make-parallel-jobs="$(nproc)" xdebug/xdebug \
+        --skip-enable-extension --make-parallel-jobs="$(nproc)" {{ xdebugPackage(version) }} \
     && rm -rf /tmp/pie \
     && docker-php-ext-enable xdebug \
     {{ services.phpDev() }}
@@ -377,7 +448,17 @@
 {% macro officialDevelopmentAlpine(role='', version='') -%}
     # Install development environment
     && bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
+{%- if version == '8.6' %}
+    # TODO PHP 8.6: `blackfire php:install` installs the glibc probe on Alpine with ZTS;
+    # install the Alpine probe directly
+    && mkdir -p /tmp/blackfire \
+    && curl -fsSL "https://blackfire.io/api/v1/releases/probe/php/alpine/$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')/86-zts" | tar xz -C /tmp/blackfire \
+    && mv /tmp/blackfire/blackfire-*.so "$(php -r 'echo ini_get("extension_dir");')/blackfire.so" \
+    && printf '[blackfire]\nextension=blackfire.so\n' > /usr/local/etc/php/conf.d/99-blackfire.ini \
+    && rm -rf /tmp/blackfire \
+{%- else %}
     && blackfire php:install \
+{%- endif %}
     && apk-install \
         linux-headers \
         make \
@@ -386,7 +467,7 @@
         libtool \
         pkgconf \
     && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
-        --skip-enable-extension --make-parallel-jobs="$(nproc)" xdebug/xdebug \
+        --skip-enable-extension --make-parallel-jobs="$(nproc)" {{ xdebugPackage(version) }} \
     && rm -rf /tmp/pie \
     && apk del -f --purge \
         autoconf \

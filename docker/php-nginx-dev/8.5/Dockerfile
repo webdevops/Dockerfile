@@ -20,8 +20,9 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     # Install development environment
     && BLACKFIRE_INSTALL_METHOD=raw bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
     && blackfire php:install \
-    && echo 'deb https://packages.tideways.com/apt-packages-main any-version main' | tee /etc/apt/sources.list.d/tideways.list \
-    && wget -qO - https://packages.tideways.com/key.gpg | apt-key add - \
+    && install -d -m 0755 /etc/apt/keyrings \
+    && curl -fsSL https://packages.tideways.com/key.gpg -o /etc/apt/keyrings/tideways.asc \
+    && echo 'deb [signed-by=/etc/apt/keyrings/tideways.asc] https://packages.tideways.com/apt-packages-main any-version main' | tee /etc/apt/sources.list.d/tideways.list \
     && apt-install tideways-php tideways-daemon \
     && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
         --skip-enable-extension --make-parallel-jobs="$(nproc)" xdebug/xdebug \

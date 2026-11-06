@@ -41,6 +41,9 @@ $testConfiguration[:phpRedis] = true
 $testConfiguration[:phpBlackfire] = false
 $testConfiguration[:phpOfficialImage] = false
 $testConfiguration[:phpImap] = !!(ENV['DOCKER_TAG'] =~ /^8\.[123](-|$)/)
+# vips and xmlrpc are abandoned upstream and only built up to PHP 8.5
+$testConfiguration[:phpVips] = !!(ENV['DOCKER_TAG'] =~ /^8\.[2-5](-|$)/)
+$testConfiguration[:phpXmlrpc] = !!(ENV['DOCKER_TAG'] =~ /^8\.[2-5](-|$)/)
 
 if ENV['PHP_OFFICIAL'] and ENV['PHP_OFFICIAL'] == "1"
     $testConfiguration[:phpOfficialImage] = true
