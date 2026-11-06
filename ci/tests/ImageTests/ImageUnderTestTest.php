@@ -59,6 +59,42 @@ final class ImageUnderTestTest extends TestCase
         self::assertFalse($image->hasImap(), 'PHP 8.4 and later have no imap');
     }
 
+    public function testVipsAndXmlrpcUpToPhp85(): void
+    {
+        foreach (['8.2', '8.5-alpine'] as $tag) {
+            $image = new ImageUnderTest('webdevops/php:' . $tag, 'webdevops/php:' . $tag, 'debian', '12', true);
+            self::assertTrue($image->hasVipsAndXmlrpc(), $tag);
+        }
+
+        $image = new ImageUnderTest('webdevops/php:8.6', 'webdevops/php:8.6', 'debian', '13', true);
+        self::assertFalse($image->hasVipsAndXmlrpc(), 'PHP 8.6 has no vips and xmlrpc');
+    }
+
+    public function testThreadSafeFromPhp86(): void
+    {
+        $image = new ImageUnderTest('webdevops/php:8.5-alpine', 'webdevops/php:8.5-alpine', 'alpine', '3', true);
+        self::assertFalse($image->isThreadSafe(), 'PHP 8.5');
+
+        foreach (['8.6', '8.6-alpine'] as $tag) {
+            $image = new ImageUnderTest('webdevops/php:' . $tag, 'webdevops/php:' . $tag, 'debian', '13', true);
+            self::assertTrue($image->isThreadSafe(), $tag);
+        }
+    }
+
+    public function testIonCubeOnDebianUpToPhp85(): void
+    {
+        foreach (['8.2', '8.5'] as $tag) {
+            $image = new ImageUnderTest('webdevops/php:' . $tag, 'webdevops/php:' . $tag, 'debian', '12', true);
+            self::assertTrue($image->hasIonCube(), $tag);
+        }
+
+        $image = new ImageUnderTest('webdevops/php:8.5-alpine', 'webdevops/php:8.5-alpine', 'alpine', '3', true);
+        self::assertFalse($image->hasIonCube(), 'Alpine has no ionCube');
+
+        $image = new ImageUnderTest('webdevops/php:8.6', 'webdevops/php:8.6', 'debian', '13', true);
+        self::assertFalse($image->hasIonCube(), 'PHP 8.6 and later have no ionCube');
+    }
+
     public function testNameIsRequired(): void
     {
         $this->expectException(RuntimeException::class);

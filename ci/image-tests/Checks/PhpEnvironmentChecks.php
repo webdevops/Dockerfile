@@ -47,6 +47,22 @@ trait PhpEnvironmentChecks
     }
 
     /**
+     * PHP_MAX_EXECUTION_TIME=1 and a request that sleeps for 3 s: thread-safe PHP (PHP 8.6) counts the elapsed time,
+     * waiting included, and stops the script; otherwise only the time PHP itself runs counts.
+     */
+    public function testPhpMaxExecutionTimeCountsWaitingOnlyInThreadSafePhp(): void
+    {
+        $body = $this->phpFpmBody($this->environmentContainer(), 'test=sleep&seconds=3');
+        if (!self::image()->isThreadSafe()) {
+            self::assertSame('slept', $body);
+            return;
+        }
+
+        self::assertStringContainsString('Maximum execution time of 1 second exceeded', $body);
+        self::assertStringNotContainsString('slept', $body);
+    }
+
+    /**
      * PHP_POST_MAX_SIZE=1M: PHP discards a body of 2 MiB. PHP_UPLOAD_MAX_FILESIZE=512K: an upload of 600 KiB fails with
      * UPLOAD_ERR_INI_SIZE (1), one of 100 KiB arrives.
      */

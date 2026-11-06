@@ -18,17 +18,27 @@ final class PhpModules
         'mbstring', 'memcached', 'mongodb', 'mysqli', 'mysqlnd', 'openssl', 'opentelemetry', 'pcntl', 'pcre', 'PDO',
         'pdo_mysql', 'pdo_pgsql', 'pdo_sqlite', 'pgsql', 'Phar', 'posix', 'protobuf', 'Reflection', 'session',
         'SimpleXML', 'soap', 'sockets', 'SPL', 'sqlite3', 'standard', 'sysvmsg', 'sysvsem', 'sysvshm', 'tokenizer',
-        'vips', 'xml', 'xmlreader', 'xmlrpc', 'xmlwriter', 'xsl', 'yaml', 'zip', 'zlib', 'gd', 'apcu', 'shmop',
-        'Zend OPcache', 'redis',
+        'xml', 'xmlreader', 'xmlwriter', 'xsl', 'yaml', 'zip', 'zlib', 'gd', 'apcu', 'shmop', 'Zend OPcache', 'redis',
     ];
 
     /**
-     * The extensions, with imap where the PHP version has it. PHP-FPM loads the same ones as the CLI, pcntl included.
+     * The extensions, with imap, vips and xmlrpc where the PHP version has them. PHP-FPM loads the same ones as the
+     * CLI, pcntl included.
      *
      * @return list<string>
      */
     public static function loaded(ImageUnderTest $image): array
     {
-        return $image->hasImap() ? [...self::COMMON, 'imap'] : self::COMMON;
+        $modules = self::COMMON;
+        if ($image->hasImap()) {
+            $modules[] = 'imap';
+        }
+
+        if ($image->hasVipsAndXmlrpc()) {
+            $modules[] = 'vips';
+            $modules[] = 'xmlrpc';
+        }
+
+        return $modules;
     }
 }
