@@ -15,22 +15,6 @@
     && chmod +s /sbin/gosu
 {%- endmacro %}
 
-
-{% macro centos(role='') -%}
-    # Install services
-    && chmod +x /opt/docker/bin/* \
-    && yum-install \
-        supervisor \
-        which \
-        wget \
-        curl \
-        vim \
-        net-tools \
-        tzdata \
-    && chmod +s /sbin/gosu
-{%- endmacro %}
-
-
 {% macro debian(role='') -%}
     # Install packages
     && chmod +x /opt/docker/bin/* \
@@ -43,7 +27,6 @@
         tzdata \
     && chmod +s /sbin/gosu
 {%- endmacro %}
-
 
 {% macro ubuntu(role='') -%}
     # Install services

@@ -16,24 +16,6 @@
         git
 {%- endmacro %}
 
-
-{% macro centos(role='') -%}
-    # Install services
-    && yum-install \
-        # Install tools
-        zip \
-        unzip \
-        bzip2 \
-        moreutils \
-        dnsutils \
-        bind-utils \
-        rsync \
-        git \
-        patch \
-    && /usr/local/bin/generate-locales
-{%- endmacro %}
-
-
 {% macro debian(role='') -%}
     # Install services
     && apt-install \
@@ -43,37 +25,6 @@
         bzip2 \
         moreutils \
         bind9-dnsutils \
-        openssh-client \
-        rsync \
-        git \
-        patch \
-    && /usr/local/bin/generate-locales
-{%- endmacro %}
-
-{% macro debian9(role='') -%}
-    # Install services
-    && apt-install \
-        # Install common tools
-        zip \
-        unzip \
-        bzip2 \
-        moreutils \
-        dnsutils \
-        openssh-client \
-        rsync \
-        git \
-        patch \
-    && /usr/local/bin/generate-locales
-{%- endmacro %}
-{% macro debian10(role='') -%}
-    # Install services
-    && apt-install \
-        # Install common tools
-        zip \
-        unzip \
-        bzip2 \
-        moreutils \
-        dnsutils \
         openssh-client \
         rsync \
         git \
