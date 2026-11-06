@@ -21,3 +21,7 @@ dockerTest:
         OS_FAMILY: 'debian'
         OS_VERSION: '12'
         PHP_OFFICIAL: '1'
+      'php[^:]*:8.6$':
+        OS_FAMILY: 'debian'
+        OS_VERSION: '13'
+        PHP_OFFICIAL: '1'

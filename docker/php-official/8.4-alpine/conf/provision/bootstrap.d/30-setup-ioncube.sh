@@ -5,6 +5,13 @@ if [ $IMAGE_FAMILY == "Alpine" ]; then
     return
 fi
 
+# The official PHP images are thread safe (ZTS) since PHP 8.6 and are built without
+# Zend signals, which the ionCube ZTS loader needs (undefined zend_signal_globals_offset)
+if [[ "$(php -n -r 'echo PHP_ZTS;')" == "1" ]]; then
+    echo "Skipping ionCube installation: the ionCube loader does not support this thread-safe PHP build"
+    return
+fi
+
 echo "Installing ionCube loader"
 
 case "$(uname -m)" in

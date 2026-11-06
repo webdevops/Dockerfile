@@ -96,6 +96,15 @@ final readonly class ImageUnderTest
         return (bool)preg_match('/^8\.[123]$/', $this->phpMinorVersion());
     }
 
+    /**
+     * The images have the vips and xmlrpc extensions up to PHP 8.5; both are abandoned upstream and do not build
+     * against PHP 8.6.
+     */
+    public function hasVipsAndXmlrpc(): bool
+    {
+        return (bool)preg_match('/^8\.[2-5]$/', $this->phpMinorVersion());
+    }
+
     private static function environment(string $setting): string
     {
         $value = getenv(ImageTests::ENVIRONMENT_PREFIX . $setting);

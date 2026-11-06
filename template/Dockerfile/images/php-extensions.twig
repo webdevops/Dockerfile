@@ -1,14 +1,25 @@
 {# Extensions that are not part of PHP, built from PIE packages or their sources #}
-{% macro external() -%}
+{% macro external(version='') -%}
     && cd / \
     && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
         --skip-enable-extension --make-parallel-jobs="$(nproc)" \
+{% if version == '8.6' %}
+        # TODO PHP 8.6: the PHP 8.6 fixes of these extensions are merged upstream but not
+        # released yet; build their development branches until a release supports PHP 8.6
+        "apcu/apcu:dev-master" \
+        "wikimedia/excimer:dev-master" \
+        open-telemetry/ext-opentelemetry \
+        "php-memcached/php-memcached:dev-master" \
+        "pecl/yaml:dev-php7" \
+        "phpredis/phpredis:dev-develop" \
+{% else %}
         apcu/apcu \
         wikimedia/excimer \
         open-telemetry/ext-opentelemetry \
         php-memcached/php-memcached \
         pecl/yaml \
         phpredis/phpredis \
+{% endif %}
         mongodb/mongodb-extension \
     && rm -rf /tmp/pie \
     && PROTOBUF_RELEASE_URL="$(curl -fsSLI --proto '=https' --proto-redir '=https' --retry 3 -o /dev/null -w '%{url_effective}' https://github.com/protocolbuffers/protobuf/releases/latest)" \
@@ -19,9 +30,17 @@
     && cd /tmp/protobuf/php/ext/google/protobuf \
     && mkdir -p third_party \
     && cp -R /tmp/protobuf/third_party/utf8_range third_party/ \
+{% if version == '8.6' %}
+    # TODO PHP 8.6: protobuf still calls the zval_dtor() alias removed in PHP 8.6
+    # https://github.com/protocolbuffers/protobuf/issues/29723
+    && grep -rl 'zval_dtor(' . | xargs -r sed -i 's/\([^_a-z]\)zval_dtor(/\1zval_ptr_dtor_nogc(/g' \
+{% endif %}
     && phpize && ./configure --enable-protobuf \
     && make -j"$(nproc)" && make install \
-    && cd / && rm -rf /tmp/protobuf /tmp/protobuf.tar.gz \
+    && cd / && rm -rf /tmp/protobuf /tmp/protobuf.tar.gz
+{%- if version != '8.6' %} \
+    # Vips and XML-RPC are only built up to PHP 8.5: both are abandoned upstream and
+    # do not build against PHP 8.6.
     # Vips' GitHub tags lag behind PECL releases; use the upstream branch.
     && git clone --depth 1 https://github.com/libvips/php-vips-ext.git /tmp/vips \
     && cd /tmp/vips \
@@ -33,4 +52,29 @@
     && phpize && ./configure --with-xmlrpc \
     && make -j"$(nproc)" && make install \
     && cd / && rm -rf /tmp/xmlrpc
+{%- endif %}
+{%- endmacro %}
+
+{# Check out the php-amqp sources in /usr/src/php/ext/amqp #}
+{% macro amqpCheckout(version='') -%}
+{% if version == '8.6' -%}
+    # TODO PHP 8.6: php-amqp has no release supporting PHP 8.6 yet; build the
+    # unmerged upstream fix https://github.com/php-amqp/php-amqp/pull/638 (pinned commit)
+    && cd /usr/src/php/ext/amqp \
+    && git fetch --depth 1 origin 58edfb5e51a49cd10174cdfb18c73a539892d53d \
+    && git checkout -q FETCH_HEAD \
+    && git submodule update --init
+{%- else -%}
+    && cd /usr/src/php/ext/amqp && git submodule update --init
+{%- endif %}
+{%- endmacro %}
+
+{# PIE package of Xdebug #}
+{% macro xdebug(version='') -%}
+{# TODO PHP 8.6: no stable Xdebug supports PHP 8.6 yet (3.5.x requires php <8.6) #}
+{%- if version == '8.6' -%}
+"xdebug/xdebug:^3.6@alpha"
+{%- else -%}
+xdebug/xdebug
+{%- endif -%}
 {%- endmacro %}

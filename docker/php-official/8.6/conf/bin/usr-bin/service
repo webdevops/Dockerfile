@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+
+set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
+# Root check
+if [ "$(/usr/bin/whoami)" != "root" ]; then
+    echo "[ERROR] Must be run as root"
+    exit 1
+fi
+
+function serviceHelp() {
+    echo "Usage: $(basename "$0") <servicename> <stop|start|restart|pid|status|check>"
+}
+
+function getServicePid() {
+    local serviceName="$1"
+    local servicePid=$(supervisorctl pid "${serviceName}:${serviceName}d")
+
+    if [[ -z "$servicePid" ]] || [[ "$servicePid" == "0" ]]; then
+        echo "not running"
+        exit 1
+    fi
+
+    echo $servicePid
+}
+
+# Param check
+if [ "$#" -lt 2 ]; then
+    echo "[ERROR] Missing parameters"
+    serviceHelp
+    exit 1
+fi
+
+#############################
+# Param init
+#############################
+
+SERVICENAME="$1"
+ACTION="$2"
+
+#############################
+# Service aliases
+#############################
+case "$SERVICENAME" in
+    apache2|httpd)
+        SERVICENAME="apache"
+        ;;
+esac
+
+#############################
+# Action runner
+#############################
+case "$ACTION" in
+    stop|start|restart|status)
+        exec supervisorctl "$ACTION" "${SERVICENAME}:${SERVICENAME}d"
+        ;;
+
+    pid)
+        echo $(getServicePid "${SERVICENAME}")
+        ;;
+
+    check)
+        FIRST_PID=$(getServicePid "${SERVICENAME}")
+        sleep 5
+        SECOND_PID=$(getServicePid "${SERVICENAME}")
+
+        if [[ "$FIRST_PID" == "$SECOND_PID" ]]; then
+            echo "ok"
+            exit 0
+        else
+            echo "not running"
+            exit 1
+        fi
+        ;;
+
+
+    *)
+        echo "[ERROR] Invalid action"
+        serviceHelp
+        exit 1
+        ;;
+
+esac

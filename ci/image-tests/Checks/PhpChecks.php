@@ -10,6 +10,7 @@ use Webdevops\Build\ImageTests\ImageTestCase;
 use function array_combine;
 use function array_map;
 use function escapeshellarg;
+use function in_array;
 use function json_decode;
 use function preg_quote;
 use function sprintf;
@@ -34,7 +35,15 @@ trait PhpChecks
         '8.3' => '8.3.36',
         '8.4' => '8.4.27',
         '8.5' => '8.5.12',
+        // TODO PHP 8.6: raise to the first stable 8.6 release once the images use php:8.6-fpm-*
+        '8.6' => '8.6.0RC5',
     ];
+
+    /**
+     * PHP versions whose images are still built from a release candidate.
+     * TODO PHP 8.6: remove 8.6 once PHP 8.6.0 is released.
+     */
+    private const array RELEASE_CANDIDATE_PHP_VERSIONS = ['8.6'];
 
     public function testPhpServiceDirectory(): void
     {
@@ -91,7 +100,12 @@ trait PhpChecks
 
         $minimum = self::MINIMUM_PHP_VERSIONS[$minor] ?? self::fail(sprintf('No minimum version for PHP %s in %s.', $minor, self::class));
         $version = trim($this->stdout("php -r 'echo PHP_VERSION;'"));
-        self::assertMatchesRegularExpression('/\A' . preg_quote($minor, '/') . '\.[0-9]+\z/', $version, 'a stable release of PHP ' . $minor);
+        if (in_array($minor, self::RELEASE_CANDIDATE_PHP_VERSIONS, true)) {
+            self::assertMatchesRegularExpression('/\A' . preg_quote($minor, '/') . '\.[0-9]+(RC[0-9]+)?\z/', $version, 'a release (candidate) of PHP ' . $minor);
+        } else {
+            self::assertMatchesRegularExpression('/\A' . preg_quote($minor, '/') . '\.[0-9]+\z/', $version, 'a stable release of PHP ' . $minor);
+        }
+
         self::assertTrue(version_compare($version, $minimum, '>='), sprintf('PHP %s should be %s or newer', $version, $minimum));
     }
 

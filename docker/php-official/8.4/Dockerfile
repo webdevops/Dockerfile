@@ -71,7 +71,7 @@ RUN set -x \
         unzip \
         bzip2 \
         moreutils \
-        dnsutils \
+        bind9-dnsutils \
         openssh-client \
         rsync \
         git \
@@ -99,21 +99,23 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         # Libraries
         libavif15 \
         libvips42 \
-        librabbitmq4 \
         libldap-2.5-0 \
+        libpng16-16 \
+        libzip4 \
+        libmemcached11 \
+        librabbitmq4 \
         libxslt1.1 \
         libldap-common \
         zlib1g \
         libpq5 \
-        libpng16-16 \
         libmcrypt4 \
-        libzip4 \
         libyaml-0-2 \
+        libonig5 \
         # Dev and headers
         libavif-dev \
         libjpeg62-turbo-dev \
         libwebp-dev \
-        libfreetype6-dev \
+        libfreetype-dev \
         libbz2-dev \
         libicu-dev \
         libldap2-dev \
@@ -126,8 +128,6 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         libpng-dev \
         libpq-dev \
         libzip-dev \
-        libc-client-dev \
-        libc-client2007e-dev \
         libkrb5-dev \
         libvips-dev \
         librabbitmq-dev \
@@ -135,6 +135,7 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         libgmp-dev \
         libyaml-dev \
         libssl-dev \
+        libonig-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -202,6 +203,8 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     && phpize && ./configure --enable-protobuf \
     && make -j"$(nproc)" && make install \
     && cd / && rm -rf /tmp/protobuf /tmp/protobuf.tar.gz \
+    # Vips and XML-RPC are only built up to PHP 8.5: both are abandoned upstream and
+    # do not build against PHP 8.6.
     # Vips' GitHub tags lag behind PECL releases; use the upstream branch.
     && git clone --depth 1 https://github.com/libvips/php-vips-ext.git /tmp/vips \
     && cd /tmp/vips \
@@ -220,13 +223,11 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
-    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
     && echo extension=yaml.so > /usr/local/etc/php/conf.d/yaml.ini \
+    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
     && echo extension=xmlrpc.so > /usr/local/etc/php/conf.d/xmlrpc.ini \
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
-        libc-client-dev \
-        libc-client2007e-dev \
         libkrb5-dev \
         libbz2-dev \
         libavif-dev \
@@ -247,6 +248,7 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         libgmp-dev \
         libyaml-dev \
         libssl-dev \
+        libonig-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \

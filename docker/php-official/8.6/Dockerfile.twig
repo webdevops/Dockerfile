@@ -1,0 +1,46 @@
+{% import 'docker.twig' as docker %}
+{% import 'provision.twig' as provision %}
+{% import 'environment.twig' as environment %}
+{% import 'baselayout.twig' as baselayout %}
+{% import 'images/bootstrap.twig' as bootstrap %}
+{% import 'images/base.twig' as base %}
+{% import 'images/baseapp.twig' as baseapp %}
+{% import 'images/php.twig' as php %}
+
+{{ docker.fromOfficial("php", "8.6-rc-fpm-trixie") }}
+
+{{ docker.version() }}
+
+{{ environment.general() }}
+{{ environment.base() }}
+{{ environment.baseApp() }}
+{{ environment.phpOfficialSendmailWorkaround() }}
+{{ environment.phpComposerVersion() }}
+
+{{ baselayout.copy() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+RUN set -x \
+    {{ bootstrap.debian() }}
+
+RUN set -x \
+    {{ base.debian() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
+
+RUN set -x \
+    {{ baseapp.debian() }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
+
+RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
+    set -x \
+    {{ php.official(version='8.6', distribution='trixie') }} \
+    {{ provision.runBootstrap() }} \
+    {{ docker.cleanup() }}
+
+{{ docker.workdir('/') }}
+{{ docker.expose('9000') }}
+{{ docker.entrypoint("/entrypoint") }}
+{{ docker.cmd("supervisord") }}

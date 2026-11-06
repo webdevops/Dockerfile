@@ -49,7 +49,7 @@ flowchart LR
   base --> baseapp["webdevops/base-app"]
   base --> nginx["webdevops/nginx"]
   base --> apache["webdevops/apache"]
-  officialphp["php:VERSION-fpm-bookworm / php:VERSION-fpm-alpine"] --> php["webdevops/php"]
+  officialphp["php:VERSION-fpm-bookworm / php:8.6-rc-fpm-trixie / php:VERSION-fpm-alpine"] --> php["webdevops/php"]
   php --> phpdev["webdevops/php-dev"]
   php --> phpnginx["webdevops/php-nginx"]
   php --> phpapache["webdevops/php-apache"]
