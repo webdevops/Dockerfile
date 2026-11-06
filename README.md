@@ -8,13 +8,25 @@ We add additional stuff like:
 * run multiple services (like php-fpm and nginx) with supervisord
 
 [![GitHub issues](https://img.shields.io/github/issues/webdevops/Dockerfile.svg)](https://github.com/webdevops/Dockerfile/issues)[![GitHub forks](https://img.shields.io/github/forks/webdevops/Dockerfile.svg)](https://github.com/webdevops/Dockerfile/network)[![GitHub stars](https://img.shields.io/github/stars/webdevops/Dockerfile.svg)](https://github.com/webdevops/Dockerfile/stargazers)[![GitHub license](https://img.shields.io/github/license/webdevops/Dockerfile.svg)](https://github.com/webdevops/Dockerfile/blob/master/LICENSE)
-[![pipeline status](https://gitlab.com/webdevops/dockerfile/badges/master/pipeline.svg)](https://gitlab.com/webdevops/dockerfile/commits/master)
+[![build](https://github.com/webdevops/Dockerfile/actions/workflows/build.yaml/badge.svg)](https://github.com/webdevops/Dockerfile/actions/workflows/build.yaml)
 
+## Quick start
 
+Save this as `compose.yaml` in your project (with the entry point in `public/index.php`) and run `docker compose up -d`:
 
-Automated build and test running on [Gitlab CI](https://gitlab.com/webdevops/dockerfile/) \(GitLab.com CI custom Google Cloud runner\) sponsored by [Onedrop GmbH & Co. KG](https://1drop.de).
+```yaml
+services:
+  app:
+    image: webdevops/php-nginx:8.5
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/app
+    environment:
+      WEB_DOCUMENT_ROOT: /app/public
+```
 
-[![Docker layout](documentation/gitbook/.gitbook/assets/docker-image-layout.gv.png)](https://github.com/webdevops/Dockerfile/tree/511a870fa90fe53da5c63a95b4254f6980e6d3d2/documentation/docs/resources/images/docker-image-layout.gv.png)
+The application is then available at http://localhost:8080. All images, settings and hooks are described in the [documentation](docs/README.md).
 
 ## Communication and support
 
@@ -37,21 +49,23 @@ docker run --rm -ti -v $PWD:/app -w /app webdevops/dockerfile-build-env make pro
 It will use the Jinja2 templates inside of the `template` directory and the 
 config files from the `provisioning` directory.
 
-**The files in the `docker` directory are never modified manually**
+**The generated files in the `docker` directory (`Dockerfile` and `conf/`) are never modified manually.**
+Edit the `Dockerfile.jinja2` templates next to them, the shared templates in `template` or the files in `provisioning` instead.
+`make provision` copies the `provisioning` files into the `conf/` directories as configured in `conf/provision.yml`.
 
 *This will be replaced with PHP twig templates in the future to streamline everything.*
 
 ### Building in CI
 
-We generate a multi stage Gitlab-CI configuration using PHP:
+We generate the GitHub Actions workflow (`.github/workflows/build.yaml`) using PHP:
 
 ```
 docker run --rm -ti -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install
-docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate
+docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci
 ```
 
-Gitlab CI builds every image independent and runs serverspec and structure tests on every
-image before pushing them to the registry.
+GitHub Actions builds every image independently and runs serverspec and structure tests on every
+image before pushing it to the registry.
 
 ### PHP extension builds
 
@@ -75,14 +89,13 @@ tests retain their existing image matrix.
 
 ## Documentation
 
-As in many projects the documentation is kind of up to date 😅.
-
-* [Old version of the documentation is available on readthedocs](https://dockerfile.readthedocs.io/)
-* [New version is currently being written on gitbook](https://webdevops.gitbook.io/dockerfile)
+* [Overview of all images](docs/README.md)
+* [Environment variables](docs/environment-variables.md)
+* [Customization: commands, hooks, services](docs/customization.md)
 
 ### Debian PHP
 
-The following images which are currently supported are based on `php:{VER}-fpm-buster`.
+The following images which are currently supported are based on `php:{VER}-fpm-bookworm`.
 
 * `webdevops/php:8.2`
 * `webdevops/php:8.3`
