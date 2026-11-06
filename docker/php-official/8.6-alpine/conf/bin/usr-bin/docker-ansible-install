@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+IMAGE_FAMILY=$(docker-image-info family)
+
+# Installation
+case "$IMAGE_FAMILY" in
+    Debian|Ubuntu)
+        apt-install \
+            python-minimal \
+            python-setuptools \
+            python-pip \
+            python-paramiko \
+            python-jinja2 \
+            python-dev \
+            libffi-dev \
+            libssl-dev \
+            build-essential
+        pip install --upgrade pip
+        hash -r
+        pip install --no-cache-dir ansible
+        # Cleanup
+        apt-get purge -y -f --force-yes \
+            python-dev \
+            build-essential \
+            libssl-dev \
+            libffi-dev
+
+        chmod 750 /usr/local/bin/ansible*
+        ;;
+
+    RedHat)
+        yum-install \
+            epel-release \
+            PyYAML \
+            python-jinja2 \
+            python-httplib2 \
+            python-keyczar \
+            python-paramiko \
+            python-setuptools \
+            python-setuptools-devel \
+            libffi \
+            python-devel \
+            libffi-devel
+        easy_install pip
+        pip install --upgrade pip
+        hash -r
+        pip install --no-cache-dir ansible
+        # Cleanup
+        yum erase -y python-devel
+
+        chmod 750 /usr/bin/ansible*
+        ;;
+
+    Alpine)
+        apk-install \
+            python \
+            python-dev \
+            py-setuptools \
+            py-crypto \
+            py2-pip \
+            py-cparser \
+            py-cryptography \
+            py-markupsafe \
+            py-cffi \
+            py-yaml \
+            py-jinja2 \
+            py-paramiko
+        pip install --upgrade pip
+        hash -r
+        pip install --no-cache-dir ansible
+        # Cleanup
+        apk del python-dev
+
+        chmod 750 /usr/bin/ansible*
+        ;;
+esac
+docker-image-cleanup

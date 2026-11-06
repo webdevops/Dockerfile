@@ -59,10 +59,10 @@ shared_examples 'php::modules' do
         its(:stdout) { should     contain('sysvsem') }
         its(:stdout) { should     contain('sysvshm') }
         its(:stdout) { should     contain('tokenizer') }
-        its(:stdout) { should     contain('vips') }
+        its(:stdout) { should     contain('vips') } if $testConfiguration[:phpVips]
         its(:stdout) { should     contain('xml') }
         its(:stdout) { should     contain('xmlreader') }
-        its(:stdout) { should     contain('xmlrpc') }
+        its(:stdout) { should     contain('xmlrpc') } if $testConfiguration[:phpXmlrpc]
         its(:stdout) { should     contain('xmlwriter') }
         its(:stdout) { should     contain('xsl') }
         its(:stdout) { should     contain('yaml') }
@@ -190,10 +190,10 @@ shared_examples 'php-fpm::modules' do
         its(:stdout) { should     contain('sysvsem') }
         its(:stdout) { should     contain('sysvshm') }
         its(:stdout) { should     contain('tokenizer') }
-        its(:stdout) { should     contain('vips') }
+        its(:stdout) { should     contain('vips') } if $testConfiguration[:phpVips]
         its(:stdout) { should     contain('xml') }
         its(:stdout) { should     contain('xmlreader') }
-        its(:stdout) { should     contain('xmlrpc') }
+        its(:stdout) { should     contain('xmlrpc') } if $testConfiguration[:phpXmlrpc]
         its(:stdout) { should     contain('xmlwriter') }
         its(:stdout) { should     contain('xsl') }
         its(:stdout) { should     contain('yaml') }

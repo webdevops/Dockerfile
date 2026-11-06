@@ -1,0 +1,29 @@
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/php-nginx:8.6
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
+
+FROM webdevops/php:8.6
+
+ENV WEB_DOCUMENT_ROOT=/app \
+    WEB_DOCUMENT_INDEX=index.php \
+    WEB_ALIAS_DOMAIN=*.vm \
+    WEB_PHP_TIMEOUT=600 \
+    WEB_PHP_SOCKET=""
+ENV WEB_PHP_SOCKET=127.0.0.1:9000
+ENV SERVICE_NGINX_CLIENT_MAX_BODY_SIZE="50m"
+
+COPY conf/ /opt/docker/
+
+RUN set -x \
+    # Install nginx
+    && install -d -m 0755 /etc/apt/keyrings \
+    && curl -fsSL https://nginx.org/keys/nginx_signing.key -o /etc/apt/keyrings/nginx.asc \
+    && printf "deb [signed-by=/etc/apt/keyrings/nginx.asc] http://nginx.org/packages/debian/ $(docker-image-info dist-codename) nginx\n" \
+    > /etc/apt/sources.list.d/nginx.list \
+    && apt-install \
+    nginx \
+    && docker-run-bootstrap \
+    && docker-image-cleanup
+
+EXPOSE 80 443

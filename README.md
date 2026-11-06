@@ -61,8 +61,9 @@ controls extension loading. PIE requests remain unpinned, and compilation uses
 `nproc` parallel jobs.
 
 Protobuf, Vips and XML-RPC are built directly from their official upstream sources.
-The existing XML-RPC **1.0.0RC3** pin is preserved on all supported PHP versions.
-Protobuf on PHP 8.2–8.5 uses the latest upstream release. If a future release raises its minimum PHP
+Vips and XML-RPC are only built for PHP 8.2–8.5 (see [PHP 8.6](#php-86-preview)).
+The existing XML-RPC **1.0.0RC3** pin is preserved on those versions.
+Protobuf on PHP 8.2–8.6 uses the latest upstream release. If a future release raises its minimum PHP
 version, older PHP image builds can fail; there is no automatic fallback to an
 older release. The existing CI matrix checks compatibility across PHP versions.
 
@@ -82,33 +83,69 @@ As in many projects the documentation is kind of up to date 😅.
 
 ### Debian PHP
 
-The following images which are currently supported are based on `php:{VER}-fpm-buster`.
+The following images which are currently supported are based on `php:{VER}-fpm-bookworm`
+(PHP 8.6: `php:8.6-rc-fpm-trixie`).
 
 * `webdevops/php:8.2`
 * `webdevops/php:8.3`
 * `webdevops/php:8.4`
 * `webdevops/php:8.5`
+* `webdevops/php:8.6` (preview, see below)
 * `webdevops/php-dev:8.2`
 * `webdevops/php-dev:8.3`
 * `webdevops/php-dev:8.4`
 * `webdevops/php-dev:8.5`
+* `webdevops/php-dev:8.6` (preview, see below)
 * `webdevops/php-apache:8.2`
 * `webdevops/php-apache:8.3`
 * `webdevops/php-apache:8.4`
 * `webdevops/php-apache:8.5`
+* `webdevops/php-apache:8.6` (preview, see below)
 * `webdevops/php-apache-dev:8.2`
 * `webdevops/php-apache-dev:8.3`
 * `webdevops/php-apache-dev:8.4`
 * `webdevops/php-apache-dev:8.5`
+* `webdevops/php-apache-dev:8.6` (preview, see below)
 * `webdevops/php-nginx:8.2`
 * `webdevops/php-nginx:8.3`
 * `webdevops/php-nginx:8.4`
 * `webdevops/php-nginx:8.5`
+* `webdevops/php-nginx:8.6` (preview, see below)
 * `webdevops/php-nginx-dev:8.2`
 * `webdevops/php-nginx-dev:8.3`
 * `webdevops/php-nginx-dev:8.4`
 * `webdevops/php-nginx-dev:8.5`
+* `webdevops/php-nginx-dev:8.6` (preview, see below)
 
+
+### PHP 8.6 (preview)
+
+PHP 8.6 images are a preview until the remaining upstream workarounds are gone:
+
+* They are built from the official **release candidate** images (`php:8.6-rc-fpm-trixie`,
+  `php:8.6-rc-fpm-alpine`) until PHP 8.6.0 is released.
+* The Debian variant uses **Debian 13 (trixie)**: PHP 8.6 requires `libavif >= 1.0.0`
+  for GD, which bookworm does not ship. PHP 8.2–8.5 stay on bookworm.
+* The official PHP 8.6 images are always built **thread safe (ZTS)** and no longer
+  contain `pecl`/`pear` or a built-in `mbstring`; `mbstring` is compiled separately.
+* Several extensions do not have a release that supports PHP 8.6 yet. Until they do,
+  `apcu`, `excimer`, `memcached`, `redis` and `yaml` are built from their development
+  branches, `amqp` from an unmerged upstream fix
+  ([php-amqp#638](https://github.com/php-amqp/php-amqp/pull/638)), `protobuf` with a
+  one-line compatibility patch and Xdebug from the `3.6` pre-releases.
+* The Debian `-dev` images do not contain Tideways yet: `tideways-php` 5.47.0 crashes
+  PHP 8.6.0RC4 (ZTS) on startup. The Alpine `-dev` images install the Blackfire probe
+  directly, because `blackfire php:install` picks the glibc probe on Alpine with ZTS.
+
+#### Removed in PHP 8.6 (breaking)
+
+The following extensions are still available in the PHP 8.2–8.5 images, but are
+**not** part of the PHP 8.6 images:
+
+| Extension | Reason | Migration |
+|-----------|--------|-----------|
+| `vips` | Deprecated upstream and no longer maintained; does not build against PHP 8.6. | Use [`jcupitt/vips`](https://github.com/libvips/php-vips) 2.x, which calls libvips via FFI. `libvips` and the `ffi` extension remain in the images. For PHP-FPM, enable FFI with `php.ffi.enable=true` (see [PHP images](documentation/gitbook/php-images/php.md)). |
+| `xmlrpc` | Removed from PHP core in PHP 8.0 because its library is unmaintained; never had a stable PECL release and does not build against PHP 8.6. | Use a userland XML-RPC library, for example [`phpxmlrpc/phpxmlrpc`](https://github.com/gggeek/phpxmlrpc). |
 
 ### Alpine PHP
 
@@ -118,23 +155,29 @@ The following images which are currently supported are based on `php:{VER}-fpm-a
 * `webdevops/php:8.3-alpine`
 * `webdevops/php:8.4-alpine`
 * `webdevops/php:8.5-alpine`
+* `webdevops/php:8.6-alpine` (preview, see below)
 * `webdevops/php-dev:8.2-alpine`
 * `webdevops/php-dev:8.3-alpine`
 * `webdevops/php-dev:8.4-alpine`
 * `webdevops/php-dev:8.5-alpine`
+* `webdevops/php-dev:8.6-alpine` (preview, see below)
 * `webdevops/php-apache:8.2-alpine`
 * `webdevops/php-apache:8.3-alpine`
 * `webdevops/php-apache:8.4-alpine`
 * `webdevops/php-apache:8.5-alpine`
+* `webdevops/php-apache:8.6-alpine` (preview, see below)
 * `webdevops/php-apache-dev:8.2-alpine`
 * `webdevops/php-apache-dev:8.3-alpine`
 * `webdevops/php-apache-dev:8.4-alpine`
 * `webdevops/php-apache-dev:8.5-alpine`
+* `webdevops/php-apache-dev:8.6-alpine` (preview, see below)
 * `webdevops/php-nginx:8.2-alpine`
 * `webdevops/php-nginx:8.3-alpine`
 * `webdevops/php-nginx:8.4-alpine`
 * `webdevops/php-nginx:8.5-alpine`
+* `webdevops/php-nginx:8.6-alpine` (preview, see below)
 * `webdevops/php-nginx-dev:8.2-alpine`
 * `webdevops/php-nginx-dev:8.3-alpine`
 * `webdevops/php-nginx-dev:8.4-alpine`
 * `webdevops/php-nginx-dev:8.5-alpine`
+* `webdevops/php-nginx-dev:8.6-alpine` (preview, see below)

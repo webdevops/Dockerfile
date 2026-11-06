@@ -17,9 +17,10 @@ COPY conf/ /opt/docker/
 
 RUN set -x \
     # Install nginx
-    && printf "deb http://nginx.org/packages/debian/ $(docker-image-info dist-codename)  nginx\n deb-src http://nginx.org/packages/debian/ $(docker-image-info dist-codename) nginx" \
-    >> /etc/apt/sources.list \
-    && curl -L https://nginx.org/keys/nginx_signing.key | apt-key add - \
+    && install -d -m 0755 /etc/apt/keyrings \
+    && curl -fsSL https://nginx.org/keys/nginx_signing.key -o /etc/apt/keyrings/nginx.asc \
+    && printf "deb [signed-by=/etc/apt/keyrings/nginx.asc] http://nginx.org/packages/debian/ $(docker-image-info dist-codename) nginx\n" \
+    > /etc/apt/sources.list.d/nginx.list \
     && apt-install \
     nginx \
     && docker-run-bootstrap \

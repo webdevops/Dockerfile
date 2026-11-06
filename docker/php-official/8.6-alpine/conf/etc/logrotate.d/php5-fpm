@@ -1,0 +1,12 @@
+/var/log/php5-fpm/fpm.log
+/var/log/php5-fpm/access.log
+/var/log/php5-fpm/slow.log
+/var/log/php5-fpm/error.log {
+    missingok
+    notifempty
+    sharedscripts
+    delaycompress
+    postrotate
+	    /bin/kill -SIGUSR1 `cat /var/run/php5-fpm.pid` 2>/dev/null || true
+    endscript
+}

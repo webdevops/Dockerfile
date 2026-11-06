@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# Install ansible if not installed
+if [ -z "`which ansible-playbook`" ]; then
+    docker-ansible-install
+fi
+
+exec /opt/docker/bin/provision.py "$@"
