@@ -14,11 +14,14 @@ Documentation for the `webdevops/*` Docker images. It describes the images as th
 | [`webdevops/bootstrap`, `webdevops/base`, `webdevops/base-app`](images/base.md) | Base images for your own images |
 | [`webdevops/vsftp`](images/vsftp.md) | FTP server |
 | [`webdevops/storage`](images/storage.md) | Plain Alpine |
+| `webdevops/toolbox` | Build helper, not meant to run. Holds the baselayout scripts (`apt-install`, `apk-install`, `docker-image-cleanup`, `docker-run-bootstrap`, `generate-locales` and more), `go-replace` and `gosu`. `bootstrap` and `php` copy them in with `COPY --from=webdevops/toolbox`. |
+| `webdevops/dockerfile-build-env` | Build environment for this repository, based on `base-app:ubuntu-22.04`. It runs `make provision`, see [Build process](../README.md#build-process). |
 
 ## Topics
 
 - [Environment variables](environment-variables.md): every setting, with defaults
-- [Customization](customization.md): commands, scripts at start and build time, services, cron jobs, the application user
+- [Customization](customization.md): commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs, configuration files, locales, the application user
+- [Known issues](known-issues.md): options that do not work, workarounds, migration from older images
 
 ## How the images build on each other
 
@@ -38,4 +41,8 @@ flowchart LR
   phpnginx --> phpnginxdev["webdevops/php-nginx-dev"]
   phpapache --> phpapachedev["webdevops/php-apache-dev"]
   alpine["alpine:latest"] --> storage["webdevops/storage"]
+  alpine --> toolbox["webdevops/toolbox"]
+  baseapp --> buildenv["webdevops/dockerfile-build-env"]
+  toolbox -. "COPY --from" .-> bootstrap
+  toolbox -. "COPY --from" .-> php
 ```

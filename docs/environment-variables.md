@@ -4,6 +4,8 @@ The container entrypoint applies these variables every time a container starts. 
 
 Each section names the images it applies to. Image names are given without tag; `php-*` means `php`, `php-dev`, `php-nginx`, `php-nginx-dev`, `php-apache` and `php-apache-dev`.
 
+Some variables are set in the images but have no effect. They are listed in [Known issues](known-issues.md), not here.
+
 ```yaml
 services:
   app:
@@ -56,6 +58,8 @@ Images: `php-*`.
 
 `php.<key>` sets any php.ini directive. The part after `php.` is the directive name, for example `php.max_input_vars: "10000"` or `php.session.upload_progress.enabled: "1"`.
 
+The values are written to `98-webdevops.ini`. Your own `php.ini` is loaded after it and wins, see [Configuration files](customization.md#php).
+
 The following shortcuts set a single directive:
 
 | Variable | php.ini directive | Default |
@@ -71,14 +75,14 @@ The following shortcuts set a single directive:
 | `PHP_OPCACHE_VALIDATE_TIMESTAMPS` | `opcache.validate_timestamps` | `1` |
 | `PHP_OPCACHE_REVALIDATE_FREQ` | `opcache.revalidate_freq` | `2` (`0` in development images) |
 | `PHP_OPCACHE_INTERNED_STRINGS_BUFFER` | `opcache.interned_strings_buffer` | `16` |
-| `PHP_SENDMAIL_PATH` | `sendmail_path` | `/usr/sbin/sendmail -t -i` |
+| `PHP_SENDMAIL_PATH` | `sendmail_path`; also set in the PHP-FPM pool, where it wins over `php.ini` | `/usr/sbin/sendmail -t -i` |
 
 Two more variables control PHP itself:
 
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `PHP_DISMOD` | not set | Comma-separated list of extensions to disable, for example `redis,apcu`. Each entry matches part of an extension's ini file name, so `pgsql` also disables `pdo_pgsql`. Extensions compiled into PHP, such as `json`, cannot be disabled. |
-| `COMPOSER_VERSION` | `2` | Major version the `composer` command runs: `2` or `1`. Composer 1 prints deprecation notices on PHP 8.4 and newer. |
+| `COMPOSER_VERSION` | `2` | Major version the `composer` command runs: `2` or `1`. Applied when a container starts; during `docker build`, `composer` is Composer 2, see [Composer](images/php.md#composer). Composer 1 prints deprecation notices on PHP 8.4 and newer. |
 
 ## PHP-FPM
 
