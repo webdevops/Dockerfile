@@ -24,7 +24,7 @@ Ports: `80` (HTTP) and `443` (HTTPS). HTTPS uses a self-signed certificate for `
 
 ## Services
 
-Started by default: `apache`, `php-fpm`, `cron`, `syslog`. The `-dev` variant also starts `postfix` and `ssh`.
+Started by default: `apache`, `php-fpm`, `cron`, `syslog`. The `-dev` variant also starts `postfix` and `ssh`. In `php-apache-dev`, PHP-FPM does not start without IPv6 in the container, see [Known issues](../known-issues.md#nginx-and-php-fpm-without-ipv6).
 
 ## Configuration
 

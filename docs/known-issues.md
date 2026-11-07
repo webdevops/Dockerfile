@@ -70,14 +70,17 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** the `-alpine` tags of `php-*`. It works in `base:alpine`.
 - **Instead:** Leave it out; `apk-install` keeps no package cache.
 
-### Nginx without IPv6
+### Nginx and PHP-FPM without IPv6
 
-- **Effect:** If the container has no IPv6, Nginx cannot listen on `[::]:80` and `[::]:443`, and supervisord restarts it over and over. PHP-FPM is not affected.
-- **Images:** `php-nginx`, `php-nginx-dev`, `nginx`.
-- **Instead:** Remove the IPv6 `listen` lines in a [start script](customization.md#scripts-at-container-start), for example `/entrypoint.d/10-no-ipv6.sh`:
+- **Effect:** If the container has no IPv6, Nginx cannot listen on `[::]:80` and `[::]:443`, and PHP-FPM cannot listen on `[::]:9000` (`Address family not supported by protocol`). supervisord restarts them over and over.
+- **Images:** Nginx in `php-nginx`, `php-nginx-dev` and `nginx`. PHP-FPM in `php`, `php-dev`, `php-nginx-dev` and `php-apache-dev`; in `php-nginx` and `php-apache` it listens on `127.0.0.1:9000` and is not affected.
+- **Instead:** Change the listen addresses in a [start script](customization.md#scripts-at-container-start), for example `/entrypoint.d/10-no-ipv6.sh`:
 
   ```sh
-  for f in $(grep -rl 'listen \[::\]' /opt/docker/etc/nginx); do sed -i '/listen \[::\]/d' "$f"; done
+  for f in $(grep -rlE 'listen \[::\]|listen = \[::\]' /opt/docker/etc/nginx /opt/docker/etc/php/fpm 2>/dev/null); do
+    sed -i -e '/^\s*listen \[::\]/d' -e 's/^listen = \[::\]:9000/listen = 0.0.0.0:9000/' "$f"
+  done
+  true
   ```
 
 ### Xdebug settings written into `php.ini`
