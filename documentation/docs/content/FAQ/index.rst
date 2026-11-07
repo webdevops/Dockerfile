@@ -1,6 +1,0 @@
-===
-FAQ
-===
-
-
-Placeholder

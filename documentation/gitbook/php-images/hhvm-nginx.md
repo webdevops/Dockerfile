@@ -1,2 +1,0 @@
-# HHVM-Nginx
-

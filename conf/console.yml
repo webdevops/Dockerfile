@@ -3,7 +3,7 @@
 dockerPath: 'docker'
 templatePath: 'template'
 provisionPath: 'provisioning'
-imagePath: 'documentation/docs/resources/images/'
+imagePath: 'graph/'
 baselayoutPath: 'baselayout'
 testinfraPath: 'tests/testinfra'
 serverspecPath: 'tests/serverspec'
