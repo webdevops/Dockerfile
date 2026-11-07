@@ -6,7 +6,7 @@ The foundation for the non-PHP images. The PHP images do not build on these; the
 | --- | --- |
 | `webdevops/bootstrap` | The operating system plus the webdevops helper scripts, for example `docker-run-bootstrap`. |
 | `webdevops/base` | Entrypoint, `supervisord`, service scripts and hooks, see [Customization](../customization.md). |
-| `webdevops/base-app` | The user and group `application` (UID/GID `1000`) and `/app`. |
+| `webdevops/base-app` | The user and group `application` (UID/GID `1000`), `/app` and common tools: `zip`, `unzip`, `bzip2`, `git`, `patch`, `rsync`, the SSH client (`ssh`) and a DNS lookup tool (`dig` on Ubuntu, `drill` on Alpine). On Ubuntu also `moreutils` (for example `sponge`). |
 
 ## Tags
 

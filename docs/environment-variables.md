@@ -33,7 +33,7 @@ Images: `base`, `base-app`, `apache`, `nginx`, `vsftp`, `php-*`.
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `CLI_SCRIPT` | not set | Command the `cli` entrypoint runs as `APPLICATION_USER`. Works in `base-app` and `php-*` only; in the other images `cli` fails because `APPLICATION_USER` is not set. See [Customization](customization.md#commands). |
-| `LOG_STDOUT` | container stdout | File that `/docker.stdout` points to. Nginx, PHP-FPM and syslog-ng write their logs to `/docker.stdout` and `/docker.stderr`. |
+| `LOG_STDOUT` | container stdout | File that `/docker.stdout` points to. Nginx, Apache, PHP-FPM and syslog-ng write their logs to `/docker.stdout` and `/docker.stderr`, vsftpd to `/docker.stdout`. |
 | `LOG_STDERR` | container stderr | File that `/docker.stderr` points to. |
 
 ## Web server
@@ -109,7 +109,7 @@ Images: `php-dev`, `php-nginx-dev`, `php-apache-dev`.
 
 | Variable | Default | Effect |
 | --- | --- | --- |
-| `PHP_DEBUGGER` | not set (Xdebug) | Debugger extension to load: `xdebug`, `blackfire` or `none`. The image contains the Blackfire PHP extension, but not the Blackfire agent. |
+| `PHP_DEBUGGER` | not set (Xdebug) | Debugger extension to load: `xdebug`, `blackfire` or `none`. The image contains the Blackfire PHP extension, but not the Blackfire agent. With `blackfire`, supervisord still starts the `blackfire-agent` service; it exits because the agent is missing and is restarted over and over, which fills the container log. |
 | `XDEBUG_MODE` | `debug` | `xdebug.mode` |
 | `XDEBUG_START_WITH_REQUEST` | `trigger` | `xdebug.start_with_request` |
 | `XDEBUG_CLIENT_HOST` | `localhost` | `xdebug.client_host` |
