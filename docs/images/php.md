@@ -11,7 +11,7 @@ PHP-FPM on top of the official PHP image, with the webdevops entrypoint, `superv
 | `8.2`, `8.3`, `8.4`, `8.5` | `php:<version>-fpm-bookworm` (Debian 12) |
 | `8.2-alpine`, `8.3-alpine`, `8.4-alpine`, `8.5-alpine` | `php:<version>-fpm-alpine` |
 
-Both `webdevops/php` and `webdevops/php-dev` use these tags.
+Both `webdevops/php` and `webdevops/php-dev` use these tags. Always use one of them: an image without a tag (`latest`) and the `alpine` tag are old builds from 2019 and 2020, see [Known issues](../known-issues.md#latest-and-alpine-tags-of-the-php-images).
 
 ## Usage
 
@@ -82,7 +82,7 @@ RUN cd /app && composer2 install --no-interaction
 
 `php-dev` is built on `php` and changes the following:
 
-- Xdebug is loaded by default (`xdebug.mode=debug`, `xdebug.start_with_request=trigger`, `xdebug.client_port=9003`). `PHP_DEBUGGER` switches to Blackfire or turns both off, see [Development images](../environment-variables.md#development-images).
+- Xdebug is loaded by default (`xdebug.mode=debug`, `xdebug.start_with_request=trigger`, `xdebug.client_port=9003`). `PHP_DEBUGGER` switches to Blackfire or turns both off, see [Development images](../environment-variables.md#development-images). Known issues: the [`XDEBUG_*` variables are written into your own `php.ini`](../known-issues.md#xdebug-settings-written-into-phpini), and the [Blackfire agent is missing](../known-issues.md#blackfire-agent).
 - `opcache.revalidate_freq` is `0`, so changed files are picked up immediately.
 - Postfix and an SSH server are started.
 - `root` and `application` have the password `dev`. Use the `-dev` images for local development only.

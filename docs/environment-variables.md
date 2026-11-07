@@ -113,7 +113,7 @@ Images: `php-dev`, `php-nginx-dev`, `php-apache-dev`.
 
 | Variable | Default | Effect |
 | --- | --- | --- |
-| `PHP_DEBUGGER` | not set (Xdebug) | Debugger extension to load: `xdebug`, `blackfire` or `none`. The image contains the Blackfire PHP extension, but not the Blackfire agent. With `blackfire`, supervisord still starts the `blackfire-agent` service; it exits because the agent is missing and is restarted over and over, which fills the container log. |
+| `PHP_DEBUGGER` | not set (Xdebug) | Debugger extension to load: `xdebug`, `blackfire` or `none`. The image contains the Blackfire PHP extension, but not the Blackfire agent. With `blackfire`, supervisord still starts the `blackfire-agent` service; it exits because the agent is missing and is restarted over and over, which fills the container log, see [Known issues](known-issues.md#blackfire-agent). |
 | `XDEBUG_MODE` | `debug` | `xdebug.mode` |
 | `XDEBUG_START_WITH_REQUEST` | `trigger` | `xdebug.start_with_request` |
 | `XDEBUG_CLIENT_HOST` | `localhost` | `xdebug.client_host` |
@@ -123,6 +123,8 @@ Images: `php-dev`, `php-nginx-dev`, `php-apache-dev`.
 | `XDEBUG_OUTPUT_DIR` | `/tmp/debug` | `xdebug.output_dir` |
 | `BLACKFIRE_SERVER_ID` | not set | `blackfire.server_id`, used with `PHP_DEBUGGER=blackfire` |
 | `BLACKFIRE_SERVER_TOKEN` | not set | `blackfire.server_token`, used with `PHP_DEBUGGER=blackfire` |
+
+Each `XDEBUG_*` variable you set is appended at start to `/opt/docker/etc/php/php.ini`, the file for your own settings. If you mount your own `php.ini` with `:ro`, the container exits at start; a read-write mount gets one more line in the file on the host at every start. To avoid both, set the directives in your `php.ini` or with `php.xdebug.<key>`, see [Known issues](known-issues.md#xdebug-settings-written-into-phpini).
 
 ## Services
 

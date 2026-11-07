@@ -24,7 +24,7 @@ services:
       - ./ftp:/home/upload
 ```
 
-The FTP user's home directory is `/home/<FTP_USER>`; uploads are stored there.
+The FTP user's home directory is `/home/<FTP_USER>`; uploads are stored there. `FTP_PATH` has no effect, see [Known issues](../known-issues.md#ftp_path).
 
 Exposed ports: `20`, `21` and `12020` to `12025`. Started by default: `vsftp`.
 

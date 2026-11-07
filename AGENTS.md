@@ -36,7 +36,7 @@ Where the documentation lives:
 | `README.md` | Entry point: short intro, quick start, build process, supported tags ("Debian PHP" / "Alpine PHP") |
 | `docs/README.md` | Image overview and how the images build on each other (Mermaid diagram) |
 | `docs/environment-variables.md` | Every environment variable with its default and effect |
-| `docs/customization.md` | Commands, scripts at start and build time, services, cron jobs, application user |
+| `docs/customization.md` | Commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs, configuration files and placeholders, supervisord, locales, application user |
 | `docs/images/*.md` | One page per image family: tags, base image, services, settings, development variant |
 | `docs/known-issues.md` | Options and tools that do not work, with affected images and workaround; migration from older images; build tools that no longer work |
 

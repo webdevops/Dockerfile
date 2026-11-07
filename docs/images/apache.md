@@ -8,6 +8,8 @@ Apache without PHP, on [`webdevops/base`](base.md).
 | --- | --- |
 | `alpine` | `webdevops/base:alpine` (Alpine 3.11, Apache 2.4.51) |
 
+Alpine 3.11 has had no security updates since November 2021, see [Known issues](../known-issues.md#alpine-311).
+
 ## Usage
 
 ```yaml
