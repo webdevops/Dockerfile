@@ -8,3 +8,4 @@
 *.log
 *.pyc
 .doit.db
+/graph
