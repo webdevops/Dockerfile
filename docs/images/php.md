@@ -48,6 +48,8 @@ All of these can be changed with environment variables, see [PHP](../environment
 
 All PHP images disable `session.upload_progress.enabled` by default. Session upload progress lets PHP write request-controlled data into the session while a multipart upload is parsed, before application code runs. Regular file uploads (`$_FILES`) and sessions are not affected. To turn it back on, set `php.session.upload_progress.enabled: "1"`.
 
+Applications that read the upload progress from the session, using a form field named like `session.upload_progress.name` (default `PHP_SESSION_UPLOAD_PROGRESS`), need this setting turned on. That includes cancelling an upload through the session (`cancel_upload`). Calling `ini_set()` in the application does not help: it returns `false` and the value stays off. Progress bars that measure the upload in the browser are not affected.
+
 ## PHP extensions
 
 All tags contain these extensions:
@@ -64,7 +66,17 @@ Differences between tags:
 
 Disable extensions you do not need with `PHP_DISMOD`, for example `PHP_DISMOD: redis,apcu`.
 
-Composer 2 is installed as `composer`; Composer 1 is available through `COMPOSER_VERSION: "1"`.
+## Composer
+
+Composer 2 is installed as `composer2`, Composer 1 as `composer1`. `composer` links to one of them: Composer 2 by default, Composer 1 with `COMPOSER_VERSION: "1"`.
+
+`COMPOSER_VERSION` switches the link when a container starts, not during `docker build`. In a Dockerfile, `composer` is always Composer 2; call `composer1` or `composer2` directly:
+
+```dockerfile
+FROM webdevops/php:8.5
+COPY . /app
+RUN cd /app && composer2 install --no-interaction
+```
 
 ## Development variant (`php-dev`)
 
