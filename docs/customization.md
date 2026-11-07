@@ -169,7 +169,7 @@ services:
       PHP_DATE_TIMEZONE: Europe/Berlin
 ```
 
-This works in the Debian and the Alpine images.
+This works in all images, based on Debian, Ubuntu or Alpine.
 
 ## Healthcheck
 
@@ -335,6 +335,8 @@ Images based on `base-app`, and all `php-*` images, contain the user and group `
 docker compose exec -u application app composer install
 ```
 
+The development images (`php-dev`, `php-nginx-dev`, `php-apache-dev`) start an SSH server. `php-dev` also sets the password `dev` for both `root` and `application`. Use the development images for local development only.
+
 ### Other UID or GID
 
 Setting `APPLICATION_UID` or `APPLICATION_GID` in a container does not change the user. If the files on your host belong to another UID than `1000`, change the user in your own image:
@@ -361,5 +363,3 @@ services:
 ```
 
 Use the output of `id -u` and `id -g` on your host. PHP-FPM, `docker compose exec -u application` and the `cli` command then run with these IDs. `usermod` and `groupmod` leave `/app` with UID and GID `1000` and the files in `/home/application` with GID `1000`; the `chown` fixes that. This works in the Debian and the Alpine images.
-
-The development images (`php-dev`, `php-nginx-dev`, `php-apache-dev`) start an SSH server. `php-dev` also sets the password `dev` for both `root` and `application`. Use the development images for local development only.

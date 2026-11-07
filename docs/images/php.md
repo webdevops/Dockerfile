@@ -11,7 +11,7 @@ PHP-FPM on top of the official PHP image, with the webdevops entrypoint, `superv
 | `8.2`, `8.3`, `8.4`, `8.5` | `php:<version>-fpm-bookworm` (Debian 12) |
 | `8.2-alpine`, `8.3-alpine`, `8.4-alpine`, `8.5-alpine` | `php:<version>-fpm-alpine` |
 
-Both `webdevops/php` and `webdevops/php-dev` use these tags. The Alpine tags are smaller: `webdevops/php:8.5` is about 430 MB to download, `webdevops/php:8.5-alpine` about 170 MB. For all differences, see [Debian or Alpine](#debian-or-alpine).
+Both `webdevops/php` and `webdevops/php-dev` use these tags. For the differences between the Debian and the Alpine tags, see [Debian or Alpine](#debian-or-alpine).
 
 Always use one of these tags: an image without a tag (`latest`) and the `alpine` tag are old builds from 2019 and 2020, see [Known issues](../known-issues.md#latest-and-alpine-tags-of-the-php-images).
 
@@ -114,7 +114,7 @@ Every PHP version comes as a Debian tag (`8.5`) and an Alpine tag (`8.5-alpine`)
 | Topic | Debian | Alpine |
 | --- | --- | --- |
 | [Base image](#tags) | `php:<version>-fpm-bookworm` (Debian 12) | `php:<version>-fpm-alpine` |
-| [Download size](#tags) of `webdevops/php:8.5` | about 430 MB | about 170 MB |
+| [Download size](https://hub.docker.com/r/webdevops/php/tags) of `webdevops/php:8.5` | about 430 MB | about 170 MB |
 | [ionCube Loader](#php-extensions) | included | not included |
 | [`imap` extension](#php-extensions) | `8.2` and `8.3` only | `8.2-alpine` and `8.3-alpine` only |
 | [Build tools for extensions](#installing-more-extensions) | included | installed by `docker-php-ext-install`; for PIE install `$PHPIZE_DEPS` |
@@ -228,7 +228,7 @@ Use `php.xdebug.client_host`, not `XDEBUG_CLIENT_HOST`: the `XDEBUG_*` variables
 - **Start a debug session:** Xdebug only connects when the request carries the trigger `XDEBUG_SESSION`. In the browser, add `?XDEBUG_SESSION=1` to the URL, or set the cookie `XDEBUG_SESSION` as browser extensions for Xdebug do. On the command line, set the environment variable:
 
   ```sh
-  docker compose exec -e XDEBUG_SESSION=1 app php bin/console app:import
+  docker compose exec -u application -e XDEBUG_SESSION=1 app php bin/console app:import
   ```
 
 - **Path mapping:** Xdebug reports the paths inside the container, for example `/app/public/index.php`. In the IDE, map your project directory to `/app`.

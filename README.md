@@ -67,7 +67,8 @@ docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console git
 ```
 
 GitHub Actions builds every image independently and runs the serverspec and structure tests
-defined for it before pushing it to the registry.
+defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdevops/`, but only
+internally; pull the images from Docker Hub.
 
 ### Building and testing locally
 
@@ -111,6 +112,8 @@ tests retain their existing image matrix.
 * [Overview of all images](docs/README.md)
 * [Environment variables](docs/environment-variables.md)
 * [Customization: commands, hooks, services](docs/customization.md)
+* PHP images: [Debian or Alpine](docs/images/php.md#debian-or-alpine), [production](docs/images/php.md#production), [Xdebug with an IDE](docs/images/php.md#xdebug-with-an-ide), [mail](docs/images/php.md#mail)
+* [Known issues](docs/known-issues.md)
 
 ### Debian PHP
 

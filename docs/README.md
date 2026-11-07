@@ -30,7 +30,6 @@ Documentation for the `webdevops/*` Docker images. It describes the images as th
   ```
 
   `docker buildx imagetools inspect webdevops/php-nginx:8.5` prints the current digest in the line `Digest:`. Update the pinned digest regularly, or you miss security updates.
-- The CI also pushes the images to `ghcr.io/webdevops/`, but they cannot be pulled from there without a login, see [Known issues](known-issues.md#images-on-ghcrio).
 
 ## Topics
 

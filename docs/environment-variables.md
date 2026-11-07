@@ -25,7 +25,7 @@ Images: `base-app`, `php-*`.
 | `APPLICATION_USER` | `application` | User the `cli` entrypoint runs `CLI_SCRIPT` as. |
 | `APPLICATION_GROUP` | `application` | Information only. The group is created when the image is built; changing the variable has no effect. |
 | `APPLICATION_UID` | `1000` | Information only: UID of the `application` user. To change it, see [Other UID or GID](customization.md#other-uid-or-gid). |
-| `APPLICATION_GID` | `1000` | Information only: GID of the `application` group. |
+| `APPLICATION_GID` | `1000` | Information only: GID of the `application` group. To change it, see [Other UID or GID](customization.md#other-uid-or-gid). |
 | `APPLICATION_PATH` | `/app` | Information only: `/app` exists and belongs to `application`. |
 
 ## Container
@@ -37,6 +37,7 @@ Images: `base`, `base-app`, `apache`, `nginx`, `vsftp`, `php-*`.
 | `CLI_SCRIPT` | not set | Command the `cli` entrypoint runs as `APPLICATION_USER`. Works in `base-app` and `php-*` only; in the other images `cli` fails because `APPLICATION_USER` is not set. See [Customization](customization.md#commands). |
 | `LOG_STDOUT` | container stdout | File that `/docker.stdout` points to. Nginx, Apache, PHP-FPM and syslog-ng write their logs to `/docker.stdout` and `/docker.stderr`, vsftpd to `/docker.stdout`. |
 | `LOG_STDERR` | container stderr | File that `/docker.stderr` points to. |
+| `TZ` | not set (UTC) | Time zone of the container, for example `Europe/Berlin`. It applies to `date`, cron and the time stamps supervisord writes to the container log. PHP uses `PHP_DATE_TIMEZONE` instead, see [Time zone](customization.md#time-zone). |
 
 ## Web server
 
@@ -121,7 +122,7 @@ Three limits apply to a request with an upload. Raise them together:
 | `PHP_POST_MAX_SIZE` | `50M` | Whole request body in PHP (`post_max_size`) | PHP discards the body: the script runs with empty `$_POST` and `$_FILES`. |
 | `PHP_UPLOAD_MAX_FILESIZE` | `50M` | Each uploaded file (`upload_max_filesize`) | The file is not stored; its `error` in `$_FILES` is `1` (`UPLOAD_ERR_INI_SIZE`). |
 
-Apache in `php-apache` sets no limit of its own; only the two PHP limits apply.
+Apache's own limit, `LimitRequestBody` (1 GiB by default), applies only to files Apache serves itself, not to requests it passes to PHP-FPM, even if you set it. In `php-apache`, only the two PHP limits apply to PHP scripts.
 
 ```yaml
 services:
@@ -189,7 +190,7 @@ Each service reads its options when it starts. A service only runs if it is enab
 | `SERVICE_APACHE_OPTS` | Extra arguments for Apache, for example `-DMYFLAG`. |
 | `SERVICE_PHPFPM_OPTS` | Extra arguments for `php-fpm`, for example `-dmax_input_time=120`. |
 | `SERVICE_VSFTP_OPTS` | Extra arguments for `vsftpd`. |
-| `POSTFIX_RELAYHOST` | Postfix `relayhost`, for example `[mail.example.com]:587`. |
+| `POSTFIX_RELAYHOST` | Postfix `relayhost`, for example `[mail.example.com]:25`. The relay host must accept mail from the container without a login; there is no variable for one. See [Mail](images/php.md#mail). |
 | `POSTFIX_MYNETWORKS` | Postfix `mynetworks`. |
 | `VIRTUAL_HOST` | Comma-separated host names. When `dnsmasq` starts, each one is added to its configuration as `address=/<host>/127.0.0.1`; `*.example.com` becomes `address=/.example.com/127.0.0.1`. Only the first wildcard entry is kept; further `*.` entries are dropped. |
 
