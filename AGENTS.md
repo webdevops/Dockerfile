@@ -38,7 +38,7 @@ Where the documentation lives:
 | `docs/environment-variables.md` | Every environment variable with its default and effect |
 | `docs/customization.md` | Commands, scripts at start and build time, services, cron jobs, application user |
 | `docs/images/*.md` | One page per image family: tags, base image, services, settings, development variant |
-| `docs/known-issues.md` | Options and tools that do not work, with workaround and issue; migration from older images; build tools that no longer work |
+| `docs/known-issues.md` | Options and tools that do not work, with affected images and workaround; migration from older images; build tools that no longer work |
 
 ### When to update it
 
@@ -73,7 +73,7 @@ Update the documentation whenever a change touches any of these:
 
    Check every image a statement names, not just one representative: images differ in what they inherit (for example `cli` only works where `APPLICATION_USER` is set). Check both the Debian and the Alpine variant whenever their implementation differs (separate files under `provisioning/*/alpine`, apk vs. apt, `httpd` vs. `apache2`, `crond` vs. `cron`). Test examples with the exact command you document, and make sure a check cannot pass on an error message.
 
-4. **Document only what works.** Never describe an option that has no effect as working. Fix it, or leave it out, list it in `docs/known-issues.md` and open an issue. If it works only in some images, say exactly which. Anything `docs/known-issues.md` lists as not working must never appear as working anywhere else. An `ENV` line in a Dockerfile is no proof that a variable works: `FTP_PATH` is declared, but no script reads it. When you fix a known issue, remove its entry in the same pull request.
+4. **Document only what works.** Never describe an option that has no effect as working. Fix it, or leave it out and list it in `docs/known-issues.md`. If it works only in some images, say exactly which. Anything `docs/known-issues.md` lists as not working must never appear as working anywhere else. An `ENV` line in a Dockerfile is no proof that a variable works: `FTP_PATH` is declared, but no script reads it. When you fix a known issue, remove its entry in the same pull request.
 
 5. **Keep lists in sync.** The tag lists in `README.md` and in `docs/images/*.md` must match the tags pushed by `.github/workflows/build.yaml`. `webdevops/php-official` is not listed in the README; it is built from the same Dockerfiles as `webdevops/php`. The defaults in `docs/environment-variables.md` must match what a container reports.
 
