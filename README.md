@@ -30,7 +30,7 @@ The application is then available at http://localhost:8080. All images, settings
 
 ## Communication and support
 
-Or write an issue in our [GitHub repository](https://github.com/webdevops/Dockerfile/issues).
+Found a bug or have a question? Write an issue in our [GitHub repository](https://github.com/webdevops/Dockerfile/issues). Problems we already know about are listed in [Known issues](docs/known-issues.md).
 
 Or join our discord https://discord.gg/BpBZtXAgJz
 
@@ -66,6 +66,23 @@ docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console git
 
 GitHub Actions builds every image independently and runs the serverspec and structure tests
 defined for it before pushing it to the registry.
+
+### Building and testing locally
+
+Build a single image from its directory. Its parent image (the `FROM` line) and `webdevops/toolbox` are taken from your local images or pulled from Docker Hub:
+
+```
+docker build -t webdevops/php-nginx:8.5 docker/php-nginx/8.5
+```
+
+Build all PHP images of one version (default `8.5`), in the order they depend on each other:
+
+```
+./build-local.sh 8.4
+```
+
+Then try an image with the quick start above. `make test` and the other Makefile targets that call `bin/console` need Python 2;
+only `make provision` and `make graph` still work, inside `webdevops/dockerfile-build-env`. See [Known issues](docs/known-issues.md#build-tools).
 
 ### PHP extension builds
 
