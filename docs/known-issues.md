@@ -114,6 +114,12 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php`, `php-dev`, `php-nginx`, `php-nginx-dev`, `php-apache`, `php-apache-dev`.
 - **Instead:** Always use a version tag such as `8.5` or `8.5-alpine`.
 
+### Images on ghcr.io
+
+- **Effect:** The CI pushes every image to Docker Hub and to `ghcr.io/webdevops/<image>`. Pulling from ghcr.io without a login fails with `unauthorized`, so ghcr.io is no alternative when Docker Hub limits your pulls.
+- **Images:** all.
+- **Instead:** Pull from Docker Hub (`webdevops/<image>`). To avoid Docker Hub's limits, log in to Docker Hub or use a pull-through cache.
+
 ### SSH in `php-nginx-dev` and `php-apache-dev`
 
 - **Effect:** The SSH server runs, but the accounts have no password, so nobody can log in. Only `php-dev` sets the password `dev`.

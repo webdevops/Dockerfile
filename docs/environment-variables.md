@@ -24,7 +24,7 @@ Images: `base-app`, `php-*`.
 | --- | --- | --- |
 | `APPLICATION_USER` | `application` | User the `cli` entrypoint runs `CLI_SCRIPT` as. |
 | `APPLICATION_GROUP` | `application` | Information only. The group is created when the image is built; changing the variable has no effect. |
-| `APPLICATION_UID` | `1000` | Information only: UID of the `application` user. |
+| `APPLICATION_UID` | `1000` | Information only: UID of the `application` user. To change it, see [Other UID or GID](customization.md#other-uid-or-gid). |
 | `APPLICATION_GID` | `1000` | Information only: GID of the `application` group. |
 | `APPLICATION_PATH` | `/app` | Information only: `/app` exists and belongs to `application`. |
 
@@ -48,8 +48,8 @@ Images: `php-nginx`, `php-nginx-dev`, `php-apache`, `php-apache-dev`, `nginx`, `
 | `WEB_DOCUMENT_INDEX` | `index.php` | Directory index. Nginx uses only this file. Apache adds it after the distribution's own index files (Debian: `index.html`, `index.cgi`, `index.pl`, `index.php`, `index.xhtml`, `index.htm`; Alpine: `index.html`); if one of those exists, Apache serves it instead. |
 | `WEB_ALIAS_DOMAIN` | `*.vm` | Additional host names of the default virtual host (`server_name` in Nginx, `ServerAlias` in Apache). |
 | `WEB_PHP_SOCKET` | `127.0.0.1:9000` (empty in `nginx` and `apache`) | Address of PHP-FPM that PHP requests are passed to. |
-| `WEB_PHP_TIMEOUT` | `600` | Timeout in seconds for PHP requests (`fastcgi_read_timeout` in Nginx, proxy timeout in Apache). |
-| `SERVICE_NGINX_CLIENT_MAX_BODY_SIZE` | `50m` | Nginx `client_max_body_size`. Nginx-based images only. |
+| `WEB_PHP_TIMEOUT` | `600` | Timeout in seconds for PHP requests (`fastcgi_read_timeout` in Nginx, proxy timeout in Apache). See [Long requests](#long-requests). |
+| `SERVICE_NGINX_CLIENT_MAX_BODY_SIZE` | `50m` | Nginx `client_max_body_size`. Nginx-based images only. See [Uploads](#uploads). |
 | `WEB_NO_CACHE_PATTERN` | `\.(css\|js\|gif\|png\|jpg\|svg\|json\|xml)$` | Development images only. Files matching this regular expression are served without caching (Nginx: `expires off`, Apache: no `ETag`). |
 
 ## PHP
@@ -64,7 +64,7 @@ The following shortcuts set a single directive:
 
 | Variable | php.ini directive | Default |
 | --- | --- | --- |
-| `PHP_DATE_TIMEZONE` | `date.timezone` | `UTC` |
+| `PHP_DATE_TIMEZONE` | `date.timezone` | `UTC`. Cron and the system use `TZ`, see [Time zone](customization.md#time-zone). |
 | `PHP_DISPLAY_ERRORS` | `display_errors` | `0` |
 | `PHP_MEMORY_LIMIT` | `memory_limit` | `512M` |
 | `PHP_MAX_EXECUTION_TIME` | `max_execution_time` | `300` (PHP CLI always uses `0`) |
@@ -106,6 +106,53 @@ The following shortcuts set a single directive:
 | `FPM_RLIMIT_CORE` | `rlimit_core` | `0` |
 
 The pool uses `pm = dynamic` and runs as `application`.
+
+## Uploads and long requests
+
+Images: `php-*`; the web server limits apply to `php-nginx` and `php-apache` and their `-dev` variants.
+
+### Uploads
+
+Three limits apply to a request with an upload. Raise them together:
+
+| Variable | Default | Limit | When it is exceeded |
+| --- | --- | --- | --- |
+| `SERVICE_NGINX_CLIENT_MAX_BODY_SIZE` | `50m` | Request body in Nginx (`client_max_body_size`) | Nginx answers `413 Request Entity Too Large`; PHP never sees the request. |
+| `PHP_POST_MAX_SIZE` | `50M` | Whole request body in PHP (`post_max_size`) | PHP discards the body: the script runs with empty `$_POST` and `$_FILES`. |
+| `PHP_UPLOAD_MAX_FILESIZE` | `50M` | Each uploaded file (`upload_max_filesize`) | The file is not stored; its `error` in `$_FILES` is `1` (`UPLOAD_ERR_INI_SIZE`). |
+
+Apache in `php-apache` sets no limit of its own; only the two PHP limits apply.
+
+```yaml
+services:
+  app:
+    image: webdevops/php-nginx:8.5
+    environment:
+      SERVICE_NGINX_CLIENT_MAX_BODY_SIZE: 100m
+      PHP_POST_MAX_SIZE: 100M
+      PHP_UPLOAD_MAX_FILESIZE: 100M
+```
+
+### Long requests
+
+Three timeouts end a long request:
+
+| Variable | Default | Limit | When it is exceeded |
+| --- | --- | --- | --- |
+| `WEB_PHP_TIMEOUT` | `600` | Seconds the web server waits for PHP-FPM | Nginx and Apache answer `504 Gateway Time-out`. |
+| `FPM_REQUEST_TERMINATE_TIMEOUT` | `0` (no limit) | Seconds PHP-FPM lets a request run (`request_terminate_timeout`) | PHP-FPM kills the process. Nginx answers `502 Bad Gateway`, Apache `503 Service Unavailable`. |
+| `PHP_MAX_EXECUTION_TIME` | `300` | Seconds a PHP script may run (`max_execution_time`) | PHP stops the script with a fatal error, status `500`. Only the time PHP itself runs counts: time spent waiting, for example in `sleep()`, does not. The PHP CLI has no limit. |
+
+For long requests, raise `PHP_MAX_EXECUTION_TIME` if PHP itself runs longer than five minutes, and `WEB_PHP_TIMEOUT` if the whole request takes longer than ten:
+
+```yaml
+services:
+  app:
+    image: webdevops/php-nginx:8.5
+    environment:
+      PHP_MAX_EXECUTION_TIME: "1800"
+      WEB_PHP_TIMEOUT: "1800"
+```
 
 ## Development images
 

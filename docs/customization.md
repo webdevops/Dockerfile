@@ -156,6 +156,61 @@ Cron runs jobs with a minimal `PATH` that does not contain `/usr/local/bin`, so 
 
 This works in the Debian- and Ubuntu-based images only. Alpine's `crond` does not read `/etc/cron.d`; see [Known issues](known-issues.md#docker-cronjob-on-alpine) for the Alpine way.
 
+### Time zone
+
+Cron uses the container's time zone, which is UTC. `PHP_DATE_TIMEZONE` only changes PHP's time zone, not when cron runs a job. To run jobs in local time, set `TZ`. It also changes the output of `date` and the time stamps supervisord writes to the container log. PHP keeps `PHP_DATE_TIMEZONE`, so set both:
+
+```yaml
+services:
+  app:
+    image: webdevops/php:8.5
+    environment:
+      TZ: Europe/Berlin
+      PHP_DATE_TIMEZONE: Europe/Berlin
+```
+
+This works in the Debian and the Alpine images.
+
+## Healthcheck
+
+The images define no `HEALTHCHECK`. Add one in `compose.yaml`.
+
+For `php-nginx` and `php-apache`, request a page through the web server. If the page is a PHP script, this also checks PHP-FPM:
+
+```yaml
+services:
+  app:
+    image: webdevops/php-nginx:8.5
+    volumes:
+      - ./:/app
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+```
+
+`curl -f` fails on status `400` and higher, so use a URL that answers `200`, for example a health endpoint of your application.
+
+For `php`, which runs PHP-FPM without a web server, check that PHP-FPM accepts connections on port `9000`:
+
+```yaml
+services:
+  php:
+    image: webdevops/php:8.5
+    volumes:
+      - ./:/app
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@fsockopen('127.0.0.1', 9000) ? 0 : 1);"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+```
+
+`docker compose ps` shows the result as `healthy` or `unhealthy`.
+
 ## Configuration files
 
 The images keep their web server, PHP and supervisord configuration in `/opt/docker/etc/`. To change a shipped file, replace it with your own file of the same name. To add settings, put a new file into one of the include directories. Both a `COPY` in your Dockerfile and a mounted file work; see [Placeholders](#placeholders) for the one limit of mounted files.
@@ -272,6 +327,39 @@ List them with `docker compose exec app locale -a`.
 
 ## Application user
 
-Images based on `base-app`, and all `php-*` images, contain the user and group `application` (UID and GID `1000`) and the directory `/app`, owned by that user. PHP-FPM runs as `application`. Changing `APPLICATION_UID` or `APPLICATION_GID` at runtime does not change the user.
+Images based on `base-app`, and all `php-*` images, contain the user and group `application` (UID and GID `1000`) and the directory `/app`, owned by that user. PHP-FPM runs as `application`.
+
+`docker compose exec` runs commands as `root`. Files they create belong to `root`, on the host too when `/app` is mounted from there. Run commands that write files as `application`:
+
+```sh
+docker compose exec -u application app composer install
+```
+
+### Other UID or GID
+
+Setting `APPLICATION_UID` or `APPLICATION_GID` in a container does not change the user. If the files on your host belong to another UID than `1000`, change the user in your own image:
+
+```dockerfile
+FROM webdevops/php-nginx:8.5
+ARG APPLICATION_UID=1000
+ARG APPLICATION_GID=1000
+RUN groupmod -g "$APPLICATION_GID" application \
+    && usermod -u "$APPLICATION_UID" -g "$APPLICATION_GID" application \
+    && chown -R application:application /app /home/application
+```
+
+```yaml
+services:
+  app:
+    build:
+      context: .
+      args:
+        APPLICATION_UID: "1001"
+        APPLICATION_GID: "1001"
+    volumes:
+      - ./:/app
+```
+
+Use the output of `id -u` and `id -g` on your host. PHP-FPM, `docker compose exec -u application` and the `cli` command then run with these IDs. `usermod` and `groupmod` leave `/app` with UID and GID `1000` and the files in `/home/application` with GID `1000`; the `chown` fixes that. This works in the Debian and the Alpine images.
 
 The development images (`php-dev`, `php-nginx-dev`, `php-apache-dev`) start an SSH server. `php-dev` also sets the password `dev` for both `root` and `application`. Use the development images for local development only.

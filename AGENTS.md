@@ -34,10 +34,10 @@ Where the documentation lives:
 | File | Content |
 | --- | --- |
 | `README.md` | Entry point: short intro, quick start, build process, supported tags ("Debian PHP" / "Alpine PHP") |
-| `docs/README.md` | Image overview and how the images build on each other (Mermaid diagram) |
-| `docs/environment-variables.md` | Every environment variable with its default and effect |
-| `docs/customization.md` | Commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs, configuration files and placeholders, supervisord, locales, application user |
-| `docs/images/*.md` | One page per image family: tags, base image, services, settings, development variant |
+| `docs/README.md` | Image overview, platforms and nightly updates, how the images build on each other (Mermaid diagram) |
+| `docs/environment-variables.md` | Every environment variable with its default and effect; uploads and long requests |
+| `docs/customization.md` | Commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs and their time zone, healthcheck, configuration files and placeholders, supervisord, locales, application user and changing its UID |
+| `docs/images/*.md` | One page per image family: tags, base image, services, settings, development variant. `php.md` also has Debian or Alpine, production, installing extensions, mail and Xdebug with an IDE |
 | `docs/known-issues.md` | Options and tools that do not work, with affected images and workaround; migration from older images; build tools that no longer work |
 
 ### When to update it

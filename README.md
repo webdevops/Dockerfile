@@ -28,6 +28,8 @@ services:
 
 The application is then available at http://localhost:8080. All images, settings and hooks are described in the [documentation](docs/README.md).
 
+The images run on `linux/amd64` and `linux/arm64` and are rebuilt every night, so a tag such as `8.5` gets new images daily. To pin an image, see [Platforms and updates](docs/README.md#platforms-and-updates).
+
 ## Communication and support
 
 Found a bug or have a question? Write an issue in our [GitHub repository](https://github.com/webdevops/Dockerfile/issues). Problems we already know about are listed in [Known issues](docs/known-issues.md).
