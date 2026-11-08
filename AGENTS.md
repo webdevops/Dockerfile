@@ -23,7 +23,7 @@ Only these commands are known to work:
 - `docker build -t webdevops/<image>:<tag> docker/<image>/<tag>` builds one image; its parent and `webdevops/toolbox` come from local images or Docker Hub.
 - `./build-local.sh [version]` builds all PHP images of one version.
 
-The other Makefile targets need Python 2. Apart from `provision` and `graph` inside `webdevops/dockerfile-build-env`, they do not work; `make test` fails there too (see `docs/known-issues.md`). The CI runs serverspec and container-structure-test for every image; to check a change by hand, start the image and try it as described below.
+Besides `provision`, the Makefile has `graph` (also Python 2, inside `webdevops/dockerfile-build-env`), `structure-test` (runs container-structure-test against your local images, for example inside `webdevops/dockerfile-build-env` with the Docker socket mounted) and `setup`, which the `webdevops/dockerfile-build-env` image runs while it is built. The CI runs serverspec and container-structure-test for every image; to check a change by hand, start the image and try it as described below.
 
 ## Keep the documentation up to date
 

@@ -70,7 +70,6 @@ diagram:
       docker:
         - webdevops/bootstrap
         - webdevops/base.*
-        - webdevops/ansible
     php:
       name: PHP images
       rank: 3
