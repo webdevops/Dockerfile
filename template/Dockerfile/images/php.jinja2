@@ -38,7 +38,7 @@
     && cd / && rm -rf /tmp/xmlrpc
 {%- endmacro %}
 
-{% macro official(role='', version='', distribution='') -%}
+{% macro official(role='', version='') -%}
     # Install php environment
     && apt-install \
         # Install tools
@@ -56,12 +56,7 @@
         libavif15 \
         libvips42 \
         librabbitmq4 \
-{%- if distribution == 'bookworm' %}
         libldap-2.5-0 \
-{%- else %}
-        libldap-2.4-2 \
-        zlibc \
-{%- endif %}
         libxslt1.1 \
         libldap-common \
         zlib1g \

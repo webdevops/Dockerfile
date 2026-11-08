@@ -28,7 +28,7 @@ RUN set -x \
 
 RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
     set -x \
-    {{ php.official(version='8.5',distribution='bookworm') }} \
+    {{ php.official(version='8.5') }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 
