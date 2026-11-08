@@ -97,6 +97,13 @@ shared_examples 'bootstrap::distribution' do
         its(:exit_status) { should eq 0 }
     end
 
+    describe command('docker-image-info dist-codename'), :if => ['debian', 'ubuntu'].include?(os[:family]) do
+        its(:stdout) { should eq command('. /etc/os-release && echo "$VERSION_CODENAME"').stdout }
+        its(:stdout) { should match /\A[a-z]+\n\z/ }
+
+        its(:exit_status) { should eq 0 }
+    end
+
     #########################
     # Alpine
     #########################
