@@ -1,9 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Runs container-structure-test against the local webdevops images that have a suite in this directory.
 # Only the tags the CI builds are tested (the -t "webdevops/..." lines in .github/workflows/build.yaml);
 # tags that are not built locally are skipped, and a tag that is the same image as one already tested
 # with the same suites (for example latest and ubuntu-22.04) is tested once.
 # Exits non-zero if a test fails, if docker cannot list the images or if no image was tested.
+# Needs Bash 4 or newer (declare -A, mapfile).
+
+if (( BASH_VERSINFO[0] < 4 )); then
+    echo "ERROR: run.sh needs Bash 4 or newer, this is Bash $BASH_VERSION." >&2
+    echo "Run make structure-test inside webdevops/dockerfile-build-env, or put a newer bash first in PATH." >&2
+    exit 1
+fi
 
 cd "$(dirname "$0")" || exit 1
 
