@@ -3,7 +3,6 @@ provision:
   base:
     configuration:
       base/general: '*'
-      base/centos: centos-*
       base/alpine: alpine
   base-app:
     configuration:
@@ -11,29 +10,19 @@ provision:
   apache:
     configuration:
       apache/general    : '*'
-      apache/centos     : centos-*
       apache/alpine     : alpine
   nginx:
     configuration:
       nginx/general     : '*'
-      nginx/centos      : centos-*
       nginx/alpine      : alpine
-  php:
-    configuration:
-      php/general       : '(debian|ubuntu|centos|alpine)'
-      php/ubuntu-12.04  : ubuntu-12.04
-      php/alpine        : alpine
   php-apache:
     configuration:
       apache/general    : '*'
-      apache/centos     : centos-*
-      apache/alpine     : alpine
       php-apache/general: '*'
       php-apache/alpine : '*-alpine'
   php-nginx:
     configuration:
       nginx/general     : '*'
-      nginx/centos      : centos-*
       nginx/alpine      : '*-alpine'
       php-nginx/general : '*'
   php-dev:

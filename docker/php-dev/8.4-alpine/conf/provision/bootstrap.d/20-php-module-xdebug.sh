@@ -1,26 +1,5 @@
 #!/usr/bin/env bash
 
-IMAGE_FAMILY=$(docker-image-info family)
-
-case "$IMAGE_FAMILY" in
-    Alpine)
-        # Fix php xdebug module [Alpine family]
-
-        if [[ -f "/etc/php5/conf.d/xdebug.ini" ]]; then
-            go-replace --mode=lineinfile \
-                -s '^extension=xdebug.so'  -r 'zend_extension=xdebug.so' \
-                /etc/php5/conf.d/xdebug.ini
-        fi
-
-        if [[ -f "/etc/php7/conf.d/xdebug.ini" ]]; then
-            go-replace --mode=lineinfile \
-                -s '^extension=xdebug.so'  -r 'zend_extension=xdebug.so' \
-                /etc/php7/conf.d/xdebug.ini
-        fi
-
-        ;;
-esac
-
 # Configure xdebug for development
 go-replace --mode=lineinfile --regex \
     -s '^[\s;]*xdebug.mode[\s]*='                     -r 'xdebug.mode = debug' \
