@@ -25,6 +25,6 @@ services:
       - ./:/app
 ```
 
-Ports: `80` (HTTP) and `443` (HTTPS). HTTPS uses a self-signed certificate for `*.vm` that ships with the image; it expired on 2025-05-01. To use your own certificate, see [Configuration files](../customization.md#configuration-files). Started by default: `nginx`. Without IPv6 in the container, Nginx does not start and is restarted over and over; [Known issues](../known-issues.md#nginx-and-php-fpm-without-ipv6) has a start script that fixes it.
+Ports: `80` (HTTP) and `443` (HTTPS). HTTPS uses a self-signed certificate for `*.vm` that ships with the image; it expired on 2025-05-01. To use your own certificate, see [Configuration files](../customization.md#configuration-files). Started by default: `nginx`. Nginx listens on IPv4 and IPv6; if the container has no IPv6, it listens on IPv4 only.
 
 Settings: [Web server](../environment-variables.md#web-server) (`WEB_PHP_SOCKET` is empty, there is no PHP), hooks in `/opt/docker/bin/service.d/nginx.d`, see [Customization](../customization.md).

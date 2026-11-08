@@ -279,6 +279,7 @@ Files with other extensions are left alone. The files are rewritten in place, wh
 - A file without placeholders can be mounted `:ro`.
 - A file with placeholders must not be mounted `:ro`: the file cannot be rewritten, and the container exits with code 2 at start.
 - A file with placeholders that is mounted read-write is rewritten on the host as well; after the first start it contains the values instead of the placeholders.
+- If the container has no IPv6, the `listen [::]` lines are removed from the Nginx files at start. In a file mounted `:ro` they cannot be removed, and Nginx does not start; leave them out of such a file.
 
 Use `COPY` in a Dockerfile for files with placeholders.
 

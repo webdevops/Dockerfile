@@ -22,3 +22,15 @@ if [[ -z "$WEB_PHP_SOCKET" ]]; then
     rm -f -- /opt/docker/etc/nginx/conf.d/10-php.conf
     rm -f -- /opt/docker/etc/nginx/vhost.common.d/10-php.conf
 fi
+
+# Without IPv6 in the container nginx cannot listen on [::], so it listens on IPv4 only
+if [[ ! -e /proc/net/if_inet6 ]]; then
+    for FILE in $(find /opt/docker/etc/nginx/ -type f -name '*.conf'); do
+        if grep -qE '^[[:space:]]*listen[[:space:]]+\[::\]' "$FILE"; then
+            echo "IPv6 is not available, removing the IPv6 listen directives from $FILE"
+            if ! sed -i -E '/^[[:space:]]*listen[[:space:]]+\[::\]/d' "$FILE"; then
+                echo "WARNING: Cannot change $FILE; nginx will not start without IPv6"
+            fi
+        fi
+    done
+fi
