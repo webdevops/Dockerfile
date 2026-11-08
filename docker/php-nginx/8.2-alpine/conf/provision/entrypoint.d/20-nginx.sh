@@ -24,20 +24,45 @@ if [[ -z "$WEB_PHP_SOCKET" ]]; then
 fi
 
 # Without IPv6 in the container nginx cannot listen on [::], so it listens on IPv4 only.
-# The file is rewritten in place (not with sed -i), so mounted files keep working.
+# Only files in the container's own file system are changed. Mounted files (bind mounts,
+# volumes, ConfigMaps) are left alone, so a file in the user's project is never changed.
 if [[ ! -e /proc/net/if_inet6 ]]; then
-    for FILE in $(find /opt/docker/etc/nginx/ -type f -name '*.conf'); do
-        if grep -qE '^[[:space:]]*listen[[:space:]]+\[::\]' "$FILE"; then
-            echo "IPv6 is not available, removing the IPv6 listen directives from $FILE"
-            TMP_FILE=""
-            if ! { TMP_FILE="$(mktemp)" \
-                && sed -E '/^[[:space:]]*listen[[:space:]]+\[::\]/d' "$FILE" > "$TMP_FILE" \
-                && cat "$TMP_FILE" > "$FILE"; }; then
-                echo "WARNING: Cannot change $FILE; nginx will not start without IPv6"
-            fi
-            if [[ -n "$TMP_FILE" ]]; then
-                rm -f -- "$TMP_FILE"
-            fi
+    NGINX_MOUNTS="$(awk '$5 != "/" { print $5 }' /proc/self/mountinfo)"
+    NGINX_CONF_SEEN=""
+    # Hidden directories are skipped: nginx does not include them, and Kubernetes keeps
+    # the files of a ConfigMap there (..data) behind the visible symlinks
+    while IFS= read -r -d '' NGINX_CONF; do
+        # Handle every file once, also when it is reachable through several symlinks
+        NGINX_CONF_REAL="$(readlink -f "$NGINX_CONF")"
+        case "$NGINX_CONF_SEEN" in *$'\n'"$NGINX_CONF_REAL"$'\n'*) continue ;; esac
+        NGINX_CONF_SEEN="$NGINX_CONF_SEEN"$'\n'"$NGINX_CONF_REAL"$'\n'
+
+        if ! grep -qE '^[[:space:]]*listen[[:space:]]+\[::\]' "$NGINX_CONF"; then
+            continue
         fi
-    done
+
+        NGINX_CONF_MOUNTED=0
+        while IFS= read -r NGINX_MOUNT; do
+            case "$NGINX_CONF" in "$NGINX_MOUNT"|"$NGINX_MOUNT"/*) NGINX_CONF_MOUNTED=1 ;; esac
+            case "$NGINX_CONF_REAL" in "$NGINX_MOUNT"|"$NGINX_MOUNT"/*) NGINX_CONF_MOUNTED=1 ;; esac
+        done <<< "$NGINX_MOUNTS"
+
+        if [[ "$NGINX_CONF_MOUNTED" -eq 1 ]]; then
+            echo "WARNING: IPv6 is not available, but $NGINX_CONF is mounted and contains listen [::]; nginx will not start" >&2
+            continue
+        fi
+
+        echo "IPv6 is not available, removing the IPv6 listen directives from $NGINX_CONF"
+        # Rewrite in place, so a symlinked file keeps its link
+        NGINX_CONF_TMP=""
+        if ! { NGINX_CONF_TMP="$(mktemp)" \
+            && sed -E '/^[[:space:]]*listen[[:space:]]+\[::\]/d' "$NGINX_CONF" > "$NGINX_CONF_TMP" \
+            && cat "$NGINX_CONF_TMP" > "$NGINX_CONF"; }; then
+            echo "WARNING: Cannot change $NGINX_CONF; nginx will not start without IPv6" >&2
+        fi
+        if [[ -n "$NGINX_CONF_TMP" ]]; then
+            rm -f -- "$NGINX_CONF_TMP"
+        fi
+    done < <(find -L /opt/docker/etc/nginx/ -mindepth 1 -name '.*' -prune -o -type f -name '*.conf' -print0)
+    unset NGINX_MOUNTS NGINX_MOUNT NGINX_CONF NGINX_CONF_REAL NGINX_CONF_MOUNTED NGINX_CONF_TMP NGINX_CONF_SEEN
 fi

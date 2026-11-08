@@ -29,7 +29,7 @@ PHP-FPM listens on port `9000`. For a web server in the same container use [`php
 
 ## Services
 
-Started by default: `php-fpm`, `cron`, `syslog`. The `-dev` variant also starts `postfix` and `ssh`. See [Customization](../customization.md#services). PHP-FPM listens on `[::]:9000`; if the container has no IPv6, it listens on `0.0.0.0:9000`.
+Started by default: `php-fpm`, `cron`, `syslog`. The `-dev` variant also starts `postfix` and `ssh`. See [Customization](../customization.md#services). PHP-FPM listens on port `9000` of all IPv6 and IPv4 addresses; if the container has no IPv6, of all IPv4 addresses.
 
 ## PHP configuration
 

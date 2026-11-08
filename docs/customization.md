@@ -279,7 +279,7 @@ Files with other extensions are left alone. The files are rewritten in place, wh
 - A file without placeholders can be mounted `:ro`.
 - A file with placeholders must not be mounted `:ro`: the file cannot be rewritten, and the container exits with code 2 at start.
 - A file with placeholders that is mounted read-write is rewritten on the host as well; after the first start it contains the values instead of the placeholders.
-- If the container has no IPv6, the `listen [::]` lines are removed from the Nginx files at start. In a file mounted read-write they are removed on the host as well; in a file mounted `:ro` they cannot be removed, and Nginx does not start.
+- If the container has no IPv6, the `listen [::]` lines are removed at start from the Nginx files in the container, including files you add with `COPY`. Mounted files are never changed: if a mounted file contains `listen [::]`, Nginx does not start without IPv6, and a warning names the file.
 
 Use `COPY` in a Dockerfile for files with placeholders.
 
@@ -294,7 +294,7 @@ Images: `php-*`. Files in `/opt/docker/etc/php/`:
 | `php.webdevops.ini` | The image's PHP defaults, followed by the values of the `php.*` and `PHP_*` variables. Loaded as `98-webdevops.ini`. At every start it is reset to the image's version and the variables are written again, so do not replace or edit it. |
 | `php.ini` | For your settings, empty by default. Loaded as `99-docker.ini`, after `98-webdevops.ini`, so its values win over the environment variables. A `:ro` mount works, except in the development images when one of the [`XDEBUG_*` variables](environment-variables.md#development-images) is set: these images write the Xdebug settings into this file, and with `:ro` the container exits at start. |
 | `fpm/php-fpm.conf` | PHP-FPM main configuration; `FPM_PROCESS_MAX` and `fpm.global.*` are appended at every start. |
-| `fpm/pool.d/application.conf` | The PHP-FPM pool `[www]`; the `FPM_*` and `fpm.pool.*` values are appended at every start. To replace it, use `COPY` in a Dockerfile: with a `:ro` mount the container exits at start, and a read-write mount gets the values appended in the file on the host. Without IPv6 in the container, `listen = [::]:9000` is also changed to `0.0.0.0:9000` there. |
+| `fpm/pool.d/application.conf` | The PHP-FPM pool `[www]`; the `FPM_*` and `fpm.pool.*` values are appended at every start. To replace it, use `COPY` in a Dockerfile: with a `:ro` mount the container exits at start, and a read-write mount gets the values appended in the file on the host. |
 
 `PHP_SENDMAIL_PATH` is the exception to the order above. It is also written into the pool as `php_admin_value[sendmail_path]`, and it is always set (default `/usr/sbin/sendmail -t -i`). So for requests handled by PHP-FPM, `sendmail_path` in your `php.ini` has no effect; only the PHP CLI uses it. Set `PHP_SENDMAIL_PATH` instead.
 

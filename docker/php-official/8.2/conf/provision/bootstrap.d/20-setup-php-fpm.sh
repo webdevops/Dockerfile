@@ -18,9 +18,9 @@ go-replace --mode=lineinfile --regex \
     -s '^[\s;]*pid[\s]*='       -r 'pid = /var/run/php-fpm.pid' \
     -- /opt/docker/etc/php/fpm/php-fpm.conf
 
-# Listen on all IPv6 and IPv4 addresses. Without IPv6 in the container,
-# entrypoint.d/20-php-fpm.sh switches to 0.0.0.0:9000 at start.
+# Listen on port 9000 of all addresses: PHP-FPM binds to [::] (IPv6 and IPv4)
+# and falls back to 0.0.0.0 if the container has no IPv6
 go-replace --mode=line --regex \
-    -s '^[\s;]*listen[\s]*=' -r 'listen = [::]:9000' \
+    -s '^[\s;]*listen[\s]*=' -r 'listen = 9000' \
     --path=/opt/docker/etc/php/fpm/ \
     --path-pattern='*.conf'
