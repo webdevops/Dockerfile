@@ -16,7 +16,6 @@ RUN apt-install \
         python2 \
         python2-dev \
         python-setuptools \
-        graphviz \
         ruby \
         ruby-dev \
         ruby-bundler \

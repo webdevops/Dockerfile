@@ -3,7 +3,6 @@
 dockerPath: 'docker'
 templatePath: 'template'
 provisionPath: 'provisioning'
-imagePath: 'graph/'
 baselayoutPath: 'baselayout'
 testinfraPath: 'tests/testinfra'
 serverspecPath: 'tests/serverspec'
@@ -16,10 +15,6 @@ docker:
   pathRegex: '/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'
   autoPull: True
   autoPullBlacklist: '^webdevops/.*'
-
-
-graph:
-    label: 'Webdevops Images\n%s'
 
 dockerTest:
   serverspec:

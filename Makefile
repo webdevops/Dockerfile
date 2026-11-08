@@ -1,5 +1,5 @@
 MAKEFLAGS += --silent
-.PHONY: list setup requirements structure-test provision graph graph-full
+.PHONY: list setup requirements structure-test provision
 
 list:
 	sh -c "echo; $(MAKE) -p no_targets__ 2>/dev/null |\
@@ -20,10 +20,3 @@ structure-test:
 provision:
 	python2 bin/console generate:dockerfile
 	python2 bin/console generate:provision
-
-graph:
-	python2 ./bin/console generate:graph
-
-graph-full:
-	python2 ./bin/console generate:graph --all\
-		--filename docker-image-full-layout.gv
