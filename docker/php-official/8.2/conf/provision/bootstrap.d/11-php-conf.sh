@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-PHP_CLEAR_ENV_AVAILABLE=1
-
 PHP_ETC_DIR=/usr/local/etc/php
 PHP_MAIN_CONF=/usr/local/etc/php-fpm.conf
 PHP_POOL_CONF=www.conf

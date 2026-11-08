@@ -26,11 +26,5 @@ indent_size = 2
 [*.php]
 indent_size = 4
 
-[DOCKER_REPOSITORY]
-insert_final_newline = false
-
-[DOCKER_TAG_LATEST]
-insert_final_newline = false
-
 [BLACKLIST]
 insert_final_newline = false

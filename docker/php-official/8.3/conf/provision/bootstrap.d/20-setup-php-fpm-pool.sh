@@ -32,14 +32,7 @@ go-replace --mode=line --regex \
     --path=/opt/docker/etc/php/fpm/ \
     --path-pattern='*.conf'
 
-if [[ "$PHP_CLEAR_ENV_AVAILABLE" -eq 1 ]]; then
-    # Clear env setting available, disable clearing of environment variables
-    go-replace --mode=lineinfile --regex \
-        -s '^[\s;]*clear_env[\s]*='                        -r 'clear_env = no' \
-        -- /opt/docker/etc/php/fpm/pool.d/application.conf
-    rm -f /opt/docker/bin/service.d/php-fpm.d/11-clear-env.sh
-else
-    # Append clear env workaround in php-fpm pool (old php-fpm versions)
-    echo ';#CLEAR_ENV_WORKAROUND#' >> /opt/docker/etc/php/fpm/pool.d/application.conf
-
-fi
+# Keep the environment variables of the container for PHP
+go-replace --mode=lineinfile --regex \
+    -s '^[\s;]*clear_env[\s]*='                        -r 'clear_env = no' \
+    -- /opt/docker/etc/php/fpm/pool.d/application.conf

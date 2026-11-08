@@ -2,7 +2,7 @@ MAKEFLAGS += --silent
 .PHONY: list setup requirements structure-test provision graph graph-full
 
 list:
-	sh -c "echo; $(MAKE) -p no_targets__ |\
+	sh -c "echo; $(MAKE) -p no_targets__ 2>/dev/null |\
 		awk -F':' '/^[a-zA-Z0-9][^\$$#\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);\
 		for(i in A)print A[i]}' | \
 	  	grep -v '__\$$\|Makefile\|%' | \
