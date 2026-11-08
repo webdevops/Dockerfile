@@ -51,22 +51,33 @@ services:
 
 ## webdevops/ssh
 
-`webdevops/ssh` was [`webdevops/base-app`](images/base.md) with the SSH server enabled. Build the same image yourself:
-
-```dockerfile
-FROM webdevops/base-app:ubuntu-22.04
-RUN docker-service enable ssh
-EXPOSE 22
-```
+`webdevops/ssh` was `webdevops/base-app` with the SSH server enabled. Use another SSH server image, for example [`lscr.io/linuxserver/openssh-server`](https://hub.docker.com/r/linuxserver/openssh-server). This example creates the user `application` with UID and GID `1000` and allows login with the key in `authorized_keys`:
 
 ```yaml
 services:
   ssh:
-    build: .
+    image: lscr.io/linuxserver/openssh-server
     ports:
-      - "2222:22"
+      - "2222:2222"
+    environment:
+      USER_NAME: application
+      PUID: "1000"
+      PGID: "1000"
+      PUBLIC_KEY_FILE: /keys/authorized_keys
     volumes:
-      - ./authorized_keys:/home/application/.ssh/authorized_keys:ro
+      - ./authorized_keys:/keys/authorized_keys:ro
 ```
 
-Neither `root` nor `application` has a password, so log in with a key: put your public key into `authorized_keys` and connect with `ssh -p 2222 application@localhost`. The container has the tools of `base-app`, for example `git` and `rsync`.
+Connect with `ssh -p 2222 application@localhost`. Password login is off. The user's home directory is `/config`.
+
+| `webdevops/ssh` | `lscr.io/linuxserver/openssh-server` |
+| --- | --- |
+| user `application`, UID and GID `1000` | `USER_NAME`, `PUID`, `PGID` |
+| port `22` | port `2222` |
+| key in `/home/application/.ssh/authorized_keys` | `PUBLIC_KEY_FILE` (a mounted file) or `PUBLIC_KEY` (the key itself) |
+| tools of `base-app`, such as `git` and `rsync` | not included; add them in your own image |
+
+```dockerfile
+FROM lscr.io/linuxserver/openssh-server
+RUN apk add --no-cache git rsync
+```
