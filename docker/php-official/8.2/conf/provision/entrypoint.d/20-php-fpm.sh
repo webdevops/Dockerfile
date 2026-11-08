@@ -79,13 +79,20 @@ if [[ -n "${PHP_SENDMAIL_PATH+x}" ]]; then
     echo "php_admin_value[sendmail_path] = ${PHP_SENDMAIL_PATH}" >> /opt/docker/etc/php/fpm/pool.d/application.conf
 fi
 
-# Without IPv6 in the container PHP-FPM cannot listen on [::], so it listens on all IPv4 addresses
+# Without IPv6 in the container PHP-FPM cannot listen on [::], so it listens on all IPv4 addresses.
+# The file is rewritten in place (not with sed -i), so mounted files keep working.
 if [[ ! -e /proc/net/if_inet6 ]]; then
     for FILE in $(find /opt/docker/etc/php/fpm/ -type f -name '*.conf'); do
         if grep -qE '^[[:space:]]*listen[[:space:]]*=[[:space:]]*\[::\]:' "$FILE"; then
             echo "IPv6 is not available, PHP-FPM listens on 0.0.0.0 instead of [::] in $FILE"
-            if ! sed -i -E '/^[[:space:]]*listen[[:space:]]*=/ s/\[::\]:/0.0.0.0:/' "$FILE"; then
+            TMP_FILE=""
+            if ! { TMP_FILE="$(mktemp)" \
+                && sed -E '/^[[:space:]]*listen[[:space:]]*=/ s/\[::\]:/0.0.0.0:/' "$FILE" > "$TMP_FILE" \
+                && cat "$TMP_FILE" > "$FILE"; }; then
                 echo "WARNING: Cannot change $FILE; PHP-FPM will not start without IPv6"
+            fi
+            if [[ -n "$TMP_FILE" ]]; then
+                rm -f -- "$TMP_FILE"
             fi
         fi
     done

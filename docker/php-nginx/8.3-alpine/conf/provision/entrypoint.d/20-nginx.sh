@@ -23,13 +23,20 @@ if [[ -z "$WEB_PHP_SOCKET" ]]; then
     rm -f -- /opt/docker/etc/nginx/vhost.common.d/10-php.conf
 fi
 
-# Without IPv6 in the container nginx cannot listen on [::], so it listens on IPv4 only
+# Without IPv6 in the container nginx cannot listen on [::], so it listens on IPv4 only.
+# The file is rewritten in place (not with sed -i), so mounted files keep working.
 if [[ ! -e /proc/net/if_inet6 ]]; then
     for FILE in $(find /opt/docker/etc/nginx/ -type f -name '*.conf'); do
         if grep -qE '^[[:space:]]*listen[[:space:]]+\[::\]' "$FILE"; then
             echo "IPv6 is not available, removing the IPv6 listen directives from $FILE"
-            if ! sed -i -E '/^[[:space:]]*listen[[:space:]]+\[::\]/d' "$FILE"; then
+            TMP_FILE=""
+            if ! { TMP_FILE="$(mktemp)" \
+                && sed -E '/^[[:space:]]*listen[[:space:]]+\[::\]/d' "$FILE" > "$TMP_FILE" \
+                && cat "$TMP_FILE" > "$FILE"; }; then
                 echo "WARNING: Cannot change $FILE; nginx will not start without IPv6"
+            fi
+            if [[ -n "$TMP_FILE" ]]; then
+                rm -f -- "$TMP_FILE"
             fi
         fi
     done
