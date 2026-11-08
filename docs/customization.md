@@ -76,7 +76,7 @@ These commands are installed in the images. Use them in `RUN` lines of your own 
 | `docker-cronjob '<line>'` | Adds a [cron job](#cron-jobs) | Debian- and Ubuntu-based images except `bootstrap` |
 | `docker-run-bootstrap` | Runs the [build scripts](#scripts-at-image-build) once and deletes them | all except `toolbox` |
 
-`apt-install` and `apk-install` are both present in every image except `toolbox`, but each only works on its own distribution.
+`apt-install` and `apk-install` are both present in every image except `toolbox`, but each only works on its own distribution. `toolbox` only stores the commands for the other images, see [Images](README.md#images).
 
 ```dockerfile
 FROM webdevops/php-nginx:8.5
