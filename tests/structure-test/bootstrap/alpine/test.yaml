@@ -1,10 +1,5 @@
 schemaVersion: "2.0.0"
 
-metadataTest:
-  envVars:
-    - key: "PATH"
-      value: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-
 commandTests:
   - name: "Check OS family"
     command: "docker-image-info"

@@ -332,7 +332,7 @@ jobs:
         name: 'run structure-test'
         run: |-
           cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04 --config base-app/test.yaml --config base-app/ubuntu-22.04/test.yaml
+          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04 --config base-app/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'

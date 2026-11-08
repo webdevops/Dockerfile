@@ -1,10 +1,13 @@
 #!/bin/bash
+# Runs container-structure-test against every local webdevops image that has a suite in this directory.
+# Exits non-zero if any image fails.
 
-TEST_REPOS="bootstrap base base-app php"
+cd "$(dirname "$0")" || exit 1
 
-for testRepo in ${TEST_REPOS}; do
-    if [[ ! -f $testRepo/test.yaml ]]; then
-        echo "Skipping tests for webdevops/$testRepo as no common test.yaml was found"
+FAILED=0
+for testRepo in */; do
+    testRepo="${testRepo%/}"
+    if [[ ! -f "$testRepo/test.yaml" ]]; then
         continue
     fi
     TEST_IMAGES="$(docker images -f "reference=webdevops/${testRepo}" --format "{{.Tag}}")"
@@ -15,10 +18,12 @@ for testRepo in ${TEST_REPOS}; do
         echo "=============================================="
         echo "Testing: webdevops/$testRepo:$imageTag"
         echo "=============================================="
-        if [[ -f $testRepo/$imageTag/test.yaml ]]; then
-            container-structure-test test --image webdevops/$testRepo:$imageTag --config $testRepo/$imageTag/test.yaml  --config $testRepo/test.yaml
-        else
-            container-structure-test test --image webdevops/$testRepo:$imageTag --config $testRepo/test.yaml
+        CONFIGS=(--config "$testRepo/test.yaml")
+        if [[ -f "$testRepo/$imageTag/test.yaml" ]]; then
+            CONFIGS+=(--config "$testRepo/$imageTag/test.yaml")
         fi
+        container-structure-test test --image "webdevops/$testRepo:$imageTag" "${CONFIGS[@]}" || FAILED=1
     done
 done
+
+exit $FAILED
