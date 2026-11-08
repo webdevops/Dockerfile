@@ -20,8 +20,7 @@ build:
 	python2 ./bin/console docker:build --threads=auto
 
 bootstrap: webdevops/bootstrap webdevops/ansible
-base:      webdevops/base webdevops/base-app webdevops/storage
-service:   webdevops/ssh webdevops/vsftp webdevops/postfix
+base:      webdevops/base webdevops/base-app
 
 php:       webdevops/php webdevops/php-apache webdevops/php-nginx
 php-dev:   webdevops/php-dev webdevops/php-apache-dev webdevops/php-nginx-dev

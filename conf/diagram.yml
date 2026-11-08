@@ -71,7 +71,6 @@ diagram:
         - webdevops/bootstrap
         - webdevops/base.*
         - webdevops/ansible
-        - webdevops/storage
     php:
       name: PHP images
       rank: 3
@@ -123,5 +122,3 @@ diagram:
       docker:
         - webdevops/apache
         - webdevops/nginx
-        - webdevops/ssh
-        - webdevops/vsftp

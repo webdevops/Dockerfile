@@ -1,6 +1,6 @@
 # Customization
 
-All images except `bootstrap`, `storage` and `toolbox` share the same entrypoint (`/entrypoint`), service handling and hooks. This page describes them.
+All images except `bootstrap` and `toolbox` share the same entrypoint (`/entrypoint`), service handling and hooks. This page describes them.
 
 ## Commands
 
@@ -69,14 +69,14 @@ These commands are installed in the images. Use them in `RUN` lines of your own 
 | --- | --- | --- |
 | `apt-install <packages>` | Runs `apt-get update`, installs the packages without recommended packages and removes the package lists again | Debian- and Ubuntu-based images, including `bootstrap:ubuntu-22.04` |
 | `apk-install <packages>` | Installs packages with `apk add --no-cache` | Alpine-based images, including `bootstrap:alpine` |
-| `docker-image-cleanup` | Removes package lists and caches; use it at the end of a `RUN` that installed packages | all except `storage`; fails in the Alpine `php-*` images, see [Known issues](known-issues.md#docker-image-cleanup-in-the-alpine-php-images) |
-| `go-replace -s <search> -r <replace> -- <file>` | Replaces text in files; the same tool fills the [placeholders](#placeholders) | all except `storage` |
-| `gosu <user> <command>` | Runs a command as another user, for example `application` | all except `storage` |
-| `docker-service enable <service>`, `docker-service disable <service>`, also `docker-service-enable` and `docker-service-disable` | Enables or disables a [service](#services); enabling installs it if needed | all except `bootstrap` and `storage` |
+| `docker-image-cleanup` | Removes package lists and caches; use it at the end of a `RUN` that installed packages | all except `toolbox`; fails in the Alpine `php-*` images, see [Known issues](known-issues.md#docker-image-cleanup-in-the-alpine-php-images) |
+| `go-replace -s <search> -r <replace> -- <file>` | Replaces text in files; the same tool fills the [placeholders](#placeholders) | all |
+| `gosu <user> <command>` | Runs a command as another user, for example `application` | all except `toolbox` |
+| `docker-service enable <service>`, `docker-service disable <service>`, also `docker-service-enable` and `docker-service-disable` | Enables or disables a [service](#services); enabling installs it if needed | all except `bootstrap` and `toolbox` |
 | `docker-cronjob '<line>'` | Adds a [cron job](#cron-jobs) | Debian- and Ubuntu-based images except `bootstrap` |
-| `docker-run-bootstrap` | Runs the [build scripts](#scripts-at-image-build) once and deletes them | all except `storage` |
+| `docker-run-bootstrap` | Runs the [build scripts](#scripts-at-image-build) once and deletes them | all except `toolbox` |
 
-`apt-install` and `apk-install` are both present in every image except `storage`, but each only works on its own distribution.
+`apt-install` and `apk-install` are both present in every image except `toolbox`, but each only works on its own distribution.
 
 ```dockerfile
 FROM webdevops/php-nginx:8.5
@@ -111,7 +111,6 @@ go-replace -s '<API_URL>' -r "$API_URL" -- /app/config/app.ini
 | `php`, `php-nginx`, `php-apache` | `php-fpm`, `cron`, `syslog`, plus `nginx` or `apache` | `postfix`, `ssh`, `dnsmasq` |
 | `php-dev`, `php-nginx-dev`, `php-apache-dev` | as above, plus `postfix` and `ssh` | `dnsmasq` |
 | `nginx`, `apache` | `nginx` or `apache` | `cron`, `syslog`, `postfix`, `ssh`, `dnsmasq` |
-| `vsftp` | `vsftp` | `cron`, `syslog`, `postfix`, `ssh`, `dnsmasq` |
 | `base`, `base-app` | none | `cron`, `syslog`, `postfix`, `ssh`, `dnsmasq` |
 
 Enable or disable a service with `docker-service` (or the shortcuts `docker-service-enable` and `docker-service-disable`). If the service's program is not installed yet, enabling it installs it. Do this in your Dockerfile:
@@ -138,7 +137,6 @@ Before a service starts, its start script sources every `*.sh` file in `/opt/doc
 | `postfix` | `/opt/docker/bin/service.d/postfix.d` |
 | `ssh` | `/opt/docker/bin/service.d/ssh.d` |
 | `dnsmasq` | `/opt/docker/bin/service.d/dnsmasq.d` |
-| `vsftp` | `/opt/docker/bin/service.d/vsftp.d` |
 | `supervisord` itself | `/opt/docker/bin/service.d/supervisor.d` |
 
 Options for each service are set with environment variables, see [Services](environment-variables.md#services).
@@ -301,7 +299,7 @@ Images: `php-*`. Files in `/opt/docker/etc/php/`:
 
 ### supervisord
 
-All images except `bootstrap` and `storage`.
+All images except `bootstrap` and `toolbox`.
 
 | File | Content |
 | --- | --- |
@@ -320,7 +318,7 @@ docker compose exec app supervisorctl restart nginx:nginxd
 | Image | Locales |
 | --- | --- |
 | `base-app:ubuntu-22.04` and the Debian-based `php-*` images | several hundred locales, for example `de_DE.utf8` and `en_US.utf8` |
-| `base:ubuntu-22.04` and `vsftp` | only `C`, `C.utf8` and `POSIX` |
+| `base:ubuntu-22.04` | only `C`, `C.utf8` and `POSIX` |
 | Alpine-based images | none; they have no `locale` command |
 
 List them with `docker compose exec app locale -a`.

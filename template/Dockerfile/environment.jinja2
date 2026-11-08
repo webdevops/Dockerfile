@@ -49,15 +49,6 @@ ENV WEB_NO_CACHE_PATTERN="\.(css|js|gif|png|jpg|svg|json|xml)$"
 {%- endmacro %}
 
 
-{% macro ftp() -%}
-ENV FTP_USER=application \
-    FTP_PASSWORD=application \
-    FTP_UID=1000 \
-    FTP_GID=1000 \
-    FTP_PATH=/data/ftp/
-{%- endmacro %}
-
-
 {% macro base() -%}
 ENV DOCKER_CONF_HOME=/opt/docker/ \
     LOG_STDOUT="" \

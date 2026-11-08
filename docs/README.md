@@ -12,10 +12,10 @@ Documentation for the `webdevops/*` Docker images. It describes the images as th
 | [`webdevops/nginx`](images/nginx.md) | Nginx without PHP |
 | [`webdevops/apache`](images/apache.md) | Apache without PHP |
 | [`webdevops/bootstrap`, `webdevops/base`, `webdevops/base-app`](images/base.md) | Base images for your own images |
-| [`webdevops/vsftp`](images/vsftp.md) | FTP server |
-| [`webdevops/storage`](images/storage.md) | Plain Alpine |
 | `webdevops/toolbox` | Build helper, not meant to run. Holds the baselayout scripts (`apt-install`, `apk-install`, `docker-image-cleanup`, `docker-run-bootstrap`, `generate-locales` and more), `go-replace` and `gosu`. `bootstrap` and `php` copy them in with `COPY --from=webdevops/toolbox`. |
 | `webdevops/dockerfile-build-env` | Build environment for this repository, based on `base-app:ubuntu-22.04`. It runs `make provision`, see [Build process](../README.md#build-process). |
+
+`webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built, see [Known issues](known-issues.md#migration-from-older-images).
 
 ## Platforms and updates
 
@@ -48,15 +48,13 @@ flowchart LR
   base --> baseapp["webdevops/base-app"]
   base --> nginx["webdevops/nginx"]
   base --> apache["webdevops/apache"]
-  base --> vsftp["webdevops/vsftp"]
   officialphp["php:VERSION-fpm-bookworm / php:VERSION-fpm-alpine"] --> php["webdevops/php"]
   php --> phpdev["webdevops/php-dev"]
   php --> phpnginx["webdevops/php-nginx"]
   php --> phpapache["webdevops/php-apache"]
   phpnginx --> phpnginxdev["webdevops/php-nginx-dev"]
   phpapache --> phpapachedev["webdevops/php-apache-dev"]
-  alpine["alpine:latest"] --> storage["webdevops/storage"]
-  alpine --> toolbox["webdevops/toolbox"]
+  alpine["alpine:latest"] --> toolbox["webdevops/toolbox"]
   baseapp --> buildenv["webdevops/dockerfile-build-env"]
   toolbox -. "COPY --from" .-> bootstrap
   toolbox -. "COPY --from" .-> php
