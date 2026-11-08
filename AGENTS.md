@@ -13,7 +13,7 @@
 | `tests/` | serverspec (Ruby) and container-structure-test definitions run by the CI |
 | `docs/` | User documentation |
 
-Not everything under `docker/` is built: `docker/php/7.0` to `docker/php/8.0` (and their `-alpine` variants) are dangling symlinks, and `docker/ssh` is not part of the CI workflow. The tags that are built are the `-t "webdevops/..."` lines in `.github/workflows/build.yaml`.
+Not everything under `docker/` is built: `docker/php/7.0` to `docker/php/8.0` (and their `-alpine` variants) are dangling symlinks. The tags that are built are the `-t "webdevops/..."` lines in `.github/workflows/build.yaml`.
 
 ## Build and test
 
@@ -39,6 +39,7 @@ Where the documentation lives:
 | `docs/customization.md` | Commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs and their time zone, healthcheck, configuration files and placeholders, supervisord, locales, application user and changing its UID |
 | `docs/images/*.md` | One page per image family: tags, base image, services, settings, development variant. `php.md` also has Debian or Alpine, production, installing extensions, mail and Xdebug with an IDE |
 | `docs/known-issues.md` | Options and tools that do not work, with affected images and workaround; migration from older images; build tools that no longer work |
+| `docs/discontinued-images.md` | Replacements for images that are no longer built (`storage`, `vsftp`, `ssh`) |
 
 ### When to update it
 
@@ -73,7 +74,7 @@ Update the documentation whenever a change touches any of these:
 
    Check every image a statement names, not just one representative: images differ in what they inherit (for example `cli` only works where `APPLICATION_USER` is set). Check both the Debian and the Alpine variant whenever their implementation differs (separate files under `provisioning/*/alpine`, apk vs. apt, `httpd` vs. `apache2`, `crond` vs. `cron`). Test examples with the exact command you document, and make sure a check cannot pass on an error message.
 
-4. **Document only what works.** Never describe an option that has no effect as working. Fix it, or leave it out and list it in `docs/known-issues.md`. If it works only in some images, say exactly which. Anything `docs/known-issues.md` lists as not working must never appear as working anywhere else. An `ENV` line in a Dockerfile is no proof that a variable works: `FTP_PATH` is declared, but no script reads it. When you fix a known issue, remove its entry in the same pull request.
+4. **Document only what works.** Never describe an option that has no effect as working. Fix it, or leave it out and list it in `docs/known-issues.md`. If it works only in some images, say exactly which. Anything `docs/known-issues.md` lists as not working must never appear as working anywhere else. An `ENV` line or a script that reads a variable is no proof that it works: `SERVICE_POSTFIX_OPTS` is passed to `postfix start`, which ignores it. When you fix a known issue, remove its entry in the same pull request.
 
 5. **Keep lists in sync.** The tag lists in `README.md` and in `docs/images/*.md` must match the tags pushed by `.github/workflows/build.yaml`. `webdevops/php-official` is not listed in the README; it is built from the same Dockerfiles as `webdevops/php`. The defaults in `docs/environment-variables.md` must match what a container reports.
 

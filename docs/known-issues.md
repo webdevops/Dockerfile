@@ -10,34 +10,28 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php-*`, Debian and Alpine.
 - **Instead:** Set `php.<key>` or a shortcut such as `PHP_MEMORY_LIMIT`, see [PHP](environment-variables.md#php), or [replace `php.ini`](customization.md#php).
 
-### `FTP_PATH`
-
-- **Effect:** No effect. Uploads always go to the FTP user's home directory, `/home/<FTP_USER>`.
-- **Images:** `vsftp`.
-- **Instead:** Mount your volume at `/home/<FTP_USER>`, see [vsftp](images/vsftp.md).
-
 ### `SERVICE_POSTFIX_OPTS`
 
 - **Effect:** No effect. The value is passed to `postfix start`, which ignores it.
-- **Images:** all images with Postfix: `base`, `base-app`, `nginx`, `apache`, `vsftp`, `php-*`.
+- **Images:** all images with Postfix: `base`, `base-app`, `nginx`, `apache`, `php-*`.
 - **Instead:** Change the Postfix configuration with `postconf -e` in a [service hook](customization.md#service-hooks) in `/opt/docker/bin/service.d/postfix.d/`, or use `POSTFIX_RELAYHOST` and `POSTFIX_MYNETWORKS`.
 
 ### `SERVICE_SUPERVISOR_USER`
 
 - **Effect:** Any value other than `root` makes the container exit with code 2 right after the start: supervisord switches to that user and then cannot create its control socket `/.supervisor.sock` (`Cannot open an HTTP server: … EACCES`).
-- **Images:** all images except `bootstrap`, `storage` and `toolbox`.
+- **Images:** all images except `bootstrap` and `toolbox`.
 - **Instead:** Leave it unset. PHP-FPM runs its workers as `application` anyway.
 
 ### `/opt/docker/provision/onbuild.d`
 
 - **Effect:** Scripts in this directory are never run. Only the removed Ansible provisioning used it.
-- **Images:** all images except `bootstrap`, `storage` and `toolbox`.
+- **Images:** all images except `bootstrap` and `toolbox`.
 - **Instead:** Use `bootstrap.d` or `build.d` with `docker-run-bootstrap`, see [Scripts at image build](customization.md#scripts-at-image-build).
 
 ### Ansible provisioning (`docker-provision`, `docker-ansible-install`)
 
 - **Effect:** Both commands fail. They need Python 2 and Python 2 packages that no longer exist.
-- **Images:** all images except `bootstrap`, `storage` and `toolbox`.
+- **Images:** all images except `bootstrap` and `toolbox`.
 - **Instead:** Shell scripts in `bootstrap.d` or `build.d`, see [Scripts at image build](customization.md#scripts-at-image-build).
 
 ### Blackfire agent
@@ -50,7 +44,7 @@ These options and tools are part of the images but do not work, or work only in 
 ### `cli` command without `APPLICATION_USER`
 
 - **Effect:** Fails with `APPLICATION_USER: unbound variable`.
-- **Images:** `base`, `nginx`, `apache`, `vsftp`. It works in `base-app` and `php-*`.
+- **Images:** `base`, `nginx`, `apache`. It works in `base-app` and `php-*`.
 - **Instead:** Set `APPLICATION_USER`, for example to `root`, or run the command directly; any other command runs as `root`, see [Commands](customization.md#commands).
 
 ### `docker-cronjob` on Alpine
@@ -137,3 +131,4 @@ These options and tools are part of the images but do not work, or work only in 
 - `XDEBUG_REMOTE_*`, `XDEBUG_IDE_KEY`, `XDEBUG_MAX_NESTING_LEVEL` and `XDEBUG_PROFILER_*` are ignored; they belong to Xdebug 2. Set the Xdebug 3 directive with `php.xdebug.<key>` instead, for example `php.xdebug.max_nesting_level: "500"` or `php.xdebug.idekey: PHPSTORM`. The variables listed under [Development images](environment-variables.md#development-images) still work.
 - `SERVICE_BLACKFIRE_AGENT_OPTS` has no effect, because the agent is not installed (see [Blackfire agent](#blackfire-agent)).
 - Tags that are no longer built stay on Docker Hub without updates: PHP 5.6 to 8.1 and all operating system tags such as `debian-9` or `ubuntu-18.04`. For `latest` and `alpine`, see [above](#latest-and-alpine-tags-of-the-php-images).
+- The images `webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built. Their last images stay on Docker Hub without updates (`ssh` since December 2022). For replacements, see [Replacing discontinued images](discontinued-images.md).

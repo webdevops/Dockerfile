@@ -57,6 +57,3 @@ provision:
       php/general        : '*'
       php/official       : '*'
       php/official-alpine: '*-alpine'
-  vsftp:
-    configuration:
-      vsftp/general     : '*'

@@ -30,12 +30,12 @@ Images: `base-app`, `php-*`.
 
 ## Container
 
-Images: `base`, `base-app`, `apache`, `nginx`, `vsftp`, `php-*`.
+Images: `base`, `base-app`, `apache`, `nginx`, `php-*`.
 
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `CLI_SCRIPT` | not set | Command the `cli` entrypoint runs as `APPLICATION_USER`. Works in `base-app` and `php-*` only; in the other images `cli` fails because `APPLICATION_USER` is not set. See [Customization](customization.md#commands). |
-| `LOG_STDOUT` | container stdout | File that `/docker.stdout` points to. Nginx, Apache, PHP-FPM and syslog-ng write their logs to `/docker.stdout` and `/docker.stderr`, vsftpd to `/docker.stdout`. |
+| `LOG_STDOUT` | container stdout | File that `/docker.stdout` points to. Nginx, Apache, PHP-FPM and syslog-ng write their logs to `/docker.stdout` and `/docker.stderr`. |
 | `LOG_STDERR` | container stderr | File that `/docker.stderr` points to. |
 | `TZ` | not set (UTC) | Time zone of the container, for example `Europe/Berlin`. It applies to `date`, cron and the time stamps supervisord writes to the container log. PHP uses `PHP_DATE_TIMEZONE` instead, see [Time zone](customization.md#time-zone). |
 
@@ -189,20 +189,6 @@ Each service reads its options when it starts. A service only runs if it is enab
 | `SERVICE_NGINX_OPTS` | Extra arguments for `nginx`, appended after `-g 'daemon off;'`. |
 | `SERVICE_APACHE_OPTS` | Extra arguments for Apache, for example `-DMYFLAG`. |
 | `SERVICE_PHPFPM_OPTS` | Extra arguments for `php-fpm`, for example `-dmax_input_time=120`. |
-| `SERVICE_VSFTP_OPTS` | Extra arguments for `vsftpd`. |
 | `POSTFIX_RELAYHOST` | Postfix `relayhost`, for example `[mail.example.com]:25`. The relay host must accept mail from the container without a login; there is no variable for one. See [Mail](images/php.md#mail). |
 | `POSTFIX_MYNETWORKS` | Postfix `mynetworks`. |
 | `VIRTUAL_HOST` | Comma-separated host names. When `dnsmasq` starts, each one is added to its configuration as `address=/<host>/127.0.0.1`; `*.example.com` becomes `address=/.example.com/127.0.0.1`. Only the first wildcard entry is kept; further `*.` entries are dropped. |
-
-## FTP
-
-Image: `vsftp`.
-
-| Variable | Default | Effect |
-| --- | --- | --- |
-| `FTP_USER` | `application` | FTP user name |
-| `FTP_PASSWORD` | `application` | FTP password |
-| `FTP_UID` | `1000` | UID of the FTP user |
-| `FTP_GID` | `1000` | GID of the FTP user |
-
-The FTP user's home directory is `/home/<FTP_USER>`; uploads are stored there.

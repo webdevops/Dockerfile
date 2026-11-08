@@ -116,7 +116,7 @@ class FileReader
      * published alias for whichever folder `autoLatestTag` points to, and a
      * reference like "webdevops/base:latest" must resolve to
      * "webdevops/base:ubuntu-22.04" to match the job that actually builds
-     * and exports it. A few images (e.g. toolbox, ssh, vsftp) *do* have a
+     * and exports it. A few images (e.g. toolbox, dockerfile-build-env) *do* have a
      * literal "latest" subdirectory and must be left untouched. Checking the
      * filesystem directly, rather than assuming the "latest" alias
      * substitution always applies, keeps this correct for both cases.
