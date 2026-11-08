@@ -18,28 +18,12 @@
     && echo 'auth sufficient pam_rootok.so' >> /etc/pam.d/su
 {%- endmacro %}
 
-
-
-{% macro centos() -%}
-    # Init bootstrap
-    # System update
-    && /usr/local/bin/yum-upgrade \
-    && yum-install \
-        epel-release \
-    && /usr/local/bin/generate-dockerimage-info
-{%- endmacro %}
-
-
-{% macro debian(distribution) -%}
+{% macro debian() -%}
     # Init bootstrap
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
-{%- if distribution == 'bookworm' %}
     && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list.d/debian.sources \
-{%- else %}
-    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list \
-{%- endif %}    
     && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \
@@ -50,27 +34,6 @@
         locales \
         gnupg
 {%- endmacro %}
-
-
-{% macro ubuntuOld() -%}
-    # Init bootstrap
-    # Add multiverse
-    && sed -i 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list \
-    && apt-update \
-    # System update
-    && /usr/local/bin/apt-upgrade \
-    # Install base stuff
-    && apt-install \
-        apt-transport-https \
-        python-software-properties \
-        ca-certificates \
-        apt-transport-https \
-    && apt-add-repository multiverse \
-    && sed -i 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list \
-    && apt-update \
-    && /usr/local/bin/generate-dockerimage-info
-{%- endmacro %}
-
 
 {% macro ubuntu() -%}
     # Init bootstrap
@@ -85,4 +48,3 @@
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info
 {%- endmacro %}
-

@@ -13,7 +13,7 @@
 | `tests/` | serverspec (Ruby) and container-structure-test definitions run by the CI |
 | `docs/` | User documentation |
 
-Not everything under `docker/` is built: `docker/php/7.0` to `docker/php/8.0` (and their `-alpine` variants) are dangling symlinks. The tags that are built are the `-t "webdevops/..."` lines in `.github/workflows/build.yaml`.
+`docker/php/<version>` are symlinks to `docker/php-official/<version>`; both images are built from the same Dockerfiles. The tags that are built are the `-t "webdevops/..."` lines in `.github/workflows/build.yaml`.
 
 ## Build and test
 

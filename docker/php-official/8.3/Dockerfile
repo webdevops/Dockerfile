@@ -38,7 +38,7 @@ RUN set -x \
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
     # Enable non-free
-    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list.d/debian.sources \    
+    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list.d/debian.sources \
     && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \

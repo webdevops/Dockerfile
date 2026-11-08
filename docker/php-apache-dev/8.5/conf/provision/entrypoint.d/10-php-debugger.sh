@@ -4,31 +4,7 @@
 # Debugger switch
 #################################################
 
-PHP_CONF_PATHS="
-/etc/php5/conf.d
-/etc/php7/conf.d
-/etc/php.d
-/etc/php5/mods-available
-/etc/php5/cli/conf.d
-/etc/php5/cli/conf.d
-/etc/php5/fpm/conf.d
-/etc/php5/fpm/conf.d
-/etc/php/7.0/mods-available
-/etc/php/7.1/mods-available
-/etc/php/7.2/mods-available
-/etc/php/7.3/mods-available
-/etc/php/7.4/mods-available
-/etc/php/7.0/cli/conf.d
-/etc/php/7.1/cli/conf.d
-/etc/php/7.2/cli/conf.d
-/etc/php/7.3/cli/conf.d
-/etc/php/7.4/cli/conf.d
-/etc/php/7.0/fpm/conf.d
-/etc/php/7.1/fpm/conf.d
-/etc/php/7.2/fpm/conf.d
-/etc/php/7.3/fpm/conf.d
-/etc/php/7.4/fpm/conf.d
-/usr/local/etc/php/conf.d/"
+PHP_CONF_PATHS="/usr/local/etc/php/conf.d/"
 
 function phpModuleRemove() {
     if [ "$#" -ne 1 ]; then

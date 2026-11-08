@@ -14,7 +14,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN set -x \
-    {{ bootstrap.debian('bookworm') }}
+    {{ bootstrap.debian() }}
 
 RUN set -x \
     {{ base.debian() }} \
@@ -28,7 +28,7 @@ RUN set -x \
 
 RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
     set -x \
-    {{ php.official(version='8.3',distribution='bookworm') }} \
+    {{ php.official(version='8.3') }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 

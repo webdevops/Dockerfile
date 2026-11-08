@@ -7,13 +7,6 @@
         nginx
 {%- endmacro %}
 
-
-{% macro centos(role='') -%}
-    # Install tools
-    && yum-install \
-        nginx
-{%- endmacro %}
-
 {% macro debian(role='') -%}
     # Install nginx
     && printf "deb http://nginx.org/packages/debian/ $(docker-image-info dist-codename)  nginx\n deb-src http://nginx.org/packages/debian/ $(docker-image-info dist-codename) nginx" \
@@ -21,11 +14,4 @@
     && curl -L https://nginx.org/keys/nginx_signing.key | apt-key add - \
     && apt-install \
     nginx
-{%- endmacro %}
-
-
-{% macro ubuntu(role='') -%}
-    # Install nginx
-    && apt-install \
-        nginx
 {%- endmacro %}
