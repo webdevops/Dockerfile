@@ -13,10 +13,6 @@ LABEL maintainer=info@webdevops.io \
       io.webdevops.version=1.5.0
 {%- endmacro %}
 
-{%- macro add(source, target) -%}
-ADD {{ source }} {{ target }}
-{%- endmacro -%}
-
 {%- macro copy(source, target) -%}
 COPY {{ source }} {{ target }}
 {%- endmacro -%}
@@ -27,10 +23,6 @@ EXPOSE {{ port }}
 
 {%- macro workdir(path) -%}
 WORKDIR {{ path }}
-{%- endmacro -%}
-
-{%- macro volume(volume) -%}
-VOLUME {{ volume }}
 {%- endmacro -%}
 
 {%- macro entrypoint(command) -%}
