@@ -15,7 +15,7 @@ Documentation for the `webdevops/*` Docker images. It describes the images as th
 | `webdevops/toolbox` | Build helper, not meant to run. Holds the baselayout scripts (`apt-install`, `apk-install`, `docker-image-cleanup`, `docker-run-bootstrap`, `generate-locales` and more), `go-replace` and `gosu`. `bootstrap` and `php` copy them in with `COPY --from=webdevops/toolbox`. |
 | `webdevops/dockerfile-build-env` | Build environment for this repository, based on `base-app:ubuntu-22.04`. It runs `make provision`, see [Build process](../README.md#build-process). |
 
-`webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built, see [Known issues](known-issues.md#migration-from-older-images).
+`webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built. [Replacing discontinued images](discontinued-images.md) shows what to use instead.
 
 ## Platforms and updates
 
@@ -37,6 +37,7 @@ Documentation for the `webdevops/*` Docker images. It describes the images as th
 - [Customization](customization.md): commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs, healthcheck, configuration files, locales, the application user
 - PHP images: [Debian or Alpine](images/php.md#debian-or-alpine), [production](images/php.md#production), [installing more extensions](images/php.md#installing-more-extensions), [mail](images/php.md#mail), [Xdebug with an IDE](images/php.md#xdebug-with-an-ide)
 - [Known issues](known-issues.md): options that do not work, workarounds, migration from older images
+- [Replacing discontinued images](discontinued-images.md): what to use instead of `storage`, `vsftp` and `ssh`
 
 ## How the images build on each other
 
