@@ -1,5 +1,12 @@
 MAKEFLAGS += --silent
-.PHONY: setup requirements structure-test provision graph graph-full
+.PHONY: list setup requirements structure-test provision graph graph-full
+
+list:
+	sh -c "echo; $(MAKE) -p no_targets__ |\
+		awk -F':' '/^[a-zA-Z0-9][^\$$#\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);\
+		for(i in A)print A[i]}' | \
+	  	grep -v '__\$$\|Makefile\|%' | \
+		sort"
 
 setup:     requirements
 

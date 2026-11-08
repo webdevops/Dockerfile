@@ -84,7 +84,7 @@ Build all PHP images of one version (default `8.5`), in the order they depend on
 ./build-local.sh 8.4
 ```
 
-Then try an image with the quick start above. `make provision` and `make graph` call `bin/console`, which needs Python 2;
+Then try an image with the quick start above. `make provision`, `make graph` and `make graph-full` call `bin/console`, which needs Python 2;
 run them inside `webdevops/dockerfile-build-env`. See [Known issues](docs/known-issues.md#build-tools).
 
 ### PHP extension builds

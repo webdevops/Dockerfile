@@ -146,7 +146,7 @@ These options and tools are part of the images but do not work, or work only in 
 
 ## Build tools
 
-- **Effect:** The Makefile targets `provision` and `graph` call `bin/console`, which needs Python 2. On a host without Python 2 they fail with `python2: No such file or directory`. Inside `webdevops/dockerfile-build-env` both work.
+- **Effect:** The Makefile targets `provision`, `graph` and `graph-full` call `bin/console`, which needs Python 2. On a host without Python 2 they fail with `python2: No such file or directory`. Inside `webdevops/dockerfile-build-env` they work.
 - **Instead:** Run `make provision` in `webdevops/dockerfile-build-env` as shown in the [README](../README.md#file-generation). Build images with `docker build` or `./build-local.sh`, see [Building and testing locally](../README.md#building-and-testing-locally). The CI runs the serverspec and structure tests for every image.
 - **Issue:** [#549](https://github.com/webdevops/Dockerfile/issues/549) (move away from Python 2).
 
