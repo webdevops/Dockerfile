@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Webdevops\Build\Tests;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Webdevops\Build\FileReader;
+
+use function str_replace;
 
 #[CoversClass(FileReader::class)]
 final class FileReaderTest extends TestCase
@@ -133,6 +136,31 @@ final class FileReaderTest extends TestCase
     public function testAutoLatestTag(): void
     {
         self::assertSame('ubuntu-22.04', new FileReader(self::ROOT)->autoLatestTag());
+    }
+
+    /**
+     * @return iterable<string, array{0: string}>
+     */
+    public static function invalidAutoLatestTags(): iterable
+    {
+        yield 'number without quotes' => ['  autoLatestTag: 22.10'];
+        yield 'empty' => ["  autoLatestTag: ''"];
+        yield 'missing' => [''];
+    }
+
+    #[DataProvider('invalidAutoLatestTags')]
+    public function testAutoLatestTagHasToBeAQuotedTag(string $line): void
+    {
+        $repository = new TemporaryRepository();
+        $repository->write('conf/console.yml', str_replace("  autoLatestTag: 'ubuntu-22.04'", $line, $repository->read('conf/console.yml')));
+
+        try {
+            $this->expectException(RuntimeException::class);
+            $this->expectExceptionMessage('"docker: autoLatestTag" in conf/console.yml has to be a tag in quotes, e.g. \'ubuntu-22.04\'.');
+            new FileReader($repository->path)->getInfo('docker/base/ubuntu-22.04/Dockerfile');
+        } finally {
+            $repository->remove();
+        }
     }
 
     public function testDockerfileWithoutHeaderIsAnError(): void

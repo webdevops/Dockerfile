@@ -14,6 +14,7 @@ use Webdevops\Build\FileReader;
 use Webdevops\Build\GithubJobBuilder;
 
 use function array_filter;
+use function array_map;
 use function array_values;
 use function file;
 use function file_exists;
@@ -138,14 +139,16 @@ class GithubCommand extends Command
     }
 
     /**
-     * The entries of --blacklist or ci/BLACKLIST without empty ones, which would match every image.
+     * The entries of --blacklist or ci/BLACKLIST without surrounding whitespace, which no image name contains,
+     * and without empty entries, which would match every image.
      *
      * @param array<mixed> $entries
      * @return list<string>
      */
     private function blacklistEntries(array $entries): array
     {
-        return array_values(array_filter($entries, fn (mixed $entry): bool => is_string($entry) && trim($entry) !== ''));
+        $entries = array_map(fn (mixed $entry): string => is_string($entry) ? trim($entry) : '', $entries);
+        return array_values(array_filter($entries, fn (string $entry): bool => $entry !== ''));
     }
 
     private function isNameBlacklisted(string $name): bool

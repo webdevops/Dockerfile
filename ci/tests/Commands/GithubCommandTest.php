@@ -129,6 +129,7 @@ final class GithubCommandTest extends TestCase
         yield 'start of the name' => [['webdevops/toolbox'], ['toolbox_latest']];
         yield 'the auto latest tag stays' => [['base'], ['base_alpine']];
         yield 'two entries' => [['php:8.4', 'base:alpine'], ['base_alpine', 'php_8-4']];
+        yield 'surrounding whitespace' => [[' php-nginx:8.5-alpine ', "\tbase:alpine"], ['base_alpine', 'php-nginx_8-5-alpine']];
     }
 
     /**
@@ -170,7 +171,7 @@ final class GithubCommandTest extends TestCase
 
     public function testBlacklistFile(): void
     {
-        $this->repository->write('ci/BLACKLIST', "php-nginx-dev\n\n   \nphp:8.4\n");
+        $this->repository->write('ci/BLACKLIST', "php-nginx-dev \n\n   \nphp:8.4\n");
 
         self::assertSame($this->jobsWithout(['php-nginx-dev_8-5-alpine', 'php_8-4']), array_keys($this->generate()['jobs']));
     }

@@ -28,7 +28,13 @@ class FileReader
      */
     public function autoLatestTag(): string
     {
-        return $this->settings['docker']['autoLatestTag'];
+        $tag = $this->settings['docker']['autoLatestTag'] ?? null;
+        if (!is_string($tag) || $tag === '') {
+            // An unquoted value such as 22.10 is a number in YAML and would lose its trailing zero
+            throw new RuntimeException('"docker: autoLatestTag" in conf/console.yml has to be a tag in quotes, e.g. \'ubuntu-22.04\'.');
+        }
+
+        return $tag;
     }
 
     /**
@@ -146,7 +152,7 @@ class FileReader
             $node['image'] = str_replace('-official', '', $node['image']);
         }
 
-        if ($tagName === $this->settings['docker']['autoLatestTag']) {
+        if ($tagName === $this->autoLatestTag()) {
             $node['aliases'][] = str_replace(':' . $tagName, ':latest', $id);
         }
 
@@ -185,8 +191,8 @@ class FileReader
         $dockerfileExists = fn (string $tag): bool => file_exists(
             $this->rootPath . '/docker/' . $image . '/' . $tag . '/Dockerfile',
         );
-        if ($tag === 'latest' && !$dockerfileExists($tag) && $dockerfileExists($this->settings['docker']['autoLatestTag'])) {
-            $tag = $this->settings['docker']['autoLatestTag'];
+        if ($tag === 'latest' && !$dockerfileExists($tag) && $dockerfileExists($this->autoLatestTag())) {
+            $tag = $this->autoLatestTag();
         }
 
         return 'webdevops/' . $image . ':' . $tag;
