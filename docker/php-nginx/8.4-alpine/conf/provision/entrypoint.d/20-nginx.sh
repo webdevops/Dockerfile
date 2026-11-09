@@ -22,3 +22,9 @@ if [[ -z "$WEB_PHP_SOCKET" ]]; then
     rm -f -- /opt/docker/etc/nginx/conf.d/10-php.conf
     rm -f -- /opt/docker/etc/nginx/vhost.common.d/10-php.conf
 fi
+
+# Without IPv6 in the container nginx cannot listen on [::]: delete the IPv6 listen
+# directives that vhost.conf includes, so nginx listens on IPv4 only
+if [[ ! -e /proc/net/if_inet6 ]]; then
+    rm -f -- /opt/docker/etc/nginx/vhost.ipv6/*.conf || true
+fi

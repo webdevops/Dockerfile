@@ -84,8 +84,8 @@ Build all PHP images of one version (default `8.5`), in the order they depend on
 ./build-local.sh 8.4
 ```
 
-Then try an image with the quick start above. `make test` and the other Makefile targets that call `bin/console` need Python 2;
-only `make provision` and `make graph` still work, inside `webdevops/dockerfile-build-env`. See [Known issues](docs/known-issues.md#build-tools).
+Then try an image with the quick start above. `make provision` calls `bin/console`, which needs Python 2;
+run it inside `webdevops/dockerfile-build-env`. See [Known issues](docs/known-issues.md#build-tools).
 
 ### PHP extension builds
 

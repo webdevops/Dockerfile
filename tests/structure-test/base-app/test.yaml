@@ -60,3 +60,7 @@ commandTests:
     command: "which"
     args: ["patch"]
     expectedOutput: ["/usr/bin/patch"]
+  - name: "bzip2"
+    command: "which"
+    args: ["bzip2"]
+    expectedOutput: ["/usr/bin/bzip2"]

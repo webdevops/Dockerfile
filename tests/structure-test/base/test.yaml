@@ -102,3 +102,11 @@ commandTests:
     command: "which"
     args: ["zic"]
     expectedOutput: ["/usr/sbin/zic"]
+  - name: "netstat"
+    command: "which"
+    args: ["netstat"]
+    expectedOutput: ["^/(usr/)?bin/netstat\\s*$"]
+  - name: "sed"
+    command: "which"
+    args: ["sed"]
+    expectedOutput: ["^/(usr/)?bin/sed\\s*$"]

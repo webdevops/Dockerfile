@@ -24,7 +24,6 @@ from command.docker_exec_command import DockerExecCommand
 from command.test_testinfra_command import TestTestinfraCommand
 from command.test_serverspec_command import TestServerspecCommand
 from command.generate_dockerfile_command import GenerateDockerfileCommand
-from command.generate_graph_command import GenerateGraphCommand
 from command.generate_provision_command import GenerateProvisionCommand
 
 if __name__ == '__main__':
@@ -63,7 +62,6 @@ if __name__ == '__main__':
         'dockerPath',
         'templatePath',
         'provisionPath',
-        'imagePath',
         'baselayoutPath',
         'testinfraPath',
         'serverspecPath',
@@ -98,7 +96,6 @@ if __name__ == '__main__':
     application.add(TestTestinfraCommand(configuration=configuration))
     application.add(TestServerspecCommand(configuration=configuration))
     application.add(GenerateDockerfileCommand(configuration=configuration))
-    application.add(GenerateGraphCommand(configuration=configuration))
     application.add(GenerateProvisionCommand(configuration=configuration))
 
     application.run()

@@ -214,7 +214,7 @@ jobs:
         name: 'run structure-test'
         run: |-
           cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-alpine --config base-app/test.yaml --config base-app/alpine/test.yaml
+          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-alpine --config base-app/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -475,7 +475,7 @@ jobs:
         name: 'run structure-test'
         run: |-
           cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine --config base/test.yaml --config base/alpine/test.yaml
+          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine --config base/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'

@@ -233,6 +233,7 @@ Images: `php-nginx`, `php-nginx-dev`, `nginx`. The distribution's configuration 
 | `global.conf` | Empty; for your settings at `http` level |
 | `conf.d/*.conf` | Settings at `http` level. `conf.d/10-php.conf` defines the upstream `php` (`WEB_PHP_SOCKET`). |
 | `vhost.conf` | The default server for port 80 and port 443: `server_name`, `root`, `index`. Both include `vhost.common.d/*.conf`; port 443 also includes `vhost.ssl.conf`. |
+| `vhost.ipv6/listen-80.conf`, `vhost.ipv6/listen-443.conf` | `listen [::]:80` and `listen [::]:443` for the default server, included by `vhost.conf`. Deleted at start if the container has no IPv6, so the default server listens on IPv4 only. |
 | `vhost.ssl.conf` | TLS protocols, ciphers and the paths of `ssl/server.crt` and `ssl/server.key` |
 | `vhost.common.d/10-general.conf` | `client_max_body_size` (`SERVICE_NGINX_CLIENT_MAX_BODY_SIZE`) |
 | `vhost.common.d/10-location-root.conf` | `location /` with `try_files $uri $uri/ /<DOCUMENT_INDEX>?$query_string` |
@@ -283,6 +284,8 @@ Files with other extensions are left alone. The files are rewritten in place, wh
 Use `COPY` in a Dockerfile for files with placeholders.
 
 If `WEB_PHP_SOCKET` is empty, the files that connect the web server to PHP-FPM are deleted at start: `conf.d/10-php.conf` and `vhost.common.d/10-php.conf` (Nginx), `conf.d/10-php.conf` (Apache). This is the default in `nginx` and `apache`.
+
+If the container has no IPv6, the files in `vhost.ipv6/` are deleted at start (Nginx); if you mount `/opt/docker/etc/nginx/` as a whole, also on the host. No other file is changed: a file of your own with `listen [::]` keeps Nginx from starting without IPv6.
 
 ### PHP
 

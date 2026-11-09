@@ -35,10 +35,10 @@ fileExistenceTests:
   - name: 'PIE working directory was removed after the build'
     path: '/tmp/pie'
     shouldExist: false
-  - name: 'provision: set php version variable script was deleted after execution'
+  - name: 'provision: image family script was deleted after execution'
     path: '/opt/docker/provision/bootstrap.d/10-php-init.sh'
     shouldExist: false
-  - name: 'provision: set permission script was deleted after execution'
+  - name: 'provision: PHP path variables script was deleted after execution'
     path: '/opt/docker/provision/bootstrap.d/11-php-conf.sh'
     shouldExist: false
   - name: 'provision: cron installer was deleted after enabling the service'

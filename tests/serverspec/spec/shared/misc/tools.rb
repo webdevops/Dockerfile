@@ -30,25 +30,3 @@ shared_examples 'misc::ghostscript' do
         its(:exit_status) { should eq 0 }
     end
 end
-
-shared_examples 'misc::graphviz' do
-    it "should include graphviz" do
-        expect(file("/usr/bin/dot")).to be_executable
-    end
-
-    describe command('/usr/bin/dot -V') do
-        its(:stderr) { should match %r!graphviz version! }
-        its(:exit_status) { should eq 0 }
-    end
-end
-
-shared_examples 'misc::letsencrypt' do
-    it "should include certbot" do
-        expect(file("/usr/bin/certbot")).to be_executable
-    end
-
-    describe command('/usr/bin/certbot --version') do
-        its(:stderr) { should match %r!certbot! }
-        its(:exit_status) { should eq 1 }
-    end
-end

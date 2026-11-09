@@ -26,7 +26,6 @@ default = {
     'dockerPath': False,
     'templatePath': False,
     'provisionPath': False,
-    'imagePath': False,
     'confPath': False,
     'baselayoutPath': False,
     'testPath': False,

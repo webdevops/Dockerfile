@@ -16,6 +16,8 @@ shared_examples 'collection::php' do
     include_examples 'misc::graphicsmagick'
     include_examples 'misc::imagemagick'
     include_examples 'misc::ghostscript'
+
+    include_examples 'base::syslog-ng'
 end
 
 shared_examples 'collection::php::production' do

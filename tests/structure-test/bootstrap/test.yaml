@@ -8,6 +8,8 @@ metadataTest:
       value: "C.UTF-8"
     - key: "TERM"
       value: "xterm"
+    - key: "PATH"
+      value: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 fileExistenceTests:
   - name: 'apk add wrapper'
