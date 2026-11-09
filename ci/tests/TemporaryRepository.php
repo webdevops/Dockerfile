@@ -17,9 +17,11 @@ use function file_put_contents;
 use function is_dir;
 use function mkdir;
 use function random_bytes;
+use function readlink;
 use function rmdir;
 use function strlen;
 use function substr;
+use function symlink;
 use function sys_get_temp_dir;
 use function unlink;
 
@@ -48,7 +50,10 @@ final readonly class TemporaryRepository
             }
 
             $target = $this->path . substr($file->getPathname(), strlen(self::FIXTURE));
-            if ($file->isDir()) {
+            if ($file->isLink()) {
+                // Like docker/php/<version>, which links to docker/php-official/<version>
+                symlink((string)readlink($file->getPathname()), $target);
+            } elseif ($file->isDir()) {
                 mkdir($target);
             } else {
                 copy($file->getPathname(), $target);
@@ -82,7 +87,7 @@ final readonly class TemporaryRepository
         );
         foreach ($files as $file) {
             if ($file instanceof SplFileInfo) {
-                $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname());
+                $file->isDir() && !$file->isLink() ? rmdir($file->getPathname()) : unlink($file->getPathname());
             }
         }
 

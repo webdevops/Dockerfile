@@ -4,6 +4,7 @@ namespace Webdevops\Build\Commands;
 
 use BlueM\Tree;
 use BlueM\Tree\Node;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -12,20 +13,23 @@ use Symfony\Component\Yaml\Yaml;
 use Webdevops\Build\FileReader;
 use Webdevops\Build\GithubJobBuilder;
 
+use function array_filter;
+use function array_values;
 use function file;
 use function file_exists;
 use function file_put_contents;
+use function is_string;
 use function ksort;
-use function str_pad;
 use function str_contains;
+use function str_pad;
+use function trim;
 
 /**
  * Writes .github/workflows/build.yaml: a build and a publish job for every Dockerfile under docker/.
  */
+#[AsCommand(name: 'github:generate-ci')]
 class GithubCommand extends Command
 {
-    protected static $defaultName = 'github:generate-ci';
-
     private OutputInterface $output;
 
     private readonly FileReader $fileReader;
@@ -38,14 +42,9 @@ class GithubCommand extends Command
     private array $jobs = [];
 
     /**
-     * @var array<string>
+     * @var list<string>
      */
     private array $blacklist = [];
-
-    /**
-     * @var array<string, mixed> conf/console.yml
-     */
-    private readonly array $settings;
 
     /**
      * @param string $rootPath the repository root
@@ -56,14 +55,13 @@ class GithubCommand extends Command
         $this->jobBuilder = new GithubJobBuilder($this->rootPath);
         parent::__construct();
         $this->addOption('blacklist', 'b', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY);
-        $this->settings = Yaml::parseFile($this->rootPath . '/conf/console.yml');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->blacklist = $input->getOption('blacklist');
+        $this->blacklist = $this->blacklistEntries($input->getOption('blacklist'));
         if ($this->blacklist === [] && file_exists($this->rootPath . '/ci/BLACKLIST')) {
-            $this->blacklist = file($this->rootPath . '/ci/BLACKLIST', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+            $this->blacklist = $this->blacklistEntries(file($this->rootPath . '/ci/BLACKLIST', FILE_IGNORE_NEW_LINES) ?: []);
         }
 
         $this->jobs = [];
@@ -126,9 +124,8 @@ class GithubCommand extends Command
             ...$this->jobBuilder->getJobsDescription($nodeAr),
         ];
         if ($this->isNameBlacklisted($nodeAr['id'])) {
-//            $this->jobs[GithubJobBuilder::toJobId($node->getId())] = array_merge($this->jobs[GithubJobBuilder::toJobId($node->getId())], ['when' => 'manual']);
             $line .= ' *blacklisted*';
-            if ($node->get('tag') !== $this->settings['docker']['autoLatestTag']) {
+            if ($node->get('tag') !== $this->fileReader->autoLatestTag()) {
                 unset($this->jobs[GithubJobBuilder::toJobId($node->getId())]);
                 unset($this->jobs[GithubJobBuilder::toJobId($node->getId()) . '_publish']);
             }
@@ -138,6 +135,17 @@ class GithubCommand extends Command
         foreach ($node->getChildren() as $childNode) {
             $this->traverse($childNode);
         }
+    }
+
+    /**
+     * The entries of --blacklist or ci/BLACKLIST without empty ones, which would match every image.
+     *
+     * @param array<mixed> $entries
+     * @return list<string>
+     */
+    private function blacklistEntries(array $entries): array
+    {
+        return array_values(array_filter($entries, fn (mixed $entry): bool => is_string($entry) && trim($entry) !== ''));
     }
 
     private function isNameBlacklisted(string $name): bool

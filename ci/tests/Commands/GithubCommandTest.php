@@ -102,9 +102,10 @@ final class GithubCommandTest extends TestCase
     public function testPublishesTheAliases(): void
     {
         $jobs = $this->generate()['jobs'];
+        $manifest = fn (string $job): string => array_column($jobs[$job]['steps'], 'run', 'name')['Create and push multi-arch manifest'];
 
-        self::assertStringContainsString('-t "webdevops/base:latest"', $jobs['base_ubuntu-22-04_publish']['steps'][3]['run']);
-        self::assertStringContainsString('-t "webdevops/php-official:8.4"', $jobs['php_8-4_publish']['steps'][3]['run']);
+        self::assertStringContainsString('-t "webdevops/base:latest"', $manifest('base_ubuntu-22-04_publish'));
+        self::assertStringContainsString('-t "webdevops/php-official:8.4"', $manifest('php_8-4_publish'));
     }
 
     public function testPrintsTheImageTree(): void
@@ -144,9 +145,32 @@ final class GithubCommandTest extends TestCase
         self::assertStringContainsString(' *blacklisted*', $tester->getDisplay());
     }
 
+    /**
+     * @return iterable<string, array{0: list<?string>}>
+     */
+    public static function emptyBlacklists(): iterable
+    {
+        yield 'empty entry' => [['']];
+        yield 'blank entry' => [['  ']];
+        yield 'option without value' => [[null]];
+    }
+
+    /**
+     * @param list<?string> $blacklist
+     */
+    #[DataProvider('emptyBlacklists')]
+    public function testEmptyBlacklistEntriesMatchNothing(array $blacklist): void
+    {
+        $tester = new CommandTester(new GithubCommand($this->repository->path));
+
+        self::assertSame(Command::SUCCESS, $tester->execute(['--blacklist' => $blacklist]));
+        self::assertSame(self::ALL_JOBS, array_keys($this->workflow()['jobs']));
+        self::assertStringNotContainsString('*blacklisted*', $tester->getDisplay());
+    }
+
     public function testBlacklistFile(): void
     {
-        $this->repository->write('ci/BLACKLIST', "php-nginx-dev\n\nphp:8.4\n");
+        $this->repository->write('ci/BLACKLIST', "php-nginx-dev\n\n   \nphp:8.4\n");
 
         self::assertSame($this->jobsWithout(['php-nginx-dev_8-5-alpine', 'php_8-4']), array_keys($this->generate()['jobs']));
     }

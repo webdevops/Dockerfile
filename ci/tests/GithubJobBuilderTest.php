@@ -235,6 +235,11 @@ final class GithubJobBuilderTest extends TestCase
             'Validate .github/workflows/build.yaml is up to date',
             'Validate the README banner is up to date',
         ], array_keys($this->steps(['job' => $job], 'job')));
+        self::assertStringStartsWith(
+            'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install --no-dev' . "\n",
+            $this->steps(['job' => $job], 'job')['Validate .github/workflows/build.yaml is up to date']['run'],
+            'generating needs no dev tools',
+        );
     }
 
     public function testCodeCheckRunsGrumphp(): void
@@ -261,7 +266,7 @@ final class GithubJobBuilderTest extends TestCase
             'image' => 'base',
             'tag' => 'alpine',
             'aliases' => [],
-            'file' => self::ROOT . '/docker/base/alpine/Dockerfile',
+            'file' => 'docker/base/alpine/Dockerfile',
             'parent' => 'webdevops/toolbox:latest',
             'imageParent' => 0,
             'imageParentRef' => null,

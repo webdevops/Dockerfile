@@ -9,13 +9,6 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Webdevops\Build\FileReader;
 
-use function array_map;
-use function file_put_contents;
-use function str_replace;
-use function sys_get_temp_dir;
-use function tempnam;
-use function unlink;
-
 #[CoversClass(FileReader::class)]
 final class FileReaderTest extends TestCase
 {
@@ -23,8 +16,7 @@ final class FileReaderTest extends TestCase
 
     public function testCollectsTheGeneratedDockerfilesSorted(): void
     {
-        $files = new FileReader(self::ROOT)->collectDockerfiles();
-
+        // docker/php/8.4 links to docker/php-official/8.4 and is left out, as in the repository
         self::assertSame([
             'docker/base-app/ubuntu-22.04/Dockerfile',
             'docker/base/alpine/Dockerfile',
@@ -35,7 +27,7 @@ final class FileReaderTest extends TestCase
             'docker/php-official/8.5-alpine/Dockerfile',
             'docker/php-official/8.5/Dockerfile',
             'docker/toolbox/latest/Dockerfile',
-        ], array_map(fn (string $file): string => str_replace(self::ROOT . '/', '', $file), $files));
+        ], new FileReader(self::ROOT)->collectDockerfiles());
     }
 
     public function testImageWithAnOutsideBaseImageIsBuiltAfterTheToolbox(): void
@@ -46,7 +38,7 @@ final class FileReaderTest extends TestCase
         self::assertSame('webdevops/base:ubuntu-22.04', $node['name']);
         self::assertSame('base', $node['image']);
         self::assertSame('ubuntu-22.04', $node['tag']);
-        self::assertSame(self::ROOT . '/docker/base/ubuntu-22.04/Dockerfile', $node['file']);
+        self::assertSame('docker/base/ubuntu-22.04/Dockerfile', $node['file']);
         self::assertSame('ubuntu:22.04', $node['baseImage']);
         self::assertSame('webdevops/toolbox:latest', $node['parent']);
         self::assertSame(0, $node['imageParent'], 'the toolbox is no image to build on');
@@ -138,18 +130,30 @@ final class FileReaderTest extends TestCase
         );
     }
 
+    public function testAutoLatestTag(): void
+    {
+        self::assertSame('ubuntu-22.04', new FileReader(self::ROOT)->autoLatestTag());
+    }
+
     public function testDockerfileWithoutHeaderIsAnError(): void
     {
-        $file = (string)tempnam(sys_get_temp_dir(), 'Dockerfile');
-        file_put_contents($file, "FROM alpine:3.22\n");
+        $repository = new TemporaryRepository();
+        $repository->write('docker/broken/latest/Dockerfile', "FROM alpine:3.22\n");
 
         try {
             $this->expectException(RuntimeException::class);
-            $this->expectExceptionMessage($file . ' has no "# Dockerfile for webdevops/<image>:<tag>" header.');
-            new FileReader(self::ROOT)->getInfo($file);
+            $this->expectExceptionMessage('docker/broken/latest/Dockerfile has no "# Dockerfile for webdevops/<image>:<tag>" header.');
+            new FileReader($repository->path)->getInfo('docker/broken/latest/Dockerfile');
         } finally {
-            unlink($file);
+            $repository->remove();
         }
+    }
+
+    public function testMissingDockerfileIsAnError(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot read docker/missing/latest/Dockerfile.');
+        new FileReader(self::ROOT)->getInfo('docker/missing/latest/Dockerfile');
     }
 
     /**
@@ -157,6 +161,6 @@ final class FileReaderTest extends TestCase
      */
     private function info(string $directory): array
     {
-        return new FileReader(self::ROOT)->getInfo(self::ROOT . '/docker/' . $directory . '/Dockerfile');
+        return new FileReader(self::ROOT)->getInfo('docker/' . $directory . '/Dockerfile');
     }
 }

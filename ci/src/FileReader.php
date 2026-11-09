@@ -24,17 +24,26 @@ class FileReader
     }
 
     /**
-     * The path of every Dockerfile under docker/, sorted.
+     * The tag that is published as latest too, e.g. ubuntu-22.04.
+     */
+    public function autoLatestTag(): string
+    {
+        return $this->settings['docker']['autoLatestTag'];
+    }
+
+    /**
+     * Every Dockerfile under docker/, relative to the repository root and sorted, e.g. docker/base/alpine/Dockerfile.
+     * Directories that are symbolic links, such as docker/php/8.5, are left out: they build the same Dockerfile.
      *
      * @return list<string>
      */
     public function collectDockerfiles(): array
     {
         $dockerfiles = [];
-        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->rootPath . '/docker/'));
+        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->rootPath . '/docker'));
         foreach ($files as $file) {
             if ($file instanceof SplFileInfo && preg_match('/^.*Dockerfile$/i', $file->getPathname())) {
-                $dockerfiles[] = $file->getPathname();
+                $dockerfiles[] = substr($file->getPathname(), strlen($this->rootPath) + 1);
             }
         }
 
@@ -45,14 +54,20 @@ class FileReader
     /**
      * The build tree node of a generated Dockerfile: image, tag, parent image and test settings.
      *
+     * @param string $dockerfile path relative to the repository root, e.g. docker/base/alpine/Dockerfile
      * @return array<string, mixed>
      */
-    public function getInfo(string $dockerfilePath): array
+    public function getInfo(string $dockerfile): array
     {
-        $content = file_get_contents($dockerfilePath);
+        $path = $this->rootPath . '/' . $dockerfile;
+        $content = is_file($path) ? file_get_contents($path) : false;
+        if ($content === false) {
+            throw new RuntimeException(sprintf('Cannot read %s.', $dockerfile));
+        }
+
         // Extract info from file header
-        if ($content === false || !preg_match('/# Dockerfile for webdevops\/(.*):(.*)/', $content, $headerMatches)) {
-            throw new RuntimeException(sprintf('%s has no "# Dockerfile for webdevops/<image>:<tag>" header.', $dockerfilePath));
+        if (!preg_match('/# Dockerfile for webdevops\/(.*):(.*)/', $content, $headerMatches)) {
+            throw new RuntimeException(sprintf('%s has no "# Dockerfile for webdevops/<image>:<tag>" header.', $dockerfile));
         }
 
         $imageName = $headerMatches[1];
@@ -66,7 +81,7 @@ class FileReader
             'image' => $imageName,
             'tag' => $tagName,
             'aliases' => [],
-            'file' => $dockerfilePath,
+            'file' => $dockerfile,
             'parent' => 0,
             'imageParent' => 0,
             'imageParentRef' => null,

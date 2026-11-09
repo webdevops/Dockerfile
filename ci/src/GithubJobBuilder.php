@@ -43,7 +43,7 @@ class GithubJobBuilder
     /**
      * The build job and the publish job of a build tree node.
      *
-     * @param array<string, mixed> $node node from FileReader::getInfo() with level, hasChildren and the image keys restored
+     * @param array<string, mixed> $node node from FileReader::getInfo() with level and hasChildren
      * @return array<string, array<string, mixed>>
      */
     public function getJobsDescription(array $node): array
@@ -225,13 +225,13 @@ class GithubJobBuilder
     }
 
     /**
-     * The directory of the node's Dockerfile, relative to the repository root.
+     * The directory of the node's Dockerfile, relative to the repository root like the file itself.
      *
      * @param array<string, mixed> $node
      */
     private function context(array $node): string
     {
-        return dirname(str_replace($this->rootPath . '/', '', $node['file']));
+        return dirname($node['file']);
     }
 
     /**
@@ -477,7 +477,8 @@ class GithubJobBuilder
                 [
                     'name' => 'Validate .github/workflows/build.yaml is up to date',
                     'run' => implode("\n", [
-                        'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install',
+                        // The generators need no dev tools; check-ci-code installs those
+                        'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install --no-dev',
                         'docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci',
                         'git diff --exit-code --color=always',
                     ]),

@@ -15,10 +15,10 @@ use Webdevops\Build\Tests\ReadmeBanner\Glyphs\FontBuilder;
 
 use function array_keys;
 use function array_map;
+use function dirname;
 use function file_get_contents;
 use function json_decode;
 use function mb_ord;
-use function realpath;
 use function sys_get_temp_dir;
 use function tempnam;
 use function unlink;
@@ -66,8 +66,8 @@ final class BuildGlyphsCommandTest extends TestCase
     {
         $default = new BuildGlyphsCommand()->getDefinition()->getOption('output')->getDefault();
 
-        self::assertIsString($default);
-        self::assertSame(realpath(__DIR__ . '/../../resources/readme-banner/glyphs.json'), realpath($default));
+        self::assertSame(dirname(__DIR__, 3) . '/ci/resources/readme-banner/glyphs.json', $default);
+        self::assertFileExists($default);
     }
 
     /**

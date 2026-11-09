@@ -2,6 +2,7 @@
 
 namespace Webdevops\Build\Commands;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,10 +20,9 @@ use function str_contains;
  * Writes the glyph table the README banner draws its texts with.
  * Only needed to change a font or to add characters; see ci/resources/readme-banner/README.md.
  */
+#[AsCommand(name: 'readme-banner:build-glyphs')]
 class BuildGlyphsCommand extends Command
 {
-    protected static $defaultName = 'readme-banner:build-glyphs';
-
     protected function configure(): void
     {
         $this
