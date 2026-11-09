@@ -31,7 +31,7 @@ class ReadmeBannerCommand extends Command
         $images = [];
         foreach ($fileReader->collectDockerfiles() as [$dockerfile]) {
             $info = $fileReader->getInfo($dockerfile);
-            $images[] = ['image' => $info['image'], 'tag' => $info['tag'], 'file' => $info['file']];
+            $images[] = ['image' => $info['image'], 'tag' => $info['tag'], 'from' => $info['baseImage']];
         }
         $banner = new BannerGenerator(dirname(__DIR__, 3));
         foreach ($banner->generate($images, array_column(GithubJobBuilder::PLATFORMS, 'platform')) as $file) {

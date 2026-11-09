@@ -53,7 +53,10 @@ class BuildGlyphsCommand extends Command
             $fonts[$key] = $file;
         }
         $file = $input->getOption('output');
-        file_put_contents($file, (new GlyphTableBuilder())->build($fonts));
+        if (file_put_contents($file, (new GlyphTableBuilder())->build($fonts)) === false) {
+            $output->writeln(sprintf('<error>Cannot write %s</error>', $file));
+            return Command::FAILURE;
+        }
         $output->writeln('Wrote ' . $file);
         return Command::SUCCESS;
     }

@@ -30,5 +30,7 @@ and so is `glyphs.json`.
    docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console readme-banner:generate
    ```
 
-`readme-banner:build-glyphs` reads fonts with TrueType outlines (`.ttf`) and applies their GPOS kerning the way a
-text shaper does. For files it cannot read, such as `.otf` or `.woff2`, it stops and says why.
+`readme-banner:build-glyphs` reads fonts with TrueType outlines (`.ttf`). For files it cannot read, such as `.otf`
+or `.woff2`, it stops and says why. It takes the kerning from the GPOS features `kern` and `dist`, but unlike a
+text shaper such as HarfBuzz it does not first replace glyphs (GSUB). For Inter and JetBrains Mono the kerning is
+the same as HarfBuzz's; check it before you use another font.

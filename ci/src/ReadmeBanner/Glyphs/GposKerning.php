@@ -12,7 +12,8 @@ use function sprintf;
 /**
  * Applies the GPOS lookups of the features "kern" and "dist" to a pair of
  * glyphs, as a text shaper does with its default features, and returns how
- * much the advances change.
+ * much the advances change. Unlike a shaper it does not replace glyphs (GSUB)
+ * first, so fonts that do that for the banner characters kern differently.
  */
 final class GposKerning
 {

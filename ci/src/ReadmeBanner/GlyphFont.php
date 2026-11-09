@@ -23,6 +23,11 @@ use function trim;
 final class GlyphFont
 {
     /**
+     * The fonts glyphs.json has to contain: the README banner draws with all of them.
+     */
+    public const FONTS = ['mono-bold', 'mono-medium', 'sans-regular', 'sans-medium', 'sans-semibold'];
+
+    /**
      * @param array<string, array{0: int, 1: string}> $glyphs advance width and outline per character, in font units
      * @param array<string, int> $kerning adjustment per character pair, in font units
      */

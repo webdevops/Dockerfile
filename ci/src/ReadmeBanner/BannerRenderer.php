@@ -41,11 +41,6 @@ final class BannerRenderer
         ],
     ];
 
-    /**
-     * The fonts of ci/resources/readme-banner/glyphs.json the banner draws with.
-     */
-    public const FONTS = ['mono-bold', 'mono-medium', 'sans-regular', 'sans-medium', 'sans-semibold'];
-
     private const WIDTH = 1280;
     private const MARGIN = 44;
     private const TAG_SIZE = 52;
@@ -70,7 +65,7 @@ final class BannerRenderer
     private ?array $bases = null;
 
     /**
-     * @param array<string, GlyphFont> $fonts keyed like the fonts in glyphs.json
+     * @param array<string, GlyphFont> $fonts at least GlyphFont::FONTS
      * @param array<string, mixed> $texts conf/readme-banner.yml
      */
     public function __construct(
@@ -124,19 +119,20 @@ final class BannerRenderer
                     $x = $descriptionX ?? $x;
                     $svg[] = $this->text('sans-regular', $row['note'], $x, $y + self::NOTE_BASELINE, self::NOTE_SIZE, $colors['muted']);
                     $x += $this->fonts['sans-regular']->width($row['note'], self::NOTE_SIZE);
-                }
-                foreach (isset($row['note']) ? [] : $row as $k => $item) {
-                    if ($k > 0) {
-                        $x += 8;
-                    }
-                    $x += $this->chip($svg, $colors, $color, $x, $y, $item['chip'], $item['selected'], $item['compact']);
-                    if ($item['description'] !== null) {
-                        $x += 12;
-                        $descriptionX = $x;
-                        $font = $item['selected'] ? 'sans-semibold' : 'sans-regular';
-                        $textColor = $item['selected'] ? $colors['text'] : $colors['muted'];
-                        $svg[] = $this->text($font, $item['description'], $x, $y + self::CHIP_HEIGHT / 2 + 6.5, self::DESCRIPTION_SIZE, $textColor);
-                        $x += $this->fonts[$font]->width($item['description'], self::DESCRIPTION_SIZE);
+                } else {
+                    foreach ($row as $k => $item) {
+                        if ($k > 0) {
+                            $x += 8;
+                        }
+                        $x += $this->chip($svg, $colors, $color, $x, $y, $item['chip'], $item['selected'], $item['compact']);
+                        if ($item['description'] !== null) {
+                            $x += 12;
+                            $descriptionX = $x;
+                            $font = $item['selected'] ? 'sans-semibold' : 'sans-regular';
+                            $textColor = $item['selected'] ? $colors['text'] : $colors['muted'];
+                            $svg[] = $this->text($font, $item['description'], $x, $y + self::CHIP_HEIGHT / 2 + 6.5, self::DESCRIPTION_SIZE, $textColor);
+                            $x += $this->fonts[$font]->width($item['description'], self::DESCRIPTION_SIZE);
+                        }
                     }
                 }
                 $this->assertFits($x - $left - self::CARD_PADDING, $inner, sprintf('a row of the "%s" card', $card['title']));

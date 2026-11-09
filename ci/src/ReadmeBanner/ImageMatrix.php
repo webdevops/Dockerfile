@@ -4,15 +4,16 @@ namespace Webdevops\Build\ReadmeBanner;
 
 use RuntimeException;
 
-use function array_key_last;
 use function array_keys;
+use function array_map;
+use function count;
 use function end;
 use function explode;
-use function file_get_contents;
+use function in_array;
 use function preg_match;
-use function preg_match_all;
 use function sort;
 use function sprintf;
+use function strtolower;
 use function str_ends_with;
 use function strrpos;
 use function substr;
@@ -30,6 +31,9 @@ final class ImageMatrix
     /** Base OS of tags without a suffix, e.g. 8.5 */
     public const NO_SUFFIX = '';
 
+    /** Parts of an official PHP image tag that come before the release, e.g. fpm in 8.5-fpm-bookworm */
+    private const PHP_IMAGE_VARIANTS = ['apache', 'cli', 'fpm', 'rc', 'zts'];
+
     /** @var array<string, true> */
     private array $flavors = [];
     /** @var array<string, true> */
@@ -38,13 +42,14 @@ final class ImageMatrix
     private array $imageVersions = [];
     /** @var array<string, true> */
     private array $suffixes = [];
-    /** @var array<string, array<string, string>> Dockerfile of webdevops/php per base OS suffix and PHP version */
-    private array $phpDockerfiles = [];
+    /** @var array<string, array<string, ?string>> image webdevops/php is built from, per base OS suffix and PHP version */
+    private array $phpBaseImages = [];
     /** @var array<string, array<string, string>> releases() per base OS suffix, read once */
     private array $releases = [];
 
     /**
-     * @param list<array{image: string, tag: string, file: string}> $images published images, e.g. php-nginx-dev with tag 8.5-alpine
+     * @param list<array{image: string, tag: string, from: ?string}> $images published images, e.g. php-nginx-dev with tag 8.5-alpine,
+     *                                                                and the image of their last FROM line
      * @param list<string> $platforms e.g. linux/amd64
      */
     public function __construct(array $images, private readonly array $platforms)
@@ -68,8 +73,8 @@ final class ImageMatrix
             $this->suffixes[$suffix] = true;
             $this->imageVersions[$image['image']][$suffix][] = $tag['version'];
             if ($image['image'] === 'php') {
-                // The other PHP images build on webdevops/php, which names the base OS release
-                $this->phpDockerfiles[$suffix][$tag['version']] = $image['file'];
+                // The other PHP images build on webdevops/php, whose base image names the release
+                $this->phpBaseImages[$suffix][$tag['version']] = $image['from'];
             }
         }
         if (!isset($this->flavors['php'])) {
@@ -112,7 +117,8 @@ final class ImageMatrix
      */
     public function baseSuffixes(): array
     {
-        $suffixes = array_keys($this->suffixes);
+        // Array keys turn numeric suffixes such as "1" into integers
+        $suffixes = array_map('strval', array_keys($this->suffixes));
         sort($suffixes);
         return $suffixes;
     }
@@ -126,11 +132,12 @@ final class ImageMatrix
     public function releases(string $suffix): array
     {
         if (!isset($this->releases[$suffix])) {
-            $dockerfiles = $this->phpDockerfiles[$suffix] ?? [];
-            uksort($dockerfiles, fn (string $a, string $b): int => version_compare($a, $b));
+            $baseImages = $this->phpBaseImages[$suffix] ?? [];
+            uksort($baseImages, fn (string $a, string $b): int => version_compare($a, $b));
             $this->releases[$suffix] = [];
-            foreach ($dockerfiles as $version => $dockerfile) {
-                $this->releases[$suffix][(string)$version] = $this->releaseFromDockerfile($dockerfile);
+            foreach ($baseImages as $version => $baseImage) {
+                $tag = (string)$version . ($suffix === self::NO_SUFFIX ? '' : '-' . $suffix);
+                $this->releases[$suffix][(string)$version] = $this->releaseOf($baseImage, $tag);
             }
         }
         return $this->releases[$suffix];
@@ -147,23 +154,24 @@ final class ImageMatrix
     }
 
     /**
-     * The last part of the base image tag in the last FROM line, which is the final stage:
-     * bookworm for "FROM php:8.5-fpm-bookworm", also with --platform, a digest or "AS name".
+     * The release at the end of an official PHP image tag, which has the form
+     * <version>[-<variant>]-<release>: bookworm for php:8.5-fpm-bookworm, also with a registry or a digest.
      */
-    private function releaseFromDockerfile(string $dockerfile): string
+    private function releaseOf(?string $baseImage, string $tag): string
     {
-        preg_match_all('/^\s*FROM\s+(?:--\S+\s+)*(?P<image>\S+)/mi', file_get_contents($dockerfile), $matches);
-        $image = $matches['image'] === [] ? '' : $matches['image'][array_key_last($matches['image'])];
         // Leave out the digest and the registry, which may have a port
-        $name = explode('@', $image, 2)[0];
+        $name = explode('@', (string)$baseImage, 2)[0];
         $name = substr($name, (int)strrpos($name, '/'));
         $colon = strrpos($name, ':');
-        if ($colon === false || !preg_match('/-(?P<release>[a-z][a-z0-9.]*)$/i', substr($name, $colon + 1), $match)) {
+        $parts = $colon === false ? [] : explode('-', substr($name, $colon + 1));
+        $release = count($parts) > 1 ? end($parts) : '';
+        if (in_array(strtolower($release), self::PHP_IMAGE_VARIANTS, true) || !preg_match('/^[a-z][a-z0-9.]*$/i', $release)) {
             throw new RuntimeException(sprintf(
-                'The README banner found no release at the end of the image tag in the last FROM line of %s, e.g. "FROM php:8.5-fpm-bookworm".',
-                $dockerfile,
+                'The README banner found no release in "%s", the image webdevops/php:%s is built from. Name it in the tag, e.g. php:8.5-fpm-bookworm.',
+                (string)$baseImage,
+                $tag,
             ));
         }
-        return $match['release'];
+        return $release;
     }
 }
