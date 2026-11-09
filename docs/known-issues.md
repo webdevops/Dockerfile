@@ -22,18 +22,6 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** all images except `bootstrap` and `toolbox`.
 - **Instead:** Leave it unset. PHP-FPM runs its workers as `application` anyway.
 
-### `/opt/docker/provision/onbuild.d`
-
-- **Effect:** Scripts in this directory are never run. Only the removed Ansible provisioning used it.
-- **Images:** all images except `bootstrap` and `toolbox`.
-- **Instead:** Use `bootstrap.d` or `build.d` with `docker-run-bootstrap`, see [Scripts at image build](customization.md#scripts-at-image-build).
-
-### Ansible provisioning (`docker-provision`, `docker-ansible-install`)
-
-- **Effect:** Both commands fail. They need Python 2 and Python 2 packages that no longer exist.
-- **Images:** all images except `bootstrap` and `toolbox`.
-- **Instead:** Shell scripts in `bootstrap.d` or `build.d`, see [Scripts at image build](customization.md#scripts-at-image-build).
-
 ### Blackfire agent
 
 - **Effect:** With `PHP_DEBUGGER=blackfire`, supervisord starts the `blackfire-agent` service, but the agent is not installed. It exits with code 127 and is restarted over and over, which fills the container log. The Blackfire PHP extension itself is loaded.
@@ -143,3 +131,4 @@ These options and tools are part of the images but do not work, or work only in 
 - `SERVICE_BLACKFIRE_AGENT_OPTS` has no effect, because the agent is not installed (see [Blackfire agent](#blackfire-agent)).
 - Tags that are no longer built stay on Docker Hub without updates: PHP 5.6 to 8.1 and all operating system tags such as `debian-9` or `ubuntu-18.04`. For `latest` and `alpine`, see [above](#latest-and-alpine-tags-of-the-php-images).
 - The images `webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built. Their last images stay on Docker Hub without updates (`ssh` since December 2022). For replacements, see [Replacing discontinued images](discontinued-images.md).
+- The Ansible provisioning is removed: `docker-provision`, `docker-ansible-install`, `/opt/docker/bin/provision` and the `provision.role*` commands of `/opt/docker/bin/control.sh`. They needed Python 2 and Ansible packages that no longer exist and did not work in any image. `/opt/docker/provision/onbuild.d` is removed too; scripts in it were never run. Use shell scripts in `bootstrap.d` or `build.d`, see [Scripts at image build](customization.md#scripts-at-image-build).
