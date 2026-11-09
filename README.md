@@ -1,6 +1,6 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme-banner-dark.svg">
-  <img src="docs/assets/readme-banner-light.svg" alt="Image tags explained: web server (php, php-apache, php-nginx), -dev variant, PHP version and -alpine base">
+  <img src="docs/assets/readme-banner-light.svg" alt="How an image tag is built: web server, variant, PHP version and base OS, with all options of each part">
 </picture>
 
 # PHP docker images with super powers 🚀

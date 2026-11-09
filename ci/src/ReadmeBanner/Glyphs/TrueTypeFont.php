@@ -43,6 +43,8 @@ final class TrueTypeFont
     private readonly BinaryData $data;
     /** @var array<string, array{0: int, 1: int}> offset and length per table tag */
     private array $tables = [];
+    /** @var array<string, BinaryData> tables read so far */
+    private array $tableData = [];
     private readonly int $unitsPerEm;
     private readonly int $numGlyphs;
     private readonly int $numberOfHMetrics;
@@ -135,8 +137,11 @@ final class TrueTypeFont
 
     private function table(string $tag): BinaryData
     {
-        [$offset, $length] = $this->tables[$tag];
-        return $this->data->slice($offset, $length);
+        if (!isset($this->tableData[$tag])) {
+            [$offset, $length] = $this->tables[$tag];
+            $this->tableData[$tag] = $this->data->slice($offset, $length);
+        }
+        return $this->tableData[$tag];
     }
 
     /**

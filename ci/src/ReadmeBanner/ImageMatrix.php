@@ -4,12 +4,17 @@ namespace Webdevops\Build\ReadmeBanner;
 
 use RuntimeException;
 
+use function array_key_last;
 use function array_keys;
 use function end;
+use function explode;
 use function file_get_contents;
 use function preg_match;
+use function preg_match_all;
 use function sort;
+use function sprintf;
 use function str_ends_with;
+use function strrpos;
 use function substr;
 use function uksort;
 use function usort;
@@ -17,8 +22,8 @@ use function version_compare;
 
 /**
  * What the README banner shows about the PHP images, taken from the images
- * the CI builds: web server flavors, PHP versions, variants, base OS
- * suffixes with their releases, and the platforms.
+ * the CI builds: web server flavors, PHP versions, base OS suffixes with
+ * their releases, and the platforms.
  */
 final class ImageMatrix
 {
@@ -29,13 +34,14 @@ final class ImageMatrix
     private array $flavors = [];
     /** @var array<string, true> */
     private array $versions = [];
-    private bool $hasDev = false;
-    /** @var array<string, array<string, true>> tags per image, e.g. php-nginx-dev => 8.5-alpine */
-    private array $tags = [];
+    /** @var array<string, array<string, list<string>>> PHP versions per image and base OS suffix, e.g. php-nginx-dev => alpine => [8.5] */
+    private array $imageVersions = [];
     /** @var array<string, true> */
     private array $suffixes = [];
     /** @var array<string, array<string, string>> Dockerfile of webdevops/php per base OS suffix and PHP version */
     private array $phpDockerfiles = [];
+    /** @var array<string, array<string, string>> releases() per base OS suffix, read once */
+    private array $releases = [];
 
     /**
      * @param list<array{image: string, tag: string, file: string}> $images published images, e.g. php-nginx-dev with tag 8.5-alpine
@@ -44,20 +50,23 @@ final class ImageMatrix
     public function __construct(array $images, private readonly array $platforms)
     {
         foreach ($images as $image) {
-            if (!preg_match('/^php(-[a-z0-9]+)*$/', $image['image'])
-                || !preg_match('/^(?P<version>\d+\.\d+)(?:-(?P<suffix>[a-z][a-z0-9]*))?$/', $image['tag'], $tag)) {
+            if (!preg_match('/^php(-[a-z0-9]+)*$/', $image['image'])) {
                 continue;
             }
-            $flavor = $image['image'];
-            if (str_ends_with($flavor, '-dev')) {
-                $flavor = substr($flavor, 0, -4);
-                $this->hasDev = true;
+            // Every PHP tag is shown, so a tag the banner cannot take apart stops it instead of being left out
+            if (!preg_match('/^(?P<version>\d+\.\d+)(?:-(?P<suffix>.+))?$/', $image['tag'], $tag)) {
+                throw new RuntimeException(sprintf(
+                    'The README banner cannot take apart the tag webdevops/%s:%s. It expects the PHP version and an optional suffix, e.g. 8.5 or 8.5-alpine.',
+                    $image['image'],
+                    $image['tag'],
+                ));
             }
+            $flavor = str_ends_with($image['image'], '-dev') ? substr($image['image'], 0, -4) : $image['image'];
+            $suffix = $tag['suffix'] ?? self::NO_SUFFIX;
             $this->flavors[$flavor] = true;
             $this->versions[$tag['version']] = true;
-            $this->tags[$image['image']][$image['tag']] = true;
-            $suffix = $tag['suffix'] ?? self::NO_SUFFIX;
             $this->suffixes[$suffix] = true;
+            $this->imageVersions[$image['image']][$suffix][] = $tag['version'];
             if ($image['image'] === 'php') {
                 // The other PHP images build on webdevops/php, which names the base OS release
                 $this->phpDockerfiles[$suffix][$tag['version']] = $image['file'];
@@ -93,19 +102,9 @@ final class ImageMatrix
      */
     public function newestVersion(string $image, string $suffix): ?string
     {
-        $versions = [];
-        foreach (array_keys($this->tags[$image] ?? []) as $tag) {
-            if (preg_match('/^(?P<version>\d+\.\d+)' . ($suffix === self::NO_SUFFIX ? '' : '-' . $suffix) . '$/', $tag, $match)) {
-                $versions[] = $match['version'];
-            }
-        }
+        $versions = $this->imageVersions[$image][$suffix] ?? [];
         usort($versions, fn (string $a, string $b): int => version_compare($a, $b));
         return $versions === [] ? null : end($versions);
-    }
-
-    public function hasDevVariant(): bool
-    {
-        return $this->hasDev;
     }
 
     /**
@@ -119,23 +118,22 @@ final class ImageMatrix
     }
 
     /**
-     * The release in the FROM line of webdevops/php per PHP version, e.g. 8.5 => bookworm
+     * The release of the base image of webdevops/php per PHP version, e.g. 8.5 => bookworm
      * for "FROM php:8.5-fpm-bookworm", oldest version first.
      *
      * @return array<string, string>
      */
     public function releases(string $suffix): array
     {
-        $dockerfiles = $this->phpDockerfiles[$suffix] ?? [];
-        uksort($dockerfiles, fn (string $a, string $b): int => version_compare($a, $b));
-        $releases = [];
-        foreach ($dockerfiles as $version => $dockerfile) {
-            if (!preg_match('/^FROM\s+php:\S+-(?P<release>[a-z][a-z0-9.]*)\s*$/mi', file_get_contents($dockerfile), $match)) {
-                throw new RuntimeException('The README banner found no release in the FROM line of ' . $dockerfile);
+        if (!isset($this->releases[$suffix])) {
+            $dockerfiles = $this->phpDockerfiles[$suffix] ?? [];
+            uksort($dockerfiles, fn (string $a, string $b): int => version_compare($a, $b));
+            $this->releases[$suffix] = [];
+            foreach ($dockerfiles as $version => $dockerfile) {
+                $this->releases[$suffix][(string)$version] = $this->releaseFromDockerfile($dockerfile);
             }
-            $releases[(string)$version] = $match['release'];
         }
-        return $releases;
+        return $this->releases[$suffix];
     }
 
     /**
@@ -146,5 +144,26 @@ final class ImageMatrix
         $platforms = $this->platforms;
         sort($platforms);
         return $platforms;
+    }
+
+    /**
+     * The last part of the base image tag in the last FROM line, which is the final stage:
+     * bookworm for "FROM php:8.5-fpm-bookworm", also with --platform, a digest or "AS name".
+     */
+    private function releaseFromDockerfile(string $dockerfile): string
+    {
+        preg_match_all('/^\s*FROM\s+(?:--\S+\s+)*(?P<image>\S+)/mi', file_get_contents($dockerfile), $matches);
+        $image = $matches['image'] === [] ? '' : $matches['image'][array_key_last($matches['image'])];
+        // Leave out the digest and the registry, which may have a port
+        $name = explode('@', $image, 2)[0];
+        $name = substr($name, (int)strrpos($name, '/'));
+        $colon = strrpos($name, ':');
+        if ($colon === false || !preg_match('/-(?P<release>[a-z][a-z0-9.]*)$/i', substr($name, $colon + 1), $match)) {
+            throw new RuntimeException(sprintf(
+                'The README banner found no release at the end of the image tag in the last FROM line of %s, e.g. "FROM php:8.5-fpm-bookworm".',
+                $dockerfile,
+            ));
+        }
+        return $match['release'];
     }
 }

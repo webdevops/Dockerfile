@@ -4,6 +4,7 @@ namespace Webdevops\Build\ReadmeBanner;
 
 use RuntimeException;
 
+use function array_key_first;
 use function array_key_last;
 use function array_map;
 use function array_slice;
@@ -13,6 +14,7 @@ use function floor;
 use function implode;
 use function in_array;
 use function intdiv;
+use function is_array;
 use function max;
 use function preg_replace;
 use function sprintf;
@@ -39,6 +41,11 @@ final class BannerRenderer
         ],
     ];
 
+    /**
+     * The fonts of ci/resources/readme-banner/glyphs.json the banner draws with.
+     */
+    public const FONTS = ['mono-bold', 'mono-medium', 'sans-regular', 'sans-medium', 'sans-semibold'];
+
     private const WIDTH = 1280;
     private const MARGIN = 44;
     private const TAG_SIZE = 52;
@@ -55,7 +62,12 @@ final class BannerRenderer
     private const NOTE_HEIGHT = 20;
     private const NOTE_BASELINE = 12;
     private const NOTE_GAP = 6;
-    private const NO_SUFFIX = 'no suffix';
+    private const NO_SUFFIX_LABEL = 'no suffix';
+
+    /** @var ?array{flavor: string, version: string, base: string} */
+    private ?array $example = null;
+    /** @var ?list<array{suffix: string, text: string, notes: list<string>}> */
+    private ?array $bases = null;
 
     /**
      * @param array<string, GlyphFont> $fonts keyed like the fonts in glyphs.json
@@ -82,13 +94,13 @@ final class BannerRenderer
             '<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" role="img" aria-labelledby="t d">',
             self::WIDTH, $height, self::WIDTH, $height,
         );
-        $svg[] = '<title id="t">' . Svg::escape($this->texts['title']) . '</title>';
+        $svg[] = '<title id="t">' . Svg::escape($this->setting('title')) . '</title>';
         $svg[] = '<desc id="d">' . Svg::escape($this->description()) . '</desc>';
         $svg[] = sprintf(
             '<rect x="1" y="1" width="%d" height="%d" rx="20" fill="%s" stroke="%s" stroke-width="2"/>',
             self::WIDTH - 2, $height - 2, $colors['background'], $colors['border'],
         );
-        $svg[] = $this->text('sans-semibold', $this->texts['heading'], self::WIDTH / 2, 76, 15, $colors['muted'], 2.6, 'middle');
+        $svg[] = $this->text('sans-semibold', $this->setting('heading'), self::WIDTH / 2, 76, 15, $colors['muted'], 2.6, 'middle');
 
         $segmentCenters = $this->tag($svg, $colors);
 
@@ -195,13 +207,13 @@ final class BannerRenderer
         }
 
         return [
-            ['part' => 'flavor', 'title' => $this->texts['cards']['flavor'], 'rows' => $flavors],
-            ['part' => 'variant', 'title' => $this->texts['cards']['variant'], 'rows' => [
-                [$item(null, $this->texts['variants']['production'], false)],
-                [$item('-dev', $this->texts['variants']['dev'], true)],
+            ['part' => 'flavor', 'title' => $this->setting('cards', 'flavor'), 'rows' => $flavors],
+            ['part' => 'variant', 'title' => $this->setting('cards', 'variant'), 'rows' => [
+                [$item(null, $this->setting('variants', 'production'), false)],
+                [$item('-dev', $this->setting('variants', 'dev'), true)],
             ]],
-            ['part' => 'version', 'title' => $this->texts['cards']['version'], 'rows' => $versions],
-            ['part' => 'base', 'title' => $this->texts['cards']['base'], 'rows' => $bases],
+            ['part' => 'version', 'title' => $this->setting('cards', 'version'), 'rows' => $versions],
+            ['part' => 'base', 'title' => $this->setting('cards', 'base'), 'rows' => $bases],
         ];
     }
 
@@ -213,6 +225,9 @@ final class BannerRenderer
      */
     private function bases(): array
     {
+        if ($this->bases !== null) {
+            return $this->bases;
+        }
         $built = $this->matrix->baseSuffixes();
         $texts = $this->texts['bases']['suffixes'] ?? [];
         foreach ($built as $suffix) {
@@ -225,14 +240,14 @@ final class BannerRenderer
         }
         $bases = [];
         if (in_array(ImageMatrix::NO_SUFFIX, $built, true)) {
-            $bases[] = ['suffix' => ImageMatrix::NO_SUFFIX, ...$this->baseText(ImageMatrix::NO_SUFFIX, $this->texts['bases']['default'])];
+            $bases[] = ['suffix' => ImageMatrix::NO_SUFFIX, ...$this->baseText(ImageMatrix::NO_SUFFIX, $this->setting('bases', 'default'))];
         }
         foreach ($texts as $suffix => $text) {
             if (in_array((string)$suffix, $built, true)) {
                 $bases[] = ['suffix' => (string)$suffix, ...$this->baseText((string)$suffix, $text)];
             }
         }
-        return $bases;
+        return $this->bases = $bases;
     }
 
     /**
@@ -247,24 +262,41 @@ final class BannerRenderer
         if (!str_contains($text, '{release}')) {
             return ['text' => $text, 'notes' => []];
         }
-        $runs = [];
+        // Versions that follow each other with the same release become a range, e.g. 8.2–8.5
+        $ranges = [];
+        $previous = null;
         foreach ($this->matrix->releases($suffix) as $version => $release) {
-            $last = array_key_last($runs);
-            if ($last !== null && $runs[$last]['release'] === $release) {
-                $runs[$last]['to'] = (string)$version;
+            if ($release === $previous) {
+                $ranges[$release][array_key_last($ranges[$release])][1] = (string)$version;
             } else {
-                $runs[] = ['release' => $release, 'from' => (string)$version, 'to' => (string)$version];
+                $ranges[$release][] = [(string)$version, (string)$version];
             }
+            $previous = $release;
         }
-        if (count($runs) === 1) {
-            return ['text' => str_replace('{release}', $runs[0]['release'], $text), 'notes' => []];
+        if (count($ranges) === 1) {
+            return ['text' => str_replace('{release}', (string)array_key_first($ranges), $text), 'notes' => []];
         }
         $notes = [];
-        foreach ($runs as $run) {
-            $versions = $run['from'] === $run['to'] ? $run['from'] : $run['from'] . '–' . $run['to'];
-            $notes[] = str_replace(['{release}', '{versions}'], [$run['release'], $versions], $this->texts['bases']['releases']);
+        foreach ($ranges as $release => $releaseRanges) {
+            $versions = implode(', ', array_map(fn (array $r): string => $r[0] === $r[1] ? $r[0] : $r[0] . '–' . $r[1], $releaseRanges));
+            $notes[] = str_replace(['{release}', '{versions}'], [(string)$release, $versions], $this->setting('bases', 'releases'));
         }
         return ['text' => trim(preg_replace('/\s+/', ' ', str_replace('{release}', '', $text))), 'notes' => $notes];
+    }
+
+    /**
+     * A setting from conf/readme-banner.yml, e.g. setting('bases', 'releases').
+     */
+    private function setting(string ...$path): mixed
+    {
+        $value = $this->texts;
+        foreach ($path as $key) {
+            if (!is_array($value) || !isset($value[$key])) {
+                throw new RuntimeException(sprintf('conf/readme-banner.yml has no setting "%s".', implode(': ', $path)));
+            }
+            $value = $value[$key];
+        }
+        return $value;
     }
 
     /**
@@ -275,8 +307,11 @@ final class BannerRenderer
      */
     private function example(): array
     {
-        $flavor = $this->texts['example']['flavor'];
-        $base = (string)$this->texts['example']['base'];
+        if ($this->example !== null) {
+            return $this->example;
+        }
+        $flavor = $this->setting('example', 'flavor');
+        $base = (string)$this->setting('example', 'base');
         if (!in_array($flavor, $this->matrix->flavors(), true)) {
             throw new RuntimeException(sprintf(
                 'The README banner example uses "%s", which is not built. Change "example" in conf/readme-banner.yml.',
@@ -291,7 +326,7 @@ final class BannerRenderer
                 $base,
             ));
         }
-        return ['flavor' => $flavor, 'version' => $version, 'base' => $base];
+        return $this->example = ['flavor' => $flavor, 'version' => $version, 'base' => $base];
     }
 
     private function versionChipsPerRow(): int
@@ -373,7 +408,7 @@ final class BannerRenderer
             );
         }
         if ($text === null) {
-            $svg[] = $this->text('sans-medium', self::NO_SUFFIX, $x + $width / 2, $y + self::CHIP_HEIGHT / 2 + 5.5, 15, $colors['muted'], 0, 'middle');
+            $svg[] = $this->text('sans-medium', self::NO_SUFFIX_LABEL, $x + $width / 2, $y + self::CHIP_HEIGHT / 2 + 5.5, 15, $colors['muted'], 0, 'middle');
         } else {
             $svg[] = $this->text('mono-medium', $text, $x + $width / 2, $y + self::CHIP_HEIGHT / 2 + 6.8, self::CHIP_SIZE, $selected ? $colors['onAccent'] : $colors['muted'], 0, 'middle');
         }
@@ -383,7 +418,7 @@ final class BannerRenderer
     private function chipWidth(?string $text, bool $compact): float
     {
         if ($text === null) {
-            return $this->fonts['sans-medium']->width(self::NO_SUFFIX, 15) + 20;
+            return $this->fonts['sans-medium']->width(self::NO_SUFFIX_LABEL, 15) + 20;
         }
         return $this->fonts['mono-medium']->width($text, self::CHIP_SIZE) + ($compact ? 14 : 20);
     }
@@ -392,7 +427,7 @@ final class BannerRenderer
     {
         $platforms = implode(' + ', $this->matrix->platforms());
         $parts = [];
-        foreach ($this->texts['footer'] as $i => $line) {
+        foreach ($this->setting('footer') as $i => $line) {
             if ($i > 0) {
                 $parts[] = ['   ·   ', true];
             }
@@ -441,20 +476,20 @@ final class BannerRenderer
         $bases = array_map(
             fn (array $b): string => sprintf(
                 '%s for %s%s',
-                $b['suffix'] === ImageMatrix::NO_SUFFIX ? 'no suffix' : '-' . $b['suffix'],
+                $b['suffix'] === ImageMatrix::NO_SUFFIX ? self::NO_SUFFIX_LABEL : '-' . $b['suffix'],
                 $b['text'],
-                $b['notes'] === [] ? '' : ' (' . implode(', ', $b['notes']) . ')',
+                $b['notes'] === [] ? '' : ' (' . implode('; ', $b['notes']) . ')',
             ),
             $this->bases(),
         );
-        $footer = str_replace('{platforms}', implode(' + ', $this->matrix->platforms()), implode('. ', $this->texts['footer']));
+        $footer = str_replace('{platforms}', implode(' + ', $this->matrix->platforms()), implode('. ', $this->setting('footer')));
         return sprintf(
             'Image tag anatomy using webdevops/%s-dev:%s-%s as the example. '
             . 'Web server: %s. Variant: no suffix for %s, -dev for %s. PHP version: %s. '
             . 'Base OS: %s. %s.',
             $example['flavor'], $example['version'], $example['base'],
             $this->list($flavors),
-            $this->texts['variants']['production'], $this->texts['variants']['dev'],
+            $this->setting('variants', 'production'), $this->setting('variants', 'dev'),
             $this->list($versions),
             implode(', ', $bases),
             $footer,

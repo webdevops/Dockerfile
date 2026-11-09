@@ -41,6 +41,14 @@ final class BannerGenerator
             512,
             JSON_THROW_ON_ERROR,
         );
+        foreach (BannerRenderer::FONTS as $name) {
+            if (!isset($table[$name])) {
+                throw new RuntimeException(sprintf(
+                    'ci/resources/readme-banner/glyphs.json has no font "%s". Build it again with ci/console readme-banner:build-glyphs, see ci/resources/readme-banner/README.md.',
+                    $name,
+                ));
+            }
+        }
         $fonts = [];
         foreach ($table as $name => $font) {
             $fonts[$name] = GlyphFont::fromTable($name, $font);

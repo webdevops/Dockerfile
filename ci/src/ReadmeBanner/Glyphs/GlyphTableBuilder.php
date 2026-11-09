@@ -3,7 +3,9 @@
 namespace Webdevops\Build\ReadmeBanner\Glyphs;
 
 use RuntimeException;
+use Webdevops\Build\ReadmeBanner\BannerRenderer;
 
+use function array_diff;
 use function array_keys;
 use function array_map;
 use function count;
@@ -57,6 +59,14 @@ final class GlyphTableBuilder
      */
     public function build(array $fontFiles): string
     {
+        $missing = array_diff(BannerRenderer::FONTS, array_keys($fontFiles));
+        if ($missing !== []) {
+            throw new RuntimeException(sprintf(
+                'The README banner draws with the fonts %s. Add %s.',
+                implode(', ', BannerRenderer::FONTS),
+                implode(', ', array_map(fn (string $key): string => $key . '=<file>', $missing)),
+            ));
+        }
         $fonts = [];
         foreach ($fontFiles as $key => $file) {
             $family = explode('-', $key)[0];
