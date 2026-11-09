@@ -11,10 +11,7 @@ shared_examples 'base::layout' do
         "/opt/docker/etc/logrotate.d",
         "/opt/docker/etc/supervisor.d",
         "/opt/docker/etc/syslog-ng",
-        "/opt/docker/provision/roles",
-        "/opt/docker/provision/roles",
         "/opt/docker/provision/entrypoint.d",
-        "/opt/docker/provision/onbuild.d",
         "/opt/docker/provision/bootstrap.d",
     ].each do |file|
         describe file("#{file}") do
@@ -102,7 +99,6 @@ shared_examples 'base::layout' do
         "/usr/local/bin/service",
         "/usr/local/bin/docker-service-enable",
         "/usr/local/bin/docker-service-disable",
-        "/usr/local/bin/docker-provision",
     ].each do |file|
         describe file("#{file}") do
             # Type check

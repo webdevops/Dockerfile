@@ -23,17 +23,7 @@ Excon.defaults[:read_timeout] = 1000
 # General spec configuration
 # -----------------------------------------------
 
-$packageVersions = {}
-$packageVersions[:ansible]         = %r!ansible 2.([0-9]\.?)+!
-$packageVersions[:ansiblePlaybook] = %r!ansible-playbook 2.([0-9]\.?)+!
-
 $testConfiguration = {}
-
-if ['redhat', 'alpine'].include?(os[:family])
-    $testConfiguration[:ansiblePath] = "/usr/bin"
-else
-    $testConfiguration[:ansiblePath] = "/usr/local/bin"
-end
 
 $testConfiguration[:phpXdebug] = true
 $testConfiguration[:phpApcu] = true
