@@ -12,35 +12,61 @@ use Symfony\Component\Yaml\Yaml;
 use Webdevops\Build\FileReader;
 use Webdevops\Build\GithubJobBuilder;
 
+use function file;
+use function file_exists;
+use function file_put_contents;
 use function ksort;
+use function str_pad;
+use function str_contains;
 
+/**
+ * Writes .github/workflows/build.yaml: a build and a publish job for every Dockerfile under docker/.
+ */
 class GithubCommand extends Command
 {
-    protected $output;
-    protected $fileReader;
-    protected $jobBuilder;
-    protected $jobs = [];
-    protected $deepestLevel = 0;
-    protected $blacklist = [];
-    protected $_settings = [];
-
     protected static $defaultName = 'github:generate-ci';
 
-    public function __construct()
+    private OutputInterface $output;
+
+    private readonly FileReader $fileReader;
+
+    private readonly GithubJobBuilder $jobBuilder;
+
+    /**
+     * @var array<string, array<string, mixed>>
+     */
+    private array $jobs = [];
+
+    /**
+     * @var array<string>
+     */
+    private array $blacklist = [];
+
+    /**
+     * @var array<string, mixed> conf/console.yml
+     */
+    private readonly array $settings;
+
+    /**
+     * @param string $rootPath the repository root
+     */
+    public function __construct(private readonly string $rootPath = __DIR__ . '/../../..')
     {
-        $this->fileReader = new FileReader();
-        $this->jobBuilder = new GithubJobBuilder();
+        $this->fileReader = new FileReader($this->rootPath);
+        $this->jobBuilder = new GithubJobBuilder($this->rootPath);
         parent::__construct();
         $this->addOption('blacklist', 'b', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY);
-        $this->_settings = Yaml::parseFile(__DIR__ . '/../../../conf/console.yml');
+        $this->settings = Yaml::parseFile($this->rootPath . '/conf/console.yml');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->blacklist = $input->getOption('blacklist');
-        if (empty($this->blacklist) && file_exists(__DIR__ . '/../../BLACKLIST')) {
-            $this->blacklist = file(__DIR__ . '/../../BLACKLIST', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if ($this->blacklist === [] && file_exists($this->rootPath . '/ci/BLACKLIST')) {
+            $this->blacklist = file($this->rootPath . '/ci/BLACKLIST', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
         }
+
+        $this->jobs = [];
         $this->output = $output;
         $tree = $this->buildTree();
         foreach ($tree->getRootNodes() as $rootNode) {
@@ -51,8 +77,9 @@ class GithubCommand extends Command
 
         $this->jobs = [
             'validate-automation' => $this->jobBuilder->getValidationConfig(),
+            'check-ci-code' => $this->jobBuilder->getCodeCheckConfig(),
             ...$this->jobs,
-        ];;
+        ];
         $buildYaml = [
             'name' => 'build',
             'on' => [
@@ -84,26 +111,16 @@ class GithubCommand extends Command
             2,
             Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK,
         );
-        file_put_contents(__DIR__ . '/../../../.github/workflows/build.yaml', $yamlString);
-        return 0;
+        file_put_contents($this->rootPath . '/.github/workflows/build.yaml', $yamlString);
+        return Command::SUCCESS;
     }
 
     private function traverse(Node $node): void
     {
-        $line = 'Processing ' . $node->getName();
+        $line = 'Processing ' . $node->get('name');
         $nodeAr = $node->toArray();
         $nodeAr['level'] = $node->getLevel();
         $nodeAr['hasChildren'] = $node->hasChildren();
-        // BlueM\Tree\Node lowercases all property keys internally, so the
-        // 'imageParent' key set by FileReader comes back as 'imageparent'.
-        // Restore the expected casing here, once, for consumers like
-        // GithubJobBuilder.
-        $nodeAr['imageParent'] = $nodeAr['imageparent'] ?? 0;
-        $nodeAr['imageParentRef'] = $nodeAr['imageparentref'] ?? 0;
-        $nodeAr['imageDependencies'] = $nodeAr['imagedependencies'] ?? [];
-        if ($node->getLevel() > $this->deepestLevel) {
-            $this->deepestLevel = $node->getLevel();
-        }
         $this->jobs = [
             ...$this->jobs,
             ...$this->jobBuilder->getJobsDescription($nodeAr),
@@ -111,11 +128,12 @@ class GithubCommand extends Command
         if ($this->isNameBlacklisted($nodeAr['id'])) {
 //            $this->jobs[GithubJobBuilder::toJobId($node->getId())] = array_merge($this->jobs[GithubJobBuilder::toJobId($node->getId())], ['when' => 'manual']);
             $line .= ' *blacklisted*';
-            if ($node->get('tag') !== $this->_settings['docker']['autoLatestTag']) {
+            if ($node->get('tag') !== $this->settings['docker']['autoLatestTag']) {
                 unset($this->jobs[GithubJobBuilder::toJobId($node->getId())]);
                 unset($this->jobs[GithubJobBuilder::toJobId($node->getId()) . '_publish']);
             }
         }
+
         $this->output->write([str_pad('', $node->getLevel() - 1, "\t", STR_PAD_LEFT), $line, PHP_EOL]);
         foreach ($node->getChildren() as $childNode) {
             $this->traverse($childNode);
@@ -124,21 +142,16 @@ class GithubCommand extends Command
 
     private function isNameBlacklisted(string $name): bool
     {
-        foreach ($this->blacklist as $blacklistItem) {
-            if (strpos($name, $blacklistItem)) {
-                return true;
-            }
-        }
-        return false;
+        return array_any($this->blacklist, fn (string $blacklistItem): bool => str_contains($name, $blacklistItem));
     }
 
     private function buildTree(): Tree
     {
         $data = [];
-        $dockerFiles = $this->fileReader->collectDockerfiles();
-        foreach ($dockerFiles as $file) {
-            $data[] = $this->fileReader->getInfo($file[0]);
+        foreach ($this->fileReader->collectDockerfiles() as $dockerfile) {
+            $data[] = $this->fileReader->getInfo($dockerfile);
         }
+
         return new Tree($data);
     }
 }

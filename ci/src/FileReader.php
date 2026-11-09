@@ -2,37 +2,63 @@
 
 namespace Webdevops\Build;
 
-use RecursiveIteratorIterator;
-use RegexIterator;
 use RecursiveDirectoryIterator;
-use RecursiveRegexIterator;
+use RecursiveIteratorIterator;
+use RuntimeException;
+use SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
 
 class FileReader
 {
-    private $_settings;
+    /**
+     * @var array<string, mixed> conf/console.yml
+     */
+    private readonly array $settings;
 
-    public function __construct()
+    /**
+     * @param string $rootPath the repository root
+     */
+    public function __construct(private readonly string $rootPath = __DIR__ . '/../..')
     {
-        $this->_settings = Yaml::parseFile(__DIR__ . '/../../conf/console.yml');
+        $this->settings = Yaml::parseFile($this->rootPath . '/conf/console.yml');
     }
 
-    public function collectDockerfiles()
+    /**
+     * The path of every Dockerfile under docker/, sorted.
+     *
+     * @return list<string>
+     */
+    public function collectDockerfiles(): array
     {
-        $dockerDir = new RecursiveDirectoryIterator(__DIR__ . '/../../docker/');
-        $iterator = new RecursiveIteratorIterator($dockerDir);
-        return new RegexIterator($iterator, '/^.*Dockerfile$/i', RecursiveRegexIterator::GET_MATCH);
+        $dockerfiles = [];
+        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->rootPath . '/docker/'));
+        foreach ($files as $file) {
+            if ($file instanceof SplFileInfo && preg_match('/^.*Dockerfile$/i', $file->getPathname())) {
+                $dockerfiles[] = $file->getPathname();
+            }
+        }
+
+        sort($dockerfiles);
+        return $dockerfiles;
     }
 
-    public function getInfo(string $dockerfilePath)
+    /**
+     * The build tree node of a generated Dockerfile: image, tag, parent image and test settings.
+     *
+     * @return array<string, mixed>
+     */
+    public function getInfo(string $dockerfilePath): array
     {
         $content = file_get_contents($dockerfilePath);
         // Extract info from file header
-        preg_match('/# Dockerfile for webdevops\/(.*):(.*)/', $content, $headerMatches);
+        if ($content === false || !preg_match('/# Dockerfile for webdevops\/(.*):(.*)/', $content, $headerMatches)) {
+            throw new RuntimeException(sprintf('%s has no "# Dockerfile for webdevops/<image>:<tag>" header.', $dockerfilePath));
+        }
+
         $imageName = $headerMatches[1];
         $tagName = $headerMatches[2];
         $id = 'webdevops/' . $imageName . ':' . $tagName;
-        $regex = '/' . $this->_settings['dockerTest']['configuration']['imageConfigurationRegex'] . '/';
+        $regex = '/' . $this->settings['dockerTest']['configuration']['imageConfigurationRegex'] . '/';
         preg_match_all($regex, $id, $serverSpecMatches);
         $node = [
             'id' => $id,
@@ -50,22 +76,23 @@ class FileReader
             'serverspec' => [
                 'DOCKER_IMAGE' => $id,
                 'DOCKER_TAG' => $tagName,
-                'OS_FAMILY' => $serverSpecMatches['OS_FAMILY'][0] ?? $this->_settings['dockerTest']['configuration']['default']['OS_FAMILY'],
-                'OS_VERSION' => $serverSpecMatches['OS_VERSION'][0] ?? $this->_settings['dockerTest']['configuration']['default']['OS_VERSION'],
+                'OS_FAMILY' => $serverSpecMatches['OS_FAMILY'][0] ?? $this->settings['dockerTest']['configuration']['default']['OS_FAMILY'],
+                'OS_VERSION' => $serverSpecMatches['OS_VERSION'][0] ?? $this->settings['dockerTest']['configuration']['default']['OS_VERSION'],
             ],
         ];
         // Additional serverSpec variables (only first match)
-        foreach ($this->_settings['dockerTest']['configuration']['image'] as $regex => $variables) {
+        foreach ($this->settings['dockerTest']['configuration']['image'] as $regex => $variables) {
             if (preg_match('#' . $regex . '#i', $id)) {
                 $node['serverspec'] = array_merge($node['serverspec'], $variables);
                 break;
             }
         }
+
         // Only internal images must be contained in build tree
         preg_match_all('/^FROM\s+(?:--\S+\s+)*(\S+)(?:\s+AS\s+\S+)?\s*$/mi', $content, $fromMatches);
         $parentImage = array_pop($fromMatches[1]);
         $node['baseImage'] = $parentImage;
-        if (strpos($parentImage, 'webdevops/') === 0) {
+        if ($parentImage !== null && str_starts_with($parentImage, 'webdevops/')) {
             // Real Docker image inheritance: the Dockerfile's FROM references
             // another internal webdevops/* image. This is the only case where
             // 'imageParent' driven OCI artifact propagation (build-contexts
@@ -78,13 +105,14 @@ class FileReader
             $node['parent'] = $this->resolveInternalImageReference($parentImage);
             $node['imageParent'] = $node['parent'];
             $node['imageParentRef'] = $parentImage;
-        } else if ($node['id'] !== 'webdevops/toolbox:latest') {
+        } elseif ($node['id'] !== 'webdevops/toolbox:latest') {
             // Synthetic scheduling dependency only (e.g. to serialize CI
             // against the Toolbox job). The Dockerfile does NOT actually
             // build FROM this image, so it must never drive OCI artifact
             // download/upload or build-contexts overrides.
             $node['parent'] = 'webdevops/toolbox:latest';
         }
+
         // Additional internal image dependencies referenced via
         // `COPY --from=webdevops/...` (not a FROM parent). BuildKit's named
         // build-context override mechanism applies identically to
@@ -95,15 +123,18 @@ class FileReader
         foreach (array_unique($copyFromMatches[1]) as $dependencyRef) {
             $node['imageDependencies'][$dependencyRef] = $this->resolveInternalImageReference($dependencyRef);
         }
+
         // Treat *-official images
-        if (strpos($id, '-official:') !== false) {
+        if (str_contains($id, '-official:')) {
             $node['aliases'][] = $id;
             $node['id'] = $node['name'] = str_replace('-official:', ':', $id);
             $node['image'] = str_replace('-official', '', $node['image']);
         }
-        if ($tagName === $this->_settings['docker']['autoLatestTag']) {
+
+        if ($tagName === $this->settings['docker']['autoLatestTag']) {
             $node['aliases'][] = str_replace(':' . $tagName, ':latest', $id);
         }
+
         return $node;
     }
 
@@ -127,7 +158,7 @@ class FileReader
     private function resolveInternalImageReference(string $reference): string
     {
         $imageAndTag = substr($reference, strlen('webdevops/'));
-        if (strpos($imageAndTag, ':') !== false) {
+        if (str_contains($imageAndTag, ':')) {
             [$image, $tag] = explode(':', $imageAndTag, 2);
         } else {
             // `COPY --from=webdevops/toolbox` has no explicit tag; Docker
@@ -135,13 +166,14 @@ class FileReader
             $image = $imageAndTag;
             $tag = 'latest';
         }
+
         $dockerfileExists = fn (string $tag): bool => file_exists(
-            __DIR__ . '/../../docker/' . $image . '/' . $tag . '/Dockerfile',
+            $this->rootPath . '/docker/' . $image . '/' . $tag . '/Dockerfile',
         );
-        if ($tag === 'latest' && !$dockerfileExists($tag) && $dockerfileExists($this->_settings['docker']['autoLatestTag'])) {
-            $tag = $this->_settings['docker']['autoLatestTag'];
+        if ($tag === 'latest' && !$dockerfileExists($tag) && $dockerfileExists($this->settings['docker']['autoLatestTag'])) {
+            $tag = $this->settings['docker']['autoLatestTag'];
         }
+
         return 'webdevops/' . $image . ':' . $tag;
     }
-
 }

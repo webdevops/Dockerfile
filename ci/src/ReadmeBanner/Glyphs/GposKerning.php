@@ -17,30 +17,41 @@ use function sprintf;
  */
 final class GposKerning
 {
-    private const FEATURES = ['kern', 'dist'];
+    private const array FEATURES = ['kern', 'dist'];
 
-    private const SINGLE_ADJUSTMENT = 1;
-    private const PAIR_ADJUSTMENT = 2;
-    private const EXTENSION = 9;
+    private const int SINGLE_ADJUSTMENT = 1;
 
-    private const IGNORE_BASE_GLYPHS = 0x0002;
-    private const IGNORE_LIGATURES = 0x0004;
-    private const IGNORE_MARKS = 0x0008;
-    private const USE_MARK_FILTERING_SET = 0x0010;
-    private const MARK_ATTACHMENT_TYPE = 0xFF00;
+    private const int PAIR_ADJUSTMENT = 2;
 
-    private const X_ADVANCE = 0x0004;
+    private const int EXTENSION = 9;
+
+    private const int IGNORE_BASE_GLYPHS = 0x0002;
+
+    private const int IGNORE_LIGATURES = 0x0004;
+
+    private const int IGNORE_MARKS = 0x0008;
+
+    private const int USE_MARK_FILTERING_SET = 0x0010;
+
+    private const int MARK_ATTACHMENT_TYPE = 0xFF00;
+
+    private const int X_ADVANCE = 0x0004;
 
     /** @var array<string, list<array{type: int, flag: int, markSet: ?int, subtables: list<int>}>> lookups per preferred script tag */
     private array $lookups = [];
+
     /** @var array<int, array<int, int>> */
     private array $coverages = [];
+
     /** @var array<int, array<int, int>> */
     private array $classDefinitions = [];
+
     /** @var array<int, int> */
     private array $glyphClasses = [];
+
     /** @var array<int, int> */
     private array $markAttachmentClasses = [];
+
     /** @var list<int> offsets of the mark glyph set coverages in GDEF */
     private array $markSets = [];
 
@@ -76,6 +87,7 @@ final class GposKerning
                     if ($this->isSkipped($glyph, $lookup)) {
                         continue;
                     }
+
                     foreach ($lookup['subtables'] as $offset) {
                         $value = $this->singleAdjustment($offset, $glyph);
                         if ($value !== null) {
@@ -84,11 +96,14 @@ final class GposKerning
                         }
                     }
                 }
+
                 continue;
             }
+
             if ($this->isSkipped($first, $lookup) || $this->isSkipped($second, $lookup)) {
                 continue;
             }
+
             foreach ($lookup['subtables'] as $offset) {
                 $pair = $this->pairAdjustment($offset, $first, $second);
                 if ($pair !== null) {
@@ -98,6 +113,7 @@ final class GposKerning
                 }
             }
         }
+
         return $advances[0] + $advances[1];
     }
 
@@ -113,6 +129,7 @@ final class GposKerning
         if (isset($this->lookups[$key])) {
             return $this->lookups[$key];
         }
+
         $scriptList = $this->gpos->uint16(4);
         $featureList = $this->gpos->uint16(6);
         $lookupList = $this->gpos->uint16(8);
@@ -126,15 +143,18 @@ final class GposKerning
                 }
             }
         }
+
         if ($script === null) {
             return $this->lookups[$key] = [];
         }
+
         $langSys = $this->gpos->uint16($script) !== 0 ? $script + $this->gpos->uint16($script) : null;
         for ($i = 0; $langSys === null && $i < $this->gpos->uint16($script + 2); $i++) {
             if ($this->gpos->tag($script + 4 + 6 * $i) === 'dflt') {
                 $langSys = $script + $this->gpos->uint16($script + 4 + 6 * $i + 4);
             }
         }
+
         if ($langSys === null) {
             return $this->lookups[$key] = [];
         }
@@ -143,20 +163,24 @@ final class GposKerning
         if ($this->gpos->uint16($langSys + 2) !== 0xFFFF) {
             $features[] = $this->gpos->uint16($langSys + 2);
         }
+
         for ($i = 0; $i < $this->gpos->uint16($langSys + 4); $i++) {
             $features[] = $this->gpos->uint16($langSys + 6 + 2 * $i);
         }
+
         $indices = [];
         foreach ($features as $feature) {
             $record = $featureList + 2 + 6 * $feature;
             if (!in_array($this->gpos->tag($record), self::FEATURES, true)) {
                 continue;
             }
+
             $table = $featureList + $this->gpos->uint16($record + 4);
             for ($i = 0; $i < $this->gpos->uint16($table + 2); $i++) {
                 $indices[] = $this->gpos->uint16($table + 4 + 2 * $i);
             }
         }
+
         $indices = array_unique($indices);
         sort($indices);
 
@@ -173,8 +197,10 @@ final class GposKerning
                     $type = $this->gpos->uint16($offset + 2);
                     $offset += $this->gpos->uint32($offset + 4);
                 }
+
                 $subtables[] = $offset;
             }
+
             if ($type !== self::SINGLE_ADJUSTMENT && $type !== self::PAIR_ADJUSTMENT) {
                 throw new RuntimeException(sprintf(
                     '%s kerns with GPOS lookups of type %d; only single (1) and pair adjustments (2) are supported.',
@@ -182,9 +208,11 @@ final class GposKerning
                     $type,
                 ));
             }
+
             $markSet = ($flag & self::USE_MARK_FILTERING_SET) !== 0 ? $this->gpos->uint16($lookup + 6 + 2 * $count) : null;
             $lookups[] = ['type' => $type, 'flag' => $flag, 'markSet' => $markSet, 'subtables' => $subtables];
         }
+
         return $this->lookups[$key] = $lookups;
     }
 
@@ -200,7 +228,7 @@ final class GposKerning
             1 => ($flag & self::IGNORE_BASE_GLYPHS) !== 0,
             2 => ($flag & self::IGNORE_LIGATURES) !== 0,
             3 => ($flag & self::IGNORE_MARKS) !== 0
-                || ($lookup['markSet'] !== null && !isset($this->coverage($this->gdef, $this->markSets[$lookup['markSet']] ?? -1)[$glyph]))
+                || ($lookup['markSet'] !== null && $this->gdef instanceof BinaryData && !isset($this->coverage($this->gdef, $this->markSets[$lookup['markSet']] ?? -1)[$glyph]))
                 || ($lookup['markSet'] === null && ($flag & self::MARK_ATTACHMENT_TYPE) !== 0
                     && ($flag & self::MARK_ATTACHMENT_TYPE) >> 8 !== ($this->markAttachmentClasses[$glyph] ?? 0)),
             default => false,
@@ -213,10 +241,12 @@ final class GposKerning
         if ($index === null) {
             return null;
         }
+
         $format = $this->gpos->uint16($offset + 4);
         if ($this->gpos->uint16($offset) === 1) {
             return $this->xAdvance($offset + 6, $format);
         }
+
         return $this->xAdvance($offset + 8 + $index * $this->valueSize($format), $format);
     }
 
@@ -229,6 +259,7 @@ final class GposKerning
         if ($index === null) {
             return null;
         }
+
         $format1 = $this->gpos->uint16($offset + 4);
         $format2 = $this->gpos->uint16($offset + 6);
         $size1 = $this->valueSize($format1);
@@ -243,6 +274,7 @@ final class GposKerning
                     return [$this->xAdvance($record + 2, $format1), $this->xAdvance($record + 2 + $size1, $format2)];
                 }
             }
+
             return null;
         }
 
@@ -253,6 +285,7 @@ final class GposKerning
         if ($class1 >= $class1Count || $class2 >= $class2Count) {
             return null;
         }
+
         $record = $offset + 16 + ($class1 * $class2Count + $class2) * ($size1 + $size2);
         return [$this->xAdvance($record, $format1), $this->xAdvance($record + $size1, $format2)];
     }
@@ -263,6 +296,7 @@ final class GposKerning
         for ($bit = 0; $bit < 8; $bit++) {
             $size += ($format >> $bit & 1) * 2;
         }
+
         return $size;
     }
 
@@ -271,6 +305,7 @@ final class GposKerning
         if (($format & self::X_ADVANCE) === 0) {
             return 0;
         }
+
         // XPlacement and YPlacement come first
         return $this->gpos->int16($record + $this->valueSize($format & 0x3));
     }
@@ -283,10 +318,12 @@ final class GposKerning
         if ($offset < 0) {
             return [];
         }
+
         $key = $offset * 2 + ($table === $this->gpos ? 0 : 1);
         if (isset($this->coverages[$key])) {
             return $this->coverages[$key];
         }
+
         $map = [];
         $count = $table->uint16($offset + 2);
         if ($table->uint16($offset) === 1) {
@@ -302,6 +339,7 @@ final class GposKerning
                 }
             }
         }
+
         return $this->coverages[$key] = $map;
     }
 
@@ -314,6 +352,7 @@ final class GposKerning
         if (isset($this->classDefinitions[$key])) {
             return $this->classDefinitions[$key];
         }
+
         $map = [];
         if ($table->uint16($offset) === 1) {
             $start = $table->uint16($offset + 2);
@@ -328,6 +367,7 @@ final class GposKerning
                 }
             }
         }
+
         return $this->classDefinitions[$key] = $map;
     }
 }

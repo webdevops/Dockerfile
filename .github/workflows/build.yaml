@@ -35,6 +35,19 @@ jobs:
         run: |-
           docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console readme-banner:generate
           git diff --exit-code --color=always
+  check-ci-code:
+    name: 'Check ci/ (GrumPHP and PHPUnit)'
+    runs-on: ubuntu-latest
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        name: 'Run GrumPHP'
+        run: |-
+          docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install
+          docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine sh -c 'apk add --no-cache file && git config --global --add safe.directory /app && vendor/bin/grumphp run --no-interaction'
   apache_alpine:
     strategy:
       fail-fast: false

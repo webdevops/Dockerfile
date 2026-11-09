@@ -49,14 +49,17 @@ class BuildGlyphsCommand extends Command
                 $output->writeln(sprintf('<error>"%s" is not of the form key=file, e.g. mono-bold=JetBrainsMono-Bold.ttf</error>', $argument));
                 return Command::INVALID;
             }
+
             [$key, $file] = explode('=', $argument, 2);
             $fonts[$key] = $file;
         }
+
         $file = $input->getOption('output');
-        if (file_put_contents($file, (new GlyphTableBuilder())->build($fonts)) === false) {
+        if (file_put_contents($file, new GlyphTableBuilder()->build($fonts)) === false) {
             $output->writeln(sprintf('<error>Cannot write %s</error>', $file));
             return Command::FAILURE;
         }
+
         $output->writeln('Wrote ' . $file);
         return Command::SUCCESS;
     }

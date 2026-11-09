@@ -1,0 +1,38 @@
+---
+# Test copy of conf/readme-banner.yml
+
+files:
+  light: 'docs/assets/banner-light.svg'
+  dark: 'docs/assets/banner-dark.svg'
+
+title: 'Test banner'
+
+heading: 'PICK YOUR IMAGE'
+
+example:
+  flavor: 'php-nginx'
+  base: 'alpine'
+
+cards:
+  flavor: 'WEB SERVER'
+  variant: 'VARIANT'
+  version: 'PHP VERSION'
+  base: 'BASE OS'
+
+flavors:
+  php: 'PHP-FPM'
+  php-nginx: '+ Nginx'
+
+variants:
+  production: 'production'
+  dev: 'development'
+
+bases:
+  default: 'Debian {release}'
+  releases: '{release}: {versions}'
+  suffixes:
+    alpine: 'Alpine'
+
+footer:
+  - 'Extends the official php images'
+  - '{platforms}'

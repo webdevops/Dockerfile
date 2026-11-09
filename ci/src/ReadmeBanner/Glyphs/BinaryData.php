@@ -12,9 +12,9 @@ use function substr;
 /**
  * Big-endian reader for the binary tables of a font file.
  */
-final class BinaryData
+final readonly class BinaryData
 {
-    public function __construct(private readonly string $bytes)
+    public function __construct(private string $bytes)
     {
     }
 

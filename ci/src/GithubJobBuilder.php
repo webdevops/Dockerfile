@@ -15,12 +15,12 @@ class GithubJobBuilder
      * that child jobs can deterministically reference the exported manifest
      * instead of relying on Buildx picking an arbitrary entry from index.json.
      */
-    private const PARENT_OCI_TAG = 'ci-parent-image';
+    private const string PARENT_OCI_TAG = 'ci-parent-image';
 
     /**
      * Every image is built for these platforms. The README banner lists them too.
      */
-    public const PLATFORMS = [
+    public const array PLATFORMS = [
         [
             'arch' => 'amd64',
             'runner' => 'ubuntu-24.04',
@@ -34,6 +34,16 @@ class GithubJobBuilder
     ];
 
     /**
+     * @param string $rootPath the repository root
+     */
+    public function __construct(private readonly string $rootPath = __DIR__ . '/../..')
+    {
+    }
+
+    /**
+     * The build job and the publish job of a build tree node.
+     *
+     * @param array<string, mixed> $node node from FileReader::getInfo() with level, hasChildren and the image keys restored
      * @return array<string, array<string, mixed>>
      */
     public function getJobsDescription(array $node): array
@@ -44,7 +54,7 @@ class GithubJobBuilder
         $jobId = GithubJobBuilder::toJobId($node['name']);
         $hasParent = (bool)($node['parent'] ?? null);
         $imageDependencies = $this->imageDependencies($node);
-        $hasImageDependencies = !empty($imageDependencies);
+        $hasImageDependencies = $imageDependencies !== [];
         $hasChildren = !empty($node['hasChildren']);
         $parentJobId = $hasParent ? GithubJobBuilder::toJobId($node['parent']) : null;
         $needs = $hasParent ? $parentJobId . '_publish' : 'validate-automation';
@@ -56,6 +66,7 @@ class GithubJobBuilder
             $pushTags[] = '-t "' . $alias . '"';
             $pushTags[] = '-t "ghcr.io/' . $alias . '"';
         }
+
         return [
             $jobId => [
                 'strategy' => [
@@ -84,7 +95,7 @@ class GithubJobBuilder
                                 'if' => $hasImageDependencies ? '${{ github.ref == \'refs/heads/master\' }}' : null,
                                 'uses' => 'docker/build-push-action@v7',
                                 'with' => $this->buildPushWith($node),
-                            ], fn ($value): bool => $value !== null),
+                            ], fn (array|string|null $value): bool => $value !== null),
                             $hasImageDependencies ? [
                                 'name' => 'Build (load locally, from parent artifact)',
                                 'if' => '${{ github.ref != \'refs/heads/master\' }}',
@@ -124,7 +135,7 @@ class GithubJobBuilder
                                 // Reuse the tested local build, including on no-cache reruns.
                                 'with' => array_merge(
                                     [
-                                        'context' => dirname(str_replace(__DIR__ . '/../../', '', $node['file'])),
+                                        'context' => $this->context($node),
                                         'platforms' => '${{ matrix.platform }}',
                                         ...$this->buildCacheWith($node),
                                         'build-args' => implode("\n", [
@@ -210,18 +221,30 @@ class GithubJobBuilder
         $name = strtolower($name);
         $name = str_replace('webdevops/', '', $name);
         $name = str_replace(['/', '.'], '-', $name);
-        $name = str_replace(':', '_', $name);
-        return $name;
+        return str_replace(':', '_', $name);
+    }
+
+    /**
+     * The directory of the node's Dockerfile, relative to the repository root.
+     *
+     * @param array<string, mixed> $node
+     */
+    private function context(array $node): string
+    {
+        return dirname(str_replace($this->rootPath . '/', '', $node['file']));
     }
 
     /**
      * Common `docker/build-push-action` inputs shared by the local build step
      * and the additional per-node variants (parent-context build, OCI export).
+     *
+     * @param array<string, mixed> $node
+     * @return array<string, mixed>
      */
     private function buildPushWith(array $node): array
     {
         return [
-            'context' => dirname(str_replace(__DIR__ . '/../../', '', $node['file'])),
+            'context' => $this->context($node),
             'platforms' => '${{ matrix.platform }}',
             'load' => true,
             'tags' => 'ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'],
@@ -234,6 +257,10 @@ class GithubJobBuilder
         ];
     }
 
+    /**
+     * @param array<string, mixed> $node
+     * @return array{cache-from: string, cache-to: string}
+     */
     private function buildCacheWith(array $node): array
     {
         // Full image/tag and architecture keep scopes unique and reusable
@@ -257,6 +284,9 @@ class GithubJobBuilder
      * synthetic scheduling dependency (e.g. on the Toolbox job for images
      * whose Dockerfile does not actually FROM/COPY an internal image), which
      * must never drive OCI artifact propagation.
+     *
+     * @param array<string, mixed> $node
+     * @return array<string, string>
      */
     private function imageDependencies(array $node): array
     {
@@ -265,9 +295,11 @@ class GithubJobBuilder
             $literalRef = $node['imageParentRef'] ?: $node['imageParent'];
             $dependencies[$literalRef] = $node['imageParent'];
         }
+
         foreach ($node['imageDependencies'] ?? [] as $literalRef => $resolvedImage) {
             $dependencies[$literalRef] = $resolvedImage;
         }
+
         return $dependencies;
     }
 
@@ -277,6 +309,7 @@ class GithubJobBuilder
      * never downloaded twice (e.g. if an image happens to be both the FROM
      * parent and a COPY --from target).
      *
+     * @param array<string, string> $imageDependencies
      * @return array<int, array<string, mixed>>
      */
     private function downloadParentImageSteps(array $imageDependencies): array
@@ -329,6 +362,8 @@ class GithubJobBuilder
      * be reused unchanged for every Buildx invocation of this node (tested
      * build and OCI export alike), otherwise a later invocation silently
      * resolves a dependency from the registry again.
+     *
+     * @param array<string, string> $imageDependencies
      */
     private function buildContexts(array $imageDependencies): string
     {
@@ -336,21 +371,27 @@ class GithubJobBuilder
         foreach ($imageDependencies as $literalRef => $imageId) {
             $lines[] = $literalRef . '=oci-layout://' . $this->getCiImagePath($imageId) . ':' . self::PARENT_OCI_TAG;
         }
+
         return implode("\n", $lines);
     }
 
-
+    /**
+     * Shell lines of the serverspec step, none if the image has no spec.
+     *
+     * @param array<string, mixed> $node
+     * @return list<string>
+     */
     private function serverSpec(array $node): array
     {
         $specFile = sprintf('spec/docker/%s_spec.rb', $node['image']);
-        if (!file_exists(__DIR__ . '/../../tests/serverspec/' . $specFile)) {
+        if (!file_exists($this->rootPath . '/tests/serverspec/' . $specFile)) {
             return [];
         }
 
         $testDockerfile = 'Dockerfile_test';
         $specConfig = $node['serverspec'];
         $specConfig['DOCKERFILE'] = $testDockerfile;
-        $encodedJsonConfig = base64_encode(json_encode($specConfig));
+        $encodedJsonConfig = base64_encode(json_encode($specConfig, JSON_THROW_ON_ERROR));
         $script = [
             'cd tests/serverspec',
             'echo "FROM ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}"-' . $node['tag'] . ' >> ' . $testDockerfile,
@@ -361,20 +402,61 @@ class GithubJobBuilder
         return $script;
     }
 
+    /**
+     * Shell lines of the container-structure-test step, none if the image has no suite.
+     *
+     * @param array<string, mixed> $node
+     * @return list<string>
+     */
     private function structuredTests(array $node): array
     {
         $script = [];
-        if (file_exists(__DIR__ . '/../../tests/structure-test/' . $node['image'] . '/test.yaml')) {
+        if (file_exists($this->rootPath . '/tests/structure-test/' . $node['image'] . '/test.yaml')) {
             $script[] = 'cd tests/structure-test';
-            if (file_exists(__DIR__ . '/../../tests/structure-test/' . $node['image'] . '/' . $node['tag'] . '/test.yaml')) {
+            if (file_exists($this->rootPath . '/tests/structure-test/' . $node['image'] . '/' . $node['tag'] . '/test.yaml')) {
                 $script[] = '/usr/local/bin/container-structure-test test --image ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'] . ' --config ' . $node['image'] . '/test.yaml --config ' . $node['image'] . '/' . $node['tag'] . '/test.yaml';
             } else {
                 $script[] = '/usr/local/bin/container-structure-test test --image ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'] . ' --config ' . $node['image'] . '/test.yaml';
             }
         }
+
         return $script;
     }
 
+    /**
+     * Checks the PHP code in ci/ with GrumPHP: coding standard, PHPStan, Rector, composer audit and PHPUnit.
+     * No other job waits for it, so a finding does not stop the images from being built.
+     *
+     * @return array<string, mixed>
+     */
+    public function getCodeCheckConfig(): array
+    {
+        return [
+            'name' => 'Check ci/ (GrumPHP and PHPUnit)',
+            'runs-on' => 'ubuntu-latest',
+            'steps' => [
+                [
+                    'uses' => 'actions/checkout@v7',
+                    'with' => ['persist-credentials' => false],
+                ],
+                [
+                    'name' => 'Run GrumPHP',
+                    'run' => implode("\n", [
+                        'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install',
+                        // GrumPHP's BOM check needs "file"; git needs to trust the checkout, which belongs to another user
+                        'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine sh -c \''
+                        . "apk add --no-cache file && git config --global --add safe.directory /app && vendor/bin/grumphp run --no-interaction'",
+                    ]),
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * The first job, which checks that the generated files are up to date.
+     *
+     * @return array<string, mixed>
+     */
     public function getValidationConfig(): array
     {
         return [

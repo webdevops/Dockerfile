@@ -23,9 +23,9 @@ use const JSON_THROW_ON_ERROR;
  * Writes the light and dark banner at the top of README.md.
  * Texts come from conf/readme-banner.yml, everything else from the built images.
  */
-final class BannerGenerator
+final readonly class BannerGenerator
 {
-    public function __construct(private readonly string $rootPath)
+    public function __construct(private string $rootPath)
     {
     }
 
@@ -37,8 +37,13 @@ final class BannerGenerator
     public function generate(array $images, array $platforms): array
     {
         $texts = Yaml::parseFile($this->rootPath . '/conf/readme-banner.yml');
+        $glyphs = file_get_contents($this->rootPath . '/ci/resources/readme-banner/glyphs.json');
+        if ($glyphs === false) {
+            throw new RuntimeException('Cannot read ci/resources/readme-banner/glyphs.json.');
+        }
+
         $table = json_decode(
-            file_get_contents($this->rootPath . '/ci/resources/readme-banner/glyphs.json'),
+            $glyphs,
             true,
             512,
             JSON_THROW_ON_ERROR,
@@ -51,6 +56,7 @@ final class BannerGenerator
                 ));
             }
         }
+
         $fonts = [];
         foreach ($table as $name => $font) {
             $fonts[$name] = GlyphFont::fromTable($name, $font);
@@ -73,11 +79,14 @@ final class BannerGenerator
             if (!is_dir(dirname($path)) && !mkdir(dirname($path), 0777, true) && !is_dir(dirname($path))) {
                 throw new RuntimeException(sprintf('Cannot create the directory of %s.', $file));
             }
+
             if (file_put_contents($path, $renderer->render($theme)) === false) {
                 throw new RuntimeException(sprintf('Cannot write %s.', $file));
             }
+
             $written[] = $file;
         }
+
         return $written;
     }
 }
