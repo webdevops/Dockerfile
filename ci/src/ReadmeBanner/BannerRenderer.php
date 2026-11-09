@@ -4,16 +4,18 @@ namespace Webdevops\Build\ReadmeBanner;
 
 use RuntimeException;
 
+use function array_chunk;
 use function array_key_first;
 use function array_key_last;
 use function array_map;
+use function array_values;
+use function is_string;
 use function array_slice;
 use function ceil;
 use function count;
 use function floor;
 use function implode;
 use function in_array;
-use function intdiv;
 use function is_array;
 use function max;
 use function preg_replace;
@@ -25,10 +27,14 @@ use function trim;
 /**
  * Draws the README banner: an example image tag taken apart into web server,
  * variant, PHP version and base OS, with all options of each part.
+ *
+ * @phpstan-type Item array{chip: ?string, description: ?string, selected: bool, compact: bool}
+ * @phpstan-type Row array{items: list<Item>, note: ?string}
+ * @phpstan-type Card array{part: string, title: string, rows: list<Row>}
  */
 final class BannerRenderer
 {
-    public const THEMES = [
+    public const array THEMES = [
         'light' => [
             'background' => '#f6f8fa', 'border' => '#d0d7de', 'card' => '#ffffff', 'cardBorder' => '#d0d7de',
             'text' => '#1f2328', 'muted' => '#59636e', 'chipBorder' => '#d0d7de', 'onAccent' => '#ffffff',
@@ -41,26 +47,43 @@ final class BannerRenderer
         ],
     ];
 
-    private const WIDTH = 1280;
-    private const MARGIN = 44;
-    private const TAG_SIZE = 52;
-    private const TAG_Y = 152;
-    private const BAR_Y = 170;
-    private const CARD_Y = 300;
-    private const CARD_GAP = 16;
-    private const CARD_PADDING = 22;
-    private const CHIP_SIZE = 19;
-    private const CHIP_HEIGHT = 32;
-    private const ROW_PITCH = 42;
-    private const DESCRIPTION_SIZE = 17;
-    private const NOTE_SIZE = 15;
-    private const NOTE_HEIGHT = 20;
-    private const NOTE_BASELINE = 12;
-    private const NOTE_GAP = 6;
-    private const NO_SUFFIX_LABEL = 'no suffix';
+    private const int WIDTH = 1280;
+
+    private const int MARGIN = 44;
+
+    private const int TAG_SIZE = 52;
+
+    private const int TAG_Y = 152;
+
+    private const int BAR_Y = 170;
+
+    private const int CARD_Y = 300;
+
+    private const int CARD_GAP = 16;
+
+    private const int CARD_PADDING = 22;
+
+    private const int CHIP_SIZE = 19;
+
+    private const int CHIP_HEIGHT = 32;
+
+    private const int ROW_PITCH = 42;
+
+    private const int DESCRIPTION_SIZE = 17;
+
+    private const int NOTE_SIZE = 15;
+
+    private const int NOTE_HEIGHT = 20;
+
+    private const int NOTE_BASELINE = 12;
+
+    private const int NOTE_GAP = 6;
+
+    private const string NO_SUFFIX_LABEL = 'no suffix';
 
     /** @var ?array{flavor: string, version: string, base: string} */
     private ?array $example = null;
+
     /** @var ?list<array{suffix: string, text: string, notes: list<string>}> */
     private ?array $bases = null;
 
@@ -80,22 +103,28 @@ final class BannerRenderer
         $colors = self::THEMES[$theme];
         $cards = $this->cards();
         $layouts = array_map(fn (array $card): array => $this->rowLayout($card['rows']), $cards);
-        $cardHeight = 60 + max(array_map(fn (array $layout): int => $layout['height'], $layouts)) + 14;
+        $cardHeight = 60 + max(0, ...array_map(fn (array $layout): int => $layout['height'], $layouts)) + 14;
         $footerY = self::CARD_Y + $cardHeight + 50;
         $height = $footerY + 40;
 
         $svg = [];
         $svg[] = sprintf(
             '<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" role="img" aria-labelledby="t d">',
-            self::WIDTH, $height, self::WIDTH, $height,
+            self::WIDTH,
+            $height,
+            self::WIDTH,
+            $height,
         );
-        $svg[] = '<title id="t">' . Svg::escape($this->setting('title')) . '</title>';
+        $svg[] = '<title id="t">' . Svg::escape($this->settingText('title')) . '</title>';
         $svg[] = '<desc id="d">' . Svg::escape($this->description()) . '</desc>';
         $svg[] = sprintf(
             '<rect x="1" y="1" width="%d" height="%d" rx="20" fill="%s" stroke="%s" stroke-width="2"/>',
-            self::WIDTH - 2, $height - 2, $colors['background'], $colors['border'],
+            self::WIDTH - 2,
+            $height - 2,
+            $colors['background'],
+            $colors['border'],
         );
-        $svg[] = $this->text('sans-semibold', $this->setting('heading'), self::WIDTH / 2, 76, 15, $colors['muted'], 2.6, 'middle');
+        $svg[] = $this->text('sans-semibold', $this->settingText('heading'), self::WIDTH / 2, 76, 15, $colors['muted'], 2.6, 'middle');
 
         $segmentCenters = $this->tag($svg, $colors);
 
@@ -106,7 +135,12 @@ final class BannerRenderer
             $this->connector($svg, $segmentCenters[$card['part']], $left + $cardWidth / 2, $color);
             $svg[] = sprintf(
                 '<rect x="%s" y="%d" width="%s" height="%d" rx="12" fill="%s" stroke="%s" stroke-width="1.5"/>',
-                Svg::number($left), self::CARD_Y, Svg::number($cardWidth), $cardHeight, $colors['card'], $colors['cardBorder'],
+                Svg::number($left),
+                self::CARD_Y,
+                Svg::number($cardWidth),
+                $cardHeight,
+                $colors['card'],
+                $colors['cardBorder'],
             );
             $svg[] = $this->text('sans-semibold', $card['title'], $left + self::CARD_PADDING, self::CARD_Y + 38, 15, $color, 1.6);
             $inner = $cardWidth - 2 * self::CARD_PADDING;
@@ -114,16 +148,17 @@ final class BannerRenderer
             foreach ($card['rows'] as $r => $row) {
                 $x = $left + self::CARD_PADDING;
                 $y = self::CARD_Y + 60 + $layouts[$i]['tops'][$r];
-                if (isset($row['note'])) {
+                if ($row['note'] !== null) {
                     // A note explains the description above it, so it starts below that description
                     $x = $descriptionX ?? $x;
                     $svg[] = $this->text('sans-regular', $row['note'], $x, $y + self::NOTE_BASELINE, self::NOTE_SIZE, $colors['muted']);
                     $x += $this->fonts['sans-regular']->width($row['note'], self::NOTE_SIZE);
                 } else {
-                    foreach ($row as $k => $item) {
+                    foreach ($row['items'] as $k => $item) {
                         if ($k > 0) {
                             $x += 8;
                         }
+
                         $x += $this->chip($svg, $colors, $color, $x, $y, $item['chip'], $item['selected'], $item['compact']);
                         if ($item['description'] !== null) {
                             $x += 12;
@@ -135,6 +170,7 @@ final class BannerRenderer
                         }
                     }
                 }
+
                 $this->assertFits($x - $left - self::CARD_PADDING, $inner, sprintf('a row of the "%s" card', $card['title']));
             }
         }
@@ -148,7 +184,7 @@ final class BannerRenderer
      * Top of each row relative to the first one, and the height of all rows.
      * A note sits right below the row it belongs to.
      *
-     * @param list<array<mixed>> $rows
+     * @param list<Row> $rows
      * @return array{tops: list<int>, height: int}
      */
     private function rowLayout(array $rows): array
@@ -156,25 +192,28 @@ final class BannerRenderer
         $tops = [];
         $y = 0;
         foreach ($rows as $r => $row) {
-            $tops[$r] = $y;
-            $y += isset($row['note']) ? self::NOTE_HEIGHT : self::CHIP_HEIGHT;
-            if (isset($rows[$r + 1]) && !isset($rows[$r + 1]['note'])) {
-                $y += isset($row['note']) ? self::NOTE_GAP : self::ROW_PITCH - self::CHIP_HEIGHT;
+            $tops[] = $y;
+            $isNote = $row['note'] !== null;
+            $y += $isNote ? self::NOTE_HEIGHT : self::CHIP_HEIGHT;
+            if (isset($rows[$r + 1]) && $rows[$r + 1]['note'] === null) {
+                $y += $isNote ? self::NOTE_GAP : self::ROW_PITCH - self::CHIP_HEIGHT;
             }
         }
+
         return ['tops' => $tops, 'height' => $y];
     }
 
     /**
      * Content of the four cards. Each row holds one or more items, or a note in smaller text.
      *
-     * @return list<array{part: string, title: string, rows: list<list<array{chip: ?string, description: ?string, selected: bool, compact: bool}>|array{note: string}>}>
+     * @return list<Card>
      */
     private function cards(): array
     {
         $example = $this->example();
         $item = fn (?string $chip, ?string $description, bool $selected, bool $compact = false): array =>
             ['chip' => $chip, 'description' => $description, 'selected' => $selected, 'compact' => $compact];
+        $row = $this->row(...);
 
         $flavors = [];
         foreach ($this->matrix->flavors() as $flavor) {
@@ -184,33 +223,44 @@ final class BannerRenderer
                     $flavor,
                 ));
             }
-            $flavors[] = [$item($flavor, $this->texts['flavors'][$flavor], $flavor === $example['flavor'])];
+
+            $flavors[] = $row($item($flavor, $this->texts['flavors'][$flavor], $flavor === $example['flavor']));
         }
 
         $versions = [];
-        $chipsPerRow = $this->versionChipsPerRow();
-        foreach ($this->matrix->versions() as $i => $version) {
-            $versions[intdiv($i, $chipsPerRow)][] = $item($version, null, $version === $example['version'], true);
+        foreach (array_chunk($this->matrix->versions(), $this->versionChipsPerRow()) as $chunk) {
+            $versions[] = $row(...array_map(fn (string $version): array => $item($version, null, $version === $example['version'], true), $chunk));
         }
 
         $bases = [];
         foreach ($this->bases() as $base) {
             $chip = $base['suffix'] === ImageMatrix::NO_SUFFIX ? null : '-' . $base['suffix'];
-            $bases[] = [$item($chip, $base['text'], $base['suffix'] === $example['base'])];
+            $bases[] = $row($item($chip, $base['text'], $base['suffix'] === $example['base']));
             foreach ($base['notes'] as $note) {
-                $bases[] = ['note' => $note];
+                $bases[] = ['items' => [], 'note' => $note];
             }
         }
 
         return [
-            ['part' => 'flavor', 'title' => $this->setting('cards', 'flavor'), 'rows' => $flavors],
-            ['part' => 'variant', 'title' => $this->setting('cards', 'variant'), 'rows' => [
-                [$item(null, $this->setting('variants', 'production'), false)],
-                [$item('-dev', $this->setting('variants', 'dev'), true)],
+            ['part' => 'flavor', 'title' => $this->settingText('cards', 'flavor'), 'rows' => $flavors],
+            ['part' => 'variant', 'title' => $this->settingText('cards', 'variant'), 'rows' => [
+                $row($item(null, $this->settingText('variants', 'production'), false)),
+                $row($item('-dev', $this->settingText('variants', 'dev'), true)),
             ]],
-            ['part' => 'version', 'title' => $this->setting('cards', 'version'), 'rows' => $versions],
-            ['part' => 'base', 'title' => $this->setting('cards', 'base'), 'rows' => $bases],
+            ['part' => 'version', 'title' => $this->settingText('cards', 'version'), 'rows' => $versions],
+            ['part' => 'base', 'title' => $this->settingText('cards', 'base'), 'rows' => $bases],
         ];
+    }
+
+    /**
+     * A row of items.
+     *
+     * @param Item ...$items
+     * @return Row
+     */
+    private function row(array ...$items): array
+    {
+        return ['items' => array_values($items), 'note' => null];
     }
 
     /**
@@ -224,6 +274,7 @@ final class BannerRenderer
         if ($this->bases !== null) {
             return $this->bases;
         }
+
         $built = $this->matrix->baseSuffixes();
         $texts = $this->texts['bases']['suffixes'] ?? [];
         foreach ($built as $suffix) {
@@ -234,15 +285,18 @@ final class BannerRenderer
                 ));
             }
         }
+
         $bases = [];
         if (in_array(ImageMatrix::NO_SUFFIX, $built, true)) {
-            $bases[] = ['suffix' => ImageMatrix::NO_SUFFIX, ...$this->baseText(ImageMatrix::NO_SUFFIX, $this->setting('bases', 'default'))];
+            $bases[] = ['suffix' => ImageMatrix::NO_SUFFIX, ...$this->baseText(ImageMatrix::NO_SUFFIX, $this->settingText('bases', 'default'))];
         }
+
         foreach ($texts as $suffix => $text) {
             if (in_array((string)$suffix, $built, true)) {
                 $bases[] = ['suffix' => (string)$suffix, ...$this->baseText((string)$suffix, $text)];
             }
         }
+
         return $this->bases = $bases;
     }
 
@@ -258,6 +312,7 @@ final class BannerRenderer
         if (!str_contains($text, '{release}')) {
             return ['text' => $text, 'notes' => []];
         }
+
         // Versions that follow each other with the same release become a range, e.g. 8.2–8.5
         $ranges = [];
         $previous = null;
@@ -267,17 +322,21 @@ final class BannerRenderer
             } else {
                 $ranges[$release][] = [(string)$version, (string)$version];
             }
+
             $previous = $release;
         }
+
         if (count($ranges) === 1) {
-            return ['text' => str_replace('{release}', (string)array_key_first($ranges), $text), 'notes' => []];
+            return ['text' => str_replace('{release}', array_key_first($ranges), $text), 'notes' => []];
         }
+
         $notes = [];
         foreach ($ranges as $release => $releaseRanges) {
             $versions = implode(', ', array_map(fn (array $r): string => $r[0] === $r[1] ? $r[0] : $r[0] . '–' . $r[1], $releaseRanges));
-            $notes[] = str_replace(['{release}', '{versions}'], [(string)$release, $versions], $this->setting('bases', 'releases'));
+            $notes[] = str_replace(['{release}', '{versions}'], [(string)$release, $versions], $this->settingText('bases', 'releases'));
         }
-        return ['text' => trim(preg_replace('/\s+/', ' ', str_replace('{release}', '', $text))), 'notes' => $notes];
+
+        return ['text' => trim((string)preg_replace('/\s+/', ' ', str_replace('{release}', '', $text))), 'notes' => $notes];
     }
 
     /**
@@ -290,8 +349,23 @@ final class BannerRenderer
             if (!is_array($value) || !isset($value[$key])) {
                 throw new RuntimeException(sprintf('conf/readme-banner.yml has no setting "%s".', implode(': ', $path)));
             }
+
             $value = $value[$key];
         }
+
+        return $value;
+    }
+
+    /**
+     * A text setting from conf/readme-banner.yml, e.g. settingText('cards', 'flavor').
+     */
+    private function settingText(string ...$path): string
+    {
+        $value = $this->setting(...$path);
+        if (!is_string($value)) {
+            throw new RuntimeException(sprintf('The setting "%s" in conf/readme-banner.yml must be a text.', implode(': ', $path)));
+        }
+
         return $value;
     }
 
@@ -306,6 +380,7 @@ final class BannerRenderer
         if ($this->example !== null) {
             return $this->example;
         }
+
         $flavor = $this->setting('example', 'flavor');
         $base = (string)$this->setting('example', 'base');
         if (!in_array($flavor, $this->matrix->flavors(), true)) {
@@ -314,6 +389,7 @@ final class BannerRenderer
                 $flavor,
             ));
         }
+
         $version = $base === ImageMatrix::NO_SUFFIX ? null : $this->matrix->newestVersion($flavor . '-dev', $base);
         if ($version === null) {
             throw new RuntimeException(sprintf(
@@ -322,19 +398,25 @@ final class BannerRenderer
                 $base,
             ));
         }
+
         return $this->example = ['flavor' => $flavor, 'version' => $version, 'base' => $base];
     }
 
+    /**
+     * @return positive-int
+     */
     private function versionChipsPerRow(): int
     {
         $inner = (self::WIDTH - 2 * self::MARGIN - 3 * self::CARD_GAP) / 4 - 2 * self::CARD_PADDING;
-        $widest = max(array_map(fn (string $v): float => $this->chipWidth($v, true), $this->matrix->versions()));
+        $widest = max(0.0, ...array_map(fn (string $v): float => $this->chipWidth($v, true), $this->matrix->versions()));
         return max(1, (int)(($inner + 8) / ($widest + 8)));
     }
 
     /**
      * Draws the example tag and returns the horizontal center of each coloured part.
      *
+     * @param list<string> $svg
+     * @param array<string, string> $colors
      * @return array<string, float>
      */
     private function tag(array &$svg, array $colors): array
@@ -362,14 +444,22 @@ final class BannerRenderer
                 $centers[$part] = $x + $width / 2;
                 $svg[] = sprintf(
                     '<rect x="%s" y="%d" width="%s" height="6" rx="3" fill="%s"/>',
-                    Svg::number($x + 4), self::BAR_Y, Svg::number($width - 8), $color,
+                    Svg::number($x + 4),
+                    self::BAR_Y,
+                    Svg::number($width - 8),
+                    $color,
                 );
             }
+
             $x += $width;
         }
+
         return $centers;
     }
 
+    /**
+     * @param list<string> $svg
+     */
     private function connector(array &$svg, float $from, float $to, string $color): void
     {
         $top = self::BAR_Y + 14;
@@ -377,7 +467,12 @@ final class BannerRenderer
         $middle = ($top + $bottom) / 2;
         $svg[] = sprintf(
             '<path d="M%1$s %2$d C%1$s %3$s %4$s %3$s %4$s %5$d" fill="none" stroke="%6$s" stroke-width="2.5" stroke-linecap="round" opacity="0.75"/>',
-            Svg::number($from), $top, Svg::number($middle), Svg::number($to), $bottom, $color,
+            Svg::number($from),
+            $top,
+            Svg::number($middle),
+            Svg::number($to),
+            $bottom,
+            $color,
         );
         $svg[] = sprintf('<circle cx="%s" cy="%d" r="4" fill="%s"/>', Svg::number($from), $top, $color);
         $svg[] = sprintf('<circle cx="%s" cy="%d" r="4" fill="%s"/>', Svg::number($to), $bottom, $color);
@@ -386,6 +481,8 @@ final class BannerRenderer
     /**
      * Draws a chip with an image name part; null draws a dashed "no suffix" chip.
      *
+     * @param list<string> $svg
+     * @param array<string, string> $colors
      * @return float the width of the chip
      */
     private function chip(array &$svg, array $colors, string $color, float $x, float $y, ?string $text, bool $selected, bool $compact): float
@@ -394,20 +491,30 @@ final class BannerRenderer
         if ($selected) {
             $svg[] = sprintf(
                 '<rect x="%s" y="%s" width="%s" height="%d" rx="8" fill="%s"/>',
-                Svg::number($x), Svg::number($y), Svg::number($width), self::CHIP_HEIGHT, $color,
+                Svg::number($x),
+                Svg::number($y),
+                Svg::number($width),
+                self::CHIP_HEIGHT,
+                $color,
             );
         } else {
             $svg[] = sprintf(
                 '<rect x="%s" y="%s" width="%s" height="%s" rx="8" fill="none" stroke="%s" stroke-width="1.5"%s/>',
-                Svg::number($x + .75), Svg::number($y + .75), Svg::number($width - 1.5), Svg::number(self::CHIP_HEIGHT - 1.5),
-                $colors['chipBorder'], $text === null ? ' stroke-dasharray="4 3"' : '',
+                Svg::number($x + .75),
+                Svg::number($y + .75),
+                Svg::number($width - 1.5),
+                Svg::number(self::CHIP_HEIGHT - 1.5),
+                $colors['chipBorder'],
+                $text === null ? ' stroke-dasharray="4 3"' : '',
             );
         }
+
         if ($text === null) {
             $svg[] = $this->text('sans-medium', self::NO_SUFFIX_LABEL, $x + $width / 2, $y + self::CHIP_HEIGHT / 2 + 5.5, 15, $colors['muted'], 0, 'middle');
         } else {
             $svg[] = $this->text('mono-medium', $text, $x + $width / 2, $y + self::CHIP_HEIGHT / 2 + 6.8, self::CHIP_SIZE, $selected ? $colors['onAccent'] : $colors['muted'], 0, 'middle');
         }
+
         return $width;
     }
 
@@ -416,9 +523,14 @@ final class BannerRenderer
         if ($text === null) {
             return $this->fonts['sans-medium']->width(self::NO_SUFFIX_LABEL, 15) + 20;
         }
+
         return $this->fonts['mono-medium']->width($text, self::CHIP_SIZE) + ($compact ? 14 : 20);
     }
 
+    /**
+     * @param list<string> $svg
+     * @param array<string, string> $colors
+     */
     private function footer(array &$svg, array $colors, int $y): void
     {
         $platforms = implode(' + ', $this->matrix->platforms());
@@ -427,24 +539,32 @@ final class BannerRenderer
             if ($i > 0) {
                 $parts[] = ['   ·   ', true];
             }
+
             $parts[] = [str_replace('{platforms}', $platforms, $line), false];
         }
+
         $font = $this->fonts['sans-medium'];
         $total = 0.0;
         foreach ($parts as [$text]) {
             $total += $font->width($text, 18);
         }
+
         $this->assertFits($total, self::WIDTH - 2 * self::MARGIN, 'the footer');
         $x = (self::WIDTH - $total) / 2;
         foreach ($parts as [$text, $isSeparator]) {
             $svg[] = sprintf(
                 '<path fill="%s"%s d="%s"/>',
-                $colors['muted'], $isSeparator ? ' opacity="0.55"' : '', $font->path($text, $x, $y, 18),
+                $colors['muted'],
+                $isSeparator ? ' opacity="0.55"' : '',
+                $font->path($text, $x, $y, 18),
             );
             $x += $font->width($text, 18);
         }
     }
 
+    /**
+     * @param 'start'|'middle'|'end' $anchor
+     */
     private function text(string $font, string $text, float $x, float $y, float $size, string $color, float $tracking = 0, string $anchor = 'start'): string
     {
         return sprintf('<path fill="%s" d="%s"/>', $color, $this->fonts[$font]->path($text, $x, $y, $size, $tracking, $anchor));
@@ -456,7 +576,9 @@ final class BannerRenderer
             throw new RuntimeException(sprintf(
                 'The README banner has no room for %s (%dpx needed, %dpx available). '
                 . 'Shorten the text in conf/readme-banner.yml or adjust the layout in ci/src/ReadmeBanner/BannerRenderer.php.',
-                $what, ceil($width), floor($available),
+                $what,
+                ceil($width),
+                floor($available),
             ));
         }
     }
@@ -483,9 +605,12 @@ final class BannerRenderer
             'Image tag anatomy using webdevops/%s-dev:%s-%s as the example. '
             . 'Web server: %s. Variant: no suffix for %s, -dev for %s. PHP version: %s. '
             . 'Base OS: %s. %s.',
-            $example['flavor'], $example['version'], $example['base'],
+            $example['flavor'],
+            $example['version'],
+            $example['base'],
             $this->list($flavors),
-            $this->setting('variants', 'production'), $this->setting('variants', 'dev'),
+            $this->setting('variants', 'production'),
+            $this->setting('variants', 'dev'),
             $this->list($versions),
             implode(', ', $bases),
             $footer,
@@ -500,6 +625,7 @@ final class BannerRenderer
         if (count($items) < 2) {
             return implode('', $items);
         }
+
         return implode(', ', array_slice($items, 0, -1)) . ' or ' . $items[count($items) - 1];
     }
 }

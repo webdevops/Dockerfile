@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webdevops\Build\ReadmeBanner;
 
 use function htmlspecialchars;
@@ -19,6 +21,7 @@ final class Svg
         if (str_contains($text, '.')) {
             $text = rtrim(rtrim($text, '0'), '.');
         }
+
         return $text === '-0' ? '0' : $text;
     }
 

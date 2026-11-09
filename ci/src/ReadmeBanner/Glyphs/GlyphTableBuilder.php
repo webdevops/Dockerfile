@@ -33,12 +33,12 @@ final class GlyphTableBuilder
     /**
      * Font families by the first part of the font key, e.g. "mono" in "mono-bold".
      */
-    public const SOURCES = [
+    public const array SOURCES = [
         'mono' => 'JetBrains Mono, SIL Open Font License 1.1, see OFL-JetBrainsMono.txt',
         'sans' => 'Inter, SIL Open Font License 1.1, see OFL-Inter.txt',
     ];
 
-    private const EXTRA_CHARACTERS = '·–—…‘’“”';
+    private const string EXTRA_CHARACTERS = '·–—…‘’“”';
 
     /**
      * Printable ASCII and a few typographic characters.
@@ -51,6 +51,7 @@ final class GlyphTableBuilder
         for ($codePoint = 0x20; $codePoint < 0x7F; $codePoint++) {
             $characters[] = mb_chr($codePoint);
         }
+
         return [...$characters, ...mb_str_split(self::EXTRA_CHARACTERS)];
     }
 
@@ -67,6 +68,7 @@ final class GlyphTableBuilder
                 implode(', ', array_map(fn (string $key): string => $key . '=<file>', $missing)),
             ));
         }
+
         $fonts = [];
         foreach ($fontFiles as $key => $file) {
             $family = explode('-', $key)[0];
@@ -77,8 +79,10 @@ final class GlyphTableBuilder
                     implode(' or ', array_map(fn (string $f): string => '"' . $f . '-"', array_keys(self::SOURCES))),
                 ));
             }
+
             $fonts[$key] = $this->buildFont(new TrueTypeFont($file), self::SOURCES[$family]);
         }
+
         return $this->dump($fonts);
     }
 
@@ -94,6 +98,7 @@ final class GlyphTableBuilder
             if ($glyph === null) {
                 throw new RuntimeException(sprintf('%s has no glyph for "%s".', $font->path(), $character));
             }
+
             $glyphIds[$character] = $glyph;
             $glyphs[] = [$character, $font->advanceWidth($glyph), $font->outline($glyph)];
         }
@@ -108,6 +113,7 @@ final class GlyphTableBuilder
                 }
             }
         }
+
         usort($kerning, fn (array $a, array $b): int => strcmp($a[0], $b[0]));
 
         return ['source' => $source, 'unitsPerEm' => $font->unitsPerEm(), 'glyphs' => $glyphs, 'kerning' => $kerning];
@@ -138,6 +144,7 @@ final class GlyphTableBuilder
             )) . '}';
             $lines[] = '  }' . (++$i < count($fonts) ? ',' : '');
         }
+
         $lines[] = '}';
         return implode("\n", $lines) . "\n";
     }

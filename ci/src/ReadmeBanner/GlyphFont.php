@@ -20,25 +20,28 @@ use function trim;
  * GitHub shows SVG files as images and does not load web fonts for them,
  * so every text in the banner is drawn as a path.
  */
-final class GlyphFont
+final readonly class GlyphFont
 {
     /**
      * The fonts glyphs.json has to contain: the README banner draws with all of them.
      */
-    public const FONTS = ['mono-bold', 'mono-medium', 'sans-regular', 'sans-medium', 'sans-semibold'];
+    public const array FONTS = ['mono-bold', 'mono-medium', 'sans-regular', 'sans-medium', 'sans-semibold'];
 
     /**
      * @param array<string, array{0: int, 1: string}> $glyphs advance width and outline per character, in font units
      * @param array<string, int> $kerning adjustment per character pair, in font units
      */
     public function __construct(
-        private readonly string $name,
-        private readonly int $unitsPerEm,
-        private readonly array $glyphs,
-        private readonly array $kerning,
+        private string $name,
+        private int $unitsPerEm,
+        private array $glyphs,
+        private array $kerning,
     ) {
     }
 
+    /**
+     * @param array{unitsPerEm: int, glyphs: array<string, array{0: int, 1: string}>, kerning: array<string, int>} $table one font of glyphs.json
+     */
     public static function fromTable(string $name, array $table): self
     {
         return new self($name, $table['unitsPerEm'], $table['glyphs'], $table['kerning']);
@@ -51,6 +54,7 @@ final class GlyphFont
         foreach ($characters as $i => $character) {
             $width += $this->glyphs[$character][0] + $this->kern($characters, $i);
         }
+
         return $width * $size / $this->unitsPerEm + $tracking * (count($characters) - 1);
     }
 
@@ -64,6 +68,7 @@ final class GlyphFont
         if ($anchor !== 'start') {
             $x -= $this->width($text, $size, $tracking) / ($anchor === 'middle' ? 2 : 1);
         }
+
         $scale = $size / $this->unitsPerEm;
         $path = [];
         $characters = $this->characters($text);
@@ -72,8 +77,10 @@ final class GlyphFont
             if ($outline !== '') {
                 $path[] = $this->place($outline, $x, $y, $scale);
             }
+
             $x += ($advance + $this->kern($characters, $i)) * $scale + $tracking;
         }
+
         return implode(' ', $path);
     }
 
@@ -95,6 +102,7 @@ final class GlyphFont
                 ));
             }
         }
+
         return $characters;
     }
 
@@ -106,6 +114,7 @@ final class GlyphFont
         if (!isset($characters[$i + 1])) {
             return 0;
         }
+
         return $this->kerning[$characters[$i] . $characters[$i + 1]] ?? 0;
     }
 
@@ -117,15 +126,17 @@ final class GlyphFont
     private function place(string $outline, float $x, float $y, float $scale): string
     {
         $isX = true;
-        $tokens = preg_split('/\s+/', trim($outline));
+        $tokens = preg_split('/\s+/', trim($outline)) ?: [];
         foreach ($tokens as $i => $token) {
             if (ctype_alpha($token)) {
                 $isX = true;
                 continue;
             }
+
             $tokens[$i] = Svg::number($isX ? $x + (float)$token * $scale : $y - (float)$token * $scale);
             $isX = !$isX;
         }
+
         return implode(' ', $tokens);
     }
 }

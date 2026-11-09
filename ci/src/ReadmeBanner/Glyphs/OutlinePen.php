@@ -4,7 +4,6 @@ namespace Webdevops\Build\ReadmeBanner\Glyphs;
 
 use Webdevops\Build\ReadmeBanner\Svg;
 
-use function array_key_last;
 use function count;
 use function implode;
 
@@ -45,18 +44,21 @@ final class OutlinePen
     public function qCurveTo(array $points, bool $closedWithoutOnCurve = false): void
     {
         if ($closedWithoutOnCurve) {
-            $start = $this->middle($points[array_key_last($points)], $points[0]);
+            $start = $this->middle($points[count($points) - 1], $points[0]);
             $this->moveTo($start);
             $points[] = $start;
         }
+
         if (count($points) === 1) {
             $this->lineTo($points[0]);
             return;
         }
+
         $last = count($points) - 1;
         for ($i = 0; $i < $last - 1; $i++) {
             $this->add('Q', $points[$i], $this->middle($points[$i], $points[$i + 1]));
         }
+
         $this->add('Q', $points[$last - 1], $points[$last]);
     }
 
@@ -79,6 +81,7 @@ final class OutlinePen
         foreach ($points as [$x, $y]) {
             $part .= ' ' . Svg::number($x) . ' ' . Svg::number($y);
         }
+
         $this->parts[] = $part;
     }
 

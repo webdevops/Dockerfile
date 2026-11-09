@@ -1,0 +1,24 @@
+imports:
+  - { resource: vendor/pluswerk/grumphp-config/grumphp.yml }
+parameters:
+  convention.process_timeout: 240
+  convention.security_checker_blocking: true
+  convention.jsonlint_ignore_pattern: {  }
+  convention.xmllint_ignore_pattern: {  }
+  convention.yamllint_ignore_pattern: {  }
+  convention.phpcslint_ignore_pattern: {  }
+  convention.phpcslint_exclude: {  }
+  convention.xlifflint_ignore_pattern: {  }
+  convention.rector_ignore_pattern: {  }
+  convention.rector_enabled: true
+  convention.rector_config: rector.php
+  convention.rector_clear-cache: false
+  convention.fractor_ignore_pattern: {  }
+  convention.fractor_enable: true
+  convention.fractor_config: fractor.php
+  convention.fractor_clear-cache: false
+  convention.phpstan_level: null
+grumphp:
+  tasks:
+    phpunit:
+      always_execute: true
