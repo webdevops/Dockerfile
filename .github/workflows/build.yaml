@@ -25,7 +25,7 @@ jobs:
           docker run --rm -v $PWD:/app -w /app webdevops/dockerfile-build-env make provision
           git diff --exit-code --color=always
       -
-        name: 'Validate .github/workflows/build.yaml is up to date'
+        name: 'Validate .github/workflows/build.yaml and the README banner are up to date'
         run: |-
           docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install
           docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci

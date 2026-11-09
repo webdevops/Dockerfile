@@ -11,7 +11,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 use Webdevops\Build\FileReader;
 use Webdevops\Build\GithubJobBuilder;
+use Webdevops\Build\ReadmeBanner\BannerGenerator;
 
+use function array_column;
+use function dirname;
 use function ksort;
 
 class GithubCommand extends Command
@@ -20,6 +23,8 @@ class GithubCommand extends Command
     protected $fileReader;
     protected $jobBuilder;
     protected $jobs = [];
+    /** @var list<array{image: string, tag: string, file: string}> images that get a build job */
+    protected $publishedImages = [];
     protected $deepestLevel = 0;
     protected $blacklist = [];
     protected $_settings = [];
@@ -85,6 +90,12 @@ class GithubCommand extends Command
             Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK,
         );
         file_put_contents(__DIR__ . '/../../../.github/workflows/build.yaml', $yamlString);
+
+        $banner = new BannerGenerator(dirname(__DIR__, 3));
+        $platforms = array_column(GithubJobBuilder::PLATFORMS, 'platform');
+        foreach ($banner->generate($this->publishedImages, $platforms) as $file) {
+            $output->writeln('Wrote ' . $file);
+        }
         return 0;
     }
 
@@ -115,6 +126,13 @@ class GithubCommand extends Command
                 unset($this->jobs[GithubJobBuilder::toJobId($node->getId())]);
                 unset($this->jobs[GithubJobBuilder::toJobId($node->getId()) . '_publish']);
             }
+        }
+        if (isset($this->jobs[GithubJobBuilder::toJobId($node->getId())])) {
+            $this->publishedImages[] = [
+                'image' => $nodeAr['image'],
+                'tag' => $nodeAr['tag'],
+                'file' => $nodeAr['file'],
+            ];
         }
         $this->output->write([str_pad('', $node->getLevel() - 1, "\t", STR_PAD_LEFT), $line, PHP_EOL]);
         foreach ($node->getChildren() as $childNode) {

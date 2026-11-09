@@ -1,0 +1,45 @@
+---
+# Texts of the banner at the top of README.md.
+# The PHP versions, web servers, Debian release and platforms come from the
+# images that are built. Run `ci/console github:generate-ci` after a change.
+
+files:
+  light: 'docs/assets/readme-banner-light.svg'
+  dark: 'docs/assets/readme-banner-dark.svg'
+
+# Title and description for screen readers
+title: 'webdevops image tags explained'
+
+heading: 'PICK YOUR IMAGE'
+
+# The image tag that is taken apart, e.g. webdevops/php-nginx-dev:8.5-alpine.
+# It always uses -dev, -alpine and the newest PHP version, so every part has a suffix.
+example:
+  flavor: 'php-nginx'
+
+cards:
+  flavor: 'WEB SERVER'
+  variant: 'VARIANT'
+  version: 'PHP VERSION'
+  base: 'BASE OS'
+
+# Description of each image next to its name. Every built php* image needs one.
+flavors:
+  php: 'PHP-FPM'
+  php-apache: '+ Apache'
+  php-nginx: '+ Nginx'
+
+variants:
+  production: 'production'
+  dev: 'development'
+
+bases:
+  # The Debian release name is appended
+  debian: 'Debian'
+  alpine: 'Alpine'
+
+# {platforms} is replaced by the built platforms, e.g. "linux/amd64 + linux/arm64"
+footer:
+  - 'Extends the official php images'
+  - '{platforms}'
+  - 'Rebuilt nightly'
