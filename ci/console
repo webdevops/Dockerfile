@@ -7,11 +7,13 @@ require __DIR__ . '/vendor/autoload.php';
 use Symfony\Component\Console\Application;
 use Webdevops\Build\Commands\BuildGlyphsCommand;
 use Webdevops\Build\Commands\GithubCommand;
+use Webdevops\Build\Commands\ReadmeBannerCommand;
 
 $application = new Application();
 
 // ... register commands
 $application->add(new GithubCommand());
+$application->add(new ReadmeBannerCommand());
 $application->add(new BuildGlyphsCommand());
 
 $application->run();

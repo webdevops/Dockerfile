@@ -393,10 +393,17 @@ class GithubJobBuilder
                     ]),
                 ],
                 [
-                    'name' => 'Validate .github/workflows/build.yaml and the README banner are up to date',
+                    'name' => 'Validate .github/workflows/build.yaml is up to date',
                     'run' => implode("\n", [
                         'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install',
                         'docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci',
+                        'git diff --exit-code --color=always',
+                    ]),
+                ],
+                [
+                    'name' => 'Validate the README banner is up to date',
+                    'run' => implode("\n", [
+                        'docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console readme-banner:generate',
                         'git diff --exit-code --color=always',
                     ]),
                 ],

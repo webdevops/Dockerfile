@@ -1,6 +1,6 @@
 # README banner fonts
 
-GitHub does not load web fonts in SVG images, so `ci/console github:generate-ci` draws every text of the
+GitHub does not load web fonts in SVG images, so `ci/console readme-banner:generate` draws every text of the
 README banner as outlines. `glyphs.json` holds the outlines, widths and kerning of the characters it can use,
 taken from [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) and [Inter](https://github.com/rsms/inter).
 Both fonts are licensed under the SIL Open Font License 1.1 (`OFL-JetBrainsMono.txt`, `OFL-Inter.txt`),
@@ -27,7 +27,7 @@ and so is `glyphs.json`.
        mono-bold=ci/var/fonts/JetBrainsMono-Bold.ttf mono-medium=ci/var/fonts/JetBrainsMono-Medium.ttf \
        sans-regular=ci/var/fonts/Inter-Regular.ttf sans-medium=ci/var/fonts/Inter-Medium.ttf \
        sans-semibold=ci/var/fonts/Inter-SemiBold.ttf
-   docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci
+   docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console readme-banner:generate
    ```
 
 `readme-banner:build-glyphs` reads fonts with TrueType outlines (`.ttf`) and applies their GPOS kerning the way a

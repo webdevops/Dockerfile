@@ -69,10 +69,11 @@ We generate the GitHub Actions workflow (`.github/workflows/build.yaml`) and the
 ```
 docker run --rm -ti -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install
 docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci
+docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console readme-banner:generate
 ```
 
 The banner (`docs/assets/readme-banner-*.svg`) takes the PHP versions, web servers, base OS suffixes, Debian releases and platforms from the images that are built.
-Its texts are in `conf/readme-banner.yml`; the SVG files are never modified manually.
+Its texts are in `conf/readme-banner.yml`; the SVG files are never modified manually. The CI fails if the workflow or the banner is out of date.
 
 GitHub Actions builds every image independently and runs the serverspec and structure tests
 defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdevops/`, but only
