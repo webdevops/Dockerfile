@@ -7,31 +7,37 @@ use RuntimeException;
 use function array_keys;
 use function array_unique;
 use function array_values;
-use function count;
 use function end;
 use function file_get_contents;
 use function preg_match;
 use function sort;
 use function str_ends_with;
 use function substr;
+use function uksort;
 use function usort;
 use function version_compare;
 
 /**
  * What the README banner shows about the PHP images, taken from the images
- * the CI builds: web server flavors, PHP versions, variants, the Debian
- * release and the platforms.
+ * the CI builds: web server flavors, PHP versions, variants, base OS
+ * suffixes with their releases, and the platforms.
  */
 final class ImageMatrix
 {
+    /** Base OS of tags without a suffix, e.g. 8.5 */
+    public const NO_SUFFIX = '';
+
     /** @var array<string, true> */
     private array $flavors = [];
     /** @var array<string, true> */
     private array $versions = [];
     private bool $hasDev = false;
-    private bool $hasAlpine = false;
-    /** @var list<string> */
-    private array $debianReleases = [];
+    /** @var array<string, array<string, true>> tags per image, e.g. php-nginx-dev => 8.5-alpine */
+    private array $tags = [];
+    /** @var array<string, true> */
+    private array $suffixes = [];
+    /** @var array<string, array<string, string>> Dockerfile of webdevops/php per base OS suffix and PHP version */
+    private array $phpDockerfiles = [];
 
     /**
      * @param list<array{image: string, tag: string, file: string}> $images published images, e.g. php-nginx-dev with tag 8.5-alpine
@@ -41,7 +47,7 @@ final class ImageMatrix
     {
         foreach ($images as $image) {
             if (!preg_match('/^php(-[a-z0-9]+)*$/', $image['image'])
-                || !preg_match('/^(?P<version>\d+\.\d+)(?P<alpine>-alpine)?$/', $image['tag'], $tag)) {
+                || !preg_match('/^(?P<version>\d+\.\d+)(?:-(?P<suffix>[a-z][a-z0-9]*))?$/', $image['tag'], $tag)) {
                 continue;
             }
             $flavor = $image['image'];
@@ -51,17 +57,17 @@ final class ImageMatrix
             }
             $this->flavors[$flavor] = true;
             $this->versions[$tag['version']] = true;
-            if (!empty($tag['alpine'])) {
-                $this->hasAlpine = true;
-            } elseif ($image['image'] === 'php') {
-                // The other PHP images build on webdevops/php, which names the Debian release
-                $this->debianReleases[] = $this->releaseFromDockerfile($image['file']);
+            $this->tags[$image['image']][$image['tag']] = true;
+            $suffix = $tag['suffix'] ?? self::NO_SUFFIX;
+            $this->suffixes[$suffix] = true;
+            if ($image['image'] === 'php') {
+                // The other PHP images build on webdevops/php, which names the base OS release
+                $this->phpDockerfiles[$suffix][$tag['version']] = $image['file'];
             }
         }
         if (!isset($this->flavors['php'])) {
             throw new RuntimeException('The README banner found no webdevops/php images to show.');
         }
-        $this->debianReleases = array_values(array_unique($this->debianReleases));
     }
 
     /**
@@ -84,10 +90,19 @@ final class ImageMatrix
         return $versions;
     }
 
-    public function newestVersion(): string
+    /**
+     * The newest PHP version of an image with a base OS suffix, e.g. 8.5 for php-nginx-dev:8.5-alpine.
+     */
+    public function newestVersion(string $image, string $suffix): ?string
     {
-        $versions = $this->versions();
-        return end($versions);
+        $versions = [];
+        foreach (array_keys($this->tags[$image] ?? []) as $tag) {
+            if (preg_match('/^(?P<version>\d+\.\d+)' . ($suffix === self::NO_SUFFIX ? '' : '-' . $suffix) . '$/', $tag, $match)) {
+                $versions[] = $match['version'];
+            }
+        }
+        usort($versions, fn (string $a, string $b): int => version_compare($a, $b));
+        return $versions === [] ? null : end($versions);
     }
 
     public function hasDevVariant(): bool
@@ -95,17 +110,35 @@ final class ImageMatrix
         return $this->hasDev;
     }
 
-    public function hasAlpine(): bool
+    /**
+     * @return list<string> the base OS suffixes of the tags, NO_SUFFIX for tags without one
+     */
+    public function baseSuffixes(): array
     {
-        return $this->hasAlpine;
+        $suffixes = array_keys($this->suffixes);
+        sort($suffixes);
+        return $suffixes;
     }
 
     /**
-     * @return string|null the Debian release name, or null if the versions use different releases
+     * The releases in the FROM lines of webdevops/php with a base OS suffix,
+     * e.g. bookworm for "FROM php:8.5-fpm-bookworm". Several if the PHP versions use different ones,
+     * in the order of the PHP versions.
+     *
+     * @return list<string>
      */
-    public function debianRelease(): ?string
+    public function releases(string $suffix): array
     {
-        return count($this->debianReleases) === 1 ? $this->debianReleases[0] : null;
+        $dockerfiles = $this->phpDockerfiles[$suffix] ?? [];
+        uksort($dockerfiles, fn (string $a, string $b): int => version_compare($a, $b));
+        $releases = [];
+        foreach ($dockerfiles as $dockerfile) {
+            if (!preg_match('/^FROM\s+php:\S+-(?P<release>[a-z][a-z0-9.]*)\s*$/mi', file_get_contents($dockerfile), $match)) {
+                throw new RuntimeException('The README banner found no release in the FROM line of ' . $dockerfile);
+            }
+            $releases[] = $match['release'];
+        }
+        return array_values(array_unique($releases));
     }
 
     /**
@@ -116,14 +149,5 @@ final class ImageMatrix
         $platforms = $this->platforms;
         sort($platforms);
         return $platforms;
-    }
-
-    private function releaseFromDockerfile(string $dockerfile): string
-    {
-        // e.g. "FROM php:8.5-fpm-bookworm"
-        if (!preg_match('/^FROM\s+php:\S+-(?P<release>[a-z]+)\s*$/mi', file_get_contents($dockerfile), $match)) {
-            throw new RuntimeException('The README banner found no Debian release in the FROM line of ' . $dockerfile);
-        }
-        return $match['release'];
     }
 }

@@ -13,8 +13,11 @@ use function implode;
 use function in_array;
 use function intdiv;
 use function max;
+use function preg_replace;
 use function sprintf;
+use function str_contains;
 use function str_replace;
+use function trim;
 
 /**
  * Draws the README banner: an example image tag taken apart into web server,
@@ -148,9 +151,10 @@ final class BannerRenderer
             $versions[intdiv($i, $chipsPerRow)][] = $item($version, null, $version === $example['version'], true);
         }
 
-        $debian = $this->texts['bases']['debian'];
-        if ($this->matrix->debianRelease() !== null) {
-            $debian .= ' ' . $this->matrix->debianRelease();
+        $bases = [];
+        foreach ($this->bases() as $base) {
+            $chip = $base['suffix'] === ImageMatrix::NO_SUFFIX ? null : '-' . $base['suffix'];
+            $bases[] = [$item($chip, $base['text'], $base['suffix'] === $example['base'])];
         }
 
         return [
@@ -160,29 +164,79 @@ final class BannerRenderer
                 [$item('-dev', $this->texts['variants']['dev'], true)],
             ]],
             ['part' => 'version', 'title' => $this->texts['cards']['version'], 'rows' => $versions],
-            ['part' => 'base', 'title' => $this->texts['cards']['base'], 'rows' => [
-                [$item(null, $debian, false)],
-                [$item('-alpine', $this->texts['bases']['alpine'], true)],
-            ]],
+            ['part' => 'base', 'title' => $this->texts['cards']['base'], 'rows' => $bases],
         ];
     }
 
     /**
-     * @return array{flavor: string, version: string}
+     * The base OS options: tags without a suffix first, then the suffixes in the order of
+     * conf/readme-banner.yml. Suffixes listed there that are not built are left out.
+     *
+     * @return list<array{suffix: string, text: string}>
+     */
+    private function bases(): array
+    {
+        $built = $this->matrix->baseSuffixes();
+        $texts = $this->texts['bases']['suffixes'] ?? [];
+        foreach ($built as $suffix) {
+            if ($suffix !== ImageMatrix::NO_SUFFIX && !isset($texts[$suffix])) {
+                throw new RuntimeException(sprintf(
+                    'The README banner has no description for the tag suffix "-%s". Add one under "bases: suffixes" in conf/readme-banner.yml.',
+                    $suffix,
+                ));
+            }
+        }
+        $bases = [];
+        if (in_array(ImageMatrix::NO_SUFFIX, $built, true)) {
+            $bases[] = ['suffix' => ImageMatrix::NO_SUFFIX, 'text' => $this->baseText(ImageMatrix::NO_SUFFIX, $this->texts['bases']['default'])];
+        }
+        foreach ($texts as $suffix => $text) {
+            if (in_array((string)$suffix, $built, true)) {
+                $bases[] = ['suffix' => (string)$suffix, 'text' => $this->baseText((string)$suffix, $text)];
+            }
+        }
+        return $bases;
+    }
+
+    /**
+     * Replaces {release} with the release in the FROM line of webdevops/php, e.g. bookworm.
+     * If the PHP versions use different releases, there is no room for all of them, so it is left out.
+     */
+    private function baseText(string $suffix, string $text): string
+    {
+        if (!str_contains($text, '{release}')) {
+            return $text;
+        }
+        $releases = $this->matrix->releases($suffix);
+        $release = count($releases) === 1 ? $releases[0] : '';
+        return trim(preg_replace('/\s+/', ' ', str_replace('{release}', $release, $text)));
+    }
+
+    /**
+     * The example tag uses -dev, the base OS suffix from conf/readme-banner.yml
+     * and the newest PHP version that is built with both.
+     *
+     * @return array{flavor: string, version: string, base: string}
      */
     private function example(): array
     {
         $flavor = $this->texts['example']['flavor'];
+        $base = (string)$this->texts['example']['base'];
         if (!in_array($flavor, $this->matrix->flavors(), true)) {
             throw new RuntimeException(sprintf(
                 'The README banner example uses "%s", which is not built. Change "example" in conf/readme-banner.yml.',
                 $flavor,
             ));
         }
-        if (!$this->matrix->hasDevVariant() || !$this->matrix->hasAlpine()) {
-            throw new RuntimeException('The README banner needs -dev and -alpine images for its example tag.');
+        $version = $base === ImageMatrix::NO_SUFFIX ? null : $this->matrix->newestVersion($flavor . '-dev', $base);
+        if ($version === null) {
+            throw new RuntimeException(sprintf(
+                'The README banner example needs webdevops/%s-dev images with the tag suffix "-%s". Change "example" in conf/readme-banner.yml.',
+                $flavor,
+                $base,
+            ));
         }
-        return ['flavor' => $flavor, 'version' => $this->matrix->newestVersion()];
+        return ['flavor' => $flavor, 'version' => $version, 'base' => $base];
     }
 
     private function versionChipsPerRow(): int
@@ -206,7 +260,7 @@ final class BannerRenderer
             ['-dev', 'variant'],
             [':', null],
             [$example['version'], 'version'],
-            ['-alpine', 'base'],
+            ['-' . $example['base'], 'base'],
         ];
         $font = $this->fonts['mono-bold'];
         $total = $font->width(implode('', array_map(fn (array $s): string => $s[0], $segments)), self::TAG_SIZE);
@@ -329,17 +383,20 @@ final class BannerRenderer
             $this->matrix->flavors(),
         );
         $versions = $this->matrix->versions();
-        $debian = $this->texts['bases']['debian'] . ($this->matrix->debianRelease() !== null ? ' ' . $this->matrix->debianRelease() : '');
+        $bases = array_map(
+            fn (array $b): string => sprintf('%s for %s', $b['suffix'] === ImageMatrix::NO_SUFFIX ? 'no suffix' : '-' . $b['suffix'], $b['text']),
+            $this->bases(),
+        );
         $footer = str_replace('{platforms}', implode(' + ', $this->matrix->platforms()), implode('. ', $this->texts['footer']));
         return sprintf(
-            'Image tag anatomy using webdevops/%s-dev:%s-alpine as the example. '
+            'Image tag anatomy using webdevops/%s-dev:%s-%s as the example. '
             . 'Web server: %s. Variant: no suffix for %s, -dev for %s. PHP version: %s. '
-            . 'Base OS: no suffix for %s, -alpine for %s. %s.',
-            $example['flavor'], $example['version'],
+            . 'Base OS: %s. %s.',
+            $example['flavor'], $example['version'], $example['base'],
             $this->list($flavors),
             $this->texts['variants']['production'], $this->texts['variants']['dev'],
             $this->list($versions),
-            $debian, $this->texts['bases']['alpine'],
+            implode(', ', $bases),
             $footer,
         );
     }
