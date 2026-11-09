@@ -45,6 +45,8 @@ class FileReader
             'imageParent' => 0,
             'imageParentRef' => null,
             'imageDependencies' => [],
+            // Image of the last FROM line, which the final stage builds on, e.g. "php:8.5-fpm-bookworm"
+            'baseImage' => null,
             'serverspec' => [
                 'DOCKER_IMAGE' => $id,
                 'DOCKER_TAG' => $tagName,
@@ -60,8 +62,9 @@ class FileReader
             }
         }
         // Only internal images must be contained in build tree
-        preg_match_all('/^FROM\s+(\S+)(?:\s+AS\s+\S+)?\s*$/mi', $content, $fromMatches);
+        preg_match_all('/^FROM\s+(?:--\S+\s+)*(\S+)(?:\s+AS\s+\S+)?\s*$/mi', $content, $fromMatches);
         $parentImage = array_pop($fromMatches[1]);
+        $node['baseImage'] = $parentImage;
         if (strpos($parentImage, 'webdevops/') === 0) {
             // Real Docker image inheritance: the Dockerfile's FROM references
             // another internal webdevops/* image. This is the only case where

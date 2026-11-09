@@ -1,0 +1,55 @@
+---
+# Texts of the banner at the top of README.md.
+# The PHP versions, web servers, base OS releases and platforms come from the
+# images that are built. Run `ci/console readme-banner:generate` after a change.
+
+files:
+  light: 'docs/assets/readme-banner-light.svg'
+  dark: 'docs/assets/readme-banner-dark.svg'
+
+# Title and description for screen readers
+title: 'webdevops image tags explained'
+
+heading: 'PICK YOUR IMAGE'
+
+# The image tag that is taken apart, e.g. webdevops/php-nginx-dev:8.5-alpine.
+# It uses -dev, the tag suffix in "base" and the newest PHP version that is
+# built with both, so every part has a suffix.
+example:
+  flavor: 'php-nginx'
+  base: 'alpine'
+
+cards:
+  flavor: 'WEB SERVER'
+  variant: 'VARIANT'
+  version: 'PHP VERSION'
+  base: 'BASE OS'
+
+# Description of each image next to its name. Every built php* image needs one.
+flavors:
+  php: 'PHP-FPM'
+  php-apache: '+ Apache'
+  php-nginx: '+ Nginx'
+
+variants:
+  production: 'production'
+  dev: 'development'
+
+bases:
+  # Tags without a suffix, e.g. 8.5. {release} is the release in the FROM line
+  # of webdevops/php, e.g. bookworm. If the PHP versions use different releases
+  # (e.g. 8.6 trixie and older versions bookworm), {release} is left out and
+  # each release gets a line below it, see "releases".
+  default: 'Debian {release}'
+  # Line per release with its PHP versions, e.g. "bookworm: 8.2–8.5"
+  releases: '{release}: {versions}'
+  # Tag suffixes after the PHP version, e.g. 8.5-alpine, in the order shown.
+  # Every suffix that is built needs an entry.
+  suffixes:
+    alpine: 'Alpine'
+
+# {platforms} is replaced by the built platforms, e.g. "linux/amd64 + linux/arm64"
+footer:
+  - 'Extends the official php images'
+  - '{platforms}'
+  - 'Rebuilt nightly'

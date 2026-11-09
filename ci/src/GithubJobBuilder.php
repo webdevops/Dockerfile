@@ -18,6 +18,22 @@ class GithubJobBuilder
     private const PARENT_OCI_TAG = 'ci-parent-image';
 
     /**
+     * Every image is built for these platforms. The README banner lists them too.
+     */
+    public const PLATFORMS = [
+        [
+            'arch' => 'amd64',
+            'runner' => 'ubuntu-24.04',
+            'platform' => 'linux/amd64',
+        ],
+        [
+            'arch' => 'arm64',
+            'runner' => 'ubuntu-24.04-arm',
+            'platform' => 'linux/arm64',
+        ],
+    ];
+
+    /**
      * @return array<string, array<string, mixed>>
      */
     public function getJobsDescription(array $node): array
@@ -45,18 +61,7 @@ class GithubJobBuilder
                 'strategy' => [
                     'fail-fast' => false,
                     'matrix' => [
-                        'include' => [
-                            [
-                                'arch' => 'amd64',
-                                'runner' => 'ubuntu-24.04',
-                                'platform' => 'linux/amd64',
-                            ],
-                            [
-                                'arch' => 'arm64',
-                                'runner' => 'ubuntu-24.04-arm',
-                                'platform' => 'linux/arm64',
-                            ],
-                        ],
+                        'include' => self::PLATFORMS,
                     ],
                 ],
                 'name' => $node['name'] . ' (${{ matrix.arch }})',
@@ -392,6 +397,13 @@ class GithubJobBuilder
                     'run' => implode("\n", [
                         'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install',
                         'docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci',
+                        'git diff --exit-code --color=always',
+                    ]),
+                ],
+                [
+                    'name' => 'Validate the README banner is up to date',
+                    'run' => implode("\n", [
+                        'docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console readme-banner:generate',
                         'git diff --exit-code --color=always',
                     ]),
                 ],

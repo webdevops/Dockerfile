@@ -1,3 +1,8 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme-banner-dark.svg">
+  <img src="docs/assets/readme-banner-light.svg" alt="How an image tag is built: web server, variant, PHP version and base OS, with all options of each part">
+</picture>
+
 # PHP docker images with super powers 🚀
 
 We provide images which extend the official [PHP-Images](https://hub.docker.com/_/php/tags).
@@ -59,12 +64,16 @@ Edit the `Dockerfile.jinja2` templates next to them, the shared templates in `te
 
 ### Building in CI
 
-We generate the GitHub Actions workflow (`.github/workflows/build.yaml`) using PHP:
+We generate the GitHub Actions workflow (`.github/workflows/build.yaml`) and the banner at the top of this README using PHP:
 
 ```
 docker run --rm -ti -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install
 docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci
+docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console readme-banner:generate
 ```
+
+The banner (`docs/assets/readme-banner-*.svg`) takes the PHP versions, web servers, base OS suffixes, Debian releases and platforms from the images that are built.
+Its texts are in `conf/readme-banner.yml`; the SVG files are never modified manually. The CI fails if the workflow or the banner is out of date.
 
 GitHub Actions builds every image independently and runs the serverspec and structure tests
 defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdevops/`, but only
