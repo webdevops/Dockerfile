@@ -71,7 +71,7 @@ docker run --rm -ti -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer in
 docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci
 ```
 
-The banner (`docs/assets/readme-banner-*.svg`) takes the PHP versions, web servers, base OS suffixes and platforms from the images that are built.
+The banner (`docs/assets/readme-banner-*.svg`) takes the PHP versions, web servers, base OS suffixes, Debian releases and platforms from the images that are built.
 Its texts are in `conf/readme-banner.yml`; the SVG files are never modified manually.
 
 GitHub Actions builds every image independently and runs the serverspec and structure tests

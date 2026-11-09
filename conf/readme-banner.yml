@@ -37,14 +37,15 @@ variants:
 
 bases:
   # Tags without a suffix, e.g. 8.5. {release} is the release in the FROM line
-  # of webdevops/php, e.g. bookworm; it is left out if the PHP versions differ.
+  # of webdevops/php, e.g. bookworm. If the PHP versions use different releases
+  # (e.g. 8.6 trixie and older versions bookworm), {release} is left out and
+  # each release gets a line below it, see "releases".
   default: 'Debian {release}'
+  # Line per release with its PHP versions, e.g. "bookworm: 8.2–8.5"
+  releases: '{release}: {versions}'
   # Tag suffixes after the PHP version, e.g. 8.5-alpine, in the order shown.
-  # Every suffix that is built needs an entry. Entries for suffixes that are
-  # not built are left out, so further Debian releases only need images.
+  # Every suffix that is built needs an entry.
   suffixes:
-    trixie: 'Debian'
-    bookworm: 'Debian'
     alpine: 'Alpine'
 
 # {platforms} is replaced by the built platforms, e.g. "linux/amd64 + linux/arm64"

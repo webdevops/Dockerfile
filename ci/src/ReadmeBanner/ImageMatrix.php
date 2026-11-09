@@ -5,8 +5,6 @@ namespace Webdevops\Build\ReadmeBanner;
 use RuntimeException;
 
 use function array_keys;
-use function array_unique;
-use function array_values;
 use function end;
 use function file_get_contents;
 use function preg_match;
@@ -121,24 +119,23 @@ final class ImageMatrix
     }
 
     /**
-     * The releases in the FROM lines of webdevops/php with a base OS suffix,
-     * e.g. bookworm for "FROM php:8.5-fpm-bookworm". Several if the PHP versions use different ones,
-     * in the order of the PHP versions.
+     * The release in the FROM line of webdevops/php per PHP version, e.g. 8.5 => bookworm
+     * for "FROM php:8.5-fpm-bookworm", oldest version first.
      *
-     * @return list<string>
+     * @return array<string, string>
      */
     public function releases(string $suffix): array
     {
         $dockerfiles = $this->phpDockerfiles[$suffix] ?? [];
         uksort($dockerfiles, fn (string $a, string $b): int => version_compare($a, $b));
         $releases = [];
-        foreach ($dockerfiles as $dockerfile) {
+        foreach ($dockerfiles as $version => $dockerfile) {
             if (!preg_match('/^FROM\s+php:\S+-(?P<release>[a-z][a-z0-9.]*)\s*$/mi', file_get_contents($dockerfile), $match)) {
                 throw new RuntimeException('The README banner found no release in the FROM line of ' . $dockerfile);
             }
-            $releases[] = $match['release'];
+            $releases[(string)$version] = $match['release'];
         }
-        return array_values(array_unique($releases));
+        return $releases;
     }
 
     /**

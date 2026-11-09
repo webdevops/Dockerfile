@@ -4,6 +4,7 @@ namespace Webdevops\Build\ReadmeBanner;
 
 use RuntimeException;
 
+use function array_key_last;
 use function array_map;
 use function array_slice;
 use function ceil;
@@ -50,6 +51,10 @@ final class BannerRenderer
     private const CHIP_HEIGHT = 32;
     private const ROW_PITCH = 42;
     private const DESCRIPTION_SIZE = 17;
+    private const NOTE_SIZE = 15;
+    private const NOTE_HEIGHT = 20;
+    private const NOTE_BASELINE = 12;
+    private const NOTE_GAP = 6;
     private const NO_SUFFIX = 'no suffix';
 
     /**
@@ -67,8 +72,8 @@ final class BannerRenderer
     {
         $colors = self::THEMES[$theme];
         $cards = $this->cards();
-        $rows = max(array_map(fn (array $card): int => count($card['rows']), $cards));
-        $cardHeight = 60 + ($rows - 1) * self::ROW_PITCH + self::CHIP_HEIGHT + 14;
+        $layouts = array_map(fn (array $card): array => $this->rowLayout($card['rows']), $cards);
+        $cardHeight = 60 + max(array_map(fn (array $layout): int => $layout['height'], $layouts)) + 14;
         $footerY = self::CARD_Y + $cardHeight + 50;
         $height = $footerY + 40;
 
@@ -98,16 +103,24 @@ final class BannerRenderer
             );
             $svg[] = $this->text('sans-semibold', $card['title'], $left + self::CARD_PADDING, self::CARD_Y + 38, 15, $color, 1.6);
             $inner = $cardWidth - 2 * self::CARD_PADDING;
+            $descriptionX = null;
             foreach ($card['rows'] as $r => $row) {
                 $x = $left + self::CARD_PADDING;
-                $y = self::CARD_Y + 60 + $r * self::ROW_PITCH;
-                foreach ($row as $k => $item) {
+                $y = self::CARD_Y + 60 + $layouts[$i]['tops'][$r];
+                if (isset($row['note'])) {
+                    // A note explains the description above it, so it starts below that description
+                    $x = $descriptionX ?? $x;
+                    $svg[] = $this->text('sans-regular', $row['note'], $x, $y + self::NOTE_BASELINE, self::NOTE_SIZE, $colors['muted']);
+                    $x += $this->fonts['sans-regular']->width($row['note'], self::NOTE_SIZE);
+                }
+                foreach (isset($row['note']) ? [] : $row as $k => $item) {
                     if ($k > 0) {
                         $x += 8;
                     }
                     $x += $this->chip($svg, $colors, $color, $x, $y, $item['chip'], $item['selected'], $item['compact']);
                     if ($item['description'] !== null) {
                         $x += 12;
+                        $descriptionX = $x;
                         $font = $item['selected'] ? 'sans-semibold' : 'sans-regular';
                         $textColor = $item['selected'] ? $colors['text'] : $colors['muted'];
                         $svg[] = $this->text($font, $item['description'], $x, $y + self::CHIP_HEIGHT / 2 + 6.5, self::DESCRIPTION_SIZE, $textColor);
@@ -124,9 +137,30 @@ final class BannerRenderer
     }
 
     /**
-     * Content of the four cards. Each row holds one or more items.
+     * Top of each row relative to the first one, and the height of all rows.
+     * A note sits right below the row it belongs to.
      *
-     * @return list<array{part: string, title: string, rows: list<list<array{chip: ?string, description: ?string, selected: bool, compact: bool}>>}>
+     * @param list<array<mixed>> $rows
+     * @return array{tops: list<int>, height: int}
+     */
+    private function rowLayout(array $rows): array
+    {
+        $tops = [];
+        $y = 0;
+        foreach ($rows as $r => $row) {
+            $tops[$r] = $y;
+            $y += isset($row['note']) ? self::NOTE_HEIGHT : self::CHIP_HEIGHT;
+            if (isset($rows[$r + 1]) && !isset($rows[$r + 1]['note'])) {
+                $y += isset($row['note']) ? self::NOTE_GAP : self::ROW_PITCH - self::CHIP_HEIGHT;
+            }
+        }
+        return ['tops' => $tops, 'height' => $y];
+    }
+
+    /**
+     * Content of the four cards. Each row holds one or more items, or a note in smaller text.
+     *
+     * @return list<array{part: string, title: string, rows: list<list<array{chip: ?string, description: ?string, selected: bool, compact: bool}>|array{note: string}>}>
      */
     private function cards(): array
     {
@@ -155,6 +189,9 @@ final class BannerRenderer
         foreach ($this->bases() as $base) {
             $chip = $base['suffix'] === ImageMatrix::NO_SUFFIX ? null : '-' . $base['suffix'];
             $bases[] = [$item($chip, $base['text'], $base['suffix'] === $example['base'])];
+            foreach ($base['notes'] as $note) {
+                $bases[] = ['note' => $note];
+            }
         }
 
         return [
@@ -172,7 +209,7 @@ final class BannerRenderer
      * The base OS options: tags without a suffix first, then the suffixes in the order of
      * conf/readme-banner.yml. Suffixes listed there that are not built are left out.
      *
-     * @return list<array{suffix: string, text: string}>
+     * @return list<array{suffix: string, text: string, notes: list<string>}>
      */
     private function bases(): array
     {
@@ -188,11 +225,11 @@ final class BannerRenderer
         }
         $bases = [];
         if (in_array(ImageMatrix::NO_SUFFIX, $built, true)) {
-            $bases[] = ['suffix' => ImageMatrix::NO_SUFFIX, 'text' => $this->baseText(ImageMatrix::NO_SUFFIX, $this->texts['bases']['default'])];
+            $bases[] = ['suffix' => ImageMatrix::NO_SUFFIX, ...$this->baseText(ImageMatrix::NO_SUFFIX, $this->texts['bases']['default'])];
         }
         foreach ($texts as $suffix => $text) {
             if (in_array((string)$suffix, $built, true)) {
-                $bases[] = ['suffix' => (string)$suffix, 'text' => $this->baseText((string)$suffix, $text)];
+                $bases[] = ['suffix' => (string)$suffix, ...$this->baseText((string)$suffix, $text)];
             }
         }
         return $bases;
@@ -200,16 +237,34 @@ final class BannerRenderer
 
     /**
      * Replaces {release} with the release in the FROM line of webdevops/php, e.g. bookworm.
-     * If the PHP versions use different releases, there is no room for all of them, so it is left out.
+     * If the PHP versions use different releases, {release} is left out and each release
+     * gets a note with its PHP versions, e.g. "bookworm: 8.2–8.5" and "trixie: 8.6".
+     *
+     * @return array{text: string, notes: list<string>}
      */
-    private function baseText(string $suffix, string $text): string
+    private function baseText(string $suffix, string $text): array
     {
         if (!str_contains($text, '{release}')) {
-            return $text;
+            return ['text' => $text, 'notes' => []];
         }
-        $releases = $this->matrix->releases($suffix);
-        $release = count($releases) === 1 ? $releases[0] : '';
-        return trim(preg_replace('/\s+/', ' ', str_replace('{release}', $release, $text)));
+        $runs = [];
+        foreach ($this->matrix->releases($suffix) as $version => $release) {
+            $last = array_key_last($runs);
+            if ($last !== null && $runs[$last]['release'] === $release) {
+                $runs[$last]['to'] = (string)$version;
+            } else {
+                $runs[] = ['release' => $release, 'from' => (string)$version, 'to' => (string)$version];
+            }
+        }
+        if (count($runs) === 1) {
+            return ['text' => str_replace('{release}', $runs[0]['release'], $text), 'notes' => []];
+        }
+        $notes = [];
+        foreach ($runs as $run) {
+            $versions = $run['from'] === $run['to'] ? $run['from'] : $run['from'] . '–' . $run['to'];
+            $notes[] = str_replace(['{release}', '{versions}'], [$run['release'], $versions], $this->texts['bases']['releases']);
+        }
+        return ['text' => trim(preg_replace('/\s+/', ' ', str_replace('{release}', '', $text))), 'notes' => $notes];
     }
 
     /**
@@ -384,7 +439,12 @@ final class BannerRenderer
         );
         $versions = $this->matrix->versions();
         $bases = array_map(
-            fn (array $b): string => sprintf('%s for %s', $b['suffix'] === ImageMatrix::NO_SUFFIX ? 'no suffix' : '-' . $b['suffix'], $b['text']),
+            fn (array $b): string => sprintf(
+                '%s for %s%s',
+                $b['suffix'] === ImageMatrix::NO_SUFFIX ? 'no suffix' : '-' . $b['suffix'],
+                $b['text'],
+                $b['notes'] === [] ? '' : ' (' . implode(', ', $b['notes']) . ')',
+            ),
             $this->bases(),
         );
         $footer = str_replace('{platforms}', implode(' + ', $this->matrix->platforms()), implode('. ', $this->texts['footer']));
