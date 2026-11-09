@@ -82,7 +82,7 @@ final class GlyphFont
             if (!array_key_exists($character, $this->glyphs)) {
                 throw new RuntimeException(sprintf(
                     'The banner font "%s" has no glyph for "%s" (U+%04X) in "%s". '
-                    . 'Use another character or add it to ci/resources/readme-banner/glyphs.json (see build-glyphs.py).',
+                    . 'Use another character or add it to ci/resources/readme-banner/glyphs.json (see ci/resources/readme-banner/README.md).',
                     $this->name,
                     $character,
                     mb_ord($character),
