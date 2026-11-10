@@ -31,6 +31,15 @@ Only these commands are known to work:
 
 Besides `provision`, the Makefile has `structure-test` and `setup`, which the `webdevops/dockerfile-build-env` image runs while it is built. `make structure-test` runs container-structure-test against your local images of `bootstrap`, `base`, `base-app`, `php`, `php-dev` and `php-nginx`, the images that have a suite in `tests/structure-test`. It tests only the tags in `.github/workflows/build.yaml` and fails if a test fails, if `docker` fails or if no such image exists locally; run it inside `webdevops/dockerfile-build-env` with the Docker socket mounted. The CI runs serverspec for every image except `toolbox` and `dockerfile-build-env`, and container-structure-test for the six images above; to check a change by hand, start the image and try it as described below.
 
+### Packages come with tests
+
+A pull request that adds a package or a tool to an image also adds a test for it, in the same pull request:
+
+- Add a shared example to `tests/serverspec/spec/shared/` that runs the tool and checks its output, not only that the file exists, for example `misc::file` in `tests/serverspec/spec/shared/misc/tools.rb`.
+- Include it in the collection of every image that gets the package; for all PHP images that is `collection::php` in `tests/serverspec/spec/collection/php.rb`.
+- Check that the test fails on an image without the package and passes on one with it.
+- In the pull request description, say how much bigger the images get: absolute and in percent, on average over the images that get the package.
+
 ## Keep the documentation up to date
 
 The documentation is part of every change. A pull request that changes what users of the images see also updates the documentation **in the same pull request**. Never leave it for a follow-up.

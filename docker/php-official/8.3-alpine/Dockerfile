@@ -84,6 +84,7 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     set -x \
     # Install php environment
     && apk-install \
+        file \
         imagemagick \
         graphicsmagick \
         ghostscript \

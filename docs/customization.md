@@ -70,6 +70,7 @@ These commands are installed in the images. Use them in `RUN` lines of your own 
 | `apt-install <packages>` | Runs `apt-get update`, installs the packages without recommended packages and removes the package lists again | Debian- and Ubuntu-based images, including `bootstrap:ubuntu-22.04` |
 | `apk-install <packages>` | Installs packages with `apk add --no-cache` | Alpine-based images, including `bootstrap:alpine` |
 | `docker-image-cleanup` | Removes package lists and caches; use it at the end of a `RUN` that installed packages | all except `toolbox`; fails in the Alpine `php-*` images, see [Known issues](known-issues.md#docker-image-cleanup-in-the-alpine-php-images) |
+| `file <path>` | Shows the type of a file, for example `file --mime-type upload.bin`; tools such as GrumPHP's BOM check call it | `php`, `php-apache`, `php-nginx` and their `-dev` images |
 | `go-replace -s <search> -r <replace> -- <file>` | Replaces text in files; the same tool fills the [placeholders](#placeholders) | all |
 | `gosu <user> <command>` | Runs a command as another user, for example `application` | all except `toolbox` |
 | `docker-service enable <service>`, `docker-service disable <service>`, also `docker-service-enable` and `docker-service-disable` | Enables or disables a [service](#services); enabling installs it if needed | all except `bootstrap` and `toolbox` |
