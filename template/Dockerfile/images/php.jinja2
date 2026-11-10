@@ -42,6 +42,7 @@
     # Install php environment
     && apt-install \
         # Install tools
+        file \
         imagemagick \
         graphicsmagick \
         ghostscript \
@@ -196,6 +197,7 @@
 {% macro officialAlpine(role='', version='') -%}
     # Install php environment
     && apk-install \
+        file \
         imagemagick \
         graphicsmagick \
         ghostscript \

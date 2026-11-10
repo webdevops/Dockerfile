@@ -85,6 +85,7 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     # Install php environment
     && apt-install \
         # Install tools
+        file \
         imagemagick \
         graphicsmagick \
         ghostscript \
