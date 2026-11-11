@@ -9,6 +9,7 @@ use Symfony\Component\Process\Process;
 
 use function fclose;
 use function fopen;
+use function implode;
 use function microtime;
 use function rtrim;
 use function sprintf;
@@ -18,7 +19,7 @@ use function trim;
 use function usleep;
 
 /**
- * A running container of the image under test, controlled with the docker command.
+ * A container of the image under test, controlled with the docker command.
  */
 final readonly class Container
 {
@@ -47,27 +48,23 @@ final readonly class Container
     }
 
     /**
-     * Creates a container of $image with the image's own command, copies the files under the directory $files into its
-     * root directory and starts it. Only files are copied: directories of the image keep their owner and mode, see
-     * FileArchive. stdin stays open, so that an image whose command is a shell, such as webdevops/bootstrap, keeps
-     * running. $labels are added to the container, e.g. to find and remove it later.
+     * Creates a container of $image, copies the files under each of $directories into its root directory and starts
+     * it. Only files are copied: directories of the image keep their owner and mode, see FileArchive. stdin stays
+     * open, so that an image whose command is a shell, such as webdevops/bootstrap, keeps running. $labels are added
+     * to the container, e.g. to find and remove it later.
      *
      * Returns once the entrypoint of the image has run its scripts, which write the configuration from the
      * environment, and has replaced itself with the command, e.g. supervisord.
      *
+     * @param list<string> $directories
      * @param array<string, string> $labels
+     * @param array<string, string> $environment variables to set in the container
+     * @param list<string> $command the command instead of the image's own, e.g. ['noop']
      */
-    public static function start(string $image, string $files, array $labels = []): self
+    public static function start(string $image, array $directories, array $labels = [], array $environment = [], array $command = []): self
     {
-        $arguments = ['create', '--interactive'];
-        foreach ($labels as $key => $value) {
-            $arguments[] = '--label';
-            $arguments[] = $key . '=' . $value;
-        }
-
-        $container = new self(trim(self::docker([...$arguments, $image])));
+        $container = self::create(['--interactive'], $image, $directories, $labels, $environment, $command);
         try {
-            $container->copy(rtrim($files, '/'));
             self::docker(['start', $container->id]);
             $container->waitForEntrypoint();
         } catch (RuntimeException $runtimeException) {
@@ -76,6 +73,38 @@ final readonly class Container
         }
 
         return $container;
+    }
+
+    /**
+     * Creates a container like start(), runs it until its command exits and removes it. Returns the output and the
+     * exit code of the command, e.g. of ['root', 'id', '-un'] through the entrypoint of the image.
+     *
+     * @param list<string> $directories
+     * @param array<string, string> $labels
+     * @param array<string, string> $environment
+     * @param list<string> $command
+     */
+    public static function run(string $image, array $directories, array $labels, array $environment, array $command): CommandResult
+    {
+        $container = self::create([], $image, $directories, $labels, $environment, $command);
+        try {
+            $process = new Process(['docker', 'start', '--attach', $container->id]);
+            $process->setTimeout(self::COMMAND_TIMEOUT);
+            $process->run();
+            self::failOnDockerError('docker start --attach ' . $container->id, $process->getErrorOutput());
+
+            return new CommandResult(implode(' ', $command), $process->getOutput(), $process->getErrorOutput(), (int)$process->getExitCode());
+        } finally {
+            $container->remove();
+        }
+    }
+
+    /**
+     * Whether the container still runs, i.e. its command has not exited.
+     */
+    public function isRunning(): bool
+    {
+        return trim(self::docker(['inspect', '--format', '{{.State.Running}}', $this->id])) === 'true';
     }
 
     /**
@@ -88,12 +117,7 @@ final readonly class Container
         $process->run();
 
         $stderr = $process->getErrorOutput();
-        foreach (self::DOCKER_ERRORS as $error) {
-            if (str_starts_with($stderr, $error)) {
-                // docker failed, e.g. because the container stopped or the daemon is gone, so the command did not run
-                throw new RuntimeException(sprintf('docker exec %s failed: %s', $this->id, trim($stderr)));
-            }
-        }
+        self::failOnDockerError('docker exec ' . $this->id, $stderr);
 
         return new CommandResult($command, $process->getOutput(), $stderr, (int)$process->getExitCode());
     }
@@ -117,6 +141,39 @@ final readonly class Container
 
             usleep(200_000);
         }
+    }
+
+    /**
+     * @param list<string> $options
+     * @param list<string> $directories
+     * @param array<string, string> $labels
+     * @param array<string, string> $environment
+     * @param list<string> $command
+     */
+    private static function create(array $options, string $image, array $directories, array $labels, array $environment, array $command): self
+    {
+        $arguments = ['create', ...$options];
+        foreach ($labels as $key => $value) {
+            $arguments[] = '--label';
+            $arguments[] = $key . '=' . $value;
+        }
+
+        foreach ($environment as $name => $value) {
+            $arguments[] = '--env';
+            $arguments[] = $name . '=' . $value;
+        }
+
+        $container = new self(trim(self::docker([...$arguments, $image, ...$command])));
+        try {
+            foreach ($directories as $directory) {
+                $container->copy(rtrim($directory, '/'));
+            }
+        } catch (RuntimeException $runtimeException) {
+            $container->remove();
+            throw $runtimeException;
+        }
+
+        return $container;
     }
 
     /**
@@ -151,6 +208,19 @@ final readonly class Container
     public function remove(): void
     {
         new Process(['docker', 'rm', '--force', '--volumes', $this->id])->run();
+    }
+
+    /**
+     * Throws if $stderr shows that docker failed, e.g. because the container stopped or the daemon is gone, so that the
+     * command in the container did not run.
+     */
+    private static function failOnDockerError(string $call, string $stderr): void
+    {
+        foreach (self::DOCKER_ERRORS as $error) {
+            if (str_starts_with($stderr, $error)) {
+                throw new RuntimeException(sprintf('%s failed: %s', $call, trim($stderr)));
+            }
+        }
     }
 
     /**

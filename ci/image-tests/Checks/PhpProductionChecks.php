@@ -22,6 +22,16 @@ trait PhpProductionChecks
         self::assertNotContains('blackfire', $modules);
     }
 
+    /**
+     * Postfix does not run, so mail() fails, see docs/images/php.md#mail.
+     */
+    public function testMailFailsWithoutPostfix(): void
+    {
+        self::assertSame('not sent', $this->stdout(
+            "php -r 'echo mail(\"someone@example.test\", \"Image test\", \"Sent by the image tests\") ? \"sent\" : \"not sent\";' 2>/dev/null",
+        ));
+    }
+
     public function testOpcacheSettingsForProduction(): void
     {
         self::assertSame([

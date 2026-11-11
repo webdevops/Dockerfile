@@ -89,7 +89,7 @@ Two more variables control PHP itself:
 
 Images: `php-*`.
 
-`fpm.global.<key>` sets a directive in the `[global]` section of the PHP-FPM configuration, for example `fpm.global.log_level: debug`. `fpm.pool.<key>` sets a directive in the pool (section `[www]` in `/opt/docker/etc/php/fpm/pool.d/application.conf`), for example `fpm.pool.pm.max_requests: "500"`.
+`fpm.global.<key>` sets a directive in the `[global]` section of the PHP-FPM configuration, for example `fpm.global.log_level: debug`. `fpm.pool.<key>` sets a directive in the pool (section `[www]` in `/opt/docker/etc/php/fpm/pool.d/application.conf`), for example `fpm.pool.pm.max_requests: "500"`. The directives that the official PHP image sets in its own pool file, such as `listen` and `clear_env`, cannot be changed this way, see [Known issues](known-issues.md#fpmpoolkey-for-the-directives-of-dockerconf).
 
 The following shortcuts set a single directive:
 

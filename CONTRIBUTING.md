@@ -92,15 +92,17 @@ It tests the local tags that the CI builds and fails if no such image exists.
 
 The image tests are PHPUnit tests in `ci/image-tests`. They start a container of the image with its own command, so supervisord starts the services as in production, and check it:
 files and their owner and mode, commands and their output, PHP extensions and settings, the running services and their ports, and requests through Nginx or Apache to PHP-FPM over http and https.
-All tests of an image run against one container. Its root directory gets the files of `ci/image-tests/Fixtures` first, so `/app` holds the pages that the requests ask for.
+Most tests of an image run against one container. Its root directory gets the files of `ci/image-tests/Fixtures` first, so `/app` holds the pages that the requests ask for, and hooks in `/entrypoint.d` and in the hook directory of each service mark that they ran.
+The tests of environment variables and commands start more containers of the image with the same files: the environment container, which starts with every variable of `ENVIRONMENT` in `ImageTestCase` set to a value other than its default, and short runs of one command through the entrypoint, e.g. `root id -un`.
 
 | Path | Content |
 | --- | --- |
 | `ci/image-tests/Images/` | One test class per image, e.g. `PhpNginxTest.php` for `webdevops/php-nginx`. An image without a class is not tested. |
 | `ci/image-tests/Checks/` | The checks as traits, e.g. `PhpChecks` for every PHP image or `NginxChecks` for the images with Nginx. A test class uses the traits of its image. |
-| `ci/image-tests/ImageTestCase.php` | Starts and removes the container, and the helpers of the checks, e.g. `assertRootScript()`, `assertServiceRunning()` and `request()` |
+| `ci/image-tests/ImageTestCase.php` | Starts and removes the containers, the variables of the environment container, and the helpers of the checks, e.g. `assertRootScript()`, `assertServiceRunning()`, `request()` and `runContainer()` |
+| `ci/image-tests/Fixtures/` | Files for the containers: the pages in `/app`, the hooks, a command `image-test` of its own, and `smtp-sink.php`, a small SMTP server in place of a mail catcher for the mail tests |
 
-`ci/console test:image webdevops/<image>:<tag>` runs the tests of an image; `webdevops/php-official` has the tests of `webdevops/php`. It takes the distribution and its version from `dockerTest` in `conf/console.yml`, and removes the container of the image afterwards, also when the run is interrupted with Ctrl-C or `docker stop`.
+`ci/console test:image webdevops/<image>:<tag>` runs the tests of an image; `webdevops/php-official` has the tests of `webdevops/php`. It takes the distribution and its version from `dockerTest` in `conf/console.yml`, and removes the containers of the image afterwards, also when the run is interrupted with Ctrl-C or `docker stop`.
 A runner killed with `SIGKILL` leaves its containers behind; they carry the label `webdevops.image-test`, so `docker rm --force $(docker ps --all --quiet --filter label=webdevops.image-test)` removes them.
 It runs in a container of `ci/image-tests/Dockerfile`, which has PHP and the `docker` command and gets the Docker socket: `make test-image` builds that image (`make test-image-runner`) and runs the tests in it (`make test-image-run`).
 The CI builds the image with the cache of GitHub Actions and then runs `make test-image-run`.

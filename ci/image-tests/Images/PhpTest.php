@@ -7,9 +7,13 @@ namespace Webdevops\Build\ImageTests\Images;
 use Webdevops\Build\ImageTests\Checks\BaseAppChecks;
 use Webdevops\Build\ImageTests\Checks\BaseChecks;
 use Webdevops\Build\ImageTests\Checks\BootstrapChecks;
+use Webdevops\Build\ImageTests\Checks\ContainerEnvironmentChecks;
+use Webdevops\Build\ImageTests\Checks\EntrypointChecks;
+use Webdevops\Build\ImageTests\Checks\PhpEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmPublicChecks;
 use Webdevops\Build\ImageTests\Checks\PhpProductionChecks;
+use Webdevops\Build\ImageTests\Checks\ServiceChecks;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 /**
@@ -23,4 +27,10 @@ final class PhpTest extends ImageTestCase
     use PhpProductionChecks;
     use PhpFpmChecks;
     use PhpFpmPublicChecks;
+    use EntrypointChecks;
+    use ServiceChecks;
+    use ContainerEnvironmentChecks;
+    use PhpEnvironmentChecks;
+
+    protected const array SERVICES = ['cron', 'php-fpm', 'syslog'];
 }

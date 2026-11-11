@@ -45,6 +45,21 @@ switch ($_GET['test']) {
         echo json_encode($result);
         break;
 
+    case 'ini_get':
+        $names = explode(',', $_GET['names'] ?? '');
+        header('Content-Type: application/json');
+        echo json_encode(array_combine($names, array_map(ini_get(...), $names)));
+        break;
+
+    case 'sleep':
+        sleep((int) ($_GET['seconds'] ?? 0));
+        echo 'slept';
+        break;
+
+    case 'mail':
+        echo mail('someone@example.test', 'Image test from ' . PHP_SAPI, 'Sent by the image tests') ? 'sent' : 'not sent';
+        break;
+
     default:
         header('HTTP/1.1 500 Internal Server Error');
         echo 'ERROR: Unknown test';

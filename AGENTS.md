@@ -89,6 +89,8 @@ Update the documentation whenever a change touches any of these:
    - Service options: the command line of the running process
    - Hooks: a script that writes a marker file, then check the marker
 
+   Where you can, make the check an image test, so that the CI repeats it: a variable goes into `ENVIRONMENT` in `ci/image-tests/ImageTestCase.php`, the check of its effect into a trait in `ci/image-tests/Checks/`.
+
    Check every image a statement names, not just one representative: images differ in what they inherit (for example `cli` only works where `APPLICATION_USER` is set). Check both the Debian and the Alpine variant whenever their implementation differs (separate files under `provisioning/*/alpine`, apk vs. apt, `httpd` vs. `apache2`, `crond` vs. `cron`). Test examples with the exact command you document, and make sure a check cannot pass on an error message.
 
 4. **Document only what works.** Never describe an option that has no effect as working. Fix it, or leave it out and list it in `docs/known-issues.md`. If it works only in some images, say exactly which. Anything `docs/known-issues.md` lists as not working must never appear as working anywhere else. An `ENV` line or a script that reads a variable is no proof that it works: `SERVICE_POSTFIX_OPTS` is passed to `postfix start`, which ignores it. When you fix a known issue, remove its entry in the same pull request.

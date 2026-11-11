@@ -28,9 +28,12 @@ use function strtolower;
 use function trim;
 
 /**
- * Base class of the tests of one image. All tests of a class run against one container of the image, which starts
+ * Base class of the tests of one image. The tests of a class run against one container of the image, which starts
  * with the image's own command, e.g. supervisord with its services. The files of Fixtures/ are copied into its root
- * directory first, so /app holds the pages that the web server tests request.
+ * directory first, so /app holds the pages that the web server tests request, and hooks mark that they ran.
+ *
+ * Tests of environment variables and commands start further containers of the image with startContainer() and
+ * runContainer(); they get the same files.
  */
 abstract class ImageTestCase extends TestCase
 {
@@ -41,9 +44,85 @@ abstract class ImageTestCase extends TestCase
 
     protected const int WAIT_SECONDS = 3;
 
+    /**
+     * The services that supervisord starts in the image, by their names in supervisorctl, see docs/customization.md.
+     *
+     * @var list<string>
+     */
+    protected const array SERVICES = [];
+
+    /**
+     * The documented environment variables that the tests check, each set to a value other than its default. The
+     * environment container of a class starts with them, see environmentContainer().
+     *
+     * @var array<string, string>
+     */
+    protected const array ENVIRONMENT = [
+        'TZ' => 'Europe/Berlin',
+        'LOG_STDOUT' => '/tmp/image-test-stdout.log',
+        'LOG_STDERR' => '/tmp/image-test-stderr.log',
+        'SERVICE_SUPERVISOR_OPTS' => '--loglevel=info',
+        'SERVICE_SYSLOG_OPTS' => '--stderr',
+        'SERVICE_SSH_OPTS' => '-e',
+        'SERVICE_NGINX_OPTS' => '-q',
+        'SERVICE_APACHE_OPTS' => '-DIMAGE_TEST',
+        'WEB_DOCUMENT_ROOT' => '/app/image-test-root',
+        'WEB_DOCUMENT_INDEX' => 'start.html',
+        'WEB_ALIAS_DOMAIN' => 'image-test.example',
+        'WEB_PHP_TIMEOUT' => '2',
+        'SERVICE_NGINX_CLIENT_MAX_BODY_SIZE' => '1k',
+        'WEB_NO_CACHE_PATTERN' => '\\.imagetest$',
+        'PHP_DATE_TIMEZONE' => 'Europe/Berlin',
+        'PHP_DISPLAY_ERRORS' => '1',
+        'PHP_MEMORY_LIMIT' => '345M',
+        'PHP_MAX_EXECUTION_TIME' => '123',
+        'PHP_POST_MAX_SIZE' => '77M',
+        'PHP_UPLOAD_MAX_FILESIZE' => '66M',
+        'PHP_OPCACHE_MEMORY_CONSUMPTION' => '200',
+        'PHP_OPCACHE_MAX_ACCELERATED_FILES' => '10000',
+        'PHP_OPCACHE_VALIDATE_TIMESTAMPS' => '0',
+        'PHP_OPCACHE_REVALIDATE_FREQ' => '5',
+        'PHP_OPCACHE_INTERNED_STRINGS_BUFFER' => '12',
+        'PHP_SENDMAIL_PATH' => '/usr/sbin/sendmail -t -i -f image-test@example.test',
+        'php.max_input_vars' => '4321',
+        'PHP_DISMOD' => 'redis,pgsql',
+        'COMPOSER_VERSION' => '1',
+        'SERVICE_PHPFPM_OPTS' => '-dmax_input_time=120',
+        'FPM_PROCESS_MAX' => '11',
+        'FPM_PM_MAX_CHILDREN' => '7',
+        'FPM_PM_START_SERVERS' => '3',
+        'FPM_PM_MIN_SPARE_SERVERS' => '2',
+        'FPM_PM_MAX_SPARE_SERVERS' => '4',
+        'FPM_PROCESS_IDLE_TIMEOUT' => '15s',
+        'FPM_MAX_REQUESTS' => '500',
+        'FPM_REQUEST_TERMINATE_TIMEOUT' => '60',
+        'FPM_RLIMIT_FILES' => '4096',
+        'FPM_RLIMIT_CORE' => '1024',
+        'fpm.global.log_limit' => '1024',
+        'fpm.pool.ping.path' => '/image-test-ping',
+        'XDEBUG_MODE' => 'develop',
+        'XDEBUG_START_WITH_REQUEST' => 'no',
+        'XDEBUG_CLIENT_HOST' => 'host.image-test.example',
+        'XDEBUG_CLIENT_PORT' => '9010',
+        'XDEBUG_DISCOVER_CLIENT_HOST' => '0',
+        'XDEBUG_TRIGGER_VALUE' => 'image-test',
+        'XDEBUG_OUTPUT_DIR' => '/tmp/image-test-xdebug',
+        'POSTFIX_RELAYHOST' => '[127.0.0.1]:2525',
+        'POSTFIX_MYNETWORKS' => '127.0.0.0/8 10.99.0.0/16',
+    ];
+
     private static ?ImageUnderTest $image = null;
 
+    private const string FIXTURES = __DIR__ . '/Fixtures';
+
     private static ?Container $container = null;
+
+    /**
+     * Further containers of the class, by name, see startContainer().
+     *
+     * @var array<string, Container>
+     */
+    private static array $containers = [];
 
     /**
      * Whether a check of this class already waited for all its attempts. The services then had their time to start,
@@ -55,15 +134,16 @@ abstract class ImageTestCase extends TestCase
     {
         self::$image = ImageUnderTest::fromEnvironment();
         self::$waitedForAllAttempts = false;
-        self::$container = Container::start(
-            self::$image->reference,
-            __DIR__ . '/Fixtures',
-            self::$image->run === '' ? [] : [ImageTests::CONTAINER_LABEL => self::$image->run],
-        );
+        self::$container = Container::start(self::$image->reference, [self::FIXTURES], self::labels());
     }
 
     public static function tearDownAfterClass(): void
     {
+        foreach (self::$containers as $container) {
+            $container->remove();
+        }
+
+        self::$containers = [];
         self::$container?->remove();
         self::$container = null;
     }
@@ -105,17 +185,95 @@ abstract class ImageTestCase extends TestCase
         return self::$container ?? throw new LogicException('The container is started in setUpBeforeClass().');
     }
 
-    protected function execute(string $command): CommandResult
+    /**
+     * The label of the run of ci/console test:image, which removes the containers of the run afterwards.
+     *
+     * @return array<string, string>
+     */
+    private static function labels(): array
     {
-        return self::container()->exec($command);
+        $run = self::image()->run;
+        return $run === '' ? [] : [ImageTests::CONTAINER_LABEL => $run];
+    }
+
+    /**
+     * Another container of the image, started once per class and $name, with $environment and, instead of the image's
+     * command, $command. It gets the files of Fixtures/ too and is removed after the class.
+     *
+     * @param array<string, string> $environment
+     * @param list<string> $command
+     */
+    protected function startContainer(string $name, array $environment = [], array $command = []): Container
+    {
+        return self::$containers[$name] ??= Container::start(self::image()->reference, [self::FIXTURES], self::labels(), $environment, $command);
+    }
+
+    /**
+     * The services that supervisord starts in the image, see SERVICES.
+     *
+     * @return list<string>
+     */
+    protected static function services(): array
+    {
+        return static::SERVICES;
+    }
+
+    /**
+     * The environment container of the class: started with the image's command and every variable of ENVIRONMENT, and
+     * SERVICE_CRON_OPTS for the cron of the distribution.
+     */
+    protected function environmentContainer(): Container
+    {
+        return $this->startContainer('environment', [
+            ...static::ENVIRONMENT,
+            'SERVICE_CRON_OPTS' => self::cronOptions(),
+        ]);
+    }
+
+    /**
+     * A log level option of cron in Debian and Ubuntu, of BusyBox crond in Alpine.
+     */
+    protected static function cronOptions(): string
+    {
+        return self::image()->isAlpine() ? '-l 8' : '-L 15';
+    }
+
+    /**
+     * The command lines of the processes in the container, with spaces between the arguments.
+     *
+     * @return list<string>
+     */
+    protected function commandLines(?Container $container = null): array
+    {
+        return $this->lines($this->stdout('for file in /proc/[0-9]*/cmdline; do tr "\\000" " " < "$file"; echo; done', $container));
+    }
+
+    /**
+     * Runs $command in a new container of the image, through its entrypoint, and returns the result once the command
+     * exits. The container gets the files of Fixtures/ too and is removed afterwards.
+     *
+     * @param list<string> $command
+     * @param array<string, string> $environment
+     */
+    protected function runContainer(array $command, array $environment = []): CommandResult
+    {
+        return Container::run(self::image()->reference, [self::FIXTURES], self::labels(), $environment, $command);
+    }
+
+    /**
+     * Runs $command with sh -c in the container of the class, or in $container.
+     */
+    protected function execute(string $command, ?Container $container = null): CommandResult
+    {
+        return ($container ?? self::container())->exec($command);
     }
 
     /**
      * Runs $command and asserts that it exits with 0.
      */
-    protected function assertCommandSucceeds(string $command): CommandResult
+    protected function assertCommandSucceeds(string $command, ?Container $container = null): CommandResult
     {
-        $result = $this->execute($command);
+        $result = $this->execute($command, $container);
         self::assertSame(0, $result->exitCode, $result->describe());
         return $result;
     }
@@ -123,9 +281,9 @@ abstract class ImageTestCase extends TestCase
     /**
      * Runs $command, asserts that it exits with 0 and returns its standard output.
      */
-    protected function stdout(string $command): string
+    protected function stdout(string $command, ?Container $container = null): string
     {
-        return $this->assertCommandSucceeds($command)->stdout;
+        return $this->assertCommandSucceeds($command, $container)->stdout;
     }
 
     protected function file(string $path): FileInfo
@@ -327,15 +485,16 @@ abstract class ImageTestCase extends TestCase
 
     /**
      * Requests $url with curl in the container, retried while the web server and PHP-FPM start, and returns the body
-     * of the first successful response. $check asserts the body and is retried with the request.
+     * of the first successful response. $check asserts the body and is retried with the request. $container is the
+     * container to request in, by default the one of the class.
      *
      * @param (callable(string): void)|null $check
      */
-    protected function request(string $url, string $curlOptions = '', ?callable $check = null): string
+    protected function request(string $url, string $curlOptions = '', ?callable $check = null, ?Container $container = null): string
     {
         $body = '';
-        $this->eventually(function () use ($url, $curlOptions, $check, &$body): void {
-            $result = $this->execute('curl --insecure --silent --show-error --fail ' . $curlOptions . ' ' . escapeshellarg($url));
+        $this->eventually(function () use ($url, $curlOptions, $check, $container, &$body): void {
+            $result = $this->execute('curl --insecure --silent --show-error --fail ' . $curlOptions . ' ' . escapeshellarg($url), $container);
             self::assertSame(0, $result->exitCode, $result->describe());
             if ($check !== null) {
                 $check($result->stdout);

@@ -39,6 +39,15 @@ trait BaseAppChecks
         self::assertSame('/bin/bash', $entry[6] ?? null, 'login shell of application');
     }
 
+    /**
+     * The cli command runs CLI_SCRIPT with the further arguments as the application user, see docs/customization.md.
+     */
+    public function testCliRunsTheCliScriptAsTheApplicationUser(): void
+    {
+        $result = $this->runContainer(['cli', '-un'], ['CLI_SCRIPT' => 'id']);
+        self::assertSame([0, "application\n"], [$result->exitCode, $result->stdout], $result->describe());
+    }
+
     public function testMoreutils(): void
     {
         if (!self::image()->isDebianOrUbuntu()) {
