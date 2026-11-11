@@ -47,6 +47,9 @@ It installs the PHP tools of `ci/` and runs GrumPHP as your user. `make test` ru
 
 The CI job "Check ci/" runs the same checks. No image build waits for it.
 
+Dependabot proposes updates of the PHP packages in `ci/` and of the gems of the serverspec tests in `tests/serverspec/` once a month: one pull request per directory with all minor and patch updates, and one for each new major version.
+It does not update the actions in `.github/workflows/build.yaml`, because that file is generated; their versions are in `ci/src/GithubJobBuilder.php`.
+
 GitHub Actions builds every image independently and runs the serverspec and structure tests
 defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdevops/`, but only
 internally; pull the images from Docker Hub.
