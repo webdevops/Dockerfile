@@ -1,0 +1,4 @@
+{% import 'docker.twig' as docker %}
+{{ docker.fromOfficial("php", "8.5-fpm-alpine") }}
+
+{{ docker.copyFromToolbox() }}

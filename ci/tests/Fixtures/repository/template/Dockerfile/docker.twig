@@ -1,0 +1,17 @@
+{# Test copy of template/Dockerfile/docker.twig with a few of its macros #}
+
+{% macro from(image, tag) -%}
+FROM webdevops/{{ image }}:{{ tag }}
+{%- endmacro %}
+
+{% macro fromOfficial(image, tag) -%}
+FROM {{ image }}:{{ tag }}
+{%- endmacro %}
+
+{% macro copyFromToolbox(tag='') -%}
+COPY --from=webdevops/toolbox{% if tag %}:{{ tag }}{% endif %} /baselayout/sbin/* /sbin/
+{%- endmacro %}
+
+{% macro cleanup() -%}
+    && docker-image-cleanup
+{%- endmacro %}

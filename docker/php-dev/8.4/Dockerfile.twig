@@ -1,3 +1,6 @@
+{% import 'docker.twig' as docker %}
+{% import 'provision.twig' as provision %}
+{% import 'images/php.twig' as php %}
 {{ docker.from("php", "8.4") }}
 
 {{ docker.copy('conf/', '/opt/docker/') }}

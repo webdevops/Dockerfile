@@ -13,15 +13,10 @@ RUN apt-install \
         ca-certificates \
         software-properties-common \
         git \
-        python2 \
-        python2-dev \
-        python-setuptools \
         ruby \
         ruby-dev \
         ruby-bundler \
         libyaml-dev \
-    && curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py \
-    && python2 get-pip.py \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
     && add-apt-repository "deb [arch=$TARGETARCH] https://download.docker.com/linux/ubuntu    $(lsb_release -cs)    stable" \
     && apt-install docker-ce \
@@ -29,16 +24,7 @@ RUN apt-install \
     && curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-$TARGETARCH \
     && chmod +x container-structure-test-linux-$TARGETARCH \
     && mv container-structure-test-linux-$TARGETARCH /usr/local/bin/container-structure-test \
-    && pip install --upgrade pip \
-    && hash -r pip \
-    && pip install --upgrade setuptools \
-    && pip install Cython==0.29.21 wheel \
-    && git clone --depth 1 https://github.com/webdevops/Dockerfile.git /tmp/Dockerfile \
     && gem install bundler -v 2.1.4 --no-document \
-    && cd /tmp/Dockerfile/tests/serverspec \
-    && bundle _2.1.4_ update --bundler \
-    && cd /tmp/Dockerfile \
-    && make setup \
     && docker-image-cleanup
 
 WORKDIR /app

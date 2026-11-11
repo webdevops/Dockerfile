@@ -1,3 +1,7 @@
+{% import 'docker.twig' as docker %}
+{% import 'provision.twig' as provision %}
+{% import 'environment.twig' as environment %}
+{% import 'images/nginx.twig' as nginx %}
 {{ docker.from("php", "8.5") }}
 
 {{ environment.web() }}

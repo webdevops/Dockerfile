@@ -1,25 +1,12 @@
 ---
-
-dockerPath: 'docker'
-templatePath: 'template'
-provisionPath: 'provisioning'
-baselayoutPath: 'baselayout'
-testinfraPath: 'tests/testinfra'
-serverspecPath: 'tests/serverspec'
-testDockerfilePath: 'tests/dockerfile'
-blacklistFile: 'BLACKLIST'
+# Settings of ci/console generate:github-ci and generate:readme-banner
 
 docker:
-  imagePrefix: 'webdevops'
+  # This tag is also published as latest
   autoLatestTag: 'ubuntu-22.04'
-  pathRegex: '/(?P<image>[^/]+)/(?P<tag>[^/]+)/Dockerfile$'
-  autoPull: True
-  autoPullBlacklist: '^webdevops/.*'
 
+# Settings of the serverspec tests, per image tag
 dockerTest:
-  serverspec:
-    specPath: 'spec/docker/%s_spec.rb'
-
   configuration:
     imageConfigurationRegex: ':(?P<OS_FAMILY>alpine|debian|ubuntu|centos)-?(?P<OS_VERSION>[^-]+)?'
     default:

@@ -1,44 +1,6 @@
-{% import 'Dockerfile/docker.jinja2'    as docker %}
-{% import 'Dockerfile/provision.jinja2' as provision %}
-{% import 'Dockerfile/services.jinja2'  as services %}
-
-{% macro externalExtensions() -%}
-    && cd / \
-    && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
-        --skip-enable-extension --make-parallel-jobs="$(nproc)" \
-        apcu/apcu \
-        wikimedia/excimer \
-        open-telemetry/ext-opentelemetry \
-        php-memcached/php-memcached \
-        pecl/yaml \
-        phpredis/phpredis \
-        mongodb/mongodb-extension \
-    && rm -rf /tmp/pie \
-    && PROTOBUF_RELEASE_URL="$(curl -fsSLI --proto '=https' --proto-redir '=https' --retry 3 -o /dev/null -w '%{url_effective}' https://github.com/protocolbuffers/protobuf/releases/latest)" \
-    && PROTOBUF_VERSION="${PROTOBUF_RELEASE_URL##*/}" \
-    && mkdir -p /tmp/protobuf \
-    && curl -fsSL --proto '=https' --proto-redir '=https' --retry 3 "https://codeload.github.com/protocolbuffers/protobuf/tar.gz/refs/tags/${PROTOBUF_VERSION}" -o /tmp/protobuf.tar.gz \
-    && tar -xzf /tmp/protobuf.tar.gz --strip-components=1 -C /tmp/protobuf \
-    && cd /tmp/protobuf/php/ext/google/protobuf \
-    && mkdir -p third_party \
-    && cp -R /tmp/protobuf/third_party/utf8_range third_party/ \
-    && phpize && ./configure --enable-protobuf \
-    && make -j"$(nproc)" && make install \
-    && cd / && rm -rf /tmp/protobuf /tmp/protobuf.tar.gz \
-    # Vips' GitHub tags lag behind PECL releases; use the upstream branch.
-    && git clone --depth 1 https://github.com/libvips/php-vips-ext.git /tmp/vips \
-    && cd /tmp/vips \
-    && phpize && ./configure --with-vips \
-    && make -j"$(nproc)" && make install \
-    && cd / && rm -rf /tmp/vips \
-    && git clone --depth 1 --branch xmlrpc-1.0.0RC3 https://github.com/php/pecl-networking-xmlrpc.git /tmp/xmlrpc \
-    && cd /tmp/xmlrpc \
-    && phpize && ./configure --with-xmlrpc \
-    && make -j"$(nproc)" && make install \
-    && cd / && rm -rf /tmp/xmlrpc
-{%- endmacro %}
-
 {% macro official(role='', version='') -%}
+{% import 'services.twig' as services -%}
+{% import 'images/php-extensions.twig' as extensions -%}
     # Install php environment
     && apt-install \
         # Install tools
@@ -66,9 +28,9 @@
         libmcrypt4 \
         libzip4 \
         libyaml-0-2 \
-{%- if version == '8.2' or version == '8.3' %}
+{% if version == '8.2' or version == '8.3' %}
         libc-client2007e \
-{%- endif %}
+{% endif %}
         # Dev and headers
         libavif-dev \
         libjpeg62-turbo-dev \
@@ -111,14 +73,14 @@
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && docker-php-ext-configure ldap \
-{%- if version == '8.2' or version == '8.3' %}
+{% if version == '8.2' or version == '8.3' %}
     && docker-php-ext-configure ftp --with-openssl-dir \
-{%- elif version == '8.4' or version == '8.5' %}
+{% elseif version == '8.4' or version == '8.5' %}
     && docker-php-ext-configure ftp --with-ftp-ssl \
-{%- endif %}
-{%- if version != '8.4' and version != '8.5' %}
+{% endif %}
+{% if version != '8.4' and version != '8.5' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-{%- endif %}
+{% endif %}
     && docker-php-ext-install -j"$(nproc)" \
         bcmath \
         amqp \
@@ -133,9 +95,9 @@
         gettext \
         ldap \
         mysqli \
-{%- if version != '8.4' and version != '8.5' %}
+{% if version != '8.4' and version != '8.5' %}
         imap \
-{%- endif %}
+{% endif %}
         pcntl \
         pdo_mysql \
         pdo_pgsql \
@@ -149,10 +111,10 @@
         xsl \
         zip \
         gd \
-{%- if version != '8.5' %}
+{% if version != '8.5' %}
         opcache \
-{%- endif %}
-    {{ externalExtensions() }} \
+{% endif %}
+    {{ extensions.external() }} \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=excimer.so > /usr/local/etc/php/conf.d/excimer.ini \
     && echo extension=opentelemetry.so > /usr/local/etc/php/conf.d/opentelemetry.ini \
@@ -195,6 +157,8 @@
 {%- endmacro %}
 
 {% macro officialAlpine(role='', version='') -%}
+{% import 'services.twig' as services -%}
+{% import 'images/php-extensions.twig' as extensions -%}
     # Install php environment
     && apk-install \
         file \
@@ -266,14 +230,14 @@
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && docker-php-ext-configure ldap \
-{%- if version == '8.2' or version == '8.3' %}
+{% if version == '8.2' or version == '8.3' %}
     && docker-php-ext-configure ftp --with-openssl-dir \
-{%- elif version == '8.4' or version == '8.5' %}
+{% elseif version == '8.4' or version == '8.5' %}
     && docker-php-ext-configure ftp --with-ftp-ssl \
-{%- endif %}
-{%- if version != '8.4' and version != '8.5' %}
+{% endif %}
+{% if version != '8.4' and version != '8.5' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-{%- endif %}
+{% endif %}
     && docker-php-ext-install -j"$(nproc)" \
         bcmath \
         bz2 \
@@ -288,9 +252,9 @@
         gettext \
         ldap \
         mysqli \
-{%- if version != '8.4' and version != '8.5' %}
+{% if version != '8.4' and version != '8.5' %}
         imap \
-{%- endif %}
+{% endif %}
         pcntl \
         pdo_mysql \
         pdo_pgsql \
@@ -304,10 +268,10 @@
         xsl \
         zip \
         gd \
-{%- if version != '8.5' %}
+{% if version != '8.5' %}
         opcache \
-{%- endif %}
-    {{ externalExtensions() }} \
+{% endif %}
+    {{ extensions.external() }} \
     && docker-php-ext-enable \
         apcu \
         excimer \
@@ -358,6 +322,7 @@
 {%- endmacro %}
 
 {% macro officialDevelopment(role='', version='') -%}
+{% import 'services.twig' as services -%}
     # Install development environment
     && BLACKFIRE_INSTALL_METHOD=raw bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
     && blackfire php:install \
@@ -372,6 +337,7 @@
 {%- endmacro %}
 
 {% macro officialDevelopmentAlpine(role='', version='') -%}
+{% import 'services.twig' as services -%}
     # Install development environment
     && bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
     && blackfire php:install \

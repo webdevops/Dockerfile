@@ -119,12 +119,6 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php-*` with PHP 8.4 and 8.5.
 - **Instead:** Use Composer 2, the default.
 
-## Build tools
-
-- **Effect:** The Makefile target `provision` calls `bin/console`, which needs Python 2. On a host without Python 2 it fails with `python2: No such file or directory`. Inside `webdevops/dockerfile-build-env` it works.
-- **Instead:** Run `make provision` in `webdevops/dockerfile-build-env` as shown in the [README](../README.md#file-generation). Build images with `docker build` or `./build-local.sh`, see [Building and testing locally](../README.md#building-and-testing-locally). The CI runs the serverspec tests for every image except `toolbox` and `dockerfile-build-env`, and the structure tests for `bootstrap`, `base`, `base-app`, `php`, `php-dev` and `php-nginx`. To run the structure tests against the images you built locally, use `docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/app -w /app webdevops/dockerfile-build-env make structure-test`. It tests the local tags that the CI builds and fails if no such image exists.
-- **Issue:** [#549](https://github.com/webdevops/Dockerfile/issues/549) (move away from Python 2).
-
 ## Migration from older images
 
 - `XDEBUG_REMOTE_*`, `XDEBUG_IDE_KEY`, `XDEBUG_MAX_NESTING_LEVEL` and `XDEBUG_PROFILER_*` are ignored; they belong to Xdebug 2. Set the Xdebug 3 directive with `php.xdebug.<key>` instead, for example `php.xdebug.max_nesting_level: "500"` or `php.xdebug.idekey: PHPSTORM`. The variables listed under [Development images](environment-variables.md#development-images) still work.

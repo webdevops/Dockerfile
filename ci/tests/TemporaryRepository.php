@@ -10,10 +10,12 @@ use RecursiveIteratorIterator;
 use SplFileInfo;
 
 use function bin2hex;
+use function chmod;
 use function copy;
 use function dirname;
 use function file_get_contents;
 use function file_put_contents;
+use function fileperms;
 use function is_dir;
 use function mkdir;
 use function random_bytes;
@@ -57,6 +59,7 @@ final readonly class TemporaryRepository
                 mkdir($target);
             } else {
                 copy($file->getPathname(), $target);
+                chmod($target, fileperms($file->getPathname()) & 0777);
             }
         }
 

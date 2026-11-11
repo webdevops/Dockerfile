@@ -1,3 +1,11 @@
+{% import 'docker.twig' as docker %}
+{% import 'provision.twig' as provision %}
+{% import 'environment.twig' as environment %}
+{% import 'baselayout.twig' as baselayout %}
+{% import 'images/bootstrap.twig' as bootstrap %}
+{% import 'images/base.twig' as base %}
+{% import 'images/baseapp.twig' as baseapp %}
+{% import 'images/php.twig' as php %}
 
 {{ docker.fromOfficial("php", "8.5-fpm-bookworm") }}
 

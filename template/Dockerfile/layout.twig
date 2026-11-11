@@ -1,22 +1,6 @@
-{% import 'Dockerfile/docker.jinja2'      as docker %}
-{% import 'Dockerfile/provision.jinja2'   as provision %}
-{% import 'Dockerfile/environment.jinja2' as environment %}
-{% import 'Dockerfile/services.jinja2'    as services %}
-{% import 'Dockerfile/tools.jinja2'       as tools %}
-{% import 'Dockerfile/baselayout.jinja2'  as baselayout %}
-
-{% import 'Dockerfile/images/bootstrap.jinja2'          as bootstrap %}
-{% import 'Dockerfile/images/base.jinja2'               as base %}
-{% import 'Dockerfile/images/baseapp.jinja2'            as baseapp %}
-{% import 'Dockerfile/images/apache.jinja2'             as apache %}
-{% import 'Dockerfile/images/nginx.jinja2'              as nginx %}
-{% import 'Dockerfile/images/php.jinja2'                as php %}
-
 #+++++++++++++++++++++++++++++++++++++++
 # Dockerfile for webdevops/{{ Dockerfile.image }}:{{ Dockerfile.tag }}
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-{% block content %}
-
-{% endblock %}
+{{ include(template) -}}

@@ -9,11 +9,11 @@ use PHPUnit\Framework\TestCase;
 use SimpleXMLElement;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use Webdevops\Build\Commands\ReadmeBannerCommand;
+use Webdevops\Build\Commands\GenerateReadmeBannerCommand;
 use Webdevops\Build\Tests\TemporaryRepository;
 
-#[CoversClass(ReadmeBannerCommand::class)]
-final class ReadmeBannerCommandTest extends TestCase
+#[CoversClass(GenerateReadmeBannerCommand::class)]
+final class GenerateReadmeBannerCommandTest extends TestCase
 {
     private TemporaryRepository $repository;
 
@@ -29,7 +29,7 @@ final class ReadmeBannerCommandTest extends TestCase
 
     public function testRendersTheBannerFromTheDockerfiles(): void
     {
-        $tester = new CommandTester(new ReadmeBannerCommand($this->repository->path));
+        $tester = new CommandTester(new GenerateReadmeBannerCommand($this->repository->path));
 
         self::assertSame(Command::SUCCESS, $tester->execute([]));
         self::assertSame("Wrote docs/assets/banner-light.svg\nWrote docs/assets/banner-dark.svg\n", $tester->getDisplay());

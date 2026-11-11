@@ -2,10 +2,7 @@
 
 namespace Webdevops\Build;
 
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use RuntimeException;
-use SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
 
 class FileReader
@@ -38,22 +35,21 @@ class FileReader
     }
 
     /**
-     * Every Dockerfile under docker/, relative to the repository root and sorted, e.g. docker/base/alpine/Dockerfile.
-     * Directories that are symbolic links, such as docker/php/8.5, are left out: they build the same Dockerfile.
+     * The Dockerfile of every tag under docker/ (see TagDirectories), relative to the repository root and sorted, e.g.
+     * docker/base/alpine/Dockerfile. Tags whose Dockerfile was not generated yet are left out. Directories that are
+     * symbolic links, such as docker/php/8.5, are left out too: they build the same Dockerfile.
      *
      * @return list<string>
      */
     public function collectDockerfiles(): array
     {
         $dockerfiles = [];
-        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->rootPath . '/docker'));
-        foreach ($files as $file) {
-            if ($file instanceof SplFileInfo && preg_match('/^.*Dockerfile$/i', $file->getPathname())) {
-                $dockerfiles[] = substr($file->getPathname(), strlen($this->rootPath) + 1);
+        foreach (new TagDirectories($this->rootPath)->tags() as $directory) {
+            if (is_file($this->rootPath . '/' . $directory . '/Dockerfile')) {
+                $dockerfiles[] = $directory . '/Dockerfile';
             }
         }
 
-        sort($dockerfiles);
         return $dockerfiles;
     }
 

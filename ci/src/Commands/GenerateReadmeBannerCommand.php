@@ -16,8 +16,8 @@ use function array_column;
  * Renders the banner at the top of README.md from the images that are built.
  * Its texts are in conf/readme-banner.yml.
  */
-#[AsCommand(name: 'readme-banner:generate')]
-class ReadmeBannerCommand extends Command
+#[AsCommand(name: 'generate:readme-banner')]
+class GenerateReadmeBannerCommand extends Command
 {
     /**
      * @param string $rootPath the repository root

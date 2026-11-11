@@ -5,8 +5,6 @@ set -exuo pipefail
 ROOT_DIR=$(pwd)
 PHP_VERSION=8.5
 
-#docker run --rm -ti -v $PWD:/app -w /app webdevops/dockerfile-build-env make provision
-
 # if first parameter is present overwrite php version + make sanity check
 
 if [ "$#" -gt 0 ]; then

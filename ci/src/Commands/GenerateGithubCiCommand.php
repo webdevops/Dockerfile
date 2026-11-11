@@ -4,6 +4,7 @@ namespace Webdevops\Build\Commands;
 
 use BlueM\Tree;
 use BlueM\Tree\Node;
+use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,14 +14,19 @@ use Symfony\Component\Yaml\Yaml;
 use Webdevops\Build\FileReader;
 use Webdevops\Build\GithubJobBuilder;
 
+use function array_column;
 use function array_filter;
 use function array_map;
 use function array_values;
+use function dirname;
 use function file;
 use function file_exists;
 use function file_put_contents;
+use function in_array;
+use function is_array;
 use function is_string;
 use function ksort;
+use function sprintf;
 use function str_contains;
 use function str_pad;
 use function trim;
@@ -28,8 +34,8 @@ use function trim;
 /**
  * Writes .github/workflows/build.yaml: a build and a publish job for every Dockerfile under docker/.
  */
-#[AsCommand(name: 'github:generate-ci')]
-class GithubCommand extends Command
+#[AsCommand(name: 'generate:github-ci', description: 'Writes .github/workflows/build.yaml: a build and a publish job for every Dockerfile under docker/')]
+class GenerateGithubCiCommand extends Command
 {
     private OutputInterface $output;
 
@@ -163,6 +169,37 @@ class GithubCommand extends Command
             $data[] = $this->fileReader->getInfo($dockerfile);
         }
 
+        $this->checkInternalImages($data);
         return new Tree($data);
+    }
+
+    /**
+     * Every webdevops image that an image builds on (FROM) or copies from (COPY --from) has to be built here too.
+     * The tree would otherwise only report a node that "points to non-existent parent".
+     *
+     * @param list<array<string, mixed>> $nodes
+     */
+    private function checkInternalImages(array $nodes): void
+    {
+        $built = array_column($nodes, 'id');
+        foreach ($nodes as $node) {
+            // an image with an outside base image is built after the toolbox, its parent in the tree
+            $needed = is_string($node['parent']) ? [$node['parent'] => $node['imageParent'] === 0 ? 'is built after' : 'builds on'] : [];
+            foreach (is_array($node['imageDependencies']) ? $node['imageDependencies'] : [] as $image) {
+                $needed[(string)$image] ??= 'copies files from';
+            }
+
+            foreach ($needed as $image => $relation) {
+                if (!in_array($image, $built, true)) {
+                    throw new RuntimeException(sprintf(
+                        '%1$s (%2$s) %3$s %4$s, which is not built any more. Remove %2$s too, or keep building %4$s.',
+                        $node['id'],
+                        dirname((string)$node['file']),
+                        $relation,
+                        $image,
+                    ));
+                }
+            }
+        }
     }
 }

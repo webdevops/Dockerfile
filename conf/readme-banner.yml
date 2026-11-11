@@ -1,7 +1,7 @@
 ---
 # Texts of the banner at the top of README.md.
 # The PHP versions, web servers, base OS releases and platforms come from the
-# images that are built. Run `ci/console readme-banner:generate` after a change.
+# images that are built. Run `make generate` after a change.
 
 files:
   light: 'docs/assets/readme-banner-light.svg'
