@@ -348,11 +348,11 @@ abstract class ImageTestCase extends TestCase
     }
 
     /**
-     * Asserts that PHP printed no notice, warning or fatal error into $output.
+     * Asserts that PHP printed no notice, warning or fatal error into $output, spelled as PHP spells them.
      */
     protected function assertNoPhpErrors(string $output): void
     {
-        foreach (['Notice', 'Warning', 'Fatal Error'] as $message) {
+        foreach (['Notice', 'Warning', 'Fatal error'] as $message) {
             self::assertStringNotContainsString($message, $output);
         }
     }
