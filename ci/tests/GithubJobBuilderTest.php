@@ -47,10 +47,27 @@ final class GithubJobBuilderTest extends TestCase
         self::assertSame('${{github.ref == \'refs/heads/master\'}}', $jobs['base_alpine_publish']['if']);
     }
 
-    public function testJobWaitsForItsParent(): void
+    public function testJobWaitsForItsParentAndTheImageTestRunner(): void
     {
-        self::assertSame('toolbox_latest_publish', $this->jobs()['base_alpine']['needs']);
-        self::assertSame('validate-automation', $this->jobs(['parent' => 0])['base_alpine']['needs']);
+        self::assertSame(['toolbox_latest_publish', 'image-test-runner'], $this->jobs()['base_alpine']['needs']);
+        self::assertSame(['validate-automation', 'image-test-runner'], $this->jobs(['parent' => 0])['base_alpine']['needs']);
+        self::assertSame('toolbox_latest_publish', $this->jobs(['image' => 'php-nginx'])['base_alpine']['needs'], 'no image tests, no runner');
+    }
+
+    public function testImageTestRunnerIsBuiltOncePerArchitectureIntoTheCache(): void
+    {
+        $job = new GithubJobBuilder(self::ROOT)->getImageTestRunnerConfig();
+
+        self::assertSame(['fail-fast' => false, 'matrix' => ['include' => GithubJobBuilder::PLATFORMS]], $job['strategy']);
+        self::assertSame('${{ matrix.runner }}', $job['runs-on']);
+        self::assertSame([
+            'context' => '.',
+            'file' => 'ci/image-tests/Dockerfile',
+            'platforms' => '${{ matrix.platform }}',
+            'outputs' => 'type=cacheonly',
+            'cache-from' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}',
+            'cache-to' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max',
+        ], $job['steps'][2]['with']);
     }
 
     public function testBuildsTheDirectoryOfTheDockerfile(): void
@@ -96,8 +113,8 @@ final class GithubJobBuilderTest extends TestCase
             'file' => 'ci/image-tests/Dockerfile',
             'load' => true,
             'tags' => 'webdevops-image-tests',
+            // the job image-test-runner writes the cache, the image jobs only read it
             'cache-from' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}',
-            'cache-to' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max',
         ], $steps['Build the image test runner']['with']);
         self::assertSame(
             'make test-image-run IMAGE=webdevops/base:alpine REFERENCE=ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine',

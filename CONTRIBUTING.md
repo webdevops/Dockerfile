@@ -70,7 +70,7 @@ Build all PHP images of one version (default `8.5`), in the order they depend on
 
 Then try an image with the [quick start](README.md#quick-start).
 
-The CI runs the image tests for every image except `toolbox` and `dockerfile-build-env`, and the structure tests for `bootstrap`, `base`, `base-app`, `php`, `php-dev` and `php-nginx`.
+The CI runs the image tests for every image except `toolbox`, and the structure tests for `bootstrap`, `base`, `base-app`, `php`, `php-dev` and `php-nginx`.
 To run the image tests against an image you built locally:
 
 ```
@@ -108,7 +108,8 @@ A container counts as started once its entrypoint has run its scripts and starte
 `ci/console test:image webdevops/<image>:<tag>` runs the tests of an image; `webdevops/php-official` has the tests of `webdevops/php`. It takes the distribution and its version from `dockerTest` in `conf/console.yml`, and removes the containers of the image afterwards, also when the run is interrupted with Ctrl-C or `docker stop`.
 A runner killed with `SIGKILL` leaves its containers behind; they carry the label `webdevops.image-test`, so `docker rm --force $(docker ps --all --quiet --filter label=webdevops.image-test)` removes them.
 It runs in a container of `ci/image-tests/Dockerfile`, which has PHP and the `docker` command and gets the Docker socket: `make test-image` builds that image (`make test-image-runner`) and runs the tests in it (`make test-image-run`).
-The CI builds the image with the cache of GitHub Actions and then runs `make test-image-run`.
+The runner builds on the official PHP image, not on a webdevops image, so a broken `webdevops/php` cannot break the tests that find the defect.
+In the CI, the job `image-test-runner` builds it once per architecture into the cache of GitHub Actions; the image jobs wait for it, load it from the cache and run `make test-image-run`.
 
 ## PHP extension builds
 

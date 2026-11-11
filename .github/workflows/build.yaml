@@ -37,6 +37,38 @@ jobs:
       -
         name: 'Run GrumPHP'
         run: 'make check'
+  image-test-runner:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'Image test runner (${{ matrix.arch }})'
+    runs-on: '${{ matrix.runner }}'
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          platforms: '${{ matrix.platform }}'
+          outputs: type=cacheonly
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
   apache_alpine:
     strategy:
       fail-fast: false
@@ -51,7 +83,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/apache:alpine (${{ matrix.arch }})'
-    needs: base_alpine_publish
+    needs:
+      - base_alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -105,7 +139,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/apache:alpine REFERENCE=ghcr.io/webdevops/apache:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
@@ -169,7 +202,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/base-app:alpine (${{ matrix.arch }})'
-    needs: base_alpine_publish
+    needs:
+      - base_alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -223,7 +258,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/base-app:alpine REFERENCE=ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
@@ -292,7 +326,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/base-app:ubuntu-22.04 (${{ matrix.arch }})'
-    needs: base_ubuntu-22-04_publish
+    needs:
+      - base_ubuntu-22-04_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -346,7 +382,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/base-app:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
@@ -440,7 +475,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/base:alpine (${{ matrix.arch }})'
-    needs: bootstrap_alpine_publish
+    needs:
+      - bootstrap_alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -494,7 +531,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/base:alpine REFERENCE=ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
@@ -586,7 +622,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/base:ubuntu-22.04 (${{ matrix.arch }})'
-    needs: bootstrap_ubuntu-22-04_publish
+    needs:
+      - bootstrap_ubuntu-22-04_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -640,7 +678,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/base:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
@@ -734,7 +771,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/bootstrap:alpine (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -788,7 +827,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/bootstrap:alpine REFERENCE=ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
@@ -880,7 +918,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/bootstrap:ubuntu-22.04 (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -934,7 +974,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/bootstrap:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
@@ -1028,7 +1067,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/dockerfile-build-env:latest (${{ matrix.arch }})'
-    needs: base-app_ubuntu-22-04_publish
+    needs:
+      - base-app_ubuntu-22-04_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1073,6 +1114,18 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/base-app:ubuntu-22.04=oci-layout://.ci-oci-image/base-app_ubuntu-22-04:ci-parent-image'
+      -
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/dockerfile-build-env:latest REFERENCE=ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1133,7 +1186,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/nginx:alpine (${{ matrix.arch }})'
-    needs: base_alpine_publish
+    needs:
+      - base_alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1187,7 +1242,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/nginx:alpine REFERENCE=ghcr.io/webdevops/nginx:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
@@ -1251,7 +1305,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.2 (${{ matrix.arch }})'
-    needs: php-apache_8-2_publish
+    needs:
+      - php-apache_8-2_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1305,7 +1361,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.2 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
@@ -1335,7 +1390,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.2-alpine (${{ matrix.arch }})'
-    needs: php-apache_8-2-alpine_publish
+    needs:
+      - php-apache_8-2-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1389,7 +1446,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.2-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
@@ -1487,7 +1543,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.3 (${{ matrix.arch }})'
-    needs: php-apache_8-3_publish
+    needs:
+      - php-apache_8-3_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1541,7 +1599,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.3 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
@@ -1571,7 +1628,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.3-alpine (${{ matrix.arch }})'
-    needs: php-apache_8-3-alpine_publish
+    needs:
+      - php-apache_8-3-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1625,7 +1684,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.3-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
@@ -1723,7 +1781,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.4 (${{ matrix.arch }})'
-    needs: php-apache_8-4_publish
+    needs:
+      - php-apache_8-4_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1777,7 +1837,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.4 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
@@ -1807,7 +1866,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.4-alpine (${{ matrix.arch }})'
-    needs: php-apache_8-4-alpine_publish
+    needs:
+      - php-apache_8-4-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1861,7 +1922,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.4-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
@@ -1959,7 +2019,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.5 (${{ matrix.arch }})'
-    needs: php-apache_8-5_publish
+    needs:
+      - php-apache_8-5_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2013,7 +2075,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.5 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
@@ -2043,7 +2104,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.5-alpine (${{ matrix.arch }})'
-    needs: php-apache_8-5-alpine_publish
+    needs:
+      - php-apache_8-5-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2097,7 +2160,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.5-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
@@ -2195,7 +2257,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.2 (${{ matrix.arch }})'
-    needs: php_8-2_publish
+    needs:
+      - php_8-2_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2249,7 +2313,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.2 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
@@ -2302,7 +2365,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.2-alpine (${{ matrix.arch }})'
-    needs: php_8-2-alpine_publish
+    needs:
+      - php_8-2-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2356,7 +2421,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.2-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
@@ -2477,7 +2541,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.3 (${{ matrix.arch }})'
-    needs: php_8-3_publish
+    needs:
+      - php_8-3_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2531,7 +2597,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.3 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
@@ -2584,7 +2649,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.3-alpine (${{ matrix.arch }})'
-    needs: php_8-3-alpine_publish
+    needs:
+      - php_8-3-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2638,7 +2705,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.3-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
@@ -2759,7 +2825,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.4 (${{ matrix.arch }})'
-    needs: php_8-4_publish
+    needs:
+      - php_8-4_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2813,7 +2881,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.4 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
@@ -2866,7 +2933,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.4-alpine (${{ matrix.arch }})'
-    needs: php_8-4-alpine_publish
+    needs:
+      - php_8-4-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2920,7 +2989,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.4-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
@@ -3041,7 +3109,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.5 (${{ matrix.arch }})'
-    needs: php_8-5_publish
+    needs:
+      - php_8-5_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3095,7 +3165,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.5 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
@@ -3148,7 +3217,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.5-alpine (${{ matrix.arch }})'
-    needs: php_8-5-alpine_publish
+    needs:
+      - php_8-5-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3202,7 +3273,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.5-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
@@ -3323,7 +3393,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.2 (${{ matrix.arch }})'
-    needs: php_8-2_publish
+    needs:
+      - php_8-2_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3377,7 +3449,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.2 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
@@ -3412,7 +3483,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.2-alpine (${{ matrix.arch }})'
-    needs: php_8-2-alpine_publish
+    needs:
+      - php_8-2-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3466,7 +3539,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.2-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
@@ -3569,7 +3641,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.3 (${{ matrix.arch }})'
-    needs: php_8-3_publish
+    needs:
+      - php_8-3_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3623,7 +3697,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.3 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
@@ -3658,7 +3731,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.3-alpine (${{ matrix.arch }})'
-    needs: php_8-3-alpine_publish
+    needs:
+      - php_8-3-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3712,7 +3787,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.3-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
@@ -3815,7 +3889,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.4 (${{ matrix.arch }})'
-    needs: php_8-4_publish
+    needs:
+      - php_8-4_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3869,7 +3945,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.4 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
@@ -3904,7 +3979,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.4-alpine (${{ matrix.arch }})'
-    needs: php_8-4-alpine_publish
+    needs:
+      - php_8-4-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3958,7 +4035,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.4-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
@@ -4061,7 +4137,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.5 (${{ matrix.arch }})'
-    needs: php_8-5_publish
+    needs:
+      - php_8-5_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4115,7 +4193,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.5 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
@@ -4150,7 +4227,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.5-alpine (${{ matrix.arch }})'
-    needs: php_8-5-alpine_publish
+    needs:
+      - php_8-5-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4204,7 +4283,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.5-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
@@ -4307,7 +4385,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.2 (${{ matrix.arch }})'
-    needs: php-nginx_8-2_publish
+    needs:
+      - php-nginx_8-2_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4361,7 +4441,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.2 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
@@ -4391,7 +4470,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.2-alpine (${{ matrix.arch }})'
-    needs: php-nginx_8-2-alpine_publish
+    needs:
+      - php-nginx_8-2-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4445,7 +4526,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.2-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
@@ -4543,7 +4623,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.3 (${{ matrix.arch }})'
-    needs: php-nginx_8-3_publish
+    needs:
+      - php-nginx_8-3_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4597,7 +4679,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.3 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
@@ -4627,7 +4708,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.3-alpine (${{ matrix.arch }})'
-    needs: php-nginx_8-3-alpine_publish
+    needs:
+      - php-nginx_8-3-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4681,7 +4764,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.3-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
@@ -4779,7 +4861,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.4 (${{ matrix.arch }})'
-    needs: php-nginx_8-4_publish
+    needs:
+      - php-nginx_8-4_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4833,7 +4917,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.4 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
@@ -4863,7 +4946,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.4-alpine (${{ matrix.arch }})'
-    needs: php-nginx_8-4-alpine_publish
+    needs:
+      - php-nginx_8-4-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4917,7 +5002,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.4-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
@@ -5015,7 +5099,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.5 (${{ matrix.arch }})'
-    needs: php-nginx_8-5_publish
+    needs:
+      - php-nginx_8-5_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5069,7 +5155,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.5 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
@@ -5099,7 +5184,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.5-alpine (${{ matrix.arch }})'
-    needs: php-nginx_8-5-alpine_publish
+    needs:
+      - php-nginx_8-5-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5153,7 +5240,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.5-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
@@ -5251,7 +5337,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.2 (${{ matrix.arch }})'
-    needs: php_8-2_publish
+    needs:
+      - php_8-2_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5305,7 +5393,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.2 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
@@ -5363,7 +5450,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.2-alpine (${{ matrix.arch }})'
-    needs: php_8-2-alpine_publish
+    needs:
+      - php_8-2-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5417,7 +5506,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.2-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
@@ -5543,7 +5631,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.3 (${{ matrix.arch }})'
-    needs: php_8-3_publish
+    needs:
+      - php_8-3_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5597,7 +5687,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.3 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
@@ -5655,7 +5744,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.3-alpine (${{ matrix.arch }})'
-    needs: php_8-3-alpine_publish
+    needs:
+      - php_8-3-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5709,7 +5800,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.3-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
@@ -5835,7 +5925,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.4 (${{ matrix.arch }})'
-    needs: php_8-4_publish
+    needs:
+      - php_8-4_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5889,7 +5981,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.4 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
@@ -5947,7 +6038,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.4-alpine (${{ matrix.arch }})'
-    needs: php_8-4-alpine_publish
+    needs:
+      - php_8-4-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6001,7 +6094,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.4-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
@@ -6127,7 +6219,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.5 (${{ matrix.arch }})'
-    needs: php_8-5_publish
+    needs:
+      - php_8-5_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6181,7 +6275,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.5 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
@@ -6239,7 +6332,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.5-alpine (${{ matrix.arch }})'
-    needs: php_8-5-alpine_publish
+    needs:
+      - php_8-5-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6293,7 +6388,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.5-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
@@ -6419,7 +6513,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.2 (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6473,7 +6569,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.2 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
@@ -6531,7 +6626,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.2-alpine (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6585,7 +6682,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.2-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
@@ -6715,7 +6811,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.3 (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6769,7 +6867,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.3 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
@@ -6827,7 +6924,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.3-alpine (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6881,7 +6980,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.3-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
@@ -7011,7 +7109,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.4 (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7065,7 +7165,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.4 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
@@ -7123,7 +7222,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.4-alpine (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7177,7 +7278,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.4-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
@@ -7307,7 +7407,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.5 (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7361,7 +7463,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.5 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
@@ -7419,7 +7520,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.5-alpine (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7473,7 +7576,6 @@ jobs:
           load: true
           tags: webdevops-image-tests
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.5-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'

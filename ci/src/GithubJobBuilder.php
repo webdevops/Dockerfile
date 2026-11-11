@@ -18,10 +18,13 @@ class GithubJobBuilder
     private const string PARENT_OCI_TAG = 'ci-parent-image';
 
     /**
-     * Local tag of the image that runs the image tests, built from ci/image-tests/Dockerfile in each job. Its Composer
-     * layer comes from the GitHub Actions cache, so Composer only runs when ci/composer.lock changes.
+     * Local tag of the image that runs the image tests, built from ci/image-tests/Dockerfile. The job
+     * IMAGE_TEST_RUNNER_JOB builds it once per architecture into the GitHub Actions cache; the image jobs load it from
+     * there, so Composer only runs when ci/composer.lock changes and only one job writes the cache.
      */
     private const string IMAGE_TEST_RUNNER = 'webdevops-image-tests';
+
+    public const string IMAGE_TEST_RUNNER_JOB = 'image-test-runner';
 
     /**
      * Every image is built for these platforms. The README banner lists them too.
@@ -64,6 +67,9 @@ class GithubJobBuilder
         $hasChildren = !empty($node['hasChildren']);
         $parentJobId = $hasParent ? GithubJobBuilder::toJobId($node['parent']) : null;
         $needs = $hasParent ? $parentJobId . '_publish' : 'validate-automation';
+        if ($imageTests !== null) {
+            $needs = [$needs, self::IMAGE_TEST_RUNNER_JOB];
+        }
 
         $pushTags = [];
         $pushTags[] = '-t "' . $node['id'] . '"';
@@ -119,8 +125,7 @@ class GithubJobBuilder
                                     'file' => 'ci/image-tests/Dockerfile',
                                     'load' => true,
                                     'tags' => self::IMAGE_TEST_RUNNER,
-                                    'cache-from' => 'type=gha,scope=' . self::IMAGE_TEST_RUNNER . '-${{ matrix.arch }}',
-                                    'cache-to' => 'type=gha,scope=' . self::IMAGE_TEST_RUNNER . '-${{ matrix.arch }},mode=max',
+                                    'cache-from' => $this->imageTestRunnerCache(),
                                 ],
                             ] : null,
                             $imageTests ? [
@@ -428,6 +433,50 @@ class GithubJobBuilder
         }
 
         return $script;
+    }
+
+    /**
+     * Builds the image test runner once per architecture into the GitHub Actions cache, from which the image jobs load
+     * it. It runs while the first images are built.
+     *
+     * @return array<string, mixed>
+     */
+    public function getImageTestRunnerConfig(): array
+    {
+        return [
+            'strategy' => [
+                'fail-fast' => false,
+                'matrix' => [
+                    'include' => self::PLATFORMS,
+                ],
+            ],
+            'name' => 'Image test runner (${{ matrix.arch }})',
+            'runs-on' => '${{ matrix.runner }}',
+            'steps' => [
+                [
+                    'uses' => 'actions/checkout@v7',
+                    'with' => ['persist-credentials' => false],
+                ],
+                ['uses' => 'docker/setup-buildx-action@v4'],
+                [
+                    'name' => 'Build the image test runner',
+                    'uses' => 'docker/build-push-action@v7',
+                    'with' => [
+                        'context' => '.',
+                        'file' => 'ci/image-tests/Dockerfile',
+                        'platforms' => '${{ matrix.platform }}',
+                        'outputs' => 'type=cacheonly',
+                        'cache-from' => $this->imageTestRunnerCache(),
+                        'cache-to' => $this->imageTestRunnerCache() . ',mode=max',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    private function imageTestRunnerCache(): string
+    {
+        return 'type=gha,scope=' . self::IMAGE_TEST_RUNNER . '-${{ matrix.arch }}';
     }
 
     /**

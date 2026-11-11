@@ -27,6 +27,7 @@ final class GenerateGithubCiCommandTest extends TestCase
     private const array ALL_JOBS = [
         'validate-automation',
         'check-ci-code',
+        'image-test-runner',
         'base-app_ubuntu-22-04',
         'base-app_ubuntu-22-04_publish',
         'base_alpine',
@@ -80,8 +81,9 @@ final class GenerateGithubCiCommandTest extends TestCase
         $jobs = $this->generate()['jobs'];
 
         self::assertSame('validate-automation', $jobs['toolbox_latest']['needs']);
-        self::assertSame('toolbox_latest_publish', $jobs['base_alpine']['needs']);
-        self::assertSame('toolbox_latest_publish', $jobs['php_8-4']['needs']);
+        // the images with image tests also wait for their runner
+        self::assertSame(['toolbox_latest_publish', 'image-test-runner'], $jobs['base_alpine']['needs']);
+        self::assertSame(['toolbox_latest_publish', 'image-test-runner'], $jobs['php_8-4']['needs']);
         self::assertSame('base_ubuntu-22-04_publish', $jobs['base-app_ubuntu-22-04']['needs']);
         self::assertSame('php_8-5-alpine_publish', $jobs['php-nginx_8-5-alpine']['needs']);
         self::assertSame('php-nginx_8-5-alpine_publish', $jobs['php-nginx-dev_8-5-alpine']['needs']);
