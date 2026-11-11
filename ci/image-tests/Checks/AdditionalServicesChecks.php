@@ -36,7 +36,8 @@ trait AdditionalServicesChecks
         $this->assertCommandSucceeds('docker-service install ' . $service, $container);
         $this->assertCommandSucceeds('docker-service enable ' . $service, $container);
         $this->assertCommandSucceeds('docker-service start ' . $service, $container);
-        $this->eventually(function () use ($service, $container): void {
+        // the check itself just started the service, so it waits with all attempts, also after a slow service
+        $this->waitFor(function () use ($service, $container): void {
             $result = $this->execute('docker-service check ' . $service, $container);
             self::assertStringContainsString('ok', $result->stdout, $result->describe());
             self::assertSame(0, $result->exitCode, $result->describe());

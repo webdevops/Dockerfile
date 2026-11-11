@@ -7,6 +7,7 @@ namespace Webdevops\Build\ImageTests;
 use LogicException;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Webdevops\Build\ImageTests\Docker\CommandResult;
 use Webdevops\Build\ImageTests\Docker\Container;
 use Webdevops\Build\ImageTests\Docker\FileInfo;
@@ -137,6 +138,13 @@ abstract class ImageTestCase extends TestCase
     private static array $containerArguments = [];
 
     /**
+     * Why a further container did not start, by name: later tests fail with it at once instead of waiting again.
+     *
+     * @var array<string, RuntimeException>
+     */
+    private static array $containerFailures = [];
+
+    /**
      * Whether a check of this class already waited for all its attempts. The services then had their time to start,
      * so later checks try only once, and a broken image fails in minutes, not in hours.
      */
@@ -157,6 +165,7 @@ abstract class ImageTestCase extends TestCase
 
         self::$containers = [];
         self::$containerArguments = [];
+        self::$containerFailures = [];
         self::$container?->remove();
         self::$container = null;
     }
@@ -226,8 +235,18 @@ abstract class ImageTestCase extends TestCase
         }
 
         self::$containerArguments[$name] = [$environment, $command];
+        if (isset(self::$containerFailures[$name])) {
+            throw self::$containerFailures[$name];
+        }
+
         if (!isset(self::$containers[$name])) {
-            self::$containers[$name] = Container::start(self::image()->reference, [self::FIXTURES, self::HOOKS], self::labels(), $environment, $command);
+            try {
+                self::$containers[$name] = Container::start(self::image()->reference, [self::FIXTURES, self::HOOKS], self::labels(), $environment, $command);
+            } catch (RuntimeException $runtimeException) {
+                self::$containerFailures[$name] = $runtimeException;
+                throw $runtimeException;
+            }
+
             // its services have not had their time yet
             self::$waitedForAllAttempts = false;
         }
