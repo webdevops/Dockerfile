@@ -9,10 +9,14 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Webdevops\Build\ImageTests\Docker\Container;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
+use function array_combine;
+use function array_keys;
 use function implode;
 use function preg_grep;
 use function preg_quote;
+use function ksort;
 use function preg_match_all;
+use function sleep;
 use function sort;
 use function sprintf;
 
@@ -39,13 +43,21 @@ trait ServiceChecks
         'syslog' => 'syslog-ng.d',
     ];
 
+    /**
+     * The services run and keep their processes: supervisord restarts a crashed service at once and shows it as RUNNING
+     * again, but with another process.
+     */
     public function testSupervisordStartsTheServicesOfTheImage(): void
     {
         $expected = self::services();
         sort($expected);
         $this->eventually(function () use ($expected): void {
-            self::assertSame($expected, $this->runningServices());
+            self::assertSame($expected, array_keys($this->runningServices()));
         });
+
+        $processes = $this->runningServices();
+        sleep(self::WAIT_SECONDS * 2);
+        self::assertSame($processes, $this->runningServices(), 'The services should keep their processes; a new process id means a restart.');
     }
 
     /**
@@ -109,17 +121,19 @@ trait ServiceChecks
     }
 
     /**
-     * The groups that supervisorctl reports as RUNNING, sorted.
+     * The groups that supervisorctl reports as RUNNING, with their process ids, sorted by group.
      *
-     * @return list<string>
+     * @return array<string, string>
      */
     private function runningServices(?Container $container = null): array
     {
-        // supervisorctl status exits with 3 when a program is stopped, which is normal here
-        $output = $this->execute('supervisorctl status', $container)->stdout;
-        preg_match_all('/^([\w-]+):\S+\s+RUNNING\b/m', $output, $matches);
-        $services = $matches[1];
-        sort($services);
+        // supervisorctl status exits with 3 when a program is stopped, which is normal here; but it must list programs,
+        // or supervisord does not answer
+        $result = $this->execute('supervisorctl status', $container);
+        self::assertMatchesRegularExpression('/^[\w-]+:\S+\s+[A-Z]+/m', $result->stdout, $result->describe());
+        preg_match_all('/^([\w-]+):\S+\s+RUNNING\s+pid (\d+)/m', $result->stdout, $matches);
+        $services = array_combine($matches[1], $matches[2]);
+        ksort($services);
         return $services;
     }
 }

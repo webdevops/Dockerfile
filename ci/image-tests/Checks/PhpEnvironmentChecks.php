@@ -33,7 +33,7 @@ trait PhpEnvironmentChecks
         // the PHP CLI always runs without a time limit
         $expected['max_execution_time'] = '0';
 
-        self::assertSame($expected, $this->phpIniValues(array_keys($expected)));
+        self::assertSame($expected, $this->phpIniValues(array_keys($expected), $this->environmentContainer()));
     }
 
     public function testPhpFpmSettingsFromTheEnvironment(): void
@@ -87,21 +87,6 @@ trait PhpEnvironmentChecks
     public function testComposerVersionFromTheEnvironment(): void
     {
         self::assertMatchesRegularExpression('/^Composer version 1\.\d+\.\d+ /m', $this->stdout('composer --version 2>/dev/null', $this->environmentContainer()));
-    }
-
-    /**
-     * The values of ini_get() in the PHP CLI of the environment container.
-     *
-     * @param list<string> $names
-     * @return array<string, string|false>
-     */
-    private function phpIniValues(array $names): array
-    {
-        $script = sprintf('echo json_encode(array_combine(%1$s, array_map(ini_get(...), %1$s)));', var_export($names, true));
-        $values = json_decode($this->stdout('php -r ' . escapeshellarg($script), $this->environmentContainer()), true);
-        self::assertIsArray($values);
-        /** @var array<string, string|false> $values */
-        return $values;
     }
 
     /**

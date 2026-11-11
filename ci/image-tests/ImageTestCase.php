@@ -26,6 +26,8 @@ use function str_contains;
 use function str_split;
 use function strtolower;
 use function trim;
+use function var_export;
+use function json_decode;
 
 /**
  * Base class of the tests of one image. Most tests of a class run against one container of the image, which starts
@@ -128,6 +130,13 @@ abstract class ImageTestCase extends TestCase
     private static array $containers = [];
 
     /**
+     * The environment and command each further container was started with, by name.
+     *
+     * @var array<string, array{array<string, string>, list<string>}>
+     */
+    private static array $containerArguments = [];
+
+    /**
      * Whether a check of this class already waited for all its attempts. The services then had their time to start,
      * so later checks try only once, and a broken image fails in minutes, not in hours.
      */
@@ -147,6 +156,7 @@ abstract class ImageTestCase extends TestCase
         }
 
         self::$containers = [];
+        self::$containerArguments = [];
         self::$container?->remove();
         self::$container = null;
     }
@@ -211,6 +221,11 @@ abstract class ImageTestCase extends TestCase
      */
     protected function startContainer(string $name, array $environment = [], array $command = []): Container
     {
+        if (isset(self::$containerArguments[$name]) && self::$containerArguments[$name] !== [$environment, $command]) {
+            throw new LogicException(sprintf('The container "%s" was started with another environment or command; give this one another name.', $name));
+        }
+
+        self::$containerArguments[$name] = [$environment, $command];
         if (!isset(self::$containers[$name])) {
             self::$containers[$name] = Container::start(self::image()->reference, [self::FIXTURES, self::HOOKS], self::labels(), $environment, $command);
             // its services have not had their time yet
@@ -236,15 +251,13 @@ abstract class ImageTestCase extends TestCase
      */
     protected function environmentContainer(): Container
     {
-        $started = isset(self::$containers['environment']);
         $container = $this->startContainer('environment', [
             ...static::ENVIRONMENT,
             'SERVICE_CRON_OPTS' => self::cronOptions(),
         ]);
-        if (!$started) {
-            // the PHP test page in the document root of WEB_DOCUMENT_ROOT
-            $this->assertCommandSucceeds('cp /app/php-test.php ' . escapeshellarg(static::ENVIRONMENT['WEB_DOCUMENT_ROOT']) . '/', $container);
-        }
+        // the PHP test page in the document root of WEB_DOCUMENT_ROOT, until it is there
+        $documentRoot = escapeshellarg(static::ENVIRONMENT['WEB_DOCUMENT_ROOT']);
+        $this->assertCommandSucceeds('test -f ' . $documentRoot . '/php-test.php || cp /app/php-test.php ' . $documentRoot . '/', $container);
 
         return $container;
     }
@@ -336,6 +349,42 @@ abstract class ImageTestCase extends TestCase
                 sleep($waitSeconds);
             }
         }
+    }
+
+    /**
+     * Like eventually(), but always with all attempts: for the result of something the check itself just did, e.g. a
+     * mail it sent, which still takes its time when the services of the class had theirs.
+     */
+    protected function waitFor(callable $check, int $attempts = self::ATTEMPTS, int $waitSeconds = self::WAIT_SECONDS): void
+    {
+        for ($attempt = 1;; ++$attempt) {
+            try {
+                $check();
+                return;
+            } catch (AssertionFailedError $failure) {
+                if ($attempt >= $attempts) {
+                    throw $failure;
+                }
+
+                sleep($waitSeconds);
+            }
+        }
+    }
+
+    /**
+     * The values of ini_get() in the PHP CLI of the container of the class, or of $container.
+     *
+     * @param list<string> $names
+     * @return array<string, string|false>
+     */
+    protected function phpIniValues(array $names, ?Container $container = null): array
+    {
+        $script = sprintf('echo json_encode(array_combine(%1$s, array_map(ini_get(...), %1$s)));', var_export($names, true));
+        $output = $this->stdout('php -r ' . escapeshellarg($script), $container);
+        $values = json_decode($output, true);
+        self::assertIsArray($values, $output);
+        /** @var array<string, string|false> $values */
+        return $values;
     }
 
     /**

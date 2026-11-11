@@ -60,7 +60,7 @@ trait PostfixChecks
     {
         $container = $this->environmentContainer();
         $this->assertCommandSucceeds('mkdir -p /tmp/image-tests && (nohup php /opt/image-tests/smtp-sink.php >> /tmp/image-tests/smtp-sink.log 2>&1 &)', $container);
-        $this->eventually(function () use ($container): void {
+        $this->waitFor(function () use ($container): void {
             $this->assertCommandSucceeds("php -r 'exit(@fsockopen(\"127.0.0.1\", 2525) ? 0 : 1);'", $container);
         });
         return $container;
@@ -71,7 +71,7 @@ trait PostfixChecks
      */
     private function assertMailArrived(string $sapi, Container $container): void
     {
-        $this->eventually(function () use ($sapi, $container): void {
+        $this->waitFor(function () use ($sapi, $container): void {
             $mail = $this->stdout('cat $(grep -l "^Subject: Image test from ' . $sapi . '" /tmp/image-tests/mail/*.eml 2>/dev/null) < /dev/null', $container);
             self::assertStringContainsString('X-Image-Test-Mail-From: <image-test@example.test>', $mail, 'the sender of PHP_SENDMAIL_PATH');
             self::assertStringContainsString("To: someone@example.test\n", str_replace("\r\n", "\n", $mail));

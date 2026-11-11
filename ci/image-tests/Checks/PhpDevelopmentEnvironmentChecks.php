@@ -26,11 +26,9 @@ trait PhpDevelopmentEnvironmentChecks
             'xdebug.trigger_value' => 'XDEBUG_TRIGGER_VALUE',
             'xdebug.output_dir' => 'XDEBUG_OUTPUT_DIR',
         ];
-        $script = sprintf('echo json_encode(array_map(ini_get(...), %s));', var_export(array_combine(array_keys($settings), array_keys($settings)), true));
-
         self::assertSame(
             array_map(static fn (string $variable): string => static::ENVIRONMENT[$variable], $settings),
-            json_decode($this->stdout('php -r ' . escapeshellarg($script), $this->environmentContainer()), true),
+            $this->phpIniValues(array_keys($settings), $this->environmentContainer()),
         );
     }
 
