@@ -9,10 +9,13 @@ use Symfony\Component\Process\Process;
 
 use function fclose;
 use function fopen;
+use function microtime;
 use function rtrim;
 use function sprintf;
+use function str_contains;
 use function str_starts_with;
 use function trim;
+use function usleep;
 
 /**
  * A running container of the image under test, controlled with the docker command.
@@ -23,6 +26,11 @@ final readonly class Container
      * Seconds a single command in the container may take.
      */
     private const int COMMAND_TIMEOUT = 300;
+
+    /**
+     * Seconds the entrypoint of the image may take for its scripts before it starts the command.
+     */
+    private const int ENTRYPOINT_TIMEOUT = 120;
 
     /**
      * Beginnings of the messages with which the docker command, not the command in the container, fails
@@ -44,6 +52,9 @@ final readonly class Container
      * FileArchive. stdin stays open, so that an image whose command is a shell, such as webdevops/bootstrap, keeps
      * running. $labels are added to the container, e.g. to find and remove it later.
      *
+     * Returns once the entrypoint of the image has run its scripts, which write the configuration from the
+     * environment, and has replaced itself with the command, e.g. supervisord.
+     *
      * @param array<string, string> $labels
      */
     public static function start(string $image, string $files, array $labels = []): self
@@ -58,6 +69,7 @@ final readonly class Container
         try {
             $container->copy(rtrim($files, '/'));
             self::docker(['start', $container->id]);
+            $container->waitForEntrypoint();
         } catch (RuntimeException $runtimeException) {
             $container->remove();
             throw $runtimeException;
@@ -84,6 +96,27 @@ final readonly class Container
         }
 
         return new CommandResult($command, $process->getOutput(), $stderr, (int)$process->getExitCode());
+    }
+
+    /**
+     * Waits while process 1 is still the entrypoint, /opt/docker/bin/entrypoint.sh started as /entrypoint. Images
+     * without it, such as webdevops/bootstrap, are ready at once.
+     */
+    private function waitForEntrypoint(): void
+    {
+        $deadline = microtime(true) + self::ENTRYPOINT_TIMEOUT;
+        while (true) {
+            $process1 = trim($this->exec('tr "\\000" " " < /proc/1/cmdline')->stdout);
+            if (!str_contains($process1, '/entrypoint')) {
+                return;
+            }
+
+            if (microtime(true) > $deadline) {
+                throw new RuntimeException(sprintf('The entrypoint of container %s did not start its command within %d s: %s', $this->id, self::ENTRYPOINT_TIMEOUT, $process1));
+            }
+
+            usleep(200_000);
+        }
     }
 
     /**
