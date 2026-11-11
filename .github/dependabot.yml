@@ -1,0 +1,46 @@
+# Once a month, one pull request per directory with all minor and patch updates,
+# also of the packages that the listed ones depend on; a new major version gets
+# a pull request of its own. Security updates come as soon as an advisory is
+# published.
+#
+# Not covered, because the files are generated:
+# - the GitHub Actions in .github/workflows/build.yaml; their versions are in
+#   ci/src/GithubJobBuilder.php
+# - the base images in docker/*/*/Dockerfile; the nightly build pulls them anew
+version: 2
+updates:
+  - package-ecosystem: composer
+    directory: /ci
+    schedule:
+      interval: monthly
+    allow:
+      - dependency-type: all
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: '[TASK]'
+    groups:
+      ci:
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: bundler
+    directory: /tests/serverspec
+    schedule:
+      interval: monthly
+    allow:
+      - dependency-type: all
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: '[TASK]'
+    groups:
+      serverspec:
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
