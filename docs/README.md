@@ -13,7 +13,7 @@ Documentation for the `webdevops/*` Docker images. It describes the images as th
 | [`webdevops/apache`](images/apache.md) | Apache without PHP |
 | [`webdevops/bootstrap`, `webdevops/base`, `webdevops/base-app`](images/base.md) | Base images for your own images |
 | `webdevops/toolbox` | Build helper, not meant to run. Stores the baselayout scripts (`apt-install`, `apk-install`, `docker-image-cleanup`, `docker-run-bootstrap`, `generate-locales` and more), `go-replace` and `gosu` under `/baselayout`. `bootstrap` and `php` copy them from there with `COPY --from=webdevops/toolbox`. In `toolbox` itself only `go-replace` is on the `PATH`. |
-| `webdevops/dockerfile-build-env` | Build environment for this repository, based on `base-app:ubuntu-22.04`. The CI runs the serverspec and structure tests in it, see [Build process](../README.md#build-process). |
+| `webdevops/dockerfile-build-env` | Build environment for this repository, based on `base-app:ubuntu-22.04`. The CI runs the serverspec and structure tests in it, see [Building in CI](../CONTRIBUTING.md#building-in-ci). |
 
 `webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built. [Replacing discontinued images](discontinued-images.md) shows what to use instead.
 
