@@ -1,0 +1,19 @@
+{# A macro sees only the imports in its own body #}
+{% macro install(version='') -%}
+{% import 'docker.twig' as docker -%}
+    # Install the packages
+    && apk-install \
+{% if version == '1' %}
+        one \
+{% elseif version == '2' %}
+        two \
+{% else %}
+        other \
+{% endif %}
+    {{ docker.cleanup() }}
+{%- endmacro %}
+
+{% macro note(text) %}
+
+# {{ text }}
+{% endmacro %}

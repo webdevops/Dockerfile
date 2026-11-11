@@ -1,19 +1,23 @@
 #!/usr/bin/env php
 <?php
-// application.php
 
 require __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 use Webdevops\Build\Commands\BuildGlyphsCommand;
-use Webdevops\Build\Commands\GithubCommand;
-use Webdevops\Build\Commands\ReadmeBannerCommand;
+use Webdevops\Build\Commands\GenerateCommand;
+use Webdevops\Build\Commands\GenerateDockerfileCommand;
+use Webdevops\Build\Commands\GenerateGithubCiCommand;
+use Webdevops\Build\Commands\GenerateProvisionCommand;
+use Webdevops\Build\Commands\GenerateReadmeBannerCommand;
 
 $application = new Application();
 
-// ... register commands
-$application->add(new GithubCommand());
-$application->add(new ReadmeBannerCommand());
+$application->add(new GenerateCommand());
+$application->add(new GenerateDockerfileCommand());
+$application->add(new GenerateProvisionCommand());
+$application->add(new GenerateGithubCiCommand());
+$application->add(new GenerateReadmeBannerCommand());
 $application->add(new BuildGlyphsCommand());
 
 $application->run();

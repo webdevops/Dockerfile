@@ -20,21 +20,12 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Validate that template/* are used to generate Dockerfiles'
+        name: 'Validate that the generated files are up to date'
         run: |-
-          docker run --rm -v $PWD:/app -w /app webdevops/dockerfile-build-env make provision
+          make generate
+          git status --porcelain
           git diff --exit-code --color=always
-      -
-        name: 'Validate .github/workflows/build.yaml is up to date'
-        run: |-
-          docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install --no-dev
-          docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci
-          git diff --exit-code --color=always
-      -
-        name: 'Validate the README banner is up to date'
-        run: |-
-          docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console readme-banner:generate
-          git diff --exit-code --color=always
+          test -z "$(git status --porcelain)"
   check-ci-code:
     name: 'Check ci/ (GrumPHP and PHPUnit)'
     runs-on: ubuntu-latest
@@ -45,9 +36,7 @@ jobs:
           persist-credentials: false
       -
         name: 'Run GrumPHP'
-        run: |-
-          docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install
-          docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine sh -c 'apk add --no-cache file && git config --global --add safe.directory /app && vendor/bin/grumphp run --no-interaction'
+        run: 'make check'
   apache_alpine:
     strategy:
       fail-fast: false

@@ -1,0 +1,4 @@
+{% import 'docker.twig' as docker %}
+{{ docker.fromOfficial("alpine", "3.22") }}
+
+RUN mkdir /baselayout

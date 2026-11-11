@@ -45,42 +45,45 @@ Or join our discord https://discord.gg/BpBZtXAgJz
 
 ### File generation
 
-The general build process is currently a mixture of python jinja2 legacy and PHP.
-
-First we build the files inside the `docker` directory using this command:
+The files inside the `docker` directory, the GitHub Actions workflow (`.github/workflows/build.yaml`) and the banner at the top of this README are generated with PHP:
 
 ```
-docker run --rm -ti -v $PWD:/app -w /app webdevops/dockerfile-build-env make provision
-``` 
+make generate
+```
 
-It will use the Jinja2 templates inside of the `template` directory and the 
-config files from the `provisioning` directory.
+It installs the PHP tools of `ci/` with Composer and runs `ci/console generate` in `webdevops/php:8.4-alpine`, so you only need `make` and Docker.
+The container runs as your user, so the files it writes belong to you.
+`ci/console generate` runs these commands in this order; each of them also runs on its own:
 
-**The generated files in the `docker` directory (`Dockerfile` and `conf/`) are never modified manually.**
-Edit the `Dockerfile.jinja2` templates next to them, the shared templates in `template` or the files in `provisioning` instead.
-`make provision` copies the `provisioning` files into the `conf/` directories as configured in `conf/provision.yml`.
+| Command | Writes |
+| --- | --- |
+| `ci/console generate:dockerfile` | `docker/<image>/<tag>/Dockerfile` from the `Dockerfile.twig` next to it and the Twig templates in the `template` directory, and the links `docker/php/<version>` to `docker/php-official/<version>` |
+| `ci/console generate:provision` | `docker/<image>/<tag>/conf/` from the `provisioning` directory, as configured in `conf/provision.yml` |
+| `ci/console generate:github-ci` | `.github/workflows/build.yaml`, a build and a publish job for every Dockerfile |
+| `ci/console generate:readme-banner` | `docs/assets/readme-banner-*.svg` |
 
-*This will be replaced with PHP twig templates in the future to streamline everything.*
+**The generated files are never modified manually.**
+Edit the `Dockerfile.twig` templates, the shared templates in `template`, the files in `provisioning` or the settings in `conf` instead.
+`template/Dockerfile/layout.twig` writes the header of every Dockerfile and includes its `Dockerfile.twig`.
+A `Dockerfile.twig` imports the macros it uses from `template/Dockerfile`, e.g. `{% import 'docker.twig' as docker %}`; a macro imports the macros it calls itself.
+`generate:provision` empties the `conf/` directories of an image first, so a file removed from `provisioning` disappears there too.
+It checks all of `conf/provision.yml` before it changes a file and stops if a source directory or a tag does not exist, or if an image has another setting than `configuration`.
+`generate:dockerfile` stops if a directory `docker/<image>/<tag>` has files but no `Dockerfile.twig`; it first removes the `.DS_Store` files of the macOS Finder under `docker`.
+To stop building a tag, remove its directory and those of the tags that build on it; `generate:github-ci` names any it finds. `generate:dockerfile` adds and removes the links in `docker/php` along with the `php-official` tags.
 
 ### Building in CI
 
-We generate the GitHub Actions workflow (`.github/workflows/build.yaml`) and the banner at the top of this README using PHP:
-
-```
-docker run --rm -ti -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install
-docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci
-docker run --rm -ti -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console readme-banner:generate
-```
-
 The banner (`docs/assets/readme-banner-*.svg`) takes the PHP versions, web servers, base OS suffixes, Debian releases and platforms from the images that are built.
-Its texts are in `conf/readme-banner.yml`; the SVG files are never modified manually. The CI fails if the workflow or the banner is out of date.
+Its texts are in `conf/readme-banner.yml`. The CI fails if a generated file is out of date or missing.
 
 The PHP code in `ci/` follows the rules of [pluswerk/grumphp-config](https://github.com/andersundsehr/grumphp-config) (PSR-12, PHPStan level 8, Rector, `composer audit`) and has PHPUnit tests in `ci/tests`.
 GrumPHP runs all of them; after a change to `ci/`, run it with:
 
 ```
-docker run --rm -ti -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine sh -c 'apk add --no-cache file && git config --global --add safe.directory /app && vendor/bin/grumphp run'
+make check
 ```
+
+It installs the PHP tools of `ci/` and runs GrumPHP as your user. `make test` runs only the PHPUnit tests.
 
 The CI job "Check ci/" runs the same checks. No image build waits for it.
 
@@ -102,8 +105,16 @@ Build all PHP images of one version (default `8.5`), in the order they depend on
 ./build-local.sh 8.4
 ```
 
-Then try an image with the quick start above. `make provision` calls `bin/console`, which needs Python 2;
-run it inside `webdevops/dockerfile-build-env`. See [Known issues](docs/known-issues.md#build-tools).
+Then try an image with the quick start above.
+
+The CI runs the serverspec tests for every image except `toolbox` and `dockerfile-build-env`, and the structure tests for `bootstrap`, `base`, `base-app`, `php`, `php-dev` and `php-nginx`.
+To run the structure tests against the images you built locally:
+
+```
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/app -w /app webdevops/dockerfile-build-env make structure-test
+```
+
+It tests the local tags that the CI builds and fails if no such image exists.
 
 ### PHP extension builds
 

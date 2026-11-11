@@ -1,3 +1,8 @@
+{% import 'docker.twig' as docker %}
+{% import 'provision.twig' as provision %}
+{% import 'environment.twig' as environment %}
+{% import 'baselayout.twig' as baselayout %}
+{% import 'images/bootstrap.twig' as bootstrap %}
 
 {{ docker.fromOfficial("ubuntu", "22.04") }}
 

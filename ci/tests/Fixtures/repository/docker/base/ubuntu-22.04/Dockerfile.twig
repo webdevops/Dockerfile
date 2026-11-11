@@ -1,1 +1,4 @@
-{% extends "base.jinja2" %}
+{% import 'docker.twig' as docker %}
+{{ docker.fromOfficial("ubuntu", "22.04") }}
+
+{{ docker.copyFromToolbox() }}

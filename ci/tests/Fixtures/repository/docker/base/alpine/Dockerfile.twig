@@ -1,0 +1,12 @@
+{% import 'docker.twig' as docker %}
+{% import 'images/base.twig' as base %}
+{# Alpine 3.22 #}
+{{ docker.fromOfficial("alpine", "3.22") }}
+
+{{ docker.copyFromToolbox("latest") }}
+{{ base.note("Installs a package by version") }}
+RUN set -x \
+    {{ base.install(version="2") }}
+
+RUN set -x \
+    {{ base.install() }}

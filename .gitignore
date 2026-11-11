@@ -1,10 +1,9 @@
 /.idea
+.DS_Store
 /.cache
 /.vscode
 /tests/serverspec/vendor
 /tests/serverspec/.bundle/
 /tests/serverspec/Dockerfile*
-/BLACKLIST
+/ci/BLACKLIST
 *.log
-*.pyc
-.doit.db

@@ -1,3 +1,7 @@
+{% import 'docker.twig' as docker %}
+{% import 'provision.twig' as provision %}
+{% import 'environment.twig' as environment %}
+{% import 'images/baseapp.twig' as baseapp %}
 {{ docker.from("base", "ubuntu-22.04") }}
 
 {{ environment.baseApp() }}

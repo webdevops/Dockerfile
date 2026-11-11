@@ -227,18 +227,17 @@ final class GithubJobBuilderTest extends TestCase
     public function testValidationJobChecksTheGeneratedFiles(): void
     {
         $job = new GithubJobBuilder(self::ROOT)->getValidationConfig();
+        $steps = $this->steps(['job' => $job], 'job');
 
         self::assertSame('Validate Automation', $job['name']);
-        self::assertSame([
-            'actions/checkout@v7',
-            'Validate that template/* are used to generate Dockerfiles',
-            'Validate .github/workflows/build.yaml is up to date',
-            'Validate the README banner is up to date',
-        ], array_keys($this->steps(['job' => $job], 'job')));
-        self::assertStringStartsWith(
-            'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install --no-dev' . "\n",
-            $this->steps(['job' => $job], 'job')['Validate .github/workflows/build.yaml is up to date']['run'],
-            'generating needs no dev tools',
+        self::assertSame(['actions/checkout@v7', 'Validate that the generated files are up to date'], array_keys($steps));
+        self::assertSame(
+            "make generate\n"
+            . "git status --porcelain\n"
+            . "git diff --exit-code --color=always\n"
+            . 'test -z "$(git status --porcelain)"',
+            $steps['Validate that the generated files are up to date']['run'],
+            'the command of the documentation, and a new file fails the step too',
         );
     }
 
@@ -249,11 +248,11 @@ final class GithubJobBuilderTest extends TestCase
 
         self::assertArrayNotHasKey('needs', $job);
         self::assertSame(['actions/checkout@v7', 'Run GrumPHP'], array_keys($steps));
-        self::assertStringEndsWith("vendor/bin/grumphp run --no-interaction'", $steps['Run GrumPHP']['run']);
+        self::assertSame('make check', $steps['Run GrumPHP']['run'], 'the command of the documentation');
     }
 
     /**
-     * Jobs of the fixture's webdevops/base:alpine, as FileReader and GithubCommand describe it.
+     * Jobs of the fixture's webdevops/base:alpine, as FileReader and GenerateGithubCiCommand describe it.
      *
      * @param array<string, mixed> $node replaces values of the node
      * @return array<string, array<string, mixed>>

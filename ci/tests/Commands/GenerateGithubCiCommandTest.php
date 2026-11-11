@@ -7,19 +7,22 @@ namespace Webdevops\Build\Tests\Commands;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Yaml\Yaml;
-use Webdevops\Build\Commands\GithubCommand;
+use Webdevops\Build\Commands\GenerateGithubCiCommand;
 use Webdevops\Build\Tests\TemporaryRepository;
 
 use function array_column;
 use function array_diff;
 use function array_keys;
 use function array_values;
+use function strpos;
+use function substr;
 
-#[CoversClass(GithubCommand::class)]
-final class GithubCommandTest extends TestCase
+#[CoversClass(GenerateGithubCiCommand::class)]
+final class GenerateGithubCiCommandTest extends TestCase
 {
     private const array ALL_JOBS = [
         'validate-automation',
@@ -110,13 +113,44 @@ final class GithubCommandTest extends TestCase
 
     public function testPrintsTheImageTree(): void
     {
-        $tester = new CommandTester(new GithubCommand($this->repository->path));
+        $tester = new CommandTester(new GenerateGithubCiCommand($this->repository->path));
         $tester->execute([]);
 
         $display = $tester->getDisplay();
         self::assertStringContainsString("Processing webdevops/toolbox:latest\n", $display);
         self::assertStringContainsString("\tProcessing webdevops/php:8.5-alpine\n", $display);
         self::assertStringContainsString("\t\t\tProcessing webdevops/php-nginx-dev:8.5-alpine\n", $display);
+    }
+
+    /**
+     * @return iterable<string, array{0: string, 1: string, 2: string}>
+     */
+    public static function missingInternalImages(): iterable
+    {
+        // e.g. php-official 8.5-alpine was removed, but not php-nginx 8.5-alpine
+        yield 'base image' => [
+            'docker/php-nginx/8.5-alpine/Dockerfile',
+            "FROM webdevops/php:8.6-alpine\n",
+            'webdevops/php-nginx:8.5-alpine (docker/php-nginx/8.5-alpine) builds on webdevops/php:8.6-alpine, which is not built any more. '
+            . 'Remove docker/php-nginx/8.5-alpine too, or keep building webdevops/php:8.6-alpine.',
+        ];
+        yield 'image to copy from' => [
+            'docker/base/alpine/Dockerfile',
+            "FROM alpine:3.22\nCOPY --from=webdevops/tools:latest /bin/tool /bin/\n",
+            'webdevops/base:alpine (docker/base/alpine) copies files from webdevops/tools:latest, which is not built any more. '
+            . 'Remove docker/base/alpine too, or keep building webdevops/tools:latest.',
+        ];
+    }
+
+    #[DataProvider('missingInternalImages')]
+    public function testMissingInternalImageIsAnError(string $dockerfile, string $instructions, string $message): void
+    {
+        $header = $this->repository->read($dockerfile);
+        $this->repository->write($dockerfile, substr($header, 0, (int)strpos($header, 'FROM ')) . $instructions);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage($message);
+        new CommandTester(new GenerateGithubCiCommand($this->repository->path))->execute([]);
     }
 
     /**
@@ -139,7 +173,7 @@ final class GithubCommandTest extends TestCase
     #[DataProvider('blacklists')]
     public function testBlacklistedImagesAreLeftOut(array $blacklist, array $removed): void
     {
-        $tester = new CommandTester(new GithubCommand($this->repository->path));
+        $tester = new CommandTester(new GenerateGithubCiCommand($this->repository->path));
         $tester->execute(['--blacklist' => $blacklist]);
 
         self::assertSame($this->jobsWithout($removed), array_keys($this->workflow()['jobs']));
@@ -162,7 +196,7 @@ final class GithubCommandTest extends TestCase
     #[DataProvider('emptyBlacklists')]
     public function testEmptyBlacklistEntriesMatchNothing(array $blacklist): void
     {
-        $tester = new CommandTester(new GithubCommand($this->repository->path));
+        $tester = new CommandTester(new GenerateGithubCiCommand($this->repository->path));
 
         self::assertSame(Command::SUCCESS, $tester->execute(['--blacklist' => $blacklist]));
         self::assertSame(self::ALL_JOBS, array_keys($this->workflow()['jobs']));
@@ -179,7 +213,7 @@ final class GithubCommandTest extends TestCase
     public function testBlacklistOptionReplacesTheFile(): void
     {
         $this->repository->write('ci/BLACKLIST', "php-nginx-dev\n");
-        $tester = new CommandTester(new GithubCommand($this->repository->path));
+        $tester = new CommandTester(new GenerateGithubCiCommand($this->repository->path));
         $tester->execute(['--blacklist' => ['php:8.4']]);
 
         self::assertSame($this->jobsWithout(['php_8-4']), array_keys($this->workflow()['jobs']));
@@ -190,7 +224,7 @@ final class GithubCommandTest extends TestCase
      */
     private function generate(): array
     {
-        $tester = new CommandTester(new GithubCommand($this->repository->path));
+        $tester = new CommandTester(new GenerateGithubCiCommand($this->repository->path));
         self::assertSame(Command::SUCCESS, $tester->execute([]));
         return $this->workflow();
     }

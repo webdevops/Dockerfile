@@ -441,12 +441,8 @@ class GithubJobBuilder
                 ],
                 [
                     'name' => 'Run GrumPHP',
-                    'run' => implode("\n", [
-                        'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install',
-                        // GrumPHP's BOM check needs "file"; git needs to trust the checkout, which belongs to another user
-                        'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine sh -c \''
-                        . "apk add --no-cache file && git config --global --add safe.directory /app && vendor/bin/grumphp run --no-interaction'",
-                    ]),
+                    // The command of the documentation
+                    'run' => 'make check',
                 ],
             ],
         ];
@@ -468,26 +464,14 @@ class GithubJobBuilder
                     'with' => ['persist-credentials' => false],
                 ],
                 [
-                    'name' => 'Validate that template/* are used to generate Dockerfiles',
+                    'name' => 'Validate that the generated files are up to date',
                     'run' => implode("\n", [
-                        'docker run --rm -v $PWD:/app -w /app webdevops/dockerfile-build-env make provision',
+                        // The command of the documentation
+                        'make generate',
+                        // A changed or a new file fails the step
+                        'git status --porcelain',
                         'git diff --exit-code --color=always',
-                    ]),
-                ],
-                [
-                    'name' => 'Validate .github/workflows/build.yaml is up to date',
-                    'run' => implode("\n", [
-                        // The generators need no dev tools; check-ci-code installs those
-                        'docker run --rm -v $PWD:/app -w /app/ci webdevops/php:8.4-alpine composer install --no-dev',
-                        'docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console github:generate-ci',
-                        'git diff --exit-code --color=always',
-                    ]),
-                ],
-                [
-                    'name' => 'Validate the README banner is up to date',
-                    'run' => implode("\n", [
-                        'docker run --rm -v $PWD:/app -w /app webdevops/php:8.4-alpine ci/console readme-banner:generate',
-                        'git diff --exit-code --color=always',
+                        'test -z "$(git status --porcelain)"',
                     ]),
                 ],
             ],

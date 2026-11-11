@@ -1,3 +1,7 @@
+{% import 'docker.twig' as docker %}
+{% import 'provision.twig' as provision %}
+{% import 'environment.twig' as environment %}
+{% import 'images/base.twig' as base %}
 {{ docker.from("bootstrap", "alpine") }}
 
 {{ environment.base() }}

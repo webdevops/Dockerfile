@@ -1,0 +1,13 @@
+---
+# Test copy of conf/provision.yml
+
+provision:
+  base:
+    configuration:
+      base/general: '*'
+      base/alpine: alpine
+  php-official:
+    configuration:
+      base/general: '*'
+      php/general: '*'
+      php/official-alpine: '*-alpine'

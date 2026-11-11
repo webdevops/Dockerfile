@@ -33,6 +33,24 @@ final class FileReaderTest extends TestCase
         ], new FileReader(self::ROOT)->collectDockerfiles());
     }
 
+    public function testCollectsOnlyTheDockerfilesOfTags(): void
+    {
+        $repository = new TemporaryRepository();
+        // a tag whose Dockerfile was not generated yet, a Dockerfile in conf/ and one without a template
+        $repository->write('docker/base/alpine-edge/Dockerfile.twig', '');
+        $repository->write('docker/base/alpine/conf/Dockerfile', '');
+        $repository->write('docker/toolbox/edge/Dockerfile', '');
+
+        try {
+            self::assertSame(
+                new FileReader(self::ROOT)->collectDockerfiles(),
+                new FileReader($repository->path)->collectDockerfiles(),
+            );
+        } finally {
+            $repository->remove();
+        }
+    }
+
     public function testImageWithAnOutsideBaseImageIsBuiltAfterTheToolbox(): void
     {
         $node = $this->info('base/ubuntu-22.04');
