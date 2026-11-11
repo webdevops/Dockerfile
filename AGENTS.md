@@ -47,7 +47,8 @@ Where the documentation lives:
 
 | File | Content |
 | --- | --- |
-| `README.md` | Entry point: short intro, quick start, build process, supported tags ("Debian PHP" / "Alpine PHP") |
+| `README.md` | Entry point: short intro, quick start, supported tags ("Debian PHP" / "Alpine PHP") |
+| `CONTRIBUTING.md` | Build process: the generated files and `make generate`, the CI and `make check`, building and testing locally, PHP extension builds |
 | `docs/README.md` | Image overview, platforms and nightly updates, how the images build on each other (Mermaid diagram) |
 | `docs/environment-variables.md` | Every environment variable with its default and effect; uploads and long requests |
 | `docs/customization.md` | Commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs and their time zone, healthcheck, configuration files and placeholders, supervisord, locales, application user and changing its UID |
@@ -64,7 +65,7 @@ Update the documentation whenever a change touches any of these:
 - a base image or operating system version
 - a PHP extension that is added or removed
 - a service, hook directory, entrypoint command or helper tool such as `docker-service`
-- the build process, the CI workflow or the commands in the README
+- the build process, the CI workflow or the commands in `CONTRIBUTING.md`
 
 ### How to update it
 
