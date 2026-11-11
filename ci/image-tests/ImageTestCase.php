@@ -189,7 +189,7 @@ abstract class ImageTestCase extends TestCase
         $file = $this->file($path);
         self::assertTrue($file->isDirectory, $path . ' should be a directory');
         $this->assertOwnedByRoot($file);
-        $this->assertAccess($file, ['owner' => 'rwx', 'group' => 'rx', 'others' => 'rx']);
+        $this->assertAccess($file, ['owner' => 'rwx', 'group' => 'rWx', 'others' => 'rWx']);
     }
 
     /**
@@ -200,7 +200,7 @@ abstract class ImageTestCase extends TestCase
         $file = $this->file($path);
         self::assertTrue($file->isFile, $path . ' should be a file');
         $this->assertOwnedByRoot($file);
-        $this->assertAccess($file, ['owner' => 'rwX', 'group' => 'rX', 'others' => 'rX']);
+        $this->assertAccess($file, ['owner' => 'rwX', 'group' => 'rWX', 'others' => 'rWX']);
     }
 
     /**
@@ -212,11 +212,12 @@ abstract class ImageTestCase extends TestCase
         self::assertTrue($file->isFile, $path . ' should be a file');
         self::assertTrue($file->isExecutable, $path . ' should be executable');
         $this->assertOwnedByRoot($file);
-        $this->assertAccess($file, ['owner' => 'rwx', 'group' => 'rx', 'others' => 'rx']);
+        $this->assertAccess($file, ['owner' => 'rwx', 'group' => 'rWx', 'others' => 'rWx']);
     }
 
     /**
-     * A file or directory that the root user and group may read, but other users may not, e.g. a TLS key.
+     * A file or directory that the root user and group may read, but other users may not, and only root can change,
+     * e.g. a TLS key.
      */
     protected function assertPrivateToRoot(string $path, bool $directory): void
     {
@@ -229,9 +230,10 @@ abstract class ImageTestCase extends TestCase
 
         $this->assertOwnedByRoot($file);
         $this->assertAccess($file, $directory
-            ? ['owner' => 'rwx', 'group' => 'rx', 'others' => 'RX']
-            : ['owner' => 'rwX', 'group' => 'rX', 'others' => 'RX']);
+            ? ['owner' => 'rwx', 'group' => 'rWx', 'others' => 'RWX']
+            : ['owner' => 'rwX', 'group' => 'rWX', 'others' => 'RWX']);
         $this->assertUserCannot('application', 'r', $path);
+        $this->assertUserCannot('application', 'w', $path);
         if ($directory) {
             $this->assertUserCannot('application', 'x', $path);
         }

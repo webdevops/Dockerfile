@@ -105,7 +105,7 @@ trait PhpChecks
         $result = $this->assertCommandSucceeds('php -m');
         self::assertSame('', $result->stderr);
         $modules = $this->lines($result->stdout);
-        foreach ([...PhpModules::cli(self::image()), 'shmop', 'Zend OPcache', 'redis'] as $module) {
+        foreach (PhpModules::loaded(self::image()) as $module) {
             self::assertContains($module, $modules, 'php -m should list ' . $module);
         }
     }

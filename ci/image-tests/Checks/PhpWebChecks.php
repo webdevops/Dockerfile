@@ -48,7 +48,7 @@ trait PhpWebChecks
     public function testPhpFpmModules(): void
     {
         $modules = $this->phpFpmModules();
-        foreach ([...PhpModules::fpm(self::image()), 'shmop', 'Zend OPcache', 'redis'] as $module) {
+        foreach (PhpModules::loaded(self::image()) as $module) {
             self::assertContains($module, $modules, 'PHP-FPM should load ' . $module);
         }
     }
