@@ -24,6 +24,7 @@ use function preg_split;
 use function random_bytes;
 use function sprintf;
 use function trim;
+use function usleep;
 
 use const PHP_BINARY;
 use const PREG_SPLIT_NO_EMPTY;
@@ -31,11 +32,17 @@ use const PREG_SPLIT_NO_EMPTY;
 /**
  * Runs the image tests of one webdevops image: PHPUnit starts a container of the image and checks it. The container
  * carries a label with the run, and the command removes it afterwards, also when PHPUnit dies or the run is
- * interrupted.
+ * interrupted. On an interruption it stops PHPUnit first, so that PHPUnit starts no further container, and removes
+ * the containers twice, a second apart, for a container that a docker command under way still creates.
  */
 #[AsCommand(name: 'test:image', description: 'Runs the image tests of webdevops/<image>:<tag> against a container of it')]
 class TestImageCommand extends Command implements SignalableCommandInterface
 {
+    /**
+     * Microseconds between the two removals after an interruption.
+     */
+    private const int SECOND_REMOVAL_DELAY = 1_000_000;
+
     /**
      * @var Closure(list<string>, array<string, string>, OutputInterface): int
      */
@@ -47,6 +54,16 @@ class TestImageCommand extends Command implements SignalableCommandInterface
     private readonly Closure $removeContainers;
 
     /**
+     * @var Closure(): void
+     */
+    private readonly Closure $stopRunner;
+
+    /**
+     * PHPUnit while the default runner runs it.
+     */
+    private ?Process $process = null;
+
+    /**
      * The run in progress, the value of the container label.
      */
     private ?string $run = null;
@@ -55,12 +72,18 @@ class TestImageCommand extends Command implements SignalableCommandInterface
      * @param string $rootPath the repository root
      * @param (Closure(list<string>, array<string, string>, OutputInterface): int)|null $runner runs PHPUnit, by default as a process
      * @param (Closure(string): void)|null $removeContainers removes the containers of a run, by default with docker
+     * @param (Closure(): void)|null $stopRunner stops PHPUnit on an interruption, by default the process of the runner
      */
-    public function __construct(private readonly string $rootPath = __DIR__ . '/../../..', ?Closure $runner = null, ?Closure $removeContainers = null)
-    {
+    public function __construct(
+        private readonly string $rootPath = __DIR__ . '/../../..',
+        ?Closure $runner = null,
+        ?Closure $removeContainers = null,
+        ?Closure $stopRunner = null,
+    ) {
         parent::__construct();
         $this->runner = $runner ?? $this->runProcess(...);
         $this->removeContainers = $removeContainers ?? $this->removeLabelledContainers(...);
+        $this->stopRunner = $stopRunner ?? $this->stopProcess(...);
     }
 
     protected function configure(): void
@@ -122,9 +145,14 @@ class TestImageCommand extends Command implements SignalableCommandInterface
      */
     public function handleSignal(int $signal, int|false $previousExitCode = 0): int|false
     {
-        if ($this->run !== null) {
-            ($this->removeContainers)($this->run);
+        ($this->stopRunner)();
+        $run = $this->run;
+        if ($run !== null) {
             $this->run = null;
+            ($this->removeContainers)($run);
+            // a docker command that PHPUnit had under way may still create its container
+            usleep(self::SECOND_REMOVAL_DELAY);
+            ($this->removeContainers)($run);
         }
 
         return 128 + $signal;
@@ -136,10 +164,22 @@ class TestImageCommand extends Command implements SignalableCommandInterface
      */
     private function runProcess(array $command, array $environment, OutputInterface $output): int
     {
-        $process = new Process($command, null, $environment, null, null);
-        return $process->run(static function (string $type, string $buffer) use ($output): void {
-            $output->write($buffer);
-        });
+        $this->process = new Process($command, null, $environment, null, null);
+        try {
+            return $this->process->run(static function (string $type, string $buffer) use ($output): void {
+                $output->write($buffer);
+            });
+        } finally {
+            $this->process = null;
+        }
+    }
+
+    /**
+     * Stops PHPUnit: SIGTERM, and SIGKILL if it still runs after 10 s.
+     */
+    private function stopProcess(): void
+    {
+        $this->process?->stop(10);
     }
 
     private function removeLabelledContainers(string $run): void

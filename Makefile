@@ -34,7 +34,8 @@ $(error Name the image to test, e.g. make test-image IMAGE=webdevops/php-nginx:8
 endif
 endif
 
-test-image: test-image-runner test-image-run
+test-image: test-image-runner
+	@$(MAKE) --no-print-directory test-image-run
 
 test-image-runner:
 	docker build --quiet --tag webdevops-image-tests --file ci/image-tests/Dockerfile . >/dev/null

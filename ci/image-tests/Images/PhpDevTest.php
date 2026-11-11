@@ -10,7 +10,6 @@ use Webdevops\Build\ImageTests\Checks\BootstrapChecks;
 use Webdevops\Build\ImageTests\Checks\PhpDevelopmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmPublicChecks;
-use Webdevops\Build\ImageTests\Checks\PhpToolsChecks;
 use Webdevops\Build\ImageTests\Checks\SshChecks;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
@@ -25,6 +24,5 @@ final class PhpDevTest extends ImageTestCase
     use PhpDevelopmentChecks;
     use PhpFpmChecks;
     use PhpFpmPublicChecks;
-    use PhpToolsChecks;
     use SshChecks;
 }

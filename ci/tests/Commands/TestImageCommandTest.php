@@ -78,25 +78,31 @@ final class TestImageCommandTest extends TestCase
         }
     }
 
-    public function testInterruptionRemovesTheContainersOfTheRun(): void
+    public function testInterruptionStopsPhpUnitAndThenRemovesTheContainersOfTheRun(): void
     {
+        $steps = [];
         $testImage = null;
         $testImage = new TestImageCommand(
             TemporaryRepository::FIXTURE,
-            function (array $command, array $environment, OutputInterface $output) use (&$testImage): int {
+            function (array $command, array $environment, OutputInterface $output) use (&$testImage, &$steps): int {
                 // the signal arrives while PHPUnit runs
                 self::assertSame(128 + SIGINT, $testImage?->handleSignal(SIGINT));
-                self::assertSame([$environment['IMAGE_TEST_RUN']], $this->removed);
+                self::assertSame([$environment['IMAGE_TEST_RUN'], $environment['IMAGE_TEST_RUN']], $this->removed);
+                self::assertSame(['stop PHPUnit', 'remove containers', 'remove containers'], $steps, 'removed twice, a second apart');
                 return 130;
             },
-            function (string $run): void {
+            function (string $run) use (&$steps): void {
+                $steps[] = 'remove containers';
                 $this->removed[] = $run;
+            },
+            function () use (&$steps): void {
+                $steps[] = 'stop PHPUnit';
             },
         );
 
         new CommandTester($testImage)->execute(['image' => 'webdevops/base:alpine']);
 
-        self::assertCount(1, $this->removed, 'removed once, not again after PHPUnit');
+        self::assertCount(2, $this->removed, 'not again after PHPUnit');
         self::assertSame([SIGINT, SIGTERM], $testImage->getSubscribedSignals());
     }
 

@@ -18,18 +18,9 @@ use function preg_quote;
 trait PhpWebChecks
 {
     /**
-     * @return iterable<string, array{string}>
-     */
-    public static function phpSchemes(): iterable
-    {
-        yield 'http' => ['http'];
-        yield 'https' => ['https'];
-    }
-
-    /**
      * A multipart upload works and the session keeps its data, although PHP-FPM disables the upload progress.
      */
-    #[DataProvider('phpSchemes')]
+    #[DataProvider('webSchemes')]
     public function testUploadWithoutUploadProgress(string $scheme): void
     {
         $this->request(
@@ -53,14 +44,14 @@ trait PhpWebChecks
         }
     }
 
-    #[DataProvider('phpSchemes')]
+    #[DataProvider('webSchemes')]
     public function testPhpFpmComputesSha1(string $scheme): void
     {
         $body = $this->phpTestPage($scheme, 'sha1');
         self::assertStringContainsString('2ae62521966cf6d4188acefc943c903e5fc0a25c', $body);
     }
 
-    #[DataProvider('phpSchemes')]
+    #[DataProvider('webSchemes')]
     public function testPhpFpmScansTheImageIniFiles(string $scheme): void
     {
         $body = $this->phpTestPage($scheme, 'php_ini_scanned_files');
@@ -68,19 +59,19 @@ trait PhpWebChecks
         self::assertStringContainsString('-webdevops.ini', $body);
     }
 
-    #[DataProvider('phpSchemes')]
+    #[DataProvider('webSchemes')]
     public function testPhpFpmSapi(string $scheme): void
     {
         self::assertStringContainsString('fpm-fcgi', $this->phpTestPage($scheme, 'php_sapi_name'));
     }
 
-    #[DataProvider('phpSchemes')]
+    #[DataProvider('webSchemes')]
     public function testPhpFpmRunsAsTheApplicationUser(string $scheme): void
     {
         self::assertStringContainsString('UID:1000#', $this->phpTestPage($scheme, 'process_user_id'));
     }
 
-    #[DataProvider('phpSchemes')]
+    #[DataProvider('webSchemes')]
     public function testPhpFpmVersion(string $scheme): void
     {
         self::assertMatchesRegularExpression(

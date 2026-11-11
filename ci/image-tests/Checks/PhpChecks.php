@@ -176,7 +176,7 @@ trait PhpChecks
 
     public function testComposer(): void
     {
-        foreach (['/usr/local/bin/composer1', '/usr/local/bin/composer2'] as $path) {
+        foreach (['/usr/local/bin/composer', '/usr/local/bin/composer1', '/usr/local/bin/composer2'] as $path) {
             $file = $this->file($path);
             self::assertTrue($file->isFile, $path . ' should be a file');
             self::assertTrue($file->isExecutable, $path . ' should be executable');

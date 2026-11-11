@@ -84,6 +84,17 @@ abstract class ImageTestCase extends TestCase
         return $cases;
     }
 
+    /**
+     * The schemes of the requests to the web server, http and https.
+     *
+     * @return iterable<string, array{string}>
+     */
+    public static function webSchemes(): iterable
+    {
+        yield 'http' => ['http'];
+        yield 'https' => ['https'];
+    }
+
     protected static function image(): ImageUnderTest
     {
         return self::$image ?? throw new LogicException('The image is set in setUpBeforeClass().');

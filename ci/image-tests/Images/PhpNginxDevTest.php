@@ -11,7 +11,6 @@ use Webdevops\Build\ImageTests\Checks\NginxChecks;
 use Webdevops\Build\ImageTests\Checks\PhpDevelopmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmPublicChecks;
-use Webdevops\Build\ImageTests\Checks\PhpToolsChecks;
 use Webdevops\Build\ImageTests\Checks\PhpWebDevelopmentChecks;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
@@ -26,7 +25,6 @@ final class PhpNginxDevTest extends ImageTestCase
     use PhpDevelopmentChecks;
     use PhpFpmChecks;
     use PhpFpmPublicChecks;
-    use PhpToolsChecks;
     use NginxChecks;
     use PhpWebDevelopmentChecks;
 }

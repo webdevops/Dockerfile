@@ -19,7 +19,8 @@ use function sys_get_temp_dir;
 use function unlink;
 
 /**
- * A tar archive of the files under a directory, at their paths relative to it, for "docker cp - <container>:/".
+ * A tar archive of the files under a directory, at their paths relative to it, for "docker cp - <container>:/". The
+ * files get mode 644, or 755 if they are executable, owned by root.
  *
  * The archive holds no directory entries. docker cp gives a directory that already exists in the container the owner
  * and mode of its entry, so /app would belong to root. Without them, existing directories keep their owner and mode,
@@ -39,7 +40,10 @@ final readonly class FileArchive
         /** @var SplFileInfo $file */
         foreach ($files as $file) {
             if ($file->isFile()) {
-                $archive->addFile($file->getPathname(), substr($file->getPathname(), strlen($directory) + 1));
+                $name = substr($file->getPathname(), strlen($directory) + 1);
+                $archive->addFile($file->getPathname(), $name);
+                // readable by everybody, whatever the umask of the checkout: the web server and PHP-FPM read the files
+                $archive[$name]->chmod($file->isExecutable() ? 0755 : 0644);
             }
         }
 

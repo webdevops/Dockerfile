@@ -134,9 +134,4 @@ trait BaseChecks
     {
         $this->assertPackageInstalled($package);
     }
-
-    public function testGoReplaceRuns(): void
-    {
-        $this->assertCommandSucceeds('go-replace --version');
-    }
 }

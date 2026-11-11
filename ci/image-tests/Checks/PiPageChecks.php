@@ -14,16 +14,7 @@ use Webdevops\Build\ImageTests\ImageTestCase;
  */
 trait PiPageChecks
 {
-    /**
-     * @return iterable<string, array{string}>
-     */
-    public static function schemes(): iterable
-    {
-        yield 'http' => ['http'];
-        yield 'https' => ['https'];
-    }
-
-    #[DataProvider('schemes')]
+    #[DataProvider('webSchemes')]
     public function testWebServerAnswers(string $scheme): void
     {
         self::assertStringContainsString('3.14159265359', $this->request($scheme . '://localhost/pi-number.html'));

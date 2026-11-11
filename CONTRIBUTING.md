@@ -100,7 +100,8 @@ All tests of an image run against one container. Its root directory gets the fil
 | `ci/image-tests/Checks/` | The checks as traits, e.g. `PhpChecks` for every PHP image or `NginxChecks` for the images with Nginx. A test class uses the traits of its image. |
 | `ci/image-tests/ImageTestCase.php` | Starts and removes the container, and the helpers of the checks, e.g. `assertRootScript()`, `assertServiceRunning()` and `request()` |
 
-`ci/console test:image webdevops/<image>:<tag>` runs the tests of an image; `webdevops/php-official` has the tests of `webdevops/php`. It takes the distribution and its version from `dockerTest` in `conf/console.yml`, and removes the container of the image afterwards, also when the run is interrupted.
+`ci/console test:image webdevops/<image>:<tag>` runs the tests of an image; `webdevops/php-official` has the tests of `webdevops/php`. It takes the distribution and its version from `dockerTest` in `conf/console.yml`, and removes the container of the image afterwards, also when the run is interrupted with Ctrl-C or `docker stop`.
+A runner killed with `SIGKILL` leaves its containers behind; they carry the label `webdevops.image-test`, so `docker rm --force $(docker ps --all --quiet --filter label=webdevops.image-test)` removes them.
 It runs in a container of `ci/image-tests/Dockerfile`, which has PHP and the `docker` command and gets the Docker socket: `make test-image` builds that image (`make test-image-runner`) and runs the tests in it (`make test-image-run`).
 The CI builds the image with the cache of GitHub Actions and then runs `make test-image-run`.
 

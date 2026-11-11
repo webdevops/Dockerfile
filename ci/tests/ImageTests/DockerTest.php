@@ -110,21 +110,22 @@ final class DockerTest extends TestCase
         );
     }
 
-    public function testFileArchiveHoldsTheFilesWithoutDirectories(): void
+    public function testFileArchiveHoldsTheFilesReadableByEverybodyWithoutDirectories(): void
     {
         $repository = new TemporaryRepository();
         try {
             $repository->write('files/app/index.php', "<?php echo 'ok';\n");
             $repository->write('files/entrypoint.d/50-marker.sh', "touch /tmp/marker\n");
-            chmod($repository->path . '/files/app/index.php', 0644);
-            chmod($repository->path . '/files/entrypoint.d/50-marker.sh', 0755);
+            // a checkout with umask 077
+            chmod($repository->path . '/files/app/index.php', 0600);
+            chmod($repository->path . '/files/entrypoint.d/50-marker.sh', 0700);
 
             $archive = FileArchive::create($repository->path . '/files');
             try {
                 self::assertSame([
                     'app/index.php' => ['0', 0644],
                     'entrypoint.d/50-marker.sh' => ['0', 0755],
-                ], $this->tarEntries($archive->path), 'only files, with their modes; no entries for app/ and entrypoint.d/');
+                ], $this->tarEntries($archive->path), 'only files, readable by everybody; no entries for app/ and entrypoint.d/');
             } finally {
                 $archive->remove();
             }
