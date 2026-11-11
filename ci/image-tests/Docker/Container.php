@@ -7,6 +7,8 @@ namespace Webdevops\Build\ImageTests\Docker;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 
+use function fclose;
+use function fopen;
 use function rtrim;
 use function sprintf;
 use function str_starts_with;
@@ -37,9 +39,10 @@ final readonly class Container
     }
 
     /**
-     * Creates a container of $image with the image's own command, copies the content of the directory $files into its
-     * root directory and starts it. stdin stays open, so that an image whose command is a shell, such as
-     * webdevops/bootstrap, keeps running. $labels are added to the container, e.g. to find and remove it later.
+     * Creates a container of $image with the image's own command, copies the files under the directory $files into its
+     * root directory and starts it. Only files are copied: directories of the image keep their owner and mode, see
+     * FileArchive. stdin stays open, so that an image whose command is a shell, such as webdevops/bootstrap, keeps
+     * running. $labels are added to the container, e.g. to find and remove it later.
      *
      * @param array<string, string> $labels
      */
@@ -53,7 +56,7 @@ final readonly class Container
 
         $container = new self(trim(self::docker([...$arguments, $image])));
         try {
-            self::docker(['cp', rtrim($files, '/') . '/.', $container->id . ':/']);
+            $container->copy(rtrim($files, '/'));
             self::docker(['start', $container->id]);
         } catch (RuntimeException $runtimeException) {
             $container->remove();
@@ -84,6 +87,32 @@ final readonly class Container
     }
 
     /**
+     * Copies the files under $directory into the root directory of the container.
+     */
+    private function copy(string $directory): void
+    {
+        $archive = FileArchive::create($directory);
+        if (!$archive->exists()) {
+            return;
+        }
+
+        try {
+            $input = fopen($archive->path, 'rb');
+            if ($input === false) {
+                throw new RuntimeException('Cannot read ' . $archive->path);
+            }
+
+            try {
+                self::docker(['cp', '-', $this->id . ':/'], $input);
+            } finally {
+                fclose($input);
+            }
+        } finally {
+            $archive->remove();
+        }
+    }
+
+    /**
      * Stops and removes the container.
      */
     public function remove(): void
@@ -93,11 +122,13 @@ final readonly class Container
 
     /**
      * @param list<string> $arguments
+     * @param resource|null $input
      */
-    private static function docker(array $arguments): string
+    private static function docker(array $arguments, mixed $input = null): string
     {
         $process = new Process(['docker', ...$arguments]);
         $process->setTimeout(self::COMMAND_TIMEOUT);
+        $process->setInput($input);
         $process->run();
         if (!$process->isSuccessful()) {
             throw new RuntimeException(sprintf('docker %s failed: %s', $arguments[0], trim($process->getErrorOutput())));

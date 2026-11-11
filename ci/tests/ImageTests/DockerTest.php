@@ -7,8 +7,21 @@ namespace Webdevops\Build\Tests\ImageTests;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Webdevops\Build\ImageTests\Docker\CommandResult;
+use Webdevops\Build\ImageTests\Docker\FileArchive;
 use Webdevops\Build\ImageTests\Docker\FileInfo;
 use Webdevops\Build\ImageTests\Docker\ListeningSockets;
+use Webdevops\Build\Tests\TemporaryRepository;
+
+use function ceil;
+use function chmod;
+use function file_get_contents;
+use function ksort;
+use function mkdir;
+use function octdec;
+use function rtrim;
+use function strlen;
+use function substr;
+use function trim;
 
 /**
  * The parts of the image test harness that work without a container.
@@ -16,6 +29,7 @@ use Webdevops\Build\ImageTests\Docker\ListeningSockets;
 #[CoversClass(FileInfo::class)]
 #[CoversClass(ListeningSockets::class)]
 #[CoversClass(CommandResult::class)]
+#[CoversClass(FileArchive::class)]
 final class DockerTest extends TestCase
 {
     public function testFileInfoOfAnExecutableFile(): void
@@ -94,5 +108,67 @@ final class DockerTest extends TestCase
             "php -m\nexit code: 1\nstdout: Core\nstderr: PHP Warning",
             new CommandResult('php -m', "Core\n", "PHP Warning\n", 1)->describe(),
         );
+    }
+
+    public function testFileArchiveHoldsTheFilesWithoutDirectories(): void
+    {
+        $repository = new TemporaryRepository();
+        try {
+            $repository->write('files/app/index.php', "<?php echo 'ok';\n");
+            $repository->write('files/entrypoint.d/50-marker.sh', "touch /tmp/marker\n");
+            chmod($repository->path . '/files/app/index.php', 0644);
+            chmod($repository->path . '/files/entrypoint.d/50-marker.sh', 0755);
+
+            $archive = FileArchive::create($repository->path . '/files');
+            try {
+                self::assertSame([
+                    'app/index.php' => ['0', 0644],
+                    'entrypoint.d/50-marker.sh' => ['0', 0755],
+                ], $this->tarEntries($archive->path), 'only files, with their modes; no entries for app/ and entrypoint.d/');
+            } finally {
+                $archive->remove();
+            }
+
+            self::assertFalse($archive->exists());
+        } finally {
+            $repository->remove();
+        }
+    }
+
+    public function testFileArchiveOfADirectoryWithoutFiles(): void
+    {
+        $repository = new TemporaryRepository();
+        try {
+            mkdir($repository->path . '/files/empty', 0755, true);
+
+            $archive = FileArchive::create($repository->path . '/files');
+
+            self::assertFalse($archive->exists(), 'nothing to copy');
+            $archive->remove();
+        } finally {
+            $repository->remove();
+        }
+    }
+
+    /**
+     * The entries of a tar archive: path => [type flag, mode]. Type flag 0 is a file, 5 a directory.
+     *
+     * @return array<string, array{string, int}>
+     */
+    private function tarEntries(string $path): array
+    {
+        $tar = (string)file_get_contents($path);
+        $entries = [];
+        $offset = 0;
+        while ($offset + 512 <= strlen($tar) && trim(substr($tar, $offset, 512), "\0") !== '') {
+            $header = substr($tar, $offset, 512);
+            $name = rtrim(substr($header, 0, 100), "\0");
+            $prefix = rtrim(substr($header, 345, 155), "\0");
+            $entries[$prefix === '' ? $name : $prefix . '/' . $name] = [$header[156], (int)octdec(trim(substr($header, 100, 8), "\0 ")) & 0777];
+            $offset += 512 + (int)ceil(octdec(trim(substr($header, 124, 12), "\0 ")) / 512) * 512;
+        }
+
+        ksort($entries);
+        return $entries;
     }
 }
