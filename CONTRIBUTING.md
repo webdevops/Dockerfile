@@ -47,10 +47,10 @@ It installs the PHP tools of `ci/` and runs GrumPHP as your user. `make test` ru
 
 The CI job "Check ci/" runs the same checks. No image build waits for it.
 
-Dependabot proposes updates of the PHP packages in `ci/` and of the gems of the serverspec tests in `tests/serverspec/` once a month: one pull request per directory with all minor and patch updates, and one for each new major version.
+Dependabot proposes updates of the PHP packages in `ci/` once a month: one pull request with all minor and patch updates, and one for each new major version.
 It does not update the actions in `.github/workflows/build.yaml`, because that file is generated; their versions are in `ci/src/GithubJobBuilder.php`.
 
-GitHub Actions builds every image independently and runs the serverspec and structure tests
+GitHub Actions builds every image independently and runs the image tests and structure tests
 defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdevops/`, but only
 internally; pull the images from Docker Hub.
 
@@ -70,7 +70,15 @@ Build all PHP images of one version (default `8.5`), in the order they depend on
 
 Then try an image with the [quick start](README.md#quick-start).
 
-The CI runs the serverspec tests for every image except `toolbox` and `dockerfile-build-env`, and the structure tests for `bootstrap`, `base`, `base-app`, `php`, `php-dev` and `php-nginx`.
+The CI runs the image tests for every image except `toolbox` and `dockerfile-build-env`, and the structure tests for `bootstrap`, `base`, `base-app`, `php`, `php-dev` and `php-nginx`.
+To run the image tests against an image you built locally:
+
+```
+make test-image IMAGE=webdevops/php-nginx:8.5
+```
+
+`REFERENCE` tests another image with the tests and settings of `IMAGE`, e.g. `REFERENCE=my-php-nginx`. Set `DOCKER_SOCKET` if your Docker socket is not `/var/run/docker.sock`.
+
 To run the structure tests against the images you built locally:
 
 ```
@@ -78,6 +86,21 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/app -w /ap
 ```
 
 It tests the local tags that the CI builds and fails if no such image exists.
+
+## Image tests
+
+The image tests are PHPUnit tests in `ci/image-tests`. They start a container of the image with its own command, so supervisord starts the services as in production, and check it:
+files and their owner and mode, commands and their output, PHP extensions and settings, the running services and their ports, and requests through Nginx or Apache to PHP-FPM over http and https.
+All tests of an image run against one container. Its root directory gets the files of `ci/image-tests/Fixtures` first, so `/app` holds the pages that the requests ask for.
+
+| Path | Content |
+| --- | --- |
+| `ci/image-tests/Images/` | One test class per image, e.g. `PhpNginxTest.php` for `webdevops/php-nginx`. An image without a class is not tested. |
+| `ci/image-tests/Checks/` | The checks as traits, e.g. `PhpChecks` for every PHP image or `NginxChecks` for the images with Nginx. A test class uses the traits of its image. |
+| `ci/image-tests/ImageTestCase.php` | Starts and removes the container, and the helpers of the checks, e.g. `assertRootScript()`, `assertServiceRunning()` and `request()` |
+
+`ci/console test:image webdevops/<image>:<tag>` runs the tests of an image. It takes the distribution and its version from `dockerTest` in `conf/console.yml`.
+`make test-image` and the CI run it in a container of `ci/image-tests/Dockerfile`, which has PHP and the `docker` command and gets the Docker socket.
 
 ## PHP extension builds
 
@@ -96,5 +119,5 @@ The native Vips extension is deprecated and no longer maintained upstream. It is
 retained for existing applications, using the upstream default branch (currently
 `master`): GitHub tags predate the PECL 1.0.13 release and would downgrade the
 extension. This includes changes beyond the last PECL release.
-No extension installation needs `pecl.php.net`; Serverspec and container structure
-tests retain their existing image matrix.
+No extension installation needs `pecl.php.net`; the image tests check that PHP and
+PHP-FPM load every extension.

@@ -11,12 +11,7 @@ use Webdevops\Build\GithubJobBuilder;
 
 use function array_filter;
 use function array_keys;
-use function base64_encode;
-use function explode;
-use function json_encode;
 use function str_starts_with;
-
-use const JSON_THROW_ON_ERROR;
 
 #[CoversClass(GithubJobBuilder::class)]
 final class GithubJobBuilderTest extends TestCase
@@ -79,7 +74,8 @@ final class GithubJobBuilderTest extends TestCase
             'actions/checkout@v7',
             'docker/setup-buildx-action@v4',
             'Build (load locally)',
-            'run serverspec',
+            'Build the image test runner',
+            'run image tests',
             'run structure-test',
             'Login to ghcr.io',
             'Push arch image',
@@ -91,20 +87,39 @@ final class GithubJobBuilderTest extends TestCase
         );
     }
 
-    public function testServerspecGetsTheSettingsOfTheImage(): void
+    public function testImageTestsRunAgainstTheImageOfTheJob(): void
     {
-        $lines = explode("\n", $this->step($this->jobs(), 'run serverspec')['run']);
+        $steps = $this->steps($this->jobs());
 
-        self::assertSame('cd tests/serverspec', $lines[0]);
-        self::assertSame('echo "FROM ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine >> Dockerfile_test', $lines[1]);
-        self::assertSame('echo "COPY conf/ /" >> Dockerfile_test', $lines[2]);
-        self::assertSame('bundle install', $lines[3]);
-        $settings = ['DOCKER_IMAGE' => 'webdevops/base:alpine', 'DOCKER_TAG' => 'alpine', 'OS_FAMILY' => 'alpine', 'DOCKERFILE' => 'Dockerfile_test'];
+        self::assertSame([
+            'context' => '.',
+            'file' => 'ci/image-tests/Dockerfile',
+            'load' => true,
+            'tags' => 'webdevops-image-tests',
+            'cache-from' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}',
+            'cache-to' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max',
+        ], $steps['Build the image test runner']['with']);
         self::assertSame(
-            'bash serverspec.sh spec/docker/base_spec.rb webdevops/base:alpine ' . base64_encode(json_encode($settings, JSON_THROW_ON_ERROR)) . '  Dockerfile_test',
-            $lines[4],
+            'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/base:alpine'
+            . ' --reference ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine',
+            $steps['run image tests']['run'],
         );
-        self::assertCount(5, $lines);
+    }
+
+    public function testOfficialPhpImageRunsTheTestsOfPhp(): void
+    {
+        $steps = $this->steps($this->jobs([
+            'id' => 'webdevops/php:8.4',
+            'name' => 'webdevops/php:8.4',
+            'image' => 'php',
+            'tag' => '8.4',
+            'aliases' => ['webdevops/php-official:8.4'],
+        ]), 'php_8-4');
+
+        self::assertStringEndsWith(
+            ' webdevops-image-tests webdevops/php:8.4 --reference ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4',
+            $steps['run image tests']['run'],
+        );
     }
 
     public function testStructureTestUsesTheSuiteOfTheTagToo(): void
@@ -125,7 +140,8 @@ final class GithubJobBuilderTest extends TestCase
     {
         $steps = $this->steps($this->jobs(['image' => 'php-nginx']));
 
-        self::assertArrayNotHasKey('run serverspec', $steps);
+        self::assertArrayNotHasKey('Build the image test runner', $steps);
+        self::assertArrayNotHasKey('run image tests', $steps);
         self::assertArrayNotHasKey('run structure-test', $steps);
     }
 
@@ -144,7 +160,8 @@ final class GithubJobBuilderTest extends TestCase
             'Download parent image (OCI layout): webdevops/toolbox:latest',
             'Build (load locally)',
             'Build (load locally, from parent artifact)',
-            'run serverspec',
+            'Build the image test runner',
+            'run image tests',
             'run structure-test',
             'Login to ghcr.io',
             'Push arch image',
@@ -271,7 +288,6 @@ final class GithubJobBuilderTest extends TestCase
             'imageParentRef' => null,
             'imageDependencies' => [],
             'baseImage' => 'alpine:3.22',
-            'serverspec' => ['DOCKER_IMAGE' => 'webdevops/base:alpine', 'DOCKER_TAG' => 'alpine', 'OS_FAMILY' => 'alpine'],
             'level' => 2,
             'hasChildren' => false,
             ...$node,

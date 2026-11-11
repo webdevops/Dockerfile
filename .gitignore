@@ -2,8 +2,5 @@
 .DS_Store
 /.cache
 /.vscode
-/tests/serverspec/vendor
-/tests/serverspec/.bundle/
-/tests/serverspec/Dockerfile*
 /ci/BLACKLIST
 *.log

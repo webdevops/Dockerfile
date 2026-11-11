@@ -18,6 +18,12 @@ class GithubJobBuilder
     private const string PARENT_OCI_TAG = 'ci-parent-image';
 
     /**
+     * Local tag of the image that runs the image tests, built from ci/image-tests/Dockerfile in each job. Its Composer
+     * layer comes from the GitHub Actions cache, so Composer only runs when ci/composer.lock changes.
+     */
+    private const string IMAGE_TEST_RUNNER = 'webdevops-image-tests';
+
+    /**
      * Every image is built for these platforms. The README banner lists them too.
      */
     public const array PLATFORMS = [
@@ -48,7 +54,7 @@ class GithubJobBuilder
      */
     public function getJobsDescription(array $node): array
     {
-        $serverSpec = $this->serverSpec($node);
+        $imageTests = $this->imageTests($node);
         $structuredTests = $this->structuredTests($node);
 
         $jobId = GithubJobBuilder::toJobId($node['name']);
@@ -105,9 +111,21 @@ class GithubJobBuilder
                                     ['build-contexts' => $this->buildContexts($imageDependencies)],
                                 ),
                             ] : null,
-                            $serverSpec ? [
-                                'name' => 'run serverspec',
-                                'run' => implode("\n", $serverSpec),
+                            $imageTests ? [
+                                'name' => 'Build the image test runner',
+                                'uses' => 'docker/build-push-action@v7',
+                                'with' => [
+                                    'context' => '.',
+                                    'file' => 'ci/image-tests/Dockerfile',
+                                    'load' => true,
+                                    'tags' => self::IMAGE_TEST_RUNNER,
+                                    'cache-from' => 'type=gha,scope=' . self::IMAGE_TEST_RUNNER . '-${{ matrix.arch }}',
+                                    'cache-to' => 'type=gha,scope=' . self::IMAGE_TEST_RUNNER . '-${{ matrix.arch }},mode=max',
+                                ],
+                            ] : null,
+                            $imageTests ? [
+                                'name' => 'run image tests',
+                                'run' => $imageTests,
                             ] : null,
                             $structuredTests ? [
                                 'name' => 'run structure-test',
@@ -376,30 +394,19 @@ class GithubJobBuilder
     }
 
     /**
-     * Shell lines of the serverspec step, none if the image has no spec.
+     * Command of the image test step, null if the image has no tests in ci/image-tests: the image test runner, built in
+     * the step before, runs the tests against the image this job built.
      *
      * @param array<string, mixed> $node
-     * @return list<string>
      */
-    private function serverSpec(array $node): array
+    private function imageTests(array $node): ?string
     {
-        $specFile = sprintf('spec/docker/%s_spec.rb', $node['image']);
-        if (!file_exists($this->rootPath . '/tests/serverspec/' . $specFile)) {
-            return [];
+        if (new ImageTests($this->rootPath)->testFile($node['image']) === null) {
+            return null;
         }
 
-        $testDockerfile = 'Dockerfile_test';
-        $specConfig = $node['serverspec'];
-        $specConfig['DOCKERFILE'] = $testDockerfile;
-        $encodedJsonConfig = base64_encode(json_encode($specConfig, JSON_THROW_ON_ERROR));
-        $script = [
-            'cd tests/serverspec',
-            'echo "FROM ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}"-' . $node['tag'] . ' >> ' . $testDockerfile,
-            'echo "COPY conf/ /" >> ' . $testDockerfile,
-        ];
-        $script[] = 'bundle install';
-        $script[] = 'bash serverspec.sh ' . $specFile . ' ' . $node['id'] . ' ' . $encodedJsonConfig . '  ' . $testDockerfile;
-        return $script;
+        return 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock ' . self::IMAGE_TEST_RUNNER . ' ' . $node['id']
+            . ' --reference ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'];
     }
 
     /**

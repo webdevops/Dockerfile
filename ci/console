@@ -10,6 +10,7 @@ use Webdevops\Build\Commands\GenerateDockerfileCommand;
 use Webdevops\Build\Commands\GenerateGithubCiCommand;
 use Webdevops\Build\Commands\GenerateProvisionCommand;
 use Webdevops\Build\Commands\GenerateReadmeBannerCommand;
+use Webdevops\Build\Commands\TestImageCommand;
 
 $application = new Application();
 
@@ -19,5 +20,6 @@ $application->add(new GenerateProvisionCommand());
 $application->add(new GenerateGithubCiCommand());
 $application->add(new GenerateReadmeBannerCommand());
 $application->add(new BuildGlyphsCommand());
+$application->add(new TestImageCommand());
 
 $application->run();

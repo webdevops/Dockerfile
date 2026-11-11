@@ -1,5 +1,5 @@
 MAKEFLAGS += --silent
-.PHONY: generate check test structure-test
+.PHONY: generate check test test-image structure-test
 
 # The containers run as the user who calls make, so that the files they write belong to them. In rootless Docker,
 # root in the container already is that user. sh replaces the entrypoint of webdevops/php, which would switch to root.
@@ -22,6 +22,15 @@ check:
 # Runs only the PHPUnit tests of ci/
 test:
 	docker run --rm $(DOCKER_USER) -e COMPOSER_HOME=/tmp/composer -v "$(CURDIR)":/app -w /app/ci --entrypoint sh webdevops/php:8.4-alpine -c 'composer install && vendor/bin/phpunit'
+
+# Runs the image tests of IMAGE (webdevops/<image>:<tag>) against a container of REFERENCE, by default IMAGE itself,
+# e.g. make test-image IMAGE=webdevops/php-nginx:8.5 REFERENCE=my-build. The tests run in a container of
+# ci/image-tests/Dockerfile, which starts the container of the image through the Docker socket.
+DOCKER_SOCKET ?= /var/run/docker.sock
+test-image:
+	$(if $(IMAGE),,$(error Name the image to test, e.g. make test-image IMAGE=webdevops/php-nginx:8.5))
+	docker build --quiet --tag webdevops-image-tests --file ci/image-tests/Dockerfile . >/dev/null
+	docker run --rm --volume "$(DOCKER_SOCKET)":/var/run/docker.sock webdevops-image-tests $(IMAGE) $(if $(REFERENCE),--reference $(REFERENCE))
 
 structure-test:
 	cd tests/structure-test && ./run.sh

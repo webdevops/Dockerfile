@@ -5,7 +5,7 @@ docker:
   # This tag is also published as latest
   autoLatestTag: 'ubuntu-22.04'
 
-# Settings of the serverspec tests, per image tag
+# Settings of the image tests (ci/console test:image), per image tag
 dockerTest:
   configuration:
     imageConfigurationRegex: ':(?P<OS_FAMILY>alpine|debian|ubuntu|centos)-?(?P<OS_VERSION>[^-]+)?'

@@ -54,7 +54,7 @@ class FileReader
     }
 
     /**
-     * The build tree node of a generated Dockerfile: image, tag, parent image and test settings.
+     * The build tree node of a generated Dockerfile: image, tag and parent image.
      *
      * @param string $dockerfile path relative to the repository root, e.g. docker/base/alpine/Dockerfile
      * @return array<string, mixed>
@@ -75,8 +75,6 @@ class FileReader
         $imageName = $headerMatches[1];
         $tagName = $headerMatches[2];
         $id = 'webdevops/' . $imageName . ':' . $tagName;
-        $regex = '/' . $this->settings['dockerTest']['configuration']['imageConfigurationRegex'] . '/';
-        preg_match_all($regex, $id, $serverSpecMatches);
         $node = [
             'id' => $id,
             'name' => $id,
@@ -90,20 +88,7 @@ class FileReader
             'imageDependencies' => [],
             // Image of the last FROM line, which the final stage builds on, e.g. "php:8.5-fpm-bookworm"
             'baseImage' => null,
-            'serverspec' => [
-                'DOCKER_IMAGE' => $id,
-                'DOCKER_TAG' => $tagName,
-                'OS_FAMILY' => $serverSpecMatches['OS_FAMILY'][0] ?? $this->settings['dockerTest']['configuration']['default']['OS_FAMILY'],
-                'OS_VERSION' => $serverSpecMatches['OS_VERSION'][0] ?? $this->settings['dockerTest']['configuration']['default']['OS_VERSION'],
-            ],
         ];
-        // Additional serverSpec variables (only first match)
-        foreach ($this->settings['dockerTest']['configuration']['image'] as $regex => $variables) {
-            if (preg_match('#' . $regex . '#i', $id)) {
-                $node['serverspec'] = array_merge($node['serverspec'], $variables);
-                break;
-            }
-        }
 
         // Only internal images must be contained in build tree
         preg_match_all('/^FROM\s+(?:--\S+\s+)*(\S+)(?:\s+AS\s+\S+)?\s*$/mi', $content, $fromMatches);

@@ -1,0 +1,7 @@
+# Build context of ci/image-tests/Dockerfile, which runs from the repository root. The images under docker/ have
+# their own directories as build context, so this file does not apply to them.
+*
+!ci/
+!conf/
+ci/vendor/
+ci/var/
