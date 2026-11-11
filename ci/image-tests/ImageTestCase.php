@@ -28,12 +28,13 @@ use function strtolower;
 use function trim;
 
 /**
- * Base class of the tests of one image. The tests of a class run against one container of the image, which starts
+ * Base class of the tests of one image. Most tests of a class run against one container of the image, which starts
  * with the image's own command, e.g. supervisord with its services. The files of Fixtures/ are copied into its root
- * directory first, so /app holds the pages that the web server tests request, and hooks mark that they ran.
+ * directory first, so /app holds the pages that the web server tests request.
  *
- * Tests of environment variables and commands start further containers of the image with startContainer() and
- * runContainer(); they get the same files.
+ * Tests of environment variables, commands and hooks start further containers of the image with startContainer()
+ * and runContainer(). They also get the files of Hooks/, scripts that mark that a hook ran. The container of the
+ * class does not, so that the hook directories there are the image's own.
  */
 abstract class ImageTestCase extends TestCase
 {
@@ -115,6 +116,8 @@ abstract class ImageTestCase extends TestCase
 
     private const string FIXTURES = __DIR__ . '/Fixtures';
 
+    private const string HOOKS = __DIR__ . '/Hooks';
+
     private static ?Container $container = null;
 
     /**
@@ -175,9 +178,12 @@ abstract class ImageTestCase extends TestCase
         yield 'https' => ['https'];
     }
 
+    /**
+     * The image under test; also in data providers, which run before setUpBeforeClass().
+     */
     protected static function image(): ImageUnderTest
     {
-        return self::$image ?? throw new LogicException('The image is set in setUpBeforeClass().');
+        return self::$image ??= ImageUnderTest::fromEnvironment();
     }
 
     protected static function container(): Container
@@ -205,7 +211,13 @@ abstract class ImageTestCase extends TestCase
      */
     protected function startContainer(string $name, array $environment = [], array $command = []): Container
     {
-        return self::$containers[$name] ??= Container::start(self::image()->reference, [self::FIXTURES], self::labels(), $environment, $command);
+        if (!isset(self::$containers[$name])) {
+            self::$containers[$name] = Container::start(self::image()->reference, [self::FIXTURES, self::HOOKS], self::labels(), $environment, $command);
+            // its services have not had their time yet
+            self::$waitedForAllAttempts = false;
+        }
+
+        return self::$containers[$name];
     }
 
     /**
@@ -220,14 +232,21 @@ abstract class ImageTestCase extends TestCase
 
     /**
      * The environment container of the class: started with the image's command and every variable of ENVIRONMENT, and
-     * SERVICE_CRON_OPTS for the cron of the distribution.
+     * SERVICE_CRON_OPTS for the cron of the distribution. php-test.php is also in its document root.
      */
     protected function environmentContainer(): Container
     {
-        return $this->startContainer('environment', [
+        $started = isset(self::$containers['environment']);
+        $container = $this->startContainer('environment', [
             ...static::ENVIRONMENT,
             'SERVICE_CRON_OPTS' => self::cronOptions(),
         ]);
+        if (!$started) {
+            // the PHP test page in the document root of WEB_DOCUMENT_ROOT
+            $this->assertCommandSucceeds('cp /app/php-test.php ' . escapeshellarg(static::ENVIRONMENT['WEB_DOCUMENT_ROOT']) . '/', $container);
+        }
+
+        return $container;
     }
 
     /**
@@ -245,7 +264,8 @@ abstract class ImageTestCase extends TestCase
      */
     protected function commandLines(?Container $container = null): array
     {
-        return $this->lines($this->stdout('for file in /proc/[0-9]*/cmdline; do tr "\\000" " " < "$file"; echo; done', $container));
+        // a process may exit while the loop runs, so errors and the exit code do not count
+        return $this->lines($this->execute('for file in /proc/[0-9]*/cmdline; do tr "\\000" " " 2>/dev/null < "$file"; echo; done', $container)->stdout);
     }
 
     /**
@@ -257,7 +277,7 @@ abstract class ImageTestCase extends TestCase
      */
     protected function runContainer(array $command, array $environment = []): CommandResult
     {
-        return Container::run(self::image()->reference, [self::FIXTURES], self::labels(), $environment, $command);
+        return Container::run(self::image()->reference, [self::FIXTURES, self::HOOKS], self::labels(), $environment, $command);
     }
 
     /**

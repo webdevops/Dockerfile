@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace Webdevops\Build\ImageTests\Checks;
 
+use LogicException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Webdevops\Build\ImageTests\Docker\Container;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 use function implode;
 use function preg_grep;
+use function preg_quote;
 use function preg_match_all;
 use function sort;
 use function sprintf;
 
 /**
  * The services that supervisord starts, the hooks they source and their options, see docs/customization.md and
- * docs/environment-variables.md. The test class names its services in SERVICES. Fixtures/ adds a hook to the hook
+ * docs/environment-variables.md. The test class names its services in SERVICES. Hooks/ adds a hook to the hook
  * directory of each service that marks that it ran.
  *
  * @phpstan-require-extends ImageTestCase
@@ -29,6 +31,7 @@ trait ServiceChecks
     private const array HOOK_DIRECTORIES = [
         'apache' => 'httpd.d',
         'cron' => 'cron.d',
+        'dnsmasq' => 'dnsmasq.d',
         'nginx' => 'nginx.d',
         'php-fpm' => 'php-fpm.d',
         'postfix' => 'postfix.d',
@@ -36,16 +39,12 @@ trait ServiceChecks
         'syslog' => 'syslog-ng.d',
     ];
 
-    /**
-     * In the environment container: in the container of the class, other checks may start more services.
-     */
     public function testSupervisordStartsTheServicesOfTheImage(): void
     {
         $expected = self::services();
         sort($expected);
-        $container = $this->environmentContainer();
-        $this->eventually(function () use ($expected, $container): void {
-            self::assertSame($expected, $this->runningServices($container));
+        $this->eventually(function () use ($expected): void {
+            self::assertSame($expected, $this->runningServices());
         });
     }
 
@@ -56,15 +55,19 @@ trait ServiceChecks
     {
         yield 'supervisord' => ['supervisor.d'];
         foreach (self::services() as $service) {
-            yield $service => [self::HOOK_DIRECTORIES[$service]];
+            yield $service => [self::HOOK_DIRECTORIES[$service] ?? throw new LogicException(sprintf('ServiceChecks knows no hook directory of the service %s.', $service))];
         }
     }
 
+    /**
+     * In the environment container, which has the hooks of Hooks/.
+     */
     #[DataProvider('hookDirectories')]
     public function testServiceSourcesItsHooksAsRoot(string $directory): void
     {
-        $this->eventually(function () use ($directory): void {
-            self::assertSame("root\n", $this->stdout('cat /tmp/image-tests/hooks/' . $directory . ' 2>&1 || true'));
+        $container = $this->environmentContainer();
+        $this->eventually(function () use ($directory, $container): void {
+            self::assertSame("root\n", $this->stdout('cat /tmp/image-tests/hooks/' . $directory . ' 2>&1 || true', $container));
         });
     }
 
@@ -77,7 +80,7 @@ trait ServiceChecks
     public static function serviceOptions(): iterable
     {
         $programs = [
-            'cron' => ['SERVICE_CRON_OPTS', '#^/usr/sbin/(cron -f -L 15|crond -f -l 8)$#'],
+            'cron' => ['SERVICE_CRON_OPTS', '#^/usr/sbin/' . (self::image()->isAlpine() ? 'crond' : 'cron') . ' -f ' . preg_quote(self::cronOptions(), '#') . '$#'],
             'syslog' => ['SERVICE_SYSLOG_OPTS', '#^syslog-ng -F .* --stderr$#'],
             'ssh' => ['SERVICE_SSH_OPTS', '#^sshd: /usr/sbin/sshd -D -e( |$)#'],
             'nginx' => ['SERVICE_NGINX_OPTS', '#^nginx: master process /usr/sbin/nginx -g daemon off; -q$#'],

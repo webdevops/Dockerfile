@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Webdevops\Build\ImageTests\Checks;
 
-use Webdevops\Build\ImageTests\Docker\Container;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 /**
@@ -20,7 +19,7 @@ trait PhpWebEnvironmentChecks
         $names = ['memory_limit', 'max_execution_time', 'max_input_time', 'max_input_vars', 'date.timezone', 'sendmail_path'];
         $body = $this->request(
             'http://localhost/php-test.php?test=ini_get&names=' . implode(',', $names),
-            container: $this->phpEnvironmentContainer(),
+            container: $this->environmentContainer(),
         );
 
         self::assertSame([
@@ -39,7 +38,7 @@ trait PhpWebEnvironmentChecks
      */
     public function testWebServerAnswers504AfterWebPhpTimeout(): void
     {
-        $container = $this->phpEnvironmentContainer();
+        $container = $this->environmentContainer();
         // wait for the web server and PHP-FPM
         $this->request('http://localhost/php-test.php?test=sha1', container: $container);
 
@@ -47,15 +46,5 @@ trait PhpWebEnvironmentChecks
             "curl --silent --output /dev/null --write-out '%{http_code}' 'http://localhost/php-test.php?test=sleep&seconds=5'",
             $container,
         ));
-    }
-
-    /**
-     * The environment container with php-test.php in its document root.
-     */
-    private function phpEnvironmentContainer(): Container
-    {
-        $container = $this->environmentContainer();
-        $this->assertCommandSucceeds('cp /app/php-test.php ' . static::ENVIRONMENT['WEB_DOCUMENT_ROOT'] . '/php-test.php', $container);
-        return $container;
     }
 }

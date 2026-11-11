@@ -13,8 +13,8 @@ use function str_contains;
 use function trim;
 
 /**
- * The commands of the entrypoint and the scripts in /entrypoint.d, see docs/customization.md. Fixtures/ adds a script
- * to /entrypoint.d and the command image-test to /opt/docker/bin/entrypoint.d.
+ * The commands of the entrypoint and the scripts in /entrypoint.d, see docs/customization.md. Hooks/ adds a script to
+ * /entrypoint.d and the command image-test to /opt/docker/bin/entrypoint.d.
  *
  * @phpstan-require-extends ImageTestCase
  */
@@ -22,7 +22,7 @@ trait EntrypointChecks
 {
     public function testEntrypointSourcesEntrypointDBeforeEveryCommand(): void
     {
-        self::assertSame("root\n", $this->stdout('cat /tmp/image-tests/entrypoint.d'), 'with supervisord');
+        self::assertSame("root\n", $this->stdout('cat /tmp/image-tests/entrypoint.d', $this->environmentContainer()), 'with supervisord');
 
         $result = $this->runContainer(['cat', '/tmp/image-tests/entrypoint.d']);
         self::assertSame([0, "root\n"], [$result->exitCode, $result->stdout], $result->describe());

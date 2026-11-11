@@ -48,7 +48,6 @@ trait PostfixChecks
         }
 
         $container = $this->mailContainer();
-        $this->assertCommandSucceeds('cp /app/php-test.php ' . static::ENVIRONMENT['WEB_DOCUMENT_ROOT'] . '/php-test.php', $container);
 
         self::assertSame('sent', $this->request('http://localhost/php-test.php?test=mail', container: $container));
         $this->assertMailArrived('fpm-fcgi', $container);

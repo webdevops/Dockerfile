@@ -8,7 +8,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 /**
- * docker-service installs, enables and starts the services that webdevops/base does not run by default.
+ * docker-service installs, enables and starts the services that webdevops/base does not run by default. It does so in a
+ * container of its own, so that the container of the class keeps the services of the image.
  *
  * @phpstan-require-extends ImageTestCase
  */
@@ -31,11 +32,12 @@ trait AdditionalServicesChecks
     #[DataProvider('additionalServices')]
     public function testAdditionalServiceStarts(string $service): void
     {
-        $this->assertCommandSucceeds('docker-service install ' . $service);
-        $this->assertCommandSucceeds('docker-service enable ' . $service);
-        $this->assertCommandSucceeds('docker-service start ' . $service);
-        $this->eventually(function () use ($service): void {
-            $result = $this->execute('docker-service check ' . $service);
+        $container = $this->startContainer('additional-services');
+        $this->assertCommandSucceeds('docker-service install ' . $service, $container);
+        $this->assertCommandSucceeds('docker-service enable ' . $service, $container);
+        $this->assertCommandSucceeds('docker-service start ' . $service, $container);
+        $this->eventually(function () use ($service, $container): void {
+            $result = $this->execute('docker-service check ' . $service, $container);
             self::assertStringContainsString('ok', $result->stdout, $result->describe());
             self::assertSame(0, $result->exitCode, $result->describe());
         }, 5);
