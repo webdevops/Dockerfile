@@ -25,6 +25,7 @@ final readonly class ImageUnderTest
      * @param string $osFamily alpine, debian or ubuntu
      * @param string $osVersion e.g. 3, 12 or 22.04; empty for the Alpine tags of the base images
      * @param bool $phpOfficial whether the image builds on the official PHP image
+     * @param string $run the run of ci/console test:image, which labels the containers; empty outside it
      */
     public function __construct(
         public string $name,
@@ -32,6 +33,7 @@ final readonly class ImageUnderTest
         public string $osFamily,
         public string $osVersion,
         public bool $phpOfficial,
+        public string $run = '',
     ) {
     }
 
@@ -48,6 +50,7 @@ final readonly class ImageUnderTest
             self::environment('OS_FAMILY'),
             self::environment('OS_VERSION'),
             self::environment('PHP_OFFICIAL') === '1',
+            self::environment('RUN'),
         );
     }
 

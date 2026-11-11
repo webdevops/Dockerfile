@@ -394,8 +394,8 @@ class GithubJobBuilder
     }
 
     /**
-     * Command of the image test step, null if the image has no tests in ci/image-tests: the image test runner, built in
-     * the step before, runs the tests against the image this job built.
+     * Command of the image test step, null if the image has no tests in ci/image-tests: make test-image-run, the command
+     * of the docs, runs the tests against the image this job built, with the runner that the step before built.
      *
      * @param array<string, mixed> $node
      */
@@ -405,8 +405,8 @@ class GithubJobBuilder
             return null;
         }
 
-        return 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock ' . self::IMAGE_TEST_RUNNER . ' ' . $node['id']
-            . ' --reference ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'];
+        return 'make test-image-run IMAGE=' . $node['id']
+            . ' REFERENCE=ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'];
     }
 
     /**

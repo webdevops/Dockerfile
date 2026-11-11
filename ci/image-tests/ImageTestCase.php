@@ -10,15 +10,19 @@ use PHPUnit\Framework\TestCase;
 use Webdevops\Build\ImageTests\Docker\CommandResult;
 use Webdevops\Build\ImageTests\Docker\Container;
 use Webdevops\Build\ImageTests\Docker\FileInfo;
+use Webdevops\Build\ImageTests;
 use Webdevops\Build\ImageTests\Docker\ListeningSockets;
 
+use function array_any;
 use function array_filter;
 use function array_map;
 use function array_values;
 use function escapeshellarg;
 use function explode;
+use function implode;
 use function sleep;
 use function sprintf;
+use function str_contains;
 use function str_split;
 use function strtolower;
 use function trim;
@@ -41,10 +45,21 @@ abstract class ImageTestCase extends TestCase
 
     private static ?Container $container = null;
 
+    /**
+     * Whether a check of this class already waited for all its attempts. The services then had their time to start,
+     * so later checks try only once, and a broken image fails in minutes, not in hours.
+     */
+    private static bool $waitedForAllAttempts = false;
+
     public static function setUpBeforeClass(): void
     {
         self::$image = ImageUnderTest::fromEnvironment();
-        self::$container = Container::start(self::$image->reference, __DIR__ . '/Fixtures');
+        self::$waitedForAllAttempts = false;
+        self::$container = Container::start(
+            self::$image->reference,
+            __DIR__ . '/Fixtures',
+            self::$image->run === '' ? [] : [ImageTests::CONTAINER_LABEL => self::$image->run],
+        );
     }
 
     public static function tearDownAfterClass(): void
@@ -108,10 +123,15 @@ abstract class ImageTestCase extends TestCase
     }
 
     /**
-     * Retries $check until it passes, while a service starts, and fails with its last failure.
+     * Retries $check until it passes, while a service starts, and fails with its last failure. Once a check of the
+     * class has used all its attempts, checks try only once.
      */
     protected function eventually(callable $check, int $attempts = self::ATTEMPTS, int $waitSeconds = self::WAIT_SECONDS): void
     {
+        if (self::$waitedForAllAttempts) {
+            $attempts = 1;
+        }
+
         $attempt = 0;
         while (true) {
             ++$attempt;
@@ -120,6 +140,7 @@ abstract class ImageTestCase extends TestCase
                 return;
             } catch (AssertionFailedError $failure) {
                 if ($attempt >= $attempts) {
+                    self::$waitedForAllAttempts = true;
                     throw $failure;
                 }
 
@@ -248,19 +269,30 @@ abstract class ImageTestCase extends TestCase
     }
 
     /**
-     * A TCP socket listens on $port, on $address if given, e.g. 0.0.0.0 or ::. Retried while the service starts.
+     * A TCP socket listens on $port, on one of $addresses if given, e.g. 0.0.0.0 or ::. Retried while the service
+     * starts.
      */
-    protected function assertListening(int $port, ?string $address = null): void
+    protected function assertListening(int $port, string ...$addresses): void
     {
-        $this->eventually(function () use ($port, $address): void {
+        $this->eventually(function () use ($port, $addresses): void {
             $sockets = ListeningSockets::read(self::container());
-            self::assertTrue($sockets->isListening($port, $address), sprintf(
-                'Nothing listens on %s:%d; listening: %s',
-                $address ?? '*',
-                $port,
+            self::assertTrue(array_any($addresses ?: [null], static fn (?string $address): bool => $sockets->isListening($port, $address)), sprintf(
+                'Nothing listens on %s; listening: %s',
+                implode(' or ', array_map(static fn (string $address): string => (str_contains($address, ':') ? '[' . $address . ']' : $address) . ':' . $port, $addresses ?: ['*'])),
                 $sockets->describe(),
             ));
         });
+    }
+
+    /**
+     * No TCP socket listens on $port on any of $addresses.
+     */
+    protected function assertNotListening(int $port, string ...$addresses): void
+    {
+        $sockets = ListeningSockets::read(self::container());
+        foreach ($addresses as $address) {
+            self::assertFalse($sockets->isListening($port, $address), sprintf('Something listens on %s:%d; listening: %s', $address, $port, $sockets->describe()));
+        }
     }
 
     /**
@@ -282,14 +314,20 @@ abstract class ImageTestCase extends TestCase
 
     /**
      * Requests $url with curl in the container, retried while the web server and PHP-FPM start, and returns the body
-     * of the first successful response.
+     * of the first successful response. $check asserts the body and is retried with the request.
+     *
+     * @param (callable(string): void)|null $check
      */
-    protected function request(string $url, string $curlOptions = ''): string
+    protected function request(string $url, string $curlOptions = '', ?callable $check = null): string
     {
         $body = '';
-        $this->eventually(function () use ($url, $curlOptions, &$body): void {
+        $this->eventually(function () use ($url, $curlOptions, $check, &$body): void {
             $result = $this->execute('curl --insecure --silent --show-error --fail ' . $curlOptions . ' ' . escapeshellarg($url));
             self::assertSame(0, $result->exitCode, $result->describe());
+            if ($check !== null) {
+                $check($result->stdout);
+            }
+
             $body = $result->stdout;
         });
 

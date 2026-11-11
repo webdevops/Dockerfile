@@ -108,7 +108,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/apache:alpine --reference ghcr.io/webdevops/apache:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
+        run: 'make test-image-run IMAGE=webdevops/apache:alpine REFERENCE=ghcr.io/webdevops/apache:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -226,7 +226,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/base-app:alpine --reference ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
+        run: 'make test-image-run IMAGE=webdevops/base-app:alpine REFERENCE=ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -349,7 +349,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/base-app:ubuntu-22.04 --reference ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
+        run: 'make test-image-run IMAGE=webdevops/base-app:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
       -
         name: 'run structure-test'
         run: |-
@@ -497,7 +497,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/base:alpine --reference ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
+        run: 'make test-image-run IMAGE=webdevops/base:alpine REFERENCE=ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -643,7 +643,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/base:ubuntu-22.04 --reference ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
+        run: 'make test-image-run IMAGE=webdevops/base:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
       -
         name: 'run structure-test'
         run: |-
@@ -791,7 +791,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/bootstrap:alpine --reference ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
+        run: 'make test-image-run IMAGE=webdevops/bootstrap:alpine REFERENCE=ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -937,7 +937,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/bootstrap:ubuntu-22.04 --reference ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
+        run: 'make test-image-run IMAGE=webdevops/bootstrap:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
       -
         name: 'run structure-test'
         run: |-
@@ -1190,7 +1190,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/nginx:alpine --reference ghcr.io/webdevops/nginx:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
+        run: 'make test-image-run IMAGE=webdevops/nginx:alpine REFERENCE=ghcr.io/webdevops/nginx:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1308,7 +1308,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache-dev:8.2 --reference ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.2 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1392,7 +1392,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache-dev:8.2-alpine --reference ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.2-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1544,7 +1544,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache-dev:8.3 --reference ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.3 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1628,7 +1628,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache-dev:8.3-alpine --reference ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.3-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1780,7 +1780,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache-dev:8.4 --reference ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.4 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1864,7 +1864,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache-dev:8.4-alpine --reference ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.4-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2016,7 +2016,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache-dev:8.5 --reference ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.5 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2100,7 +2100,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache-dev:8.5-alpine --reference ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.5-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2252,7 +2252,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache:8.2 --reference ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.2 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2359,7 +2359,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache:8.2-alpine --reference ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.2-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2534,7 +2534,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache:8.3 --reference ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.3 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2641,7 +2641,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache:8.3-alpine --reference ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.3-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2816,7 +2816,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache:8.4 --reference ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.4 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2923,7 +2923,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache:8.4-alpine --reference ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.4-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -3098,7 +3098,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache:8.5 --reference ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.5 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -3205,7 +3205,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-apache:8.5-alpine --reference ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.5-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -3380,7 +3380,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-dev:8.2 --reference ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.2 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         name: 'run structure-test'
         run: |-
@@ -3469,7 +3469,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-dev:8.2-alpine --reference ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.2-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -3626,7 +3626,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-dev:8.3 --reference ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.3 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         name: 'run structure-test'
         run: |-
@@ -3715,7 +3715,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-dev:8.3-alpine --reference ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.3-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -3872,7 +3872,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-dev:8.4 --reference ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.4 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         name: 'run structure-test'
         run: |-
@@ -3961,7 +3961,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-dev:8.4-alpine --reference ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.4-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -4118,7 +4118,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-dev:8.5 --reference ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.5 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         name: 'run structure-test'
         run: |-
@@ -4207,7 +4207,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-dev:8.5-alpine --reference ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.5-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -4364,7 +4364,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx-dev:8.2 --reference ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.2 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4448,7 +4448,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx-dev:8.2-alpine --reference ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.2-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4600,7 +4600,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx-dev:8.3 --reference ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.3 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4684,7 +4684,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx-dev:8.3-alpine --reference ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.3-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4836,7 +4836,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx-dev:8.4 --reference ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.4 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4920,7 +4920,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx-dev:8.4-alpine --reference ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.4-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -5072,7 +5072,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx-dev:8.5 --reference ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.5 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -5156,7 +5156,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx-dev:8.5-alpine --reference ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.5-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -5308,7 +5308,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx:8.2 --reference ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.2 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         name: 'run structure-test'
         run: |-
@@ -5420,7 +5420,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx:8.2-alpine --reference ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.2-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -5600,7 +5600,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx:8.3 --reference ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.3 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         name: 'run structure-test'
         run: |-
@@ -5712,7 +5712,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx:8.3-alpine --reference ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.3-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -5892,7 +5892,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx:8.4 --reference ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.4 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         name: 'run structure-test'
         run: |-
@@ -6004,7 +6004,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx:8.4-alpine --reference ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.4-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -6184,7 +6184,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx:8.5 --reference ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.5 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         name: 'run structure-test'
         run: |-
@@ -6296,7 +6296,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php-nginx:8.5-alpine --reference ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.5-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -6476,7 +6476,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php:8.2 --reference ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
+        run: 'make test-image-run IMAGE=webdevops/php:8.2 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         name: 'run structure-test'
         run: |-
@@ -6588,7 +6588,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php:8.2-alpine --reference ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php:8.2-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -6772,7 +6772,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php:8.3 --reference ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
+        run: 'make test-image-run IMAGE=webdevops/php:8.3 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         name: 'run structure-test'
         run: |-
@@ -6884,7 +6884,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php:8.3-alpine --reference ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php:8.3-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -7068,7 +7068,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php:8.4 --reference ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
+        run: 'make test-image-run IMAGE=webdevops/php:8.4 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         name: 'run structure-test'
         run: |-
@@ -7180,7 +7180,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php:8.4-alpine --reference ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php:8.4-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -7364,7 +7364,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php:8.5 --reference ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
+        run: 'make test-image-run IMAGE=webdevops/php:8.5 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         name: 'run structure-test'
         run: |-
@@ -7476,7 +7476,7 @@ jobs:
           cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
       -
         name: 'run image tests'
-        run: 'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/php:8.5-alpine --reference ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
+        run: 'make test-image-run IMAGE=webdevops/php:8.5-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         name: 'run structure-test'
         run: |-

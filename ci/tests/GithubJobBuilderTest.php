@@ -100,8 +100,7 @@ final class GithubJobBuilderTest extends TestCase
             'cache-to' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max',
         ], $steps['Build the image test runner']['with']);
         self::assertSame(
-            'docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock webdevops-image-tests webdevops/base:alpine'
-            . ' --reference ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine',
+            'make test-image-run IMAGE=webdevops/base:alpine REFERENCE=ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine',
             $steps['run image tests']['run'],
         );
     }
@@ -116,8 +115,8 @@ final class GithubJobBuilderTest extends TestCase
             'aliases' => ['webdevops/php-official:8.4'],
         ]), 'php_8-4');
 
-        self::assertStringEndsWith(
-            ' webdevops-image-tests webdevops/php:8.4 --reference ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4',
+        self::assertSame(
+            'make test-image-run IMAGE=webdevops/php:8.4 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4',
             $steps['run image tests']['run'],
         );
     }

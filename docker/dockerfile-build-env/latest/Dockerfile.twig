@@ -8,6 +8,7 @@ RUN apt-install \
         ca-certificates \
         software-properties-common \
         git \
+        make \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
     && add-apt-repository "deb [arch=$TARGETARCH] https://download.docker.com/linux/ubuntu    $(lsb_release -cs)    stable" \
     && apt-install docker-ce \

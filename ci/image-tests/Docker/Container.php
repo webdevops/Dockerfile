@@ -22,6 +22,16 @@ final readonly class Container
      */
     private const int COMMAND_TIMEOUT = 300;
 
+    /**
+     * Beginnings of the messages with which the docker command, not the command in the container, fails
+     */
+    private const array DOCKER_ERRORS = [
+        'Error response from daemon',
+        'Cannot connect to the Docker daemon',
+        'permission denied while trying to connect to the Docker daemon',
+        'OCI runtime exec failed',
+    ];
+
     private function __construct(public string $id)
     {
     }
@@ -29,11 +39,19 @@ final readonly class Container
     /**
      * Creates a container of $image with the image's own command, copies the content of the directory $files into its
      * root directory and starts it. stdin stays open, so that an image whose command is a shell, such as
-     * webdevops/bootstrap, keeps running.
+     * webdevops/bootstrap, keeps running. $labels are added to the container, e.g. to find and remove it later.
+     *
+     * @param array<string, string> $labels
      */
-    public static function start(string $image, string $files): self
+    public static function start(string $image, string $files, array $labels = []): self
     {
-        $container = new self(trim(self::docker(['create', '--interactive', $image])));
+        $arguments = ['create', '--interactive'];
+        foreach ($labels as $key => $value) {
+            $arguments[] = '--label';
+            $arguments[] = $key . '=' . $value;
+        }
+
+        $container = new self(trim(self::docker([...$arguments, $image])));
         try {
             self::docker(['cp', rtrim($files, '/') . '/.', $container->id . ':/']);
             self::docker(['start', $container->id]);
@@ -55,9 +73,11 @@ final readonly class Container
         $process->run();
 
         $stderr = $process->getErrorOutput();
-        if (str_starts_with($stderr, 'Error response from daemon')) {
-            // the container is gone or stopped, so the command did not run at all
-            throw new RuntimeException(sprintf('docker exec %s failed: %s', $this->id, trim($stderr)));
+        foreach (self::DOCKER_ERRORS as $error) {
+            if (str_starts_with($stderr, $error)) {
+                // docker failed, e.g. because the container stopped or the daemon is gone, so the command did not run
+                throw new RuntimeException(sprintf('docker exec %s failed: %s', $this->id, trim($stderr)));
+            }
         }
 
         return new CommandResult($command, $process->getOutput(), $stderr, (int)$process->getExitCode());

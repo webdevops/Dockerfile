@@ -14,7 +14,7 @@ use function putenv;
 #[CoversClass(ImageUnderTest::class)]
 final class ImageUnderTestTest extends TestCase
 {
-    private const array VARIABLES = ['NAME', 'REFERENCE', 'OS_FAMILY', 'OS_VERSION', 'PHP_OFFICIAL'];
+    private const array VARIABLES = ['NAME', 'REFERENCE', 'OS_FAMILY', 'OS_VERSION', 'PHP_OFFICIAL', 'RUN'];
 
     protected function tearDown(): void
     {
@@ -30,8 +30,11 @@ final class ImageUnderTestTest extends TestCase
         putenv('IMAGE_TEST_OS_FAMILY=alpine');
         putenv('IMAGE_TEST_OS_VERSION=3');
         putenv('IMAGE_TEST_PHP_OFFICIAL=1');
+        putenv('IMAGE_TEST_RUN=0123456789abcdef');
 
         $image = ImageUnderTest::fromEnvironment();
+
+        self::assertSame('0123456789abcdef', $image->run);
 
         self::assertSame('local/php-nginx', $image->reference);
         self::assertSame('8.3-alpine', $image->tag());
@@ -50,6 +53,7 @@ final class ImageUnderTestTest extends TestCase
         $image = ImageUnderTest::fromEnvironment();
 
         self::assertSame('webdevops/php:8.5', $image->reference);
+        self::assertSame('', $image->run, 'outside ci/console test:image');
         self::assertTrue($image->isDebianOrUbuntu());
         self::assertFalse($image->phpOfficial);
         self::assertFalse($image->hasImap(), 'PHP 8.4 and later have no imap');

@@ -8,6 +8,7 @@ use Closure;
 use InvalidArgumentException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\SignalableCommandInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,17 +16,25 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use Webdevops\Build\ImageTests;
 
+use function bin2hex;
+use function defined;
 use function is_string;
 use function preg_match;
+use function preg_split;
+use function random_bytes;
 use function sprintf;
+use function trim;
 
 use const PHP_BINARY;
+use const PREG_SPLIT_NO_EMPTY;
 
 /**
- * Runs the image tests of one webdevops image: PHPUnit starts a container of the image and checks it.
+ * Runs the image tests of one webdevops image: PHPUnit starts a container of the image and checks it. The container
+ * carries a label with the run, and the command removes it afterwards, also when PHPUnit dies or the run is
+ * interrupted.
  */
 #[AsCommand(name: 'test:image', description: 'Runs the image tests of webdevops/<image>:<tag> against a container of it')]
-class TestImageCommand extends Command
+class TestImageCommand extends Command implements SignalableCommandInterface
 {
     /**
      * @var Closure(list<string>, array<string, string>, OutputInterface): int
@@ -33,13 +42,25 @@ class TestImageCommand extends Command
     private readonly Closure $runner;
 
     /**
+     * @var Closure(string): void
+     */
+    private readonly Closure $removeContainers;
+
+    /**
+     * The run in progress, the value of the container label.
+     */
+    private ?string $run = null;
+
+    /**
      * @param string $rootPath the repository root
      * @param (Closure(list<string>, array<string, string>, OutputInterface): int)|null $runner runs PHPUnit, by default as a process
+     * @param (Closure(string): void)|null $removeContainers removes the containers of a run, by default with docker
      */
-    public function __construct(private readonly string $rootPath = __DIR__ . '/../../..', ?Closure $runner = null)
+    public function __construct(private readonly string $rootPath = __DIR__ . '/../../..', ?Closure $runner = null, ?Closure $removeContainers = null)
     {
         parent::__construct();
         $this->runner = $runner ?? $this->runProcess(...);
+        $this->removeContainers = $removeContainers ?? $this->removeLabelledContainers(...);
     }
 
     protected function configure(): void
@@ -62,20 +83,51 @@ class TestImageCommand extends Command
             throw new InvalidArgumentException(sprintf('webdevops/%s has no image tests in %s.', $matches[1], ImageTests::DIRECTORY));
         }
 
+        $this->run = bin2hex(random_bytes(8));
         $reference = $input->getOption('reference');
         $environment = [
             ImageTests::ENVIRONMENT_PREFIX . 'NAME' => $name,
             ImageTests::ENVIRONMENT_PREFIX . 'REFERENCE' => is_string($reference) && $reference !== '' ? $reference : $name,
+            ImageTests::ENVIRONMENT_PREFIX . 'RUN' => $this->run,
         ];
         foreach ($imageTests->settings($name) as $key => $value) {
             $environment[ImageTests::ENVIRONMENT_PREFIX . $key] = $value;
         }
 
-        return ($this->runner)(
-            [PHP_BINARY, $this->rootPath . '/ci/vendor/bin/phpunit', '--configuration', $this->rootPath . '/ci/phpunit.xml.dist', $this->rootPath . '/' . $testFile],
-            $environment,
-            $output,
-        );
+        try {
+            return ($this->runner)(
+                [PHP_BINARY, $this->rootPath . '/ci/vendor/bin/phpunit', '--configuration', $this->rootPath . '/ci/phpunit.xml.dist', $this->rootPath . '/' . $testFile],
+                $environment,
+                $output,
+            );
+        } finally {
+            // unless a signal removed them already
+            if ($this->run !== null) {
+                ($this->removeContainers)($this->run);
+                $this->run = null;
+            }
+        }
+    }
+
+    /**
+     * @return list<int>
+     */
+    public function getSubscribedSignals(): array
+    {
+        return defined('SIGINT') && defined('SIGTERM') ? [SIGINT, SIGTERM] : [];
+    }
+
+    /**
+     * On Ctrl-C or a stop, removes the containers of the run and exits.
+     */
+    public function handleSignal(int $signal, int|false $previousExitCode = 0): int|false
+    {
+        if ($this->run !== null) {
+            ($this->removeContainers)($this->run);
+            $this->run = null;
+        }
+
+        return 128 + $signal;
     }
 
     /**
@@ -88,5 +140,16 @@ class TestImageCommand extends Command
         return $process->run(static function (string $type, string $buffer) use ($output): void {
             $output->write($buffer);
         });
+    }
+
+    private function removeLabelledContainers(string $run): void
+    {
+        $list = new Process(['docker', 'ps', '--all', '--quiet', '--filter', 'label=' . ImageTests::CONTAINER_LABEL . '=' . $run]);
+        $list->run();
+
+        $ids = preg_split('/\s+/', trim($list->getOutput()), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        if ($ids !== []) {
+            new Process(['docker', 'rm', '--force', '--volumes', ...$ids])->run();
+        }
     }
 }

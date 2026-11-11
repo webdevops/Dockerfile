@@ -18,6 +18,7 @@ final class ImageTestsTest extends TestCase
         $imageTests = new ImageTests(TemporaryRepository::FIXTURE);
 
         self::assertSame('ci/image-tests/Images/BaseTest.php', $imageTests->testFile('base'));
+        self::assertSame('ci/image-tests/Images/PhpTest.php', $imageTests->testFile('php-official'), 'php-official has the tests of php');
         self::assertNull($imageTests->testFile('php-nginx'), 'the fixture has no PhpNginxTest.php');
     }
 

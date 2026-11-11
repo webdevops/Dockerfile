@@ -10,8 +10,6 @@ use Webdevops\Build\ImageTests\ImageTestCase;
 use function json_decode;
 use function preg_quote;
 
-use const JSON_THROW_ON_ERROR;
-
 /**
  * Requests through the web server to PHP-FPM, with Fixtures/app/php-test.php.
  *
@@ -34,13 +32,16 @@ trait PhpWebChecks
     #[DataProvider('phpSchemes')]
     public function testUploadWithoutUploadProgress(string $scheme): void
     {
-        $body = $this->request(
+        $this->request(
             $scheme . '://localhost/php-test.php?test=session_upload_progress',
             '--form PHP_SESSION_UPLOAD_PROGRESS=image-test --form file=@/app/pi-number.html',
-        );
-        self::assertSame(
-            ['upload_progress_enabled' => false, 'file_uploaded' => true, 'session_persisted' => true],
-            json_decode($body, true, 512, JSON_THROW_ON_ERROR),
+            static function (string $body): void {
+                self::assertSame(
+                    ['upload_progress_enabled' => false, 'file_uploaded' => true, 'session_persisted' => true],
+                    json_decode($body, true),
+                    $body,
+                );
+            },
         );
     }
 

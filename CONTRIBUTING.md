@@ -77,7 +77,8 @@ To run the image tests against an image you built locally:
 make test-image IMAGE=webdevops/php-nginx:8.5
 ```
 
-`REFERENCE` tests another image with the tests and settings of `IMAGE`, e.g. `REFERENCE=my-php-nginx`. Set `DOCKER_SOCKET` if your Docker socket is not `/var/run/docker.sock`.
+`REFERENCE` tests another image with the tests and settings of `IMAGE`, e.g. `REFERENCE=my-php-nginx`.
+The tests use `/var/run/docker.sock`, in rootless Docker the socket of the current Docker context; set `DOCKER_SOCKET` for another one.
 
 To run the structure tests against the images you built locally:
 
@@ -99,8 +100,9 @@ All tests of an image run against one container. Its root directory gets the fil
 | `ci/image-tests/Checks/` | The checks as traits, e.g. `PhpChecks` for every PHP image or `NginxChecks` for the images with Nginx. A test class uses the traits of its image. |
 | `ci/image-tests/ImageTestCase.php` | Starts and removes the container, and the helpers of the checks, e.g. `assertRootScript()`, `assertServiceRunning()` and `request()` |
 
-`ci/console test:image webdevops/<image>:<tag>` runs the tests of an image. It takes the distribution and its version from `dockerTest` in `conf/console.yml`.
-`make test-image` and the CI run it in a container of `ci/image-tests/Dockerfile`, which has PHP and the `docker` command and gets the Docker socket.
+`ci/console test:image webdevops/<image>:<tag>` runs the tests of an image; `webdevops/php-official` has the tests of `webdevops/php`. It takes the distribution and its version from `dockerTest` in `conf/console.yml`, and removes the container of the image afterwards, also when the run is interrupted.
+It runs in a container of `ci/image-tests/Dockerfile`, which has PHP and the `docker` command and gets the Docker socket: `make test-image` builds that image (`make test-image-runner`) and runs the tests in it (`make test-image-run`).
+The CI builds the image with the cache of GitHub Actions and then runs `make test-image-run`.
 
 ## PHP extension builds
 

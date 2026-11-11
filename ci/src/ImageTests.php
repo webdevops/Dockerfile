@@ -33,6 +33,12 @@ final readonly class ImageTests
     public const string ENVIRONMENT_PREFIX = 'IMAGE_TEST_';
 
     /**
+     * Label of the containers the tests start; its value is the run, so that ci/console test:image removes them even
+     * if PHPUnit does not get to it.
+     */
+    public const string CONTAINER_LABEL = 'webdevops.image-test';
+
+    /**
      * @param string $rootPath the repository root
      */
     public function __construct(private string $rootPath = __DIR__ . '/../..')
@@ -41,10 +47,12 @@ final readonly class ImageTests
 
     /**
      * The test class of $image relative to the repository root, e.g. ci/image-tests/Images/PhpNginxTest.php for
-     * php-nginx; null if the image has no tests.
+     * php-nginx; null if the image has no tests. php-official has the tests of php: both are built from the same
+     * Dockerfiles.
      */
     public function testFile(string $image): ?string
     {
+        $image = str_replace('-official', '', $image);
         $file = self::DIRECTORY . '/' . str_replace(' ', '', ucwords(str_replace('-', ' ', $image))) . 'Test.php';
         return is_file($this->rootPath . '/' . $file) ? $file : null;
     }
