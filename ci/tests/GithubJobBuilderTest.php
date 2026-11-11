@@ -68,6 +68,7 @@ final class GithubJobBuilderTest extends TestCase
             'cache-from' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}',
             'cache-to' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max',
         ], $job['steps'][2]['with']);
+        self::assertTrue($job['steps'][2]['continue-on-error'], 'a failure must not skip the image jobs that need this job');
     }
 
     public function testBuildsTheDirectoryOfTheDockerfile(): void

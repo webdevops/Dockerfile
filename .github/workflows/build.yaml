@@ -62,6 +62,7 @@ jobs:
       -
         name: 'Build the image test runner'
         uses: docker/build-push-action@v7
+        continue-on-error: true
         with:
           context: .
           file: ci/image-tests/Dockerfile

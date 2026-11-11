@@ -461,6 +461,9 @@ class GithubJobBuilder
                 [
                     'name' => 'Build the image test runner',
                     'uses' => 'docker/build-push-action@v7',
+                    // Only warms the cache: if it fails, e.g. on a transient error of the cache or of Docker Hub, the
+                    // image jobs that need this job still run and build the runner themselves.
+                    'continue-on-error' => true,
                     'with' => [
                         'context' => '.',
                         'file' => 'ci/image-tests/Dockerfile',
