@@ -7,6 +7,9 @@ namespace Webdevops\Build\ImageTests\Checks;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
+use function sleep;
+use function sprintf;
+
 /**
  * Checks of the images with Apache: configuration layout, TLS files, modules, and Apache answering on port 80 and
  * 443.
@@ -135,5 +138,26 @@ trait ApacheChecks
     public function testApacheRuns(): void
     {
         $this->assertServiceRunning('apache');
+    }
+
+    /**
+     * supervisorctl restart starts a new Apache, which reads a configuration added in the meantime, also when the pid
+     * file of the stopped one is left over and names a running process, here supervisord, as after an unclean exit.
+     */
+    public function testSupervisorctlRestartsApache(): void
+    {
+        $container = $this->startContainer('apache-restart');
+        $this->request('http://localhost/pi-number.html', container: $container);
+        $pidFile = self::image()->isAlpine() ? '/run/apache2/httpd.pid' : '/var/run/apache2/apache2.pid';
+        $this->assertCommandSucceeds(sprintf(
+            "printf '%%s\n' 'Header always set X-Image-Test-Restart \"restarted\"' > /opt/docker/etc/httpd/conf.d/image-test-restart.conf && supervisorctl stop apache:apached && echo 1 > %s && supervisorctl start apache:apached",
+            $pidFile,
+        ), $container);
+        $this->waitFor(function () use ($container): void {
+            self::assertMatchesRegularExpression('/^X-Image-Test-Restart: restarted\r?$/mi', $this->stdout('curl --silent --head http://localhost/pi-number.html', $container));
+        });
+        $processId = $this->stdout('supervisorctl pid apache:apached', $container);
+        sleep(self::WAIT_SECONDS * 2);
+        self::assertSame($processId, $this->stdout('supervisorctl pid apache:apached', $container), 'Apache should keep running, not be restarted over and over.');
     }
 }
