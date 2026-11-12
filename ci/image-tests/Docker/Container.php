@@ -108,10 +108,7 @@ final readonly class Container
     }
 
     /**
-     * Runs $command with sh -c in the container, as the image's user.
-     */
-    /**
-     * The container log, what the processes of the container wrote to its stdout and stderr, e.g. supervisord.
+     * The container log: what the processes of the container wrote to its stdout and stderr, e.g. supervisord.
      */
     public function logs(): string
     {
@@ -125,6 +122,9 @@ final readonly class Container
         return $process->getOutput() . $process->getErrorOutput();
     }
 
+    /**
+     * Runs $command with sh -c in the container, as the image's user.
+     */
     public function exec(string $command): CommandResult
     {
         $process = new Process(['docker', 'exec', $this->id, 'sh', '-c', $command]);
