@@ -1,0 +1,45 @@
+{% import 'docker.twig' as docker %}
+{% import 'provision.twig' as provision %}
+{% import 'environment.twig' as environment %}
+{% import 'baselayout.twig' as baselayout %}
+{% import 'images/bootstrap.twig' as bootstrap %}
+{% import 'images/base.twig' as base %}
+{% import 'images/baseapp.twig' as baseapp %}
+{% import 'images/php.twig' as php %}
+
+{{ docker.fromOfficial("php", "8.6-rc-fpm-alpine") }}
+
+{{ docker.version() }}
+
+{{ environment.general() }}
+{{ environment.base() }}
+{{ environment.baseApp() }}
+{# Check if needed #}
+{{ environment.phpOfficialSendmailWorkaround() }}
+{{ environment.phpAlpineIconvWorkaround() }}
+{{ environment.phpComposerVersion() }}
+
+{{ baselayout.copy() }}
+
+{{ docker.copy('conf/', '/opt/docker/') }}
+
+RUN set -x \
+    {{ bootstrap.alpine('3.20') }}
+
+RUN set -x \
+    {{ base.alpine() }} \
+    {{ provision.runBootstrap() }}
+
+RUN set -x \
+    {{ baseapp.alpine() }} \
+    {{ provision.runBootstrap() }}
+
+RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
+    set -x \
+    {{ php.officialAlpine(version='8.6') }} \
+    {{ provision.runBootstrap() }}
+
+{{ docker.workdir('/') }}
+{{ docker.expose('9000') }}
+{{ docker.entrypoint("/entrypoint") }}
+{{ docker.cmd("supervisord") }}

@@ -4,7 +4,7 @@
 
 ## Tags
 
-`8.2`, `8.3`, `8.4`, `8.5` (Debian 12) and `8.2-alpine`, `8.3-alpine`, `8.4-alpine`, `8.5-alpine`, for both `php-nginx` and `php-nginx-dev`.
+`8.2`, `8.3`, `8.4`, `8.5` (Debian 12), `8.6` (Debian 13) and `8.2-alpine`, `8.3-alpine`, `8.4-alpine`, `8.5-alpine`, `8.6-alpine`, for both `php-nginx` and `php-nginx-dev`. The `8.6` tags are a preview, see [PHP 8.6](php.md#php-86-preview).
 
 ## Usage
 

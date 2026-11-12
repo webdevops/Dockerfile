@@ -1,4 +1,4 @@
-{% macro official(role='', version='') -%}
+{% macro official(role='', version='', distribution='') -%}
 {% import 'services.twig' as services -%}
 {% import 'images/php-extensions.twig' as extensions -%}
     # Install php environment
@@ -16,26 +16,39 @@
         pngnq \
         pngquant \
         # Libraries
+{% if distribution == 'trixie' %}
+        libavif16 \
+        libvips42t64 \
+        libldap2 \
+        libpng16-16t64 \
+        libzip5 \
+        libmemcached11t64 \
+{% else %}
         libavif15 \
         libvips42 \
-        librabbitmq4 \
         libldap-2.5-0 \
+        libpng16-16 \
+        libzip4 \
+        libmemcached11 \
+{% endif %}
+        librabbitmq4 \
         libxslt1.1 \
         libldap-common \
         zlib1g \
         libpq5 \
-        libpng16-16 \
         libmcrypt4 \
-        libzip4 \
         libyaml-0-2 \
+        libonig5 \
 {% if version == '8.2' or version == '8.3' %}
         libc-client2007e \
+        libc-client-dev \
+        libc-client2007e-dev \
 {% endif %}
         # Dev and headers
         libavif-dev \
         libjpeg62-turbo-dev \
         libwebp-dev \
-        libfreetype6-dev \
+        libfreetype-dev \
         libbz2-dev \
         libicu-dev \
         libldap2-dev \
@@ -48,8 +61,6 @@
         libpng-dev \
         libpq-dev \
         libzip-dev \
-        libc-client-dev \
-        libc-client2007e-dev \
         libkrb5-dev \
         libvips-dev \
         librabbitmq-dev \
@@ -57,6 +68,7 @@
         libgmp-dev \
         libyaml-dev \
         libssl-dev \
+        libonig-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -70,15 +82,15 @@
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-avif --with-jpeg --with-freetype --with-webp \
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
-    && cd /usr/src/php/ext/amqp && git submodule update --init \
+    {{ extensions.amqpCheckout(version) }} \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && docker-php-ext-configure ldap \
 {% if version == '8.2' or version == '8.3' %}
     && docker-php-ext-configure ftp --with-openssl-dir \
-{% elseif version == '8.4' or version == '8.5' %}
+{% elseif version == '8.4' or version == '8.5' or version == '8.6' %}
     && docker-php-ext-configure ftp --with-ftp-ssl \
 {% endif %}
-{% if version != '8.4' and version != '8.5' %}
+{% if version != '8.4' and version != '8.5' and version != '8.6' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
 {% endif %}
     && docker-php-ext-install -j"$(nproc)" \
@@ -95,7 +107,10 @@
         gettext \
         ldap \
         mysqli \
-{% if version != '8.4' and version != '8.5' %}
+{% if version == '8.6' %}
+        mbstring \
+{% endif %}
+{% if version != '8.4' and version != '8.5' and version != '8.6' %}
         imap \
 {% endif %}
         pcntl \
@@ -111,10 +126,10 @@
         xsl \
         zip \
         gd \
-{% if version != '8.5' %}
+{% if version != '8.5' and version != '8.6' %}
         opcache \
 {% endif %}
-    {{ extensions.external() }} \
+    {{ extensions.external(version) }} \
     && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
     && echo extension=excimer.so > /usr/local/etc/php/conf.d/excimer.ini \
     && echo extension=opentelemetry.so > /usr/local/etc/php/conf.d/opentelemetry.ini \
@@ -122,13 +137,17 @@
     && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
     && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
     && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
-    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
     && echo extension=yaml.so > /usr/local/etc/php/conf.d/yaml.ini \
+{% if version != '8.6' %}
+    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
     && echo extension=xmlrpc.so > /usr/local/etc/php/conf.d/xmlrpc.ini \
+{% endif %}
     # Uninstall dev and header packages
     && apt-get purge -y -f --force-yes \
+{% if version == '8.2' or version == '8.3' %}
         libc-client-dev \
         libc-client2007e-dev \
+{% endif %}
         libkrb5-dev \
         libbz2-dev \
         libavif-dev \
@@ -149,6 +168,7 @@
         libgmp-dev \
         libyaml-dev \
         libssl-dev \
+        libonig-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
@@ -183,6 +203,7 @@
         libzip \
         libmemcached \
         yaml \
+        oniguruma \
         # Build dependencies
         linux-headers \
         autoconf \
@@ -212,6 +233,7 @@
         libzip-dev \
         libmemcached-dev \
         yaml-dev \
+        oniguruma-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -228,14 +250,14 @@
     && docker-php-ext-configure gd --with-avif --with-jpeg --with-freetype --with-webp \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
-    && cd /usr/src/php/ext/amqp && git submodule update --init \
+    {{ extensions.amqpCheckout(version) }} \
     && docker-php-ext-configure ldap \
 {% if version == '8.2' or version == '8.3' %}
     && docker-php-ext-configure ftp --with-openssl-dir \
-{% elseif version == '8.4' or version == '8.5' %}
+{% elseif version == '8.4' or version == '8.5' or version == '8.6' %}
     && docker-php-ext-configure ftp --with-ftp-ssl \
 {% endif %}
-{% if version != '8.4' and version != '8.5' %}
+{% if version != '8.4' and version != '8.5' and version != '8.6' %}
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
 {% endif %}
     && docker-php-ext-install -j"$(nproc)" \
@@ -252,7 +274,10 @@
         gettext \
         ldap \
         mysqli \
-{% if version != '8.4' and version != '8.5' %}
+{% if version == '8.6' %}
+        mbstring \
+{% endif %}
+{% if version != '8.4' and version != '8.5' and version != '8.6' %}
         imap \
 {% endif %}
         pcntl \
@@ -268,22 +293,24 @@
         xsl \
         zip \
         gd \
-{% if version != '8.5' %}
+{% if version != '8.5' and version != '8.6' %}
         opcache \
 {% endif %}
-    {{ extensions.external() }} \
+    {{ extensions.external(version) }} \
     && docker-php-ext-enable \
         apcu \
         excimer \
         opentelemetry \
         protobuf \
-        vips \
         yaml \
         redis \
-        xmlrpc \
         imagick \
         mongodb \
         memcached \
+{% if version != '8.6' %}
+        vips \
+        xmlrpc \
+{% endif %}
     # Uninstall dev and header packages
     && apk del -f --purge \
         autoconf \
@@ -314,6 +341,7 @@
         libzip-dev \
         libmemcached-dev \
         yaml-dev \
+        oniguruma-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
@@ -323,14 +351,21 @@
 
 {% macro officialDevelopment(role='', version='') -%}
 {% import 'services.twig' as services -%}
+{% import 'images/php-extensions.twig' as extensions -%}
     # Install development environment
     && BLACKFIRE_INSTALL_METHOD=raw bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
     && blackfire php:install \
-    && echo 'deb https://packages.tideways.com/apt-packages-main any-version main' | tee /etc/apt/sources.list.d/tideways.list \
-    && wget -qO - https://packages.tideways.com/key.gpg | apt-key add - \
+{% if version == '8.6' %}
+    # TODO PHP 8.6: Tideways is not installed yet, tideways-php 5.47.0 crashes
+    # PHP 8.6.0RC4 (ZTS) on startup
+{% else %}
+    && install -d -m 0755 /etc/apt/keyrings \
+    && curl -fsSL --proto '=https' --proto-redir '=https' --retry 3 https://packages.tideways.com/key.gpg -o /etc/apt/keyrings/tideways.asc \
+    && echo 'deb [signed-by=/etc/apt/keyrings/tideways.asc] https://packages.tideways.com/apt-packages-main any-version main' | tee /etc/apt/sources.list.d/tideways.list \
     && apt-install tideways-php tideways-daemon \
+{% endif %}
     && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
-        --skip-enable-extension --make-parallel-jobs="$(nproc)" xdebug/xdebug \
+        --skip-enable-extension --make-parallel-jobs="$(nproc)" {{ extensions.xdebug(version) }} \
     && rm -rf /tmp/pie \
     && docker-php-ext-enable xdebug \
     {{ services.phpDev() }}
@@ -338,9 +373,20 @@
 
 {% macro officialDevelopmentAlpine(role='', version='') -%}
 {% import 'services.twig' as services -%}
+{% import 'images/php-extensions.twig' as extensions -%}
     # Install development environment
     && bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \
+{% if version == '8.6' %}
+    # TODO PHP 8.6: `blackfire php:install` installs the glibc probe on Alpine with ZTS;
+    # install the Alpine probe directly
+    && mkdir -p /tmp/blackfire \
+    && curl -fsSL --proto '=https' --proto-redir '=https' --retry 3 "https://blackfire.io/api/v1/releases/probe/php/alpine/$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')/86-zts" | tar xz -C /tmp/blackfire \
+    && mv /tmp/blackfire/blackfire-*.so "$(php -r 'echo ini_get("extension_dir");')/blackfire.so" \
+    && printf '[blackfire]\nextension=blackfire.so\n' > /usr/local/etc/php/conf.d/99-blackfire.ini \
+    && rm -rf /tmp/blackfire \
+{% else %}
     && blackfire php:install \
+{% endif %}
     && apk-install \
         linux-headers \
         make \
@@ -349,7 +395,7 @@
         libtool \
         pkgconf \
     && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
-        --skip-enable-extension --make-parallel-jobs="$(nproc)" xdebug/xdebug \
+        --skip-enable-extension --make-parallel-jobs="$(nproc)" {{ extensions.xdebug(version) }} \
     && rm -rf /tmp/pie \
     && apk del -f --purge \
         autoconf \

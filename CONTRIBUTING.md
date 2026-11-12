@@ -119,8 +119,9 @@ controls extension loading. PIE requests remain unpinned, and compilation uses
 `nproc` parallel jobs.
 
 Protobuf, Vips and XML-RPC are built directly from their official upstream sources.
-The existing XML-RPC **1.0.0RC3** pin is preserved on all supported PHP versions.
-Protobuf on PHP 8.2–8.5 uses the latest upstream release. If a future release raises its minimum PHP
+Vips and XML-RPC are only built for PHP 8.2–8.5 (see [PHP 8.6](docs/images/php.md#php-86-preview)).
+The existing XML-RPC **1.0.0RC3** pin is preserved on those versions.
+Protobuf on PHP 8.2–8.6 uses the latest upstream release. If a future release raises its minimum PHP
 version, older PHP image builds can fail; there is no automatic fallback to an
 older release. The existing CI matrix checks compatibility across PHP versions.
 

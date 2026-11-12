@@ -106,6 +106,7 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         libzip \
         libmemcached \
         yaml \
+        oniguruma \
         # Build dependencies
         linux-headers \
         autoconf \
@@ -135,6 +136,7 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         libzip-dev \
         libmemcached-dev \
         yaml-dev \
+        oniguruma-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
@@ -206,6 +208,8 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     && phpize && ./configure --enable-protobuf \
     && make -j"$(nproc)" && make install \
     && cd / && rm -rf /tmp/protobuf /tmp/protobuf.tar.gz \
+    # Vips and XML-RPC are only built up to PHP 8.5: both are abandoned upstream and
+    # do not build against PHP 8.6.
     # Vips' GitHub tags lag behind PECL releases; use the upstream branch.
     && git clone --depth 1 https://github.com/libvips/php-vips-ext.git /tmp/vips \
     && cd /tmp/vips \
@@ -222,13 +226,13 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         excimer \
         opentelemetry \
         protobuf \
-        vips \
         yaml \
         redis \
-        xmlrpc \
         imagick \
         mongodb \
         memcached \
+        vips \
+        xmlrpc \
     # Uninstall dev and header packages
     && apk del -f --purge \
         autoconf \
@@ -259,6 +263,7 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         libzip-dev \
         libmemcached-dev \
         yaml-dev \
+        oniguruma-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \

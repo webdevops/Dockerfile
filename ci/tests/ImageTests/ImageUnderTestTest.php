@@ -59,6 +59,17 @@ final class ImageUnderTestTest extends TestCase
         self::assertFalse($image->hasImap(), 'PHP 8.4 and later have no imap');
     }
 
+    public function testVipsAndXmlrpcUpToPhp85(): void
+    {
+        foreach (['8.2', '8.5-alpine'] as $tag) {
+            $image = new ImageUnderTest('webdevops/php:' . $tag, 'webdevops/php:' . $tag, 'debian', '12', true);
+            self::assertTrue($image->hasVipsAndXmlrpc(), $tag);
+        }
+
+        $image = new ImageUnderTest('webdevops/php:8.6', 'webdevops/php:8.6', 'debian', '13', true);
+        self::assertFalse($image->hasVipsAndXmlrpc(), 'PHP 8.6 has no vips and xmlrpc');
+    }
+
     public function testNameIsRequired(): void
     {
         $this->expectException(RuntimeException::class);
