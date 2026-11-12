@@ -180,6 +180,8 @@ services:
 
 The `-dev` images start Postfix. It has no relay host and delivers each message directly to the recipient's mail server.
 
+Postfix does not use SMTPUTF8 (`smtputf8_enable = no`), so a message with UTF-8 in its headers, for example in the subject, also reaches a relay host or mail catcher that does not offer it.
+
 > [!WARNING]
 > Without a relay host, Postfix in a development container tries to deliver mail to real recipients. Send it to a mail catcher such as [Mailpit](https://mailpit.axllent.org/) instead.
 

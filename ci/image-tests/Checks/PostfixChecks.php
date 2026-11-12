@@ -55,6 +55,22 @@ trait PostfixChecks
     }
 
     /**
+     * A mail with UTF-8 in its subject reaches the relay host, which, like many mail catchers, does not offer
+     * SMTPUTF8.
+     */
+    public function testMailWithUtf8InTheSubjectReachesTheRelayHost(): void
+    {
+        $container = $this->mailContainer();
+        self::assertSame('sent', $this->stdout(
+            "php -r 'echo mail(\"someone@example.test\", \"Image test with UTF-8: Grüße\", \"Sent by the image tests\") ? \"sent\" : \"not sent\";' 2>/dev/null",
+            $container,
+        ));
+        $this->waitFor(function () use ($container): void {
+            self::assertStringContainsString('Subject: Image test with UTF-8: Grüße', $this->stdout('cat /tmp/image-tests/mail/*.eml 2>/dev/null || true', $container));
+        });
+    }
+
+    /**
      * The environment container with the SMTP sink running. A second sink exits, because the port is taken.
      */
     private function mailContainer(): Container

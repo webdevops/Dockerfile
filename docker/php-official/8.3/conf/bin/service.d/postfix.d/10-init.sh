@@ -6,10 +6,12 @@ cp -f /etc/services    /var/spool/postfix/etc/services
 
 go-replace --mode=line --regex -s '^[\s]*myhostname[\s]*=.*' -r "myhostname = $HOSTNAME"
 
-# General
+# General; without SMTPUTF8, mail with UTF-8 in its headers also reaches a relay host that does not offer it, such
+# as many mail catchers
 go-replace --mode=lineinfile --regex \
     -s '^[\s]*myhostname[\s]*=.*.*' -r "myhostname = $HOSTNAME" \
     -s '^[\s]*inet_interfaces[\s]*=.*' -r "inet_interfaces = 127.0.0.1" \
+    -s '^[\s]*smtputf8_enable[\s]*=.*' -r "smtputf8_enable = no" \
     -- /etc/postfix/main.cf
 
 ## REPLAYHOST
