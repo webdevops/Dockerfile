@@ -94,6 +94,13 @@ if [[ "$IMAGE_FAMILY" == "Alpine" ]]; then
     sed -i -e '1h;2,$H;$!d;g' -e 's/<VirtualHost.*<\/VirtualHost>/#-> removed vhost/g' /etc/apache2/conf.d/ssl.conf
 fi
 
+# Self-signed certificate for *.vm, new with every build of the image, valid for ten years
+mkdir -p /opt/docker/etc/httpd/ssl
+openssl req -new -newkey rsa:2048 -nodes -subj '/CN=*.vm' \
+    -keyout /opt/docker/etc/httpd/ssl/server.key -out /opt/docker/etc/httpd/ssl/server.csr
+openssl x509 -req -days 3650 -in /opt/docker/etc/httpd/ssl/server.csr -signkey /opt/docker/etc/httpd/ssl/server.key \
+    -extfile <(echo 'subjectAltName = DNS:*.vm') -out /opt/docker/etc/httpd/ssl/server.crt
+
 # Fix rights of ssl files
 chown -R root:root /opt/docker/etc/httpd/ssl
 find /opt/docker/etc/httpd/ssl -type d -exec chmod 750 {} \;

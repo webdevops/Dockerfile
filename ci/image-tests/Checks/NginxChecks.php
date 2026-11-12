@@ -17,6 +17,7 @@ use function escapeshellarg;
 trait NginxChecks
 {
     use PiPageChecks;
+    use TlsCertificateChecks;
 
     /**
      * @return array<string, array{string}>
@@ -126,6 +127,14 @@ trait NginxChecks
             '/opt/docker/etc/nginx/ssl/server.csr',
             '/opt/docker/etc/nginx/ssl/server.key',
         ]);
+    }
+
+    /**
+     * The image creates its own certificate for *.vm at the build, valid for ten years.
+     */
+    public function testNginxTlsCertificateIsValid(): void
+    {
+        $this->assertTlsCertificateIsValid('/opt/docker/etc/nginx/ssl');
     }
 
     #[DataProvider('nginxTlsFiles')]

@@ -16,6 +16,7 @@ use Webdevops\Build\ImageTests\ImageTestCase;
 trait ApacheChecks
 {
     use PiPageChecks;
+    use TlsCertificateChecks;
 
     /**
      * Modules that Apache loads, with the event MPM and PHP-FPM through proxy_fcgi
@@ -100,6 +101,14 @@ trait ApacheChecks
             '/opt/docker/etc/httpd/ssl/server.csr',
             '/opt/docker/etc/httpd/ssl/server.key',
         ]);
+    }
+
+    /**
+     * The image creates its own certificate for *.vm at the build, valid for ten years.
+     */
+    public function testApacheTlsCertificateIsValid(): void
+    {
+        $this->assertTlsCertificateIsValid('/opt/docker/etc/httpd/ssl');
     }
 
     #[DataProvider('apacheTlsFiles')]

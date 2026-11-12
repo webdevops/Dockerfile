@@ -20,7 +20,7 @@ services:
       - ./:/app
 ```
 
-Ports: `80` (HTTP) and `443` (HTTPS). HTTPS uses a self-signed certificate for `*.vm` that ships with the image; it expired on 2025-05-01. To use your own certificate, see [Configuration files](../customization.md#configuration-files). Nginx listens on IPv4 and IPv6; if the container has no IPv6, it listens on IPv4 only. Your own configuration files with `listen [::]` are not changed, see [Configuration files](../customization.md#configuration-files).
+Ports: `80` (HTTP) and `443` (HTTPS). HTTPS uses a self-signed certificate for `*.vm` that every build of the image creates anew, valid for ten years. To use your own certificate, see [Configuration files](../customization.md#configuration-files). Nginx listens on IPv4 and IPv6; if the container has no IPv6, it listens on IPv4 only. Your own configuration files with `listen [::]` are not changed, see [Configuration files](../customization.md#configuration-files).
 
 ## Services
 

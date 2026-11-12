@@ -32,6 +32,13 @@ mkdir -p /var/lib/nginx/logs
 ln -sf /var/lib/nginx/logs/access.log /docker.stdout
 ln -sf /var/lib/nginx/logs/error.log /docker.stderr
 
+# Self-signed certificate for *.vm, new with every build of the image, valid for ten years
+mkdir -p /opt/docker/etc/nginx/ssl
+openssl req -new -newkey rsa:2048 -nodes -subj '/CN=*.vm' \
+    -keyout /opt/docker/etc/nginx/ssl/server.key -out /opt/docker/etc/nginx/ssl/server.csr
+openssl x509 -req -days 3650 -in /opt/docker/etc/nginx/ssl/server.csr -signkey /opt/docker/etc/nginx/ssl/server.key \
+    -extfile <(echo 'subjectAltName = DNS:*.vm') -out /opt/docker/etc/nginx/ssl/server.crt
+
 # Fix rights of ssl files
 chown -R root:root /opt/docker/etc/nginx/ssl
 find /opt/docker/etc/nginx/ssl -type d -exec chmod 750 {} \;

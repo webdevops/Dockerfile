@@ -94,12 +94,6 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** all images with dnsmasq.
 - **Instead:** Use one wildcard entry.
 
-### Expired TLS certificate
-
-- **Effect:** The self-signed certificate for `*.vm` on port 443 expired on 2025-05-01.
-- **Images:** `php-nginx`, `php-nginx-dev`, `php-apache`, `php-apache-dev`, `nginx`, `apache`.
-- **Instead:** Mount your own `server.crt` and `server.key`, see [Configuration files](customization.md#configuration-files).
-
 ### Alpine 3.11
 
 - **Effect:** The `alpine` tags of `bootstrap`, `base`, `base-app`, `nginx` and `apache` are built on Alpine 3.11, which has been out of support since November 2021, with Nginx 1.16.1 and Apache 2.4.51.
