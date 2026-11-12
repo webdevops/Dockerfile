@@ -37,8 +37,9 @@ RUN set -x \
     # Init bootstrap
     && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
-    # Enable non-free
-    && sed -ri "s/(deb.*\/debian $(docker-image-info dist-codename) main)/\1 contrib non-free /" -- /etc/apt/sources.list.d/debian.sources \
+    # Enable contrib and non-free
+    && sed -ri 's/^(Components: main)$/\1 contrib non-free/' /etc/apt/sources.list.d/debian.sources \
+    && grep -q '^Components: main contrib non-free$' /etc/apt/sources.list.d/debian.sources \
     && apt-update \
     # System update
     && /usr/local/bin/apt-upgrade \

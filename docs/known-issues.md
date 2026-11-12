@@ -52,18 +52,6 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** the `-alpine` tags of `php-*`. It works in `base:alpine`.
 - **Instead:** Leave it out; `apk-install` keeps no package cache.
 
-### `contrib` and `non-free` packages in the Debian PHP images
-
-- **Effect:** Only the Debian component `main` is enabled. The image build tries to add `contrib` and `non-free`, but its `sed` command expects the one-line `sources.list` format, while Debian 12 lists its sources in `/etc/apt/sources.list.d/debian.sources`. Packages from `contrib` or `non-free`, for example `unrar` or `ttf-mscorefonts-installer`, cannot be installed.
-- **Images:** `php-*` with the Debian tags `8.2` to `8.5`.
-- **Instead:** Enable the components in your Dockerfile:
-
-  ```dockerfile
-  FROM webdevops/php:8.5
-  RUN sed -i 's/^Components: main$/Components: main contrib non-free/' /etc/apt/sources.list.d/debian.sources \
-      && apt-install unrar
-  ```
-
 ### Alpine 3.20 repository in the Alpine PHP images
 
 - **Effect:** `/etc/apk/repositories` also lists the community repository of Alpine 3.20 (`https://dl-4.alpinelinux.org/alpine/v3.20/community/`), although the images are based on a newer Alpine release, for example 3.24 in `8.5-alpine`. `apk` reads that index too, so a package that is missing from the current release can be installed from Alpine 3.20, built against older libraries.
