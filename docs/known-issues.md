@@ -28,16 +28,6 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php-*`, Debian and Alpine.
 - **Instead:** Read them with `docker compose logs`. To have PHP-FPM's messages and the PHP errors in the file of `LOG_STDERR`, also set `fpm.global.error_log: /docker.stderr`. The access log needs a pool file that sorts after `docker.conf`, see [`fpm.pool.<key>`](#fpmpoolkey-for-the-directives-of-dockerconf).
 
-### syslog on Alpine
-
-- **Effect:** syslog-ng takes messages on `/dev/log` only as a stream, but programs on Alpine send them as datagrams. The messages of cron, Postfix and `logger` are lost: they reach neither the container log nor the file of `LOG_STDOUT`.
-- **Images:** the Alpine images that run syslog-ng: `php-*` with an `-alpine` tag, and `base`, `base-app`, `nginx` and `apache` once you enable the service.
-- **Instead:** Let syslog-ng take datagrams, in a [service hook](customization.md#service-hooks) such as `/opt/docker/bin/service.d/syslog-ng.d/50-dgram.sh`:
-
-  ```bash
-  sed -i 's#unix-stream("/dev/log")#unix-dgram("/dev/log")#' /opt/docker/etc/syslog-ng/syslog-ng.conf
-  ```
-
 ### No `/app` in `nginx` and `apache`
 
 - **Effect:** The images have no `/app`, the default document root. Without your application there, Nginx answers every request with `500` (`rewrite or internal redirection cycle`), and Apache exits at the start with `DocumentRoot '/app' is not a directory` and is restarted over and over.

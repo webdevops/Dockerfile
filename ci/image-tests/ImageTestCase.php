@@ -310,11 +310,12 @@ abstract class ImageTestCase extends TestCase
     }
 
     /**
-     * A log level option of cron in Debian and Ubuntu, of BusyBox crond in Alpine.
+     * A log level option of cron in Debian and Ubuntu, of BusyBox crond in Alpine, at which cron logs each job it runs:
+     * Debian also logs its end, BusyBox its start.
      */
     protected static function cronOptions(): string
     {
-        return self::image()->isAlpine() ? '-l 8' : '-L 15';
+        return self::image()->isAlpine() ? '-l 0' : '-L 15';
     }
 
     /**

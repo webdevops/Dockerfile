@@ -42,7 +42,8 @@ trait ContainerEnvironmentChecks
 
     /**
      * TZ=Europe/Berlin: cron runs a job for the current hour in Berlin, which is not the hour in UTC. The job comes from
-     * Hooks/ and is there before cron starts; the test works out its hours, see ImageTestCase::cronHours(). Only in the
+     * Hooks/ and is there before cron starts; the test works out its hours, see ImageTestCase::cronHours().
+     * SERVICE_CRON_OPTS: cron logs the job at its log level, through syslog-ng into the file of LOG_STDOUT. Only in the
      * images that start cron.
      */
     public function testCronRunsJobsInTheTimeZoneFromTheEnvironment(): void
@@ -56,6 +57,30 @@ trait ContainerEnvironmentChecks
         $this->waitFor(function () use ($container): void {
             self::assertSame("ran\n", $this->stdout('cat /tmp/image-tests/cron-job 2>&1 || true', $container));
         }, 25, 3);
+        $this->waitFor(function () use ($container): void {
+            self::assertMatchesRegularExpression(
+                self::image()->isAlpine() ? '/crond\[\d+\]: USER root pid +\d+ cmd echo ran/' : '/CRON\[\d+\]: \(root\) END \(\[\d+\] echo ran/',
+                $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container),
+                'SERVICE_CRON_OPTS=' . self::cronOptions(),
+            );
+        }, 10, 1);
+    }
+
+    /**
+     * syslog-ng writes the messages of the programs in the container into the file of LOG_STDOUT. The environment
+     * container starts it where the image does not.
+     */
+    public function testSyslogMessagesReachTheFileFromTheEnvironment(): void
+    {
+        $container = $this->environmentContainer();
+        if (!in_array('syslog', self::services(), true)) {
+            $this->assertCommandSucceeds('docker-service enable syslog && docker-service start syslog', $container);
+        }
+
+        $this->eventually(function () use ($container): void {
+            $this->assertCommandSucceeds('logger -t image-test syslog-marker', $container);
+            self::assertStringContainsString('image-test: syslog-marker', $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container));
+        });
     }
 
     /**
