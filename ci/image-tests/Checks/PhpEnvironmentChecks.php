@@ -177,6 +177,19 @@ trait PhpEnvironmentChecks
         }
     }
 
+    /**
+     * php.error_log, in a container of its own: PHP-FPM and the PHP CLI write the messages of error_log() to that file.
+     */
+    public function testPhpErrorLogFromTheEnvironment(): void
+    {
+        $container = $this->startContainer('php-error-log', ['php.error_log' => '/tmp/image-test-php-error.log']);
+        self::assertSame('logged', $this->phpFpmBody($container, 'test=error_log'));
+        $this->assertCommandSucceeds("php -r 'error_log(\"image-test-from-the-cli\");'", $container);
+        $log = $this->stdout('cat /tmp/image-test-php-error.log', $container);
+        self::assertStringContainsString('image-test-from-php-fpm', $log);
+        self::assertStringContainsString('image-test-from-the-cli', $log);
+    }
+
     public function testPhpDismodDisablesExtensionsOfTheCliAndPhpFpm(): void
     {
         $container = $this->environmentContainer();
