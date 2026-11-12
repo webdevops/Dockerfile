@@ -10,6 +10,7 @@ use Webdevops\Build\ImageTests\ImageTestCase;
 use function array_combine;
 use function array_map;
 use function escapeshellarg;
+use function implode;
 use function json_decode;
 use function preg_quote;
 use function sprintf;
@@ -149,6 +150,21 @@ trait PhpChecks
         foreach (['main', 'contrib', 'non-free'] as $component) {
             self::assertMatchesRegularExpression('#/debian/dists/[a-z]+/' . $component . '/binary-#', $uris, $component);
         }
+    }
+
+    /**
+     * docker-php-setting, in a container of its own: it appends the setting to /opt/docker/etc/php/php.ini, which PHP
+     * and PHP-FPM read after the settings from the environment; a value that is not a number is quoted unless --raw.
+     */
+    public function testDockerPhpSettingChangesASetting(): void
+    {
+        $result = $this->runContainer(['sh', '-c', implode(' && ', [
+            'docker-php-setting memory_limit 384M > /dev/null',
+            'docker-php-setting --raw error_reporting E_ERROR > /dev/null',
+            "php -r 'echo ini_get(\"memory_limit\"), \" \", ini_get(\"error_reporting\"), PHP_EOL;'",
+            'php-fpm -i | grep "^memory_limit "',
+        ])], ['PHP_MEMORY_LIMIT' => '256M']);
+        self::assertSame([0, "384M 1\nmemory_limit => 384M => 384M\n"], [$result->exitCode, $result->stdout], $result->describe());
     }
 
     public function testPhpComputesSha1(): void

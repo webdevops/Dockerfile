@@ -11,16 +11,12 @@ PHP_VALUE_RAW=0
 PHP_KEY=
 PHP_VALUE=
 
-for arg in "$@"; do
-    case "$arg" in
-        --raw)
-            PHP_VALUE_RAW=1
-            shift
-            ;;
-    esac
-done
+if [[ "${1:-}" == "--raw" ]]; then
+    PHP_VALUE_RAW=1
+    shift
+fi
 
-if [[ "$#" -le 2 ]]; then
+if [[ "$#" -lt 2 ]]; then
     echo "Usage: $(basename "$0") [--raw] <setting> <value>"
     exit 1
 fi

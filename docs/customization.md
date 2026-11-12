@@ -69,6 +69,7 @@ These commands are installed in the images. Use them in `RUN` lines of your own 
 | --- | --- | --- |
 | `apt-install <packages>` | Runs `apt-get update`, installs the packages without recommended packages and removes the package lists again | Debian- and Ubuntu-based images, including `bootstrap:ubuntu-22.04` |
 | `apk-install <packages>` | Installs packages with `apk add --no-cache` | Alpine-based images, including `bootstrap:alpine` |
+| `docker-php-setting [--raw] <setting> <value>` | Appends a PHP setting to `/opt/docker/etc/php/php.ini`, for example `docker-php-setting memory_limit 384M`. PHP and PHP-FPM read that file after the [PHP variables](environment-variables.md#php), so the setting wins over them. A value that is not a number is written in quotes; `--raw` writes it as it is, for example `docker-php-setting --raw error_reporting E_ERROR` | `php-*` |
 | `docker-image-cleanup` | Removes package lists and caches; use it at the end of a `RUN` that installed packages | all except `toolbox`; fails in the Alpine `php-*` images, see [Known issues](known-issues.md#docker-image-cleanup-in-the-alpine-php-images) |
 | `file <path>` | Shows the type of a file, for example `file --mime-type upload.bin`; tools such as GrumPHP's BOM check call it | `php`, `php-apache`, `php-nginx` and their `-dev` images |
 | `go-replace -s <search> -r <replace> -- <file>` | Replaces text in files; the same tool fills the [placeholders](#placeholders) | all |
@@ -295,7 +296,7 @@ Images: `php-*`. Files in `/opt/docker/etc/php/`:
 | File | Content |
 | --- | --- |
 | `php.webdevops.ini` | The image's PHP defaults, followed by the values of the `php.*` and `PHP_*` variables. Loaded as `98-webdevops.ini`. At every start it is reset to the image's version and the variables are written again, so do not replace or edit it. |
-| `php.ini` | For your settings, empty by default. Loaded as `99-docker.ini`, after `98-webdevops.ini`, so its values win over the environment variables. A `:ro` mount works. |
+| `php.ini` | For your settings, empty by default; [`docker-php-setting`](#tools-for-your-dockerfile) appends to it. Loaded as `99-docker.ini`, after `98-webdevops.ini`, so its values win over the environment variables. A `:ro` mount works. |
 | `fpm/php-fpm.conf` | PHP-FPM main configuration; `FPM_PROCESS_MAX` and `fpm.global.*` are appended at every start. |
 | `fpm/pool.d/application.conf` | The PHP-FPM pool `[www]`; the `FPM_*` and `fpm.pool.*` values are appended at every start. To replace it, use `COPY` in a Dockerfile: with a `:ro` mount the container exits at start, and a read-write mount gets the values appended in the file on the host. |
 
