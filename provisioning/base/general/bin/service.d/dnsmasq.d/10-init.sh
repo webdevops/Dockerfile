@@ -25,11 +25,11 @@ if [[ -n "${VIRTUAL_HOST+x}" ]]; then
     # split comma by space
     VIRTUAL_HOST_LIST=${VIRTUAL_HOST//,/$'\n'}
 
-    # replace *.domain for dns specific .domain wildcard
-    VIRTUAL_HOST_LIST=${VIRTUAL_HOST_LIST/\*./.}
+    # replace each *.domain for dns specific .domain wildcard
+    VIRTUAL_HOST_LIST=${VIRTUAL_HOST_LIST//\*./.}
 
     # no support for .*
-    VIRTUAL_HOST_LIST=${VIRTUAL_HOST_LIST/.\*/.}
+    VIRTUAL_HOST_LIST=${VIRTUAL_HOST_LIST//.\*/.}
 
     for DOMAIN in $VIRTUAL_HOST_LIST; do
         echo "address=/${DOMAIN}/127.0.0.1" >>  /etc/dnsmasq.d/webdevops.conf
