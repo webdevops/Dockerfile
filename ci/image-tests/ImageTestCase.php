@@ -18,6 +18,7 @@ use function array_any;
 use function array_filter;
 use function array_map;
 use function array_values;
+use function count;
 use function escapeshellarg;
 use function explode;
 use function implode;
@@ -29,6 +30,7 @@ use function strtolower;
 use function trim;
 use function var_export;
 use function json_decode;
+use function preg_grep;
 
 /**
  * Base class of the tests of one image. Most tests of a class run against one container of the image, which starts
@@ -36,8 +38,8 @@ use function json_decode;
  * directory first, so /app holds the pages that the web server tests request.
  *
  * Tests of environment variables, commands and hooks start further containers of the image with startContainer()
- * and runContainer(). They also get the files of Hooks/, scripts that mark that a hook ran. The container of the
- * class does not, so that the hook directories there are the image's own.
+ * and runContainer(). They also get the files of Hooks/: scripts that mark that a hook ran, and configuration that
+ * single tests switch on. The container of the class does not, so that the hook directories there are the image's own.
  */
 abstract class ImageTestCase extends TestCase
 {
@@ -56,8 +58,9 @@ abstract class ImageTestCase extends TestCase
     protected const array SERVICES = [];
 
     /**
-     * The documented environment variables that the tests check, each set to a value other than its default. The
-     * environment container of a class starts with them, see environmentContainer().
+     * Documented environment variables, each set to a value other than its default, whose effect the tests check in
+     * the environment container of a class, see environmentContainer(). Variables whose effect would get in the way of
+     * other tests, e.g. a start of Xdebug with every request, get a container of their own in their test.
      *
      * @var array<string, string>
      */
@@ -65,54 +68,38 @@ abstract class ImageTestCase extends TestCase
         'TZ' => 'Europe/Berlin',
         'LOG_STDOUT' => '/tmp/image-test-stdout.log',
         'LOG_STDERR' => '/tmp/image-test-stderr.log',
-        'SERVICE_SUPERVISOR_OPTS' => '--loglevel=info',
-        'SERVICE_SYSLOG_OPTS' => '--stderr',
-        'SERVICE_SSH_OPTS' => '-e',
-        'SERVICE_NGINX_OPTS' => '-q',
+        'SERVICE_SUPERVISOR_OPTS' => '--loglevel=trace',
+        'SERVICE_SYSLOG_OPTS' => '--pidfile=/tmp/image-test-syslog-ng.pid',
+        'SERVICE_SSH_OPTS' => '-p 2222',
         'SERVICE_APACHE_OPTS' => '-DIMAGE_TEST',
         'WEB_DOCUMENT_ROOT' => '/app/image-test-root',
         'WEB_DOCUMENT_INDEX' => 'start.html',
-        'WEB_ALIAS_DOMAIN' => 'image-test.example',
         'WEB_PHP_TIMEOUT' => '2',
         'SERVICE_NGINX_CLIENT_MAX_BODY_SIZE' => '1k',
         'WEB_NO_CACHE_PATTERN' => '\\.imagetest$',
         'PHP_DATE_TIMEZONE' => 'Europe/Berlin',
         'PHP_DISPLAY_ERRORS' => '1',
-        'PHP_MEMORY_LIMIT' => '345M',
-        'PHP_MAX_EXECUTION_TIME' => '123',
-        'PHP_POST_MAX_SIZE' => '77M',
-        'PHP_UPLOAD_MAX_FILESIZE' => '66M',
+        'PHP_MEMORY_LIMIT' => '64M',
+        'PHP_MAX_EXECUTION_TIME' => '1',
+        'PHP_POST_MAX_SIZE' => '1M',
+        'PHP_UPLOAD_MAX_FILESIZE' => '512K',
         'PHP_OPCACHE_MEMORY_CONSUMPTION' => '200',
         'PHP_OPCACHE_MAX_ACCELERATED_FILES' => '10000',
         'PHP_OPCACHE_VALIDATE_TIMESTAMPS' => '0',
-        'PHP_OPCACHE_REVALIDATE_FREQ' => '5',
         'PHP_OPCACHE_INTERNED_STRINGS_BUFFER' => '12',
         'PHP_SENDMAIL_PATH' => '/usr/sbin/sendmail -t -i -f image-test@example.test',
-        'php.max_input_vars' => '4321',
+        'php.max_input_vars' => '10',
         'PHP_DISMOD' => 'redis,pgsql',
         'COMPOSER_VERSION' => '1',
-        'SERVICE_PHPFPM_OPTS' => '-dmax_input_time=120',
-        'FPM_PROCESS_MAX' => '11',
-        'FPM_PM_MAX_CHILDREN' => '7',
-        'FPM_PM_START_SERVERS' => '3',
-        'FPM_PM_MIN_SPARE_SERVERS' => '2',
-        'FPM_PM_MAX_SPARE_SERVERS' => '4',
-        'FPM_PROCESS_IDLE_TIMEOUT' => '15s',
-        'FPM_MAX_REQUESTS' => '500',
-        'FPM_REQUEST_TERMINATE_TIMEOUT' => '60',
-        'FPM_RLIMIT_FILES' => '4096',
+        'SERVICE_PHPFPM_OPTS' => '-dsession.name=IMAGETEST',
+        'FPM_PROCESS_MAX' => '2',
+        'FPM_REQUEST_TERMINATE_TIMEOUT' => '4',
+        'FPM_RLIMIT_FILES' => '4321',
         'FPM_RLIMIT_CORE' => '1024',
-        'fpm.global.log_limit' => '1024',
+        'fpm.global.log_level' => 'debug',
         'fpm.pool.ping.path' => '/image-test-ping',
-        'XDEBUG_MODE' => 'develop',
-        'XDEBUG_START_WITH_REQUEST' => 'no',
-        'XDEBUG_CLIENT_HOST' => 'host.image-test.example',
-        'XDEBUG_CLIENT_PORT' => '9010',
-        'XDEBUG_DISCOVER_CLIENT_HOST' => '0',
-        'XDEBUG_TRIGGER_VALUE' => 'image-test',
-        'XDEBUG_OUTPUT_DIR' => '/tmp/image-test-xdebug',
         'POSTFIX_RELAYHOST' => '[127.0.0.1]:2525',
-        'POSTFIX_MYNETWORKS' => '127.0.0.0/8 10.99.0.0/16',
+        'POSTFIX_MYNETWORKS' => '127.0.0.2/32',
     ];
 
     private static ?ImageUnderTest $image = null;
@@ -133,7 +120,7 @@ abstract class ImageTestCase extends TestCase
     /**
      * The environment and command each further container was started with, by name.
      *
-     * @var array<string, array{array<string, string>, list<string>}>
+     * @var array<string, array{array<string, string>, list<string>, bool}>
      */
     private static array $containerArguments = [];
 
@@ -223,25 +210,26 @@ abstract class ImageTestCase extends TestCase
 
     /**
      * Another container of the image, started once per class and $name, with $environment and, instead of the image's
-     * command, $command. It gets the files of Fixtures/ too and is removed after the class.
+     * command, $command. It gets the files of Fixtures/ and Hooks/ too, unless $withFiles is false, and is removed after
+     * the class.
      *
      * @param array<string, string> $environment
      * @param list<string> $command
      */
-    protected function startContainer(string $name, array $environment = [], array $command = []): Container
+    protected function startContainer(string $name, array $environment = [], array $command = [], bool $withFiles = true): Container
     {
-        if (isset(self::$containerArguments[$name]) && self::$containerArguments[$name] !== [$environment, $command]) {
+        if (isset(self::$containerArguments[$name]) && self::$containerArguments[$name] !== [$environment, $command, $withFiles]) {
             throw new LogicException(sprintf('The container "%s" was started with another environment or command; give this one another name.', $name));
         }
 
-        self::$containerArguments[$name] = [$environment, $command];
+        self::$containerArguments[$name] = [$environment, $command, $withFiles];
         if (isset(self::$containerFailures[$name])) {
             throw self::$containerFailures[$name];
         }
 
         if (!isset(self::$containers[$name])) {
             try {
-                self::$containers[$name] = Container::start(self::image()->reference, [self::FIXTURES, self::HOOKS], self::labels(), $environment, $command);
+                self::$containers[$name] = Container::start(self::image()->reference, $withFiles ? [self::FIXTURES, self::HOOKS] : [], self::labels(), $environment, $command);
             } catch (RuntimeException $runtimeException) {
                 self::$containerFailures[$name] = $runtimeException;
                 throw $runtimeException;
@@ -265,14 +253,16 @@ abstract class ImageTestCase extends TestCase
     }
 
     /**
-     * The environment container of the class: started with the image's command and every variable of ENVIRONMENT, and
-     * SERVICE_CRON_OPTS for the cron of the distribution. php-test.php is also in its document root.
+     * The environment container of the class: started with the image's command and every variable of ENVIRONMENT,
+     * SERVICE_CRON_OPTS for the cron of the distribution, and a cron job. php-test.php is also in its document root.
      */
     protected function environmentContainer(): Container
     {
         $container = $this->startContainer('environment', [
             ...static::ENVIRONMENT,
             'SERVICE_CRON_OPTS' => self::cronOptions(),
+            // a cron job from Hooks/, for the time zone, see ContainerEnvironmentChecks
+            'IMAGE_TEST_CRON' => '1',
         ]);
         // the PHP test page in the document root of WEB_DOCUMENT_ROOT, until it is there
         $documentRoot = escapeshellarg(static::ENVIRONMENT['WEB_DOCUMENT_ROOT']);
@@ -404,6 +394,49 @@ abstract class ImageTestCase extends TestCase
         self::assertIsArray($values, $output);
         /** @var array<string, string|false> $values */
         return $values;
+    }
+
+    /**
+     * Sends a request straight to PHP-FPM on 127.0.0.1:9000 in $container, with Fixtures/opt/image-tests/fastcgi-request.php,
+     * and returns the result; its stdout is the response, headers and body. $query is the query string of $script,
+     * $parameters are further FastCGI parameters, e.g. REQUEST_METHOD, and $bodyCommand is a shell command whose output
+     * is the request body. The request is not retried, see phpFpmBody().
+     *
+     * @param array<string, string> $parameters
+     */
+    protected function phpFpmRequest(Container $container, string $query, array $parameters = [], string $bodyCommand = '', string $script = '/app/php-test.php'): CommandResult
+    {
+        $command = 'php -n /opt/image-tests/fastcgi-request.php 127.0.0.1:9000 ' . escapeshellarg($script) . ' ' . escapeshellarg($query);
+        foreach ($parameters as $name => $value) {
+            $command .= ' ' . escapeshellarg($name . '=' . $value);
+        }
+
+        return $this->execute($bodyCommand === '' ? $command . ' < /dev/null' : $bodyCommand . ' | ' . $command, $container);
+    }
+
+    /**
+     * The body of the response of PHP-FPM to phpFpmRequest(), retried while PHP-FPM starts.
+     *
+     * @param array<string, string> $parameters
+     */
+    protected function phpFpmBody(Container $container, string $query, array $parameters = [], string $bodyCommand = '', string $script = '/app/php-test.php'): string
+    {
+        $response = '';
+        $this->eventually(function () use ($container, $query, $parameters, $bodyCommand, $script, &$response): void {
+            $result = $this->phpFpmRequest($container, $query, $parameters, $bodyCommand, $script);
+            self::assertSame(0, $result->exitCode, $result->describe());
+            $response = $result->stdout;
+        });
+
+        return explode("\r\n\r\n", $response, 2)[1] ?? '';
+    }
+
+    /**
+     * The number of worker processes of PHP-FPM in $container.
+     */
+    protected function phpFpmWorkers(Container $container): int
+    {
+        return count(preg_grep('/^php-fpm: pool /', $this->commandLines($container)) ?: []);
     }
 
     /**

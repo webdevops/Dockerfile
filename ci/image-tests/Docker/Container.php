@@ -110,6 +110,21 @@ final readonly class Container
     /**
      * Runs $command with sh -c in the container, as the image's user.
      */
+    /**
+     * The container log, what the processes of the container wrote to its stdout and stderr, e.g. supervisord.
+     */
+    public function logs(): string
+    {
+        $process = new Process(['docker', 'logs', $this->id]);
+        $process->setTimeout(self::COMMAND_TIMEOUT);
+        $process->run();
+        if ($process->getExitCode() !== 0) {
+            throw new RuntimeException(sprintf('docker logs %s failed: %s', $this->id, trim($process->getErrorOutput())));
+        }
+
+        return $process->getOutput() . $process->getErrorOutput();
+    }
+
     public function exec(string $command): CommandResult
     {
         $process = new Process(['docker', 'exec', $this->id, 'sh', '-c', $command]);

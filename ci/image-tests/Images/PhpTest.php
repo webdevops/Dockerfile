@@ -11,6 +11,7 @@ use Webdevops\Build\ImageTests\Checks\ContainerEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\EntrypointChecks;
 use Webdevops\Build\ImageTests\Checks\PhpEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmChecks;
+use Webdevops\Build\ImageTests\Checks\PhpFpmEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmPublicChecks;
 use Webdevops\Build\ImageTests\Checks\PhpProductionChecks;
 use Webdevops\Build\ImageTests\Checks\ServiceChecks;
@@ -31,6 +32,7 @@ final class PhpTest extends ImageTestCase
     use ServiceChecks;
     use ContainerEnvironmentChecks;
     use PhpEnvironmentChecks;
+    use PhpFpmEnvironmentChecks;
 
     protected const array SERVICES = ['cron', 'php-fpm', 'syslog'];
 }

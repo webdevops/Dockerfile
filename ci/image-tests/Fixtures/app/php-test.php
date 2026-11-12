@@ -60,6 +60,67 @@ switch ($_GET['test']) {
         echo mail('someone@example.test', 'Image test from ' . PHP_SAPI, 'Sent by the image tests') ? 'sent' : 'not sent';
         break;
 
+    case 'allocate':
+        // a string of the given number of MiB
+        $memory = str_repeat('x', (int) ($_GET['mib'] ?? 0) * 1024 * 1024);
+        echo 'allocated ' . strlen($memory);
+        break;
+
+    case 'busy':
+        // runs, without waiting, for the given number of seconds
+        $end = microtime(true) + (float) ($_GET['seconds'] ?? 0);
+        while (microtime(true) < $end) {
+            hash('sha256', 'webdevops');
+        }
+
+        echo 'finished';
+        break;
+
+    case 'warning':
+        echo $undefinedImageTestVariable;
+        echo 'done';
+        break;
+
+    case 'error_log':
+        error_log((string) ($_GET['message'] ?? ''));
+        echo 'logged';
+        break;
+
+    case 'request':
+        header('Content-Type: application/json');
+        echo json_encode([
+            'post' => count($_POST),
+            'files' => array_map(static fn (array $file): int => $file['error'], $_FILES),
+        ]);
+        break;
+
+    case 'opcache':
+        $status = opcache_get_status(false);
+        header('Content-Type: application/json');
+        echo json_encode([
+            'memory' => $status['memory_usage']['used_memory'] + $status['memory_usage']['free_memory'] + $status['memory_usage']['wasted_memory'],
+            'interned_strings_buffer' => $status['interned_strings_usage']['buffer_size'],
+            'max_cached_keys' => $status['opcache_statistics']['max_cached_keys'],
+        ]);
+        break;
+
+    case 'process':
+        header('Content-Type: application/json');
+        echo json_encode([
+            'pid' => getmypid(),
+            'limits' => file_get_contents('/proc/self/limits'),
+        ]);
+        break;
+
+    case 'date':
+        echo date_default_timezone_get() . ' ' . date('T');
+        break;
+
+    case 'session_name':
+        session_start();
+        echo session_name();
+        break;
+
     default:
         header('HTTP/1.1 500 Internal Server Error');
         echo 'ERROR: Unknown test';

@@ -13,6 +13,7 @@ use Webdevops\Build\ImageTests\Checks\ContainerEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\EntrypointChecks;
 use Webdevops\Build\ImageTests\Checks\ServiceChecks;
 use Webdevops\Build\ImageTests\Checks\WebEnvironmentChecks;
+use Webdevops\Build\ImageTests\Checks\WithoutAppDirectoryChecks;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 /**
@@ -29,6 +30,7 @@ final class ApacheTest extends ImageTestCase
     use CliWithoutApplicationUserChecks;
     use WebEnvironmentChecks;
     use ApacheEnvironmentChecks;
+    use WithoutAppDirectoryChecks;
 
     protected const array SERVICES = ['apache'];
 }

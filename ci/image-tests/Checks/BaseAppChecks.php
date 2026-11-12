@@ -28,11 +28,24 @@ trait BaseAppChecks
         }
     }
 
+    /**
+     * APPLICATION_PATH: /app exists and belongs to the application user.
+     */
+    public function testApplicationPathBelongsToTheApplicationUser(): void
+    {
+        $file = $this->file('/app');
+        self::assertTrue($file->isDirectory, '/app should be a directory');
+        self::assertSame('application', $file->owner);
+        self::assertSame('application', $file->group);
+    }
+
     public function testApplicationUser(): void
     {
         $this->assertCommandSucceeds('id application');
         self::assertContains('application', explode(' ', trim($this->stdout('id -Gn application'))), 'application should belong to the group application');
         self::assertSame('1000', trim($this->stdout('id -u application')));
+        // APPLICATION_GID
+        self::assertSame('1000', trim($this->stdout('id -g application')));
 
         $entry = explode(':', trim($this->stdout('getent passwd application')));
         self::assertSame('/home/application', $entry[5] ?? null, 'home directory of application');

@@ -15,6 +15,7 @@ use Webdevops\Build\ImageTests\Checks\PhpDevelopmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpDevelopmentEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmChecks;
+use Webdevops\Build\ImageTests\Checks\PhpFpmEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmPublicChecks;
 use Webdevops\Build\ImageTests\Checks\PhpWebDevelopmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpWebEnvironmentChecks;
@@ -40,6 +41,7 @@ final class PhpApacheDevTest extends ImageTestCase
     use ServiceChecks;
     use ContainerEnvironmentChecks;
     use PhpEnvironmentChecks;
+    use PhpFpmEnvironmentChecks;
     use PhpDevelopmentEnvironmentChecks;
     use PostfixChecks;
     use WebEnvironmentChecks;
