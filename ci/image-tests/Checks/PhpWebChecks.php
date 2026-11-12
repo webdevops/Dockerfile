@@ -99,4 +99,12 @@ trait PhpWebChecks
         $this->assertNoPhpErrors($body);
         return $body;
     }
+
+    /**
+     * PHP gets the requested host name as SERVER_NAME, in Nginx as in Apache.
+     */
+    public function testPhpFpmGetsTheHostAsServerName(): void
+    {
+        self::assertSame('image-test.example', $this->request('http://localhost/php-test.php?test=server_name', "--header 'Host: image-test.example'"));
+    }
 }

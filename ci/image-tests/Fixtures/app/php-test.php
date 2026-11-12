@@ -9,6 +9,10 @@ switch ($_GET['test']) {
         echo 'PHP ' . phpversion();
         break;
 
+    case 'server_name':
+        echo htmlspecialchars($_SERVER['SERVER_NAME'] ?? '', ENT_QUOTES);
+        break;
+
     case 'php_sapi_name':
         echo PHP_SAPI;
         break;
