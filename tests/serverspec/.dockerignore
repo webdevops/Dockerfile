@@ -1,7 +1,0 @@
-vendor
-spec
-.bundle
-Makefile
-Rakefile
-run.sh
-Gemfile*

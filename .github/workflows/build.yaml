@@ -37,6 +37,39 @@ jobs:
       -
         name: 'Run GrumPHP'
         run: 'make check'
+  image-test-runner:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'Image test runner (${{ matrix.arch }})'
+    runs-on: '${{ matrix.runner }}'
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        continue-on-error: true
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          platforms: '${{ matrix.platform }}'
+          outputs: type=cacheonly
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
   apache_alpine:
     strategy:
       fail-fast: false
@@ -51,7 +84,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/apache:alpine (${{ matrix.arch }})'
-    needs: base_alpine_publish
+    needs:
+      - base_alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -97,13 +132,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/base:alpine=oci-layout://.ci-oci-image/base_alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/apache:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/apache_spec.rb webdevops/apache:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2FwYWNoZTphbHBpbmUiLCJET0NLRVJfVEFHIjoiYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IiIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/apache:alpine REFERENCE=ghcr.io/webdevops/apache:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -164,7 +203,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/base-app:alpine (${{ matrix.arch }})'
-    needs: base_alpine_publish
+    needs:
+      - base_alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -210,13 +251,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/base:alpine=oci-layout://.ci-oci-image/base_alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/base-app_spec.rb webdevops/base-app:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2UtYXBwOmFscGluZSIsIkRPQ0tFUl9UQUciOiJhbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/base-app:alpine REFERENCE=ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -282,7 +327,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/base-app:ubuntu-22.04 (${{ matrix.arch }})'
-    needs: base_ubuntu-22-04_publish
+    needs:
+      - base_ubuntu-22-04_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -328,13 +375,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/base:ubuntu-22.04=oci-layout://.ci-oci-image/base_ubuntu-22-04:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}"-ubuntu-22.04 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/base-app_spec.rb webdevops/base-app:ubuntu-22.04 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2UtYXBwOnVidW50dS0yMi4wNCIsIkRPQ0tFUl9UQUciOiJ1YnVudHUtMjIuMDQiLCJPU19GQU1JTFkiOiJ1YnVudHUiLCJPU19WRVJTSU9OIjoiMjIuMDQiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/base-app:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
       -
         name: 'run structure-test'
         run: |-
@@ -425,7 +476,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/base:alpine (${{ matrix.arch }})'
-    needs: bootstrap_alpine_publish
+    needs:
+      - bootstrap_alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -471,13 +524,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/bootstrap:alpine=oci-layout://.ci-oci-image/bootstrap_alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/base_spec.rb webdevops/base:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2U6YWxwaW5lIiwiRE9DS0VSX1RBRyI6ImFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/base:alpine REFERENCE=ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -566,7 +623,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/base:ubuntu-22.04 (${{ matrix.arch }})'
-    needs: bootstrap_ubuntu-22-04_publish
+    needs:
+      - bootstrap_ubuntu-22-04_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -612,13 +671,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/bootstrap:ubuntu-22.04=oci-layout://.ci-oci-image/bootstrap_ubuntu-22-04:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}"-ubuntu-22.04 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/base_spec.rb webdevops/base:ubuntu-22.04 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jhc2U6dWJ1bnR1LTIyLjA0IiwiRE9DS0VSX1RBRyI6InVidW50dS0yMi4wNCIsIk9TX0ZBTUlMWSI6InVidW50dSIsIk9TX1ZFUlNJT04iOiIyMi4wNCIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/base:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
       -
         name: 'run structure-test'
         run: |-
@@ -709,7 +772,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/bootstrap:alpine (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -755,13 +820,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/bootstrap_spec.rb webdevops/bootstrap:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jvb3RzdHJhcDphbHBpbmUiLCJET0NLRVJfVEFHIjoiYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IiIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/bootstrap:alpine REFERENCE=ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -850,7 +919,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/bootstrap:ubuntu-22.04 (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -896,13 +967,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}"-ubuntu-22.04 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/bootstrap_spec.rb webdevops/bootstrap:ubuntu-22.04 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL2Jvb3RzdHJhcDp1YnVudHUtMjIuMDQiLCJET0NLRVJfVEFHIjoidWJ1bnR1LTIyLjA0IiwiT1NfRkFNSUxZIjoidWJ1bnR1IiwiT1NfVkVSU0lPTiI6IjIyLjA0IiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/bootstrap:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
       -
         name: 'run structure-test'
         run: |-
@@ -993,7 +1068,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/dockerfile-build-env:latest (${{ matrix.arch }})'
-    needs: base-app_ubuntu-22-04_publish
+    needs:
+      - base-app_ubuntu-22-04_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1038,6 +1115,18 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/base-app:ubuntu-22.04=oci-layout://.ci-oci-image/base-app_ubuntu-22-04:ci-parent-image'
+      -
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/dockerfile-build-env:latest REFERENCE=ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1098,7 +1187,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/nginx:alpine (${{ matrix.arch }})'
-    needs: base_alpine_publish
+    needs:
+      - base_alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1144,13 +1235,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/base:alpine=oci-layout://.ci-oci-image/base_alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/nginx_spec.rb webdevops/nginx:alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL25naW54OmFscGluZSIsIkRPQ0tFUl9UQUciOiJhbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/nginx:alpine REFERENCE=ghcr.io/webdevops/nginx:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1211,7 +1306,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.2 (${{ matrix.arch }})'
-    needs: php-apache_8-2_publish
+    needs:
+      - php-apache_8-2_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1257,13 +1354,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.2=oci-layout://.ci-oci-image/php-apache_8-2:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMiIsIkRPQ0tFUl9UQUciOiI4LjIiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.2 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1290,7 +1391,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.2-alpine (${{ matrix.arch }})'
-    needs: php-apache_8-2-alpine_publish
+    needs:
+      - php-apache_8-2-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1336,13 +1439,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.2-alpine=oci-layout://.ci-oci-image/php-apache_8-2-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMi1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4yLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.2-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1437,7 +1544,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.3 (${{ matrix.arch }})'
-    needs: php-apache_8-3_publish
+    needs:
+      - php-apache_8-3_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1483,13 +1592,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.3=oci-layout://.ci-oci-image/php-apache_8-3:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMyIsIkRPQ0tFUl9UQUciOiI4LjMiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.3 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1516,7 +1629,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.3-alpine (${{ matrix.arch }})'
-    needs: php-apache_8-3-alpine_publish
+    needs:
+      - php-apache_8-3-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1562,13 +1677,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.3-alpine=oci-layout://.ci-oci-image/php-apache_8-3-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguMy1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC4zLWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.3-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1663,7 +1782,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.4 (${{ matrix.arch }})'
-    needs: php-apache_8-4_publish
+    needs:
+      - php-apache_8-4_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1709,13 +1830,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.4=oci-layout://.ci-oci-image/php-apache_8-4:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguNCIsIkRPQ0tFUl9UQUciOiI4LjQiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.4 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1742,7 +1867,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.4-alpine (${{ matrix.arch }})'
-    needs: php-apache_8-4-alpine_publish
+    needs:
+      - php-apache_8-4-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1788,13 +1915,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.4-alpine=oci-layout://.ci-oci-image/php-apache_8-4-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguNC1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC40LWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.4-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1889,7 +2020,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.5 (${{ matrix.arch }})'
-    needs: php-apache_8-5_publish
+    needs:
+      - php-apache_8-5_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -1935,13 +2068,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.5=oci-layout://.ci-oci-image/php-apache_8-5:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguNSIsIkRPQ0tFUl9UQUciOiI4LjUiLCJPU19GQU1JTFkiOiJkZWJpYW4iLCJPU19WRVJTSU9OIjoiMTIiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.5 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -1968,7 +2105,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache-dev:8.5-alpine (${{ matrix.arch }})'
-    needs: php-apache_8-5-alpine_publish
+    needs:
+      - php-apache_8-5-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2014,13 +2153,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-apache:8.5-alpine=oci-layout://.ci-oci-image/php-apache_8-5-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache-dev_spec.rb webdevops/php-apache-dev:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGUtZGV2OjguNS1hbHBpbmUiLCJET0NLRVJfVEFHIjoiOC41LWFscGluZSIsIk9TX0ZBTUlMWSI6ImFscGluZSIsIk9TX1ZFUlNJT04iOiIzIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.5-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2115,7 +2258,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.2 (${{ matrix.arch }})'
-    needs: php_8-2_publish
+    needs:
+      - php_8-2_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2161,13 +2306,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.2 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2217,7 +2366,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.2-alpine (${{ matrix.arch }})'
-    needs: php_8-2-alpine_publish
+    needs:
+      - php_8-2-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2263,13 +2414,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.2-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2387,7 +2542,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.3 (${{ matrix.arch }})'
-    needs: php_8-3_publish
+    needs:
+      - php_8-3_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2433,13 +2590,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.3 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2489,7 +2650,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.3-alpine (${{ matrix.arch }})'
-    needs: php_8-3-alpine_publish
+    needs:
+      - php_8-3-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2535,13 +2698,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.3-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2659,7 +2826,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.4 (${{ matrix.arch }})'
-    needs: php_8-4_publish
+    needs:
+      - php_8-4_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2705,13 +2874,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC40IiwiRE9DS0VSX1RBRyI6IjguNCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.4 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2761,7 +2934,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.4-alpine (${{ matrix.arch }})'
-    needs: php_8-4-alpine_publish
+    needs:
+      - php_8-4-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2807,13 +2982,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC40LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjQtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.4-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -2931,7 +3110,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.5 (${{ matrix.arch }})'
-    needs: php_8-5_publish
+    needs:
+      - php_8-5_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -2977,13 +3158,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC41IiwiRE9DS0VSX1RBRyI6IjguNSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.5 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -3033,7 +3218,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-apache:8.5-alpine (${{ matrix.arch }})'
-    needs: php_8-5-alpine_publish
+    needs:
+      - php_8-5-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3079,13 +3266,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-apache_spec.rb webdevops/php-apache:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1hcGFjaGU6OC41LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjUtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.5-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -3203,7 +3394,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.2 (${{ matrix.arch }})'
-    needs: php_8-2_publish
+    needs:
+      - php_8-2_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3249,13 +3442,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.2 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         name: 'run structure-test'
         run: |-
@@ -3287,7 +3484,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.2-alpine (${{ matrix.arch }})'
-    needs: php_8-2-alpine_publish
+    needs:
+      - php_8-2-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3333,13 +3532,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.2-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -3439,7 +3642,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.3 (${{ matrix.arch }})'
-    needs: php_8-3_publish
+    needs:
+      - php_8-3_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3485,13 +3690,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.3 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         name: 'run structure-test'
         run: |-
@@ -3523,7 +3732,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.3-alpine (${{ matrix.arch }})'
-    needs: php_8-3-alpine_publish
+    needs:
+      - php_8-3-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3569,13 +3780,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.3-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -3675,7 +3890,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.4 (${{ matrix.arch }})'
-    needs: php_8-4_publish
+    needs:
+      - php_8-4_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3721,13 +3938,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC40IiwiRE9DS0VSX1RBRyI6IjguNCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.4 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         name: 'run structure-test'
         run: |-
@@ -3759,7 +3980,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.4-alpine (${{ matrix.arch }})'
-    needs: php_8-4-alpine_publish
+    needs:
+      - php_8-4-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3805,13 +4028,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC40LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjQtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.4-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -3911,7 +4138,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.5 (${{ matrix.arch }})'
-    needs: php_8-5_publish
+    needs:
+      - php_8-5_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -3957,13 +4186,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC41IiwiRE9DS0VSX1RBRyI6IjguNSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.5 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         name: 'run structure-test'
         run: |-
@@ -3995,7 +4228,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-dev:8.5-alpine (${{ matrix.arch }})'
-    needs: php_8-5-alpine_publish
+    needs:
+      - php_8-5-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4041,13 +4276,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-dev_spec.rb webdevops/php-dev:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1kZXY6OC41LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjUtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.5-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -4147,7 +4386,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.2 (${{ matrix.arch }})'
-    needs: php-nginx_8-2_publish
+    needs:
+      - php-nginx_8-2_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4193,13 +4434,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.2=oci-layout://.ci-oci-image/php-nginx_8-2:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4yIiwiRE9DS0VSX1RBRyI6IjguMiIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.2 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4226,7 +4471,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.2-alpine (${{ matrix.arch }})'
-    needs: php-nginx_8-2-alpine_publish
+    needs:
+      - php-nginx_8-2-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4272,13 +4519,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.2-alpine=oci-layout://.ci-oci-image/php-nginx_8-2-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4yLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjItYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.2-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4373,7 +4624,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.3 (${{ matrix.arch }})'
-    needs: php-nginx_8-3_publish
+    needs:
+      - php-nginx_8-3_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4419,13 +4672,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.3=oci-layout://.ci-oci-image/php-nginx_8-3:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4zIiwiRE9DS0VSX1RBRyI6IjguMyIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.3 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4452,7 +4709,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.3-alpine (${{ matrix.arch }})'
-    needs: php-nginx_8-3-alpine_publish
+    needs:
+      - php-nginx_8-3-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4498,13 +4757,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.3-alpine=oci-layout://.ci-oci-image/php-nginx_8-3-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC4zLWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjMtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.3-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4599,7 +4862,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.4 (${{ matrix.arch }})'
-    needs: php-nginx_8-4_publish
+    needs:
+      - php-nginx_8-4_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4645,13 +4910,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.4=oci-layout://.ci-oci-image/php-nginx_8-4:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC40IiwiRE9DS0VSX1RBRyI6IjguNCIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.4 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4678,7 +4947,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.4-alpine (${{ matrix.arch }})'
-    needs: php-nginx_8-4-alpine_publish
+    needs:
+      - php-nginx_8-4-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4724,13 +4995,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.4-alpine=oci-layout://.ci-oci-image/php-nginx_8-4-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC40LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjQtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.4-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4825,7 +5100,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.5 (${{ matrix.arch }})'
-    needs: php-nginx_8-5_publish
+    needs:
+      - php-nginx_8-5_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4871,13 +5148,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.5=oci-layout://.ci-oci-image/php-nginx_8-5:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC41IiwiRE9DS0VSX1RBRyI6IjguNSIsIk9TX0ZBTUlMWSI6ImRlYmlhbiIsIk9TX1ZFUlNJT04iOiIxMiIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.5 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4904,7 +5185,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx-dev:8.5-alpine (${{ matrix.arch }})'
-    needs: php-nginx_8-5-alpine_publish
+    needs:
+      - php-nginx_8-5-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -4950,13 +5233,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php-nginx:8.5-alpine=oci-layout://.ci-oci-image/php-nginx_8-5-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx-dev_spec.rb webdevops/php-nginx-dev:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueC1kZXY6OC41LWFscGluZSIsIkRPQ0tFUl9UQUciOiI4LjUtYWxwaW5lIiwiT1NfRkFNSUxZIjoiYWxwaW5lIiwiT1NfVkVSU0lPTiI6IjMiLCJQSFBfT0ZGSUNJQUwiOiIxIiwiRE9DS0VSRklMRSI6IkRvY2tlcmZpbGVfdGVzdCJ9  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.5-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -5051,7 +5338,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.2 (${{ matrix.arch }})'
-    needs: php_8-2_publish
+    needs:
+      - php_8-2_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5097,13 +5386,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjIiLCJET0NLRVJfVEFHIjoiOC4yIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.2 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         name: 'run structure-test'
         run: |-
@@ -5158,7 +5451,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.2-alpine (${{ matrix.arch }})'
-    needs: php_8-2-alpine_publish
+    needs:
+      - php_8-2-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5204,13 +5499,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjItYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMi1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.2-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -5333,7 +5632,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.3 (${{ matrix.arch }})'
-    needs: php_8-3_publish
+    needs:
+      - php_8-3_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5379,13 +5680,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjMiLCJET0NLRVJfVEFHIjoiOC4zIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.3 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         name: 'run structure-test'
         run: |-
@@ -5440,7 +5745,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.3-alpine (${{ matrix.arch }})'
-    needs: php_8-3-alpine_publish
+    needs:
+      - php_8-3-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5486,13 +5793,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjMtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMy1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.3-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -5615,7 +5926,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.4 (${{ matrix.arch }})'
-    needs: php_8-4_publish
+    needs:
+      - php_8-4_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5661,13 +5974,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjQiLCJET0NLRVJfVEFHIjoiOC40IiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.4 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         name: 'run structure-test'
         run: |-
@@ -5722,7 +6039,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.4-alpine (${{ matrix.arch }})'
-    needs: php_8-4-alpine_publish
+    needs:
+      - php_8-4-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5768,13 +6087,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjQtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguNC1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.4-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -5897,7 +6220,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.5 (${{ matrix.arch }})'
-    needs: php_8-5_publish
+    needs:
+      - php_8-5_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -5943,13 +6268,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjUiLCJET0NLRVJfVEFHIjoiOC41IiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.5 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         name: 'run structure-test'
         run: |-
@@ -6004,7 +6333,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php-nginx:8.5-alpine (${{ matrix.arch }})'
-    needs: php_8-5-alpine_publish
+    needs:
+      - php_8-5-alpine_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6050,13 +6381,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php-nginx_spec.rb webdevops/php-nginx:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1uZ2lueDo4LjUtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguNS1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.5-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -6179,7 +6514,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.2 (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6225,13 +6562,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.2 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjIiLCJET0NLRVJfVEFHIjoiOC4yIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php:8.2 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         name: 'run structure-test'
         run: |-
@@ -6286,7 +6627,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.2-alpine (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6332,13 +6675,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.2-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjItYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMi1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php:8.2-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -6465,7 +6812,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.3 (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6511,13 +6860,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.3 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjMiLCJET0NLRVJfVEFHIjoiOC4zIiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php:8.3 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         name: 'run structure-test'
         run: |-
@@ -6572,7 +6925,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.3-alpine (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6618,13 +6973,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.3-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjMtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguMy1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php:8.3-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -6751,7 +7110,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.4 (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6797,13 +7158,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.4 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjQiLCJET0NLRVJfVEFHIjoiOC40IiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php:8.4 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         name: 'run structure-test'
         run: |-
@@ -6858,7 +7223,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.4-alpine (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -6904,13 +7271,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.4-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjQtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguNC1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php:8.4-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         name: 'run structure-test'
         run: |-
@@ -7037,7 +7408,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.5 (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7083,13 +7456,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5 >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.5 eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjUiLCJET0NLRVJfVEFHIjoiOC41IiwiT1NfRkFNSUxZIjoiZGViaWFuIiwiT1NfVkVSU0lPTiI6IjEyIiwiUEhQX09GRklDSUFMIjoiMSIsIkRPQ0tFUkZJTEUiOiJEb2NrZXJmaWxlX3Rlc3QifQ==  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php:8.5 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         name: 'run structure-test'
         run: |-
@@ -7144,7 +7521,9 @@ jobs:
             runner: ubuntu-24.04-arm
             platform: linux/arm64
     name: 'webdevops/php:8.5-alpine (${{ matrix.arch }})'
-    needs: toolbox_latest_publish
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
     container: webdevops/dockerfile-build-env
@@ -7190,13 +7569,17 @@ jobs:
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
-        name: 'run serverspec'
-        run: |-
-          cd tests/serverspec
-          echo "FROM ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine >> Dockerfile_test
-          echo "COPY conf/ /" >> Dockerfile_test
-          bundle install
-          bash serverspec.sh spec/docker/php_spec.rb webdevops/php:8.5-alpine eyJET0NLRVJfSU1BR0UiOiJ3ZWJkZXZvcHNcL3BocC1vZmZpY2lhbDo4LjUtYWxwaW5lIiwiRE9DS0VSX1RBRyI6IjguNS1hbHBpbmUiLCJPU19GQU1JTFkiOiJhbHBpbmUiLCJPU19WRVJTSU9OIjoiMyIsIlBIUF9PRkZJQ0lBTCI6IjEiLCJET0NLRVJGSUxFIjoiRG9ja2VyZmlsZV90ZXN0In0=  Dockerfile_test
+        name: 'Build the image test runner'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php:8.5-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         name: 'run structure-test'
         run: |-

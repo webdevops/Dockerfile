@@ -27,6 +27,7 @@
   },
   "autoload-dev": {
     "psr-4": {
+      "Webdevops\\Build\\ImageTests\\": "image-tests/",
       "Webdevops\\Build\\Tests\\": "tests/"
     }
   },

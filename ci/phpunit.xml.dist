@@ -4,6 +4,7 @@
          bootstrap="vendor/autoload.php"
          cacheDirectory="var/phpunit"
          colors="true"
+         defaultTestSuite="ci"
          beStrictAboutOutputDuringTests="true"
          failOnRisky="true"
          failOnWarning="true"
@@ -12,6 +13,7 @@
     <testsuites>
         <testsuite name="ci">
             <directory>tests</directory>
+            <exclude>tests/Fixtures</exclude>
         </testsuite>
     </testsuites>
     <source>

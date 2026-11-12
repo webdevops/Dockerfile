@@ -72,33 +72,6 @@ final class FileReaderTest extends TestCase
         self::assertSame([], $this->info('base/alpine')['aliases']);
     }
 
-    public function testServerspecSettingsComeFromTheTag(): void
-    {
-        self::assertSame([
-            'DOCKER_IMAGE' => 'webdevops/base:ubuntu-22.04',
-            'DOCKER_TAG' => 'ubuntu-22.04',
-            'OS_FAMILY' => 'ubuntu',
-            'OS_VERSION' => '22.04',
-        ], $this->info('base/ubuntu-22.04')['serverspec']);
-    }
-
-    public function testFirstMatchingImageSettingsAreAdded(): void
-    {
-        $serverspec = $this->info('php-official/8.5-alpine')['serverspec'];
-
-        self::assertSame('alpine', $serverspec['OS_FAMILY']);
-        self::assertSame('3', $serverspec['OS_VERSION'], 'not 12 from the second matching settings');
-        self::assertSame('1', $serverspec['PHP_OFFICIAL']);
-    }
-
-    public function testDefaultServerspecSettings(): void
-    {
-        $serverspec = $this->info('toolbox/latest')['serverspec'];
-
-        self::assertSame('ubuntu', $serverspec['OS_FAMILY']);
-        self::assertSame('22.04', $serverspec['OS_VERSION']);
-    }
-
     public function testToolboxHasNoParent(): void
     {
         $node = $this->info('toolbox/latest');
@@ -115,8 +88,6 @@ final class FileReaderTest extends TestCase
         self::assertSame('webdevops/php:8.4', $node['name']);
         self::assertSame('php', $node['image']);
         self::assertSame(['webdevops/php-official:8.4'], $node['aliases']);
-        self::assertSame('webdevops/php-official:8.4', $node['serverspec']['DOCKER_IMAGE']);
-        self::assertSame('debian', $node['serverspec']['OS_FAMILY']);
     }
 
     public function testInternalParentImage(): void

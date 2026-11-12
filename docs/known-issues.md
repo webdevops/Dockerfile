@@ -82,6 +82,12 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php-dev`, `php-nginx-dev`, `php-apache-dev`.
 - **Instead:** Set the Xdebug directives in your `php.ini` or with `php.xdebug.<key>` instead of the `XDEBUG_*` variables. Or bring your `php.ini` in with `COPY`; then only the copy inside the container is changed.
 
+### `fpm.pool.<key>` for the directives of `docker.conf`
+
+- **Effect:** No effect for `listen`, `access.log`, `clear_env`, `catch_workers_output` and `decorate_workers_output`. The official PHP image sets them in the pool file `docker.conf`, which PHP-FPM reads after `application.conf`, so its values win. Other directives work, for example `fpm.pool.pm.max_requests`.
+- **Images:** `php-*`, Debian and Alpine.
+- **Instead:** Add a pool file whose name sorts after `docker.conf`, for example `zz-pool.conf` with a `[www]` section, to `/opt/docker/etc/php/fpm/pool.d/`.
+
 ### Several wildcards in `VIRTUAL_HOST`
 
 - **Effect:** Only the first `*.` entry becomes a wildcard for dnsmasq; further wildcard entries are dropped.

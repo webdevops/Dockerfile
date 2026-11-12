@@ -1,4 +1,4 @@
-# Once a month, one pull request per directory with all minor and patch updates,
+# Once a month, one pull request with all minor and patch updates of ci/,
 # also of the packages that the listed ones depend on; a new major version gets
 # a pull request of its own. Security updates come as soon as an advisory is
 # published.
@@ -27,20 +27,3 @@ updates:
           - minor
           - patch
 
-  - package-ecosystem: bundler
-    directory: /tests/serverspec
-    schedule:
-      interval: monthly
-    allow:
-      - dependency-type: all
-    cooldown:
-      default-days: 7
-    commit-message:
-      prefix: '[TASK]'
-    groups:
-      serverspec:
-        patterns:
-          - '*'
-        update-types:
-          - minor
-          - patch

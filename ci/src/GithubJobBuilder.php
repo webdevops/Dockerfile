@@ -18,6 +18,15 @@ class GithubJobBuilder
     private const string PARENT_OCI_TAG = 'ci-parent-image';
 
     /**
+     * Local tag of the image that runs the image tests, built from ci/image-tests/Dockerfile. The job
+     * IMAGE_TEST_RUNNER_JOB builds it once per architecture into the GitHub Actions cache; the image jobs load it from
+     * there, so Composer only runs when ci/composer.lock changes and only one job writes the cache.
+     */
+    private const string IMAGE_TEST_RUNNER = 'webdevops-image-tests';
+
+    public const string IMAGE_TEST_RUNNER_JOB = 'image-test-runner';
+
+    /**
      * Every image is built for these platforms. The README banner lists them too.
      */
     public const array PLATFORMS = [
@@ -48,7 +57,7 @@ class GithubJobBuilder
      */
     public function getJobsDescription(array $node): array
     {
-        $serverSpec = $this->serverSpec($node);
+        $imageTests = $this->imageTests($node);
         $structuredTests = $this->structuredTests($node);
 
         $jobId = GithubJobBuilder::toJobId($node['name']);
@@ -58,6 +67,9 @@ class GithubJobBuilder
         $hasChildren = !empty($node['hasChildren']);
         $parentJobId = $hasParent ? GithubJobBuilder::toJobId($node['parent']) : null;
         $needs = $hasParent ? $parentJobId . '_publish' : 'validate-automation';
+        if ($imageTests !== null) {
+            $needs = [$needs, self::IMAGE_TEST_RUNNER_JOB];
+        }
 
         $pushTags = [];
         $pushTags[] = '-t "' . $node['id'] . '"';
@@ -105,9 +117,20 @@ class GithubJobBuilder
                                     ['build-contexts' => $this->buildContexts($imageDependencies)],
                                 ),
                             ] : null,
-                            $serverSpec ? [
-                                'name' => 'run serverspec',
-                                'run' => implode("\n", $serverSpec),
+                            $imageTests ? [
+                                'name' => 'Build the image test runner',
+                                'uses' => 'docker/build-push-action@v7',
+                                'with' => [
+                                    'context' => '.',
+                                    'file' => 'ci/image-tests/Dockerfile',
+                                    'load' => true,
+                                    'tags' => self::IMAGE_TEST_RUNNER,
+                                    'cache-from' => $this->imageTestRunnerCache(),
+                                ],
+                            ] : null,
+                            $imageTests ? [
+                                'name' => 'run image tests',
+                                'run' => $imageTests,
                             ] : null,
                             $structuredTests ? [
                                 'name' => 'run structure-test',
@@ -376,30 +399,19 @@ class GithubJobBuilder
     }
 
     /**
-     * Shell lines of the serverspec step, none if the image has no spec.
+     * Command of the image test step, null if the image has no tests in ci/image-tests: make test-image-run, the command
+     * of the docs, runs the tests against the image this job built, with the runner that the step before built.
      *
      * @param array<string, mixed> $node
-     * @return list<string>
      */
-    private function serverSpec(array $node): array
+    private function imageTests(array $node): ?string
     {
-        $specFile = sprintf('spec/docker/%s_spec.rb', $node['image']);
-        if (!file_exists($this->rootPath . '/tests/serverspec/' . $specFile)) {
-            return [];
+        if (new ImageTests($this->rootPath)->testFile($node['image']) === null) {
+            return null;
         }
 
-        $testDockerfile = 'Dockerfile_test';
-        $specConfig = $node['serverspec'];
-        $specConfig['DOCKERFILE'] = $testDockerfile;
-        $encodedJsonConfig = base64_encode(json_encode($specConfig, JSON_THROW_ON_ERROR));
-        $script = [
-            'cd tests/serverspec',
-            'echo "FROM ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}"-' . $node['tag'] . ' >> ' . $testDockerfile,
-            'echo "COPY conf/ /" >> ' . $testDockerfile,
-        ];
-        $script[] = 'bundle install';
-        $script[] = 'bash serverspec.sh ' . $specFile . ' ' . $node['id'] . ' ' . $encodedJsonConfig . '  ' . $testDockerfile;
-        return $script;
+        return 'make test-image-run IMAGE=' . $node['id']
+            . ' REFERENCE=ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'];
     }
 
     /**
@@ -421,6 +433,53 @@ class GithubJobBuilder
         }
 
         return $script;
+    }
+
+    /**
+     * Builds the image test runner once per architecture into the GitHub Actions cache, from which the image jobs load
+     * it. It runs while the first images are built.
+     *
+     * @return array<string, mixed>
+     */
+    public function getImageTestRunnerConfig(): array
+    {
+        return [
+            'strategy' => [
+                'fail-fast' => false,
+                'matrix' => [
+                    'include' => self::PLATFORMS,
+                ],
+            ],
+            'name' => 'Image test runner (${{ matrix.arch }})',
+            'runs-on' => '${{ matrix.runner }}',
+            'steps' => [
+                [
+                    'uses' => 'actions/checkout@v7',
+                    'with' => ['persist-credentials' => false],
+                ],
+                ['uses' => 'docker/setup-buildx-action@v4'],
+                [
+                    'name' => 'Build the image test runner',
+                    'uses' => 'docker/build-push-action@v7',
+                    // Only warms the cache: if it fails, e.g. on a transient error of the cache or of Docker Hub, the
+                    // image jobs that need this job still run and build the runner themselves.
+                    'continue-on-error' => true,
+                    'with' => [
+                        'context' => '.',
+                        'file' => 'ci/image-tests/Dockerfile',
+                        'platforms' => '${{ matrix.platform }}',
+                        'outputs' => 'type=cacheonly',
+                        'cache-from' => $this->imageTestRunnerCache(),
+                        'cache-to' => $this->imageTestRunnerCache() . ',mode=max',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    private function imageTestRunnerCache(): string
+    {
+        return 'type=gha,scope=' . self::IMAGE_TEST_RUNNER . '-${{ matrix.arch }}';
     }
 
     /**

@@ -83,6 +83,7 @@ class GenerateGithubCiCommand extends Command
         $this->jobs = [
             'validate-automation' => $this->jobBuilder->getValidationConfig(),
             'check-ci-code' => $this->jobBuilder->getCodeCheckConfig(),
+            GithubJobBuilder::IMAGE_TEST_RUNNER_JOB => $this->jobBuilder->getImageTestRunnerConfig(),
             ...$this->jobs,
         ];
         $buildYaml = [
