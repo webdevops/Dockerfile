@@ -29,7 +29,7 @@ trap "postfix reload" SIGHUP
 includeScriptDir "/opt/docker/bin/service.d/postfix.d/"
 
 # start postfix
-postfix start $SERVICE_POSTFIX_OPTS
+postfix $SERVICE_POSTFIX_OPTS start
 
 # lets give postfix some time to start
 sleep 3

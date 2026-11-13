@@ -4,12 +4,6 @@ These options and tools are part of the images but do not work, or work only in 
 
 ## Problems in the images
 
-### `SERVICE_POSTFIX_OPTS`
-
-- **Effect:** No effect. The value is passed to `postfix start`, which ignores it.
-- **Images:** all images with Postfix: `base`, `base-app`, `nginx`, `apache`, `php-*`.
-- **Instead:** Change the Postfix configuration with `postconf -e` in a [service hook](customization.md#service-hooks) in `/opt/docker/bin/service.d/postfix.d/`, or use `POSTFIX_RELAYHOST` and `POSTFIX_MYNETWORKS`.
-
 ### `SERVICE_SUPERVISOR_USER`
 
 - **Effect:** Any value other than `root` makes the container exit with code 2 right after the start: supervisord switches to that user and then cannot create its control socket `/.supervisor.sock` (`Cannot open an HTTP server: … EACCES`).

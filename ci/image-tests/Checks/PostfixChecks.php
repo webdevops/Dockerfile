@@ -31,6 +31,18 @@ trait PostfixChecks
         self::assertStringContainsString('Relay access denied', $this->stdout('php -n /opt/image-tests/smtp-relay.php 127.0.0.1 2>&1 || true', $container), 'a client outside of POSTFIX_MYNETWORKS');
     }
 
+    /**
+     * SERVICE_POSTFIX_OPTS, in a container of its own: options of the postfix command, given before "start"; -v makes it
+     * write verbose messages, which reach the container log, on Debian through syslog.
+     */
+    public function testPostfixOptionsFromTheEnvironment(): void
+    {
+        $container = $this->startContainer('postfix-options', ['SERVICE_POSTFIX_OPTS' => '-v']);
+        $this->eventually(static function () use ($container): void {
+            self::assertMatchesRegularExpression('/postfix(\[\d+\])?: name_mask: /', $container->logs());
+        });
+    }
+
     public function testMailFromThePhpCliReachesTheRelayHost(): void
     {
         $container = $this->mailContainer();

@@ -188,6 +188,7 @@ Each service reads its options when it starts. A service only runs if it is enab
 | `SERVICE_DNSMASQ_USER` | User `dnsmasq` runs as. Default: `root`. |
 | `SERVICE_NGINX_OPTS` | Extra arguments for `nginx`, appended after `-g 'daemon off;'`. |
 | `SERVICE_APACHE_OPTS` | Extra arguments for Apache, for example `-DMYFLAG`. |
+| `SERVICE_POSTFIX_OPTS` | Options for the `postfix` command, given before `start`, for example `-v` for verbose messages; they reach the container log, on Debian and Ubuntu through syslog. |
 | `SERVICE_PHPFPM_OPTS` | Extra arguments for `php-fpm`, for example `-dmax_input_time=120`. |
 | `POSTFIX_RELAYHOST` | Postfix `relayhost`, for example `[mail.example.com]:25`. The relay host must accept mail from the container without a login; there is no variable for one. See [Mail](images/php.md#mail). |
 | `POSTFIX_MYNETWORKS` | Postfix `mynetworks`. |
