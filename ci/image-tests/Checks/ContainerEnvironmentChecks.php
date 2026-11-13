@@ -42,7 +42,8 @@ trait ContainerEnvironmentChecks
 
     /**
      * TZ=Europe/Berlin: cron runs a job for the current hour in Berlin, which is not the hour in UTC. The job comes from
-     * Hooks/ and is there before cron starts. Only in the images that start cron.
+     * Hooks/ and is there before cron starts; the test works out its hours, see ImageTestCase::cronHours(). Only in the
+     * images that start cron.
      */
     public function testCronRunsJobsInTheTimeZoneFromTheEnvironment(): void
     {

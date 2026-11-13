@@ -19,7 +19,7 @@ trait DnsmasqEnvironmentChecks
 {
     public function testDnsmasqWithVirtualHostsFromTheEnvironment(): void
     {
-        $container = $this->startContainer('dnsmasq', [
+        $container = $this->startTestContainer('dnsmasq', [
             'VIRTUAL_HOST' => 'app.image-test.example,*.wildcard.image-test.example',
             'SERVICE_DNSMASQ_OPTS' => '--address=/options.image-test.example/127.0.0.2',
             'SERVICE_DNSMASQ_USER' => 'nobody',

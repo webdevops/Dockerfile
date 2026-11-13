@@ -31,7 +31,7 @@ These options and tools are part of the images but do not work, or work only in 
 ### syslog on Alpine
 
 - **Effect:** syslog-ng takes messages on `/dev/log` only as a stream, but programs on Alpine send them as datagrams. The messages of cron, Postfix and `logger` are lost: they reach neither the container log nor the file of `LOG_STDOUT`.
-- **Images:** the Alpine images that run syslog-ng: `php-*` with an `-alpine` tag, and `base` and `base-app` once you enable the service.
+- **Images:** the Alpine images that run syslog-ng: `php-*` with an `-alpine` tag, and `base`, `base-app`, `nginx` and `apache` once you enable the service.
 - **Instead:** Let syslog-ng take datagrams, in a [service hook](customization.md#service-hooks) such as `/opt/docker/bin/service.d/syslog-ng.d/50-dgram.sh`:
 
   ```bash

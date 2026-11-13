@@ -29,7 +29,7 @@ trait PhpDevelopmentEnvironmentChecks
      */
     public function testXdebugConnectsToTheClientFromTheEnvironment(): void
     {
-        $container = $this->startContainer('xdebug', [
+        $container = $this->startTestContainer('xdebug', [
             'XDEBUG_MODE' => 'debug,trace',
             'XDEBUG_START_WITH_REQUEST' => 'yes',
             'XDEBUG_CLIENT_HOST' => '127.0.0.2',
@@ -52,7 +52,7 @@ trait PhpDevelopmentEnvironmentChecks
      */
     public function testXdebugTriggerValueFromTheEnvironment(): void
     {
-        $container = $this->startContainer('xdebug-trigger', [
+        $container = $this->startTestContainer('xdebug-trigger', [
             'XDEBUG_TRIGGER_VALUE' => 'image-test',
             'XDEBUG_CLIENT_PORT' => '9010',
         ]);

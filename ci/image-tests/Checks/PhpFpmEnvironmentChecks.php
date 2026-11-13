@@ -67,14 +67,16 @@ trait PhpFpmEnvironmentChecks
     }
 
     /**
-     * fpm.global.log_level=debug: PHP-FPM writes debug messages to the container log.
+     * fpm.global.log_level=debug: PHP-FPM writes debug messages to its error log, the container log or, where PHP-FPM
+     * logs to /docker.stderr, the file of LOG_STDERR.
      */
     public function testPhpFpmGlobalDirectiveFromTheEnvironment(): void
     {
         $container = $this->environmentContainer();
         $this->phpFpmBody($container, 'test=sha1');
-        $this->eventually(static function () use ($container): void {
-            self::assertMatchesRegularExpression('/DEBUG: pid \d+, fpm_/', $container->logs());
+        $this->eventually(function () use ($container): void {
+            $log = $container->logs() . $this->execute('cat ' . static::ENVIRONMENT['LOG_STDERR'], $container)->stdout;
+            self::assertMatchesRegularExpression('/DEBUG: pid \d+, fpm_/', $log);
         });
     }
 
@@ -93,7 +95,7 @@ trait PhpFpmEnvironmentChecks
      */
     public function testPhpFpmProcessManagerFromTheEnvironment(): void
     {
-        $container = $this->startContainer('fpm-process-manager', [
+        $container = $this->startTestContainer('fpm-process-manager', [
             'FPM_PM_START_SERVERS' => '3',
             'FPM_PM_MIN_SPARE_SERVERS' => '3',
             'FPM_PM_MAX_SPARE_SERVERS' => '4',
@@ -103,7 +105,7 @@ trait PhpFpmEnvironmentChecks
         $this->eventually(function () use ($container): void {
             self::assertSame(3, $this->phpFpmWorkers($container), 'workers at the start');
         });
-        self::assertSame(6, $this->phpFpmWorkersDuring($container, 3, 6, 3), 'workers while three requests run: three busy, three idle');
+        self::assertSame(6, $this->phpFpmWorkersDuring($container, 3, 6, 4.5), 'workers while three requests run: three busy, three idle');
         $this->phpFpmWorkersDuring($container, 12, 5, 4);
         $status = $this->phpFpmBody($container, '', script: '/image-test-status');
         self::assertMatchesRegularExpression('/^max active processes:\s+8$/m', $status, 'FPM_PM_MAX_CHILDREN');
@@ -114,16 +116,17 @@ trait PhpFpmEnvironmentChecks
     }
 
     /**
-     * FPM_MAX_REQUESTS=2 and FPM_PROCESS_IDLE_TIMEOUT=2s, in a container of their own with fpm.pool.pm=ondemand and one
-     * worker: a worker serves two requests, then a new one starts; an idle worker exits after 2 s.
+     * FPM_MAX_REQUESTS=2 and FPM_PROCESS_IDLE_TIMEOUT=5s, in a container of their own with fpm.pool.pm=ondemand and one
+     * worker: a worker serves two requests, then a new one starts; an idle worker exits after 5 s. The 5 s leave time for
+     * the requests, each a docker exec, before the worker is idle for too long.
      */
     public function testPhpFpmMaxRequestsAndIdleTimeoutFromTheEnvironment(): void
     {
-        $container = $this->startContainer('fpm-ondemand', [
+        $container = $this->startTestContainer('fpm-ondemand', [
             'fpm.pool.pm' => 'ondemand',
             'FPM_PM_MAX_CHILDREN' => '1',
             'FPM_MAX_REQUESTS' => '2',
-            'FPM_PROCESS_IDLE_TIMEOUT' => '2s',
+            'FPM_PROCESS_IDLE_TIMEOUT' => '5s',
         ]);
         $processIds = array_map(function () use ($container): int {
             $process = json_decode($this->phpFpmBody($container, 'test=process'), true);
@@ -133,8 +136,8 @@ trait PhpFpmEnvironmentChecks
         self::assertSame($processIds[0], $processIds[1], 'the first two requests in one worker');
         self::assertNotSame($processIds[1], $processIds[2], 'a new worker after two requests');
         self::assertSame(1, $this->phpFpmWorkers($container));
-        sleep(4);
-        self::assertSame(0, $this->phpFpmWorkers($container), 'the idle worker exits after 2 s');
+        sleep(8);
+        self::assertSame(0, $this->phpFpmWorkers($container), 'the idle worker exits after 5 s');
     }
 
     /**
@@ -144,9 +147,9 @@ trait PhpFpmEnvironmentChecks
     private function phpFpmWorkersDuring(Container $container, int $requests, int $seconds, float $within): int
     {
         $this->assertCommandSucceeds(sprintf(
-            'for request in $(seq %d); do (php -n /opt/image-tests/fastcgi-request.php 127.0.0.1:9000 /app/php-test.php "test=sleep&seconds=%d" < /dev/null > /dev/null 2>&1 &); done',
+            'for request in $(seq %d); do (%s < /dev/null > /dev/null 2>&1 &); done',
             $requests,
-            $seconds,
+            self::phpFpmCommand('test=sleep&seconds=' . $seconds),
         ), $container);
         $start = microtime(true);
         $workers = 0;

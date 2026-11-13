@@ -19,7 +19,7 @@ trait WithoutAppDirectoryChecks
 {
     public function testWebServerWithoutAppDirectory(): void
     {
-        $container = $this->startContainer('without-app', withFiles: false);
+        $container = $this->startTestContainer('without-app', withFiles: false);
         self::assertNotSame(0, $this->execute('test -e /app', $container)->exitCode, '/app should not exist');
         if (in_array('apache', self::services(), true)) {
             $this->eventually(static function () use ($container): void {
@@ -31,7 +31,7 @@ trait WithoutAppDirectoryChecks
 
         // Nginx falls back to the index file, which is missing too, and ends in a loop
         $this->eventually(function () use ($container): void {
-            self::assertSame('500', $this->stdout("curl --silent --output /dev/null --write-out '%{http_code}' http://localhost/", $container));
+            self::assertSame('500', $this->statusCode('http://localhost/', container: $container));
             self::assertStringContainsString('rewrite or internal redirection cycle', $container->logs());
         });
     }

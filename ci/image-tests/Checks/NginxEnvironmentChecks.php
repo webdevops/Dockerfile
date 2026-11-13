@@ -22,10 +22,7 @@ trait NginxEnvironmentChecks
         $container = $this->environmentContainer();
         // wait for Nginx
         $this->request('http://localhost/', container: $container);
-        self::assertSame('413', $this->stdout(
-            "head -c 2048 /dev/zero | curl --silent --output /dev/null --write-out '%{http_code}' --data-binary @- http://localhost/",
-            $container,
-        ));
+        self::assertSame('413', $this->statusCode('http://localhost/', '--data-binary @-', $container, 'head -c 2048 /dev/zero'));
     }
 
     /**
@@ -34,7 +31,7 @@ trait NginxEnvironmentChecks
      */
     public function testNginxOptionsFromTheEnvironment(): void
     {
-        $container = $this->startContainer('nginx-options', ['SERVICE_NGINX_OPTS' => '-c /opt/image-tests/nginx.conf']);
+        $container = $this->startTestContainer('nginx-options', ['SERVICE_NGINX_OPTS' => '-c /opt/image-tests/nginx.conf']);
         self::assertSame("nginx.conf of the image tests\n", $this->request('http://localhost:8080/', container: $container));
         self::assertNotSame(0, $this->execute('curl --silent http://localhost/', $container)->exitCode, 'Nothing should listen on port 80.');
     }
@@ -49,7 +46,7 @@ trait NginxEnvironmentChecks
         $this->request('http://localhost/', container: $container);
         $file = static::ENVIRONMENT['WEB_DOCUMENT_ROOT'] . '/image-test-forbidden.html';
         $this->assertCommandSucceeds('touch ' . $file . ' && chmod 000 ' . $file, $container);
-        self::assertSame('403', $this->stdout("curl --silent --output /dev/null --write-out '%{http_code}' http://localhost/image-test-forbidden.html", $container));
+        self::assertSame('403', $this->statusCode('http://localhost/image-test-forbidden.html', container: $container));
         $this->eventually(function () use ($container): void {
             self::assertMatchesRegularExpression('#"GET /image-test-forbidden\.html HTTP/1\.1" 403 #', $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container));
             self::assertMatchesRegularExpression('#\[error\] .*image-test-forbidden\.html" failed \(13: Permission denied\)#', $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDERR'], $container));

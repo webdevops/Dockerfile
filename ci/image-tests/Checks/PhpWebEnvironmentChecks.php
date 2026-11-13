@@ -23,9 +23,6 @@ trait PhpWebEnvironmentChecks
         // wait for the web server and PHP-FPM
         $this->request('http://localhost/php-test.php?test=sha1', container: $container);
 
-        self::assertSame('504', $this->stdout(
-            "curl --silent --output /dev/null --write-out '%{http_code}' 'http://localhost/php-test.php?test=sleep&seconds=5'",
-            $container,
-        ));
+        self::assertSame('504', $this->statusCode('http://localhost/php-test.php?test=sleep&seconds=5', container: $container));
     }
 }

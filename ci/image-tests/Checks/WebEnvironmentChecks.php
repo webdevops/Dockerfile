@@ -6,6 +6,8 @@ namespace Webdevops\Build\ImageTests\Checks;
 
 use Webdevops\Build\ImageTests\ImageTestCase;
 
+use function escapeshellarg;
+
 /**
  * The web server variables WEB_DOCUMENT_ROOT, WEB_DOCUMENT_INDEX, WEB_ALIAS_DOMAIN and WEB_PHP_SOCKET, see
  * docs/environment-variables.md#web-server. Fixtures/ has the document root /app/image-test-root.
@@ -28,11 +30,9 @@ trait WebEnvironmentChecks
      */
     public function testAliasDomainFromTheEnvironment(): void
     {
-        $container = $this->startContainer('alias', ['WEB_ALIAS_DOMAIN' => 'image-test.example', 'IMAGE_TEST_OTHER_VHOST' => '1']);
-        $status = fn (string $host): string => $this->stdout(
-            "curl --silent --output /dev/null --write-out '%{http_code}' --header 'Host: " . $host . "' http://localhost/pi-number.html",
-            $container,
-        );
+        $container = $this->startTestContainer('alias', ['WEB_ALIAS_DOMAIN' => 'image-test.example', 'IMAGE_TEST_OTHER_VHOST' => '1']);
+        // 127.0.0.1: the second virtual host listens only on IPv4, localhost may be ::1
+        $status = fn (string $host): string => $this->statusCode('http://127.0.0.1/pi-number.html', '--header ' . escapeshellarg('Host: ' . $host), $container);
         $this->eventually(static function () use ($status): void {
             self::assertSame('410', $status('other.example'), 'a host name of the second virtual host');
         });
@@ -45,10 +45,10 @@ trait WebEnvironmentChecks
      */
     public function testPhpSocketFromTheEnvironment(): void
     {
-        $container = $this->startContainer('php-socket', ['WEB_PHP_SOCKET' => '127.0.0.1:9999']);
+        $container = $this->startTestContainer('php-socket', ['WEB_PHP_SOCKET' => '127.0.0.1:9999']);
         $this->eventually(function () use ($container): void {
             // Nginx answers 502, Apache 503
-            self::assertContains($this->stdout("curl --silent --output /dev/null --write-out '%{http_code}' 'http://localhost/php-test.php?test=sha1'", $container), ['502', '503']);
+            self::assertContains($this->statusCode('http://localhost/php-test.php?test=sha1', container: $container), ['502', '503']);
             self::assertStringContainsString('127.0.0.1:9999', $container->logs());
         });
     }

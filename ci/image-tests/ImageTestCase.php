@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webdevops\Build\ImageTests;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use LogicException;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
@@ -28,8 +30,6 @@ use function str_contains;
 use function str_split;
 use function strtolower;
 use function trim;
-use function var_export;
-use function json_decode;
 use function preg_grep;
 
 /**
@@ -37,9 +37,10 @@ use function preg_grep;
  * with the image's own command, e.g. supervisord with its services. The files of Fixtures/ are copied into its root
  * directory first, so /app holds the pages that the web server tests request.
  *
- * Tests of environment variables, commands and hooks start further containers of the image with startContainer()
- * and runContainer(). They also get the files of Hooks/: scripts that mark that a hook ran, and configuration that
- * single tests switch on. The container of the class does not, so that the hook directories there are the image's own.
+ * Tests of environment variables, commands and hooks start further containers of the image with startContainer(),
+ * startTestContainer() and runContainer(). They also get the files of Hooks/: scripts that mark that a hook ran, and
+ * configuration that single tests switch on. The container of the class does not, so that the hook directories there
+ * are the image's own.
  */
 abstract class ImageTestCase extends TestCase
 {
@@ -132,6 +133,18 @@ abstract class ImageTestCase extends TestCase
     private static array $containerFailures = [];
 
     /**
+     * The names of the further containers of the current test, see startTestContainer().
+     *
+     * @var list<string>
+     */
+    private array $testContainers = [];
+
+    /**
+     * The hours of the cron job of the environment container, see cronHours().
+     */
+    private static ?string $cronHours = null;
+
+    /**
      * Whether a check of this class already waited for all its attempts. The services then had their time to start,
      * so later checks try only once, and a broken image fails in minutes, not in hours.
      */
@@ -153,8 +166,20 @@ abstract class ImageTestCase extends TestCase
         self::$containers = [];
         self::$containerArguments = [];
         self::$containerFailures = [];
+        self::$cronHours = null;
         self::$container?->remove();
         self::$container = null;
+    }
+
+    protected function tearDown(): void
+    {
+        foreach ($this->testContainers as $name) {
+            (self::$containers[$name] ?? null)?->remove();
+            unset(self::$containers[$name], self::$containerArguments[$name], self::$containerFailures[$name]);
+        }
+
+        $this->testContainers = [];
+        parent::tearDown();
     }
 
     /**
@@ -243,6 +268,19 @@ abstract class ImageTestCase extends TestCase
     }
 
     /**
+     * Like startContainer(), for the current test only: the container is removed after the test, so that it does not
+     * run along with the tests after it.
+     *
+     * @param array<string, string> $environment
+     * @param list<string> $command
+     */
+    protected function startTestContainer(string $name, array $environment = [], array $command = [], bool $withFiles = true): Container
+    {
+        $this->testContainers[] = $name;
+        return $this->startContainer($name, $environment, $command, $withFiles);
+    }
+
+    /**
      * The services that supervisord starts in the image, see SERVICES.
      *
      * @return list<string>
@@ -262,7 +300,7 @@ abstract class ImageTestCase extends TestCase
             ...static::ENVIRONMENT,
             'SERVICE_CRON_OPTS' => self::cronOptions(),
             // a cron job from Hooks/, for the time zone, see ContainerEnvironmentChecks
-            'IMAGE_TEST_CRON' => '1',
+            'IMAGE_TEST_CRON' => $this->cronHours(),
         ]);
         // the PHP test page in the document root of WEB_DOCUMENT_ROOT, until it is there
         $documentRoot = escapeshellarg(static::ENVIRONMENT['WEB_DOCUMENT_ROOT']);
@@ -277,6 +315,21 @@ abstract class ImageTestCase extends TestCase
     protected static function cronOptions(): string
     {
         return self::image()->isAlpine() ? '-l 8' : '-L 15';
+    }
+
+    /**
+     * The current and the next hour in the time zone of TZ, e.g. "9,10", for the cron job of the environment container.
+     * Worked out here and not in the image, whose time zone the test checks; once per class, so that the environment
+     * of the container stays the same.
+     */
+    private function cronHours(): string
+    {
+        if (self::$cronHours === null) {
+            $hour = (int) new DateTimeImmutable('now', new DateTimeZone(static::ENVIRONMENT['TZ']))->format('G');
+            self::$cronHours = sprintf('%d,%d', $hour, ($hour + 1) % 24);
+        }
+
+        return self::$cronHours;
     }
 
     /**
@@ -381,36 +434,32 @@ abstract class ImageTestCase extends TestCase
     }
 
     /**
-     * The values of ini_get() in the PHP CLI of the container of the class, or of $container.
-     *
-     * @param list<string> $names
-     * @return array<string, string|false>
-     */
-    protected function phpIniValues(array $names, ?Container $container = null): array
-    {
-        $script = sprintf('echo json_encode(array_combine(%1$s, array_map(ini_get(...), %1$s)));', var_export($names, true));
-        $output = $this->stdout('php -r ' . escapeshellarg($script), $container);
-        $values = json_decode($output, true);
-        self::assertIsArray($values, $output);
-        /** @var array<string, string|false> $values */
-        return $values;
-    }
-
-    /**
-     * Sends a request straight to PHP-FPM on 127.0.0.1:9000 in $container, with Fixtures/opt/image-tests/fastcgi-request.php,
-     * and returns the result; its stdout is the response, headers and body. $query is the query string of $script,
-     * $parameters are further FastCGI parameters, e.g. REQUEST_METHOD, and $bodyCommand is a shell command whose output
-     * is the request body. The request is not retried, see phpFpmBody().
+     * The shell command that sends a request straight to PHP-FPM on 127.0.0.1:9000, with
+     * Fixtures/opt/image-tests/fastcgi-request.php, and prints the response, headers and body. $query is the query
+     * string of $script, $parameters are further FastCGI parameters, e.g. REQUEST_METHOD. The command reads the request
+     * body from its stdin.
      *
      * @param array<string, string> $parameters
      */
-    protected function phpFpmRequest(Container $container, string $query, array $parameters = [], string $bodyCommand = '', string $script = '/app/php-test.php'): CommandResult
+    protected static function phpFpmCommand(string $query, array $parameters = [], string $script = '/app/php-test.php'): string
     {
         $command = 'php -n /opt/image-tests/fastcgi-request.php 127.0.0.1:9000 ' . escapeshellarg($script) . ' ' . escapeshellarg($query);
         foreach ($parameters as $name => $value) {
             $command .= ' ' . escapeshellarg($name . '=' . $value);
         }
 
+        return $command;
+    }
+
+    /**
+     * Sends a request with phpFpmCommand() in $container and returns the result. $bodyCommand is a shell command whose
+     * output is the request body. The request is not retried, see phpFpmBody().
+     *
+     * @param array<string, string> $parameters
+     */
+    protected function phpFpmRequest(Container $container, string $query, array $parameters = [], string $bodyCommand = '', string $script = '/app/php-test.php'): CommandResult
+    {
+        $command = self::phpFpmCommand($query, $parameters, $script);
         return $this->execute($bodyCommand === '' ? $command . ' < /dev/null' : $bodyCommand . ' | ' . $command, $container);
     }
 
@@ -625,6 +674,17 @@ abstract class ImageTestCase extends TestCase
         });
 
         return $body;
+    }
+
+    /**
+     * The HTTP status code of a request for $url with curl in the container of the class, or in $container, e.g. "404".
+     * The request is not retried. $bodyCommand is a shell command whose output goes to the stdin of curl, e.g. for
+     * --data-binary @- in $curlOptions.
+     */
+    protected function statusCode(string $url, string $curlOptions = '', ?Container $container = null, string $bodyCommand = ''): string
+    {
+        $command = "curl --silent --output /dev/null --write-out '%{http_code}' " . $curlOptions . ' ' . escapeshellarg($url);
+        return $this->stdout($bodyCommand === '' ? $command : $bodyCommand . ' | ' . $command, $container);
     }
 
     /**

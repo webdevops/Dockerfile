@@ -131,18 +131,20 @@ trait PhpEnvironmentChecks
     }
 
     /**
-     * PHP_OPCACHE_REVALIDATE_FREQ=4, with PHP_OPCACHE_VALIDATE_TIMESTAMPS=1 in a container of its own: PHP-FPM runs the
-     * cached script for up to 4 s after it changed, then the new one.
+     * PHP_OPCACHE_REVALIDATE_FREQ=6, with PHP_OPCACHE_VALIDATE_TIMESTAMPS=1 in a container of its own: PHP-FPM runs the
+     * cached script for up to 6 s after it cached it, then the new one. 3 s after the change it still runs the cached
+     * one, which the default of 2 s in the production images would not.
      */
     public function testOpcacheRevalidateFrequencyFromTheEnvironment(): void
     {
-        $container = $this->startContainer('opcache', ['PHP_OPCACHE_VALIDATE_TIMESTAMPS' => '1', 'PHP_OPCACHE_REVALIDATE_FREQ' => '4']);
+        $container = $this->startTestContainer('opcache', ['PHP_OPCACHE_VALIDATE_TIMESTAMPS' => '1', 'PHP_OPCACHE_REVALIDATE_FREQ' => '6']);
         $this->writeOpcacheScript($container, 'first');
         self::assertSame('first', $this->phpFpmBody($container, '', script: '/tmp/image-tests/opcache/script.php'));
         $this->writeOpcacheScript($container, 'second', 60);
-        self::assertSame('first', $this->phpFpmBody($container, '', script: '/tmp/image-tests/opcache/script.php'), 'within the 4 s');
+        sleep(3);
+        self::assertSame('first', $this->phpFpmBody($container, '', script: '/tmp/image-tests/opcache/script.php'), 'within the 6 s');
         sleep(5);
-        self::assertSame('second', $this->phpFpmBody($container, '', script: '/tmp/image-tests/opcache/script.php'), 'after the 4 s');
+        self::assertSame('second', $this->phpFpmBody($container, '', script: '/tmp/image-tests/opcache/script.php'), 'after the 6 s');
     }
 
     /**
@@ -164,7 +166,7 @@ trait PhpEnvironmentChecks
      */
     public function testPhpSendmailPathFromTheEnvironment(): void
     {
-        $container = $this->startContainer('sendmail', ['PHP_SENDMAIL_PATH' => '/opt/image-tests/capture-mail.sh --from image-test@example.test']);
+        $container = $this->startTestContainer('sendmail', ['PHP_SENDMAIL_PATH' => '/opt/image-tests/capture-mail.sh --from image-test@example.test']);
         $this->assertCommandSucceeds('mkdir -p -m 1777 /tmp/image-tests/captured-mail', $container);
         self::assertSame('sent', $this->stdout("php -r 'echo mail(\"someone@example.test\", \"Image test from \" . PHP_SAPI, \"Sent by the image tests\") ? \"sent\" : \"not sent\";'", $container));
         self::assertSame('sent', $this->phpFpmBody($container, 'test=mail'));

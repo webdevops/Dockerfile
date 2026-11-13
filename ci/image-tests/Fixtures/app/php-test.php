@@ -45,12 +45,6 @@ switch ($_GET['test']) {
         echo json_encode($result);
         break;
 
-    case 'ini_get':
-        $names = explode(',', $_GET['names'] ?? '');
-        header('Content-Type: application/json');
-        echo json_encode(array_combine($names, array_map(ini_get(...), $names)));
-        break;
-
     case 'sleep':
         sleep((int) ($_GET['seconds'] ?? 0));
         echo 'slept';
@@ -117,7 +111,6 @@ switch ($_GET['test']) {
         break;
 
     case 'session_name':
-        session_start();
         echo session_name();
         break;
 
