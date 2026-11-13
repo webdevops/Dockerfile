@@ -75,11 +75,6 @@ switch ($_GET['test']) {
         echo 'done';
         break;
 
-    case 'error_log':
-        error_log((string) ($_GET['message'] ?? ''));
-        echo 'logged';
-        break;
-
     case 'request':
         header('Content-Type: application/json');
         echo json_encode([
