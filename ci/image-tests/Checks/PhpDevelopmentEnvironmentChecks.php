@@ -5,7 +5,14 @@ declare(strict_types=1);
 namespace Webdevops\Build\ImageTests\Checks;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use Webdevops\Build\ImageTests\Docker\Container;
+use Webdevops\Build\ImageTests\Docker\ListeningSockets;
 use Webdevops\Build\ImageTests\ImageTestCase;
+
+use function escapeshellarg;
+use function explode;
+use function sleep;
+use function sprintf;
 
 /**
  * PHP_DEBUGGER, XDEBUG_* and BLACKFIRE_* in the development images, see
@@ -15,21 +22,71 @@ use Webdevops\Build\ImageTests\ImageTestCase;
  */
 trait PhpDevelopmentEnvironmentChecks
 {
-    public function testXdebugSettingsFromTheEnvironment(): void
+    /**
+     * XDEBUG_MODE=debug,trace, XDEBUG_START_WITH_REQUEST=yes, XDEBUG_CLIENT_HOST=127.0.0.2, XDEBUG_CLIENT_PORT=9010,
+     * XDEBUG_DISCOVER_CLIENT_HOST=0 and XDEBUG_OUTPUT_DIR, in a container of their own: a PHP script, without a
+     * trigger, connects to 127.0.0.2:9010, not to the address of X-Forwarded-For, and leaves a trace file.
+     */
+    public function testXdebugConnectsToTheClientFromTheEnvironment(): void
     {
-        $settings = [
-            'xdebug.mode' => 'XDEBUG_MODE',
-            'xdebug.start_with_request' => 'XDEBUG_START_WITH_REQUEST',
-            'xdebug.client_host' => 'XDEBUG_CLIENT_HOST',
-            'xdebug.client_port' => 'XDEBUG_CLIENT_PORT',
-            'xdebug.discover_client_host' => 'XDEBUG_DISCOVER_CLIENT_HOST',
-            'xdebug.trigger_value' => 'XDEBUG_TRIGGER_VALUE',
-            'xdebug.output_dir' => 'XDEBUG_OUTPUT_DIR',
-        ];
-        self::assertSame(
-            array_map(static fn (string $variable): string => static::ENVIRONMENT[$variable], $settings),
-            $this->phpIniValues(array_keys($settings), $this->environmentContainer()),
-        );
+        $container = $this->startTestContainer('xdebug', [
+            'XDEBUG_MODE' => 'debug,trace',
+            'XDEBUG_START_WITH_REQUEST' => 'yes',
+            'XDEBUG_CLIENT_HOST' => '127.0.0.2',
+            'XDEBUG_CLIENT_PORT' => '9010',
+            'XDEBUG_DISCOVER_CLIENT_HOST' => '0',
+            'XDEBUG_OUTPUT_DIR' => '/tmp/image-test-xdebug',
+        ]);
+        $this->startDbgpListeners($container, ['127.0.0.2:9010', '127.0.0.3:9010']);
+        $this->assertCommandSucceeds('mkdir -p /tmp/image-test-xdebug && HTTP_X_FORWARDED_FOR=127.0.0.3 php -r \'echo "run";\'', $container);
+        $this->waitFor(function () use ($container): void {
+            self::assertStringContainsString('<init ', $this->stdout('cat /tmp/image-tests/dbgp/127.0.0.2:9010 2>&1 || true', $container));
+        });
+        self::assertSame('', $this->stdout('cat /tmp/image-tests/dbgp/127.0.0.3:9010 2>/dev/null || true', $container), 'Without discovery, the address of X-Forwarded-For does not count.');
+        self::assertMatchesRegularExpression('/^trace\..+\.xt$/m', $this->stdout('ls /tmp/image-test-xdebug', $container), 'XDEBUG_OUTPUT_DIR');
+    }
+
+    /**
+     * XDEBUG_TRIGGER_VALUE=image-test, in a container of its own with the default trigger mode and discovery: a script
+     * with another trigger value does not connect, one with this value connects to the address of X-Forwarded-For.
+     */
+    public function testXdebugTriggerValueFromTheEnvironment(): void
+    {
+        $container = $this->startTestContainer('xdebug-trigger', [
+            'XDEBUG_TRIGGER_VALUE' => 'image-test',
+            'XDEBUG_CLIENT_PORT' => '9010',
+        ]);
+        $this->startDbgpListeners($container, ['127.0.0.3:9010']);
+        $this->assertCommandSucceeds('XDEBUG_TRIGGER=other HTTP_X_FORWARDED_FOR=127.0.0.3 php -r \'echo "run";\'', $container);
+        sleep(1);
+        self::assertSame('', $this->stdout('cat /tmp/image-tests/dbgp/127.0.0.3:9010 2>/dev/null || true', $container), 'another trigger value');
+        $this->assertCommandSucceeds('XDEBUG_TRIGGER=image-test HTTP_X_FORWARDED_FOR=127.0.0.3 php -r \'echo "run";\'', $container);
+        $this->waitFor(function () use ($container): void {
+            self::assertStringContainsString('idekey="image-test"', $this->stdout('cat /tmp/image-tests/dbgp/127.0.0.3:9010 2>&1 || true', $container));
+        });
+    }
+
+    /**
+     * Starts Fixtures/opt/image-tests/dbgp-listener.php on each of $addresses, and waits until they listen. Each writes
+     * to /tmp/image-tests/dbgp/<address>.
+     *
+     * @param list<string> $addresses
+     */
+    private function startDbgpListeners(Container $container, array $addresses): void
+    {
+        foreach ($addresses as $address) {
+            $this->assertCommandSucceeds(sprintf(
+                'mkdir -p /tmp/image-tests/dbgp && (nohup php -n /opt/image-tests/dbgp-listener.php %1$s /tmp/image-tests/dbgp/%1$s >> /tmp/image-tests/dbgp/listener.log 2>&1 &)',
+                escapeshellarg($address),
+            ), $container);
+        }
+
+        foreach ($addresses as $address) {
+            $this->waitFor(function () use ($container, $address): void {
+                [$host, $port] = explode(':', $address);
+                self::assertTrue(ListeningSockets::read($container)->isListening((int) $port, $host), $address . ' should listen');
+            }, 10, 1);
+        }
     }
 
     /**

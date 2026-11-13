@@ -7,11 +7,12 @@ namespace Webdevops\Build\ImageTests\Checks;
 use LogicException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Webdevops\Build\ImageTests\Docker\Container;
+use Webdevops\Build\ImageTests\Docker\ListeningSockets;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 use function array_combine;
 use function array_keys;
-use function implode;
+use function in_array;
 use function preg_grep;
 use function preg_quote;
 use function ksort;
@@ -84,40 +85,66 @@ trait ServiceChecks
     }
 
     /**
-     * The SERVICE_*_OPTS of a service end up as arguments of its program: the variable and a pattern of the command
-     * line of the program with the value of the environment container.
+     * The services whose SERVICE_*_OPTS the environment container sets, see ENVIRONMENT. Nginx gets a container of its
+     * own, see NginxEnvironmentChecks.
      *
-     * @return iterable<string, array{string, string}>
+     * @return iterable<string, array{string}>
      */
     public static function serviceOptions(): iterable
     {
-        $programs = [
-            'cron' => ['SERVICE_CRON_OPTS', '#^/usr/sbin/' . (self::image()->isAlpine() ? 'crond' : 'cron') . ' -f ' . preg_quote(self::cronOptions(), '#') . '$#'],
-            'syslog' => ['SERVICE_SYSLOG_OPTS', '#^syslog-ng -F .* --stderr$#'],
-            'ssh' => ['SERVICE_SSH_OPTS', '#^sshd: /usr/sbin/sshd -D -e( |$)#'],
-            'nginx' => ['SERVICE_NGINX_OPTS', '#^nginx: master process /usr/sbin/nginx -g daemon off; -q$#'],
-            'apache' => ['SERVICE_APACHE_OPTS', '#(apache2|httpd) -DFOREGROUND( .*)? -DIMAGE_TEST$#'],
-        ];
-        yield 'supervisord' => ['SERVICE_SUPERVISOR_OPTS', '#/supervisord -c /opt/docker/etc/supervisor\.conf .* --loglevel=info$#'];
+        yield 'supervisord' => ['supervisord'];
         foreach (self::services() as $service) {
-            if (isset($programs[$service])) {
-                yield $service => $programs[$service];
+            if (in_array($service, ['cron', 'syslog', 'ssh', 'apache', 'php-fpm'], true)) {
+                yield $service => [$service];
             }
         }
     }
 
+    /**
+     * What the SERVICE_*_OPTS of the environment container do: supervisord logs at the level "trace"; syslog-ng writes
+     * its process id to the file of --pidfile; sshd listens on port 2222; Apache defines IMAGE_TEST, for which the
+     * configuration from Hooks/ sends a header; PHP-FPM names the session cookie IMAGETEST. Cron gets a log level of
+     * its own, which shows only in its command line.
+     */
     #[DataProvider('serviceOptions')]
-    public function testServiceOptionsFromTheEnvironment(string $variable, string $pattern): void
+    public function testServiceOptionsFromTheEnvironment(string $service): void
     {
         $container = $this->environmentContainer();
-        $this->eventually(function () use ($container, $variable, $pattern): void {
-            $commandLines = $this->commandLines($container);
-            self::assertNotSame([], preg_grep($pattern, $commandLines), sprintf(
-                "%s should end up in the command line of its program; processes:\n%s",
-                $variable,
-                implode("\n", $commandLines),
-            ));
+        $this->eventually(function () use ($container, $service): void {
+            match ($service) {
+                'supervisord' => self::assertMatchesRegularExpression(
+                    '/^\S+ \S+ TRAC XML-RPC method called: supervisor\./m',
+                    $this->containerLogAfterSupervisorctl($container),
+                    'SERVICE_SUPERVISOR_OPTS=--loglevel=trace',
+                ),
+                'syslog' => self::assertMatchesRegularExpression(
+                    '/^syslog-ng /',
+                    $this->stdout('tr "\\000" " " < /proc/$(cat /tmp/image-test-syslog-ng.pid)/cmdline 2>&1 || true', $container),
+                    'SERVICE_SYSLOG_OPTS=--pidfile=/tmp/image-test-syslog-ng.pid',
+                ),
+                'ssh' => self::assertTrue(ListeningSockets::read($container)->isListening(2222), 'SERVICE_SSH_OPTS=-p 2222'),
+                'apache' => self::assertMatchesRegularExpression(
+                    '/^X-Image-Test-Define: IMAGE_TEST\r?$/mi',
+                    $this->stdout('curl --silent --head http://localhost/', $container),
+                    'SERVICE_APACHE_OPTS=-DIMAGE_TEST',
+                ),
+                'php-fpm' => self::assertSame('IMAGETEST', $this->phpFpmBody($container, 'test=session_name'), 'SERVICE_PHPFPM_OPTS=-dsession.name=IMAGETEST'),
+                'cron' => self::assertNotSame([], preg_grep(
+                    '#^/usr/sbin/' . (self::image()->isAlpine() ? 'crond' : 'cron') . ' -f ' . preg_quote(self::cronOptions(), '#') . '$#',
+                    $this->commandLines($container),
+                ), 'SERVICE_CRON_OPTS'),
+                default => throw new LogicException('No check of the options of ' . $service),
+            };
         });
+    }
+
+    /**
+     * The container log after a call of supervisorctl, which supervisord logs at the level "trace".
+     */
+    private function containerLogAfterSupervisorctl(Container $container): string
+    {
+        $this->execute('supervisorctl status', $container);
+        return $container->logs();
     }
 
     /**

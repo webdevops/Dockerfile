@@ -48,7 +48,7 @@ trait EntrypointChecks
 
     public function testNoopKeepsTheContainerRunningWithoutServices(): void
     {
-        $container = $this->startContainer('noop', [], ['noop']);
+        $container = $this->startTestContainer('noop', [], ['noop']);
 
         $this->eventually(function () use ($container): void {
             self::assertSame('tail -f /dev/null', $this->commandLineOfProcess1($container));

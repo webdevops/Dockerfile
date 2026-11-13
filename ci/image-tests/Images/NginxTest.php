@@ -13,6 +13,7 @@ use Webdevops\Build\ImageTests\Checks\NginxChecks;
 use Webdevops\Build\ImageTests\Checks\NginxEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\ServiceChecks;
 use Webdevops\Build\ImageTests\Checks\WebEnvironmentChecks;
+use Webdevops\Build\ImageTests\Checks\WithoutAppDirectoryChecks;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 /**
@@ -29,6 +30,7 @@ final class NginxTest extends ImageTestCase
     use CliWithoutApplicationUserChecks;
     use WebEnvironmentChecks;
     use NginxEnvironmentChecks;
+    use WithoutAppDirectoryChecks;
 
     protected const array SERVICES = ['nginx'];
 }

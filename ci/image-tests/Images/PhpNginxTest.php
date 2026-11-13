@@ -13,6 +13,7 @@ use Webdevops\Build\ImageTests\Checks\NginxChecks;
 use Webdevops\Build\ImageTests\Checks\NginxEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmChecks;
+use Webdevops\Build\ImageTests\Checks\PhpFpmEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmLocalOnlyChecks;
 use Webdevops\Build\ImageTests\Checks\PhpProductionChecks;
 use Webdevops\Build\ImageTests\Checks\PhpWebEnvironmentChecks;
@@ -38,6 +39,7 @@ final class PhpNginxTest extends ImageTestCase
     use ServiceChecks;
     use ContainerEnvironmentChecks;
     use PhpEnvironmentChecks;
+    use PhpFpmEnvironmentChecks;
     use WebEnvironmentChecks;
     use NginxEnvironmentChecks;
     use PhpWebEnvironmentChecks;

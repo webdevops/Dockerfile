@@ -18,16 +18,17 @@ use function str_replace;
  */
 trait PostfixChecks
 {
-    public function testPostfixSettingsFromTheEnvironment(): void
+    /**
+     * POSTFIX_MYNETWORKS=127.0.0.2/32: Postfix relays mail of a client from 127.0.0.2 to other domains, but not of one
+     * from 127.0.0.1. POSTFIX_RELAYHOST is checked by the mail that reaches the SMTP sink.
+     */
+    public function testPostfixNetworksFromTheEnvironment(): void
     {
         $container = $this->environmentContainer();
-        // the start script of Postfix writes them into main.cf
         $this->eventually(function () use ($container): void {
-            self::assertSame(
-                static::ENVIRONMENT['POSTFIX_RELAYHOST'] . "\n" . static::ENVIRONMENT['POSTFIX_MYNETWORKS'] . "\n",
-                $this->stdout('postconf -h relayhost mynetworks 2>/dev/null', $container),
-            );
+            self::assertStringStartsWith('250 ', $this->stdout('php -n /opt/image-tests/smtp-relay.php 127.0.0.2 2>&1 || true', $container), 'a client in POSTFIX_MYNETWORKS');
         });
+        self::assertStringContainsString('Relay access denied', $this->stdout('php -n /opt/image-tests/smtp-relay.php 127.0.0.1 2>&1 || true', $container), 'a client outside of POSTFIX_MYNETWORKS');
     }
 
     public function testMailFromThePhpCliReachesTheRelayHost(): void
