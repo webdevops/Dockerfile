@@ -20,6 +20,7 @@ use Webdevops\Build\ImageTests\Checks\PhpWebDevelopmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpWebEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PostfixChecks;
 use Webdevops\Build\ImageTests\Checks\ServiceChecks;
+use Webdevops\Build\ImageTests\Checks\SshChecks;
 use Webdevops\Build\ImageTests\Checks\WebEnvironmentChecks;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
@@ -38,6 +39,7 @@ final class PhpNginxDevTest extends ImageTestCase
     use PhpWebDevelopmentChecks;
     use EntrypointChecks;
     use ServiceChecks;
+    use SshChecks;
     use ContainerEnvironmentChecks;
     use PhpEnvironmentChecks;
     use PhpDevelopmentEnvironmentChecks;
