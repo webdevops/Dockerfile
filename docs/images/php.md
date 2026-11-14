@@ -54,7 +54,11 @@ Applications that read the upload progress from the session, using a form field 
 
 ## PHP extensions
 
-This table lists the extensions of each PHP version; PHP loads them in the CLI and in PHP-FPM. It applies to `php`, `php-nginx`, `php-apache` and their `-dev` variants. Each column covers both tags of a PHP version, for example `8.5` and `8.5-alpine`; "Debian only" marks an extension that only the Debian tag contains. The tags differ only in `imap` (PHP 8.2 and 8.3), `lexbor` and `uri` (PHP 8.5) and the ionCube Loader (Debian tags); these come first in the table, the extensions of all tags follow in alphabetical order.
+All tags contain these extensions:
+
+`amqp`, `apcu`, `bcmath`, `bz2`, `calendar`, `ctype`, `curl`, `date`, `dom`, `excimer`, `exif`, `ffi`, `fileinfo`, `filter`, `ftp`, `gd`, `gettext`, `gmp`, `hash`, `iconv`, `imagick`, `intl`, `json`, `ldap`, `libxml`, `mbstring`, `memcached`, `mongodb`, `mysqli`, `mysqlnd`, `openssl`, `opentelemetry`, `pcntl`, `pcre`, `pdo`, `pdo_mysql`, `pdo_pgsql`, `pdo_sqlite`, `pgsql`, `phar`, `posix`, `protobuf`, `random`, `readline`, `redis`, `reflection`, `session`, `shmop`, `simplexml`, `soap`, `sockets`, `sodium`, `spl`, `sqlite3`, `standard`, `sysvmsg`, `sysvsem`, `sysvshm`, `tokenizer`, `vips`, `xml`, `xmlreader`, `xmlrpc`, `xmlwriter`, `xsl`, `yaml`, `Zend OPcache`, `zip`, `zlib`
+
+The tags differ in these extensions. Each column covers both tags of a PHP version, for example `8.5` and `8.5-alpine`; "Debian only" marks an extension that only the Debian tag contains.
 
 | Extension | `8.2` | `8.3` | `8.4` | `8.5` |
 | --- | :---: | :---: | :---: | :---: |
@@ -62,76 +66,8 @@ This table lists the extensions of each PHP version; PHP loads them in the CLI a
 | `uri` ([new in PHP 8.5](https://www.php.net/releases/8.5/en.php)) | – | – | – | ✓ |
 | `imap` ([moved to PECL in PHP 8.4](https://wiki.php.net/rfc/unbundle_imap_pspell_oci8)) | ✓ | ✓ | – | – |
 | ionCube Loader ([skipped on Alpine](../../provisioning/php/general/provision/bootstrap.d/30-setup-ioncube.sh)) | Debian only | Debian only | Debian only | Debian only |
-| **In all tags** | | | | |
-| `amqp` | ✓ | ✓ | ✓ | ✓ |
-| `apcu` | ✓ | ✓ | ✓ | ✓ |
-| `bcmath` | ✓ | ✓ | ✓ | ✓ |
-| `bz2` | ✓ | ✓ | ✓ | ✓ |
-| `calendar` | ✓ | ✓ | ✓ | ✓ |
-| `ctype` | ✓ | ✓ | ✓ | ✓ |
-| `curl` | ✓ | ✓ | ✓ | ✓ |
-| `date` | ✓ | ✓ | ✓ | ✓ |
-| `dom` | ✓ | ✓ | ✓ | ✓ |
-| `excimer` | ✓ | ✓ | ✓ | ✓ |
-| `exif` | ✓ | ✓ | ✓ | ✓ |
-| `ffi` | ✓ | ✓ | ✓ | ✓ |
-| `fileinfo` | ✓ | ✓ | ✓ | ✓ |
-| `filter` | ✓ | ✓ | ✓ | ✓ |
-| `ftp` | ✓ | ✓ | ✓ | ✓ |
-| `gd` | ✓ | ✓ | ✓ | ✓ |
-| `gettext` | ✓ | ✓ | ✓ | ✓ |
-| `gmp` | ✓ | ✓ | ✓ | ✓ |
-| `hash` | ✓ | ✓ | ✓ | ✓ |
-| `iconv` | ✓ | ✓ | ✓ | ✓ |
-| `imagick` | ✓ | ✓ | ✓ | ✓ |
-| `intl` | ✓ | ✓ | ✓ | ✓ |
-| `json` | ✓ | ✓ | ✓ | ✓ |
-| `ldap` | ✓ | ✓ | ✓ | ✓ |
-| `libxml` | ✓ | ✓ | ✓ | ✓ |
-| `mbstring` | ✓ | ✓ | ✓ | ✓ |
-| `memcached` | ✓ | ✓ | ✓ | ✓ |
-| `mongodb` | ✓ | ✓ | ✓ | ✓ |
-| `mysqli` | ✓ | ✓ | ✓ | ✓ |
-| `mysqlnd` | ✓ | ✓ | ✓ | ✓ |
-| `openssl` | ✓ | ✓ | ✓ | ✓ |
-| `opentelemetry` | ✓ | ✓ | ✓ | ✓ |
-| `pcntl` | ✓ | ✓ | ✓ | ✓ |
-| `pcre` | ✓ | ✓ | ✓ | ✓ |
-| `pdo` | ✓ | ✓ | ✓ | ✓ |
-| `pdo_mysql` | ✓ | ✓ | ✓ | ✓ |
-| `pdo_pgsql` | ✓ | ✓ | ✓ | ✓ |
-| `pdo_sqlite` | ✓ | ✓ | ✓ | ✓ |
-| `pgsql` | ✓ | ✓ | ✓ | ✓ |
-| `phar` | ✓ | ✓ | ✓ | ✓ |
-| `posix` | ✓ | ✓ | ✓ | ✓ |
-| `protobuf` | ✓ | ✓ | ✓ | ✓ |
-| `random` | ✓ | ✓ | ✓ | ✓ |
-| `readline` | ✓ | ✓ | ✓ | ✓ |
-| `redis` | ✓ | ✓ | ✓ | ✓ |
-| `reflection` | ✓ | ✓ | ✓ | ✓ |
-| `session` | ✓ | ✓ | ✓ | ✓ |
-| `shmop` | ✓ | ✓ | ✓ | ✓ |
-| `simplexml` | ✓ | ✓ | ✓ | ✓ |
-| `soap` | ✓ | ✓ | ✓ | ✓ |
-| `sockets` | ✓ | ✓ | ✓ | ✓ |
-| `sodium` | ✓ | ✓ | ✓ | ✓ |
-| `spl` | ✓ | ✓ | ✓ | ✓ |
-| `sqlite3` | ✓ | ✓ | ✓ | ✓ |
-| `standard` | ✓ | ✓ | ✓ | ✓ |
-| `sysvmsg` | ✓ | ✓ | ✓ | ✓ |
-| `sysvsem` | ✓ | ✓ | ✓ | ✓ |
-| `sysvshm` | ✓ | ✓ | ✓ | ✓ |
-| `tokenizer` | ✓ | ✓ | ✓ | ✓ |
-| `vips` | ✓ | ✓ | ✓ | ✓ |
-| `xml` | ✓ | ✓ | ✓ | ✓ |
-| `xmlreader` | ✓ | ✓ | ✓ | ✓ |
-| `xmlrpc` | ✓ | ✓ | ✓ | ✓ |
-| `xmlwriter` | ✓ | ✓ | ✓ | ✓ |
-| `xsl` | ✓ | ✓ | ✓ | ✓ |
-| `yaml` | ✓ | ✓ | ✓ | ✓ |
-| `Zend OPcache` | ✓ | ✓ | ✓ | ✓ |
-| `zip` | ✓ | ✓ | ✓ | ✓ |
-| `zlib` | ✓ | ✓ | ✓ | ✓ |
+
+PHP loads the extensions in the CLI and in PHP-FPM of `php`, `php-nginx`, `php-apache` and their `-dev` variants.
 
 The `-dev` images also contain Xdebug, which is loaded by default, and the Blackfire PHP extension, which is not; `PHP_DEBUGGER` switches between them, see [Development variant](#development-variant-php-dev).
 
