@@ -119,7 +119,7 @@ Every PHP version comes as a Debian tag (`8.5`) and an Alpine tag (`8.5-alpine`)
 | [`imap` extension](#php-extensions) | `8.2` and `8.3` only | `8.2-alpine` and `8.3-alpine` only |
 | [Build tools for extensions](#installing-more-extensions) | included | installed by `docker-php-ext-install`; for PIE install `$PHPIZE_DEPS` |
 | [Locales](../customization.md#locales) | several hundred, for example `de_DE.utf8` | none |
-| [Installing packages](../customization.md#tools-for-your-dockerfile) | `apt-install` | `apk-install` |
+| [Installing packages](../customization.md#tools-for-your-dockerfile) | `apt-install`, from the Debian components `main`, `contrib` and `non-free` | `apk-install` |
 | [`docker-cronjob`](../customization.md#cron-jobs) | works | does not work, see [Known issues](../known-issues.md#docker-cronjob-on-alpine) |
 | [`docker-image-cleanup`](../customization.md#tools-for-your-dockerfile) | works | fails, see [Known issues](../known-issues.md#docker-image-cleanup-in-the-alpine-php-images) |
 | [Apache index files](../environment-variables.md#web-server) in `php-apache` | `index.html`, `index.cgi`, `index.pl`, `index.php`, `index.xhtml`, `index.htm` come before `WEB_DOCUMENT_INDEX` | `index.html` comes before `WEB_DOCUMENT_INDEX` |

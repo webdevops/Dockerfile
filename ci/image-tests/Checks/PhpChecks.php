@@ -135,6 +135,22 @@ trait PhpChecks
         ]));
     }
 
+    /**
+     * The Debian images enable the components contrib and non-free besides main, for packages such as unrar; apt lists
+     * the indexes of all three without fetching them.
+     */
+    public function testAptUsesContribAndNonFree(): void
+    {
+        if (self::image()->osFamily !== 'debian') {
+            self::markTestSkipped('contrib and non-free are Debian components.');
+        }
+
+        $uris = $this->stdout('apt-get --print-uris update');
+        foreach (['main', 'contrib', 'non-free'] as $component) {
+            self::assertMatchesRegularExpression('#/debian/dists/[a-z]+/' . $component . '/binary-#', $uris, $component);
+        }
+    }
+
     public function testPhpComputesSha1(): void
     {
         $result = $this->assertCommandSucceeds("php -r 'echo sha1(\"webdevops\");'");
