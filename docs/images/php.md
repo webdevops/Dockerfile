@@ -205,7 +205,7 @@ Mail from PHP-FPM and from the PHP CLI then shows up in Mailpit at http://localh
 
 `php-dev` is built on `php` and changes the following:
 
-- Xdebug is loaded by default (`xdebug.mode=debug`, `xdebug.start_with_request=trigger`, `xdebug.client_port=9003`), see [Xdebug with an IDE](#xdebug-with-an-ide). `PHP_DEBUGGER` switches to Blackfire or turns both off, see [Development images](../environment-variables.md#development-images). Known issues: the [`XDEBUG_*` variables are written into your own `php.ini`](../known-issues.md#xdebug-settings-written-into-phpini), and the [Blackfire agent is missing](../known-issues.md#blackfire-agent).
+- Xdebug is loaded by default (`xdebug.mode=debug`, `xdebug.start_with_request=trigger`, `xdebug.client_port=9003`), see [Xdebug with an IDE](#xdebug-with-an-ide). `PHP_DEBUGGER` switches to Blackfire or turns both off, see [Development images](../environment-variables.md#development-images). Known issue: the [Blackfire agent is missing](../known-issues.md#blackfire-agent).
 - `opcache.revalidate_freq` is `0`, so changed files are picked up immediately.
 - Postfix and an SSH server are started. Postfix sends mail to real recipients unless you set a relay host, see [Mail](#mail).
 - `root` and `application` have the password `dev`. Use the `-dev` images for local development only.
@@ -228,7 +228,7 @@ services:
       - "host.docker.internal:host-gateway"
 ```
 
-Use `php.xdebug.client_host`, not `XDEBUG_CLIENT_HOST`: the `XDEBUG_*` variables are written into your own `php.ini`, see [Known issues](../known-issues.md#xdebug-settings-written-into-phpini).
+`XDEBUG_CLIENT_HOST: host.docker.internal` has the same effect.
 
 - **Start a debug session:** Xdebug only connects when the request carries the trigger `XDEBUG_SESSION`. In the browser, add `?XDEBUG_SESSION=1` to the URL, or set the cookie `XDEBUG_SESSION` as browser extensions for Xdebug do. On the command line, set the environment variable:
 

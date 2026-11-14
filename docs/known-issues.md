@@ -86,12 +86,6 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php-nginx` and `php-nginx-dev` with the Debian tags `8.2` to `8.5`.
 - **Instead:** Add your own repositories as a new file in `/etc/apt/sources.list.d/`, for example `echo "deb http://deb.debian.org/debian bookworm-backports main" > /etc/apt/sources.list.d/backports.list`.
 
-### Xdebug settings written into `php.ini`
-
-- **Effect:** When an `XDEBUG_*` variable is set, the development images append its setting to `/opt/docker/etc/php/php.ini`, your own file. A read-write mount gets one more line on every start of the container, also on the host; with a `:ro` mount the container exits at start.
-- **Images:** `php-dev`, `php-nginx-dev`, `php-apache-dev`.
-- **Instead:** Set the Xdebug directives in your `php.ini` or with `php.xdebug.<key>` instead of the `XDEBUG_*` variables. Or bring your `php.ini` in with `COPY`; then only the copy inside the container is changed.
-
 ### `fpm.pool.<key>` for the directives of `docker.conf`
 
 - **Effect:** No effect for `listen`, `access.log`, `clear_env`, `catch_workers_output` and `decorate_workers_output`. The official PHP image sets them in the pool file `docker.conf`, which PHP-FPM reads after `application.conf`, so its values win. Other directives work, for example `fpm.pool.pm.max_requests`.

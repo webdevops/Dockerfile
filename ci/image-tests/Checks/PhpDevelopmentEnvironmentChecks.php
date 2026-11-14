@@ -11,6 +11,7 @@ use Webdevops\Build\ImageTests\ImageTestCase;
 
 use function escapeshellarg;
 use function explode;
+use function implode;
 use function sleep;
 use function sprintf;
 
@@ -87,6 +88,21 @@ trait PhpDevelopmentEnvironmentChecks
                 self::assertTrue(ListeningSockets::read($container)->isListening((int) $port, $host), $address . ' should listen');
             }, 10, 1);
         }
+    }
+
+    /**
+     * The XDEBUG_* settings go to 98-webdevops.ini, which every start writes anew, not into /opt/docker/etc/php/php.ini,
+     * the file for your own settings. That stays as the image has it, so a mount with :ro works, and its values win.
+     */
+    public function testXdebugSettingsLeavePhpIniAlone(): void
+    {
+        $result = $this->runContainer(['sh', '-c', implode('; ', [
+            'cat /opt/docker/etc/php/php.ini',
+            "php -r 'echo ini_get(\"xdebug.mode\"), PHP_EOL;'",
+            "echo 'xdebug.mode = coverage' >> /opt/docker/etc/php/php.ini",
+            "php -r 'echo ini_get(\"xdebug.mode\"), PHP_EOL;'",
+        ])], ['XDEBUG_MODE' => 'trace']);
+        self::assertSame([0, "; placeholder\ntrace\ncoverage\n"], [$result->exitCode, $result->stdout], $result->describe());
     }
 
     /**

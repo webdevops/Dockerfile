@@ -295,7 +295,7 @@ Images: `php-*`. Files in `/opt/docker/etc/php/`:
 | File | Content |
 | --- | --- |
 | `php.webdevops.ini` | The image's PHP defaults, followed by the values of the `php.*` and `PHP_*` variables. Loaded as `98-webdevops.ini`. At every start it is reset to the image's version and the variables are written again, so do not replace or edit it. |
-| `php.ini` | For your settings, empty by default. Loaded as `99-docker.ini`, after `98-webdevops.ini`, so its values win over the environment variables. A `:ro` mount works, except in the development images when one of the [`XDEBUG_*` variables](environment-variables.md#development-images) is set: these images write the Xdebug settings into this file, and with `:ro` the container exits at start. |
+| `php.ini` | For your settings, empty by default. Loaded as `99-docker.ini`, after `98-webdevops.ini`, so its values win over the environment variables. A `:ro` mount works. |
 | `fpm/php-fpm.conf` | PHP-FPM main configuration; `FPM_PROCESS_MAX` and `fpm.global.*` are appended at every start. |
 | `fpm/pool.d/application.conf` | The PHP-FPM pool `[www]`; the `FPM_*` and `fpm.pool.*` values are appended at every start. To replace it, use `COPY` in a Dockerfile: with a `:ro` mount the container exits at start, and a read-write mount gets the values appended in the file on the host. |
 

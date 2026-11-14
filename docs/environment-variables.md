@@ -172,7 +172,7 @@ Images: `php-dev`, `php-nginx-dev`, `php-apache-dev`.
 | `BLACKFIRE_SERVER_ID` | not set | `blackfire.server_id`, used with `PHP_DEBUGGER=blackfire` |
 | `BLACKFIRE_SERVER_TOKEN` | not set | `blackfire.server_token`, used with `PHP_DEBUGGER=blackfire` |
 
-Each `XDEBUG_*` variable you set is appended at start to `/opt/docker/etc/php/php.ini`, the file for your own settings. If you mount your own `php.ini` with `:ro`, the container exits at start; a read-write mount gets one more line in the file on the host at every start. To avoid both, set the directives in your `php.ini` or with `php.xdebug.<key>`, see [Known issues](known-issues.md#xdebug-settings-written-into-phpini).
+Each `XDEBUG_*` variable you set is written at start to `98-webdevops.ini`, after the image's Xdebug defaults and the `php.*` variables, so it wins over both. Your own `php.ini` is loaded after it and wins over the variables, see [Configuration files](customization.md#php).
 
 ## Services
 
