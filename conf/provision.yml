@@ -34,11 +34,13 @@ provision:
       php-apache/general: '*'
       php-dev/general   : '*'
       apache-dev/general: '*'
+      development/general: '*'
   php-nginx-dev:
     configuration:
       php-nginx/general : '*'
       php-dev/general   : '*'
       nginx-dev/general : '*'
+      development/general: '*'
   php-official:
     configuration:
       base/general       : '*'

@@ -38,5 +38,5 @@ Started by default: `nginx`, `php-fpm`, `cron`, `syslog`. The `-dev` variant als
 
 - Xdebug is loaded by default, as in [`php-dev`](php.md#development-variant-php-dev); `PHP_DEBUGGER` switches to Blackfire or turns both off. To connect your IDE, see [Xdebug with an IDE](php.md#xdebug-with-an-ide).
 - `opcache.revalidate_freq` is `0`.
-- Postfix and an SSH server are started. Postfix sends mail to real recipients unless you set a relay host, see [Mail](php.md#mail). Unlike `php-dev`, no passwords are set, so nobody can log in over SSH; use `docker compose exec` instead, see [Known issues](../known-issues.md#ssh-in-php-nginx-dev-and-php-apache-dev).
+- Postfix and an SSH server are started. Postfix sends mail to real recipients unless you set a relay host, see [Mail](php.md#mail). As in `php-dev`, `root` and `application` have the password `dev`, also for SSH.
 - Files matching `WEB_NO_CACHE_PATTERN` (CSS, JavaScript, images, JSON, XML by default) are served with `expires off`.

@@ -111,12 +111,6 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php`, `php-dev`, `php-nginx`, `php-nginx-dev`, `php-apache`, `php-apache-dev`.
 - **Instead:** Always use a version tag such as `8.5` or `8.5-alpine`.
 
-### SSH in `php-nginx-dev` and `php-apache-dev`
-
-- **Effect:** The SSH server runs, but the accounts have no password, so nobody can log in. Only `php-dev` sets the password `dev`.
-- **Images:** `php-nginx-dev`, `php-apache-dev`.
-- **Instead:** Use `docker compose exec`.
-
 ### Composer 1 on PHP 8.4 and 8.5
 
 - **Effect:** With `COMPOSER_VERSION=1`, every Composer run prints deprecation notices.

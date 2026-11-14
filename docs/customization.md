@@ -337,7 +337,7 @@ Images based on `base-app`, and all `php-*` images, contain the user and group `
 docker compose exec -u application app composer install
 ```
 
-The development images (`php-dev`, `php-nginx-dev`, `php-apache-dev`) start an SSH server. `php-dev` also sets the password `dev` for both `root` and `application`. Use the development images for local development only.
+The development images (`php-dev`, `php-nginx-dev`, `php-apache-dev`) start an SSH server and set the password `dev` for both `root` and `application`. Use the development images for local development only.
 
 ### Other UID or GID
 
