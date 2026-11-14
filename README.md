@@ -50,7 +50,7 @@ How the files in this repository are generated, and how the images are built and
 * [Overview of all images](docs/README.md)
 * [Environment variables](docs/environment-variables.md)
 * [Customization: commands, hooks, services](docs/customization.md)
-* PHP images: [Debian or Alpine](docs/images/php.md#debian-or-alpine), [production](docs/images/php.md#production), [Xdebug with an IDE](docs/images/php.md#xdebug-with-an-ide), [mail](docs/images/php.md#mail)
+* PHP images: [PHP extensions per tag](docs/images/php.md#php-extensions), [Debian or Alpine](docs/images/php.md#debian-or-alpine), [production](docs/images/php.md#production), [Xdebug with an IDE](docs/images/php.md#xdebug-with-an-ide), [mail](docs/images/php.md#mail)
 * [Known issues](docs/known-issues.md)
 
 ### Debian PHP

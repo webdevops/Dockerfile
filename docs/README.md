@@ -35,7 +35,7 @@ Documentation for the `webdevops/*` Docker images. It describes the images as th
 
 - [Environment variables](environment-variables.md): every setting, with defaults, including [uploads and long requests](environment-variables.md#uploads-and-long-requests)
 - [Customization](customization.md): commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs, healthcheck, configuration files, locales, the application user
-- PHP images: [Debian or Alpine](images/php.md#debian-or-alpine), [production](images/php.md#production), [installing more extensions](images/php.md#installing-more-extensions), [mail](images/php.md#mail), [Xdebug with an IDE](images/php.md#xdebug-with-an-ide)
+- PHP images: [PHP extensions per tag](images/php.md#php-extensions), [Debian or Alpine](images/php.md#debian-or-alpine), [production](images/php.md#production), [installing more extensions](images/php.md#installing-more-extensions), [mail](images/php.md#mail), [Xdebug with an IDE](images/php.md#xdebug-with-an-ide)
 - [Known issues](known-issues.md): options that do not work, workarounds, migration from older images
 - [Replacing discontinued images](discontinued-images.md): what to use instead of `storage`, `vsftp` and `ssh`
 
