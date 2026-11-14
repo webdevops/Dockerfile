@@ -54,17 +54,86 @@ Applications that read the upload progress from the session, using a form field 
 
 ## PHP extensions
 
-All tags contain these extensions:
+This table lists the extensions of each PHP version; PHP loads them in the CLI and in PHP-FPM. It applies to `php`, `php-nginx`, `php-apache` and their `-dev` variants. Each column covers both tags of a PHP version, for example `8.5` and `8.5-alpine`; "Debian only" marks an extension that only the Debian tag contains. The tags differ only in `imap` (PHP 8.2 and 8.3), `lexbor` and `uri` (PHP 8.5) and the ionCube Loader (Debian tags); these come first in the table, the extensions of all tags follow in alphabetical order.
 
-`amqp`, `apcu`, `bcmath`, `bz2`, `calendar`, `ctype`, `curl`, `date`, `dom`, `excimer`, `exif`, `ffi`, `fileinfo`, `filter`, `ftp`, `gd`, `gettext`, `gmp`, `hash`, `iconv`, `imagick`, `intl`, `json`, `ldap`, `libxml`, `mbstring`, `memcached`, `mongodb`, `mysqli`, `mysqlnd`, `openssl`, `opentelemetry`, `pcntl`, `pcre`, `pdo`, `pdo_mysql`, `pdo_pgsql`, `pdo_sqlite`, `pgsql`, `phar`, `posix`, `protobuf`, `random`, `readline`, `redis`, `reflection`, `session`, `shmop`, `simplexml`, `soap`, `sockets`, `sodium`, `spl`, `sqlite3`, `standard`, `sysvmsg`, `sysvsem`, `sysvshm`, `tokenizer`, `vips`, `xml`, `xmlreader`, `xmlrpc`, `xmlwriter`, `xsl`, `yaml`, `Zend OPcache`, `zip`, `zlib`
+| Extension | `8.2` | `8.3` | `8.4` | `8.5` |
+| --- | :---: | :---: | :---: | :---: |
+| `lexbor` ([new in PHP 8.5](https://php.watch/versions/8.5/changelog)) | – | – | – | ✓ |
+| `uri` ([new in PHP 8.5](https://www.php.net/releases/8.5/en.php)) | – | – | – | ✓ |
+| `imap` ([moved to PECL in PHP 8.4](https://wiki.php.net/rfc/unbundle_imap_pspell_oci8)) | ✓ | ✓ | – | – |
+| ionCube Loader ([skipped on Alpine](../../provisioning/php/general/provision/bootstrap.d/30-setup-ioncube.sh)) | Debian only | Debian only | Debian only | Debian only |
+| **In all tags** | | | | |
+| `amqp` | ✓ | ✓ | ✓ | ✓ |
+| `apcu` | ✓ | ✓ | ✓ | ✓ |
+| `bcmath` | ✓ | ✓ | ✓ | ✓ |
+| `bz2` | ✓ | ✓ | ✓ | ✓ |
+| `calendar` | ✓ | ✓ | ✓ | ✓ |
+| `ctype` | ✓ | ✓ | ✓ | ✓ |
+| `curl` | ✓ | ✓ | ✓ | ✓ |
+| `date` | ✓ | ✓ | ✓ | ✓ |
+| `dom` | ✓ | ✓ | ✓ | ✓ |
+| `excimer` | ✓ | ✓ | ✓ | ✓ |
+| `exif` | ✓ | ✓ | ✓ | ✓ |
+| `ffi` | ✓ | ✓ | ✓ | ✓ |
+| `fileinfo` | ✓ | ✓ | ✓ | ✓ |
+| `filter` | ✓ | ✓ | ✓ | ✓ |
+| `ftp` | ✓ | ✓ | ✓ | ✓ |
+| `gd` | ✓ | ✓ | ✓ | ✓ |
+| `gettext` | ✓ | ✓ | ✓ | ✓ |
+| `gmp` | ✓ | ✓ | ✓ | ✓ |
+| `hash` | ✓ | ✓ | ✓ | ✓ |
+| `iconv` | ✓ | ✓ | ✓ | ✓ |
+| `imagick` | ✓ | ✓ | ✓ | ✓ |
+| `intl` | ✓ | ✓ | ✓ | ✓ |
+| `json` | ✓ | ✓ | ✓ | ✓ |
+| `ldap` | ✓ | ✓ | ✓ | ✓ |
+| `libxml` | ✓ | ✓ | ✓ | ✓ |
+| `mbstring` | ✓ | ✓ | ✓ | ✓ |
+| `memcached` | ✓ | ✓ | ✓ | ✓ |
+| `mongodb` | ✓ | ✓ | ✓ | ✓ |
+| `mysqli` | ✓ | ✓ | ✓ | ✓ |
+| `mysqlnd` | ✓ | ✓ | ✓ | ✓ |
+| `openssl` | ✓ | ✓ | ✓ | ✓ |
+| `opentelemetry` | ✓ | ✓ | ✓ | ✓ |
+| `pcntl` | ✓ | ✓ | ✓ | ✓ |
+| `pcre` | ✓ | ✓ | ✓ | ✓ |
+| `pdo` | ✓ | ✓ | ✓ | ✓ |
+| `pdo_mysql` | ✓ | ✓ | ✓ | ✓ |
+| `pdo_pgsql` | ✓ | ✓ | ✓ | ✓ |
+| `pdo_sqlite` | ✓ | ✓ | ✓ | ✓ |
+| `pgsql` | ✓ | ✓ | ✓ | ✓ |
+| `phar` | ✓ | ✓ | ✓ | ✓ |
+| `posix` | ✓ | ✓ | ✓ | ✓ |
+| `protobuf` | ✓ | ✓ | ✓ | ✓ |
+| `random` | ✓ | ✓ | ✓ | ✓ |
+| `readline` | ✓ | ✓ | ✓ | ✓ |
+| `redis` | ✓ | ✓ | ✓ | ✓ |
+| `reflection` | ✓ | ✓ | ✓ | ✓ |
+| `session` | ✓ | ✓ | ✓ | ✓ |
+| `shmop` | ✓ | ✓ | ✓ | ✓ |
+| `simplexml` | ✓ | ✓ | ✓ | ✓ |
+| `soap` | ✓ | ✓ | ✓ | ✓ |
+| `sockets` | ✓ | ✓ | ✓ | ✓ |
+| `sodium` | ✓ | ✓ | ✓ | ✓ |
+| `spl` | ✓ | ✓ | ✓ | ✓ |
+| `sqlite3` | ✓ | ✓ | ✓ | ✓ |
+| `standard` | ✓ | ✓ | ✓ | ✓ |
+| `sysvmsg` | ✓ | ✓ | ✓ | ✓ |
+| `sysvsem` | ✓ | ✓ | ✓ | ✓ |
+| `sysvshm` | ✓ | ✓ | ✓ | ✓ |
+| `tokenizer` | ✓ | ✓ | ✓ | ✓ |
+| `vips` | ✓ | ✓ | ✓ | ✓ |
+| `xml` | ✓ | ✓ | ✓ | ✓ |
+| `xmlreader` | ✓ | ✓ | ✓ | ✓ |
+| `xmlrpc` | ✓ | ✓ | ✓ | ✓ |
+| `xmlwriter` | ✓ | ✓ | ✓ | ✓ |
+| `xsl` | ✓ | ✓ | ✓ | ✓ |
+| `yaml` | ✓ | ✓ | ✓ | ✓ |
+| `Zend OPcache` | ✓ | ✓ | ✓ | ✓ |
+| `zip` | ✓ | ✓ | ✓ | ✓ |
+| `zlib` | ✓ | ✓ | ✓ | ✓ |
 
-Differences between tags:
-
-| Extension | Tags |
-| --- | --- |
-| `imap` | `8.2`, `8.3`, `8.2-alpine`, `8.3-alpine` |
-| ionCube Loader | Debian-based tags (`8.2` to `8.5`) |
-| `lexbor`, `uri` | `8.5`, `8.5-alpine` |
+The `-dev` images also contain Xdebug, which is loaded by default, and the Blackfire PHP extension, which is not; `PHP_DEBUGGER` switches between them, see [Development variant](#development-variant-php-dev).
 
 Disable extensions you do not need with `PHP_DISMOD`, for example `PHP_DISMOD: redis,apcu`.
 
