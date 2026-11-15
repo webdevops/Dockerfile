@@ -26,9 +26,6 @@ RUN apk add --no-cache \
     && mkdir -p \
             /baselayout/sbin \
             /baselayout/usr/local/bin \
-        # Baselayout scripts
-        && wget -O /tmp/baselayout-install.sh https://raw.githubusercontent.com/webdevops/Docker-Image-Baselayout/master/install.sh \
-        && sh /tmp/baselayout-install.sh /baselayout \
         ## Install go-replace
     && wget -O "/baselayout/usr/local/bin/go-replace" "https://github.com/webdevops/go-replace/releases/download/27.9.0/go-replace.linux.$TARGETARCH" \
     && chmod +x "/baselayout/usr/local/bin/go-replace" \
@@ -43,3 +40,6 @@ RUN apk add --no-cache \
     && rm -rf "$GNUPGHOME" /tmp/gosu.asc \
     && chmod +x "/baselayout/sbin/gosu" \
     && "/baselayout/sbin/gosu" nobody true
+
+# Baselayout scripts (apt-install, apk-install, docker-run-bootstrap, ...), from provisioning/baselayout
+COPY conf/ /baselayout/

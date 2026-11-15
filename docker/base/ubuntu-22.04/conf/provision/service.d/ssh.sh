@@ -7,10 +7,6 @@ case "$IMAGE_FAMILY" in
         apt-install openssh-server
         ;;
 
-    RedHat)
-        yum-install openssh-server
-        ;;
-
     Alpine)
         apk-install openssh
         ;;

@@ -8,13 +8,6 @@ case "$IMAGE_FAMILY" in
         apt-install syslog-ng syslog-ng-core
         ;;
 
-    RedHat)
-        yum-install syslog-ng
-
-        # remove logrotate (not needed for docker)
-        rm -f "/etc/cron.daily/logrotate"
-        ;;
-
     Alpine)
         apk-install syslog-ng
         ;;

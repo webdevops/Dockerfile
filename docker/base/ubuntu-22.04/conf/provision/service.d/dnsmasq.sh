@@ -8,10 +8,6 @@ case "$IMAGE_FAMILY" in
         apt-install dnsmasq
         ;;
 
-    RedHat)
-        yum-install dnsmasq
-        ;;
-
     Alpine)
         apk-install dnsmasq
         ;;

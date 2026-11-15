@@ -36,14 +36,6 @@ fileExistenceTests:
     path: '/usr/local/bin/apt-upgrade'
     shouldExist: true
     permissions: '-rwxr-xr-x'
-  - name: 'yum install wrapper with auto cleanup'
-    path: '/usr/local/bin/yum-install'
-    shouldExist: true
-    permissions: '-rwxr-xr-x'
-  - name: 'yum upgrade wrapper with auto cleanup'
-    path: '/usr/local/bin/yum-upgrade'
-    shouldExist: true
-    permissions: '-rwxr-xr-x'
   - name: 'Cleanup for docker images after package installations'
     path: '/usr/local/bin/docker-image-cleanup'
     shouldExist: true
