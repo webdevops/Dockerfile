@@ -72,11 +72,9 @@ final class GenerateGithubCiCommandTest extends TestCase
             'pull_request' => ['branches' => ['master']],
             'workflow_dispatch' => null,
         ], $workflow['on']);
-        self::assertSame(
-            ['contents' => 'read', 'packages' => 'write'],
-            $workflow['permissions'],
-            'the build steps hand the token to the scripts of the Dockerfiles',
-        );
+        self::assertSame(['contents' => 'read'], $workflow['permissions'], 'only the jobs that push may write packages');
+        self::assertArrayNotHasKey('permissions', $workflow['jobs']['validate-automation']);
+        self::assertArrayNotHasKey('permissions', $workflow['jobs']['image-test-runner']);
         self::assertSame(self::ALL_JOBS, array_keys($workflow['jobs']));
         self::assertSame('Validate Automation', $workflow['jobs']['validate-automation']['name']);
     }

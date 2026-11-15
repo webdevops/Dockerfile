@@ -56,7 +56,7 @@ defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdev
 internally; pull the images from Docker Hub.
 
 The build steps pass the token of the run (`GITHUB_TOKEN`) to Docker as the build secret `COMPOSER_AUTH`, for PIE (see [PHP extension builds](#php-extension-builds)).
-The workflow gives this token read access to the repository and write access to the packages on ghcr.io, nothing else.
+The token may only read the repository; only the jobs that push images to ghcr.io may also write packages there.
 
 BuildKit pulls the images from Docker Hub through `mirror.gcr.io`: anonymous pulls from Docker Hub fail with `429 Too Many Requests` once the IP address of the runner has reached its limit.
 An image that the mirror does not have comes from Docker Hub.

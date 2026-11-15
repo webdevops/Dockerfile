@@ -44,6 +44,8 @@ final class GithubJobBuilderTest extends TestCase
         self::assertSame('${{ matrix.runner }}', $jobs['base_alpine']['runs-on']);
         self::assertSame('webdevops/dockerfile-build-env', $jobs['base_alpine']['container']);
         self::assertSame('base_alpine', $jobs['base_alpine_publish']['needs']);
+        self::assertSame(['contents' => 'read', 'packages' => 'write'], $jobs['base_alpine']['permissions'], 'pushes to and pulls from ghcr.io');
+        self::assertSame(['packages' => 'write'], $jobs['base_alpine_publish']['permissions'], 'pushes to ghcr.io, needs no checkout');
         self::assertSame('${{github.ref == \'refs/heads/master\'}}', $jobs['base_alpine_publish']['if']);
     }
 
@@ -143,7 +145,7 @@ final class GithubJobBuilderTest extends TestCase
         self::assertArrayNotHasKey('if', $steps['Build (load locally)']);
         self::assertArrayNotHasKey('build-contexts', $steps['Build (load locally)']['with']);
         self::assertSame(
-            'docker push "ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine',
+            'docker push "ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine"',
             $steps['Push arch image']['run'],
         );
     }
@@ -255,7 +257,7 @@ final class GithubJobBuilderTest extends TestCase
         $child = $this->steps($this->jobs(['imageParent' => 'webdevops/base:ubuntu-22.04', 'imageParentRef' => 'webdevops/base:latest']));
 
         $pushed = $parent['Build (load locally)']['with']['tags'];
-        self::assertSame('docker push ' . $pushed, str_replace('"', '', $parent['Push arch image']['run']));
+        self::assertSame('docker push "' . $pushed . '"', $parent['Push arch image']['run']);
         self::assertSame('webdevops/base:latest=docker-image://' . $pushed, $child['Build (load locally)']['with']['build-contexts']);
     }
 

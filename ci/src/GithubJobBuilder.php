@@ -40,6 +40,12 @@ class GithubJobBuilder
     private const string COMPOSER_AUTH_SECRET = 'COMPOSER_AUTH=COMPOSER_AUTH';
 
     /**
+     * The workflow gives the token only read access to the repository; the image jobs may also push to ghcr.io. The
+     * build steps hand the token to every script of the RUN instructions with PIE, so it gets nothing more.
+     */
+    private const array PUSH_PERMISSIONS = ['contents' => 'read', 'packages' => 'write'];
+
+    /**
      * BuildKit pulls Docker Hub images through this mirror: anonymous pulls from Docker Hub fail with "429 Too Many
      * Requests" once the runner's IP address has reached its limit. The webdevops parent images never come from Docker
      * Hub, where the mirror could serve an outdated one: outside of master they come from the artifacts of the run
@@ -115,6 +121,8 @@ class GithubJobBuilder
                 // even run if previous job skipped
                 'if' => '${{ !failure() && !cancelled() }}',
                 'runs-on' => '${{ matrix.runner }}',
+                // pushes its image to ghcr.io on master and takes the parent images from there
+                'permissions' => self::PUSH_PERMISSIONS,
                 'container' => 'webdevops/dockerfile-build-env',
                 'steps' => array_values(
                     array_filter(
@@ -178,7 +186,7 @@ class GithubJobBuilder
                             [
                                 'name' => 'Push arch image',
                                 'if' => '${{github.ref == \'refs/heads/master\'}}',
-                                'run' => 'docker push "ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}"-' . $node['tag'],
+                                'run' => 'docker push "' . $this->archImage($node['image'], $node['tag']) . '"',
                             ],
                             $hasChildren ? [
                                 'name' => 'Export image (OCI layout)',
@@ -227,6 +235,7 @@ class GithubJobBuilder
             $jobId . '_publish' => [
                 'name' => $node['name'] . ' - Publish',
                 'runs-on' => 'ubuntu-latest',
+                'permissions' => ['packages' => 'write'],
                 'needs' => $jobId,
                 'if' => '${{github.ref == \'refs/heads/master\'}}',
                 'steps' => [
@@ -302,7 +311,7 @@ class GithubJobBuilder
             'context' => $this->context($node),
             'platforms' => '${{ matrix.platform }}',
             'load' => true,
-            'tags' => $this->archImage($node['id']),
+            'tags' => $this->archImage($node['image'], $node['tag']),
             // Re-run all jobs to test a fresh build of the full image chain.
             'no-cache' => '${{ github.event_name == \'schedule\' || github.run_attempt > 1 }}',
             ...$this->buildCacheWith($node),
@@ -314,13 +323,12 @@ class GithubJobBuilder
     }
 
     /**
-     * The image of one architecture that the job of $imageId builds and, on master, pushes to ghcr.io, e.g.
-     * "ghcr.io/webdevops/php:sha-<commit>-amd64-8.4" for "webdevops/php:8.4".
+     * The image of one architecture that the job of webdevops/$image:$tag builds and, on master, pushes to ghcr.io,
+     * e.g. "ghcr.io/webdevops/php:sha-<commit>-amd64-8.4".
      */
-    private function archImage(string $imageId): string
+    private function archImage(string $image, string $tag): string
     {
-        [$repository, $tag] = explode(':', $imageId, 2);
-        return 'ghcr.io/' . $repository . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $tag;
+        return 'ghcr.io/webdevops/' . $image . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $tag;
     }
 
     /**
@@ -469,7 +477,9 @@ class GithubJobBuilder
     {
         $lines = [];
         foreach ($imageDependencies as $literalRef => $imageId) {
-            $lines[] = $literalRef . '=docker-image://' . $this->archImage($imageId);
+            // e.g. "webdevops/php:8.4"
+            [$repository, $tag] = explode(':', $imageId, 2);
+            $lines[] = $literalRef . '=docker-image://' . $this->archImage(substr($repository, strlen('webdevops/')), $tag);
         }
 
         return implode("\n", $lines);
@@ -488,7 +498,7 @@ class GithubJobBuilder
         }
 
         return 'make test-image-run IMAGE=' . $node['id']
-            . ' REFERENCE=ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'];
+            . ' REFERENCE=' . $this->archImage($node['image'], $node['tag']);
     }
 
     /**
@@ -503,9 +513,9 @@ class GithubJobBuilder
         if (file_exists($this->rootPath . '/tests/structure-test/' . $node['image'] . '/test.yaml')) {
             $script[] = 'cd tests/structure-test';
             if (file_exists($this->rootPath . '/tests/structure-test/' . $node['image'] . '/' . $node['tag'] . '/test.yaml')) {
-                $script[] = '/usr/local/bin/container-structure-test test --image ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'] . ' --config ' . $node['image'] . '/test.yaml --config ' . $node['image'] . '/' . $node['tag'] . '/test.yaml';
+                $script[] = '/usr/local/bin/container-structure-test test --image ' . $this->archImage($node['image'], $node['tag']) . ' --config ' . $node['image'] . '/test.yaml --config ' . $node['image'] . '/' . $node['tag'] . '/test.yaml';
             } else {
-                $script[] = '/usr/local/bin/container-structure-test test --image ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'] . ' --config ' . $node['image'] . '/test.yaml';
+                $script[] = '/usr/local/bin/container-structure-test test --image ' . $this->archImage($node['image'], $node['tag']) . ' --config ' . $node['image'] . '/test.yaml';
             }
         }
 

@@ -109,11 +109,10 @@ class GenerateGithubCiCommand extends Command
                 ],
                 'workflow_dispatch' => null,
             ],
-            // The build steps hand GITHUB_TOKEN to the RUN instructions with PIE, and with them to every script those
-            // instructions run, so the token may only read the repository and push the images to ghcr.io.
+            // The token may only read the repository; the jobs that push images to ghcr.io get packages: write
+            // themselves (GithubJobBuilder::PUSH_PERMISSIONS).
             'permissions' => [
                 'contents' => 'read',
-                'packages' => 'write',
             ],
             'jobs' => $this->jobs,
         ];

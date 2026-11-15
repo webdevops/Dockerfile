@@ -12,7 +12,6 @@ name: build
   workflow_dispatch: null
 permissions:
   contents: read
-  packages: write
 jobs:
   validate-automation:
     name: 'Validate Automation'
@@ -97,6 +96,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -174,10 +176,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/apache:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine'
+        run: 'docker push "ghcr.io/webdevops/apache:sha-${{ github.sha }}-${{ matrix.arch }}-alpine"'
   apache_alpine_publish:
     name: 'webdevops/apache:alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: apache_alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -228,6 +232,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -310,10 +317,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine'
+        run: 'docker push "ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-alpine"'
   base-app_alpine_publish:
     name: 'webdevops/base-app:alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: base-app_alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -364,6 +373,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -446,7 +458,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}"-ubuntu-22.04'
+        run: 'docker push "ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -476,6 +488,8 @@ jobs:
   base-app_ubuntu-22-04_publish:
     name: 'webdevops/base-app:ubuntu-22.04 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: base-app_ubuntu-22-04
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -528,6 +542,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -610,7 +627,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine'
+        run: 'docker push "ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -640,6 +657,8 @@ jobs:
   base_alpine_publish:
     name: 'webdevops/base:alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: base_alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -690,6 +709,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -772,7 +794,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}"-ubuntu-22.04'
+        run: 'docker push "ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -802,6 +824,8 @@ jobs:
   base_ubuntu-22-04_publish:
     name: 'webdevops/base:ubuntu-22.04 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: base_ubuntu-22-04
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -854,6 +878,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -936,7 +963,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine'
+        run: 'docker push "ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -966,6 +993,8 @@ jobs:
   bootstrap_alpine_publish:
     name: 'webdevops/bootstrap:alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: bootstrap_alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -1016,6 +1045,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -1098,7 +1130,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}"-ubuntu-22.04'
+        run: 'docker push "ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1128,6 +1160,8 @@ jobs:
   bootstrap_ubuntu-22-04_publish:
     name: 'webdevops/bootstrap:ubuntu-22.04 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: bootstrap_ubuntu-22-04
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -1180,6 +1214,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -1257,10 +1294,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-${{ matrix.arch }}"-latest'
+        run: 'docker push "ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-${{ matrix.arch }}-latest"'
   dockerfile-build-env_latest_publish:
     name: 'webdevops/dockerfile-build-env:latest - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: dockerfile-build-env_latest
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -1311,6 +1350,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -1388,10 +1430,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine'
+        run: 'docker push "ghcr.io/webdevops/nginx:sha-${{ github.sha }}-${{ matrix.arch }}-alpine"'
   nginx_alpine_publish:
     name: 'webdevops/nginx:alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: nginx_alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -1442,6 +1486,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -1519,7 +1566,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2'
+        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2"'
   php-apache-dev_8-2-alpine:
     strategy:
       fail-fast: false
@@ -1539,6 +1586,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -1616,10 +1666,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine"'
   php-apache-dev_8-2-alpine_publish:
     name: 'webdevops/php-apache-dev:8.2-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache-dev_8-2-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -1654,6 +1706,8 @@ jobs:
   php-apache-dev_8-2_publish:
     name: 'webdevops/php-apache-dev:8.2 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache-dev_8-2
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -1704,6 +1758,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -1781,7 +1838,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3'
+        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3"'
   php-apache-dev_8-3-alpine:
     strategy:
       fail-fast: false
@@ -1801,6 +1858,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -1878,10 +1938,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine"'
   php-apache-dev_8-3-alpine_publish:
     name: 'webdevops/php-apache-dev:8.3-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache-dev_8-3-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -1916,6 +1978,8 @@ jobs:
   php-apache-dev_8-3_publish:
     name: 'webdevops/php-apache-dev:8.3 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache-dev_8-3
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -1966,6 +2030,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -2043,7 +2110,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4'
+        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4"'
   php-apache-dev_8-4-alpine:
     strategy:
       fail-fast: false
@@ -2063,6 +2130,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -2140,10 +2210,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine"'
   php-apache-dev_8-4-alpine_publish:
     name: 'webdevops/php-apache-dev:8.4-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache-dev_8-4-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -2178,6 +2250,8 @@ jobs:
   php-apache-dev_8-4_publish:
     name: 'webdevops/php-apache-dev:8.4 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache-dev_8-4
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -2228,6 +2302,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -2305,7 +2382,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5'
+        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5"'
   php-apache-dev_8-5-alpine:
     strategy:
       fail-fast: false
@@ -2325,6 +2402,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -2402,10 +2482,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine"'
   php-apache-dev_8-5-alpine_publish:
     name: 'webdevops/php-apache-dev:8.5-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache-dev_8-5-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -2440,6 +2522,8 @@ jobs:
   php-apache-dev_8-5_publish:
     name: 'webdevops/php-apache-dev:8.5 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache-dev_8-5
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -2490,6 +2574,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -2567,7 +2654,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2'
+        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2613,6 +2700,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -2690,7 +2780,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2720,6 +2810,8 @@ jobs:
   php-apache_8-2-alpine_publish:
     name: 'webdevops/php-apache:8.2-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache_8-2-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -2754,6 +2846,8 @@ jobs:
   php-apache_8-2_publish:
     name: 'webdevops/php-apache:8.2 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache_8-2
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -2804,6 +2898,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -2881,7 +2978,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3'
+        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2927,6 +3024,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -3004,7 +3104,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3034,6 +3134,8 @@ jobs:
   php-apache_8-3-alpine_publish:
     name: 'webdevops/php-apache:8.3-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache_8-3-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -3068,6 +3170,8 @@ jobs:
   php-apache_8-3_publish:
     name: 'webdevops/php-apache:8.3 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache_8-3
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -3118,6 +3222,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -3195,7 +3302,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4'
+        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3241,6 +3348,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -3318,7 +3428,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3348,6 +3458,8 @@ jobs:
   php-apache_8-4-alpine_publish:
     name: 'webdevops/php-apache:8.4-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache_8-4-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -3382,6 +3494,8 @@ jobs:
   php-apache_8-4_publish:
     name: 'webdevops/php-apache:8.4 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache_8-4
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -3432,6 +3546,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -3509,7 +3626,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5'
+        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3555,6 +3672,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -3632,7 +3752,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3662,6 +3782,8 @@ jobs:
   php-apache_8-5-alpine_publish:
     name: 'webdevops/php-apache:8.5-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache_8-5-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -3696,6 +3818,8 @@ jobs:
   php-apache_8-5_publish:
     name: 'webdevops/php-apache:8.5 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-apache_8-5
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -3746,6 +3870,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -3828,7 +3955,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2'
+        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2"'
   php-dev_8-2-alpine:
     strategy:
       fail-fast: false
@@ -3848,6 +3975,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -3930,10 +4060,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine"'
   php-dev_8-2-alpine_publish:
     name: 'webdevops/php-dev:8.2-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-dev_8-2-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -3968,6 +4100,8 @@ jobs:
   php-dev_8-2_publish:
     name: 'webdevops/php-dev:8.2 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-dev_8-2
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -4018,6 +4152,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -4100,7 +4237,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3'
+        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3"'
   php-dev_8-3-alpine:
     strategy:
       fail-fast: false
@@ -4120,6 +4257,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -4202,10 +4342,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine"'
   php-dev_8-3-alpine_publish:
     name: 'webdevops/php-dev:8.3-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-dev_8-3-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -4240,6 +4382,8 @@ jobs:
   php-dev_8-3_publish:
     name: 'webdevops/php-dev:8.3 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-dev_8-3
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -4290,6 +4434,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -4372,7 +4519,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4'
+        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4"'
   php-dev_8-4-alpine:
     strategy:
       fail-fast: false
@@ -4392,6 +4539,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -4474,10 +4624,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine"'
   php-dev_8-4-alpine_publish:
     name: 'webdevops/php-dev:8.4-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-dev_8-4-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -4512,6 +4664,8 @@ jobs:
   php-dev_8-4_publish:
     name: 'webdevops/php-dev:8.4 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-dev_8-4
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -4562,6 +4716,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -4644,7 +4801,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5'
+        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5"'
   php-dev_8-5-alpine:
     strategy:
       fail-fast: false
@@ -4664,6 +4821,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -4746,10 +4906,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine"'
   php-dev_8-5-alpine_publish:
     name: 'webdevops/php-dev:8.5-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-dev_8-5-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -4784,6 +4946,8 @@ jobs:
   php-dev_8-5_publish:
     name: 'webdevops/php-dev:8.5 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-dev_8-5
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -4834,6 +4998,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -4911,7 +5078,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2'
+        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2"'
   php-nginx-dev_8-2-alpine:
     strategy:
       fail-fast: false
@@ -4931,6 +5098,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -5008,10 +5178,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine"'
   php-nginx-dev_8-2-alpine_publish:
     name: 'webdevops/php-nginx-dev:8.2-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx-dev_8-2-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -5046,6 +5218,8 @@ jobs:
   php-nginx-dev_8-2_publish:
     name: 'webdevops/php-nginx-dev:8.2 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx-dev_8-2
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -5096,6 +5270,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -5173,7 +5350,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3'
+        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3"'
   php-nginx-dev_8-3-alpine:
     strategy:
       fail-fast: false
@@ -5193,6 +5370,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -5270,10 +5450,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine"'
   php-nginx-dev_8-3-alpine_publish:
     name: 'webdevops/php-nginx-dev:8.3-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx-dev_8-3-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -5308,6 +5490,8 @@ jobs:
   php-nginx-dev_8-3_publish:
     name: 'webdevops/php-nginx-dev:8.3 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx-dev_8-3
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -5358,6 +5542,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -5435,7 +5622,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4'
+        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4"'
   php-nginx-dev_8-4-alpine:
     strategy:
       fail-fast: false
@@ -5455,6 +5642,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -5532,10 +5722,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine"'
   php-nginx-dev_8-4-alpine_publish:
     name: 'webdevops/php-nginx-dev:8.4-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx-dev_8-4-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -5570,6 +5762,8 @@ jobs:
   php-nginx-dev_8-4_publish:
     name: 'webdevops/php-nginx-dev:8.4 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx-dev_8-4
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -5620,6 +5814,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -5697,7 +5894,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5'
+        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5"'
   php-nginx-dev_8-5-alpine:
     strategy:
       fail-fast: false
@@ -5717,6 +5914,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -5794,10 +5994,12 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine"'
   php-nginx-dev_8-5-alpine_publish:
     name: 'webdevops/php-nginx-dev:8.5-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx-dev_8-5-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -5832,6 +6034,8 @@ jobs:
   php-nginx-dev_8-5_publish:
     name: 'webdevops/php-nginx-dev:8.5 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx-dev_8-5
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -5882,6 +6086,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -5964,7 +6171,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2'
+        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6010,6 +6217,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -6092,7 +6302,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6122,6 +6332,8 @@ jobs:
   php-nginx_8-2-alpine_publish:
     name: 'webdevops/php-nginx:8.2-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx_8-2-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -6156,6 +6368,8 @@ jobs:
   php-nginx_8-2_publish:
     name: 'webdevops/php-nginx:8.2 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx_8-2
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -6206,6 +6420,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -6288,7 +6505,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3'
+        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6334,6 +6551,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -6416,7 +6636,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6446,6 +6666,8 @@ jobs:
   php-nginx_8-3-alpine_publish:
     name: 'webdevops/php-nginx:8.3-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx_8-3-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -6480,6 +6702,8 @@ jobs:
   php-nginx_8-3_publish:
     name: 'webdevops/php-nginx:8.3 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx_8-3
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -6530,6 +6754,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -6612,7 +6839,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4'
+        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6658,6 +6885,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -6740,7 +6970,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6770,6 +7000,8 @@ jobs:
   php-nginx_8-4-alpine_publish:
     name: 'webdevops/php-nginx:8.4-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx_8-4-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -6804,6 +7036,8 @@ jobs:
   php-nginx_8-4_publish:
     name: 'webdevops/php-nginx:8.4 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx_8-4
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -6854,6 +7088,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -6936,7 +7173,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5'
+        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6982,6 +7219,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -7064,7 +7304,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine'
+        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7094,6 +7334,8 @@ jobs:
   php-nginx_8-5-alpine_publish:
     name: 'webdevops/php-nginx:8.5-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx_8-5-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -7128,6 +7370,8 @@ jobs:
   php-nginx_8-5_publish:
     name: 'webdevops/php-nginx:8.5 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php-nginx_8-5
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -7178,6 +7422,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -7260,7 +7507,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2'
+        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7306,6 +7553,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -7388,7 +7638,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.2-alpine'
+        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7418,6 +7668,8 @@ jobs:
   php_8-2-alpine_publish:
     name: 'webdevops/php:8.2-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php_8-2-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -7454,6 +7706,8 @@ jobs:
   php_8-2_publish:
     name: 'webdevops/php:8.2 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php_8-2
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -7506,6 +7760,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -7588,7 +7845,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3'
+        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7634,6 +7891,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -7716,7 +7976,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.3-alpine'
+        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7746,6 +8006,8 @@ jobs:
   php_8-3-alpine_publish:
     name: 'webdevops/php:8.3-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php_8-3-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -7782,6 +8044,8 @@ jobs:
   php_8-3_publish:
     name: 'webdevops/php:8.3 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php_8-3
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -7834,6 +8098,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -7916,7 +8183,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4'
+        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7962,6 +8229,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -8044,7 +8314,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.4-alpine'
+        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -8074,6 +8344,8 @@ jobs:
   php_8-4-alpine_publish:
     name: 'webdevops/php:8.4-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php_8-4-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -8110,6 +8382,8 @@ jobs:
   php_8-4_publish:
     name: 'webdevops/php:8.4 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php_8-4
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -8162,6 +8436,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -8244,7 +8521,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5'
+        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -8290,6 +8567,9 @@ jobs:
       - image-test-runner
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -8372,7 +8652,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}"-8.5-alpine'
+        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -8402,6 +8682,8 @@ jobs:
   php_8-5-alpine_publish:
     name: 'webdevops/php:8.5-alpine - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php_8-5-alpine
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -8438,6 +8720,8 @@ jobs:
   php_8-5_publish:
     name: 'webdevops/php:8.5 - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: php_8-5
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
@@ -8488,6 +8772,9 @@ jobs:
     needs: validate-automation
     if: '${{ !failure() && !cancelled() }}'
     runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
     container: webdevops/dockerfile-build-env
     steps:
       -
@@ -8527,7 +8814,7 @@ jobs:
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}"-latest'
+        run: 'docker push "ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest"'
       -
         name: 'Export image (OCI layout)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -8556,6 +8843,8 @@ jobs:
   toolbox_latest_publish:
     name: 'webdevops/toolbox:latest - Publish'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs: toolbox_latest
     if: "${{github.ref == 'refs/heads/master'}}"
     steps:
