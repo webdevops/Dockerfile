@@ -13,8 +13,6 @@ use Webdevops\Build\ImageTests\ImageTestCase;
 use function array_combine;
 use function array_keys;
 use function in_array;
-use function preg_grep;
-use function preg_quote;
 use function ksort;
 use function preg_match_all;
 use function sleep;
@@ -94,7 +92,7 @@ trait ServiceChecks
     {
         yield 'supervisord' => ['supervisord'];
         foreach (self::services() as $service) {
-            if (in_array($service, ['cron', 'syslog', 'ssh', 'apache', 'php-fpm'], true)) {
+            if (in_array($service, ['syslog', 'ssh', 'apache', 'php-fpm'], true)) {
                 yield $service => [$service];
             }
         }
@@ -103,8 +101,8 @@ trait ServiceChecks
     /**
      * What the SERVICE_*_OPTS of the environment container do: supervisord logs at the level "trace"; syslog-ng writes
      * its process id to the file of --pidfile; sshd listens on port 2222; Apache defines IMAGE_TEST, for which the
-     * configuration from Hooks/ sends a header; PHP-FPM names the session cookie IMAGETEST. Cron gets a log level of
-     * its own, which shows only in its command line.
+     * configuration from Hooks/ sends a header; PHP-FPM names the session cookie IMAGETEST. The log level of cron is
+     * checked by ContainerEnvironmentChecks.
      */
     #[DataProvider('serviceOptions')]
     public function testServiceOptionsFromTheEnvironment(string $service): void
@@ -129,10 +127,6 @@ trait ServiceChecks
                     'SERVICE_APACHE_OPTS=-DIMAGE_TEST',
                 ),
                 'php-fpm' => self::assertSame('IMAGETEST', $this->phpFpmBody($container, 'test=session_name'), 'SERVICE_PHPFPM_OPTS=-dsession.name=IMAGETEST'),
-                'cron' => self::assertNotSame([], preg_grep(
-                    '#^/usr/sbin/' . (self::image()->isAlpine() ? 'crond' : 'cron') . ' -f ' . preg_quote(self::cronOptions(), '#') . '$#',
-                    $this->commandLines($container),
-                ), 'SERVICE_CRON_OPTS'),
                 default => throw new LogicException('No check of the options of ' . $service),
             };
         });
