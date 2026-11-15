@@ -138,6 +138,8 @@ export COMPOSER_AUTH='{"github-oauth":{"github.com":"<token>"}}'
 docker build --secret id=COMPOSER_AUTH,env=COMPOSER_AUTH -t webdevops/php:8.5 docker/php/8.5
 ```
 
+`./build-local.sh` passes the secret on when `COMPOSER_AUTH` is set.
+
 Protobuf, Vips and XML-RPC are built directly from their official upstream sources.
 The existing XML-RPC **1.0.0RC3** pin is preserved on all supported PHP versions.
 Protobuf on PHP 8.2–8.5 uses the latest upstream release. If a future release raises its minimum PHP

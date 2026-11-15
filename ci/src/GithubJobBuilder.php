@@ -32,6 +32,14 @@ class GithubJobBuilder
      * github.com". The build steps pass the token of the run as the secret COMPOSER_AUTH, which the RUN instructions
      * with PIE mount as an environment variable for Composer, on which PIE builds. Pull requests from forks get a
      * read-only token too.
+     *
+     * Every script of those RUN instructions can read the token, not only PIE: the installers of Composer and Blackfire
+     * and the build systems of the extensions. In the image jobs it may push to ghcr.io (PUSH_PERMISSIONS), and a token
+     * cannot have fewer permissions in one step. The token ends with the job.
+     *
+     * With the token, the PIE requests of all jobs and runs share one limit, that of GITHUB_TOKEN per repository,
+     * instead of the anonymous limit of each runner's IP address: 7 extensions in 16 PHP jobs and Xdebug in 48
+     * development jobs per run.
      */
     private const array COMPOSER_AUTH_ENV = [
         'COMPOSER_AUTH' => '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}',
@@ -40,8 +48,9 @@ class GithubJobBuilder
     private const string COMPOSER_AUTH_SECRET = 'COMPOSER_AUTH=COMPOSER_AUTH';
 
     /**
-     * The workflow gives the token only read access to the repository; the image jobs may also push to ghcr.io. The
-     * build steps hand the token to every script of the RUN instructions with PIE, so it gets nothing more.
+     * The workflow gives the token only read access to the repository; the image jobs may also push their images to
+     * ghcr.io and pull their parent images from there. The token gets no other permission, because the build steps
+     * hand it to every script of the RUN instructions with PIE (COMPOSER_AUTH_ENV).
      */
     private const array PUSH_PERMISSIONS = ['contents' => 'read', 'packages' => 'write'];
 
@@ -108,6 +117,13 @@ class GithubJobBuilder
             $pushTags[] = '-t "ghcr.io/' . $alias . '"';
         }
 
+        // The images of every architecture that the image job pushed ("Push arch image")
+        $archImages = array_map(
+            fn (array $platform): string => '"' . $this->archImage($node['image'], $node['tag'], $platform['arch']) . '"',
+            self::PLATFORMS,
+        );
+        $archImages[array_key_last($archImages)] .= ' && exit 0';
+
         return [
             $jobId => [
                 'strategy' => [
@@ -135,13 +151,7 @@ class GithubJobBuilder
                             [
                                 // Before the build, which takes the parent images from ghcr.io on master
                                 'if' => '${{github.ref == \'refs/heads/master\'}}',
-                                'name' => 'Login to ghcr.io',
-                                'uses' => 'docker/login-action@v4',
-                                'with' => [
-                                    'registry' => 'ghcr.io',
-                                    'username' => '${{ github.actor }}',
-                                    'password' => '${{ secrets.GITHUB_TOKEN }}',
-                                ],
+                                ...$this->loginGhcrStep(),
                             ],
                             ...$this->downloadParentImageSteps($imageDependencies),
                             array_filter([
@@ -240,15 +250,7 @@ class GithubJobBuilder
                 'if' => '${{github.ref == \'refs/heads/master\'}}',
                 'steps' => [
                     ['uses' => 'docker/setup-buildx-action@v4'],
-                    [
-                        'name' => 'Login to ghcr.io',
-                        'uses' => 'docker/login-action@v4',
-                        'with' => [
-                            'registry' => 'ghcr.io',
-                            'username' => '${{ github.actor }}',
-                            'password' => '${{ secrets.GITHUB_TOKEN }}',
-                        ],
-                    ],
+                    $this->loginGhcrStep(),
                     [
                         'name' => 'Login to hub.docker.com',
                         'uses' => 'docker/login-action@v4',
@@ -267,8 +269,7 @@ class GithubJobBuilder
                                 '  ' . implode(" \\\n  ", [
                                     'docker buildx imagetools create',
                                     ...$pushTags,
-                                    '"ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-amd64-' . $node['tag'] . '"',
-                                    '"ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-arm64-' . $node['tag'] . '" && exit 0',
+                                    ...$archImages,
                                 ]),
                                 '  sleep $((i*i))',
                                 'done',
@@ -324,11 +325,29 @@ class GithubJobBuilder
 
     /**
      * The image of one architecture that the job of webdevops/$image:$tag builds and, on master, pushes to ghcr.io,
-     * e.g. "ghcr.io/webdevops/php:sha-<commit>-amd64-8.4".
+     * e.g. "ghcr.io/webdevops/php:sha-<commit>-amd64-8.4"; by default the architecture of the matrix job.
      */
-    private function archImage(string $image, string $tag): string
+    private function archImage(string $image, string $tag, string $arch = '${{ matrix.arch }}'): string
     {
-        return 'ghcr.io/webdevops/' . $image . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $tag;
+        return 'ghcr.io/webdevops/' . $image . ':sha-${{ github.sha }}-' . $arch . '-' . $tag;
+    }
+
+    /**
+     * Logs in to ghcr.io with the token of the run, to push the images there and, on master, pull the parent images.
+     *
+     * @return array<string, mixed>
+     */
+    private function loginGhcrStep(): array
+    {
+        return [
+            'name' => 'Login to ghcr.io',
+            'uses' => 'docker/login-action@v4',
+            'with' => [
+                'registry' => 'ghcr.io',
+                'username' => '${{ github.actor }}',
+                'password' => '${{ secrets.GITHUB_TOKEN }}',
+            ],
+        ];
     }
 
     /**
