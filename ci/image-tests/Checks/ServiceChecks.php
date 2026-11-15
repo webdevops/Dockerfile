@@ -102,7 +102,7 @@ trait ServiceChecks
      * What the SERVICE_*_OPTS of the environment container do: supervisord logs at the level "trace"; syslog-ng writes
      * its process id to the file of --pidfile; sshd listens on port 2222; Apache defines IMAGE_TEST, for which the
      * configuration from Hooks/ sends a header; PHP-FPM names the session cookie IMAGETEST. The log level of cron is
-     * checked by ContainerEnvironmentChecks.
+     * checked by ContainerEnvironmentChecks::testCronLogsAtTheLevelFromTheEnvironment().
      */
     #[DataProvider('serviceOptions')]
     public function testServiceOptionsFromTheEnvironment(string $service): void
