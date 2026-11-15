@@ -63,7 +63,6 @@ final class GithubJobBuilderTest extends TestCase
         self::assertSame('${{ matrix.runner }}', $job['runs-on']);
         self::assertSame([
             'actions/checkout@v7',
-            'Set up Buildx',
             'Set up Buildx (Docker Hub through mirror.gcr.io)',
             'Build the image test runner',
         ], array_keys($steps));
@@ -78,7 +77,7 @@ final class GithubJobBuilderTest extends TestCase
         self::assertTrue($steps['Build the image test runner']['continue-on-error'], 'a failure must not skip the image jobs that need this job');
     }
 
-    public function testDockerHubImagesComeThroughTheMirrorOutsideOfMaster(): void
+    public function testDockerHubImagesComeThroughTheMirror(): void
     {
         $jobSteps = [
             'image job' => $this->steps($this->jobs()),
@@ -88,22 +87,12 @@ final class GithubJobBuilderTest extends TestCase
         foreach ($jobSteps as $job => $steps) {
             self::assertSame(
                 [
-                    'name' => 'Set up Buildx',
-                    'if' => '${{ github.ref == \'refs/heads/master\' }}',
-                    'uses' => 'docker/setup-buildx-action@v4',
-                ],
-                $steps['Set up Buildx'],
-                $job . ': master pulls the parent images that were just published, which the mirror could serve outdated',
-            );
-            self::assertSame(
-                [
                     'name' => 'Set up Buildx (Docker Hub through mirror.gcr.io)',
-                    'if' => '${{ github.ref != \'refs/heads/master\' }}',
                     'uses' => 'docker/setup-buildx-action@v4',
                     'with' => ['buildkitd-config-inline' => "[registry.\"docker.io\"]\n  mirrors = [\"mirror.gcr.io\"]"],
                 ],
                 $steps['Set up Buildx (Docker Hub through mirror.gcr.io)'],
-                $job,
+                $job . ': on master too, because no build takes a webdevops image from Docker Hub',
             );
         }
     }
@@ -143,16 +132,16 @@ final class GithubJobBuilderTest extends TestCase
 
         self::assertSame([
             'actions/checkout@v7',
-            'Set up Buildx',
             'Set up Buildx (Docker Hub through mirror.gcr.io)',
+            'Login to ghcr.io',
             'Build (load locally)',
             'Build the image test runner',
             'run image tests',
             'run structure-test',
-            'Login to ghcr.io',
             'Push arch image',
         ], array_keys($steps));
         self::assertArrayNotHasKey('if', $steps['Build (load locally)']);
+        self::assertArrayNotHasKey('build-contexts', $steps['Build (load locally)']['with']);
         self::assertSame(
             'docker push "ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine',
             $steps['Push arch image']['run'],
@@ -216,7 +205,7 @@ final class GithubJobBuilderTest extends TestCase
         self::assertArrayNotHasKey('run structure-test', $steps);
     }
 
-    public function testBranchBuildUsesTheParentImagesOfThisRun(): void
+    public function testBuildsUseTheParentImagesOfThisRun(): void
     {
         $steps = $this->steps($this->jobs([
             'imageParent' => 'webdevops/base:ubuntu-22.04',
@@ -226,8 +215,8 @@ final class GithubJobBuilderTest extends TestCase
 
         self::assertSame([
             'actions/checkout@v7',
-            'Set up Buildx',
             'Set up Buildx (Docker Hub through mirror.gcr.io)',
+            'Login to ghcr.io',
             'Download parent image (OCI layout): webdevops/base:ubuntu-22.04',
             'Download parent image (OCI layout): webdevops/toolbox:latest',
             'Build (load locally)',
@@ -235,7 +224,6 @@ final class GithubJobBuilderTest extends TestCase
             'Build the image test runner',
             'run image tests',
             'run structure-test',
-            'Login to ghcr.io',
             'Push arch image',
         ], array_keys($steps));
         self::assertSame(
@@ -244,13 +232,31 @@ final class GithubJobBuilderTest extends TestCase
         );
         self::assertSame('${{ github.ref != \'refs/heads/master\' }}', $steps['Download parent image (OCI layout): webdevops/base:ubuntu-22.04']['if']);
         self::assertSame('${{ github.ref == \'refs/heads/master\' }}', $steps['Build (load locally)']['if']);
-        self::assertArrayNotHasKey('build-contexts', $steps['Build (load locally)']['with']);
+        self::assertSame(
+            "webdevops/base:latest=docker-image://ghcr.io/webdevops/base:sha-\${{ github.sha }}-\${{ matrix.arch }}-ubuntu-22.04\n"
+            . 'webdevops/toolbox=docker-image://ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest',
+            $steps['Build (load locally)']['with']['build-contexts'],
+            'master takes the parent images that their jobs pushed to ghcr.io in the same run',
+        );
         self::assertSame('${{ github.ref != \'refs/heads/master\' }}', $steps['Build (load locally, from parent artifact)']['if']);
         self::assertSame(
             "webdevops/base:latest=oci-layout://.ci-oci-image/base_ubuntu-22-04:ci-parent-image\n"
             . 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image',
             $steps['Build (load locally, from parent artifact)']['with']['build-contexts'],
         );
+    }
+
+    public function testMasterTakesTheImageThatTheJobOfTheParentPushes(): void
+    {
+        $parent = $this->steps(
+            $this->jobs(['id' => 'webdevops/base:ubuntu-22.04', 'name' => 'webdevops/base:ubuntu-22.04', 'tag' => 'ubuntu-22.04']),
+            'base_ubuntu-22-04',
+        );
+        $child = $this->steps($this->jobs(['imageParent' => 'webdevops/base:ubuntu-22.04', 'imageParentRef' => 'webdevops/base:latest']));
+
+        $pushed = $parent['Build (load locally)']['with']['tags'];
+        self::assertSame('docker push ' . $pushed, str_replace('"', '', $parent['Push arch image']['run']));
+        self::assertSame('webdevops/base:latest=docker-image://' . $pushed, $child['Build (load locally)']['with']['build-contexts']);
     }
 
     public function testParentThatIsAlsoCopiedFromIsDownloadedOnce(): void

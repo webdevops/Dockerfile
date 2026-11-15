@@ -58,9 +58,10 @@ internally; pull the images from Docker Hub.
 The build steps pass the token of the run (`GITHUB_TOKEN`) to Docker as the build secret `COMPOSER_AUTH`, for PIE (see [PHP extension builds](#php-extension-builds)).
 The workflow gives this token read access to the repository and write access to the packages on ghcr.io, nothing else.
 
-Outside of master, in pull requests and on other branches, BuildKit pulls the images from Docker Hub through `mirror.gcr.io`: anonymous pulls from Docker Hub fail with `429 Too Many Requests` once the IP address of the runner has reached its limit.
-There, the webdevops images come from the artifacts of the run, so only official images like `php` and `composer` are pulled; an image that the mirror does not have comes from Docker Hub.
-On master, the builds pull from Docker Hub directly: they take the parent images that the publish jobs have just pushed, and the mirror could still serve an older one.
+BuildKit pulls the images from Docker Hub through `mirror.gcr.io`: anonymous pulls from Docker Hub fail with `429 Too Many Requests` once the IP address of the runner has reached its limit.
+An image that the mirror does not have comes from Docker Hub.
+The webdevops parent images never come from Docker Hub, where the mirror could serve an outdated one: in pull requests and on other branches they come from the artifacts of the run, on master from the image that the job of the parent pushed to ghcr.io in the same run (`ghcr.io/webdevops/<image>:sha-<commit>-<arch>-<tag>`).
+So only official images like `php` and `composer` go through the mirror.
 
 ## Building and testing locally
 

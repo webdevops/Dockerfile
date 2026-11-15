@@ -40,11 +40,12 @@ class GithubJobBuilder
     private const string COMPOSER_AUTH_SECRET = 'COMPOSER_AUTH=COMPOSER_AUTH';
 
     /**
-     * Outside of master, BuildKit pulls Docker Hub images through this mirror: anonymous pulls from Docker Hub fail
-     * with "429 Too Many Requests" once the runner's IP address has reached its limit. There, the webdevops parent
-     * images come from the artifacts of the run, so only official images like php and composer are pulled. BuildKit
-     * falls back to Docker Hub for an image that the mirror does not have. Master pulls the parent images that its
-     * publish jobs have just pushed, which the mirror could serve outdated, so it pulls from Docker Hub directly.
+     * BuildKit pulls Docker Hub images through this mirror: anonymous pulls from Docker Hub fail with "429 Too Many
+     * Requests" once the runner's IP address has reached its limit. The webdevops parent images never come from Docker
+     * Hub, where the mirror could serve an outdated one: outside of master they come from the artifacts of the run
+     * (buildContexts()), on master from ghcr.io (ghcrBuildContexts()). So only official images like php and composer
+     * go through the mirror, where an older copy does no harm. BuildKit falls back to Docker Hub for an image that the
+     * mirror does not have.
      */
     private const string DOCKER_HUB_MIRROR = 'mirror.gcr.io';
 
@@ -122,14 +123,28 @@ class GithubJobBuilder
                                 'uses' => 'actions/checkout@v7',
                                 'with' => ['persist-credentials' => false],
                             ],
-                            ...$this->setupBuildxSteps(),
+                            $this->setupBuildxStep(),
+                            [
+                                // Before the build, which takes the parent images from ghcr.io on master
+                                'if' => '${{github.ref == \'refs/heads/master\'}}',
+                                'name' => 'Login to ghcr.io',
+                                'uses' => 'docker/login-action@v4',
+                                'with' => [
+                                    'registry' => 'ghcr.io',
+                                    'username' => '${{ github.actor }}',
+                                    'password' => '${{ secrets.GITHUB_TOKEN }}',
+                                ],
+                            ],
                             ...$this->downloadParentImageSteps($imageDependencies),
                             array_filter([
                                 'name' => 'Build (load locally)',
                                 'if' => $hasImageDependencies ? '${{ github.ref == \'refs/heads/master\' }}' : null,
                                 'uses' => 'docker/build-push-action@v7',
                                 'env' => self::COMPOSER_AUTH_ENV,
-                                'with' => $this->buildPushWith($node),
+                                'with' => array_merge(
+                                    $this->buildPushWith($node),
+                                    $hasImageDependencies ? ['build-contexts' => $this->ghcrBuildContexts($imageDependencies)] : [],
+                                ),
                             ], fn (array|string|null $value): bool => $value !== null),
                             $hasImageDependencies ? [
                                 'name' => 'Build (load locally, from parent artifact)',
@@ -160,16 +175,6 @@ class GithubJobBuilder
                                 'name' => 'run structure-test',
                                 'run' => implode("\n", $structuredTests),
                             ] : null,
-                            [
-                                'if' => '${{github.ref == \'refs/heads/master\'}}',
-                                'name' => 'Login to ghcr.io',
-                                'uses' => 'docker/login-action@v4',
-                                'with' => [
-                                    'registry' => 'ghcr.io',
-                                    'username' => '${{ github.actor }}',
-                                    'password' => '${{ secrets.GITHUB_TOKEN }}',
-                                ],
-                            ],
                             [
                                 'name' => 'Push arch image',
                                 'if' => '${{github.ref == \'refs/heads/master\'}}',
@@ -297,7 +302,7 @@ class GithubJobBuilder
             'context' => $this->context($node),
             'platforms' => '${{ matrix.platform }}',
             'load' => true,
-            'tags' => 'ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'],
+            'tags' => $this->archImage($node['id']),
             // Re-run all jobs to test a fresh build of the full image chain.
             'no-cache' => '${{ github.event_name == \'schedule\' || github.run_attempt > 1 }}',
             ...$this->buildCacheWith($node),
@@ -309,25 +314,27 @@ class GithubJobBuilder
     }
 
     /**
-     * Sets up Buildx, outside of master with DOCKER_HUB_MIRROR for the images from Docker Hub.
-     *
-     * @return list<array<string, mixed>>
+     * The image of one architecture that the job of $imageId builds and, on master, pushes to ghcr.io, e.g.
+     * "ghcr.io/webdevops/php:sha-<commit>-amd64-8.4" for "webdevops/php:8.4".
      */
-    private function setupBuildxSteps(): array
+    private function archImage(string $imageId): string
+    {
+        [$repository, $tag] = explode(':', $imageId, 2);
+        return 'ghcr.io/' . $repository . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $tag;
+    }
+
+    /**
+     * Sets up Buildx with DOCKER_HUB_MIRROR for the images from Docker Hub.
+     *
+     * @return array<string, mixed>
+     */
+    private function setupBuildxStep(): array
     {
         return [
-            [
-                'name' => 'Set up Buildx',
-                'if' => '${{ github.ref == \'refs/heads/master\' }}',
-                'uses' => 'docker/setup-buildx-action@v4',
-            ],
-            [
-                'name' => 'Set up Buildx (Docker Hub through ' . self::DOCKER_HUB_MIRROR . ')',
-                'if' => '${{ github.ref != \'refs/heads/master\' }}',
-                'uses' => 'docker/setup-buildx-action@v4',
-                'with' => [
-                    'buildkitd-config-inline' => "[registry.\"docker.io\"]\n  mirrors = [\"" . self::DOCKER_HUB_MIRROR . '"]',
-                ],
+            'name' => 'Set up Buildx (Docker Hub through ' . self::DOCKER_HUB_MIRROR . ')',
+            'uses' => 'docker/setup-buildx-action@v4',
+            'with' => [
+                'buildkitd-config-inline' => "[registry.\"docker.io\"]\n  mirrors = [\"" . self::DOCKER_HUB_MIRROR . '"]',
             ],
         ];
     }
@@ -451,6 +458,24 @@ class GithubJobBuilder
     }
 
     /**
+     * Buildx `build-contexts` value of master, mapping every literal FROM/COPY --from reference in $imageDependencies to
+     * the image that the job of that dependency pushed to ghcr.io in the same run ("Push arch image"); the dependencies
+     * are built before this job, as for the artifacts of buildContexts(). BuildKit thus never pulls a webdevops image
+     * from Docker Hub, where its mirror could serve an outdated one, and the build uses the parent image of its commit.
+     *
+     * @param array<string, string> $imageDependencies
+     */
+    private function ghcrBuildContexts(array $imageDependencies): string
+    {
+        $lines = [];
+        foreach ($imageDependencies as $literalRef => $imageId) {
+            $lines[] = $literalRef . '=docker-image://' . $this->archImage($imageId);
+        }
+
+        return implode("\n", $lines);
+    }
+
+    /**
      * Command of the image test step, null if the image has no tests in ci/image-tests: make test-image-run, the command
      * of the docs, runs the tests against the image this job built, with the runner that the step before built.
      *
@@ -509,7 +534,7 @@ class GithubJobBuilder
                     'uses' => 'actions/checkout@v7',
                     'with' => ['persist-credentials' => false],
                 ],
-                ...$this->setupBuildxSteps(),
+                $this->setupBuildxStep(),
                 [
                     'name' => 'Build the image test runner',
                     'uses' => 'docker/build-push-action@v7',
