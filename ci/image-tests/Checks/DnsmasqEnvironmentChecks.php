@@ -20,7 +20,7 @@ trait DnsmasqEnvironmentChecks
     public function testDnsmasqWithVirtualHostsFromTheEnvironment(): void
     {
         $container = $this->startTestContainer('dnsmasq', [
-            'VIRTUAL_HOST' => 'app.image-test.example,*.wildcard.image-test.example',
+            'VIRTUAL_HOST' => 'app.image-test.example,*.wildcard.image-test.example,*.second.image-test.example',
             'SERVICE_DNSMASQ_OPTS' => '--address=/options.image-test.example/127.0.0.2',
             'SERVICE_DNSMASQ_USER' => 'nobody',
         ]);
@@ -36,7 +36,12 @@ trait DnsmasqEnvironmentChecks
         self::assertSame("root\n", $this->stdout('cat /tmp/image-tests/hooks/dnsmasq.d', $container), 'the start script sources the hooks in dnsmasq.d');
         // the start script makes dnsmasq the name server of the container
         // VIRTUAL_HOST, and SERVICE_DNSMASQ_OPTS with an address of its own
-        $hosts = ['app.image-test.example' => '127.0.0.1', 'any.wildcard.image-test.example' => '127.0.0.1', 'options.image-test.example' => '127.0.0.2'];
+        $hosts = [
+            'app.image-test.example' => '127.0.0.1',
+            'any.wildcard.image-test.example' => '127.0.0.1',
+            'any.second.image-test.example' => '127.0.0.1',
+            'options.image-test.example' => '127.0.0.2',
+        ];
         foreach ($hosts as $host => $address) {
             $this->eventually(function () use ($container, $host, $address): void {
                 // musl repeats the name as an alias

@@ -191,4 +191,4 @@ Each service reads its options when it starts. A service only runs if it is enab
 | `SERVICE_PHPFPM_OPTS` | Extra arguments for `php-fpm`, for example `-dmax_input_time=120`. |
 | `POSTFIX_RELAYHOST` | Postfix `relayhost`, for example `[mail.example.com]:25`. The relay host must accept mail from the container without a login; there is no variable for one. See [Mail](images/php.md#mail). |
 | `POSTFIX_MYNETWORKS` | Postfix `mynetworks`. |
-| `VIRTUAL_HOST` | Comma-separated host names. When `dnsmasq` starts, each one is added to its configuration as `address=/<host>/127.0.0.1`; `*.example.com` becomes `address=/.example.com/127.0.0.1`. Only the first wildcard entry is kept; further `*.` entries are dropped. |
+| `VIRTUAL_HOST` | Comma-separated host names. When `dnsmasq` starts, each one is added to its configuration as `address=/<host>/127.0.0.1`; each `*.example.com` becomes `address=/.example.com/127.0.0.1`, a wildcard for all its subdomains. |

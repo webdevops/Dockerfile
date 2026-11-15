@@ -82,12 +82,6 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php-*`, Debian and Alpine.
 - **Instead:** Add a pool file whose name sorts after `docker.conf`, for example `zz-pool.conf` with a `[www]` section, to `/opt/docker/etc/php/fpm/pool.d/`.
 
-### Several wildcards in `VIRTUAL_HOST`
-
-- **Effect:** Only the first `*.` entry becomes a wildcard for dnsmasq; further wildcard entries are dropped.
-- **Images:** all images with dnsmasq.
-- **Instead:** Use one wildcard entry.
-
 ### Alpine 3.11
 
 - **Effect:** The `alpine` tags of `bootstrap`, `base`, `base-app`, `nginx` and `apache` are built on Alpine 3.11, which has been out of support since November 2021, with Nginx 1.16.1 and Apache 2.4.51.
