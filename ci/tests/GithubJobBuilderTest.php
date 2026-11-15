@@ -57,9 +57,16 @@ final class GithubJobBuilderTest extends TestCase
     public function testImageTestRunnerIsBuiltOncePerArchitectureIntoTheCache(): void
     {
         $job = new GithubJobBuilder(self::ROOT)->getImageTestRunnerConfig();
+        $steps = $this->steps(['job' => $job], 'job');
 
         self::assertSame(['fail-fast' => false, 'matrix' => ['include' => GithubJobBuilder::PLATFORMS]], $job['strategy']);
         self::assertSame('${{ matrix.runner }}', $job['runs-on']);
+        self::assertSame([
+            'actions/checkout@v7',
+            'Set up Buildx',
+            'Set up Buildx (Docker Hub through mirror.gcr.io)',
+            'Build the image test runner',
+        ], array_keys($steps));
         self::assertSame([
             'context' => '.',
             'file' => 'ci/image-tests/Dockerfile',
@@ -67,8 +74,54 @@ final class GithubJobBuilderTest extends TestCase
             'outputs' => 'type=cacheonly',
             'cache-from' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}',
             'cache-to' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max',
-        ], $job['steps'][2]['with']);
-        self::assertTrue($job['steps'][2]['continue-on-error'], 'a failure must not skip the image jobs that need this job');
+        ], $steps['Build the image test runner']['with']);
+        self::assertTrue($steps['Build the image test runner']['continue-on-error'], 'a failure must not skip the image jobs that need this job');
+    }
+
+    public function testDockerHubImagesComeThroughTheMirrorOutsideOfMaster(): void
+    {
+        $jobSteps = [
+            'image job' => $this->steps($this->jobs()),
+            'image test runner' => $this->steps(['job' => new GithubJobBuilder(self::ROOT)->getImageTestRunnerConfig()], 'job'),
+        ];
+
+        foreach ($jobSteps as $job => $steps) {
+            self::assertSame(
+                [
+                    'name' => 'Set up Buildx',
+                    'if' => '${{ github.ref == \'refs/heads/master\' }}',
+                    'uses' => 'docker/setup-buildx-action@v4',
+                ],
+                $steps['Set up Buildx'],
+                $job . ': master pulls the parent images that were just published, which the mirror could serve outdated',
+            );
+            self::assertSame(
+                [
+                    'name' => 'Set up Buildx (Docker Hub through mirror.gcr.io)',
+                    'if' => '${{ github.ref != \'refs/heads/master\' }}',
+                    'uses' => 'docker/setup-buildx-action@v4',
+                    'with' => ['buildkitd-config-inline' => "[registry.\"docker.io\"]\n  mirrors = [\"mirror.gcr.io\"]"],
+                ],
+                $steps['Set up Buildx (Docker Hub through mirror.gcr.io)'],
+                $job,
+            );
+        }
+    }
+
+    public function testEveryBuildGetsTheTokenOfTheRunForPie(): void
+    {
+        $steps = $this->steps($this->jobs([
+            'imageParent' => 'webdevops/base:ubuntu-22.04',
+            'imageParentRef' => 'webdevops/base:latest',
+            'hasChildren' => true,
+        ]));
+
+        foreach (['Build (load locally)', 'Build (load locally, from parent artifact)', 'Export image (OCI layout)'] as $name) {
+            self::assertSame(['COMPOSER_AUTH' => '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'], $steps[$name]['env'], $name);
+            self::assertSame('COMPOSER_AUTH=COMPOSER_AUTH', $steps[$name]['with']['secret-envs'], $name);
+        }
+
+        self::assertArrayNotHasKey('env', $steps['Build the image test runner'], 'the runner does not use PIE');
     }
 
     public function testBuildsTheDirectoryOfTheDockerfile(): void
@@ -90,7 +143,8 @@ final class GithubJobBuilderTest extends TestCase
 
         self::assertSame([
             'actions/checkout@v7',
-            'docker/setup-buildx-action@v4',
+            'Set up Buildx',
+            'Set up Buildx (Docker Hub through mirror.gcr.io)',
             'Build (load locally)',
             'Build the image test runner',
             'run image tests',
@@ -172,7 +226,8 @@ final class GithubJobBuilderTest extends TestCase
 
         self::assertSame([
             'actions/checkout@v7',
-            'docker/setup-buildx-action@v4',
+            'Set up Buildx',
+            'Set up Buildx (Docker Hub through mirror.gcr.io)',
             'Download parent image (OCI layout): webdevops/base:ubuntu-22.04',
             'Download parent image (OCI layout): webdevops/toolbox:latest',
             'Build (load locally)',

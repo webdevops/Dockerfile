@@ -109,6 +109,12 @@ class GenerateGithubCiCommand extends Command
                 ],
                 'workflow_dispatch' => null,
             ],
+            // The build steps hand GITHUB_TOKEN to the RUN instructions with PIE, and with them to every script those
+            // instructions run, so the token may only read the repository and push the images to ghcr.io.
+            'permissions' => [
+                'contents' => 'read',
+                'packages' => 'write',
+            ],
             'jobs' => $this->jobs,
         ];
         $yamlString = Yaml::dump(

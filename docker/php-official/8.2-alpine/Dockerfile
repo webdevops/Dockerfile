@@ -81,6 +81,7 @@ RUN set -x \
     && docker-run-bootstrap
 
 RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
+    --mount=type=secret,id=COMPOSER_AUTH,env=COMPOSER_AUTH \
     set -x \
     # Install php environment
     && apk-install \

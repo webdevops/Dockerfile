@@ -11,6 +11,7 @@
 {{ docker.copy('conf/', '/opt/docker/') }}
 
 RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
+    --mount=type=secret,id=COMPOSER_AUTH,env=COMPOSER_AUTH \
     set -x \
     {{ php.officialDevelopmentAlpine(version="8.3") }} \
     {{ provision.runBootstrap() }}

@@ -27,6 +27,28 @@ class GithubJobBuilder
     public const string IMAGE_TEST_RUNNER_JOB = 'image-test-runner';
 
     /**
+     * PIE resolves and downloads the PHP extensions through the GitHub API. Without a token, its requests count against
+     * the limit for anonymous requests of the runner's IP address, and PIE fails with "Could not authenticate against
+     * github.com". The build steps pass the token of the run as the secret COMPOSER_AUTH, which the RUN instructions
+     * with PIE mount as an environment variable for Composer, on which PIE builds. Pull requests from forks get a
+     * read-only token too.
+     */
+    private const array COMPOSER_AUTH_ENV = [
+        'COMPOSER_AUTH' => '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}',
+    ];
+
+    private const string COMPOSER_AUTH_SECRET = 'COMPOSER_AUTH=COMPOSER_AUTH';
+
+    /**
+     * Outside of master, BuildKit pulls Docker Hub images through this mirror: anonymous pulls from Docker Hub fail
+     * with "429 Too Many Requests" once the runner's IP address has reached its limit. There, the webdevops parent
+     * images come from the artifacts of the run, so only official images like php and composer are pulled. BuildKit
+     * falls back to Docker Hub for an image that the mirror does not have. Master pulls the parent images that its
+     * publish jobs have just pushed, which the mirror could serve outdated, so it pulls from Docker Hub directly.
+     */
+    private const string DOCKER_HUB_MIRROR = 'mirror.gcr.io';
+
+    /**
      * Every image is built for these platforms. The README banner lists them too.
      */
     public const array PLATFORMS = [
@@ -100,18 +122,20 @@ class GithubJobBuilder
                                 'uses' => 'actions/checkout@v7',
                                 'with' => ['persist-credentials' => false],
                             ],
-                            ['uses' => 'docker/setup-buildx-action@v4'],
+                            ...$this->setupBuildxSteps(),
                             ...$this->downloadParentImageSteps($imageDependencies),
                             array_filter([
                                 'name' => 'Build (load locally)',
                                 'if' => $hasImageDependencies ? '${{ github.ref == \'refs/heads/master\' }}' : null,
                                 'uses' => 'docker/build-push-action@v7',
+                                'env' => self::COMPOSER_AUTH_ENV,
                                 'with' => $this->buildPushWith($node),
                             ], fn (array|string|null $value): bool => $value !== null),
                             $hasImageDependencies ? [
                                 'name' => 'Build (load locally, from parent artifact)',
                                 'if' => '${{ github.ref != \'refs/heads/master\' }}',
                                 'uses' => 'docker/build-push-action@v7',
+                                'env' => self::COMPOSER_AUTH_ENV,
                                 'with' => array_merge(
                                     $this->buildPushWith($node),
                                     ['build-contexts' => $this->buildContexts($imageDependencies)],
@@ -155,6 +179,8 @@ class GithubJobBuilder
                                 'name' => 'Export image (OCI layout)',
                                 'if' => '${{ github.ref != \'refs/heads/master\' }}',
                                 'uses' => 'docker/build-push-action@v7',
+                                // Only needed if a layer is not in the cache after all.
+                                'env' => self::COMPOSER_AUTH_ENV,
                                 // Reuse the tested local build, including on no-cache reruns.
                                 'with' => array_merge(
                                     [
@@ -164,6 +190,7 @@ class GithubJobBuilder
                                         'build-args' => implode("\n", [
                                             'TARGETARCH=${{ matrix.arch }}',
                                         ]),
+                                        'secret-envs' => self::COMPOSER_AUTH_SECRET,
                                     ],
                                     // Must use the exact same build-contexts override as the
                                     // tested build above, otherwise this second Buildx invocation
@@ -277,6 +304,31 @@ class GithubJobBuilder
             'build-args' => implode("\n", [
                 'TARGETARCH=${{ matrix.arch }}',
             ]),
+            'secret-envs' => self::COMPOSER_AUTH_SECRET,
+        ];
+    }
+
+    /**
+     * Sets up Buildx, outside of master with DOCKER_HUB_MIRROR for the images from Docker Hub.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function setupBuildxSteps(): array
+    {
+        return [
+            [
+                'name' => 'Set up Buildx',
+                'if' => '${{ github.ref == \'refs/heads/master\' }}',
+                'uses' => 'docker/setup-buildx-action@v4',
+            ],
+            [
+                'name' => 'Set up Buildx (Docker Hub through ' . self::DOCKER_HUB_MIRROR . ')',
+                'if' => '${{ github.ref != \'refs/heads/master\' }}',
+                'uses' => 'docker/setup-buildx-action@v4',
+                'with' => [
+                    'buildkitd-config-inline' => "[registry.\"docker.io\"]\n  mirrors = [\"" . self::DOCKER_HUB_MIRROR . '"]',
+                ],
+            ],
         ];
     }
 
@@ -457,7 +509,7 @@ class GithubJobBuilder
                     'uses' => 'actions/checkout@v7',
                     'with' => ['persist-credentials' => false],
                 ],
-                ['uses' => 'docker/setup-buildx-action@v4'],
+                ...$this->setupBuildxSteps(),
                 [
                     'name' => 'Build the image test runner',
                     'uses' => 'docker/build-push-action@v7',

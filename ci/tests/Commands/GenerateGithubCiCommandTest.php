@@ -72,6 +72,11 @@ final class GenerateGithubCiCommandTest extends TestCase
             'pull_request' => ['branches' => ['master']],
             'workflow_dispatch' => null,
         ], $workflow['on']);
+        self::assertSame(
+            ['contents' => 'read', 'packages' => 'write'],
+            $workflow['permissions'],
+            'the build steps hand the token to the scripts of the Dockerfiles',
+        );
         self::assertSame(self::ALL_JOBS, array_keys($workflow['jobs']));
         self::assertSame('Validate Automation', $workflow['jobs']['validate-automation']['name']);
     }
