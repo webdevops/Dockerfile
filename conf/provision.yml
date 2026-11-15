@@ -48,3 +48,6 @@ provision:
       php/general        : '*'
       php/official       : '*'
       php/official-alpine: '*-alpine'
+  toolbox:
+    configuration:
+      baselayout/general: '*'

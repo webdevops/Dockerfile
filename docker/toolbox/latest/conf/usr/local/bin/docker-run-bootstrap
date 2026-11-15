@@ -1,0 +1,51 @@
+#!/bin/sh
+
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
+## execute with bash if possible
+if [ ! -n "${BASH+x}" ]; then
+    if [ -f /bin/bash ]; then
+        exec /bin/bash "$0" "$@"
+    fi
+fi
+
+# Make all scripts executable
+if [ -d /opt/docker/bin/ ]; then
+    find /opt/docker/bin/ -type f -iname '*.sh' -print0 | xargs --no-run-if-empty -0 chmod +x
+fi
+
+# Enable usr-bin executables
+if [ -d /opt/docker/bin/usr-bin ]; then
+    find /opt/docker/bin/usr-bin -type f | while read USR_BIN_FILE; do
+        chmod +x -- "$USR_BIN_FILE"
+        ln -n -f -- "$USR_BIN_FILE" "/usr/local/bin/$(basename "$USR_BIN_FILE")"
+    done
+fi
+
+
+globexists() {
+  test -e "$1" -o -L "$1"
+}
+
+execScriptsInPath() {
+    SCRIPT_DIRECTORY="$1"
+    if [ -d "$SCRIPT_DIRECTORY" ]; then
+        if globexists "${SCRIPT_DIRECTORY}/"*.sh; then
+            echo ":: Running scripts in ${SCRIPT_DIRECTORY}"
+            for FILE in "${SCRIPT_DIRECTORY}/"*.sh; do
+                echo "-> Executing ${FILE}"
+
+                # run custom scripts, only once
+                . "$FILE"
+                rm -f -- "$FILE"
+            done
+        fi
+    fi
+}
+
+# Bootstrap
+execScriptsInPath "/opt/docker/provision/bootstrap.d"
+execScriptsInPath "/opt/docker/provision/build.d"
+execScriptsInPath "/bootstrap.d"
+execScriptsInPath "/build.d"
