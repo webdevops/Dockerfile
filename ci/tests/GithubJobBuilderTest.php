@@ -44,6 +44,8 @@ final class GithubJobBuilderTest extends TestCase
         self::assertSame('${{ matrix.runner }}', $jobs['base_alpine']['runs-on']);
         self::assertSame('webdevops/dockerfile-build-env', $jobs['base_alpine']['container']);
         self::assertSame('base_alpine', $jobs['base_alpine_publish']['needs']);
+        self::assertSame(['contents' => 'read', 'packages' => 'write'], $jobs['base_alpine']['permissions'], 'pushes to ghcr.io');
+        self::assertSame(['packages' => 'write'], $jobs['base_alpine_publish']['permissions'], 'pushes to ghcr.io, needs no checkout');
         self::assertSame('${{github.ref == \'refs/heads/master\'}}', $jobs['base_alpine_publish']['if']);
     }
 
@@ -69,6 +71,22 @@ final class GithubJobBuilderTest extends TestCase
             'cache-to' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max',
         ], $job['steps'][2]['with']);
         self::assertTrue($job['steps'][2]['continue-on-error'], 'a failure must not skip the image jobs that need this job');
+    }
+
+    public function testEveryBuildGetsTheTokenOfTheRunForPie(): void
+    {
+        $steps = $this->steps($this->jobs([
+            'imageParent' => 'webdevops/base:ubuntu-22.04',
+            'imageParentRef' => 'webdevops/base:latest',
+            'hasChildren' => true,
+        ]));
+
+        foreach (['Build (load locally)', 'Build (load locally, from parent artifact)', 'Export image (OCI layout)'] as $name) {
+            self::assertSame(['COMPOSER_AUTH' => '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'], $steps[$name]['env'], $name);
+            self::assertSame('COMPOSER_AUTH=COMPOSER_AUTH', $steps[$name]['with']['secret-envs'], $name);
+        }
+
+        self::assertArrayNotHasKey('env', $steps['Build the image test runner'], 'the runner does not use PIE');
     }
 
     public function testBuildsTheDirectoryOfTheDockerfile(): void
@@ -100,7 +118,7 @@ final class GithubJobBuilderTest extends TestCase
         ], array_keys($steps));
         self::assertArrayNotHasKey('if', $steps['Build (load locally)']);
         self::assertSame(
-            'docker push "ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}"-alpine',
+            'docker push "ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine"',
             $steps['Push arch image']['run'],
         );
     }

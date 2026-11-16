@@ -109,6 +109,11 @@ class GenerateGithubCiCommand extends Command
                 ],
                 'workflow_dispatch' => null,
             ],
+            // The token may only read the repository; the jobs that push images to ghcr.io get packages: write
+            // themselves (GithubJobBuilder::PUSH_PERMISSIONS).
+            'permissions' => [
+                'contents' => 'read',
+            ],
             'jobs' => $this->jobs,
         ];
         $yamlString = Yaml::dump(

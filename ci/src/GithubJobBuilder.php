@@ -27,6 +27,34 @@ class GithubJobBuilder
     public const string IMAGE_TEST_RUNNER_JOB = 'image-test-runner';
 
     /**
+     * PIE resolves and downloads the PHP extensions through the GitHub API. Without a token, its requests count against
+     * the limit for anonymous requests of the runner's IP address, and PIE fails with "Could not authenticate against
+     * github.com". The build steps pass the token of the run as the secret COMPOSER_AUTH, which the RUN instructions
+     * with PIE mount as an environment variable for Composer, on which PIE builds. Pull requests from forks get a
+     * read-only token too.
+     *
+     * Every script of those RUN instructions can read the token, not only PIE: the installers of Composer and Blackfire
+     * and the build systems of the extensions. In the image jobs it may push to ghcr.io (PUSH_PERMISSIONS), and a token
+     * cannot have fewer permissions in one step. The token ends with the job.
+     *
+     * With the token, the PIE requests of all jobs and runs share one limit, that of GITHUB_TOKEN per repository,
+     * instead of the anonymous limit of each runner's IP address: 7 extensions in 16 PHP jobs and Xdebug in 48
+     * development jobs per run.
+     */
+    private const array COMPOSER_AUTH_ENV = [
+        'COMPOSER_AUTH' => '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}',
+    ];
+
+    private const string COMPOSER_AUTH_SECRET = 'COMPOSER_AUTH=COMPOSER_AUTH';
+
+    /**
+     * The workflow gives the token only read access to the repository; the image jobs may also push their images to
+     * ghcr.io. The token gets no other permission, because the build steps hand it to every script of the RUN
+     * instructions with PIE (COMPOSER_AUTH_ENV).
+     */
+    private const array PUSH_PERMISSIONS = ['contents' => 'read', 'packages' => 'write'];
+
+    /**
      * Every image is built for these platforms. The README banner lists them too.
      */
     public const array PLATFORMS = [
@@ -79,6 +107,13 @@ class GithubJobBuilder
             $pushTags[] = '-t "ghcr.io/' . $alias . '"';
         }
 
+        // The images of every architecture that the image job pushed ("Push arch image")
+        $archImages = array_map(
+            fn (array $platform): string => '"' . $this->archImage($node['image'], $node['tag'], $platform['arch']) . '"',
+            self::PLATFORMS,
+        );
+        $archImages[array_key_last($archImages)] .= ' && exit 0';
+
         return [
             $jobId => [
                 'strategy' => [
@@ -92,6 +127,8 @@ class GithubJobBuilder
                 // even run if previous job skipped
                 'if' => '${{ !failure() && !cancelled() }}',
                 'runs-on' => '${{ matrix.runner }}',
+                // pushes its image to ghcr.io on master and takes the parent images from there
+                'permissions' => self::PUSH_PERMISSIONS,
                 'container' => 'webdevops/dockerfile-build-env',
                 'steps' => array_values(
                     array_filter(
@@ -106,12 +143,14 @@ class GithubJobBuilder
                                 'name' => 'Build (load locally)',
                                 'if' => $hasImageDependencies ? '${{ github.ref == \'refs/heads/master\' }}' : null,
                                 'uses' => 'docker/build-push-action@v7',
+                                'env' => self::COMPOSER_AUTH_ENV,
                                 'with' => $this->buildPushWith($node),
                             ], fn (array|string|null $value): bool => $value !== null),
                             $hasImageDependencies ? [
                                 'name' => 'Build (load locally, from parent artifact)',
                                 'if' => '${{ github.ref != \'refs/heads/master\' }}',
                                 'uses' => 'docker/build-push-action@v7',
+                                'env' => self::COMPOSER_AUTH_ENV,
                                 'with' => array_merge(
                                     $this->buildPushWith($node),
                                     ['build-contexts' => $this->buildContexts($imageDependencies)],
@@ -138,23 +177,19 @@ class GithubJobBuilder
                             ] : null,
                             [
                                 'if' => '${{github.ref == \'refs/heads/master\'}}',
-                                'name' => 'Login to ghcr.io',
-                                'uses' => 'docker/login-action@v4',
-                                'with' => [
-                                    'registry' => 'ghcr.io',
-                                    'username' => '${{ github.actor }}',
-                                    'password' => '${{ secrets.GITHUB_TOKEN }}',
-                                ],
+                                ...$this->loginGhcrStep(),
                             ],
                             [
                                 'name' => 'Push arch image',
                                 'if' => '${{github.ref == \'refs/heads/master\'}}',
-                                'run' => 'docker push "ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}"-' . $node['tag'],
+                                'run' => 'docker push "' . $this->archImage($node['image'], $node['tag']) . '"',
                             ],
                             $hasChildren ? [
                                 'name' => 'Export image (OCI layout)',
                                 'if' => '${{ github.ref != \'refs/heads/master\' }}',
                                 'uses' => 'docker/build-push-action@v7',
+                                // Only needed if a layer is not in the cache after all.
+                                'env' => self::COMPOSER_AUTH_ENV,
                                 // Reuse the tested local build, including on no-cache reruns.
                                 'with' => array_merge(
                                     [
@@ -164,6 +199,7 @@ class GithubJobBuilder
                                         'build-args' => implode("\n", [
                                             'TARGETARCH=${{ matrix.arch }}',
                                         ]),
+                                        'secret-envs' => self::COMPOSER_AUTH_SECRET,
                                     ],
                                     // Must use the exact same build-contexts override as the
                                     // tested build above, otherwise this second Buildx invocation
@@ -195,19 +231,12 @@ class GithubJobBuilder
             $jobId . '_publish' => [
                 'name' => $node['name'] . ' - Publish',
                 'runs-on' => 'ubuntu-latest',
+                'permissions' => ['packages' => 'write'],
                 'needs' => $jobId,
                 'if' => '${{github.ref == \'refs/heads/master\'}}',
                 'steps' => [
                     ['uses' => 'docker/setup-buildx-action@v4'],
-                    [
-                        'name' => 'Login to ghcr.io',
-                        'uses' => 'docker/login-action@v4',
-                        'with' => [
-                            'registry' => 'ghcr.io',
-                            'username' => '${{ github.actor }}',
-                            'password' => '${{ secrets.GITHUB_TOKEN }}',
-                        ],
-                    ],
+                    $this->loginGhcrStep(),
                     [
                         'name' => 'Login to hub.docker.com',
                         'uses' => 'docker/login-action@v4',
@@ -226,8 +255,7 @@ class GithubJobBuilder
                                 '  ' . implode(" \\\n  ", [
                                     'docker buildx imagetools create',
                                     ...$pushTags,
-                                    '"ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-amd64-' . $node['tag'] . '"',
-                                    '"ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-arm64-' . $node['tag'] . '" && exit 0',
+                                    ...$archImages,
                                 ]),
                                 '  sleep $((i*i))',
                                 'done',
@@ -270,13 +298,41 @@ class GithubJobBuilder
             'context' => $this->context($node),
             'platforms' => '${{ matrix.platform }}',
             'load' => true,
-            'tags' => 'ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'],
+            'tags' => $this->archImage($node['image'], $node['tag']),
             // Re-run all jobs to test a fresh build of the full image chain.
             'no-cache' => '${{ github.event_name == \'schedule\' || github.run_attempt > 1 }}',
             ...$this->buildCacheWith($node),
             'build-args' => implode("\n", [
                 'TARGETARCH=${{ matrix.arch }}',
             ]),
+            'secret-envs' => self::COMPOSER_AUTH_SECRET,
+        ];
+    }
+
+    /**
+     * The image of one architecture that the job of webdevops/$image:$tag builds and, on master, pushes to ghcr.io,
+     * e.g. "ghcr.io/webdevops/php:sha-<commit>-amd64-8.4"; by default the architecture of the matrix job.
+     */
+    private function archImage(string $image, string $tag, string $arch = '${{ matrix.arch }}'): string
+    {
+        return 'ghcr.io/webdevops/' . $image . ':sha-${{ github.sha }}-' . $arch . '-' . $tag;
+    }
+
+    /**
+     * Logs in to ghcr.io with the token of the run, to push the images there.
+     *
+     * @return array<string, mixed>
+     */
+    private function loginGhcrStep(): array
+    {
+        return [
+            'name' => 'Login to ghcr.io',
+            'uses' => 'docker/login-action@v4',
+            'with' => [
+                'registry' => 'ghcr.io',
+                'username' => '${{ github.actor }}',
+                'password' => '${{ secrets.GITHUB_TOKEN }}',
+            ],
         ];
     }
 
@@ -411,7 +467,7 @@ class GithubJobBuilder
         }
 
         return 'make test-image-run IMAGE=' . $node['id']
-            . ' REFERENCE=ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'];
+            . ' REFERENCE=' . $this->archImage($node['image'], $node['tag']);
     }
 
     /**
@@ -426,9 +482,9 @@ class GithubJobBuilder
         if (file_exists($this->rootPath . '/tests/structure-test/' . $node['image'] . '/test.yaml')) {
             $script[] = 'cd tests/structure-test';
             if (file_exists($this->rootPath . '/tests/structure-test/' . $node['image'] . '/' . $node['tag'] . '/test.yaml')) {
-                $script[] = '/usr/local/bin/container-structure-test test --image ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'] . ' --config ' . $node['image'] . '/test.yaml --config ' . $node['image'] . '/' . $node['tag'] . '/test.yaml';
+                $script[] = '/usr/local/bin/container-structure-test test --image ' . $this->archImage($node['image'], $node['tag']) . ' --config ' . $node['image'] . '/test.yaml --config ' . $node['image'] . '/' . $node['tag'] . '/test.yaml';
             } else {
-                $script[] = '/usr/local/bin/container-structure-test test --image ghcr.io/webdevops/' . $node['image'] . ':sha-${{ github.sha }}-${{ matrix.arch }}-' . $node['tag'] . ' --config ' . $node['image'] . '/test.yaml';
+                $script[] = '/usr/local/bin/container-structure-test test --image ' . $this->archImage($node['image'], $node['tag']) . ' --config ' . $node['image'] . '/test.yaml';
             }
         }
 

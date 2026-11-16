@@ -8,6 +8,7 @@ FROM webdevops/php:8.5
 COPY conf/ /opt/docker/
 
 RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
+    --mount=type=secret,id=COMPOSER_AUTH,env=COMPOSER_AUTH \
     set -x \
     # Install development environment
     && BLACKFIRE_INSTALL_METHOD=raw bash -c "$(curl -L https://installer.blackfire.io/installer.sh)" \

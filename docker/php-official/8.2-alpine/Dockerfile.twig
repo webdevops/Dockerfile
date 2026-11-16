@@ -35,6 +35,7 @@ RUN set -x \
     {{ provision.runBootstrap() }}
 
 RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
+    --mount=type=secret,id=COMPOSER_AUTH,env=COMPOSER_AUTH \
     set -x \
     {{ php.officialAlpine(version='8.2') }} \
     {{ provision.runBootstrap() }}

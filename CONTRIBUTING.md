@@ -55,6 +55,9 @@ GitHub Actions builds every image independently and runs the image tests and str
 defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdevops/`, but only
 internally; pull the images from Docker Hub.
 
+The build steps pass the token of the run (`GITHUB_TOKEN`) to Docker as the build secret `COMPOSER_AUTH`, for PIE (see [PHP extension builds](#php-extension-builds)).
+The token may only read the repository; only the jobs that push images to ghcr.io may also write packages there.
+
 ## Building and testing locally
 
 Build a single image from its directory. Its parent image (the `FROM` line) and `webdevops/toolbox` are taken from your local images or pulled from Docker Hub:
@@ -116,10 +119,21 @@ In the CI, the job `image-test-runner` builds it once per architecture into the 
 
 ## PHP extension builds
 
-PHP images require Docker BuildKit. The official `ghcr.io/php/pie:bin` image
+PHP images require Docker BuildKit 0.16 or later. The official `ghcr.io/php/pie:bin` image
 supplies PIE through a build-only mount; the existing INI configuration still
 controls extension loading. PIE requests remain unpinned, and compilation uses
 `nproc` parallel jobs.
+
+PIE resolves and downloads the extensions through the GitHub API. The `RUN` instructions with PIE mount the build
+secret `COMPOSER_AUTH` as an environment variable, which Composer, and with it PIE, reads. Without the secret, PIE
+sends its requests without a token, and GitHub limits them per IP address. To build with your token:
+
+```
+export COMPOSER_AUTH='{"github-oauth":{"github.com":"<token>"}}'
+docker build --secret id=COMPOSER_AUTH,env=COMPOSER_AUTH -t webdevops/php:8.5 docker/php/8.5
+```
+
+`./build-local.sh` passes the secret on when `COMPOSER_AUTH` is set.
 
 Protobuf, Vips and XML-RPC are built directly from their official upstream sources.
 The existing XML-RPC **1.0.0RC3** pin is preserved on all supported PHP versions.
