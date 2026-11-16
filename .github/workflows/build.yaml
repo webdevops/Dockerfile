@@ -60,12 +60,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
       -
         name: 'Build the image test runner'
         uses: docker/build-push-action@v7
@@ -106,20 +101,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/base:alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -143,7 +125,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/apache:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/base:alpine=docker-image://ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -173,6 +154,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/apache:alpine REFERENCE=ghcr.io/webdevops/apache:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -242,20 +231,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/base:alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -279,7 +255,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/base-app:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/base:alpine=docker-image://ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -314,6 +289,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-alpine --config base-app/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -383,20 +366,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/base:ubuntu-22.04'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -420,7 +390,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/base:ubuntu-22.04=docker-image://ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -455,6 +424,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04 --config base-app/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -552,20 +529,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/bootstrap:alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -589,7 +553,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/base:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/bootstrap:alpine=docker-image://ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -624,6 +587,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine --config base/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -719,20 +690,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/bootstrap:ubuntu-22.04'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -756,7 +714,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/bootstrap:ubuntu-22.04=docker-image://ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -791,6 +748,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04 --config base/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -888,20 +853,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -925,7 +877,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/bootstrap:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/toolbox=docker-image://ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -960,6 +911,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-alpine --config bootstrap/test.yaml --config bootstrap/alpine/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -1055,20 +1014,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1092,7 +1038,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/toolbox=docker-image://ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1127,6 +1072,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04 --config bootstrap/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -1224,20 +1177,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/base-app:ubuntu-22.04'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1261,7 +1201,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/base-app:ubuntu-22.04=docker-image://ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1291,6 +1230,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/dockerfile-build-env:latest REFERENCE=ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -1360,20 +1307,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/base:alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1397,7 +1331,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/nginx:alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/base:alpine=docker-image://ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1427,6 +1360,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/nginx:alpine REFERENCE=ghcr.io/webdevops/nginx:sha-${{ github.sha }}-${{ matrix.arch }}-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -1496,20 +1437,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.2'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1533,7 +1461,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-apache:8.2=docker-image://ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1563,6 +1490,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.2 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -1596,20 +1531,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.2-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1633,7 +1555,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-apache:8.2-alpine=docker-image://ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1663,6 +1584,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.2-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -1768,20 +1697,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.3'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1805,7 +1721,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-apache:8.3=docker-image://ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1835,6 +1750,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.3 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -1868,20 +1791,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.3-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1905,7 +1815,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-apache:8.3-alpine=docker-image://ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -1935,6 +1844,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.3-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -2040,20 +1957,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.4'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2077,7 +1981,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-apache:8.4=docker-image://ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2107,6 +2010,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.4 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -2140,20 +2051,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.4-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2177,7 +2075,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-apache:8.4-alpine=docker-image://ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2207,6 +2104,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.4-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -2312,20 +2217,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.5'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2349,7 +2241,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-apache:8.5=docker-image://ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2379,6 +2270,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.5 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -2412,20 +2311,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-apache:8.5-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2449,7 +2335,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-apache:8.5-alpine=docker-image://ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2479,6 +2364,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.5-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -2584,20 +2477,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2621,7 +2501,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.2=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2651,6 +2530,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.2 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -2710,20 +2597,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2747,7 +2621,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.2-alpine=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2777,6 +2650,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.2-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -2908,20 +2789,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2945,7 +2813,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.3=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -2975,6 +2842,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.3 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -3034,20 +2909,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3071,7 +2933,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.3-alpine=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3101,6 +2962,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.3-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -3232,20 +3101,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3269,7 +3125,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.4=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3299,6 +3154,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.4 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -3358,20 +3221,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3395,7 +3245,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.4-alpine=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3425,6 +3274,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.4-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -3556,20 +3413,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3593,7 +3437,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.5=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3623,6 +3466,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.5 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -3682,20 +3533,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3719,7 +3557,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-apache:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.5-alpine=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3749,6 +3586,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-apache:8.5-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -3880,20 +3725,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3917,7 +3749,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.2=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -3953,6 +3784,14 @@ jobs:
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2 --config php-dev/test.yaml
       -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
         run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2"'
@@ -3985,20 +3824,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4022,7 +3848,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.2-alpine=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4057,6 +3882,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine --config php-dev/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -4162,20 +3995,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4199,7 +4019,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.3=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4235,6 +4054,14 @@ jobs:
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3 --config php-dev/test.yaml
       -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
         run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3"'
@@ -4267,20 +4094,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4304,7 +4118,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.3-alpine=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4339,6 +4152,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine --config php-dev/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -4444,20 +4265,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4481,7 +4289,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.4=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4517,6 +4324,14 @@ jobs:
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4 --config php-dev/test.yaml
       -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
         run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4"'
@@ -4549,20 +4364,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4586,7 +4388,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.4-alpine=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4621,6 +4422,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine --config php-dev/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -4726,20 +4535,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4763,7 +4559,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.5=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4799,6 +4594,14 @@ jobs:
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5 --config php-dev/test.yaml
       -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
         run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5"'
@@ -4831,20 +4634,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4868,7 +4658,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.5-alpine=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -4903,6 +4692,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine --config php-dev/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -5008,20 +4805,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.2'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5045,7 +4829,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-nginx:8.2=docker-image://ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5075,6 +4858,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.2 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -5108,20 +4899,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.2-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5145,7 +4923,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-nginx:8.2-alpine=docker-image://ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5175,6 +4952,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.2-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -5280,20 +5065,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.3'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5317,7 +5089,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-nginx:8.3=docker-image://ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5347,6 +5118,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.3 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -5380,20 +5159,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.3-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5417,7 +5183,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-nginx:8.3-alpine=docker-image://ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5447,6 +5212,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.3-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -5552,20 +5325,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.4'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5589,7 +5349,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-nginx:8.4=docker-image://ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5619,6 +5378,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.4 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -5652,20 +5419,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.4-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5689,7 +5443,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-nginx:8.4-alpine=docker-image://ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5719,6 +5472,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.4-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -5824,20 +5585,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.5'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5861,7 +5609,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-nginx:8.5=docker-image://ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5891,6 +5638,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.5 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -5924,20 +5679,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php-nginx:8.5-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5961,7 +5703,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php-nginx:8.5-alpine=docker-image://ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -5991,6 +5732,14 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.5-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -6096,20 +5845,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6133,7 +5869,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.2=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6168,6 +5903,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2 --config php-nginx/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -6227,20 +5970,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.2-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6264,7 +5994,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.2-alpine=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6299,6 +6028,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine --config php-nginx/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -6430,20 +6167,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6467,7 +6191,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.3=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6502,6 +6225,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3 --config php-nginx/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -6561,20 +6292,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.3-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6598,7 +6316,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.3-alpine=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6633,6 +6350,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine --config php-nginx/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -6764,20 +6489,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6801,7 +6513,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.4=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6836,6 +6547,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4 --config php-nginx/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -6895,20 +6614,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.4-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6932,7 +6638,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.4-alpine=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -6967,6 +6672,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine --config php-nginx/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -7098,20 +6811,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7135,7 +6835,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.5=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7170,6 +6869,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5 --config php-nginx/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -7229,20 +6936,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/php:8.5-alpine'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7266,7 +6960,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php-nginx:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/php:8.5-alpine=docker-image://ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7301,6 +6994,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine --config php-nginx/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -7432,20 +7133,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7469,7 +7157,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php:8.2-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/toolbox=docker-image://ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7504,6 +7191,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2 --config php/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -7563,20 +7258,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7600,7 +7282,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php:8.2-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/toolbox=docker-image://ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7635,6 +7316,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine --config php/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -7770,20 +7459,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7807,7 +7483,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php:8.3-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/toolbox=docker-image://ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7842,6 +7517,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3 --config php/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -7901,20 +7584,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7938,7 +7608,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php:8.3-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/toolbox=docker-image://ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -7973,6 +7642,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine --config php/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -8108,20 +7785,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -8145,7 +7809,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php:8.4-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/toolbox=docker-image://ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -8180,6 +7843,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4 --config php/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -8239,20 +7910,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -8276,7 +7934,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php:8.4-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/toolbox=docker-image://ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -8311,6 +7968,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine --config php/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -8446,20 +8111,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -8483,7 +8135,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php:8.5-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/toolbox=docker-image://ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -8518,6 +8169,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5 --config php/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -8577,20 +8236,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -8614,7 +8260,6 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/php:8.5-alpine-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/toolbox=docker-image://ghcr.io/webdevops/toolbox:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
       -
         name: 'Build (load locally, from parent artifact)'
         if: "${{ github.ref != 'refs/heads/master' }}"
@@ -8649,6 +8294,14 @@ jobs:
         run: |-
           cd tests/structure-test
           /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine --config php/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"
@@ -8782,20 +8435,7 @@ jobs:
         with:
           persist-credentials: false
       -
-        name: 'Set up Buildx (Docker Hub through mirror.gcr.io)'
         uses: docker/setup-buildx-action@v4
-        with:
-          buildkitd-config-inline: |-
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Build (load locally)'
         uses: docker/build-push-action@v7
@@ -8811,6 +8451,14 @@ jobs:
           cache-to: 'type=gha,scope=webdevops/toolbox:latest-${{ matrix.arch }},mode=max'
           build-args: 'TARGETARCH=${{ matrix.arch }}'
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
       -
         name: 'Push arch image'
         if: "${{github.ref == 'refs/heads/master'}}"

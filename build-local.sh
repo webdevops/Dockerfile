@@ -17,7 +17,7 @@ fi
 
 # PIE takes a GitHub token from COMPOSER_AUTH, see "PHP extension builds" in CONTRIBUTING.md
 SECRET=""
-if [ -n "${COMPOSER_AUTH:-}" ]; then
+if [[ -n "${COMPOSER_AUTH:-}" ]]; then
     SECRET="--secret id=COMPOSER_AUTH,env=COMPOSER_AUTH"
 fi
 
