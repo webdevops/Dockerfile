@@ -42,8 +42,7 @@ trait ContainerEnvironmentChecks
 
     /**
      * TZ=Europe/Berlin: cron runs a job for the current hour in Berlin, which is not the hour in UTC. The job comes from
-     * Hooks/ and is there before cron starts; the test works out its hours, see ImageTestCase::cronHours().
-     * SERVICE_CRON_OPTS: cron logs the job at its log level, through syslog-ng into the file of LOG_STDOUT. Only in the
+     * Hooks/ and is there before cron starts; the test works out its hours, see ImageTestCase::cronHours(). Only in the
      * images that start cron.
      */
     public function testCronRunsJobsInTheTimeZoneFromTheEnvironment(): void
@@ -57,13 +56,29 @@ trait ContainerEnvironmentChecks
         $this->waitFor(function () use ($container): void {
             self::assertSame("ran\n", $this->stdout('cat /tmp/image-tests/cron-job 2>&1 || true', $container));
         }, 25, 3);
+    }
+
+    /**
+     * SERVICE_CRON_OPTS: cron logs the job of the environment container at the log level of the variable, through
+     * syslog-ng into the file of LOG_STDOUT. At the default level, Debian logs only "CMD (echo ran ...)" and BusyBox
+     * only "USER root pid ... cmd echo ran ...", so the lines that the test looks for come from the variable: the end of
+     * the job with its process id (-L 15), the steps of BusyBox (-l 0). Only in the images that start cron.
+     */
+    public function testCronLogsAtTheLevelFromTheEnvironment(): void
+    {
+        if (!in_array('cron', self::services(), true)) {
+            self::markTestSkipped('The image does not start cron.');
+        }
+
+        $container = $this->environmentContainer();
+        // cron runs the job at the start of a minute, in the hours of ImageTestCase::cronHours()
         $this->waitFor(function () use ($container): void {
             self::assertMatchesRegularExpression(
-                self::image()->isAlpine() ? '/crond\[\d+\]: USER root pid +\d+ cmd echo ran/' : '/CRON\[\d+\]: \(root\) END \(\[\d+\] echo ran/',
+                self::image()->isAlpine() ? '/crond\[\d+\]: +job: \d+ echo ran/' : '/CRON\[\d+\]: \(root\) END \(\[\d+\] echo ran/',
                 $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container),
                 'SERVICE_CRON_OPTS=' . self::cronOptions(),
             );
-        }, 10, 1);
+        }, 25, 3);
     }
 
     /**
