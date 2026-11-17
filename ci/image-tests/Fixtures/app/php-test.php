@@ -80,6 +80,10 @@ switch ($_GET['test']) {
         echo 'logged';
         break;
 
+    case 'error_log_setting':
+        echo ini_get('error_log');
+        break;
+
     case 'warning':
         echo $undefinedImageTestVariable;
         echo 'done';
