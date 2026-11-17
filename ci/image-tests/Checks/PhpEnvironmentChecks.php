@@ -197,8 +197,10 @@ trait PhpEnvironmentChecks
      * without LOG_STDERR, links to the stderr of the container: the message of error_log() reaches the container log.
      * With LOG_STDERR, it reaches that file where a worker of PHP-FPM may write to it, as in webdevops/php; the setting
      * is checked too, because the container log alone would not tell /docker.stderr from the stderr of the worker.
+     * The PHP CLI has no error log of its own: its messages go to the stderr of the command, e.g. of docker compose
+     * exec, not to the container log.
      */
-    public function testPhpFpmLogsPhpErrorsToDockerStderrByDefault(): void
+    public function testPhpErrorsReachTheContainerLogAndTheStderrOfTheCliByDefault(): void
     {
         $container = self::container();
         self::assertSame('/docker.stderr', $this->phpFpmBody($container, 'test=error_log_setting'));
@@ -206,6 +208,10 @@ trait PhpEnvironmentChecks
         $this->eventually(function () use ($container): void {
             self::assertStringContainsString('PHP message: image-test-from-php-fpm', $container->logs());
         });
+
+        $cli = $this->assertCommandSucceeds("php -r 'error_log(\"image-test-from-the-cli\");'", $container);
+        self::assertStringContainsString('image-test-from-the-cli', $cli->stderr);
+        self::assertStringNotContainsString('image-test-from-the-cli', $container->logs());
     }
 
     public function testPhpDismodDisablesExtensionsOfTheCliAndPhpFpm(): void
