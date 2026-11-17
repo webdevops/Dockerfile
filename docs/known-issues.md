@@ -4,12 +4,6 @@ These options and tools are part of the images but do not work, or work only in 
 
 ## Problems in the images
 
-### `docker-php-setting`
-
-- **Effect:** Always prints its usage text and exits with code 1, also for a valid call such as `docker-php-setting memory_limit 512M`. The setting is not changed.
-- **Images:** `php-*`, Debian and Alpine.
-- **Instead:** Set `php.<key>` or a shortcut such as `PHP_MEMORY_LIMIT`, see [PHP](environment-variables.md#php), or [replace `php.ini`](customization.md#php).
-
 ### `SERVICE_POSTFIX_OPTS`
 
 - **Effect:** No effect. The value is passed to `postfix start`, which ignores it.
