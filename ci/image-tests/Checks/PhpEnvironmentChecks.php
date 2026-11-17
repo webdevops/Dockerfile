@@ -193,12 +193,19 @@ trait PhpEnvironmentChecks
     }
 
     /**
-     * Without php.error_log, PHP-FPM logs the errors of PHP scripts to /docker.stderr, the container log or the file of
-     * LOG_STDERR. Where a worker of PHP-FPM may write to that file, as in webdevops/php, the errors end up there.
+     * Without php.error_log, PHP-FPM logs the errors of PHP scripts to /docker.stderr, which the container of the class,
+     * without LOG_STDERR, links to the stderr of the container: the message of error_log() reaches the container log.
+     * With LOG_STDERR, it reaches that file where a worker of PHP-FPM may write to it, as in webdevops/php; the setting
+     * is checked too, because the container log alone would not tell /docker.stderr from the stderr of the worker.
      */
     public function testPhpFpmLogsPhpErrorsToDockerStderrByDefault(): void
     {
-        self::assertSame('/docker.stderr', $this->phpFpmBody(self::container(), 'test=error_log_setting'));
+        $container = self::container();
+        self::assertSame('/docker.stderr', $this->phpFpmBody($container, 'test=error_log_setting'));
+        self::assertSame('logged', $this->phpFpmBody($container, 'test=error_log'));
+        $this->eventually(function () use ($container): void {
+            self::assertStringContainsString('PHP message: image-test-from-php-fpm', $container->logs());
+        });
     }
 
     public function testPhpDismodDisablesExtensionsOfTheCliAndPhpFpm(): void
