@@ -74,6 +74,16 @@ switch ($_GET['test']) {
         echo 'finished';
         break;
 
+    case 'error_log':
+        // a fixed message: one from the request would let the request write into the log
+        error_log('image-test-from-php-fpm');
+        echo 'logged';
+        break;
+
+    case 'error_log_setting':
+        echo ini_get('error_log');
+        break;
+
     case 'warning':
         echo $undefinedImageTestVariable;
         echo 'done';
