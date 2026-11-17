@@ -151,6 +151,8 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-avif --with-jpeg --with-freetype --with-webp \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
+    # imagick leaves its version to the packaging of PECL; take it from package.xml, so that phpversion('imagick') reports it
+    && sed -i "s/@PACKAGE_VERSION@/$(sed -n 's:.*<release>\([0-9][0-9.]*\)</release>.*:\1:p' /usr/src/php/ext/imagick/package.xml | head -n 1)/" /usr/src/php/ext/imagick/php_imagick.h \
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && docker-php-ext-configure ldap \

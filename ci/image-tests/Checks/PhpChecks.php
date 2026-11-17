@@ -201,6 +201,14 @@ trait PhpChecks
         $this->assertCommandSucceeds('/usr/local/bin/composer');
     }
 
+    /**
+     * phpversion('imagick') is a version number, not the placeholder of the source, which libraries compare.
+     */
+    public function testImagickReportsItsVersion(): void
+    {
+        self::assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', $this->stdout('php -r \'echo phpversion("imagick");\''));
+    }
+
     public function testGraphicsMagick(): void
     {
         self::assertTrue($this->file('/usr/bin/gm')->isExecutable, '/usr/bin/gm should be executable');
