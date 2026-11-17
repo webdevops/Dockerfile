@@ -11,6 +11,7 @@ use RuntimeException;
 use Webdevops\Build\FileReader;
 
 use function str_replace;
+use function symlink;
 
 #[CoversClass(FileReader::class)]
 final class FileReaderTest extends TestCase
@@ -30,6 +31,18 @@ final class FileReaderTest extends TestCase
             'docker/php/8.5/Dockerfile',
             'docker/toolbox/latest/Dockerfile',
         ], new FileReader(self::ROOT)->collectDockerfiles());
+    }
+
+    public function testCollectsNoDockerfileThroughASymbolicLink(): void
+    {
+        $repository = new TemporaryRepository();
+        symlink('8.5', $repository->path . '/docker/php/8.6');
+
+        try {
+            self::assertNotContains('docker/php/8.6/Dockerfile', new FileReader($repository->path)->collectDockerfiles());
+        } finally {
+            $repository->remove();
+        }
     }
 
     public function testCollectsOnlyTheDockerfilesOfTags(): void
@@ -104,27 +117,57 @@ final class FileReaderTest extends TestCase
     }
 
     /**
-     * @return iterable<string, array{0: string}>
+     * @return iterable<string, array{0: string, 1: string}>
      */
     public static function invalidAliases(): iterable
     {
-        yield 'tag without quotes' => ["      tags: [8.4, '8.5-alpine', '8.5']"];
-        yield 'empty tag' => ["      tags: ['', '8.5-alpine', '8.5']"];
-        yield 'no list' => ["      tags: '8.4'"];
-        yield 'name of the image itself' => ["      tags: ['8.4']\n    php:\n      image: 'php'\n      tags: ['8.5']"];
-        yield 'empty name' => ["      tags: ['8.4']\n    '':\n      image: 'php'\n      tags: ['8.5']"];
+        $tags = '"docker: aliases: php-official" in conf/console.yml: "tags" has to be a list of tags in quotes, e.g. [\'8.5\'].';
+        yield 'tag without quotes' => ["      tags: [8.4, '8.5-alpine', '8.5']", $tags];
+        yield 'empty tag' => ["      tags: ['', '8.5-alpine', '8.5']", $tags];
+        yield 'no list' => ["      tags: '8.4'", $tags];
+        yield 'tag listed twice' => ["      tags: ['8.4', '8.5', '8.4']", '"docker: aliases: php-official" in conf/console.yml: "tags" lists a tag twice.'];
+        yield 'name of the image itself' => [
+            "      tags: ['8.4']\n    php:\n      image: 'php'\n      tags: ['8.5']",
+            '"docker: aliases: php" in conf/console.yml: the deprecated name has to differ from its image.',
+        ];
+        yield 'empty name' => [
+            "      tags: ['8.4']\n    '':\n      image: 'php'\n      tags: ['8.5']",
+            '"docker: aliases: " in conf/console.yml: the deprecated name has to be an image name in lower case, e.g. php-official.',
+        ];
+        yield 'name in upper case' => [
+            "      tags: ['8.4']\n    PHP-Official:\n      image: 'php'\n      tags: ['8.5']",
+            '"docker: aliases: PHP-Official" in conf/console.yml: the deprecated name has to be an image name in lower case, e.g. php-official.',
+        ];
+        yield 'image with its namespace' => [
+            "      tags: ['8.4']\n    php-legacy:\n      image: 'webdevops/php'\n      tags: ['8.5']",
+            '"docker: aliases: php-legacy" in conf/console.yml: "image" has to name the image in lower case, e.g. php.',
+        ];
     }
 
     #[DataProvider('invalidAliases')]
-    public function testInvalidAliasListIsAnError(string $line): void
+    public function testInvalidAliasListIsAnError(string $line, string $message): void
     {
         $repository = new TemporaryRepository();
         $repository->write('conf/console.yml', str_replace("      tags: ['8.4', '8.5-alpine', '8.5']", $line, $repository->read('conf/console.yml')));
 
         try {
             $this->expectException(RuntimeException::class);
-            $this->expectExceptionMessage('"docker: aliases" in conf/console.yml has to map each deprecated name to the image it names and the tags in quotes, e.g. php-official: {image: php, tags: [\'8.5\']}.');
+            $this->expectExceptionMessage($message);
             new FileReader($repository->path)->getInfo('docker/php/8.5/Dockerfile');
+        } finally {
+            $repository->remove();
+        }
+    }
+
+    public function testAliasesThatAreNoMapAreAnError(): void
+    {
+        $repository = new TemporaryRepository();
+        $repository->write('conf/console.yml', str_replace("  aliases:\n", "  aliases: 'php-official'\n  unused:\n", $repository->read('conf/console.yml')));
+
+        try {
+            $this->expectException(RuntimeException::class);
+            $this->expectExceptionMessage('"docker: aliases" in conf/console.yml has to map each deprecated name to the image it names and its tags, e.g. php-official: {image: php, tags: [\'8.5\']}.');
+            new FileReader($repository->path)->aliases();
         } finally {
             $repository->remove();
         }

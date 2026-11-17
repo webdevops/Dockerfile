@@ -57,25 +57,43 @@ class FileReader
     private function readAliases(): array
     {
         $settings = $this->settings['docker']['aliases'] ?? [];
-        $error = '"docker: aliases" in conf/console.yml has to map each deprecated name to the image it names and the tags in quotes, e.g. php-official: {image: php, tags: [\'8.5\']}.';
         if (!is_array($settings)) {
-            throw new RuntimeException($error);
+            throw new RuntimeException('"docker: aliases" in conf/console.yml has to map each deprecated name to the image it names and its tags, e.g. php-official: {image: php, tags: [\'8.5\']}.');
         }
 
         $aliases = [];
         foreach ($settings as $name => $alias) {
             $image = is_array($alias) ? $alias['image'] ?? null : null;
             $tags = is_array($alias) ? $alias['tags'] ?? null : null;
-            // an unquoted tag such as 8.10 is a number in YAML and would lose its trailing zero
-            if (!is_string($name) || $name === '' || !is_string($image) || $image === '' || $name === $image || !is_array($tags) || !array_is_list($tags) || array_any($tags, static fn (mixed $tag): bool => !is_string($tag) || $tag === '')) {
-                throw new RuntimeException($error);
+            $problem = match (true) {
+                !is_string($name) || !$this->isImageName($name) => 'the deprecated name has to be an image name in lower case, e.g. php-official',
+                !is_string($image) || !$this->isImageName($image) => '"image" has to name the image in lower case, e.g. php',
+                $name === $image => 'the deprecated name has to differ from its image',
+                // an unquoted tag such as 8.10 is a number in YAML and would lose its trailing zero
+                !is_array($tags) || !array_is_list($tags) || array_any($tags, static fn (mixed $tag): bool => !is_string($tag) || $tag === '') => '"tags" has to be a list of tags in quotes, e.g. [\'8.5\']',
+                count(array_unique($tags)) !== count($tags) => '"tags" lists a tag twice',
+                default => null,
+            };
+            if ($problem !== null) {
+                throw new RuntimeException(sprintf('"docker: aliases: %s" in conf/console.yml: %s.', $name, $problem));
             }
 
+            /** @var string $name */
+            /** @var string $image */
             /** @var list<string> $tags */
             $aliases[$name] = ['image' => $image, 'tags' => $tags];
         }
 
         return $aliases;
+    }
+
+    /**
+     * Whether $name can be the name of a webdevops image, e.g. php-official: lower case letters and digits, separated
+     * by single dots, dashes or underscores.
+     */
+    private function isImageName(string $name): bool
+    {
+        return (bool)preg_match('/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/', $name);
     }
 
     /**

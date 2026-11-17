@@ -178,11 +178,6 @@ final class ProvisionerTest extends TestCase
             "provision:\n  missing-image:\n    configuration:\n      base/general: '*'\n",
             'conf/provision.yml copies provisioning/base/general into webdevops/missing-image:*, but webdevops/missing-image has no such tag under docker/.',
         ];
-        yield 'deprecated name of an image' => [
-            // webdevops/php-official is only published as webdevops/php, see "docker: aliases" in conf/console.yml
-            "provision:\n  php-official:\n    configuration:\n      php/general: '*'\n",
-            'conf/provision.yml copies provisioning/php/general into webdevops/php-official:*, but webdevops/php-official has no such tag under docker/.',
-        ];
         yield 'empty tag list' => [
             "provision:\n  base:\n    configuration:\n      base/general: []\n",
             'conf/provision.yml has no tag for provisioning/base/general in webdevops/base.',

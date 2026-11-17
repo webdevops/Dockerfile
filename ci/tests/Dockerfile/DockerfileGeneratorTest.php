@@ -13,6 +13,8 @@ use Webdevops\Build\FileReader;
 use Webdevops\Build\Tests\TemporaryRepository;
 
 use function file_get_contents;
+use function is_link;
+use function symlink;
 
 #[CoversClass(DockerfileGenerator::class)]
 final class DockerfileGeneratorTest extends TestCase
@@ -124,6 +126,14 @@ final class DockerfileGeneratorTest extends TestCase
         self::assertFileDoesNotExist($this->repository->path . '/docker/base/alpine/.DS_Store');
         self::assertFileDoesNotExist($this->repository->path . '/docker/.DS_Store');
         self::assertFileDoesNotExist($this->repository->path . '/docker/toolbox/latest/conf/.DS_Store', 'it would get into a local build');
+    }
+
+    public function testLeavesOutSymbolicLinks(): void
+    {
+        symlink('8.5', $this->repository->path . '/docker/php/8.6');
+
+        self::assertNotContains('webdevops/php:8.6', $this->generate());
+        self::assertTrue(is_link($this->repository->path . '/docker/php/8.6'));
     }
 
     public function testNewTagIsRendered(): void

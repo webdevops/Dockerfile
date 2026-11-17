@@ -22,6 +22,15 @@ final class ImageTestsTest extends TestCase
         self::assertNull($imageTests->testFile('php-nginx'), 'the fixture has no PhpNginxTest.php');
     }
 
+    public function testUnpublishedAliasOf(): void
+    {
+        $imageTests = new ImageTests(TemporaryRepository::FIXTURE);
+
+        self::assertSame('php', $imageTests->unpublishedAliasOf('php-official', '8.6'));
+        self::assertNull($imageTests->unpublishedAliasOf('php-official', '8.5'), 'published');
+        self::assertNull($imageTests->unpublishedAliasOf('php', '8.6'), 'no deprecated name');
+    }
+
     public function testEveryImageWithTestsInTheRepositoryHasAClass(): void
     {
         $imageTests = new ImageTests(__DIR__ . '/../..');

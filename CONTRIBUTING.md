@@ -32,7 +32,7 @@ It checks all of `conf/provision.yml` before it changes a file and stops if a so
 `generate:dockerfile` stops if a directory `docker/<image>/<tag>` has files but no `Dockerfile.twig`; it first removes the `.DS_Store` files of the macOS Finder under `docker`.
 To stop building a tag, remove its directory and those of the tags that build on it; `generate:github-ci` names any it finds.
 
-`webdevops/php-official` is a deprecated name of `webdevops/php`. `generate:github-ci` publishes a `php` tag under that name too only if `docker: aliases` in `conf/console.yml` lists it; new PHP versions are not added there. When you stop building a `php` tag, remove it from that list as well: `generate:github-ci` stops while the list names a tag without a Dockerfile in `docker/php`, or while a directory `docker/php-official` exists.
+`webdevops/php-official` is a deprecated name of `webdevops/php`. `generate:github-ci` publishes a `php` tag under that name too only if `docker: aliases` in `conf/console.yml` lists it; new PHP versions are not added there. When you stop building a `php` tag, remove it from that list as well: `generate:github-ci` stops while the list names a tag without a Dockerfile in `docker/php`, or while a tag directory in `docker/php-official` has a Dockerfile.
 
 ## Building in CI
 
