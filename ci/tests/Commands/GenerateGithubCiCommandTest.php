@@ -18,9 +18,11 @@ use function array_column;
 use function array_diff;
 use function array_keys;
 use function array_values;
+use function rmdir;
 use function str_replace;
 use function strpos;
 use function substr;
+use function unlink;
 
 #[CoversClass(GenerateGithubCiCommand::class)]
 final class GenerateGithubCiCommandTest extends TestCase
@@ -133,11 +135,27 @@ final class GenerateGithubCiCommandTest extends TestCase
 
     public function testAliasOfATagThatIsNotBuiltIsAnError(): void
     {
-        // e.g. docker/php/8.4 was removed, but not its tag in the list
-        $this->repository->write('conf/console.yml', str_replace("tags: ['8.4', '8.5-alpine', '8.5']", "tags: ['8.3', '8.4']", $this->repository->read('conf/console.yml')));
+        // docker/php/8.4 was removed, but not its tag in the list
+        foreach (['Dockerfile', 'Dockerfile.twig'] as $file) {
+            unlink($this->repository->path . '/docker/php/8.4/' . $file);
+        }
+
+        rmdir($this->repository->path . '/docker/php/8.4');
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('"docker: aliases" in conf/console.yml publishes webdevops/php:8.3 as webdevops/php-official:8.3, which is not built. Remove the tag from the list.');
+        $this->expectExceptionMessage('"docker: aliases" in conf/console.yml publishes webdevops/php:8.4 as webdevops/php-official:8.4, which is not built. Remove the tag from the list.');
+        new CommandTester(new GenerateGithubCiCommand($this->repository->path))->execute([]);
+    }
+
+    public function testDeprecatedNameBuiltAsAnImageIsAnError(): void
+    {
+        // e.g. a branch from before the deprecation adds docker/php-official/8.6
+        foreach (['Dockerfile', 'Dockerfile.twig'] as $file) {
+            $this->repository->write('docker/php-official/8.6/' . $file, str_replace('webdevops/php:8.5', 'webdevops/php-official:8.6', $this->repository->read('docker/php/8.5/' . $file)));
+        }
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('webdevops/php-official is a deprecated name in "docker: aliases" of conf/console.yml, but docker/php-official/8.6 builds it as an image of its own. Build the tag in docker/php instead.');
         new CommandTester(new GenerateGithubCiCommand($this->repository->path))->execute([]);
     }
 

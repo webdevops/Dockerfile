@@ -111,10 +111,12 @@ final class FileReaderTest extends TestCase
         yield 'tag without quotes' => ["      tags: [8.4, '8.5-alpine', '8.5']"];
         yield 'empty tag' => ["      tags: ['', '8.5-alpine', '8.5']"];
         yield 'no list' => ["      tags: '8.4'"];
+        yield 'name of the image itself' => ["      tags: ['8.4']\n    php:\n      image: 'php'\n      tags: ['8.5']"];
+        yield 'empty name' => ["      tags: ['8.4']\n    '':\n      image: 'php'\n      tags: ['8.5']"];
     }
 
     #[DataProvider('invalidAliases')]
-    public function testAliasTagsHaveToBeQuotedTags(string $line): void
+    public function testInvalidAliasListIsAnError(string $line): void
     {
         $repository = new TemporaryRepository();
         $repository->write('conf/console.yml', str_replace("      tags: ['8.4', '8.5-alpine', '8.5']", $line, $repository->read('conf/console.yml')));

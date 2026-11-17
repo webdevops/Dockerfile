@@ -12,6 +12,7 @@ use Webdevops\Build\Provision\Provisioner;
 use Webdevops\Build\Tests\TemporaryRepository;
 
 use function fileperms;
+use function symlink;
 
 #[CoversClass(Provisioner::class)]
 final class ProvisionerTest extends TestCase
@@ -135,6 +136,17 @@ final class ProvisionerTest extends TestCase
             self::assertSame('conf/provision.yml copies provisioning/php/general into webdevops/php:8.6, but webdevops/php has no such tag under docker/.', $runtimeException->getMessage());
             self::assertSame('old', $this->repository->read('docker/base/alpine/conf/etc/os'));
         }
+    }
+
+    public function testSymbolicLinksAreNoTags(): void
+    {
+        // provisioning a link docker/php/8.6 to 8.5 would replace conf/ of 8.5
+        symlink('8.5', $this->repository->path . '/docker/php/8.6');
+        $this->configure("provision:\n  php:\n    configuration:\n      php/general: '8.6'\n");
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('conf/provision.yml copies provisioning/php/general into webdevops/php:8.6, but webdevops/php has no such tag under docker/.');
+        $this->provision();
     }
 
     public function testLogsEachSource(): void

@@ -47,12 +47,12 @@ final readonly class ImageTests
 
     /**
      * The test class of $image relative to the repository root, e.g. ci/image-tests/Images/PhpNginxTest.php for
-     * php-nginx; null if the image has no tests. php-official, a deprecated name of php (see "docker: aliases" in
-     * conf/console.yml), has the tests of php.
+     * php-nginx; null if the image has no tests. A deprecated name from "docker: aliases" in conf/console.yml, such as
+     * php-official, has the tests of the image it names.
      */
     public function testFile(string $image): ?string
     {
-        $image = str_replace('-official', '', $image);
+        $image = new FileReader($this->rootPath)->aliases()[$image]['image'] ?? $image;
         $file = self::DIRECTORY . '/' . str_replace(' ', '', ucwords(str_replace('-', ' ', $image))) . 'Test.php';
         return is_file($this->rootPath . '/' . $file) ? $file : null;
     }

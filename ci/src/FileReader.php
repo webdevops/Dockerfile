@@ -13,6 +13,11 @@ class FileReader
     private readonly array $settings;
 
     /**
+     * @var ?array<string, array{image: string, tags: list<string>}> aliases(), read on first use
+     */
+    private ?array $aliases = null;
+
+    /**
      * @param string $rootPath the repository root
      */
     public function __construct(private readonly string $rootPath = __DIR__ . '/../..')
@@ -43,6 +48,14 @@ class FileReader
      */
     public function aliases(): array
     {
+        return $this->aliases ??= $this->readAliases();
+    }
+
+    /**
+     * @return array<string, array{image: string, tags: list<string>}>
+     */
+    private function readAliases(): array
+    {
         $settings = $this->settings['docker']['aliases'] ?? [];
         $error = '"docker: aliases" in conf/console.yml has to map each deprecated name to the image it names and the tags in quotes, e.g. php-official: {image: php, tags: [\'8.5\']}.';
         if (!is_array($settings)) {
@@ -54,7 +67,7 @@ class FileReader
             $image = is_array($alias) ? $alias['image'] ?? null : null;
             $tags = is_array($alias) ? $alias['tags'] ?? null : null;
             // an unquoted tag such as 8.10 is a number in YAML and would lose its trailing zero
-            if (!is_string($name) || !is_string($image) || $image === '' || !is_array($tags) || !array_is_list($tags) || array_any($tags, static fn (mixed $tag): bool => !is_string($tag) || $tag === '')) {
+            if (!is_string($name) || $name === '' || !is_string($image) || $image === '' || $name === $image || !is_array($tags) || !array_is_list($tags) || array_any($tags, static fn (mixed $tag): bool => !is_string($tag) || $tag === '')) {
                 throw new RuntimeException($error);
             }
 
