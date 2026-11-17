@@ -179,13 +179,15 @@ trait PhpEnvironmentChecks
 
     /**
      * php.error_log, in a container of its own: PHP-FPM and the PHP CLI write the messages of error_log() to that file.
+     * The file is in /app, not in /tmp: a worker of PHP-FPM creates it as application, and with fs.protected_regular,
+     * as on the runners of GitHub Actions, even root may not open the file of another user in a sticky directory.
      */
     public function testPhpErrorLogFromTheEnvironment(): void
     {
-        $container = $this->startContainer('php-error-log', ['php.error_log' => '/tmp/image-test-php-error.log']);
+        $container = $this->startContainer('php-error-log', ['php.error_log' => '/app/image-test-php-error.log']);
         self::assertSame('logged', $this->phpFpmBody($container, 'test=error_log'));
         $this->assertCommandSucceeds("php -r 'error_log(\"image-test-from-the-cli\");'", $container);
-        $log = $this->stdout('cat /tmp/image-test-php-error.log', $container);
+        $log = $this->stdout('cat /app/image-test-php-error.log', $container);
         self::assertStringContainsString('image-test-from-php-fpm', $log);
         self::assertStringContainsString('image-test-from-the-cli', $log);
     }
