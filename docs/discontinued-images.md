@@ -4,7 +4,9 @@
 
 ## webdevops/php-official
 
-`webdevops/php-official` is the same image as `webdevops/php`: the CI builds it once and publishes it under both names, with the same digest. The second name is only published for the tags `8.2` to `8.5` and `8.2-alpine` to `8.5-alpine`; tags of newer PHP versions are only published as `webdevops/php`. For these tags, change the image name and keep the tag:
+`webdevops/php-official` is the same image as `webdevops/php`: the CI builds it once and publishes it under both names, with the same digest. The second name is only published for the tags `8.2` to `8.5` and `8.2-alpine` to `8.5-alpine`; newer PHP versions, starting with 8.6, are only published as `webdevops/php`.
+
+Switch to `webdevops/php` now. For the tags `8.2` to `8.5`, change only the image name and keep the tag:
 
 ```yaml
 services:
@@ -13,7 +15,7 @@ services:
     image: webdevops/php:8.5
 ```
 
-The older tags of `webdevops/php-official`, `5.6` to `8.1`, are no longer built under either name and get no updates. Move to a PHP version that is still built, see the [tags of `webdevops/php`](images/php.md#tags).
+The older tags of `webdevops/php-official`, `5.6` to `8.1`, are no longer built under either name and get no updates; switch to `webdevops/php` with a PHP version that is still built, see the [tags of `webdevops/php`](images/php.md#tags).
 
 ## webdevops/nginx
 
