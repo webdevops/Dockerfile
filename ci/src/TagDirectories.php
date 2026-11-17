@@ -18,8 +18,8 @@ use function str_starts_with;
 
 /**
  * The tag directories under docker/: every docker/<image>/<tag>/ with a Dockerfile.twig, the template its
- * Dockerfile is rendered from. Directories that are symbolic links, such as docker/php/8.5, are left out: they show
- * a tag of the image they link to. docker/ is read once, when the object is created.
+ * Dockerfile is rendered from. Directories that are symbolic links are left out: they would build the Dockerfile of
+ * the directory they link to a second time. docker/ is read once, when the object is created.
  */
 final readonly class TagDirectories
 {

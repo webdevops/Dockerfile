@@ -21,7 +21,7 @@ final class GenerateProvisionCommandTest extends TestCase
             $tester = new CommandTester(new GenerateProvisionCommand($repository->path));
 
             self::assertSame(Command::SUCCESS, $tester->execute([]));
-            self::assertStringContainsString("php/official-alpine => webdevops/php-official:*-alpine\n", $tester->getDisplay());
+            self::assertStringContainsString("php/official-alpine => webdevops/php:*-alpine\n", $tester->getDisplay());
             self::assertSame("alpine\n", $repository->read('docker/base/alpine/conf/etc/os'));
         } finally {
             $repository->remove();

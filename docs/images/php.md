@@ -2,7 +2,7 @@
 
 PHP-FPM on top of the official PHP image, with the webdevops entrypoint, `supervisord`, cron, syslog-ng and the `application` user. The `-dev` variant adds Xdebug, the Blackfire extension, Postfix and an SSH server for local development.
 
-`webdevops/php-official` is built from the same Dockerfiles as `webdevops/php`.
+`webdevops/php-official` is deprecated: it is the same image as `webdevops/php` under a second name, published only for the tags `8.2` to `8.5` and their `-alpine` tags. Use `webdevops/php`, see [Replacing discontinued images](../discontinued-images.md#webdevopsphp-official).
 
 ## Tags
 

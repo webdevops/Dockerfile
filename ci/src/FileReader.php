@@ -35,9 +35,39 @@ class FileReader
     }
 
     /**
+     * "docker: aliases" in conf/console.yml: the deprecated image names that the CI also publishes an image under, each
+     * with that image and the tags it is published for, e.g. ['php-official' => ['image' => 'php', 'tags' => ['8.5']]].
+     * A deprecated name gets no new tags: it is only published for the tags listed there.
+     *
+     * @return array<string, array{image: string, tags: list<string>}>
+     */
+    public function aliases(): array
+    {
+        $settings = $this->settings['docker']['aliases'] ?? [];
+        $error = '"docker: aliases" in conf/console.yml has to map each deprecated name to the image it names and the tags in quotes, e.g. php-official: {image: php, tags: [\'8.5\']}.';
+        if (!is_array($settings)) {
+            throw new RuntimeException($error);
+        }
+
+        $aliases = [];
+        foreach ($settings as $name => $alias) {
+            $image = is_array($alias) ? $alias['image'] ?? null : null;
+            $tags = is_array($alias) ? $alias['tags'] ?? null : null;
+            // an unquoted tag such as 8.10 is a number in YAML and would lose its trailing zero
+            if (!is_string($name) || !is_string($image) || $image === '' || !is_array($tags) || !array_is_list($tags) || array_any($tags, static fn (mixed $tag): bool => !is_string($tag) || $tag === '')) {
+                throw new RuntimeException($error);
+            }
+
+            /** @var list<string> $tags */
+            $aliases[$name] = ['image' => $image, 'tags' => $tags];
+        }
+
+        return $aliases;
+    }
+
+    /**
      * The Dockerfile of every tag under docker/ (see TagDirectories), relative to the repository root and sorted, e.g.
-     * docker/base/alpine/Dockerfile. Tags whose Dockerfile was not generated yet are left out. Directories that are
-     * symbolic links, such as docker/php/8.5, are left out too: they build the same Dockerfile.
+     * docker/base/alpine/Dockerfile. Tags whose Dockerfile was not generated yet are left out.
      *
      * @return list<string>
      */
@@ -126,11 +156,11 @@ class FileReader
             $node['imageDependencies'][$dependencyRef] = $this->resolveInternalImageReference($dependencyRef);
         }
 
-        // Treat *-official images
-        if (str_contains($id, '-official:')) {
-            $node['aliases'][] = $id;
-            $node['id'] = $node['name'] = str_replace('-official:', ':', $id);
-            $node['image'] = str_replace('-official', '', $node['image']);
+        // deprecated names of the image, e.g. webdevops/php-official:8.5 for webdevops/php:8.5
+        foreach ($this->aliases() as $name => $alias) {
+            if ($alias['image'] === $imageName && in_array($tagName, $alias['tags'], true)) {
+                $node['aliases'][] = 'webdevops/' . $name . ':' . $tagName;
+            }
         }
 
         if ($tagName === $this->autoLatestTag()) {

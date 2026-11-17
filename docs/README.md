@@ -13,7 +13,7 @@ Documentation for the `webdevops/*` Docker images. It describes the images as th
 | `webdevops/toolbox` | Build helper, not meant to run. Stores the baselayout scripts (`apt-install`, `apk-install`, `docker-image-cleanup`, `docker-run-bootstrap`, `generate-locales` and more), `go-replace` and `gosu` under `/baselayout`. `bootstrap` and `php` copy them from there with `COPY --from=webdevops/toolbox`. In `toolbox` itself only `go-replace` is on the `PATH`. |
 | `webdevops/dockerfile-build-env` | Build environment for this repository, based on `base-app:ubuntu-22.04`. The CI builds and tests the images in it, see [Building in CI](../CONTRIBUTING.md#building-in-ci). |
 
-`webdevops/nginx`, `webdevops/apache`, the `alpine` tags of `webdevops/bootstrap`, `webdevops/base` and `webdevops/base-app`, as well as `webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built. [Replacing discontinued images](discontinued-images.md) shows what to use instead.
+`webdevops/nginx`, `webdevops/apache`, the `alpine` tags of `webdevops/bootstrap`, `webdevops/base` and `webdevops/base-app`, as well as `webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built, and `webdevops/php-official` is deprecated. [Replacing discontinued images](discontinued-images.md) shows what to use instead.
 
 ## Platforms and updates
 
@@ -36,7 +36,7 @@ Documentation for the `webdevops/*` Docker images. It describes the images as th
 - [Customization](customization.md): commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs, healthcheck, configuration files, locales, the application user
 - PHP images: [PHP extensions per tag](images/php.md#php-extensions), [Debian or Alpine](images/php.md#debian-or-alpine), [production](images/php.md#production), [installing more extensions](images/php.md#installing-more-extensions), [mail](images/php.md#mail), [Xdebug with an IDE](images/php.md#xdebug-with-an-ide)
 - [Known issues](known-issues.md): options that do not work, workarounds, migration from older images
-- [Replacing discontinued images](discontinued-images.md): what to use instead of `nginx`, `apache`, the `alpine` tags of the base images, `storage`, `vsftp` and `ssh`
+- [Replacing discontinued images](discontinued-images.md): what to use instead of `php-official`, `nginx`, `apache`, the `alpine` tags of the base images, `storage`, `vsftp` and `ssh`
 
 ## How the images build on each other
 

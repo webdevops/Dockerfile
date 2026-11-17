@@ -18,6 +18,7 @@ use function array_column;
 use function array_diff;
 use function array_keys;
 use function array_values;
+use function str_replace;
 use function strpos;
 use function substr;
 
@@ -114,6 +115,30 @@ final class GenerateGithubCiCommandTest extends TestCase
 
         self::assertStringContainsString('-t "webdevops/base:latest"', $manifest('base_ubuntu-22-04_publish'));
         self::assertStringContainsString('-t "webdevops/php-official:8.4"', $manifest('php_8-4_publish'));
+        self::assertStringContainsString('-t "ghcr.io/webdevops/php-official:8.4"', $manifest('php_8-4_publish'));
+        self::assertStringNotContainsString('php-official', $manifest('php-nginx_8-5-alpine_publish'));
+    }
+
+    public function testDeprecatedNameGetsNoNewTags(): void
+    {
+        $this->repository->write('conf/console.yml', str_replace("tags: ['8.4', '8.5-alpine', '8.5']", "tags: ['8.4']", $this->repository->read('conf/console.yml')));
+
+        $jobs = $this->generate()['jobs'];
+        $manifest = fn (string $job): string => array_column($jobs[$job]['steps'], 'run', 'name')['Create and push multi-arch manifest'];
+
+        self::assertStringContainsString('-t "webdevops/php-official:8.4"', $manifest('php_8-4_publish'));
+        self::assertStringContainsString('-t "webdevops/php:8.5"', $manifest('php_8-5_publish'));
+        self::assertStringNotContainsString('php-official', $manifest('php_8-5_publish'));
+    }
+
+    public function testAliasOfATagThatIsNotBuiltIsAnError(): void
+    {
+        // e.g. docker/php/8.4 was removed, but not its tag in the list
+        $this->repository->write('conf/console.yml', str_replace("tags: ['8.4', '8.5-alpine', '8.5']", "tags: ['8.3', '8.4']", $this->repository->read('conf/console.yml')));
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('"docker: aliases" in conf/console.yml publishes webdevops/php:8.3 as webdevops/php-official:8.3, which is not built. Remove the tag from the list.');
+        new CommandTester(new GenerateGithubCiCommand($this->repository->path))->execute([]);
     }
 
     public function testPrintsTheImageTree(): void
@@ -132,7 +157,7 @@ final class GenerateGithubCiCommandTest extends TestCase
      */
     public static function missingInternalImages(): iterable
     {
-        // e.g. php-official 8.5-alpine was removed, but not php-nginx 8.5-alpine
+        // e.g. php 8.5-alpine was removed, but not php-nginx 8.5-alpine
         yield 'base image' => [
             'docker/php-nginx/8.5-alpine/Dockerfile',
             "FROM webdevops/php:8.6-alpine\n",

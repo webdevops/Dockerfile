@@ -19,16 +19,15 @@ final class FileReaderTest extends TestCase
 
     public function testCollectsTheGeneratedDockerfilesSorted(): void
     {
-        // docker/php/8.4 links to docker/php-official/8.4 and is left out, as in the repository
         self::assertSame([
             'docker/base-app/ubuntu-22.04/Dockerfile',
             'docker/base/alpine/Dockerfile',
             'docker/base/ubuntu-22.04/Dockerfile',
             'docker/php-nginx-dev/8.5-alpine/Dockerfile',
             'docker/php-nginx/8.5-alpine/Dockerfile',
-            'docker/php-official/8.4/Dockerfile',
-            'docker/php-official/8.5-alpine/Dockerfile',
-            'docker/php-official/8.5/Dockerfile',
+            'docker/php/8.4/Dockerfile',
+            'docker/php/8.5-alpine/Dockerfile',
+            'docker/php/8.5/Dockerfile',
             'docker/toolbox/latest/Dockerfile',
         ], new FileReader(self::ROOT)->collectDockerfiles());
     }
@@ -80,14 +79,53 @@ final class FileReaderTest extends TestCase
         self::assertSame([], $node['imageDependencies']);
     }
 
-    public function testOfficialImageIsPublishedAsPhp(): void
+    public function testDeprecatedNameIsPublishedForTheListedTags(): void
     {
-        $node = $this->info('php-official/8.4');
+        $node = $this->info('php/8.4');
 
         self::assertSame('webdevops/php:8.4', $node['id']);
         self::assertSame('webdevops/php:8.4', $node['name']);
         self::assertSame('php', $node['image']);
         self::assertSame(['webdevops/php-official:8.4'], $node['aliases']);
+        self::assertSame([], $this->info('php-nginx/8.5-alpine')['aliases'], 'php-official names php only');
+    }
+
+    public function testDeprecatedNameGetsNoNewTags(): void
+    {
+        $repository = new TemporaryRepository();
+        $repository->write('conf/console.yml', str_replace("tags: ['8.4', '8.5-alpine', '8.5']", "tags: ['8.4']", $repository->read('conf/console.yml')));
+
+        try {
+            self::assertSame([], new FileReader($repository->path)->getInfo('docker/php/8.5/Dockerfile')['aliases']);
+            self::assertSame(['php-official' => ['image' => 'php', 'tags' => ['8.4']]], new FileReader($repository->path)->aliases());
+        } finally {
+            $repository->remove();
+        }
+    }
+
+    /**
+     * @return iterable<string, array{0: string}>
+     */
+    public static function invalidAliases(): iterable
+    {
+        yield 'tag without quotes' => ["      tags: [8.4, '8.5-alpine', '8.5']"];
+        yield 'empty tag' => ["      tags: ['', '8.5-alpine', '8.5']"];
+        yield 'no list' => ["      tags: '8.4'"];
+    }
+
+    #[DataProvider('invalidAliases')]
+    public function testAliasTagsHaveToBeQuotedTags(string $line): void
+    {
+        $repository = new TemporaryRepository();
+        $repository->write('conf/console.yml', str_replace("      tags: ['8.4', '8.5-alpine', '8.5']", $line, $repository->read('conf/console.yml')));
+
+        try {
+            $this->expectException(RuntimeException::class);
+            $this->expectExceptionMessage('"docker: aliases" in conf/console.yml has to map each deprecated name to the image it names and the tags in quotes, e.g. php-official: {image: php, tags: [\'8.5\']}.');
+            new FileReader($repository->path)->getInfo('docker/php/8.5/Dockerfile');
+        } finally {
+            $repository->remove();
+        }
     }
 
     public function testInternalParentImage(): void

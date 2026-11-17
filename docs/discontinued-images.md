@@ -1,6 +1,17 @@
 # Replacing discontinued images
 
-`webdevops/nginx`, `webdevops/apache`, the `alpine` tags of `webdevops/bootstrap`, `webdevops/base` and `webdevops/base-app`, as well as `webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built. Their last images stay on Docker Hub, but they get no updates, including security fixes. This page shows a replacement for each. The examples are a starting point, not a complete migration. They use the `latest` tag of other projects' images; for production, pin a version or digest, see [Platforms and updates](README.md#platforms-and-updates).
+`webdevops/nginx`, `webdevops/apache`, the `alpine` tags of `webdevops/bootstrap`, `webdevops/base` and `webdevops/base-app`, as well as `webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built. Their last images stay on Docker Hub, but they get no updates, including security fixes. `webdevops/php-official` is deprecated and gets no new tags. This page shows a replacement for each. The examples are a starting point, not a complete migration. They use the `latest` tag of other projects' images; for production, pin a version or digest, see [Platforms and updates](README.md#platforms-and-updates).
+
+## webdevops/php-official
+
+`webdevops/php-official` is the same image as `webdevops/php`: the CI builds it once and publishes it under both names, with the same digest. The second name is only published for the tags `8.2` to `8.5` and `8.2-alpine` to `8.5-alpine`; newer PHP versions, starting with 8.6, are only published as `webdevops/php`. Change the image name and keep the tag:
+
+```yaml
+services:
+  app:
+    # before: webdevops/php-official:8.5
+    image: webdevops/php:8.5
+```
 
 ## webdevops/nginx
 

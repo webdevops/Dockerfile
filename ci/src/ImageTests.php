@@ -47,8 +47,8 @@ final readonly class ImageTests
 
     /**
      * The test class of $image relative to the repository root, e.g. ci/image-tests/Images/PhpNginxTest.php for
-     * php-nginx; null if the image has no tests. php-official has the tests of php: both are built from the same
-     * Dockerfiles.
+     * php-nginx; null if the image has no tests. php-official, a deprecated name of php (see "docker: aliases" in
+     * conf/console.yml), has the tests of php.
      */
     public function testFile(string $image): ?string
     {

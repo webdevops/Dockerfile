@@ -13,8 +13,6 @@ use Webdevops\Build\FileReader;
 use Webdevops\Build\Tests\TemporaryRepository;
 
 use function file_get_contents;
-use function readlink;
-use function unlink;
 
 #[CoversClass(DockerfileGenerator::class)]
 final class DockerfileGeneratorTest extends TestCase
@@ -52,18 +50,17 @@ final class DockerfileGeneratorTest extends TestCase
         }
     }
 
-    public function testLogsEachDockerfileAndLeavesOutLinkedDirectories(): void
+    public function testLogsEachDockerfile(): void
     {
-        // docker/php/8.4 links to docker/php-official/8.4
         self::assertSame([
             'webdevops/base-app:ubuntu-22.04',
             'webdevops/base:alpine',
             'webdevops/base:ubuntu-22.04',
             'webdevops/php-nginx-dev:8.5-alpine',
             'webdevops/php-nginx:8.5-alpine',
-            'webdevops/php-official:8.4',
-            'webdevops/php-official:8.5-alpine',
-            'webdevops/php-official:8.5',
+            'webdevops/php:8.4',
+            'webdevops/php:8.5-alpine',
+            'webdevops/php:8.5',
             'webdevops/toolbox:latest',
         ], $this->generate());
     }
@@ -98,14 +95,14 @@ final class DockerfileGeneratorTest extends TestCase
         // e.g. the template was removed to stop building the tag, but not the generated files
         $this->repository->write('docker/base/alpine/Dockerfile', '');
         $this->repository->write('docker/base/alpine-edge/Dockerfile', "# Dockerfile for webdevops/base:alpine-edge\n");
-        $this->repository->write('docker/php-official/8.3/conf/etc/php.conf', "php\n");
+        $this->repository->write('docker/php/8.3/conf/etc/php.conf', "php\n");
 
         try {
             $this->generate();
             self::fail('the directories without template were accepted');
         } catch (RuntimeException $runtimeException) {
             self::assertSame(
-                'No Dockerfile.twig in docker/base/alpine-edge, docker/php-official/8.3. '
+                'No Dockerfile.twig in docker/base/alpine-edge, docker/php/8.3. '
                 . 'Add the template, or remove the directory to stop building the tag.',
                 $runtimeException->getMessage(),
             );
@@ -127,15 +124,6 @@ final class DockerfileGeneratorTest extends TestCase
         self::assertFileDoesNotExist($this->repository->path . '/docker/base/alpine/.DS_Store');
         self::assertFileDoesNotExist($this->repository->path . '/docker/.DS_Store');
         self::assertFileDoesNotExist($this->repository->path . '/docker/toolbox/latest/conf/.DS_Store', 'it would get into a local build');
-    }
-
-    public function testUpdatesTheLinksOfPhp(): void
-    {
-        unlink($this->repository->path . '/docker/php/8.5');
-
-        $this->generate();
-
-        self::assertSame('../php-official/8.5', readlink($this->repository->path . '/docker/php/8.5'));
     }
 
     public function testNewTagIsRendered(): void
