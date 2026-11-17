@@ -115,7 +115,9 @@ A container counts as started once its entrypoint has run its scripts and starte
 A runner killed with `SIGKILL` leaves its containers behind; they carry the label `webdevops.image-test`, so `docker rm --force $(docker ps --all --quiet --filter label=webdevops.image-test)` removes them.
 It runs in a container of `ci/image-tests/Dockerfile`, which has PHP and the `docker` command and gets the Docker socket: `make test-image` builds that image (`make test-image-runner`) and runs the tests in it (`make test-image-run`).
 The runner builds on the official PHP image, not on a webdevops image, so a broken `webdevops/php` cannot break the tests that find the defect.
-In the CI, the job `image-test-runner` builds it once per architecture into the cache of GitHub Actions; the image jobs wait for it, load it from the cache and run `make test-image-run`. If that job fails, the image jobs still run and build the runner themselves.
+In the CI, the job `image-test-runner` builds it once per architecture, with the cache of GitHub Actions, and passes it on as an artifact; the image jobs wait for it, load it with `docker load` and run `make test-image-run`.
+So only that job asks Docker Hub for the images that `ci/image-tests/Dockerfile` builds on, not every image job: a build, even from the cache, would ask once per job.
+If that job cannot pass the runner on, the image jobs still run and build the runner themselves, from its cache.
 
 ## PHP extension builds
 

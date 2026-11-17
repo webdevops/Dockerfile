@@ -19,12 +19,19 @@ class GithubJobBuilder
 
     /**
      * Local tag of the image that runs the image tests, built from ci/image-tests/Dockerfile. The job
-     * IMAGE_TEST_RUNNER_JOB builds it once per architecture into the GitHub Actions cache; the image jobs load it from
-     * there, so Composer only runs when ci/composer.lock changes and only one job writes the cache.
+     * IMAGE_TEST_RUNNER_JOB builds it once per architecture, with the GitHub Actions cache, so Composer only runs when
+     * ci/composer.lock changes and only one job writes the cache. It passes the image on as an artifact, which the image
+     * jobs load with docker load: a build, even from the cache, would ask Docker Hub for the images that
+     * ci/image-tests/Dockerfile builds on, once per image job.
      */
     private const string IMAGE_TEST_RUNNER = 'webdevops-image-tests';
 
     public const string IMAGE_TEST_RUNNER_JOB = 'image-test-runner';
+
+    /**
+     * The image test runner as an archive for docker load, relative to the checkout like getCiImagePath().
+     */
+    private const string IMAGE_TEST_RUNNER_ARCHIVE = '.ci-image-test-runner/' . self::IMAGE_TEST_RUNNER . '.tar';
 
     /**
      * PIE resolves and downloads the PHP extensions through the GitHub API. Without a token, its requests count against
@@ -156,17 +163,7 @@ class GithubJobBuilder
                                     ['build-contexts' => $this->buildContexts($imageDependencies)],
                                 ),
                             ] : null,
-                            $imageTests ? [
-                                'name' => 'Build the image test runner',
-                                'uses' => 'docker/build-push-action@v7',
-                                'with' => [
-                                    'context' => '.',
-                                    'file' => 'ci/image-tests/Dockerfile',
-                                    'load' => true,
-                                    'tags' => self::IMAGE_TEST_RUNNER,
-                                    'cache-from' => $this->imageTestRunnerCache(),
-                                ],
-                            ] : null,
+                            ...($imageTests ? $this->imageTestRunnerSteps() : []),
                             $imageTests ? [
                                 'name' => 'run image tests',
                                 'run' => $imageTests,
@@ -492,8 +489,50 @@ class GithubJobBuilder
     }
 
     /**
-     * Builds the image test runner once per architecture into the GitHub Actions cache, from which the image jobs load
-     * it. It runs while the first images are built.
+     * Steps of an image job that provide the image test runner: they load the archive of the job IMAGE_TEST_RUNNER_JOB,
+     * without a request to Docker Hub. Only if there is none or it does not load, e.g. because that job failed, the job
+     * builds the runner itself, from the cache that IMAGE_TEST_RUNNER_JOB writes.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function imageTestRunnerSteps(): array
+    {
+        return [
+            [
+                'name' => 'Download the image test runner',
+                'id' => 'download-image-test-runner',
+                'uses' => 'actions/download-artifact@v8',
+                'continue-on-error' => true,
+                'with' => [
+                    'name' => $this->imageTestRunnerArtifactName(),
+                    'path' => dirname(self::IMAGE_TEST_RUNNER_ARCHIVE),
+                ],
+            ],
+            [
+                'name' => 'Load the image test runner',
+                'id' => 'load-image-test-runner',
+                'if' => '${{ steps.download-image-test-runner.outcome == \'success\' }}',
+                'continue-on-error' => true,
+                'run' => 'docker load --input ' . self::IMAGE_TEST_RUNNER_ARCHIVE,
+            ],
+            [
+                'name' => 'Build the image test runner',
+                'if' => '${{ steps.load-image-test-runner.outcome != \'success\' }}',
+                'uses' => 'docker/build-push-action@v7',
+                'with' => [
+                    'context' => '.',
+                    'file' => 'ci/image-tests/Dockerfile',
+                    'load' => true,
+                    'tags' => self::IMAGE_TEST_RUNNER,
+                    'cache-from' => $this->imageTestRunnerCache(),
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Builds the image test runner once per architecture, with the GitHub Actions cache, and passes it on to the image
+     * jobs as an artifact. It runs while the first images are built.
      *
      * @return array<string, mixed>
      */
@@ -514,19 +553,37 @@ class GithubJobBuilder
                     'with' => ['persist-credentials' => false],
                 ],
                 ['uses' => 'docker/setup-buildx-action@v4'],
+                // If a step fails, e.g. on a transient error of the cache or of Docker Hub, the job still succeeds:
+                // the image jobs that need it run anyway and build the runner themselves.
                 [
                     'name' => 'Build the image test runner',
+                    'id' => 'build-image-test-runner',
                     'uses' => 'docker/build-push-action@v7',
-                    // Only warms the cache: if it fails, e.g. on a transient error of the cache or of Docker Hub, the
-                    // image jobs that need this job still run and build the runner themselves.
                     'continue-on-error' => true,
                     'with' => [
                         'context' => '.',
                         'file' => 'ci/image-tests/Dockerfile',
                         'platforms' => '${{ matrix.platform }}',
-                        'outputs' => 'type=cacheonly',
+                        'tags' => self::IMAGE_TEST_RUNNER,
+                        'outputs' => 'type=docker,dest=' . self::IMAGE_TEST_RUNNER_ARCHIVE,
                         'cache-from' => $this->imageTestRunnerCache(),
                         'cache-to' => $this->imageTestRunnerCache() . ',mode=max',
+                    ],
+                ],
+                [
+                    'name' => 'Upload the image test runner',
+                    'if' => '${{ steps.build-image-test-runner.outcome == \'success\' }}',
+                    'uses' => 'actions/upload-artifact@v7',
+                    'continue-on-error' => true,
+                    'with' => [
+                        'name' => $this->imageTestRunnerArtifactName(),
+                        'path' => self::IMAGE_TEST_RUNNER_ARCHIVE,
+                        'retention-days' => 1,
+                        // A rerun must replace the previous attempt's runner.
+                        'overwrite' => true,
+                        // The layers in the archive are compressed already.
+                        'compression-level' => 0,
+                        'if-no-files-found' => 'error',
                     ],
                 ],
             ],
@@ -536,6 +593,14 @@ class GithubJobBuilder
     private function imageTestRunnerCache(): string
     {
         return 'type=gha,scope=' . self::IMAGE_TEST_RUNNER . '-${{ matrix.arch }}';
+    }
+
+    /**
+     * Artifact name of the image test runner, one per architecture like the runner itself.
+     */
+    private function imageTestRunnerArtifactName(): string
+    {
+        return self::IMAGE_TEST_RUNNER . '-${{ matrix.arch }}';
     }
 
     /**

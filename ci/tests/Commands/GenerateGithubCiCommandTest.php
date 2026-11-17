@@ -18,6 +18,7 @@ use function array_column;
 use function array_diff;
 use function array_keys;
 use function array_values;
+use function preg_match_all;
 use function strpos;
 use function substr;
 
@@ -105,6 +106,40 @@ final class GenerateGithubCiCommandTest extends TestCase
         self::assertArrayHasKey('Export image (OCI layout)', $steps('php_8-5-alpine'));
         self::assertArrayHasKey('Export image (OCI layout)', $steps('toolbox_latest'));
         self::assertArrayNotHasKey('Export image (OCI layout)', $steps('php_8-4'));
+    }
+
+    public function testImageJobsLoadTheImageTestRunnerOfTheRunnerJob(): void
+    {
+        $jobs = $this->generate()['jobs'];
+        $upload = array_column($jobs['image-test-runner']['steps'], null, 'name')['Upload the image test runner']['with'];
+
+        foreach (['base_alpine', 'php_8-4'] as $job) {
+            $steps = array_column($jobs[$job]['steps'], null, 'name');
+            self::assertSame($upload['name'], $steps['Download the image test runner']['with']['name'], $job);
+            self::assertSame('docker load --input ' . $upload['path'], $steps['Load the image test runner']['run'], $job);
+        }
+    }
+
+    public function testStepConditionsReferToEarlierStepsOfTheirJob(): void
+    {
+        $references = 0;
+        foreach ($this->generate()['jobs'] as $jobId => $job) {
+            $ids = [];
+            foreach ($job['steps'] as $step) {
+                preg_match_all('/\bsteps\.([\w-]+)\./', $step['if'] ?? '', $matches);
+                foreach ($matches[1] as $id) {
+                    self::assertContains($id, $ids, $jobId . ': ' . ($step['name'] ?? $step['uses']));
+                    ++$references;
+                }
+
+                if (isset($step['id'])) {
+                    self::assertNotContains($step['id'], $ids, $jobId . ': step ids are unique');
+                    $ids[] = $step['id'];
+                }
+            }
+        }
+
+        self::assertGreaterThan(0, $references);
     }
 
     public function testPublishesTheAliases(): void
