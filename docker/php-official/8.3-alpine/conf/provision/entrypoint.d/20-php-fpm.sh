@@ -75,9 +75,12 @@ if [[ -n "${FPM_RLIMIT_CORE+x}" ]]; then
 fi
 
 # The pool logs the errors of PHP scripts to /docker.stderr with php_admin_value, which a php.ini value cannot override,
-# so php.error_log replaces it here
+# so php.error_log replaces it here. PHP-FPM takes the first of two php_admin_value lines, so a line added below would
+# not take effect.
 if [[ -n "$(envListVars 'php\.error_log=')" ]]; then
-    echo "php_admin_value[error_log] = $(envGetValue php.error_log)" >> /opt/docker/etc/php/fpm/pool.d/application.conf
+    go-replace --mode=lineinfile --regex \
+        -s '^[\s;]*php_admin_value\[error_log\][\s]*=' -r "php_admin_value[error_log] = $(envGetValue php.error_log)" \
+        -- /opt/docker/etc/php/fpm/pool.d/application.conf
 fi
 
 # Workaround for official PHP images
