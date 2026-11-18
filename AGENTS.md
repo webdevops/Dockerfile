@@ -57,7 +57,7 @@ Where the documentation lives:
 | `docs/customization.md` | Commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs and their time zone, healthcheck, configuration files and placeholders, supervisord, locales, application user and changing its UID |
 | `docs/images/*.md` | One page per image family: tags, base image, services, settings, development variant. `php.md` also has Debian or Alpine, production, installing extensions, mail and Xdebug with an IDE |
 | `docs/known-issues.md` | Options and tools that do not work, with affected images and workaround; migration from older images |
-| `docs/discontinued-images.md` | Replacements for images that are no longer built (`storage`, `vsftp`, `ssh`) |
+| `docs/discontinued-images.md` | Replacements for images and tags that are no longer built (`nginx`, `apache`, the `alpine` tags of `bootstrap`, `base` and `base-app`, `storage`, `vsftp`, `ssh`) |
 
 ### When to update it
 

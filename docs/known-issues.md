@@ -7,7 +7,7 @@ These options and tools are part of the images but do not work, or work only in 
 ### `SERVICE_POSTFIX_OPTS`
 
 - **Effect:** No effect. The value is passed to `postfix start`, which ignores it.
-- **Images:** all images with Postfix: `base`, `base-app`, `nginx`, `apache`, `php-*`.
+- **Images:** all images with Postfix: `base`, `base-app`, `php-*`.
 - **Instead:** Change the Postfix configuration with `postconf -e` in a [service hook](customization.md#service-hooks) in `/opt/docker/bin/service.d/postfix.d/`, or use `POSTFIX_RELAYHOST` and `POSTFIX_MYNETWORKS`.
 
 ### `SERVICE_SUPERVISOR_USER`
@@ -22,12 +22,6 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php`, `php-dev`, `php-nginx`, `php-nginx-dev`, `php-apache` and `php-apache-dev`, Debian and Alpine.
 - **Instead:** Read them with `docker compose logs`. To have PHP-FPM's messages and the PHP errors in the file of `LOG_STDERR` in every image, also set `fpm.global.error_log: /docker.stderr`. `php.error_log` gives the PHP errors of PHP-FPM and the CLI a file of their own, in a directory that `application` may write to, for example `/app`. The access log needs a pool file that sorts after `docker.conf`, see [`fpm.pool.<key>`](#fpmpoolkey-for-the-directives-of-dockerconf).
 
-### No `/app` in `nginx` and `apache`
-
-- **Effect:** The images have no `/app`, the default document root. Without your application there, Nginx answers every request with `500` (`rewrite or internal redirection cycle`), and Apache exits at the start with `DocumentRoot '/app' is not a directory` and is restarted over and over.
-- **Images:** `nginx`, `apache`. The `php-*` images have `/app`.
-- **Instead:** Mount your application at `/app` or copy it there, or set `WEB_DOCUMENT_ROOT` to a directory that exists.
-
 ### Blackfire agent
 
 - **Effect:** With `PHP_DEBUGGER=blackfire`, supervisord starts the `blackfire-agent` service, but the agent is not installed. It exits with code 127 and is restarted over and over, which fills the container log. The Blackfire PHP extension itself is loaded.
@@ -38,7 +32,7 @@ These options and tools are part of the images but do not work, or work only in 
 ### `cli` command without `APPLICATION_USER`
 
 - **Effect:** Fails with `APPLICATION_USER: unbound variable`.
-- **Images:** `base`, `nginx`, `apache`. It works in `base-app` and `php-*`.
+- **Images:** `base`. It works in `base-app` and `php-*`.
 - **Instead:** Set `APPLICATION_USER`, for example to `root`, or run the command directly; any other command runs as `root`, see [Commands](customization.md#commands).
 
 ### `docker-cronjob` on Alpine
@@ -70,12 +64,6 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php`, `php-dev`, `php-nginx`, `php-nginx-dev`, `php-apache`, `php-apache-dev`.
 - **Instead:** Always use a version tag such as `8.5` or `8.5-alpine`.
 
-### `latest` tags of `nginx` and `apache`
-
-- **Effect:** Only the `alpine` tag is built. `latest` and the Debian and Ubuntu tags are still on Docker Hub, but the CI has not built them since April 2020, the `centos-7` tag since March 2021. An image used without a tag, for example `image: webdevops/nginx`, is the `latest` image from April 2020: Ubuntu 18.04 with Nginx 1.14.0 or Apache 2.4.29, without security updates.
-- **Images:** `nginx`, `apache`.
-- **Instead:** Use the `alpine` tag, or a PHP image with Nginx or Apache.
-
 ### Composer 1 on PHP 8.4 and 8.5
 
 - **Effect:** With `COMPOSER_VERSION=1`, every Composer run prints deprecation notices.
@@ -87,5 +75,6 @@ These options and tools are part of the images but do not work, or work only in 
 - `XDEBUG_REMOTE_*`, `XDEBUG_IDE_KEY`, `XDEBUG_MAX_NESTING_LEVEL` and `XDEBUG_PROFILER_*` are ignored; they belong to Xdebug 2. Set the Xdebug 3 directive with `php.xdebug.<key>` instead, for example `php.xdebug.max_nesting_level: "500"` or `php.xdebug.idekey: PHPSTORM`. The variables listed under [Development images](environment-variables.md#development-images) still work.
 - `SERVICE_BLACKFIRE_AGENT_OPTS` has no effect, because the agent is not installed (see [Blackfire agent](#blackfire-agent)).
 - Tags that are no longer built stay on Docker Hub without updates: PHP 5.6 to 8.1 and all operating system tags such as `debian-9` or `ubuntu-18.04`. For `latest` and `alpine`, see [above](#latest-and-alpine-tags-of-the-php-images).
+- The images `webdevops/nginx` and `webdevops/apache` and the `alpine` tags of `webdevops/bootstrap`, `webdevops/base` and `webdevops/base-app` are no longer built. Their last images, on Alpine 3.24, stay on Docker Hub without updates, and so do the older tags of `nginx` and `apache`, among them `latest` (Ubuntu 18.04 from April 2020). For replacements, see [Replacing discontinued images](discontinued-images.md).
 - The images `webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built. Their last images stay on Docker Hub without updates (`ssh` since December 2022). For replacements, see [Replacing discontinued images](discontinued-images.md).
 - The Ansible provisioning is removed: `docker-provision`, `docker-ansible-install`, `/opt/docker/bin/provision` and the `provision.role*` commands of `/opt/docker/bin/control.sh`. They needed Python 2 and Ansible packages that no longer exist and did not work in any image. `/opt/docker/provision/onbuild.d` is removed too; scripts in it were never run. Use shell scripts in `bootstrap.d` or `build.d`, see [Scripts at image build](customization.md#scripts-at-image-build).

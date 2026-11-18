@@ -30,7 +30,7 @@ Images: `base-app`, `php-*`.
 
 ## Container
 
-Images: `base`, `base-app`, `apache`, `nginx`, `php-*`.
+Images: `base`, `base-app`, `php-*`.
 
 | Variable | Default | Effect |
 | --- | --- | --- |
@@ -41,14 +41,14 @@ Images: `base`, `base-app`, `apache`, `nginx`, `php-*`.
 
 ## Web server
 
-Images: `php-nginx`, `php-nginx-dev`, `php-apache`, `php-apache-dev`, `nginx`, `apache`.
+Images: `php-nginx`, `php-nginx-dev`, `php-apache`, `php-apache-dev`.
 
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `WEB_DOCUMENT_ROOT` | `/app` | Document root of the default virtual host. |
 | `WEB_DOCUMENT_INDEX` | `index.php` | Directory index. Nginx uses only this file. Apache adds it after the distribution's own index files (Debian: `index.html`, `index.cgi`, `index.pl`, `index.php`, `index.xhtml`, `index.htm`; Alpine: `index.html`); if one of those exists, Apache serves it instead. |
 | `WEB_ALIAS_DOMAIN` | `*.vm` | Additional host names of the default virtual host (`server_name` in Nginx, `ServerAlias` in Apache). |
-| `WEB_PHP_SOCKET` | `127.0.0.1:9000` (empty in `nginx` and `apache`) | Address of PHP-FPM that PHP requests are passed to. |
+| `WEB_PHP_SOCKET` | `127.0.0.1:9000` | Address of PHP-FPM that PHP requests are passed to. |
 | `WEB_PHP_TIMEOUT` | `600` | Timeout in seconds for PHP requests (`fastcgi_read_timeout` in Nginx, proxy timeout in Apache). See [Long requests](#long-requests). |
 | `SERVICE_NGINX_CLIENT_MAX_BODY_SIZE` | `50m` | Nginx `client_max_body_size`. Nginx-based images only. See [Uploads](#uploads). |
 | `WEB_NO_CACHE_PATTERN` | `\.(css\|js\|gif\|png\|jpg\|svg\|json\|xml)$` | Development images only. Files matching this regular expression are served without caching (Nginx: `expires off`, Apache: no `ETag`). |

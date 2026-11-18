@@ -7,7 +7,7 @@ namespace Webdevops\Build\ImageTests\Checks;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 /**
- * The self-signed certificate for *.vm that the web server images create at their build, see docs/images/nginx.md.
+ * The self-signed certificate for *.vm that the web server images create at their build, see docs/images/php-nginx.md.
  *
  * @phpstan-require-extends ImageTestCase
  */
