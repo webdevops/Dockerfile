@@ -44,7 +44,7 @@ Documentation for the `webdevops/*` Docker images. It describes the images as th
 ```mermaid
 flowchart LR
   ubuntu["ubuntu:22.04"] --> bootstrap["webdevops/bootstrap"]
-  alpine311["alpine:3.11"] --> bootstrap
+  alpine324["alpine:3.24"] --> bootstrap
   bootstrap --> base["webdevops/base"]
   base --> baseapp["webdevops/base-app"]
   base --> nginx["webdevops/nginx"]

@@ -7,6 +7,8 @@ namespace Webdevops\Build\ImageTests\Checks;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
+use function dirname;
+use function implode;
 use function preg_quote;
 use function sprintf;
 
@@ -111,6 +113,23 @@ trait BootstrapChecks
     public function testGoReplace(): void
     {
         self::assertMatchesRegularExpression('/go-replace\s+(version)?\s*[0-9]+\.[0-9]+\.[0-9]+/', $this->stdout('go-replace --version'));
+    }
+
+    public function testDockerImageCleanup(): void
+    {
+        // in a container of its own, as the command empties /tmp and /var/log
+        $cache = self::image()->isAlpine() ? '/var/cache/apk/image-test' : '/var/lib/apt/lists/image-test';
+        $result = $this->runContainer(['sh', '-c', implode(' && ', [
+            'mkdir -p ' . dirname($cache),
+            'touch /tmp/image-test ' . $cache,
+            'docker-image-cleanup',
+            'test ! -e /tmp/image-test',
+            'test ! -e ' . $cache,
+            'echo cleaned',
+        ])]);
+
+        self::assertSame(0, $result->exitCode, $result->describe());
+        self::assertStringEndsWith("cleaned\n", $result->stdout);
     }
 
     public function testApkInstallsFromTheCache(): void
