@@ -4,7 +4,7 @@
 {% import 'baselayout.twig' as baselayout %}
 {% import 'images/bootstrap.twig' as bootstrap %}
 
-{{ docker.fromOfficial("alpine", "3.11") }}
+{{ docker.fromOfficial("alpine", "3.24") }}
 
 {{ docker.version() }}
 
@@ -13,6 +13,6 @@
 {{ baselayout.copy() }}
 
 RUN set -x \
-    {{ bootstrap.alpine("3.11") }} \
+    {{ bootstrap.alpine() }} \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}

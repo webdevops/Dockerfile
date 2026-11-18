@@ -4,7 +4,7 @@
 #+++++++++++++++++++++++++++++++++++++++
 
 
-FROM alpine:3.11
+FROM alpine:3.24
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
@@ -23,8 +23,6 @@ COPY --from=webdevops/toolbox /baselayout/usr/local/bin/* /usr/local/bin/
 
 RUN set -x \
     # Init bootstrap
-    # Add community
-    && echo https://dl-4.alpinelinux.org/alpine/v3.11/community/ >> /etc/apk/repositories \
     # System update
     && /usr/local/bin/apk-upgrade \
     # Install base stuff

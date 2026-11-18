@@ -6,9 +6,9 @@ Nginx without PHP, on [`webdevops/base`](base.md).
 
 | Tag | Based on |
 | --- | --- |
-| `alpine` | `webdevops/base:alpine` (Alpine 3.11, Nginx 1.16.1) |
+| `alpine` | `webdevops/base:alpine` (Alpine 3.24, Nginx 1.30) |
 
-Alpine 3.11 has had no security updates since November 2021, see [Known issues](../known-issues.md#alpine-311).
+Only `alpine` is built. `latest` and the other tags on Docker Hub are from 2020 and 2021, see [Known issues](../known-issues.md#latest-tags-of-nginx-and-apache).
 
 ## Usage
 

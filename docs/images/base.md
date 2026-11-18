@@ -13,9 +13,7 @@ The foundation for the non-PHP images. The PHP images do not build on these; the
 | Tag | Based on |
 | --- | --- |
 | `ubuntu-22.04`, `latest` | `ubuntu:22.04` |
-| `alpine` | `alpine:3.11` |
-
-Alpine 3.11 has had no security updates since November 2021, see [Known issues](../known-issues.md#alpine-311).
+| `alpine` | `alpine:3.24` |
 
 The same tags exist for `bootstrap`, `base` and `base-app`.
 

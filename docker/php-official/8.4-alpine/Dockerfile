@@ -36,8 +36,6 @@ COPY conf/ /opt/docker/
 
 RUN set -x \
     # Init bootstrap
-    # Add community
-    && echo https://dl-4.alpinelinux.org/alpine/v3.20/community/ >> /etc/apk/repositories \
     # System update
     && /usr/local/bin/apk-upgrade \
     # Install base stuff
@@ -61,6 +59,7 @@ RUN set -x \
         vim \
         sed \
         tzdata \
+        tzdata-utils \
         busybox-suid \
     && chmod +s /sbin/gosu \
     && docker-run-bootstrap

@@ -52,18 +52,6 @@ These options and tools are part of the images but do not work, or work only in 
   ```
 - **Issue:** related question [#280](https://github.com/webdevops/Dockerfile/issues/280).
 
-### `docker-image-cleanup` in the Alpine PHP images
-
-- **Effect:** Exits with code 1 (`find: /var/lib/apk/: No such file or directory`), so `RUN apk-install … && docker-image-cleanup` fails the build.
-- **Images:** the `-alpine` tags of `php-*`. It works in `base:alpine`.
-- **Instead:** Leave it out; `apk-install` keeps no package cache.
-
-### Alpine 3.20 repository in the Alpine PHP images
-
-- **Effect:** `/etc/apk/repositories` also lists the community repository of Alpine 3.20 (`https://dl-4.alpinelinux.org/alpine/v3.20/community/`), although the images are based on a newer Alpine release, for example 3.24 in `8.5-alpine`. `apk` reads that index too, so a package that is missing from the current release can be installed from Alpine 3.20, built against older libraries.
-- **Images:** `php-*` with the Alpine tags `8.2-alpine` to `8.5-alpine`.
-- **Instead:** Remove the line in your Dockerfile before you install packages: `RUN sed -i '/\/v3\.20\//d' /etc/apk/repositories`.
-
 ### Package sources in the Debian Nginx images
 
 - **Effect:** `/etc/apt/sources.list` holds only the nginx.org repository and ends without a line break. A line appended with `echo "deb ..." >> /etc/apt/sources.list` is joined to the last line: apt ignores the new repository and only prints warnings such as `component misspelt in sources.list`. The nginx.org key is stored in the deprecated global keyring `/etc/apt/trusted.gpg`, which apt trusts for every repository; `apt-get update` warns about it.
@@ -76,18 +64,17 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php-*`, Debian and Alpine.
 - **Instead:** Add a pool file whose name sorts after `docker.conf`, for example `zz-pool.conf` with a `[www]` section, to `/opt/docker/etc/php/fpm/pool.d/`.
 
-### Alpine 3.11
-
-- **Effect:** The `alpine` tags of `bootstrap`, `base`, `base-app`, `nginx` and `apache` are built on Alpine 3.11, which has been out of support since November 2021, with Nginx 1.16.1 and Apache 2.4.51.
-- **Images:** `bootstrap:alpine`, `base:alpine`, `base-app:alpine`, `nginx:alpine`, `apache:alpine`. The Alpine variants of the PHP images are not affected; they use the Alpine release of the official PHP image.
-- **Instead:** Use the `ubuntu-22.04` tags, or a PHP image.
-- **Issue:** [#453](https://github.com/webdevops/Dockerfile/issues/453) (closed, still applies).
-
 ### `latest` and `alpine` tags of the PHP images
 
 - **Effect:** The CI no longer builds these tags, but they are still on Docker Hub. An image used without a tag, for example `image: webdevops/php-nginx`, is the `latest` image from April 2020 and gets no updates. The `alpine` tags are from April 2020 as well, those of the development images from April 2019.
 - **Images:** `php`, `php-dev`, `php-nginx`, `php-nginx-dev`, `php-apache`, `php-apache-dev`.
 - **Instead:** Always use a version tag such as `8.5` or `8.5-alpine`.
+
+### `latest` tags of `nginx` and `apache`
+
+- **Effect:** Only the `alpine` tag is built. `latest` and the Debian and Ubuntu tags are still on Docker Hub, but the CI has not built them since April 2020, the `centos-7` tag since March 2021. An image used without a tag, for example `image: webdevops/nginx`, is the `latest` image from April 2020: Ubuntu 18.04 with Nginx 1.14.0 or Apache 2.4.29, without security updates.
+- **Images:** `nginx`, `apache`.
+- **Instead:** Use the `alpine` tag, or a PHP image with Nginx or Apache.
 
 ### Composer 1 on PHP 8.4 and 8.5
 

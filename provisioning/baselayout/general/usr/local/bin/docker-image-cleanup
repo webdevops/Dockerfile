@@ -14,7 +14,8 @@ case "$LSB_FAMILY" in
         ;;
 
     Alpine)
-        find /var/lib/apk/ -mindepth 1 -delete
+        # the package cache of apk; /var/lib/apk only exists in older Alpine releases
+        rm -rf /var/cache/apk/* /var/lib/apk/*
         ;;
 
     *)
