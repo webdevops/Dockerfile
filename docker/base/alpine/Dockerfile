@@ -23,6 +23,8 @@ RUN set -x \
         tzdata \
         busybox-suid \
     && chmod +s /sbin/gosu \
+    # zic, which tzdata of Alpine no longer contains
+    && apk-install tzdata-utils \
     && docker-run-bootstrap \
     && docker-image-cleanup
 

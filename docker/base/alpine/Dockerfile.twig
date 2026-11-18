@@ -10,6 +10,8 @@
 
 RUN set -x \
     {{ base.alpine() }} \
+    # zic, which tzdata of Alpine no longer contains
+    && apk-install tzdata-utils \
     {{ provision.runBootstrap() }} \
     {{ docker.cleanup() }}
 
