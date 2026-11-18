@@ -26,6 +26,11 @@ class GithubJobBuilder
      */
     private const string IMAGE_TEST_RUNNER = 'webdevops-image-tests';
 
+    /**
+     * Cache of GitHub Actions for BuildKit, followed by the scope of one image and architecture.
+     */
+    private const string GHA_CACHE_SCOPE = 'type=gha,scope=';
+
     public const string IMAGE_TEST_RUNNER_JOB = 'image-test-runner';
 
     /**
@@ -341,7 +346,7 @@ class GithubJobBuilder
     {
         // Full image/tag and architecture keep scopes unique and reusable
         // across commits, branches and reruns.
-        $cache = 'type=gha,scope=' . $node['id'] . '-${{ matrix.arch }}';
+        $cache = self::GHA_CACHE_SCOPE . $node['id'] . '-${{ matrix.arch }}';
         return [
             'cache-from' => $cache,
             'cache-to' => $cache . ',mode=max',
@@ -505,7 +510,7 @@ class GithubJobBuilder
                 'uses' => 'actions/download-artifact@v8',
                 'continue-on-error' => true,
                 'with' => [
-                    'name' => $this->imageTestRunnerArtifactName(),
+                    'name' => $this->imageTestRunnerName(),
                     'path' => dirname(self::IMAGE_TEST_RUNNER_ARCHIVE),
                 ],
             ],
@@ -526,7 +531,7 @@ class GithubJobBuilder
                     'file' => 'ci/image-tests/Dockerfile',
                     'load' => true,
                     'tags' => self::IMAGE_TEST_RUNNER,
-                    'cache-from' => $this->imageTestRunnerCache(),
+                    'cache-from' => self::GHA_CACHE_SCOPE . $this->imageTestRunnerName(),
                 ],
             ],
         ];
@@ -570,8 +575,8 @@ class GithubJobBuilder
                         'platforms' => '${{ matrix.platform }}',
                         'tags' => self::IMAGE_TEST_RUNNER,
                         'outputs' => 'type=docker,dest=' . self::IMAGE_TEST_RUNNER_ARCHIVE,
-                        'cache-from' => $this->imageTestRunnerCache(),
-                        'cache-to' => $this->imageTestRunnerCache() . ',mode=max,ignore-error=true',
+                        'cache-from' => self::GHA_CACHE_SCOPE . $this->imageTestRunnerName(),
+                        'cache-to' => self::GHA_CACHE_SCOPE . $this->imageTestRunnerName() . ',mode=max,ignore-error=true',
                     ],
                 ],
                 [
@@ -580,7 +585,7 @@ class GithubJobBuilder
                     'uses' => 'actions/upload-artifact@v7',
                     'continue-on-error' => true,
                     'with' => [
-                        'name' => $this->imageTestRunnerArtifactName(),
+                        'name' => $this->imageTestRunnerName(),
                         'path' => self::IMAGE_TEST_RUNNER_ARCHIVE,
                         'retention-days' => 1,
                         // A rerun must replace the previous attempt's runner.
@@ -594,15 +599,10 @@ class GithubJobBuilder
         ];
     }
 
-    private function imageTestRunnerCache(): string
-    {
-        return 'type=gha,scope=' . self::IMAGE_TEST_RUNNER . '-${{ matrix.arch }}';
-    }
-
     /**
-     * Artifact name of the image test runner, one per architecture like the runner itself.
+     * Name of the image test runner of one architecture: the name of its artifact and the scope of its cache.
      */
-    private function imageTestRunnerArtifactName(): string
+    private function imageTestRunnerName(): string
     {
         return self::IMAGE_TEST_RUNNER . '-${{ matrix.arch }}';
     }
