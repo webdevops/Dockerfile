@@ -68,10 +68,6 @@ trait PhpChecks
 
     public function testZicIsInstalled(): void
     {
-        if (self::image()->osFamily !== 'debian') {
-            self::markTestSkipped('zic is only checked in the Debian images.');
-        }
-
         $file = $this->file('/usr/sbin/zic');
         self::assertTrue($file->isFile, '/usr/sbin/zic should be a file');
         self::assertTrue($file->isExecutable, '/usr/sbin/zic should be executable');

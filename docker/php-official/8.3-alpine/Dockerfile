@@ -59,6 +59,7 @@ RUN set -x \
         vim \
         sed \
         tzdata \
+        tzdata-utils \
         busybox-suid \
     && chmod +s /sbin/gosu \
     && docker-run-bootstrap
