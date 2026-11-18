@@ -116,7 +116,7 @@ final class GenerateGithubCiCommandTest extends TestCase
         foreach (['base_alpine', 'php_8-4'] as $job) {
             $steps = array_column($jobs[$job]['steps'], null, 'name');
             self::assertSame($upload['name'], $steps['Download the image test runner']['with']['name'], $job);
-            self::assertSame('docker load --input ' . $upload['path'], $steps['Load the image test runner']['run'], $job);
+            self::assertSame('docker load --input ' . $upload['path'] . ' && rm ' . $upload['path'], $steps['Load the image test runner']['run'], $job);
         }
     }
 

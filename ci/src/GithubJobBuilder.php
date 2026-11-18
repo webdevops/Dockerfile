@@ -453,7 +453,8 @@ class GithubJobBuilder
 
     /**
      * Command of the image test step, null if the image has no tests in ci/image-tests: make test-image-run, the command
-     * of the docs, runs the tests against the image this job built, with the runner that the step before built.
+     * of the docs, runs the tests against the image this job built, with the runner that the steps of
+     * imageTestRunnerSteps() loaded or built.
      *
      * @param array<string, mixed> $node
      */
@@ -513,7 +514,8 @@ class GithubJobBuilder
                 'id' => 'load-image-test-runner',
                 'if' => '${{ steps.download-image-test-runner.outcome == \'success\' }}',
                 'continue-on-error' => true,
-                'run' => 'docker load --input ' . self::IMAGE_TEST_RUNNER_ARCHIVE,
+                // The archive is not needed any more, and the job needs the disk for its own images.
+                'run' => 'docker load --input ' . self::IMAGE_TEST_RUNNER_ARCHIVE . ' && rm ' . self::IMAGE_TEST_RUNNER_ARCHIVE,
             ],
             [
                 'name' => 'Build the image test runner',
@@ -553,8 +555,10 @@ class GithubJobBuilder
                     'with' => ['persist-credentials' => false],
                 ],
                 ['uses' => 'docker/setup-buildx-action@v4'],
-                // If a step fails, e.g. on a transient error of the cache or of Docker Hub, the job still succeeds:
-                // the image jobs that need it run anyway and build the runner themselves.
+                // If the build or the upload fails, e.g. on a transient error of Docker Hub, the job still succeeds: the
+                // image jobs that need it run anyway and build the runner themselves. A failed export to the cache does
+                // not fail the build (ignore-error), so the archive is still passed on. Checkout and the setup of Buildx
+                // have no such fallback: if they fail, the job fails, and the image jobs that need it are skipped.
                 [
                     'name' => 'Build the image test runner',
                     'id' => 'build-image-test-runner',
@@ -567,7 +571,7 @@ class GithubJobBuilder
                         'tags' => self::IMAGE_TEST_RUNNER,
                         'outputs' => 'type=docker,dest=' . self::IMAGE_TEST_RUNNER_ARCHIVE,
                         'cache-from' => $this->imageTestRunnerCache(),
-                        'cache-to' => $this->imageTestRunnerCache() . ',mode=max',
+                        'cache-to' => $this->imageTestRunnerCache() . ',mode=max,ignore-error=true',
                     ],
                 ],
                 [

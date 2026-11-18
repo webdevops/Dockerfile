@@ -73,7 +73,7 @@ jobs:
           tags: webdevops-image-tests
           outputs: 'type=docker,dest=.ci-image-test-runner/webdevops-image-tests.tar'
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
+          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max,ignore-error=true'
       -
         name: 'Upload the image test runner'
         if: "${{ steps.build-image-test-runner.outcome == 'success' }}"
@@ -169,7 +169,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -314,7 +314,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -464,7 +464,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -642,7 +642,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -818,7 +818,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -996,7 +996,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -1172,7 +1172,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -1350,7 +1350,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -1495,7 +1495,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -1640,7 +1640,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -1749,7 +1749,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -1930,7 +1930,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -2039,7 +2039,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -2220,7 +2220,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -2329,7 +2329,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -2510,7 +2510,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -2619,7 +2619,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -2800,7 +2800,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -2935,7 +2935,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -3142,7 +3142,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -3277,7 +3277,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -3484,7 +3484,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -3619,7 +3619,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -3826,7 +3826,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -3961,7 +3961,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -4168,7 +4168,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -4282,7 +4282,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -4468,7 +4468,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -4582,7 +4582,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -4768,7 +4768,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -4882,7 +4882,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -5068,7 +5068,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -5182,7 +5182,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -5368,7 +5368,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -5477,7 +5477,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -5658,7 +5658,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -5767,7 +5767,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -5948,7 +5948,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -6057,7 +6057,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -6238,7 +6238,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -6347,7 +6347,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -6528,7 +6528,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -6668,7 +6668,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -6880,7 +6880,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -7020,7 +7020,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -7232,7 +7232,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -7372,7 +7372,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -7584,7 +7584,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -7724,7 +7724,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -7936,7 +7936,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -8076,7 +8076,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -8292,7 +8292,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -8432,7 +8432,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -8648,7 +8648,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -8788,7 +8788,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -9004,7 +9004,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
@@ -9144,7 +9144,7 @@ jobs:
         id: load-image-test-runner
         if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
         continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar'
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
       -
         name: 'Build the image test runner'
         if: "${{ steps.load-image-test-runner.outcome != 'success' }}"

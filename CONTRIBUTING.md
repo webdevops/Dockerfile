@@ -117,7 +117,7 @@ It runs in a container of `ci/image-tests/Dockerfile`, which has PHP and the `do
 The runner builds on the official PHP image, not on a webdevops image, so a broken `webdevops/php` cannot break the tests that find the defect.
 In the CI, the job `image-test-runner` builds it once per architecture, with the cache of GitHub Actions, and passes it on as an artifact; the image jobs wait for it, load it with `docker load` and run `make test-image-run`.
 So only that job asks Docker Hub for the images that `ci/image-tests/Dockerfile` builds on, not every image job: a build, even from the cache, would ask once per job.
-If that job cannot pass the runner on, the image jobs still run and build the runner themselves, from its cache.
+If that job cannot build or upload the runner, the image jobs still run and build it themselves, from its cache; a failed write to the cache does not stop the upload. If its checkout or the setup of Buildx fails, the job fails, and the image jobs that need it are skipped.
 
 ## PHP extension builds
 

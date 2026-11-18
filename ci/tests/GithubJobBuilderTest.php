@@ -76,7 +76,8 @@ final class GithubJobBuilderTest extends TestCase
             // an archive for docker load in the image jobs
             'outputs' => 'type=docker,dest=.ci-image-test-runner/webdevops-image-tests.tar',
             'cache-from' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}',
-            'cache-to' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max',
+            // a failed export to the cache must not keep the archive from being uploaded
+            'cache-to' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max,ignore-error=true',
         ], $build['with']);
         $upload = $steps['Upload the image test runner'];
         self::assertSame('${{ steps.' . $build['id'] . ".outcome == 'success' }}", $upload['if']);
@@ -158,8 +159,8 @@ final class GithubJobBuilderTest extends TestCase
 
         $load = $steps['Load the image test runner'];
         self::assertSame('${{ steps.' . $download['id'] . ".outcome == 'success' }}", $load['if']);
-        // the file that the runner job uploads, in the directory that the download writes to
-        self::assertSame('docker load --input ' . $upload['path'], $load['run']);
+        // the file that the runner job uploads, in the directory that the download writes to, removed once loaded
+        self::assertSame('docker load --input ' . $upload['path'] . ' && rm ' . $upload['path'], $load['run']);
         self::assertTrue($load['continue-on-error'], 'an archive that does not load is built instead');
     }
 
