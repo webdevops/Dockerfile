@@ -31,6 +31,11 @@ class GithubJobBuilder
      */
     private const string GHA_CACHE_SCOPE = 'type=gha,scope=';
 
+    /**
+     * Suffix of the names that a job of the architecture matrix gives its cache scope and artifacts.
+     */
+    private const string ARCH_SUFFIX = '-${{ matrix.arch }}';
+
     public const string IMAGE_TEST_RUNNER_JOB = 'image-test-runner';
 
     /**
@@ -346,7 +351,7 @@ class GithubJobBuilder
     {
         // Full image/tag and architecture keep scopes unique and reusable
         // across commits, branches and reruns.
-        $cache = self::GHA_CACHE_SCOPE . $node['id'] . '-${{ matrix.arch }}';
+        $cache = self::GHA_CACHE_SCOPE . $node['id'] . self::ARCH_SUFFIX;
         return [
             'cache-from' => $cache,
             'cache-to' => $cache . ',mode=max',
@@ -414,7 +419,7 @@ class GithubJobBuilder
      */
     private function getCiImageArtifactName(string $imageId): string
     {
-        return 'docker-parent-' . GithubJobBuilder::toJobId($imageId) . '-${{ matrix.arch }}';
+        return 'docker-parent-' . GithubJobBuilder::toJobId($imageId) . self::ARCH_SUFFIX;
     }
 
     /**
@@ -604,7 +609,7 @@ class GithubJobBuilder
      */
     private function imageTestRunnerName(): string
     {
-        return self::IMAGE_TEST_RUNNER . '-${{ matrix.arch }}';
+        return self::IMAGE_TEST_RUNNER . self::ARCH_SUFFIX;
     }
 
     /**
