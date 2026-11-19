@@ -15,7 +15,8 @@ use Webdevops\Build\ImageTests\ImageTestCase;
 trait PhpWebEnvironmentChecks
 {
     /**
-     * A PHP request that takes longer than WEB_PHP_TIMEOUT (2 s) gets 504 from the web server.
+     * A PHP request that takes longer than WEB_PHP_TIMEOUT (2 s) gets 504 from the web server. The request lifts
+     * PHP_MAX_EXECUTION_TIME, which counts the time in sleep() in thread-safe PHP.
      */
     public function testWebServerAnswers504AfterWebPhpTimeout(): void
     {
@@ -23,6 +24,6 @@ trait PhpWebEnvironmentChecks
         // wait for the web server and PHP-FPM
         $this->request('http://localhost/php-test.php?test=sha1', container: $container);
 
-        self::assertSame('504', $this->statusCode('http://localhost/php-test.php?test=sleep&seconds=5', container: $container));
+        self::assertSame('504', $this->statusCode('http://localhost/php-test.php?test=sleep&seconds=5&time_limit=0', container: $container));
     }
 }

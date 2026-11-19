@@ -564,15 +564,29 @@ jobs:
         uses: docker/setup-buildx-action@v4
       -
         name: 'Build the image test runner'
+        id: build-image-test-runner
         uses: docker/build-push-action@v7
         continue-on-error: true
         with:
           context: .
           file: ci/image-tests/Dockerfile
           platforms: '${{ matrix.platform }}'
-          outputs: type=cacheonly
+          tags: webdevops-image-tests
+          outputs: 'type=docker,dest=.ci-image-test-runner/webdevops-image-tests.tar'
           cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max'
+          cache-to: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max,ignore-error=true'
+      -
+        name: 'Upload the image test runner'
+        if: "${{ steps.build-image-test-runner.outcome == 'success' }}"
+        uses: actions/upload-artifact@v7
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner/webdevops-image-tests.tar
+          retention-days: 1
+          overwrite: true
+          compression-level: 0
+          if-no-files-found: error
   base-app_ubuntu-22-04:
     strategy:
       fail-fast: false
@@ -644,7 +658,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/base:ubuntu-22.04=oci-layout://.ci-oci-image/base_ubuntu-22-04:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -807,7 +836,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/bootstrap:ubuntu-22.04=oci-layout://.ci-oci-image/bootstrap_ubuntu-22-04:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -970,7 +1014,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -1133,7 +1192,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/base-app:ubuntu-22.04=oci-layout://.ci-oci-image/base-app_ubuntu-22-04:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -1263,7 +1337,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-apache:8.2=oci-layout://.ci-oci-image/php-apache_8-2:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -1357,7 +1446,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-apache:8.2-alpine=oci-layout://.ci-oci-image/php-apache_8-2-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -1523,7 +1627,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-apache:8.3=oci-layout://.ci-oci-image/php-apache_8-3:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -1617,7 +1736,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-apache:8.3-alpine=oci-layout://.ci-oci-image/php-apache_8-3-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -1783,7 +1917,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-apache:8.4=oci-layout://.ci-oci-image/php-apache_8-4:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -1877,7 +2026,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-apache:8.4-alpine=oci-layout://.ci-oci-image/php-apache_8-4-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -2043,7 +2207,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-apache:8.5=oci-layout://.ci-oci-image/php-apache_8-5:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -2137,7 +2316,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-apache:8.5-alpine=oci-layout://.ci-oci-image/php-apache_8-5-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -2232,6 +2426,296 @@ jobs:
             sleep $((i*i))
           done
           exit 1
+  php-apache-dev_8-6:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'webdevops/php-apache-dev:8.6 (${{ matrix.arch }})'
+    needs:
+      - php-apache_8-6_publish
+      - image-test-runner
+    if: '${{ !failure() && !cancelled() }}'
+    runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Download parent image (OCI layout): webdevops/php-apache:8.6'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/download-artifact@v8
+        with:
+          name: 'docker-parent-php-apache_8-6-${{ matrix.arch }}'
+          path: .ci-oci-image/php-apache_8-6
+      -
+        name: 'Build (load locally)'
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-apache-dev/8.6
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+      -
+        name: 'Build (load locally, from parent artifact)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-apache-dev/8.6
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php-apache:8.6=oci-layout://.ci-oci-image/php-apache_8-6:ci-parent-image'
+      -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
+        name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.6 REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Push arch image'
+        if: "${{github.ref == 'refs/heads/master'}}"
+        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6"'
+  php-apache-dev_8-6-alpine:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'webdevops/php-apache-dev:8.6-alpine (${{ matrix.arch }})'
+    needs:
+      - php-apache_8-6-alpine_publish
+      - image-test-runner
+    if: '${{ !failure() && !cancelled() }}'
+    runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Download parent image (OCI layout): webdevops/php-apache:8.6-alpine'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/download-artifact@v8
+        with:
+          name: 'docker-parent-php-apache_8-6-alpine-${{ matrix.arch }}'
+          path: .ci-oci-image/php-apache_8-6-alpine
+      -
+        name: 'Build (load locally)'
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-apache-dev/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+      -
+        name: 'Build (load locally, from parent artifact)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-apache-dev/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-apache-dev:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache-dev:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php-apache:8.6-alpine=oci-layout://.ci-oci-image/php-apache_8-6-alpine:ci-parent-image'
+      -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
+        name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache-dev:8.6-alpine REFERENCE=ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Push arch image'
+        if: "${{github.ref == 'refs/heads/master'}}"
+        run: 'docker push "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine"'
+  php-apache-dev_8-6-alpine_publish:
+    name: 'webdevops/php-apache-dev:8.6-alpine - Publish'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: php-apache-dev_8-6-alpine
+    if: "${{github.ref == 'refs/heads/master'}}"
+    steps:
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v4
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Create and push multi-arch manifest'
+        run: |-
+          set -euo pipefail
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            docker buildx imagetools create \
+            -t "webdevops/php-apache-dev:8.6-alpine" \
+            -t "ghcr.io/webdevops/php-apache-dev:8.6-alpine" \
+            "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-amd64-8.6-alpine" \
+            "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-arm64-8.6-alpine" && exit 0
+            sleep $((i*i))
+          done
+          exit 1
+  php-apache-dev_8-6_publish:
+    name: 'webdevops/php-apache-dev:8.6 - Publish'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: php-apache-dev_8-6
+    if: "${{github.ref == 'refs/heads/master'}}"
+    steps:
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v4
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Create and push multi-arch manifest'
+        run: |-
+          set -euo pipefail
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            docker buildx imagetools create \
+            -t "webdevops/php-apache-dev:8.6" \
+            -t "ghcr.io/webdevops/php-apache-dev:8.6" \
+            "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-amd64-8.6" \
+            "ghcr.io/webdevops/php-apache-dev:sha-${{ github.sha }}-arm64-8.6" && exit 0
+            sleep $((i*i))
+          done
+          exit 1
   php-apache_8-2:
     strategy:
       fail-fast: false
@@ -2303,7 +2787,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -2423,7 +2922,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -2615,7 +3129,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -2735,7 +3264,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -2927,7 +3471,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -3047,7 +3606,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -3239,7 +3813,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -3359,7 +3948,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -3480,6 +4084,348 @@ jobs:
             sleep $((i*i))
           done
           exit 1
+  php-apache_8-6:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'webdevops/php-apache:8.6 (${{ matrix.arch }})'
+    needs:
+      - php_8-6_publish
+      - image-test-runner
+    if: '${{ !failure() && !cancelled() }}'
+    runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Download parent image (OCI layout): webdevops/php:8.6'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/download-artifact@v8
+        with:
+          name: 'docker-parent-php_8-6-${{ matrix.arch }}'
+          path: .ci-oci-image/php_8-6
+      -
+        name: 'Build (load locally)'
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-apache/8.6
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+      -
+        name: 'Build (load locally, from parent artifact)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-apache/8.6
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php:8.6=oci-layout://.ci-oci-image/php_8-6:ci-parent-image'
+      -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
+        name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.6 REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Push arch image'
+        if: "${{github.ref == 'refs/heads/master'}}"
+        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.6"'
+      -
+        name: 'Export image (OCI layout)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-apache/8.6
+          platforms: '${{ matrix.platform }}'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php:8.6=oci-layout://.ci-oci-image/php_8-6:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-6'
+      -
+        name: 'Upload image (OCI layout)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/upload-artifact@v7
+        with:
+          name: 'docker-parent-php-apache_8-6-${{ matrix.arch }}'
+          path: .ci-oci-image/php-apache_8-6
+          retention-days: 1
+          overwrite: true
+          compression-level: 0
+          if-no-files-found: error
+  php-apache_8-6-alpine:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'webdevops/php-apache:8.6-alpine (${{ matrix.arch }})'
+    needs:
+      - php_8-6-alpine_publish
+      - image-test-runner
+    if: '${{ !failure() && !cancelled() }}'
+    runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Download parent image (OCI layout): webdevops/php:8.6-alpine'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/download-artifact@v8
+        with:
+          name: 'docker-parent-php_8-6-alpine-${{ matrix.arch }}'
+          path: .ci-oci-image/php_8-6-alpine
+      -
+        name: 'Build (load locally)'
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-apache/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+      -
+        name: 'Build (load locally, from parent artifact)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-apache/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php:8.6-alpine=oci-layout://.ci-oci-image/php_8-6-alpine:ci-parent-image'
+      -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
+        name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-apache:8.6-alpine REFERENCE=ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Push arch image'
+        if: "${{github.ref == 'refs/heads/master'}}"
+        run: 'docker push "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine"'
+      -
+        name: 'Export image (OCI layout)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-apache/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          cache-from: 'type=gha,scope=webdevops/php-apache:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-apache:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php:8.6-alpine=oci-layout://.ci-oci-image/php_8-6-alpine:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-apache_8-6-alpine'
+      -
+        name: 'Upload image (OCI layout)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/upload-artifact@v7
+        with:
+          name: 'docker-parent-php-apache_8-6-alpine-${{ matrix.arch }}'
+          path: .ci-oci-image/php-apache_8-6-alpine
+          retention-days: 1
+          overwrite: true
+          compression-level: 0
+          if-no-files-found: error
+  php-apache_8-6-alpine_publish:
+    name: 'webdevops/php-apache:8.6-alpine - Publish'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: php-apache_8-6-alpine
+    if: "${{github.ref == 'refs/heads/master'}}"
+    steps:
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v4
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Create and push multi-arch manifest'
+        run: |-
+          set -euo pipefail
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            docker buildx imagetools create \
+            -t "webdevops/php-apache:8.6-alpine" \
+            -t "ghcr.io/webdevops/php-apache:8.6-alpine" \
+            "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-amd64-8.6-alpine" \
+            "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-arm64-8.6-alpine" && exit 0
+            sleep $((i*i))
+          done
+          exit 1
+  php-apache_8-6_publish:
+    name: 'webdevops/php-apache:8.6 - Publish'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: php-apache_8-6
+    if: "${{github.ref == 'refs/heads/master'}}"
+    steps:
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v4
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Create and push multi-arch manifest'
+        run: |-
+          set -euo pipefail
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            docker buildx imagetools create \
+            -t "webdevops/php-apache:8.6" \
+            -t "ghcr.io/webdevops/php-apache:8.6" \
+            "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-amd64-8.6" \
+            "ghcr.io/webdevops/php-apache:sha-${{ github.sha }}-arm64-8.6" && exit 0
+            sleep $((i*i))
+          done
+          exit 1
   php-dev_8-2:
     strategy:
       fail-fast: false
@@ -3551,7 +4497,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -3650,7 +4611,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -3821,7 +4797,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -3920,7 +4911,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -4091,7 +5097,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -4190,7 +5211,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -4361,7 +5397,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -4460,7 +5511,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -4560,6 +5626,306 @@ jobs:
             sleep $((i*i))
           done
           exit 1
+  php-dev_8-6:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'webdevops/php-dev:8.6 (${{ matrix.arch }})'
+    needs:
+      - php_8-6_publish
+      - image-test-runner
+    if: '${{ !failure() && !cancelled() }}'
+    runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Download parent image (OCI layout): webdevops/php:8.6'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/download-artifact@v8
+        with:
+          name: 'docker-parent-php_8-6-${{ matrix.arch }}'
+          path: .ci-oci-image/php_8-6
+      -
+        name: 'Build (load locally)'
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-dev/8.6
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+      -
+        name: 'Build (load locally, from parent artifact)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-dev/8.6
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php:8.6=oci-layout://.ci-oci-image/php_8-6:ci-parent-image'
+      -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
+        name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.6 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6 --config php-dev/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Push arch image'
+        if: "${{github.ref == 'refs/heads/master'}}"
+        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6"'
+  php-dev_8-6-alpine:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'webdevops/php-dev:8.6-alpine (${{ matrix.arch }})'
+    needs:
+      - php_8-6-alpine_publish
+      - image-test-runner
+    if: '${{ !failure() && !cancelled() }}'
+    runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Download parent image (OCI layout): webdevops/php:8.6-alpine'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/download-artifact@v8
+        with:
+          name: 'docker-parent-php_8-6-alpine-${{ matrix.arch }}'
+          path: .ci-oci-image/php_8-6-alpine
+      -
+        name: 'Build (load locally)'
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-dev/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+      -
+        name: 'Build (load locally, from parent artifact)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-dev/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-dev:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-dev:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php:8.6-alpine=oci-layout://.ci-oci-image/php_8-6-alpine:ci-parent-image'
+      -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
+        name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-dev:8.6-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine --config php-dev/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Push arch image'
+        if: "${{github.ref == 'refs/heads/master'}}"
+        run: 'docker push "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine"'
+  php-dev_8-6-alpine_publish:
+    name: 'webdevops/php-dev:8.6-alpine - Publish'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: php-dev_8-6-alpine
+    if: "${{github.ref == 'refs/heads/master'}}"
+    steps:
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v4
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Create and push multi-arch manifest'
+        run: |-
+          set -euo pipefail
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            docker buildx imagetools create \
+            -t "webdevops/php-dev:8.6-alpine" \
+            -t "ghcr.io/webdevops/php-dev:8.6-alpine" \
+            "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-amd64-8.6-alpine" \
+            "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-arm64-8.6-alpine" && exit 0
+            sleep $((i*i))
+          done
+          exit 1
+  php-dev_8-6_publish:
+    name: 'webdevops/php-dev:8.6 - Publish'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: php-dev_8-6
+    if: "${{github.ref == 'refs/heads/master'}}"
+    steps:
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v4
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Create and push multi-arch manifest'
+        run: |-
+          set -euo pipefail
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            docker buildx imagetools create \
+            -t "webdevops/php-dev:8.6" \
+            -t "ghcr.io/webdevops/php-dev:8.6" \
+            "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-amd64-8.6" \
+            "ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-arm64-8.6" && exit 0
+            sleep $((i*i))
+          done
+          exit 1
   php-nginx-dev_8-2:
     strategy:
       fail-fast: false
@@ -4631,7 +5997,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-nginx:8.2=oci-layout://.ci-oci-image/php-nginx_8-2:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -4725,7 +6106,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-nginx:8.2-alpine=oci-layout://.ci-oci-image/php-nginx_8-2-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -4891,7 +6287,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-nginx:8.3=oci-layout://.ci-oci-image/php-nginx_8-3:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -4985,7 +6396,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-nginx:8.3-alpine=oci-layout://.ci-oci-image/php-nginx_8-3-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -5151,7 +6577,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-nginx:8.4=oci-layout://.ci-oci-image/php-nginx_8-4:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -5245,7 +6686,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-nginx:8.4-alpine=oci-layout://.ci-oci-image/php-nginx_8-4-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -5411,7 +6867,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-nginx:8.5=oci-layout://.ci-oci-image/php-nginx_8-5:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -5505,7 +6976,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php-nginx:8.5-alpine=oci-layout://.ci-oci-image/php-nginx_8-5-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -5600,6 +7086,296 @@ jobs:
             sleep $((i*i))
           done
           exit 1
+  php-nginx-dev_8-6:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'webdevops/php-nginx-dev:8.6 (${{ matrix.arch }})'
+    needs:
+      - php-nginx_8-6_publish
+      - image-test-runner
+    if: '${{ !failure() && !cancelled() }}'
+    runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Download parent image (OCI layout): webdevops/php-nginx:8.6'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/download-artifact@v8
+        with:
+          name: 'docker-parent-php-nginx_8-6-${{ matrix.arch }}'
+          path: .ci-oci-image/php-nginx_8-6
+      -
+        name: 'Build (load locally)'
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-nginx-dev/8.6
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+      -
+        name: 'Build (load locally, from parent artifact)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-nginx-dev/8.6
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php-nginx:8.6=oci-layout://.ci-oci-image/php-nginx_8-6:ci-parent-image'
+      -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
+        name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.6 REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Push arch image'
+        if: "${{github.ref == 'refs/heads/master'}}"
+        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6"'
+  php-nginx-dev_8-6-alpine:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'webdevops/php-nginx-dev:8.6-alpine (${{ matrix.arch }})'
+    needs:
+      - php-nginx_8-6-alpine_publish
+      - image-test-runner
+    if: '${{ !failure() && !cancelled() }}'
+    runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Download parent image (OCI layout): webdevops/php-nginx:8.6-alpine'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/download-artifact@v8
+        with:
+          name: 'docker-parent-php-nginx_8-6-alpine-${{ matrix.arch }}'
+          path: .ci-oci-image/php-nginx_8-6-alpine
+      -
+        name: 'Build (load locally)'
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-nginx-dev/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+      -
+        name: 'Build (load locally, from parent artifact)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-nginx-dev/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-nginx-dev:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx-dev:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php-nginx:8.6-alpine=oci-layout://.ci-oci-image/php-nginx_8-6-alpine:ci-parent-image'
+      -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
+        name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx-dev:8.6-alpine REFERENCE=ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Push arch image'
+        if: "${{github.ref == 'refs/heads/master'}}"
+        run: 'docker push "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine"'
+  php-nginx-dev_8-6-alpine_publish:
+    name: 'webdevops/php-nginx-dev:8.6-alpine - Publish'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: php-nginx-dev_8-6-alpine
+    if: "${{github.ref == 'refs/heads/master'}}"
+    steps:
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v4
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Create and push multi-arch manifest'
+        run: |-
+          set -euo pipefail
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            docker buildx imagetools create \
+            -t "webdevops/php-nginx-dev:8.6-alpine" \
+            -t "ghcr.io/webdevops/php-nginx-dev:8.6-alpine" \
+            "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-amd64-8.6-alpine" \
+            "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-arm64-8.6-alpine" && exit 0
+            sleep $((i*i))
+          done
+          exit 1
+  php-nginx-dev_8-6_publish:
+    name: 'webdevops/php-nginx-dev:8.6 - Publish'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: php-nginx-dev_8-6
+    if: "${{github.ref == 'refs/heads/master'}}"
+    steps:
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v4
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Create and push multi-arch manifest'
+        run: |-
+          set -euo pipefail
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            docker buildx imagetools create \
+            -t "webdevops/php-nginx-dev:8.6" \
+            -t "ghcr.io/webdevops/php-nginx-dev:8.6" \
+            "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-amd64-8.6" \
+            "ghcr.io/webdevops/php-nginx-dev:sha-${{ github.sha }}-arm64-8.6" && exit 0
+            sleep $((i*i))
+          done
+          exit 1
   php-nginx_8-2:
     strategy:
       fail-fast: false
@@ -5671,7 +7447,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.2=oci-layout://.ci-oci-image/php_8-2:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -5796,7 +7587,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.2-alpine=oci-layout://.ci-oci-image/php_8-2-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -5993,7 +7799,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.3=oci-layout://.ci-oci-image/php_8-3:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -6118,7 +7939,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.3-alpine=oci-layout://.ci-oci-image/php_8-3-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -6315,7 +8151,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.4=oci-layout://.ci-oci-image/php_8-4:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -6440,7 +8291,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.4-alpine=oci-layout://.ci-oci-image/php_8-4-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -6637,7 +8503,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.5=oci-layout://.ci-oci-image/php_8-5:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -6762,7 +8643,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/php:8.5-alpine=oci-layout://.ci-oci-image/php_8-5-alpine:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -6888,6 +8784,358 @@ jobs:
             sleep $((i*i))
           done
           exit 1
+  php-nginx_8-6:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'webdevops/php-nginx:8.6 (${{ matrix.arch }})'
+    needs:
+      - php_8-6_publish
+      - image-test-runner
+    if: '${{ !failure() && !cancelled() }}'
+    runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Download parent image (OCI layout): webdevops/php:8.6'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/download-artifact@v8
+        with:
+          name: 'docker-parent-php_8-6-${{ matrix.arch }}'
+          path: .ci-oci-image/php_8-6
+      -
+        name: 'Build (load locally)'
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-nginx/8.6
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+      -
+        name: 'Build (load locally, from parent artifact)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-nginx/8.6
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php:8.6=oci-layout://.ci-oci-image/php_8-6:ci-parent-image'
+      -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
+        name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.6 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6 --config php-nginx/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Push arch image'
+        if: "${{github.ref == 'refs/heads/master'}}"
+        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6"'
+      -
+        name: 'Export image (OCI layout)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-nginx/8.6
+          platforms: '${{ matrix.platform }}'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php:8.6=oci-layout://.ci-oci-image/php_8-6:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-6'
+      -
+        name: 'Upload image (OCI layout)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/upload-artifact@v7
+        with:
+          name: 'docker-parent-php-nginx_8-6-${{ matrix.arch }}'
+          path: .ci-oci-image/php-nginx_8-6
+          retention-days: 1
+          overwrite: true
+          compression-level: 0
+          if-no-files-found: error
+  php-nginx_8-6-alpine:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'webdevops/php-nginx:8.6-alpine (${{ matrix.arch }})'
+    needs:
+      - php_8-6-alpine_publish
+      - image-test-runner
+    if: '${{ !failure() && !cancelled() }}'
+    runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Download parent image (OCI layout): webdevops/php:8.6-alpine'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/download-artifact@v8
+        with:
+          name: 'docker-parent-php_8-6-alpine-${{ matrix.arch }}'
+          path: .ci-oci-image/php_8-6-alpine
+      -
+        name: 'Build (load locally)'
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-nginx/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+      -
+        name: 'Build (load locally, from parent artifact)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-nginx/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php:8.6-alpine=oci-layout://.ci-oci-image/php_8-6-alpine:ci-parent-image'
+      -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
+        name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php-nginx:8.6-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine --config php-nginx/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Push arch image'
+        if: "${{github.ref == 'refs/heads/master'}}"
+        run: 'docker push "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine"'
+      -
+        name: 'Export image (OCI layout)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php-nginx/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          cache-from: 'type=gha,scope=webdevops/php-nginx:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php-nginx:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/php:8.6-alpine=oci-layout://.ci-oci-image/php_8-6-alpine:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php-nginx_8-6-alpine'
+      -
+        name: 'Upload image (OCI layout)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/upload-artifact@v7
+        with:
+          name: 'docker-parent-php-nginx_8-6-alpine-${{ matrix.arch }}'
+          path: .ci-oci-image/php-nginx_8-6-alpine
+          retention-days: 1
+          overwrite: true
+          compression-level: 0
+          if-no-files-found: error
+  php-nginx_8-6-alpine_publish:
+    name: 'webdevops/php-nginx:8.6-alpine - Publish'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: php-nginx_8-6-alpine
+    if: "${{github.ref == 'refs/heads/master'}}"
+    steps:
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v4
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Create and push multi-arch manifest'
+        run: |-
+          set -euo pipefail
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            docker buildx imagetools create \
+            -t "webdevops/php-nginx:8.6-alpine" \
+            -t "ghcr.io/webdevops/php-nginx:8.6-alpine" \
+            "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-amd64-8.6-alpine" \
+            "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-arm64-8.6-alpine" && exit 0
+            sleep $((i*i))
+          done
+          exit 1
+  php-nginx_8-6_publish:
+    name: 'webdevops/php-nginx:8.6 - Publish'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: php-nginx_8-6
+    if: "${{github.ref == 'refs/heads/master'}}"
+    steps:
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v4
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Create and push multi-arch manifest'
+        run: |-
+          set -euo pipefail
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            docker buildx imagetools create \
+            -t "webdevops/php-nginx:8.6" \
+            -t "ghcr.io/webdevops/php-nginx:8.6" \
+            "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-amd64-8.6" \
+            "ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-arm64-8.6" && exit 0
+            sleep $((i*i))
+          done
+          exit 1
   php_8-2:
     strategy:
       fail-fast: false
@@ -6959,7 +9207,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -7084,7 +9347,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -7285,7 +9563,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -7410,7 +9703,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -7611,7 +9919,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -7736,7 +10059,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -7937,7 +10275,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -8062,7 +10415,22 @@ jobs:
           secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
           build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
       -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
         name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -8189,6 +10557,358 @@ jobs:
             -t "ghcr.io/webdevops/php-official:8.5" \
             "ghcr.io/webdevops/php:sha-${{ github.sha }}-amd64-8.5" \
             "ghcr.io/webdevops/php:sha-${{ github.sha }}-arm64-8.5" && exit 0
+            sleep $((i*i))
+          done
+          exit 1
+  php_8-6:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'webdevops/php:8.6 (${{ matrix.arch }})'
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
+    if: '${{ !failure() && !cancelled() }}'
+    runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/download-artifact@v8
+        with:
+          name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
+          path: .ci-oci-image/toolbox_latest
+      -
+        name: 'Build (load locally)'
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php/8.6
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+      -
+        name: 'Build (load locally, from parent artifact)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php/8.6
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
+      -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
+        name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php:8.6 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6 --config php/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Push arch image'
+        if: "${{github.ref == 'refs/heads/master'}}"
+        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6"'
+      -
+        name: 'Export image (OCI layout)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php/8.6
+          platforms: '${{ matrix.platform }}'
+          cache-from: 'type=gha,scope=webdevops/php:8.6-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.6-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-6'
+      -
+        name: 'Upload image (OCI layout)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/upload-artifact@v7
+        with:
+          name: 'docker-parent-php_8-6-${{ matrix.arch }}'
+          path: .ci-oci-image/php_8-6
+          retention-days: 1
+          overwrite: true
+          compression-level: 0
+          if-no-files-found: error
+  php_8-6-alpine:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          -
+            arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          -
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    name: 'webdevops/php:8.6-alpine (${{ matrix.arch }})'
+    needs:
+      - toolbox_latest_publish
+      - image-test-runner
+    if: '${{ !failure() && !cancelled() }}'
+    runs-on: '${{ matrix.runner }}'
+    permissions:
+      contents: read
+      packages: write
+    container: webdevops/dockerfile-build-env
+    steps:
+      -
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/download-artifact@v8
+        with:
+          name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
+          path: .ci-oci-image/toolbox_latest
+      -
+        name: 'Build (load locally)'
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+      -
+        name: 'Build (load locally, from parent artifact)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          load: true
+          tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
+          cache-from: 'type=gha,scope=webdevops/php:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
+      -
+        name: 'Download the image test runner'
+        id: download-image-test-runner
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: 'webdevops-image-tests-${{ matrix.arch }}'
+          path: .ci-image-test-runner
+      -
+        name: 'Load the image test runner'
+        id: load-image-test-runner
+        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
+        continue-on-error: true
+        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
+      -
+        name: 'Build the image test runner'
+        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ci/image-tests/Dockerfile
+          load: true
+          tags: webdevops-image-tests
+          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
+      -
+        name: 'run image tests'
+        run: 'make test-image-run IMAGE=webdevops/php:8.6-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
+      -
+        name: 'run structure-test'
+        run: |-
+          cd tests/structure-test
+          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine --config php/test.yaml
+      -
+        if: "${{github.ref == 'refs/heads/master'}}"
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Push arch image'
+        if: "${{github.ref == 'refs/heads/master'}}"
+        run: 'docker push "ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine"'
+      -
+        name: 'Export image (OCI layout)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: docker/build-push-action@v7
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        with:
+          context: docker/php/8.6-alpine
+          platforms: '${{ matrix.platform }}'
+          cache-from: 'type=gha,scope=webdevops/php:8.6-alpine-${{ matrix.arch }}'
+          cache-to: 'type=gha,scope=webdevops/php:8.6-alpine-${{ matrix.arch }},mode=max'
+          build-args: 'TARGETARCH=${{ matrix.arch }}'
+          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
+          build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
+          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/php_8-6-alpine'
+      -
+        name: 'Upload image (OCI layout)'
+        if: "${{ github.ref != 'refs/heads/master' }}"
+        uses: actions/upload-artifact@v7
+        with:
+          name: 'docker-parent-php_8-6-alpine-${{ matrix.arch }}'
+          path: .ci-oci-image/php_8-6-alpine
+          retention-days: 1
+          overwrite: true
+          compression-level: 0
+          if-no-files-found: error
+  php_8-6-alpine_publish:
+    name: 'webdevops/php:8.6-alpine - Publish'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: php_8-6-alpine
+    if: "${{github.ref == 'refs/heads/master'}}"
+    steps:
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v4
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Create and push multi-arch manifest'
+        run: |-
+          set -euo pipefail
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            docker buildx imagetools create \
+            -t "webdevops/php:8.6-alpine" \
+            -t "ghcr.io/webdevops/php:8.6-alpine" \
+            "ghcr.io/webdevops/php:sha-${{ github.sha }}-amd64-8.6-alpine" \
+            "ghcr.io/webdevops/php:sha-${{ github.sha }}-arm64-8.6-alpine" && exit 0
+            sleep $((i*i))
+          done
+          exit 1
+  php_8-6_publish:
+    name: 'webdevops/php:8.6 - Publish'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: php_8-6
+    if: "${{github.ref == 'refs/heads/master'}}"
+    steps:
+      -
+        uses: docker/setup-buildx-action@v4
+      -
+        name: 'Login to ghcr.io'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+      -
+        name: 'Login to hub.docker.com'
+        uses: docker/login-action@v4
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+      -
+        name: 'Create and push multi-arch manifest'
+        run: |-
+          set -euo pipefail
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            docker buildx imagetools create \
+            -t "webdevops/php:8.6" \
+            -t "ghcr.io/webdevops/php:8.6" \
+            "ghcr.io/webdevops/php:sha-${{ github.sha }}-amd64-8.6" \
+            "ghcr.io/webdevops/php:sha-${{ github.sha }}-arm64-8.6" && exit 0
             sleep $((i*i))
           done
           exit 1

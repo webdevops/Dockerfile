@@ -24,6 +24,16 @@ trait PhpDevelopmentChecks
         self::assertNotContains('blackfire', $modules);
     }
 
+    /**
+     * The Debian -dev images load the Tideways extension, the Alpine ones have none.
+     */
+    public function testTidewaysIsLoadedInTheDebianImages(): void
+    {
+        $result = $this->assertCommandSucceeds("php -r 'var_export(extension_loaded(\"tideways\"));'");
+        $this->assertNoPhpErrors($result->stdout . $result->stderr);
+        self::assertSame(self::image()->isAlpine() ? 'false' : 'true', $result->stdout);
+    }
+
     public function testSettingsForDevelopment(): void
     {
         self::assertSame([
