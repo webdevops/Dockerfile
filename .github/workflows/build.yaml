@@ -12,6 +12,9 @@ name: build
   workflow_dispatch: null
 permissions:
   contents: read
+concurrency:
+  group: 'build-${{ github.event.pull_request.number || github.run_id }}'
+  cancel-in-progress: true
 jobs:
   validate-automation:
     name: 'Validate Automation'

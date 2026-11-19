@@ -116,6 +116,13 @@ class GenerateGithubCiCommand extends Command
             'permissions' => [
                 'contents' => 'read',
             ],
+            // A new push to a pull request cancels the run of its previous commit, which nobody needs any more. Runs
+            // of the other events get a group of their own, so a run on master, the nightly run and a manual run are
+            // never cancelled: they publish the images.
+            'concurrency' => [
+                'group' => 'build-${{ github.event.pull_request.number || github.run_id }}',
+                'cancel-in-progress' => true,
+            ],
             'jobs' => $this->jobs,
         ];
         $yamlString = Yaml::dump(

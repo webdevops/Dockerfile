@@ -85,6 +85,17 @@ final class GenerateGithubCiCommandTest extends TestCase
         self::assertSame('Validate Automation', $workflow['jobs']['validate-automation']['name']);
     }
 
+    public function testANewPushToAPullRequestCancelsItsPreviousRun(): void
+    {
+        $workflow = $this->generate();
+
+        // Runs of other events get their own group, so master, the nightly run and manual runs are never cancelled
+        self::assertSame([
+            'group' => 'build-${{ github.event.pull_request.number || github.run_id }}',
+            'cancel-in-progress' => true,
+        ], $workflow['concurrency']);
+    }
+
     public function testJobsFollowTheImageTree(): void
     {
         $jobs = $this->generate()['jobs'];
