@@ -7,6 +7,7 @@ namespace Webdevops\Build\Tests;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Webdevops\Build\DockerHub\Repository;
 use Webdevops\Build\GithubJobBuilder;
 
 use function array_filter;
@@ -301,6 +302,40 @@ final class GithubJobBuilderTest extends TestCase
         self::assertArrayNotHasKey('needs', $job);
         self::assertSame(['actions/checkout@v7', 'Run GrumPHP'], array_keys($steps));
         self::assertSame('make check', $steps['Run GrumPHP']['run'], 'the command of the documentation');
+    }
+
+    public function testDockerHubDescriptionJob(): void
+    {
+        $job = new GithubJobBuilder()->getDockerHubDescriptionConfig([
+            new Repository('php', 'PHP-FPM', true),
+            new Repository('hhvm', 'No longer built or updated.', false),
+        ]);
+
+        self::assertSame('Update the Docker Hub pages', $job['name']);
+        self::assertSame('ubuntu-latest', $job['runs-on']);
+        self::assertArrayNotHasKey('needs', $job, 'the pages do not wait for the images, nor the images for the pages');
+        self::assertSame(
+            '${{ github.repository == \'webdevops/Dockerfile\' && github.ref == \'refs/heads/master\''
+            . ' && (github.event_name == \'push\' || github.event_name == \'workflow_dispatch\') }}',
+            $job['if'],
+        );
+        $upload = static fn (string $name, string $short): array => [
+            'name' => 'webdevops/' . $name,
+            'if' => '${{ !cancelled() }}',
+            'uses' => 'peter-evans/dockerhub-description@v5',
+            'with' => [
+                'username' => '${{ secrets.DOCKERHUB_USERNAME }}',
+                'password' => '${{ secrets.DOCKERHUB_TOKEN }}',
+                'repository' => 'webdevops/' . $name,
+                'readme-filepath' => './docs/dockerhub/' . $name . '.md',
+                'short-description' => $short,
+            ],
+        ];
+        self::assertSame([
+            ['uses' => 'actions/checkout@v7', 'with' => ['persist-credentials' => false]],
+            $upload('php', 'PHP-FPM'),
+            $upload('hhvm', 'No longer built or updated.'),
+        ], $job['steps']);
     }
 
     /**
