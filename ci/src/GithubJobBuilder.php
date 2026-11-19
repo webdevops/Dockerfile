@@ -645,8 +645,8 @@ class GithubJobBuilder
         return [
             'name' => 'Update the Docker Hub pages',
             'if' => '${{ github.repository == \'webdevops/Dockerfile\' && github.ref == \'refs/heads/master\''
-                . ' && (github.event_name == \'push\''
-                . ' || (github.event_name == \'workflow_dispatch\' && github.actor != \'github-actions[bot]\')) }}',
+                . " && (github.event_name == 'push'"
+                . " || (github.event_name == 'workflow_dispatch' && github.actor != 'github-actions[bot]')) }}",
             'runs-on' => 'ubuntu-latest',
             'env' => ['DOCKER_HUB_API' => 'https://hub.docker.com/v2'],
             'steps' => $steps,

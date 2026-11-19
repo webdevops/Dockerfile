@@ -67,7 +67,7 @@ final readonly class PublishedTags
         ksort($grouped, SORT_STRING);
         $byRepository = [];
         foreach ($grouped as $repository => $bases) {
-            $byRepository[(string)$repository] = $this->rows($bases);
+            $byRepository[$repository] = $this->rows($bases);
         }
 
         return $byRepository;

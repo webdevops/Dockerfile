@@ -166,8 +166,8 @@ final class PageGeneratorTest extends TestCase
         try {
             new PageGenerator($this->repository->path)->generate();
             self::fail('The missing entry was not reported.');
-        } catch (RuntimeException $exception) {
-            self::assertSame('webdevops/toolbox is built but has no entry under "built" in conf/dockerhub.yml.', $exception->getMessage());
+        } catch (RuntimeException $runtimeException) {
+            self::assertSame('webdevops/toolbox is built but has no entry under "built" in conf/dockerhub.yml.', $runtimeException->getMessage());
         }
 
         self::assertFalse(file_exists($this->repository->path . '/docs/dockerhub/php.md'), 'a failed check writes no page');
