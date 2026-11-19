@@ -17,7 +17,7 @@ The container runs as your user, so the files it writes belong to you.
 
 | Command | Writes |
 | --- | --- |
-| `ci/console generate:dockerfile` | `docker/<image>/<tag>/Dockerfile` from the `Dockerfile.twig` next to it and the Twig templates in the `template` directory, and the links `docker/php/<version>` to `docker/php-official/<version>` |
+| `ci/console generate:dockerfile` | `docker/<image>/<tag>/Dockerfile` from the `Dockerfile.twig` next to it and the Twig templates in the `template` directory |
 | `ci/console generate:provision` | `docker/<image>/<tag>/conf/` from the `provisioning` directory, as configured in `conf/provision.yml` |
 | `ci/console generate:github-ci` | `.github/workflows/build.yaml`, a build and a publish job for every Dockerfile |
 | `ci/console generate:readme-banner` | `docs/assets/readme-banner-*.svg` |
@@ -30,7 +30,9 @@ A `Dockerfile.twig` imports the macros it uses from `template/Dockerfile`, e.g. 
 The commands that the images have in `/usr/local/bin`, such as `apt-install`, `apk-install`, `docker-run-bootstrap` and `generate-locales`, are in `provisioning/baselayout/general/usr/local/bin`. They only handle Debian, Ubuntu and Alpine, the systems the images are built on. `generate:provision` copies them into `docker/toolbox/latest/conf/`, `toolbox` keeps them under `/baselayout`, and `bootstrap` and the PHP images copy them from there with `COPY --from=webdevops/toolbox`.
 It checks all of `conf/provision.yml` before it changes a file and stops if a source directory or a tag does not exist, or if an image has another setting than `configuration`.
 `generate:dockerfile` stops if a directory `docker/<image>/<tag>` has files but no `Dockerfile.twig`; it first removes the `.DS_Store` files of the macOS Finder under `docker`.
-To stop building a tag, remove its directory and those of the tags that build on it; `generate:github-ci` names any it finds. `generate:dockerfile` adds and removes the links in `docker/php` along with the `php-official` tags.
+To stop building a tag, remove its directory and those of the tags that build on it; `generate:github-ci` names any it finds.
+
+`webdevops/php-official` is a deprecated name of `webdevops/php`. `generate:github-ci` publishes a `php` tag under that name too only if `docker: aliases` in `conf/console.yml` lists it; new PHP versions are not added there. When you stop building a `php` tag, remove it from that list as well: `generate:github-ci` stops while the list names a tag without a Dockerfile in `docker/php`, or while a tag directory in `docker/php-official` has a Dockerfile.
 
 ## Building in CI
 
@@ -54,6 +56,13 @@ It does not update the actions in `.github/workflows/build.yaml`, because that f
 GitHub Actions builds every image independently and runs the image tests and structure tests
 defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdevops/`, but only
 internally; pull the images from Docker Hub.
+
+Besides the nightly run, `.github/workflows/php-upstream.yaml` starts `build.yaml` on `master` when the official PHP images get a new PHP release.
+Every hour it reads `PHP_VERSION` of the image in the `FROM` line of each `docker/php/<tag>/Dockerfile` and of `webdevops/php:<tag>` and `webdevops/php-nginx:<tag>`.
+If one of ours is different or does not exist yet, it starts the build, unless a build of `master` is running or queued (pull requests do not count).
+It also does not start one if a build it started in the last 8 hours did not succeed, or if it already started 3 builds in that time; builds started by hand do not count.
+An image that cannot be read is skipped with a warning; the next run tries again.
+It is written by hand, not generated. Run it by hand with "dry-run" to see which tags are behind without starting a build.
 
 The build steps pass the token of the run (`GITHUB_TOKEN`) to Docker as the build secret `COMPOSER_AUTH`, for PIE (see [PHP extension builds](#php-extension-builds)).
 The token may only read the repository; only the jobs that push images to ghcr.io may also write packages there.
@@ -108,10 +117,10 @@ A container counts as started once its entrypoint has run its scripts and starte
 | `ci/image-tests/Images/` | One test class per image, e.g. `PhpNginxTest.php` for `webdevops/php-nginx`. An image without a class is not tested. |
 | `ci/image-tests/Checks/` | The checks as traits, e.g. `PhpChecks` for every PHP image or `NginxChecks` for the images with Nginx. A test class uses the traits of its image. |
 | `ci/image-tests/ImageTestCase.php` | Starts and removes the containers, the variables of the environment container, and the helpers of the checks, e.g. `assertRootScript()`, `assertServiceRunning()`, `request()`, `phpFpmBody()` and `runContainer()` |
-| `ci/image-tests/Fixtures/` | Files for all containers except those started with `withFiles: false`, e.g. the one for the test without `/app`: the pages in `/app`, and in `/opt/image-tests` small programs that stand in for what a test talks to: `fastcgi-request.php` sends a request straight to PHP-FPM, `smtp-sink.php` takes the mail of Postfix in place of a mail catcher, `smtp-relay.php` asks Postfix to relay, `dbgp-listener.php` takes the connections of Xdebug in place of an IDE, `capture-mail.sh` stands in for sendmail, and `nginx.conf` is a configuration for `SERVICE_NGINX_OPTS` |
-| `ci/image-tests/Hooks/` | Files for the further containers, again except those with `withFiles: false`: the hooks, a command `image-test` of its own, a second virtual host for the test of `WEB_ALIAS_DOMAIN`, and an Apache configuration for the test of `SERVICE_APACHE_OPTS` |
+| `ci/image-tests/Fixtures/` | Files for all containers: the pages in `/app`, and in `/opt/image-tests` small programs that stand in for what a test talks to: `fastcgi-request.php` sends a request straight to PHP-FPM, `smtp-sink.php` takes the mail of Postfix in place of a mail catcher, `smtp-relay.php` asks Postfix to relay, `dbgp-listener.php` takes the connections of Xdebug in place of an IDE, `capture-mail.sh` stands in for sendmail, and `nginx.conf` is a configuration for `SERVICE_NGINX_OPTS` |
+| `ci/image-tests/Hooks/` | Files for the further containers: the hooks, a command `image-test` of its own, a second virtual host for the test of `WEB_ALIAS_DOMAIN`, and an Apache configuration for the test of `SERVICE_APACHE_OPTS` |
 
-`ci/console test:image webdevops/<image>:<tag>` runs the tests of an image; `webdevops/php-official` has the tests of `webdevops/php`. It takes the distribution and its version from `dockerTest` in `conf/console.yml`, and removes the containers of the image afterwards, also when the run is interrupted with Ctrl-C or `docker stop`.
+`ci/console test:image webdevops/<image>:<tag>` runs the tests of an image; `webdevops/php-official`, a deprecated name of `webdevops/php`, has the tests of `webdevops/php`. It takes the distribution and its version from `dockerTest` in `conf/console.yml`, and removes the containers of the image afterwards, also when the run is interrupted with Ctrl-C or `docker stop`.
 A runner killed with `SIGKILL` leaves its containers behind; they carry the label `webdevops.image-test`, so `docker rm --force $(docker ps --all --quiet --filter label=webdevops.image-test)` removes them.
 It runs in a container of `ci/image-tests/Dockerfile`, which has PHP and the `docker` command and gets the Docker socket: `make test-image` builds that image (`make test-image-runner`) and runs the tests in it (`make test-image-run`).
 The runner builds on the official PHP image, not on a webdevops image, so a broken `webdevops/php` cannot break the tests that find the defect.

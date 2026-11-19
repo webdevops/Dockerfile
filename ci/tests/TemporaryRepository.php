@@ -53,7 +53,7 @@ final readonly class TemporaryRepository
 
             $target = $this->path . substr($file->getPathname(), strlen(self::FIXTURE));
             if ($file->isLink()) {
-                // Like docker/php/<version>, which links to docker/php-official/<version>
+                // a symbolic link in the fixture stays a link
                 symlink((string)readlink($file->getPathname()), $target);
             } elseif ($file->isDir()) {
                 mkdir($target);

@@ -7,6 +7,7 @@ namespace Webdevops\Build;
 use RuntimeException;
 use Symfony\Component\Yaml\Yaml;
 
+use function in_array;
 use function is_array;
 use function is_file;
 use function is_string;
@@ -41,20 +42,39 @@ final readonly class ImageTests
     /**
      * @param string $rootPath the repository root
      */
+    /**
+     * @var array<string, array{image: string, tags: list<string>}> "docker: aliases" in conf/console.yml
+     */
+    private array $aliases;
+
+    /**
+     * @param string $rootPath the repository root
+     */
     public function __construct(private string $rootPath = __DIR__ . '/../..')
     {
+        $this->aliases = new FileReader($rootPath)->aliases();
     }
 
     /**
      * The test class of $image relative to the repository root, e.g. ci/image-tests/Images/PhpNginxTest.php for
-     * php-nginx; null if the image has no tests. php-official has the tests of php: both are built from the same
-     * Dockerfiles.
+     * php-nginx; null if the image has no tests. A deprecated name from "docker: aliases" in conf/console.yml, such as
+     * php-official, has the tests of the image it names.
      */
     public function testFile(string $image): ?string
     {
-        $image = str_replace('-official', '', $image);
+        $image = $this->aliases[$image]['image'] ?? $image;
         $file = self::DIRECTORY . '/' . str_replace(' ', '', ucwords(str_replace('-', ' ', $image))) . 'Test.php';
         return is_file($this->rootPath . '/' . $file) ? $file : null;
+    }
+
+    /**
+     * The image that $image stands for if $image is a deprecated name from "docker: aliases" in conf/console.yml that
+     * is not published with $tag, e.g. php for php-official and 8.6; null otherwise.
+     */
+    public function unpublishedAliasOf(string $image, string $tag): ?string
+    {
+        $alias = $this->aliases[$image] ?? null;
+        return $alias !== null && !in_array($tag, $alias['tags'], true) ? $alias['image'] : null;
     }
 
     /**

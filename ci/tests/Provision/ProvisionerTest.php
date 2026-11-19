@@ -12,6 +12,7 @@ use Webdevops\Build\Provision\Provisioner;
 use Webdevops\Build\Tests\TemporaryRepository;
 
 use function fileperms;
+use function symlink;
 
 #[CoversClass(Provisioner::class)]
 final class ProvisionerTest extends TestCase
@@ -33,9 +34,9 @@ final class ProvisionerTest extends TestCase
         $this->provision();
 
         self::assertSame("general\n", $this->repository->read('docker/base/ubuntu-22.04/conf/etc/os'));
-        self::assertSame("php\n", $this->repository->read('docker/php-official/8.4/conf/etc/php.conf'));
-        self::assertSame("php\n", $this->repository->read('docker/php-official/8.5/conf/etc/php.conf'), '8.5 does not match *-alpine');
-        self::assertSame("#!/bin/sh\necho service\n", $this->repository->read('docker/php-official/8.5-alpine/conf/bin/service'));
+        self::assertSame("php\n", $this->repository->read('docker/php/8.4/conf/etc/php.conf'));
+        self::assertSame("php\n", $this->repository->read('docker/php/8.5/conf/etc/php.conf'), '8.5 does not match *-alpine');
+        self::assertSame("#!/bin/sh\necho service\n", $this->repository->read('docker/php/8.5-alpine/conf/bin/service'));
     }
 
     public function testLaterSourcesReplaceFilesOfEarlierOnes(): void
@@ -43,7 +44,7 @@ final class ProvisionerTest extends TestCase
         $this->provision();
 
         self::assertSame("alpine\n", $this->repository->read('docker/base/alpine/conf/etc/os'));
-        self::assertSame("php alpine\n", $this->repository->read('docker/php-official/8.5-alpine/conf/etc/php.conf'));
+        self::assertSame("php alpine\n", $this->repository->read('docker/php/8.5-alpine/conf/etc/php.conf'));
     }
 
     public function testKeepsThePermissionsOfTheFiles(): void
@@ -67,12 +68,12 @@ final class ProvisionerTest extends TestCase
     public function testEmptiesTheConfDirectoriesFirst(): void
     {
         $this->repository->write('docker/base/alpine/conf/etc/removed-from-provisioning', 'old');
-        $this->repository->write('docker/php-official/8.4/conf/etc/os', 'old');
+        $this->repository->write('docker/php/8.4/conf/etc/os', 'old');
 
         $this->provision();
 
         self::assertFileDoesNotExist($this->repository->path . '/docker/base/alpine/conf/etc/removed-from-provisioning');
-        self::assertSame("general\n", $this->repository->read('docker/php-official/8.4/conf/etc/os'));
+        self::assertSame("general\n", $this->repository->read('docker/php/8.4/conf/etc/os'));
     }
 
     public function testLeavesImagesAloneThatConfProvisionYmlDoesNotName(): void
@@ -126,15 +127,26 @@ final class ProvisionerTest extends TestCase
     public function testChecksTheWholeConfigurationBeforeChangingFiles(): void
     {
         $this->repository->write('docker/base/alpine/conf/etc/os', 'old');
-        $this->configure("provision:\n  base:\n    configuration:\n      base/general: '*'\n  php-official:\n    configuration:\n      php/general: '8.6'\n");
+        $this->configure("provision:\n  base:\n    configuration:\n      base/general: '*'\n  php:\n    configuration:\n      php/general: '8.6'\n");
 
         try {
             $this->provision();
-            self::fail('8.6 is no tag of php-official');
+            self::fail('8.6 is no tag of php');
         } catch (RuntimeException $runtimeException) {
-            self::assertSame('conf/provision.yml copies provisioning/php/general into webdevops/php-official:8.6, but webdevops/php-official has no such tag under docker/.', $runtimeException->getMessage());
+            self::assertSame('conf/provision.yml copies provisioning/php/general into webdevops/php:8.6, but webdevops/php has no such tag under docker/.', $runtimeException->getMessage());
             self::assertSame('old', $this->repository->read('docker/base/alpine/conf/etc/os'));
         }
+    }
+
+    public function testSymbolicLinksAreNoTags(): void
+    {
+        // provisioning a link docker/php/8.6 to 8.5 would replace conf/ of 8.5
+        symlink('8.5', $this->repository->path . '/docker/php/8.6');
+        $this->configure("provision:\n  php:\n    configuration:\n      php/general: '8.6'\n");
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('conf/provision.yml copies provisioning/php/general into webdevops/php:8.6, but webdevops/php has no such tag under docker/.');
+        $this->provision();
     }
 
     public function testLogsEachSource(): void
@@ -142,9 +154,9 @@ final class ProvisionerTest extends TestCase
         self::assertSame([
             'base/general => webdevops/base:*',
             'base/alpine => webdevops/base:alpine',
-            'base/general => webdevops/php-official:*',
-            'php/general => webdevops/php-official:*',
-            'php/official-alpine => webdevops/php-official:*-alpine',
+            'base/general => webdevops/php:*',
+            'php/general => webdevops/php:*',
+            'php/official-alpine => webdevops/php:*-alpine',
         ], $this->provision());
     }
 
@@ -165,11 +177,6 @@ final class ProvisionerTest extends TestCase
         yield 'image without tags' => [
             "provision:\n  missing-image:\n    configuration:\n      base/general: '*'\n",
             'conf/provision.yml copies provisioning/base/general into webdevops/missing-image:*, but webdevops/missing-image has no such tag under docker/.',
-        ];
-        yield 'image whose tags are symbolic links' => [
-            // docker/php/8.4 links to docker/php-official/8.4
-            "provision:\n  php:\n    configuration:\n      php/general: '*'\n",
-            'conf/provision.yml copies provisioning/php/general into webdevops/php:*, but webdevops/php has no such tag under docker/.',
         ];
         yield 'empty tag list' => [
             "provision:\n  base:\n    configuration:\n      base/general: []\n",

@@ -2,7 +2,7 @@
 
 PHP-FPM on top of the official PHP image, with the webdevops entrypoint, `supervisord`, cron, syslog-ng and the `application` user. The `-dev` variant adds Xdebug, the Blackfire extension, Postfix and an SSH server for local development.
 
-`webdevops/php-official` is built from the same Dockerfiles as `webdevops/php`.
+`webdevops/php-official` is deprecated: it is the same image as `webdevops/php` under a second name, published only for the tags `8.2` to `8.5` and their `-alpine` tags. Switch to `webdevops/php` now, see [Replacing discontinued images](../discontinued-images.md#webdevopsphp-official).
 
 ## Tags
 
@@ -126,7 +126,7 @@ Every PHP version comes as a Debian tag (`8.5`) and an Alpine tag (`8.5-alpine`)
 | [Locales](../customization.md#locales) | several hundred, for example `de_DE.utf8` | none |
 | [Installing packages](../customization.md#tools-for-your-dockerfile) | `apt-install`, from the Debian components `main`, `contrib` and `non-free` | `apk-install` |
 | [`docker-cronjob`](../customization.md#cron-jobs) | works | does not work, see [Known issues](../known-issues.md#docker-cronjob-on-alpine) |
-| [`docker-image-cleanup`](../customization.md#tools-for-your-dockerfile) | works | fails, see [Known issues](../known-issues.md#docker-image-cleanup-in-the-alpine-php-images) |
+| [`docker-image-cleanup`](../customization.md#tools-for-your-dockerfile) | works | works |
 | [Apache index files](../environment-variables.md#web-server) in `php-apache` | `index.html`, `index.cgi`, `index.pl`, `index.php`, `index.xhtml`, `index.htm` come before `WEB_DOCUMENT_INDEX` | `index.html` comes before `WEB_DOCUMENT_INDEX` |
 | [`mail()` without Postfix](#mail) | fails: there is no `sendmail` command | fails: BusyBox `sendmail` finds no mail server |
 

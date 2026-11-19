@@ -28,13 +28,13 @@ use const JSON_THROW_ON_ERROR;
 trait PhpChecks
 {
     /**
-     * The security releases of 2026-10-21, https://www.php.net/
+     * The security releases of 2026-11-19, https://www.php.net/
      */
     private const array MINIMUM_PHP_VERSIONS = [
-        '8.2' => '8.2.35',
-        '8.3' => '8.3.36',
-        '8.4' => '8.4.27',
-        '8.5' => '8.5.12',
+        '8.2' => '8.2.36',
+        '8.3' => '8.3.37',
+        '8.4' => '8.4.28',
+        '8.5' => '8.5.13',
     ];
 
     public function testPhpServiceDirectory(): void
@@ -68,10 +68,6 @@ trait PhpChecks
 
     public function testZicIsInstalled(): void
     {
-        if (self::image()->osFamily !== 'debian') {
-            self::markTestSkipped('zic is only checked in the Debian images.');
-        }
-
         $file = $this->file('/usr/sbin/zic');
         self::assertTrue($file->isFile, '/usr/sbin/zic should be a file');
         self::assertTrue($file->isExecutable, '/usr/sbin/zic should be executable');

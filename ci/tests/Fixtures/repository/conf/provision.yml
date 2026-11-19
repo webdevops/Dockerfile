@@ -6,7 +6,7 @@ provision:
     configuration:
       base/general: '*'
       base/alpine: alpine
-  php-official:
+  php:
     configuration:
       base/general: '*'
       php/general: '*'

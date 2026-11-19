@@ -4,6 +4,12 @@
 docker:
   # This tag is also published as latest
   autoLatestTag: 'ubuntu-22.04'
+  # Deprecated image names that the CI also publishes an image under, only for the tags listed here.
+  # webdevops/php-official is webdevops/php and gets no new tags, see docs/discontinued-images.md.
+  aliases:
+    php-official:
+      image: 'php'
+      tags: ['8.2', '8.2-alpine', '8.3', '8.3-alpine', '8.4', '8.4-alpine', '8.5', '8.5-alpine']
 
 # Settings of the image tests (ci/console test:image), per image tag
 dockerTest:

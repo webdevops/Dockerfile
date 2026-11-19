@@ -101,6 +101,11 @@ class TestImageCommand extends Command implements SignalableCommandInterface
         }
 
         $imageTests = new ImageTests($this->rootPath);
+        $image = $imageTests->unpublishedAliasOf($matches[1], $matches[2]);
+        if ($image !== null) {
+            throw new InvalidArgumentException(sprintf('%1$s is not published: webdevops/%2$s is a deprecated name of webdevops/%3$s for some tags only. Test webdevops/%3$s:%4$s instead.', $name, $matches[1], $image, $matches[2]));
+        }
+
         $testFile = $imageTests->testFile($matches[1]);
         if ($testFile === null) {
             throw new InvalidArgumentException(sprintf('webdevops/%s has no image tests in %s.', $matches[1], ImageTests::DIRECTORY));
