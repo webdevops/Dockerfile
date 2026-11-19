@@ -10,6 +10,8 @@ Rebuilt every night for linux/amd64 and linux/arm64.
 | --- | --- |
 | `latest` | Alpine |
 
+Tags that are not listed here are no longer built and get no updates.
+
 ## Documentation
 
 - [Images](https://github.com/webdevops/Dockerfile/blob/master/docs/README.md#images)

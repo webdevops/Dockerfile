@@ -316,7 +316,8 @@ final class GithubJobBuilderTest extends TestCase
         self::assertArrayNotHasKey('needs', $job, 'the pages do not wait for the images, nor the images for the pages');
         self::assertSame(
             '${{ github.repository == \'webdevops/Dockerfile\' && github.ref == \'refs/heads/master\''
-            . ' && (github.event_name == \'push\' || github.event_name == \'workflow_dispatch\') }}',
+            . ' && (github.event_name == \'push\''
+            . ' || (github.event_name == \'workflow_dispatch\' && github.actor != \'github-actions[bot]\')) }}',
             $job['if'],
         );
         $upload = static fn (string $name, string $short): array => [

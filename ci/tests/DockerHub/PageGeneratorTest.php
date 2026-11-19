@@ -67,6 +67,8 @@ final class PageGeneratorTest extends TestCase
             | `8.4` | Debian 12 |
             | `8.5-alpine` | Alpine |
 
+            Tags that are not listed here are no longer built and get no updates.
+
             ## Quick start
 
             ```yaml
@@ -101,6 +103,8 @@ final class PageGeneratorTest extends TestCase
             | --- | --- |
             | `ubuntu-22.04`, `latest` | Ubuntu 22.04 |
             | `alpine` | Alpine 3.22 |
+
+            Tags that are not listed here are no longer built and get no updates.
 
             ## Documentation
 

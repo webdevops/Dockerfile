@@ -41,7 +41,7 @@ jobs:
         run: 'make check'
   dockerhub-description:
     name: 'Update the Docker Hub pages'
-    if: "${{ github.repository == 'webdevops/Dockerfile' && github.ref == 'refs/heads/master' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}"
+    if: "${{ github.repository == 'webdevops/Dockerfile' && github.ref == 'refs/heads/master' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.actor != 'github-actions[bot]')) }}"
     runs-on: ubuntu-latest
     steps:
       -

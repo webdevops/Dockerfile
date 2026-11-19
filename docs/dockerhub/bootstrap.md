@@ -12,6 +12,8 @@ Rebuilt every night for linux/amd64 and linux/arm64.
 | --- | --- |
 | `ubuntu-22.04`, `latest` | Ubuntu 22.04 |
 
+Tags that are not listed here are no longer built and get no updates.
+
 ## Quick start
 
 ```dockerfile

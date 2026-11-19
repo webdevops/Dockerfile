@@ -10,6 +10,8 @@ Rebuilt every night for linux/amd64 and linux/arm64.
 | --- | --- |
 | `latest` | Ubuntu 22.04 |
 
+Tags that are not listed here are no longer built and get no updates.
+
 ## Documentation
 
 - [Building in CI](https://github.com/webdevops/Dockerfile/blob/master/CONTRIBUTING.md#building-in-ci)

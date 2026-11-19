@@ -570,7 +570,9 @@ class GithubJobBuilder
     /**
      * Uploads the page and the short description of every Docker Hub repository (docs/dockerhub/, written by
      * ci/console generate:dockerhub) after a push to master and on a manual run, only in webdevops/Dockerfile: pull
-     * requests get no secrets, the nightly run changes no page, and a fork must not overwrite the pages.
+     * requests get no secrets, the nightly run changes no page, and a fork must not overwrite the pages. The builds
+     * that .github/workflows/php-upstream.yaml starts (actor github-actions[bot]) skip it too: that workflow starts no
+     * further build for hours after one of them failed, and a failed upload must not hold back new PHP releases.
      *
      * The job waits for no image and no image waits for it: a failed build does not hold back the pages, a failed
      * upload no image. Each repository is a step that runs even if an earlier one failed, so one rejected page does not
@@ -608,7 +610,8 @@ class GithubJobBuilder
         return [
             'name' => 'Update the Docker Hub pages',
             'if' => '${{ github.repository == \'webdevops/Dockerfile\' && github.ref == \'refs/heads/master\''
-                . ' && (github.event_name == \'push\' || github.event_name == \'workflow_dispatch\') }}',
+                . ' && (github.event_name == \'push\''
+                . ' || (github.event_name == \'workflow_dispatch\' && github.actor != \'github-actions[bot]\')) }}',
             'runs-on' => 'ubuntu-latest',
             'steps' => $steps,
         ];

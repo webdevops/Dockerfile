@@ -19,6 +19,8 @@ Rebuilt every night for {{ platforms|join(' and ') }}.
 {% for row in rows %}
 | {{ row.tags }} | {{ row.base }} |
 {% endfor %}
+
+Tags that are not listed here are no longer built and get no updates.
 {% if example is not null %}
 
 ## Quick start
