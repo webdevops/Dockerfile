@@ -9,10 +9,10 @@ PHP-FPM on top of the official PHP image, with the webdevops entrypoint, `superv
 | Tags | Based on |
 | --- | --- |
 | `8.2`, `8.3`, `8.4`, `8.5` | `php:<version>-fpm-bookworm` (Debian 12) |
-| `8.6` (preview) | `php:8.6-fpm-trixie` (Debian 13) |
-| `8.2-alpine`, `8.3-alpine`, `8.4-alpine`, `8.5-alpine`, `8.6-alpine` (preview) | `php:<version>-fpm-alpine` |
+| `8.6` | `php:8.6-fpm-trixie` (Debian 13) |
+| `8.2-alpine`, `8.3-alpine`, `8.4-alpine`, `8.5-alpine`, `8.6-alpine` | `php:<version>-fpm-alpine` |
 
-Both `webdevops/php` and `webdevops/php-dev` use these tags. For the differences between the Debian and the Alpine tags, see [Debian or Alpine](#debian-or-alpine); for what is different in PHP 8.6, see [PHP 8.6](#php-86-preview).
+Both `webdevops/php` and `webdevops/php-dev` use these tags. For the differences between the Debian and the Alpine tags, see [Debian or Alpine](#debian-or-alpine); for what is different in PHP 8.6, see [PHP 8.6](#php-86).
 
 Always use one of these tags: an image without a tag (`latest`) and the `alpine` tag are old builds from 2019 and 2020, see [Known issues](../known-issues.md#latest-and-alpine-tags-of-the-php-images).
 
@@ -66,9 +66,9 @@ The tags differ in these extensions. Each column covers both tags of a PHP versi
 | `lexbor` ([new in PHP 8.5](https://php.watch/versions/8.5/changelog)) | – | – | – | ✓ | ✓ |
 | `uri` ([new in PHP 8.5](https://www.php.net/releases/8.5/en.php)) | – | – | – | ✓ | ✓ |
 | `imap` ([moved to PECL in PHP 8.4](https://wiki.php.net/rfc/unbundle_imap_pspell_oci8)) | ✓ | ✓ | – | – | – |
-| `vips` ([not built for PHP 8.6](#php-86-preview)) | ✓ | ✓ | ✓ | ✓ | – |
-| `xmlrpc` ([not built for PHP 8.6](#php-86-preview)) | ✓ | ✓ | ✓ | ✓ | – |
-| ionCube Loader ([skipped on Alpine](../../provisioning/php/general/provision/bootstrap.d/30-setup-ioncube.sh), [not installed from PHP 8.6 on](#php-86-preview)) | Debian only | Debian only | Debian only | Debian only | – |
+| `vips` ([not built for PHP 8.6](#php-86)) | ✓ | ✓ | ✓ | ✓ | – |
+| `xmlrpc` ([not built for PHP 8.6](#php-86)) | ✓ | ✓ | ✓ | ✓ | – |
+| ionCube Loader ([skipped on Alpine](../../provisioning/php/general/provision/bootstrap.d/30-setup-ioncube.sh), [not installed from PHP 8.6 on](#php-86)) | Debian only | Debian only | Debian only | Debian only | – |
 
 PHP loads the extensions in the CLI and in PHP-FPM of `php`, `php-nginx`, `php-apache` and their `-dev` variants.
 
@@ -133,9 +133,9 @@ Every PHP version comes as a Debian tag (`8.5`) and an Alpine tag (`8.5-alpine`)
 | [Apache index files](../environment-variables.md#web-server) in `php-apache` | `index.html`, `index.cgi`, `index.pl`, `index.php`, `index.xhtml`, `index.htm` come before `WEB_DOCUMENT_INDEX` | `index.html` comes before `WEB_DOCUMENT_INDEX` |
 | [`mail()` without Postfix](#mail) | fails: there is no `sendmail` command | fails: BusyBox `sendmail` finds no mail server |
 
-## PHP 8.6 (preview)
+## PHP 8.6
 
-The `8.6` and `8.6-alpine` tags are a preview: they are built on PHP 8.6.0, but several extensions and Xdebug have no release that supports PHP 8.6 yet, see the last two points. Compared with PHP 8.5:
+The `8.6` and `8.6-alpine` tags are built on PHP 8.6. Compared with PHP 8.5:
 
 - **Debian 13:** The Debian tag `8.6` is based on Debian 13 (trixie) instead of Debian 12, because GD in PHP 8.6 needs a newer libavif than Debian 12 provides. Package names differ between the two releases, for example `libzip5` instead of `libzip4`, and `apt-add-repository` does not work, see [Known issues](../known-issues.md#apt-add-repository-in-the-php-86-images).
 - **Thread safe (ZTS):** The official PHP 8.6 images, and therefore all `8.6` tags, are built thread safe. Extensions that you compile yourself with PIE or `docker-php-ext-install` are built to match.
