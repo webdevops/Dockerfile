@@ -61,7 +61,7 @@ final class ConfigTest extends TestCase
         self::assertFalse($config->built()['base']['development']);
         self::assertNull($config->built()['base']['note']);
         self::assertTrue($config->built()['php-nginx-dev']['development']);
-        self::assertSame(['lang' => 'yaml', 'code' => "services:\n  php:\n    image: {image}\n"], $config->built()['php']['example']);
+        self::assertSame(['lang' => 'yaml', 'code' => "services:\n  php:\n    image: {image}\n", 'tag' => null], $config->built()['php']['example']);
         self::assertNull($config->discontinued()['hhvm']['replacement']);
         self::assertSame(['bookworm' => 'Debian 12', 'trixie' => 'Debian 13'], $config->releases());
     }

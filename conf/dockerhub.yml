@@ -20,7 +20,8 @@ releases:
 #   intro:       first paragraph of the page
 #   development: true adds "Meant for local development. Do not use it in production."
 #   note:        paragraph after the intro
-#   example:     Quick start; {image} is the image with its newest tag
+#   example:     Quick start; {image} is the image with example.tag, by default
+#                its newest tag. The PHP images use the tag of the README.
 #   docs:        links under "Documentation"
 built:
   bootstrap:
@@ -73,6 +74,7 @@ built:
     note: 'Always use one of the tags below: an image without a tag (`latest`) and the `alpine` tag are old builds from 2019 and 2020 that get no updates, see [Known issues](docs/known-issues.md#latest-and-alpine-tags-of-the-php-images).'
     example:
       lang: 'yaml'
+      tag: '8.5'
       code: |
         services:
           php:
@@ -97,6 +99,7 @@ built:
     development: true
     example:
       lang: 'yaml'
+      tag: '8.5'
       code: |
         services:
           php:
@@ -114,6 +117,7 @@ built:
     note: 'Always use one of the tags below: an image without a tag (`latest`) and the `alpine` tag are old builds from 2019 and 2020 that get no updates, see [Known issues](docs/known-issues.md#latest-and-alpine-tags-of-the-php-images).'
     example:
       lang: 'yaml'
+      tag: '8.5'
       code: |
         services:
           app:
@@ -136,6 +140,7 @@ built:
     development: true
     example:
       lang: 'yaml'
+      tag: '8.5'
       code: |
         services:
           app:
@@ -157,6 +162,7 @@ built:
     note: 'Always use one of the tags below: an image without a tag (`latest`) and the `alpine` tag are old builds from 2019 and 2020 that get no updates, see [Known issues](docs/known-issues.md#latest-and-alpine-tags-of-the-php-images).'
     example:
       lang: 'yaml'
+      tag: '8.5'
       code: |
         services:
           app:
@@ -179,6 +185,7 @@ built:
     development: true
     example:
       lang: 'yaml'
+      tag: '8.5'
       code: |
         services:
           app:

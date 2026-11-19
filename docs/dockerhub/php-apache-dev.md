@@ -12,8 +12,9 @@ Rebuilt every night for linux/amd64 and linux/arm64.
 
 | Tag | Based on |
 | --- | --- |
+| `8.6` | Debian 13 |
 | `8.5`, `8.4`, `8.3`, `8.2` | Debian 12 |
-| `8.5-alpine`, `8.4-alpine`, `8.3-alpine`, `8.2-alpine` | Alpine |
+| `8.6-alpine`, `8.5-alpine`, `8.4-alpine`, `8.3-alpine`, `8.2-alpine` | Alpine |
 
 Tags that are not listed here are no longer built and get no updates.
 

@@ -23,7 +23,7 @@ use function strlen;
  * those that are not built any more.
  *
  * @phpstan-type Link array{label: string, path: string}
- * @phpstan-type Example array{lang: string, code: string}
+ * @phpstan-type Example array{lang: string, code: string, tag: ?string}
  * @phpstan-type BuiltEntry array{short: string, intro: string, docs: list<Link>, example: ?Example, development: bool, note: ?string}
  * @phpstan-type Replacement array{image: string, url: string, docs: string}
  * @phpstan-type DiscontinuedEntry array{lastBuilt: string, replacement: ?Replacement}
@@ -175,6 +175,7 @@ final readonly class Config
             $example = [
                 'lang' => $this->required($example, 'lang', $name, 'example: lang'),
                 'code' => $this->required($example, 'code', $name, 'example: code'),
+                'tag' => isset($example['tag']) ? $this->required($example, 'tag', $name, 'example: tag') : null,
             ];
         }
 

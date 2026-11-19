@@ -15,11 +15,13 @@ use function array_column;
 use function array_diff;
 use function array_keys;
 use function array_map;
+use function array_merge;
 use function array_values;
 use function basename;
 use function file_put_contents;
 use function glob;
 use function implode;
+use function in_array;
 use function is_dir;
 use function mkdir;
 use function rtrim;
@@ -138,15 +140,24 @@ final readonly class PageGenerator
     }
 
     /**
-     * @param array{short: string, intro: string, docs: list<array{label: string, path: string}>, example: ?array{lang: string, code: string}, development: bool, note: ?string} $entry
+     * @param array{short: string, intro: string, docs: list<array{label: string, path: string}>, example: ?array{lang: string, code: string, tag: ?string}, development: bool, note: ?string} $entry
      * @param list<array{base: string, tags: list<string>}> $rows
      */
     private function builtPage(Environment $twig, Links $links, string $name, array $entry, array $rows): string
     {
         $example = $entry['example'];
         if ($example !== null) {
-            $image = 'webdevops/' . $name . ':' . $rows[0]['tags'][0];
-            $example = ['lang' => $example['lang'], 'code' => rtrim(str_replace('{image}', $image, $example['code']))];
+            $tags = array_merge(...array_column($rows, 'tags'));
+            $tag = $example['tag'] ?? $rows[0]['tags'][0];
+            if (!in_array($tag, $tags, true)) {
+                throw new RuntimeException(sprintf(
+                    'The example of webdevops/%s in conf/dockerhub.yml uses the tag %s, which is not built.',
+                    $name,
+                    $tag,
+                ));
+            }
+
+            $example = ['lang' => $example['lang'], 'code' => rtrim(str_replace('{image}', 'webdevops/' . $name . ':' . $tag, $example['code']))];
         }
 
         return $twig->render('built.md.twig', [

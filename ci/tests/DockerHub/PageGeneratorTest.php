@@ -115,6 +115,24 @@ final class PageGeneratorTest extends TestCase
             MARKDOWN, $this->repository->read('docs/dockerhub/base.md'));
     }
 
+    public function testExampleWithAChosenTag(): void
+    {
+        $this->replaceInConfig("      lang: 'yaml'\n", "      lang: 'yaml'\n      tag: '8.4'\n");
+
+        new PageGenerator($this->repository->path)->generate();
+
+        self::assertStringContainsString("    image: webdevops/php:8.4\n", $this->repository->read('docs/dockerhub/php.md'));
+    }
+
+    public function testExampleWithATagThatIsNotBuiltIsAnError(): void
+    {
+        $this->replaceInConfig("      lang: 'yaml'\n", "      lang: 'yaml'\n      tag: '8.1'\n");
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The example of webdevops/php in conf/dockerhub.yml uses the tag 8.1, which is not built.');
+        new PageGenerator($this->repository->path)->generate();
+    }
+
     public function testDevelopmentPageAndNote(): void
     {
         new PageGenerator($this->repository->path)->generate();
