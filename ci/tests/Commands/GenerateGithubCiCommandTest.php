@@ -242,6 +242,7 @@ final class GenerateGithubCiCommandTest extends TestCase
 
         self::assertSame(
             [
+                'Log in to Docker Hub',
                 'webdevops/base',
                 'webdevops/base-app',
                 'webdevops/hhvm',

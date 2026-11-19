@@ -31,10 +31,28 @@ class GithubJobBuilder
     public const string DOCKER_HUB_JOB = 'dockerhub-description';
 
     /**
-     * v5.0.0, pinned to its commit: a tag of an action from outside GitHub and Docker can be moved to other code, and
-     * this one gets the Docker Hub token. Dependabot does not update it, because build.yaml is generated.
+     * Logs in to Docker Hub with DOCKERHUB_USERNAME and DOCKERHUB_TOKEN, masks the access token in the log and hands it
+     * to the next steps as DOCKERHUB_ACCESS_TOKEN.
      */
-    private const string DOCKER_HUB_DESCRIPTION_ACTION = 'peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa';
+    private const string DOCKER_HUB_LOGIN = <<<'BASH'
+        token=$(jq -n --arg identifier "$DOCKERHUB_USERNAME" --arg secret "$DOCKERHUB_TOKEN" '{identifier: $identifier, secret: $secret}' \
+          | curl -sS --fail-with-body --retry 3 -H 'Content-Type: application/json' --data @- "$DOCKER_HUB_API/auth/token" \
+          | jq -r '.access_token // empty')
+        if [ -z "$token" ]; then echo "::error::Docker Hub returned no access token"; exit 1; fi
+        echo "::add-mask::$token"
+        echo "DOCKERHUB_ACCESS_TOKEN=$token" >> "$GITHUB_ENV"
+        BASH;
+
+    /**
+     * Sets the page (PAGE) and the short description (SHORT_DESCRIPTION) of a repository (REPOSITORY) on Docker Hub.
+     */
+    private const string DOCKER_HUB_UPLOAD = <<<'BASH'
+        jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          '{full_description: $full_description, description: $description}' \
+          | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
+            --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+        BASH;
 
     /**
      * PIE resolves and downloads the PHP extensions through the GitHub API. Without a token, its requests count against
@@ -585,7 +603,8 @@ class GithubJobBuilder
      * keep the others from being updated; the job then fails.
      *
      * Docker Hub only changes the description for a user with admin rights on the repository, with a password or a
-     * personal access token with the scope Read/Write/Delete.
+     * personal access token with the scope Read/Write/Delete. The steps call the API of Docker Hub themselves, as
+     * peter-evans/dockerhub-description does, so that no action from outside GitHub gets the token.
      *
      * @param list<Repository> $repositories
      * @return array<string, mixed>
@@ -597,20 +616,29 @@ class GithubJobBuilder
                 'uses' => 'actions/checkout@v7',
                 'with' => ['persist-credentials' => false],
             ],
+            [
+                'name' => 'Log in to Docker Hub',
+                'id' => 'login',
+                'shell' => 'bash',
+                'env' => [
+                    'DOCKERHUB_USERNAME' => '${{ secrets.DOCKERHUB_USERNAME }}',
+                    'DOCKERHUB_TOKEN' => '${{ secrets.DOCKERHUB_TOKEN }}',
+                ],
+                'run' => self::DOCKER_HUB_LOGIN,
+            ],
         ];
         foreach ($repositories as $repository) {
             $image = 'webdevops/' . $repository->name;
             $steps[] = [
                 'name' => $image,
-                'if' => '${{ !cancelled() }}',
-                'uses' => self::DOCKER_HUB_DESCRIPTION_ACTION,
-                'with' => [
-                    'username' => '${{ secrets.DOCKERHUB_USERNAME }}',
-                    'password' => '${{ secrets.DOCKERHUB_TOKEN }}',
-                    'repository' => $image,
-                    'readme-filepath' => './' . $repository->pagePath(),
-                    'short-description' => $repository->shortDescription,
+                'if' => '${{ !cancelled() && steps.login.outcome == \'success\' }}',
+                'shell' => 'bash',
+                'env' => [
+                    'REPOSITORY' => $image,
+                    'PAGE' => $repository->pagePath(),
+                    'SHORT_DESCRIPTION' => $repository->shortDescription,
                 ],
+                'run' => self::DOCKER_HUB_UPLOAD,
             ];
         }
 
@@ -620,6 +648,7 @@ class GithubJobBuilder
                 . ' && (github.event_name == \'push\''
                 . ' || (github.event_name == \'workflow_dispatch\' && github.actor != \'github-actions[bot]\')) }}',
             'runs-on' => 'ubuntu-latest',
+            'env' => ['DOCKER_HUB_API' => 'https://hub.docker.com/v2'],
             'steps' => $steps,
         ];
     }
