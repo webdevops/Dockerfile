@@ -46,12 +46,6 @@ These options and tools are part of the images but do not work, or work only in 
   ```
 - **Issue:** related question [#280](https://github.com/webdevops/Dockerfile/issues/280).
 
-### Package sources in the Debian Nginx images
-
-- **Effect:** `/etc/apt/sources.list` holds only the nginx.org repository and ends without a line break. A line appended with `echo "deb ..." >> /etc/apt/sources.list` is joined to the last line: apt ignores the new repository and only prints warnings such as `component misspelt in sources.list`. The nginx.org key is stored in the deprecated global keyring `/etc/apt/trusted.gpg`, which apt trusts for every repository; `apt-get update` warns about it.
-- **Images:** `php-nginx` and `php-nginx-dev` with the Debian tags `8.2` to `8.5`.
-- **Instead:** Add your own repositories as a new file in `/etc/apt/sources.list.d/`, for example `echo "deb http://deb.debian.org/debian bookworm-backports main" > /etc/apt/sources.list.d/backports.list`.
-
 ### `fpm.pool.<key>` for the directives of `docker.conf`
 
 - **Effect:** No effect for `listen`, `access.log`, `clear_env`, `catch_workers_output` and `decorate_workers_output`. The official PHP image sets them in the pool file `docker.conf`, which PHP-FPM reads after `application.conf`, so its values win. Other directives work, for example `fpm.pool.pm.max_requests`.
@@ -64,10 +58,16 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php`, `php-dev`, `php-nginx`, `php-nginx-dev`, `php-apache`, `php-apache-dev`.
 - **Instead:** Always use a version tag such as `8.5` or `8.5-alpine`.
 
-### Composer 1 on PHP 8.4 and 8.5
+### `apt-add-repository` in the PHP 8.6 images
 
-- **Effect:** With `COMPOSER_VERSION=1`, every Composer run prints deprecation notices.
-- **Images:** `php-*` with PHP 8.4 and 8.5.
+- **Effect:** Fails with `E: Unable to locate package software-properties-common`: the command installs `software-properties-common` first, which Debian 13 no longer has.
+- **Images:** `php-*` with the Debian tag `8.6`.
+- **Instead:** Write the repository to a file in `/etc/apt/sources.list.d/`, for example `RUN echo "deb http://deb.debian.org/debian trixie-backports main" > /etc/apt/sources.list.d/backports.list`.
+
+### Composer 1 on PHP 8.4 to 8.6
+
+- **Effect:** With `COMPOSER_VERSION=1`, every Composer run prints deprecation notices. From PHP 8.5 on, Composer 1 also cannot download packages: commands such as `composer require` stop with `Uncaught TypeError: stream_context_create(): Argument #1 ($options) must be an array with valid callbacks as values`.
+- **Images:** `php-*` with PHP 8.4 (deprecation notices), 8.5 and 8.6 (no downloads).
 - **Instead:** Use Composer 2, the default.
 
 ## Migration from older images

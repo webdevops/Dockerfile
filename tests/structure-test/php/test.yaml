@@ -236,10 +236,8 @@ commandTests:
       - "sysvsem"
       - "sysvshm"
       - "tokenizer"
-      - "vips"
       - "xml"
       - "xmlreader"
-      - "xmlrpc"
       - "xmlwriter"
       - "xsl"
       - "yaml"
@@ -250,3 +248,8 @@ commandTests:
     command: "/usr/local/bin/php-fpm"
     args: ["-m"]
     expectedOutput: *phpModules
+  # vips and xmlrpc are abandoned upstream and only built up to PHP 8.5
+  - name: "vips and xmlrpc modules (PHP 8.5 and older)"
+    command: "php"
+    args: ["-r", "exit(PHP_VERSION_ID >= 80600 || (extension_loaded('vips') && extension_loaded('xmlrpc')) ? 0 : 1);"]
+    exitCode: 0

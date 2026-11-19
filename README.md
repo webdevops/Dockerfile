@@ -55,59 +55,72 @@ How the files in this repository are generated, and how the images are built and
 
 ### Debian PHP
 
-The following images which are currently supported are based on `php:{VER}-fpm-bookworm`.
+The following images which are currently supported are based on `php:{VER}-fpm-bookworm`
+(PHP 8.6: `php:8.6-fpm-trixie`, see [PHP 8.6](docs/images/php.md#php-86)).
 
 * `webdevops/php:8.2`
 * `webdevops/php:8.3`
 * `webdevops/php:8.4`
 * `webdevops/php:8.5`
+* `webdevops/php:8.6`
 * `webdevops/php-dev:8.2`
 * `webdevops/php-dev:8.3`
 * `webdevops/php-dev:8.4`
 * `webdevops/php-dev:8.5`
+* `webdevops/php-dev:8.6`
 * `webdevops/php-apache:8.2`
 * `webdevops/php-apache:8.3`
 * `webdevops/php-apache:8.4`
 * `webdevops/php-apache:8.5`
+* `webdevops/php-apache:8.6`
 * `webdevops/php-apache-dev:8.2`
 * `webdevops/php-apache-dev:8.3`
 * `webdevops/php-apache-dev:8.4`
 * `webdevops/php-apache-dev:8.5`
+* `webdevops/php-apache-dev:8.6`
 * `webdevops/php-nginx:8.2`
 * `webdevops/php-nginx:8.3`
 * `webdevops/php-nginx:8.4`
 * `webdevops/php-nginx:8.5`
+* `webdevops/php-nginx:8.6`
 * `webdevops/php-nginx-dev:8.2`
 * `webdevops/php-nginx-dev:8.3`
 * `webdevops/php-nginx-dev:8.4`
 * `webdevops/php-nginx-dev:8.5`
+* `webdevops/php-nginx-dev:8.6`
 
 
 ### Alpine PHP
 
-The following images which are currently supported are based on `php:{VER}-fpm-alpine`.
+The following images which are currently supported are based on `php:{VER}-fpm-alpine`
 
 * `webdevops/php:8.2-alpine`
 * `webdevops/php:8.3-alpine`
 * `webdevops/php:8.4-alpine`
 * `webdevops/php:8.5-alpine`
+* `webdevops/php:8.6-alpine`
 * `webdevops/php-dev:8.2-alpine`
 * `webdevops/php-dev:8.3-alpine`
 * `webdevops/php-dev:8.4-alpine`
 * `webdevops/php-dev:8.5-alpine`
+* `webdevops/php-dev:8.6-alpine`
 * `webdevops/php-apache:8.2-alpine`
 * `webdevops/php-apache:8.3-alpine`
 * `webdevops/php-apache:8.4-alpine`
 * `webdevops/php-apache:8.5-alpine`
+* `webdevops/php-apache:8.6-alpine`
 * `webdevops/php-apache-dev:8.2-alpine`
 * `webdevops/php-apache-dev:8.3-alpine`
 * `webdevops/php-apache-dev:8.4-alpine`
 * `webdevops/php-apache-dev:8.5-alpine`
+* `webdevops/php-apache-dev:8.6-alpine`
 * `webdevops/php-nginx:8.2-alpine`
 * `webdevops/php-nginx:8.3-alpine`
 * `webdevops/php-nginx:8.4-alpine`
 * `webdevops/php-nginx:8.5-alpine`
+* `webdevops/php-nginx:8.6-alpine`
 * `webdevops/php-nginx-dev:8.2-alpine`
 * `webdevops/php-nginx-dev:8.3-alpine`
 * `webdevops/php-nginx-dev:8.4-alpine`
 * `webdevops/php-nginx-dev:8.5-alpine`
+* `webdevops/php-nginx-dev:8.6-alpine`

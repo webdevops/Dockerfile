@@ -45,7 +45,7 @@ flowchart LR
   ubuntu["ubuntu:22.04"] --> bootstrap["webdevops/bootstrap"]
   bootstrap --> base["webdevops/base"]
   base --> baseapp["webdevops/base-app"]
-  officialphp["php:VERSION-fpm-bookworm / php:VERSION-fpm-alpine"] --> php["webdevops/php"]
+  officialphp["php:VERSION-fpm-bookworm / php:8.6-fpm-trixie / php:VERSION-fpm-alpine"] --> php["webdevops/php"]
   php --> phpdev["webdevops/php-dev"]
   php --> phpnginx["webdevops/php-nginx"]
   php --> phpapache["webdevops/php-apache"]

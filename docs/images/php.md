@@ -9,9 +9,10 @@ PHP-FPM on top of the official PHP image, with the webdevops entrypoint, `superv
 | Tags | Based on |
 | --- | --- |
 | `8.2`, `8.3`, `8.4`, `8.5` | `php:<version>-fpm-bookworm` (Debian 12) |
-| `8.2-alpine`, `8.3-alpine`, `8.4-alpine`, `8.5-alpine` | `php:<version>-fpm-alpine` |
+| `8.6` | `php:8.6-fpm-trixie` (Debian 13) |
+| `8.2-alpine`, `8.3-alpine`, `8.4-alpine`, `8.5-alpine`, `8.6-alpine` | `php:<version>-fpm-alpine` |
 
-Both `webdevops/php` and `webdevops/php-dev` use these tags. For the differences between the Debian and the Alpine tags, see [Debian or Alpine](#debian-or-alpine).
+Both `webdevops/php` and `webdevops/php-dev` use these tags. For the differences between the Debian and the Alpine tags, see [Debian or Alpine](#debian-or-alpine); for what is different in PHP 8.6, see [PHP 8.6](#php-86).
 
 Always use one of these tags: an image without a tag (`latest`) and the `alpine` tag are old builds from 2019 and 2020, see [Known issues](../known-issues.md#latest-and-alpine-tags-of-the-php-images).
 
@@ -56,16 +57,18 @@ Applications that read the upload progress from the session, using a form field 
 
 All tags contain these extensions:
 
-`amqp`, `apcu`, `bcmath`, `bz2`, `calendar`, `ctype`, `curl`, `date`, `dom`, `excimer`, `exif`, `ffi`, `fileinfo`, `filter`, `ftp`, `gd`, `gettext`, `gmp`, `hash`, `iconv`, `imagick`, `intl`, `json`, `ldap`, `libxml`, `mbstring`, `memcached`, `mongodb`, `mysqli`, `mysqlnd`, `openssl`, `opentelemetry`, `pcntl`, `pcre`, `pdo`, `pdo_mysql`, `pdo_pgsql`, `pdo_sqlite`, `pgsql`, `phar`, `posix`, `protobuf`, `random`, `readline`, `redis`, `reflection`, `session`, `shmop`, `simplexml`, `soap`, `sockets`, `sodium`, `spl`, `sqlite3`, `standard`, `sysvmsg`, `sysvsem`, `sysvshm`, `tokenizer`, `vips`, `xml`, `xmlreader`, `xmlrpc`, `xmlwriter`, `xsl`, `yaml`, `Zend OPcache`, `zip`, `zlib`
+`amqp`, `apcu`, `bcmath`, `bz2`, `calendar`, `ctype`, `curl`, `date`, `dom`, `excimer`, `exif`, `ffi`, `fileinfo`, `filter`, `ftp`, `gd`, `gettext`, `gmp`, `hash`, `iconv`, `imagick`, `intl`, `json`, `ldap`, `libxml`, `mbstring`, `memcached`, `mongodb`, `mysqli`, `mysqlnd`, `openssl`, `opentelemetry`, `pcntl`, `pcre`, `pdo`, `pdo_mysql`, `pdo_pgsql`, `pdo_sqlite`, `pgsql`, `phar`, `posix`, `protobuf`, `random`, `readline`, `redis`, `reflection`, `session`, `shmop`, `simplexml`, `soap`, `sockets`, `sodium`, `spl`, `sqlite3`, `standard`, `sysvmsg`, `sysvsem`, `sysvshm`, `tokenizer`, `xml`, `xmlreader`, `xmlwriter`, `xsl`, `yaml`, `Zend OPcache`, `zip`, `zlib`
 
 The tags differ in these extensions. Each column covers both tags of a PHP version, for example `8.5` and `8.5-alpine`; "Debian only" marks an extension that only the Debian tag contains.
 
-| Extension | `8.2` | `8.3` | `8.4` | `8.5` |
-| --- | :---: | :---: | :---: | :---: |
-| `lexbor` ([new in PHP 8.5](https://php.watch/versions/8.5/changelog)) | – | – | – | ✓ |
-| `uri` ([new in PHP 8.5](https://www.php.net/releases/8.5/en.php)) | – | – | – | ✓ |
-| `imap` ([moved to PECL in PHP 8.4](https://wiki.php.net/rfc/unbundle_imap_pspell_oci8)) | ✓ | ✓ | – | – |
-| ionCube Loader ([skipped on Alpine](../../provisioning/php/general/provision/bootstrap.d/30-setup-ioncube.sh)) | Debian only | Debian only | Debian only | Debian only |
+| Extension | `8.2` | `8.3` | `8.4` | `8.5` | `8.6` |
+| --- | :---: | :---: | :---: | :---: | :---: |
+| `lexbor` ([new in PHP 8.5](https://php.watch/versions/8.5/changelog)) | – | – | – | ✓ | ✓ |
+| `uri` ([new in PHP 8.5](https://www.php.net/releases/8.5/en.php)) | – | – | – | ✓ | ✓ |
+| `imap` ([moved to PECL in PHP 8.4](https://wiki.php.net/rfc/unbundle_imap_pspell_oci8)) | ✓ | ✓ | – | – | – |
+| `vips` ([not built for PHP 8.6](#php-86)) | ✓ | ✓ | ✓ | ✓ | – |
+| `xmlrpc` ([not built for PHP 8.6](#php-86)) | ✓ | ✓ | ✓ | ✓ | – |
+| ionCube Loader ([skipped on Alpine](../../provisioning/php/general/provision/bootstrap.d/30-setup-ioncube.sh), [not installed from PHP 8.6 on](#php-86)) | Debian only | Debian only | Debian only | Debian only | – |
 
 PHP loads the extensions in the CLI and in PHP-FPM of `php`, `php-nginx`, `php-apache` and their `-dev` variants.
 
@@ -118,9 +121,9 @@ Every PHP version comes as a Debian tag (`8.5`) and an Alpine tag (`8.5-alpine`)
 
 | Topic | Debian | Alpine |
 | --- | --- | --- |
-| [Base image](#tags) | `php:<version>-fpm-bookworm` (Debian 12) | `php:<version>-fpm-alpine` |
+| [Base image](#tags) | `php:<version>-fpm-bookworm` (Debian 12); PHP 8.6: `php:8.6-fpm-trixie` (Debian 13) | `php:<version>-fpm-alpine` |
 | [Download size](https://hub.docker.com/r/webdevops/php/tags) of `webdevops/php:8.5` | about 430 MB | about 170 MB |
-| [ionCube Loader](#php-extensions) | included | not included |
+| [ionCube Loader](#php-extensions) | included up to PHP 8.5 | not included |
 | [`imap` extension](#php-extensions) | `8.2` and `8.3` only | `8.2-alpine` and `8.3-alpine` only |
 | [Build tools for extensions](#installing-more-extensions) | included | installed by `docker-php-ext-install`; for PIE install `$PHPIZE_DEPS` |
 | [Locales](../customization.md#locales) | several hundred, for example `de_DE.utf8` | none |
@@ -129,6 +132,29 @@ Every PHP version comes as a Debian tag (`8.5`) and an Alpine tag (`8.5-alpine`)
 | [`docker-image-cleanup`](../customization.md#tools-for-your-dockerfile) | works | works |
 | [Apache index files](../environment-variables.md#web-server) in `php-apache` | `index.html`, `index.cgi`, `index.pl`, `index.php`, `index.xhtml`, `index.htm` come before `WEB_DOCUMENT_INDEX` | `index.html` comes before `WEB_DOCUMENT_INDEX` |
 | [`mail()` without Postfix](#mail) | fails: there is no `sendmail` command | fails: BusyBox `sendmail` finds no mail server |
+
+## PHP 8.6
+
+The `8.6` and `8.6-alpine` tags are built on PHP 8.6. Compared with PHP 8.5:
+
+- **Debian 13:** The Debian tag `8.6` is based on Debian 13 (trixie) instead of Debian 12, because GD in PHP 8.6 needs a newer libavif than Debian 12 provides. Package names differ between the two releases, for example `libzip5` instead of `libzip4`, and `apt-add-repository` does not work, see [Known issues](../known-issues.md#apt-add-repository-in-the-php-86-images).
+- **Thread safe (ZTS):** The official PHP 8.6 images, and therefore all `8.6` tags, are built thread safe. Extensions that you compile yourself with PIE or `docker-php-ext-install` are built to match.
+- **`max_execution_time` counts waiting:** In thread-safe PHP, the limit of `PHP_MAX_EXECUTION_TIME` (`max_execution_time`) counts the elapsed time, including time spent waiting, for example in `sleep()`, for an HTTP response or for a command started with `exec()`; PHP stops the script with the fatal error once the call returns. In PHP 8.5 and older, only the time PHP itself runs counts. Raise `PHP_MAX_EXECUTION_TIME` if your requests wait longer than its default of 300 seconds.
+- **No `pecl`:** The official PHP 8.6 images no longer contain `pecl` and `pear`. Install extensions with PIE, see [Installing more extensions](#installing-more-extensions).
+- **No `vips` and `xmlrpc`:** Both extensions are abandoned upstream and do not build against PHP 8.6.
+  - Instead of `vips`, use [`jcupitt/vips`](https://github.com/libvips/php-vips) 2.x, which calls libvips through FFI. libvips and the `ffi` extension are part of the images. By default PHP allows FFI only on the command line and in preloaded scripts; to use it in PHP-FPM, set `php.ffi.enable: "true"`.
+  - Instead of `xmlrpc`, use a userland library such as [`phpxmlrpc/phpxmlrpc`](https://github.com/gggeek/phpxmlrpc).
+- **No ionCube Loader:** The PHP 8.6 images and later do not contain the ionCube Loader, also once ionCube supports these PHP versions. Its loader for thread-safe PHP does not load in the official images, which are built without Zend signals; applications that need ionCube stay on PHP 8.5.
+- **Development images:** Xdebug is a 3.6 pre-release.
+- **Unreleased extension versions:** `apcu`, `excimer`, `memcached`, `redis` and `yaml` have no release that supports PHP 8.6 yet and are built from their development branches; `amqp` and `protobuf` are built with fixes that are not released yet.
+
+```yaml
+services:
+  php:
+    image: webdevops/php:8.6
+    environment:
+      php.ffi.enable: "true"
+```
 
 ## Production
 

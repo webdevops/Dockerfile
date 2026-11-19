@@ -50,6 +50,11 @@ switch ($_GET['test']) {
         break;
 
     case 'sleep':
+        // time_limit=0 lifts max_execution_time first: in thread-safe PHP (8.6), the time in sleep() counts towards it
+        if (isset($_GET['time_limit'])) {
+            set_time_limit((int) $_GET['time_limit']);
+        }
+
         sleep((int) ($_GET['seconds'] ?? 0));
         echo 'slept';
         break;
