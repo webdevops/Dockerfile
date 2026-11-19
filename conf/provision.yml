@@ -3,18 +3,9 @@ provision:
   base:
     configuration:
       base/general: '*'
-      base/alpine: alpine
   base-app:
     configuration:
       base-app/general: '*'
-  apache:
-    configuration:
-      apache/general    : '*'
-      apache/alpine     : alpine
-  nginx:
-    configuration:
-      nginx/general     : '*'
-      nginx/alpine      : alpine
   php-apache:
     configuration:
       apache/general    : '*'

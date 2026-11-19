@@ -121,7 +121,7 @@ abstract class ImageTestCase extends TestCase
     /**
      * The environment and command each further container was started with, by name.
      *
-     * @var array<string, array{array<string, string>, list<string>, bool}>
+     * @var array<string, array{array<string, string>, list<string>}>
      */
     private static array $containerArguments = [];
 
@@ -235,26 +235,25 @@ abstract class ImageTestCase extends TestCase
 
     /**
      * Another container of the image, started once per class and $name, with $environment and, instead of the image's
-     * command, $command. It gets the files of Fixtures/ and Hooks/ too, unless $withFiles is false, and is removed after
-     * the class.
+     * command, $command. It gets the files of Fixtures/ and Hooks/ too, and is removed after the class.
      *
      * @param array<string, string> $environment
      * @param list<string> $command
      */
-    protected function startContainer(string $name, array $environment = [], array $command = [], bool $withFiles = true): Container
+    protected function startContainer(string $name, array $environment = [], array $command = []): Container
     {
-        if (isset(self::$containerArguments[$name]) && self::$containerArguments[$name] !== [$environment, $command, $withFiles]) {
+        if (isset(self::$containerArguments[$name]) && self::$containerArguments[$name] !== [$environment, $command]) {
             throw new LogicException(sprintf('The container "%s" was started with another environment or command; give this one another name.', $name));
         }
 
-        self::$containerArguments[$name] = [$environment, $command, $withFiles];
+        self::$containerArguments[$name] = [$environment, $command];
         if (isset(self::$containerFailures[$name])) {
             throw self::$containerFailures[$name];
         }
 
         if (!isset(self::$containers[$name])) {
             try {
-                self::$containers[$name] = Container::start(self::image()->reference, $withFiles ? [self::FIXTURES, self::HOOKS] : [], self::labels(), $environment, $command);
+                self::$containers[$name] = Container::start(self::image()->reference, [self::FIXTURES, self::HOOKS], self::labels(), $environment, $command);
             } catch (RuntimeException $runtimeException) {
                 self::$containerFailures[$name] = $runtimeException;
                 throw $runtimeException;
@@ -274,10 +273,10 @@ abstract class ImageTestCase extends TestCase
      * @param array<string, string> $environment
      * @param list<string> $command
      */
-    protected function startTestContainer(string $name, array $environment = [], array $command = [], bool $withFiles = true): Container
+    protected function startTestContainer(string $name, array $environment = [], array $command = []): Container
     {
         $this->testContainers[] = $name;
-        return $this->startContainer($name, $environment, $command, $withFiles);
+        return $this->startContainer($name, $environment, $command);
     }
 
     /**
