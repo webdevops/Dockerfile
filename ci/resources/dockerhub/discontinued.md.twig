@@ -1,0 +1,10 @@
+# webdevops/{{ name }}
+
+> **This image is no longer built.** The last image is from {{ lastBuilt }}.
+> It gets no updates, including security fixes.
+{% if replacement is not null %}
+
+Use [`{{ replacement.image }}`]({{ replacement.url }}) instead. How to switch: [Replacing discontinued images]({{ replacement.docs }}).
+{% endif %}
+
+Source: [github.com/webdevops/Dockerfile](https://github.com/webdevops/Dockerfile)

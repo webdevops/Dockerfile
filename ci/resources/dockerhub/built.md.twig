@@ -1,0 +1,37 @@
+# webdevops/{{ name }}
+
+{{ intro }}
+{% if development %}
+
+Meant for local development. Do not use it in production.
+{% endif %}
+{% if note is not null %}
+
+{{ note }}
+{% endif %}
+
+Rebuilt every night for {{ platforms|join(' and ') }}.
+
+## Tags
+
+| Tag | Based on |
+| --- | --- |
+{% for row in rows %}
+| {{ row.tags }} | {{ row.base }} |
+{% endfor %}
+{% if example is not null %}
+
+## Quick start
+
+```{{ example.lang }}
+{{ example.code }}
+```
+{% endif %}
+
+## Documentation
+
+{% for link in docs %}
+- [{{ link.label }}]({{ link.url }})
+{% endfor %}
+
+Source and issues: [github.com/webdevops/Dockerfile](https://github.com/webdevops/Dockerfile)

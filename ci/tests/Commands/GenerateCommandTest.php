@@ -15,6 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Webdevops\Build\Commands\GenerateCommand;
 use Webdevops\Build\Commands\GenerateDockerfileCommand;
+use Webdevops\Build\Commands\GenerateDockerhubCommand;
 use Webdevops\Build\Commands\GenerateProvisionCommand;
 use Webdevops\Build\Commands\GenerateGithubCiCommand;
 use Webdevops\Build\Commands\GenerateReadmeBannerCommand;
@@ -47,6 +48,7 @@ final class GenerateCommandTest extends TestCase
         self::assertSame("alpine\n", $this->repository->read('docker/base/alpine/conf/etc/os'));
         self::assertStringContainsString('toolbox_latest:', $this->repository->read('.github/workflows/build.yaml'));
         self::assertStringContainsString('<svg', $this->repository->read('docs/assets/banner-light.svg'));
+        self::assertStringContainsString('# webdevops/php', $this->repository->read('docs/dockerhub/php.md'));
     }
 
     public function testRunsTheGeneratorsInOrder(): void
@@ -55,7 +57,7 @@ final class GenerateCommandTest extends TestCase
         $tester->execute([]);
 
         self::assertMatchesRegularExpression(
-            '/^generate:dockerfile\n(webdevops\/.*\n)+generate:provision\n(.* => .*\n)+generate:github-ci\n(.*\n)+generate:readme-banner\nWrote /',
+            '/^generate:dockerfile\n(webdevops\/.*\n)+generate:provision\n(.* => .*\n)+generate:github-ci\n(.*\n)+generate:readme-banner\n(Wrote .*\n)+generate:dockerhub\n(Wrote docs\/dockerhub\/.*\n)+$/',
             $tester->getDisplay(),
         );
     }
@@ -90,6 +92,7 @@ final class GenerateCommandTest extends TestCase
         $application->add(new GenerateProvisionCommand($this->repository->path));
         $application->add(new GenerateGithubCiCommand($this->repository->path));
         $application->add(new GenerateReadmeBannerCommand($this->repository->path));
+        $application->add(new GenerateDockerhubCommand($this->repository->path));
         return $application;
     }
 }

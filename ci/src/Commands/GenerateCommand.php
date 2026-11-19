@@ -14,16 +14,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 use function sprintf;
 
 /**
- * Writes every generated file, in the order they depend on each other: the build.yaml and the banner are read from
- * the Dockerfiles, so those come first.
+ * Writes every generated file, in the order they depend on each other: the build.yaml, the banner and the Docker Hub
+ * pages are read from the Dockerfiles, so those come first.
  */
-#[AsCommand(name: 'generate', description: 'Writes every generated file: the Dockerfiles and conf/ under docker/, .github/workflows/build.yaml and the README banner')]
+#[AsCommand(name: 'generate', description: 'Writes every generated file: the Dockerfiles and conf/ under docker/, .github/workflows/build.yaml, the README banner and the Docker Hub pages')]
 class GenerateCommand extends Command
 {
     /**
      * The commands that write the generated files, in the order they run.
      */
-    public const array COMMANDS = ['generate:dockerfile', 'generate:provision', 'generate:github-ci', 'generate:readme-banner'];
+    public const array COMMANDS = ['generate:dockerfile', 'generate:provision', 'generate:github-ci', 'generate:readme-banner', 'generate:dockerhub'];
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

@@ -7,6 +7,7 @@ use Symfony\Component\Console\Application;
 use Webdevops\Build\Commands\BuildGlyphsCommand;
 use Webdevops\Build\Commands\GenerateCommand;
 use Webdevops\Build\Commands\GenerateDockerfileCommand;
+use Webdevops\Build\Commands\GenerateDockerhubCommand;
 use Webdevops\Build\Commands\GenerateGithubCiCommand;
 use Webdevops\Build\Commands\GenerateProvisionCommand;
 use Webdevops\Build\Commands\GenerateReadmeBannerCommand;
@@ -19,6 +20,7 @@ $application->add(new GenerateDockerfileCommand());
 $application->add(new GenerateProvisionCommand());
 $application->add(new GenerateGithubCiCommand());
 $application->add(new GenerateReadmeBannerCommand());
+$application->add(new GenerateDockerhubCommand());
 $application->add(new BuildGlyphsCommand());
 $application->add(new TestImageCommand());
 
