@@ -19,7 +19,7 @@ Documentation for the `webdevops/*` Docker images. It describes the images as th
 
 - The images are on Docker Hub for `linux/amd64` and `linux/arm64`. Docker pulls the one that matches your machine.
 - The CI rebuilds all tags every night. The build starts at 00:00 UTC and runs without the build cache, so packages and extensions are installed fresh. A tag such as `8.5` therefore points to a new image after every nightly build.
-- A new PHP release does not wait for the night: every hour the CI compares the PHP version of the official `php` images with that of `webdevops/php-official` and `webdevops/php-nginx`, and starts the build as soon as an official image has a newer PHP. Such a build uses the build cache; a changed base image rebuilds every layer above it.
+- A new PHP release does not wait for the night: every hour the CI compares the PHP version of the official `php` images with that of `webdevops/php` and `webdevops/php-nginx`, and starts the build as soon as an official image has a newer PHP. Such a build uses the build cache; a changed base image rebuilds every layer above it.
 - To keep an image unchanged, pin it by digest. Docker then uses the digest; the tag in front of it is only for readers:
 
   ```yaml

@@ -58,7 +58,7 @@ defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdev
 internally; pull the images from Docker Hub.
 
 Besides the nightly run, `.github/workflows/php-upstream.yaml` starts `build.yaml` on `master` when the official PHP images get a new PHP release.
-Every hour it reads `PHP_VERSION` of the image in the `FROM` line of each `docker/php-official/<tag>/Dockerfile` and of `webdevops/php-official:<tag>` and `webdevops/php-nginx:<tag>`.
+Every hour it reads `PHP_VERSION` of the image in the `FROM` line of each `docker/php/<tag>/Dockerfile` and of `webdevops/php:<tag>` and `webdevops/php-nginx:<tag>`.
 If one of ours is different or does not exist yet, it starts the build, unless a build of `master` is running or queued (pull requests do not count).
 It also does not start one if a build it started in the last 8 hours did not succeed, or if it already started 3 builds in that time; builds started by hand do not count.
 An image that cannot be read is skipped with a warning; the next run tries again.
