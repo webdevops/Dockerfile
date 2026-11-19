@@ -1,10 +1,10 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/php-official:8.2
+# Dockerfile for webdevops/php:8.4
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
 
-FROM php:8.2-fpm-bookworm
+FROM php:8.4-fpm-bookworm
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
@@ -111,7 +111,6 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         libmcrypt4 \
         libzip4 \
         libyaml-0-2 \
-        libc-client2007e \
         # Dev and headers
         libavif-dev \
         libjpeg62-turbo-dev \
@@ -156,8 +155,7 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     # imagick leaves its version to the packaging of PECL; take it from package.xml, so that phpversion('imagick') reports it
     && sed -i "s/@PACKAGE_VERSION@/$(sed -n 's:.*<release>\([0-9][0-9.]*\)</release>.*:\1:p' /usr/src/php/ext/imagick/package.xml | head -n 1)/" /usr/src/php/ext/imagick/php_imagick.h \
     && docker-php-ext-configure ldap \
-    && docker-php-ext-configure ftp --with-openssl-dir \
-    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-configure ftp --with-ftp-ssl \
     && docker-php-ext-install -j"$(nproc)" \
         bcmath \
         amqp \
@@ -172,7 +170,6 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         gettext \
         ldap \
         mysqli \
-        imap \
         pcntl \
         pdo_mysql \
         pdo_pgsql \

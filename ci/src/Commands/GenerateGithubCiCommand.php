@@ -176,7 +176,43 @@ class GenerateGithubCiCommand extends Command
         }
 
         $this->checkInternalImages($data);
+        $this->checkAliases($data);
         return new Tree($data);
+    }
+
+    /**
+     * Every tag that "docker: aliases" in conf/console.yml publishes under a deprecated name has to be built here, and a
+     * deprecated name must not be built as an image of its own: docker/<name>/<tag> would publish new tags under it.
+     *
+     * @param list<array<string, mixed>> $nodes
+     */
+    private function checkAliases(array $nodes): void
+    {
+        $built = array_column($nodes, 'id');
+        foreach ($this->fileReader->aliases() as $name => $alias) {
+            foreach ($nodes as $node) {
+                if ($node['image'] === $name) {
+                    throw new RuntimeException(sprintf(
+                        'webdevops/%1$s is a deprecated name in "docker: aliases" of conf/console.yml, but %2$s builds it as an image of its own. Build the tag in docker/%3$s instead.',
+                        $name,
+                        dirname((string)$node['file']),
+                        $alias['image'],
+                    ));
+                }
+            }
+
+            foreach ($alias['tags'] as $tag) {
+                $image = 'webdevops/' . $alias['image'] . ':' . $tag;
+                if (!in_array($image, $built, true)) {
+                    throw new RuntimeException(sprintf(
+                        '"docker: aliases" in conf/console.yml publishes %s as webdevops/%s:%s, which is not built. Remove the tag from the list.',
+                        $image,
+                        $name,
+                        $tag,
+                    ));
+                }
+            }
+        }
     }
 
     /**

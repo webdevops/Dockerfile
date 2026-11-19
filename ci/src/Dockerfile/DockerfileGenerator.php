@@ -19,8 +19,7 @@ use function sprintf;
  * Renders docker/<image>/<tag>/Dockerfile from the Dockerfile.twig next to it.
  *
  * template/Dockerfile/layout.twig writes the header and includes the Dockerfile.twig, which imports the macros it
- * uses from template/Dockerfile/, e.g. {% import 'docker.twig' as docker %}. Directories that are symbolic links,
- * such as docker/php/8.5, are left out; ImageLinks keeps them up to date.
+ * uses from template/Dockerfile/, e.g. {% import 'docker.twig' as docker %}.
  */
 final readonly class DockerfileGenerator
 {
@@ -32,7 +31,7 @@ final readonly class DockerfileGenerator
     }
 
     /**
-     * Renders every Dockerfile and updates the links of ImageLinks. A tag directory without Dockerfile.twig is an
+     * Renders every Dockerfile. A tag directory without Dockerfile.twig is an
      * error: nothing would update its files, but generate:github-ci would still build and publish a Dockerfile in it.
      * The .DS_Store files that the macOS Finder leaves under docker/ are removed first.
      *
@@ -51,8 +50,6 @@ final readonly class DockerfileGenerator
                 implode(', ', $withoutTemplate),
             ));
         }
-
-        new ImageLinks($this->rootPath)->update($tagDirectories);
 
         $loader = new FilesystemLoader($this->rootPath . '/template/Dockerfile');
         $loader->addPath($this->rootPath . '/docker', 'docker');

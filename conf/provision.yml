@@ -32,7 +32,7 @@ provision:
       php-dev/general   : '*'
       nginx-dev/general : '*'
       development/general: '*'
-  php-official:
+  php:
     configuration:
       base/general       : '*'
       base-app/general   : '*'
