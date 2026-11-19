@@ -57,7 +57,8 @@ internally; pull the images from Docker Hub.
 
 Besides the nightly run, `.github/workflows/php-upstream.yaml` starts `build.yaml` on `master` when the official PHP images get a new PHP release.
 Every hour it reads `PHP_VERSION` of the image in the `FROM` line of each `docker/php-official/<tag>/Dockerfile` and of `webdevops/php-official:<tag>` and `webdevops/php-nginx:<tag>`.
-If one of ours is different, it starts the build, unless a build on `master` is running or queued, or one was started by hand or by this workflow in the last 8 hours.
+If one of ours is different or does not exist yet, it starts the build, unless a build of `master` is running or queued (pull requests do not count), or the workflow itself started one in the last 8 hours.
+An image that cannot be read is skipped with a warning; the next run tries again.
 It is written by hand, not generated. Run it by hand with "dry-run" to see which tags are behind without starting a build.
 
 The build steps pass the token of the run (`GITHUB_TOKEN`) to Docker as the build secret `COMPOSER_AUTH`, for PIE (see [PHP extension builds](#php-extension-builds)).
