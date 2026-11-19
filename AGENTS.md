@@ -19,7 +19,7 @@
 | `tests/` | container-structure-test definitions run by the CI |
 | `docs/` | User documentation |
 
-`docker/php/<version>` are symlinks to `docker/php-official/<version>`, kept by `ci/console generate:dockerfile`; both images are built from the same Dockerfiles. The tags that are built are the `-t "webdevops/..."` lines in `.github/workflows/build.yaml`.
+`webdevops/php-official` is a deprecated name of `webdevops/php`: the CI publishes the image of `docker/php/<tag>` under that name too, but only for the tags listed under `docker: aliases` in `conf/console.yml`. Do not add new tags there. The tags that are built are the `-t "webdevops/..."` lines in `.github/workflows/build.yaml`.
 
 ## Build and test
 
@@ -59,7 +59,7 @@ Where the documentation lives:
 | `docs/customization.md` | Commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs and their time zone, healthcheck, configuration files and placeholders, supervisord, locales, application user and changing its UID |
 | `docs/images/*.md` | One page per image family: tags, base image, services, settings, development variant. `php.md` also has Debian or Alpine, production, installing extensions, mail and Xdebug with an IDE |
 | `docs/known-issues.md` | Options and tools that do not work, with affected images and workaround; migration from older images |
-| `docs/discontinued-images.md` | Replacements for images and tags that are no longer built (`nginx`, `apache`, the `alpine` tags of `bootstrap`, `base` and `base-app`, `storage`, `vsftp`, `ssh`) |
+| `docs/discontinued-images.md` | Replacements for images and tags that are no longer built (`nginx`, `apache`, the `alpine` tags of `bootstrap`, `base` and `base-app`, `storage`, `vsftp`, `ssh`) or deprecated (`php-official`) |
 | `docs/dockerhub/*.md` | The pages on Docker Hub: a start page per built image with its tags and links into `docs/`, a warning per image that is no longer built. Generated from `conf/dockerhub.yml`; change the texts there |
 
 ### When to update it
@@ -99,7 +99,7 @@ Update the documentation whenever a change touches any of these:
 
 4. **Document only what works.** Never describe an option that has no effect as working. Fix it, or leave it out and list it in `docs/known-issues.md`. If it works only in some images, say exactly which. Anything `docs/known-issues.md` lists as not working must never appear as working anywhere else. An `ENV` line or a script that reads a variable is no proof that it works: `SERVICE_POSTFIX_OPTS` is passed to `postfix start`, which ignores it. When you fix a known issue, remove its entry in the same pull request.
 
-5. **Keep lists in sync.** The tag lists in `README.md` and in `docs/images/*.md` must match the tags pushed by `.github/workflows/build.yaml`. The README banner and the Docker Hub pages follow the built tags by themselves when you run `make generate`; change their texts in `conf/readme-banner.yml` and `conf/dockerhub.yml`. An image that is no longer built moves from `built` to `discontinued` in `conf/dockerhub.yml`; `make generate` fails until it does. A statement on a Docker Hub page follows the same rules as the documentation. `webdevops/php-official` is not listed in the README; it is built from the same Dockerfiles as `webdevops/php`. The defaults in `docs/environment-variables.md` must match what a container reports.
+5. **Keep lists in sync.** The tag lists in `README.md` and in `docs/images/*.md` must match the tags pushed by `.github/workflows/build.yaml`. The README banner and the Docker Hub pages follow the built tags by themselves when you run `make generate`; change their texts in `conf/readme-banner.yml` and `conf/dockerhub.yml`. An image that is no longer built moves from `built` to `discontinued` in `conf/dockerhub.yml`; `make generate` fails until it does. A statement on a Docker Hub page follows the same rules as the documentation. `webdevops/php-official` is not listed in the README; it is a deprecated name of `webdevops/php`. The defaults in `docs/environment-variables.md` must match what a container reports.
 
 6. **Follow the style.**
    - English, GitHub Markdown, relative links, diagrams as Mermaid. No documentation tooling.

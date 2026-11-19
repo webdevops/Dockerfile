@@ -54,7 +54,7 @@ final class PublishedTagsTest extends TestCase
         try {
             $repository->write('docker/toolbox/latest/Dockerfile', "# Dockerfile for webdevops/toolbox:latest\nFROM alpine:latest\n");
             $repository->write('docker/base/alpine/Dockerfile', "# Dockerfile for webdevops/base:alpine\nFROM debian:bookworm\n");
-            $repository->write('docker/php-official/8.4/Dockerfile', "# Dockerfile for webdevops/php-official:8.4\nFROM php:8.4-fpm-alpine3.24\n");
+            $repository->write('docker/php/8.4/Dockerfile', "# Dockerfile for webdevops/php:8.4\nFROM php:8.4-fpm-alpine3.24\n");
             $byRepository = new PublishedTags(new FileReader($repository->path), self::RELEASES)->byRepository();
         } finally {
             $repository->remove();

@@ -13,6 +13,11 @@ class FileReader
     private readonly array $settings;
 
     /**
+     * @var ?array<string, array{image: string, tags: list<string>}> aliases(), read on first use
+     */
+    private ?array $aliases = null;
+
+    /**
      * @param string $rootPath the repository root
      */
     public function __construct(private readonly string $rootPath = __DIR__ . '/../..')
@@ -35,9 +40,65 @@ class FileReader
     }
 
     /**
+     * "docker: aliases" in conf/console.yml: the deprecated image names that the CI also publishes an image under, each
+     * with that image and the tags it is published for, e.g. ['php-official' => ['image' => 'php', 'tags' => ['8.5']]].
+     * A deprecated name gets no new tags: it is only published for the tags listed there.
+     *
+     * @return array<string, array{image: string, tags: list<string>}>
+     */
+    public function aliases(): array
+    {
+        return $this->aliases ??= $this->readAliases();
+    }
+
+    /**
+     * @return array<string, array{image: string, tags: list<string>}>
+     */
+    private function readAliases(): array
+    {
+        $settings = $this->settings['docker']['aliases'] ?? [];
+        if (!is_array($settings)) {
+            throw new RuntimeException('"docker: aliases" in conf/console.yml has to map each deprecated name to the image it names and its tags, e.g. php-official: {image: php, tags: [\'8.5\']}.');
+        }
+
+        $aliases = [];
+        foreach ($settings as $name => $alias) {
+            $image = is_array($alias) ? $alias['image'] ?? null : null;
+            $tags = is_array($alias) ? $alias['tags'] ?? null : null;
+            $problem = match (true) {
+                !is_string($name) || !$this->isImageName($name) => 'the deprecated name has to be an image name in lower case, e.g. php-official',
+                !is_string($image) || !$this->isImageName($image) => '"image" has to name the image in lower case, e.g. php',
+                $name === $image => 'the deprecated name has to differ from its image',
+                // an unquoted tag such as 8.10 is a number in YAML and would lose its trailing zero
+                !is_array($tags) || !array_is_list($tags) || array_any($tags, static fn (mixed $tag): bool => !is_string($tag) || $tag === '') => '"tags" has to be a list of tags in quotes, e.g. [\'8.5\']',
+                count(array_unique($tags)) !== count($tags) => '"tags" lists a tag twice',
+                default => null,
+            };
+            if ($problem !== null) {
+                throw new RuntimeException(sprintf('"docker: aliases: %s" in conf/console.yml: %s.', $name, $problem));
+            }
+
+            /** @var string $name */
+            /** @var string $image */
+            /** @var list<string> $tags */
+            $aliases[$name] = ['image' => $image, 'tags' => $tags];
+        }
+
+        return $aliases;
+    }
+
+    /**
+     * Whether $name can be the name of a webdevops image, e.g. php-official: lower case letters and digits, separated
+     * by single dots, dashes or underscores.
+     */
+    private function isImageName(string $name): bool
+    {
+        return (bool)preg_match('/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/', $name);
+    }
+
+    /**
      * The Dockerfile of every tag under docker/ (see TagDirectories), relative to the repository root and sorted, e.g.
-     * docker/base/alpine/Dockerfile. Tags whose Dockerfile was not generated yet are left out. Directories that are
-     * symbolic links, such as docker/php/8.5, are left out too: they build the same Dockerfile.
+     * docker/base/alpine/Dockerfile. Tags whose Dockerfile was not generated yet are left out.
      *
      * @return list<string>
      */
@@ -126,11 +187,11 @@ class FileReader
             $node['imageDependencies'][$dependencyRef] = $this->resolveInternalImageReference($dependencyRef);
         }
 
-        // Treat *-official images
-        if (str_contains($id, '-official:')) {
-            $node['aliases'][] = $id;
-            $node['id'] = $node['name'] = str_replace('-official:', ':', $id);
-            $node['image'] = str_replace('-official', '', $node['image']);
+        // deprecated names of the image, e.g. webdevops/php-official:8.5 for webdevops/php:8.5
+        foreach ($this->aliases() as $name => $alias) {
+            if ($alias['image'] === $imageName && in_array($tagName, $alias['tags'], true)) {
+                $node['aliases'][] = 'webdevops/' . $name . ':' . $tagName;
+            }
         }
 
         if ($tagName === $this->autoLatestTag()) {

@@ -379,7 +379,7 @@ jobs:
         env:
           REPOSITORY: webdevops/php-official
           PAGE: docs/dockerhub/php-official.md
-          SHORT_DESCRIPTION: 'The same image as webdevops/php, built from the same Dockerfiles'
+          SHORT_DESCRIPTION: 'Deprecated name of webdevops/php without new tags; use webdevops/php instead'
         run: |-
           jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
@@ -6932,7 +6932,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.2
+          context: docker/php/8.2
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
@@ -6948,7 +6948,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.2
+          context: docker/php/8.2
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
@@ -6994,7 +6994,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.2
+          context: docker/php/8.2
           platforms: '${{ matrix.platform }}'
           cache-from: 'type=gha,scope=webdevops/php:8.2-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.2-${{ matrix.arch }},mode=max'
@@ -7057,7 +7057,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.2-alpine
+          context: docker/php/8.2-alpine
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
@@ -7073,7 +7073,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.2-alpine
+          context: docker/php/8.2-alpine
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
@@ -7119,7 +7119,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.2-alpine
+          context: docker/php/8.2-alpine
           platforms: '${{ matrix.platform }}'
           cache-from: 'type=gha,scope=webdevops/php:8.2-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.2-alpine-${{ matrix.arch }},mode=max'
@@ -7258,7 +7258,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.3
+          context: docker/php/8.3
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
@@ -7274,7 +7274,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.3
+          context: docker/php/8.3
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
@@ -7320,7 +7320,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.3
+          context: docker/php/8.3
           platforms: '${{ matrix.platform }}'
           cache-from: 'type=gha,scope=webdevops/php:8.3-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.3-${{ matrix.arch }},mode=max'
@@ -7383,7 +7383,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.3-alpine
+          context: docker/php/8.3-alpine
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
@@ -7399,7 +7399,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.3-alpine
+          context: docker/php/8.3-alpine
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
@@ -7445,7 +7445,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.3-alpine
+          context: docker/php/8.3-alpine
           platforms: '${{ matrix.platform }}'
           cache-from: 'type=gha,scope=webdevops/php:8.3-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.3-alpine-${{ matrix.arch }},mode=max'
@@ -7584,7 +7584,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.4
+          context: docker/php/8.4
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
@@ -7600,7 +7600,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.4
+          context: docker/php/8.4
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
@@ -7646,7 +7646,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.4
+          context: docker/php/8.4
           platforms: '${{ matrix.platform }}'
           cache-from: 'type=gha,scope=webdevops/php:8.4-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.4-${{ matrix.arch }},mode=max'
@@ -7709,7 +7709,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.4-alpine
+          context: docker/php/8.4-alpine
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
@@ -7725,7 +7725,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.4-alpine
+          context: docker/php/8.4-alpine
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
@@ -7771,7 +7771,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.4-alpine
+          context: docker/php/8.4-alpine
           platforms: '${{ matrix.platform }}'
           cache-from: 'type=gha,scope=webdevops/php:8.4-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.4-alpine-${{ matrix.arch }},mode=max'
@@ -7910,7 +7910,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.5
+          context: docker/php/8.5
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
@@ -7926,7 +7926,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.5
+          context: docker/php/8.5
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
@@ -7972,7 +7972,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.5
+          context: docker/php/8.5
           platforms: '${{ matrix.platform }}'
           cache-from: 'type=gha,scope=webdevops/php:8.5-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.5-${{ matrix.arch }},mode=max'
@@ -8035,7 +8035,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.5-alpine
+          context: docker/php/8.5-alpine
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
@@ -8051,7 +8051,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.5-alpine
+          context: docker/php/8.5-alpine
           platforms: '${{ matrix.platform }}'
           load: true
           tags: 'ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
@@ -8097,7 +8097,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         with:
-          context: docker/php-official/8.5-alpine
+          context: docker/php/8.5-alpine
           platforms: '${{ matrix.platform }}'
           cache-from: 'type=gha,scope=webdevops/php:8.5-alpine-${{ matrix.arch }}'
           cache-to: 'type=gha,scope=webdevops/php:8.5-alpine-${{ matrix.arch }},mode=max'

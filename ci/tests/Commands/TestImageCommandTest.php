@@ -135,6 +135,10 @@ final class TestImageCommandTest extends TestCase
         yield 'no namespace' => ['base:alpine', 'Name the image as webdevops/<image>:<tag>'];
         yield 'no tag' => ['webdevops/base', 'Name the image as webdevops/<image>:<tag>'];
         yield 'no tests' => ['webdevops/php-nginx:8.5', 'webdevops/php-nginx has no image tests in ci/image-tests/Images.'];
+        yield 'deprecated name without that tag' => [
+            'webdevops/php-official:8.6',
+            'webdevops/php-official:8.6 is not published: webdevops/php-official is a deprecated name of webdevops/php for some tags only. Test webdevops/php:8.6 instead.',
+        ];
     }
 
     #[DataProvider('invalidImages')]

@@ -1,6 +1,6 @@
 # webdevops/php-official
 
-Built from the same Dockerfiles as [`webdevops/php`](https://hub.docker.com/r/webdevops/php), with the same tags: PHP-FPM on top of the official PHP image.
+**Deprecated.** The same image as [`webdevops/php`](https://hub.docker.com/r/webdevops/php) under a second name, published only for the tags `8.2` to `8.5` and `8.2-alpine` to `8.5-alpine`; newer PHP versions are only published as `webdevops/php`. Switch to `webdevops/php` now: change the image name and keep the tag.
 
 Rebuilt every night for linux/amd64 and linux/arm64.
 
@@ -13,21 +13,9 @@ Rebuilt every night for linux/amd64 and linux/arm64.
 
 Tags that are not listed here are no longer built and get no updates.
 
-## Quick start
-
-```yaml
-services:
-  php:
-    image: webdevops/php-official:8.5
-    volumes:
-      - ./:/app
-```
-
 ## Documentation
 
+- [Switching to webdevops/php](https://github.com/webdevops/Dockerfile/blob/master/docs/discontinued-images.md#webdevopsphp-official)
 - [webdevops/php and webdevops/php-dev](https://github.com/webdevops/Dockerfile/blob/master/docs/images/php.md)
-- [Environment variables](https://github.com/webdevops/Dockerfile/blob/master/docs/environment-variables.md)
-- [Customization: commands, scripts, services and hooks](https://github.com/webdevops/Dockerfile/blob/master/docs/customization.md)
-- [Known issues](https://github.com/webdevops/Dockerfile/blob/master/docs/known-issues.md)
 
 Source and issues: [github.com/webdevops/Dockerfile](https://github.com/webdevops/Dockerfile)

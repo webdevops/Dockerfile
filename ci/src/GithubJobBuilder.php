@@ -99,6 +99,11 @@ class GithubJobBuilder
     ];
 
     /**
+     * The image tests, read on first use
+     */
+    private ?ImageTests $imageTests = null;
+
+    /**
      * @param string $rootPath the repository root
      */
     public function __construct(private readonly string $rootPath = __DIR__ . '/../..')
@@ -490,7 +495,8 @@ class GithubJobBuilder
      */
     private function imageTests(array $node): ?string
     {
-        if (new ImageTests($this->rootPath)->testFile($node['image']) === null) {
+        $this->imageTests ??= new ImageTests($this->rootPath);
+        if ($this->imageTests->testFile($node['image']) === null) {
             return null;
         }
 

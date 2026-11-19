@@ -1,10 +1,10 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/php-official:8.4
+# Dockerfile for webdevops/php:8.5
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
 
-FROM php:8.4-fpm-bookworm
+FROM php:8.5-fpm-bookworm
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
@@ -183,7 +183,6 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         xsl \
         zip \
         gd \
-        opcache \
     && cd / \
     && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
         --skip-enable-extension --make-parallel-jobs="$(nproc)" \

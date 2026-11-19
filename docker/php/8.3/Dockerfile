@@ -1,10 +1,10 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/php-official:8.2-alpine
+# Dockerfile for webdevops/php:8.3
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
 
-FROM php:8.2-fpm-alpine
+FROM php:8.3-fpm-bookworm
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
@@ -23,7 +23,6 @@ ENV APPLICATION_USER=application \
     APPLICATION_UID=1000 \
     APPLICATION_GID=1000
 ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"
-ENV LD_PRELOAD="/usr/lib/preloadable_libiconv.so"
 ENV COMPOSER_VERSION="2"
 
 
@@ -36,137 +35,139 @@ COPY conf/ /opt/docker/
 
 RUN set -x \
     # Init bootstrap
-    # System update
-    && /usr/local/bin/apk-upgrade \
-    # Install base stuff
-    && apk-install \
-        bash \
-        ca-certificates \
-        openssl \
-    && update-ca-certificates \
+    && apt-update \
     && /usr/local/bin/generate-dockerimage-info \
-    ## Fix su execution (eg for tests)
-    && mkdir -p /etc/pam.d/ \
-    && echo 'auth sufficient pam_rootok.so' >> /etc/pam.d/su
+    # Enable contrib and non-free
+    && sed -ri 's/^(Components: main)$/\1 contrib non-free/' /etc/apt/sources.list.d/debian.sources \
+    && grep -q '^Components: main contrib non-free$' /etc/apt/sources.list.d/debian.sources \
+    && apt-update \
+    # System update
+    && /usr/local/bin/apt-upgrade \
+    # Base stuff
+    && apt-install \
+        apt-transport-https \
+        ca-certificates \
+        locales \
+        gnupg
 
 RUN set -x \
-    # Install services
+    # Install packages
     && chmod +x /opt/docker/bin/* \
-    && apk-install \
+    && apt-install \
         supervisor \
         wget \
         curl \
         vim \
-        sed \
+        net-tools \
         tzdata \
-        tzdata-utils \
-        busybox-suid \
     && chmod +s /sbin/gosu \
-    && docker-run-bootstrap
+    && docker-run-bootstrap \
+    && docker-image-cleanup
 
 RUN set -x \
-    && apk-install shadow \
-    && apk-install \
+    # Install services
+    && apt-install \
         # Install common tools
         zip \
         unzip \
         bzip2 \
-        drill \
-        ldns \
+        moreutils \
+        dnsutils \
         openssh-client \
         rsync \
-        patch \
         git \
-    && docker-run-bootstrap
+        patch \
+    && /usr/local/bin/generate-locales \
+    && docker-run-bootstrap \
+    && docker-image-cleanup
 
 RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
     --mount=type=secret,id=COMPOSER_AUTH,env=COMPOSER_AUTH \
     set -x \
     # Install php environment
-    && apk-install \
+    && apt-install \
+        # Install tools
         file \
         imagemagick \
         graphicsmagick \
         ghostscript \
         jpegoptim \
+        libjpeg-turbo-progs \
         pngcrush \
         optipng \
+        apngopt \
+        pngnq \
         pngquant \
-        vips \
-        rabbitmq-c \
-        c-client \
         # Libraries
-        libavif \
-        libldap \
-        icu-libs \
-        libintl \
-        libpq \
-        libxslt \
-        libgomp \
-        libzip \
-        libmemcached \
-        yaml \
-        # Build dependencies
-        linux-headers \
-        autoconf \
-        g++ \
-        make \
-        libtool \
-        pcre-dev \
-        gettext-dev \
+        libavif15 \
+        libvips42 \
+        librabbitmq4 \
+        libldap-2.5-0 \
+        libxslt1.1 \
+        libldap-common \
+        zlib1g \
+        libpq5 \
+        libpng16-16 \
+        libmcrypt4 \
+        libzip4 \
+        libyaml-0-2 \
+        libc-client2007e \
+        # Dev and headers
         libavif-dev \
-        freetype-dev \
-        gmp-dev \
-        libjpeg-turbo-dev \
-        libpng-dev \
-        vips-dev \
-        krb5-dev \
-        openssl-dev \
-        imap-dev \
-        imagemagick-dev \
-        rabbitmq-c-dev \
-        openldap-dev \
-        icu-dev \
-        postgresql-dev \
+        libjpeg62-turbo-dev \
+        libwebp-dev \
+        libfreetype6-dev \
+        libbz2-dev \
+        libicu-dev \
+        libldap2-dev \
+        libldb-dev \
+        libmcrypt-dev \
         libxml2-dev \
-        samba-dev \
-        pcre-dev \
-        libxslt-dev \
-        libzip-dev \
+        libxslt1-dev \
+        zlib1g-dev \
         libmemcached-dev \
-        yaml-dev \
+        libpng-dev \
+        libpq-dev \
+        libzip-dev \
+        libc-client-dev \
+        libc-client2007e-dev \
+        libkrb5-dev \
+        libvips-dev \
+        librabbitmq-dev \
+        libmagick++-dev \
+        libgmp-dev \
+        libyaml-dev \
+        libssl-dev \
     # Install guetzli
     && wget https://github.com/google/guetzli/archive/master.zip \
     && unzip master.zip \
     && make -C guetzli-master \
     && cp guetzli-master/bin/Release/guetzli /usr/local/bin/ \
     && rm -rf master.zip guetzli-master \
-    # https://github.com/docker-library/php/issues/240
-    && apk add gnu-libiconv --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --allow-untrusted \
     # Install new version of ICU
     && curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-73-1/icu4c-73_1-src.tgz \
     && tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make -j"$(nproc)" && make install && cd / && rm -rf /tmp/icu* \
     # Install extensions
     && PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-avif --with-jpeg --with-freetype --with-webp \
+    && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
+    && cd /usr/src/php/ext/amqp && git submodule update --init \
     && git clone --branch master --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     # imagick leaves its version to the packaging of PECL; take it from package.xml, so that phpversion('imagick') reports it
     && sed -i "s/@PACKAGE_VERSION@/$(sed -n 's:.*<release>\([0-9][0-9.]*\)</release>.*:\1:p' /usr/src/php/ext/imagick/package.xml | head -n 1)/" /usr/src/php/ext/imagick/php_imagick.h \
-    && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
-    && cd /usr/src/php/ext/amqp && git submodule update --init \
     && docker-php-ext-configure ldap \
     && docker-php-ext-configure ftp --with-openssl-dir \
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install -j"$(nproc)" \
         bcmath \
+        amqp \
+        imagick \
+        ffi \
         bz2 \
         calendar \
         exif \
         ftp \
         gmp \
-        ffi \
-        imagick \
-        amqp \
         intl \
         gettext \
         ldap \
@@ -219,48 +220,40 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     && phpize && ./configure --with-xmlrpc \
     && make -j"$(nproc)" && make install \
     && cd / && rm -rf /tmp/xmlrpc \
-    && docker-php-ext-enable \
-        apcu \
-        excimer \
-        opentelemetry \
-        protobuf \
-        vips \
-        yaml \
-        redis \
-        xmlrpc \
-        imagick \
-        mongodb \
-        memcached \
+    && echo extension=apcu.so > /usr/local/etc/php/conf.d/apcu.ini \
+    && echo extension=excimer.so > /usr/local/etc/php/conf.d/excimer.ini \
+    && echo extension=opentelemetry.so > /usr/local/etc/php/conf.d/opentelemetry.ini \
+    && echo extension=protobuf.so > /usr/local/etc/php/conf.d/protobuf.ini \
+    && echo extension=redis.so > /usr/local/etc/php/conf.d/redis.ini \
+    && echo extension=mongodb.so > /usr/local/etc/php/conf.d/mongodb.ini \
+    && echo extension=memcached.so > /usr/local/etc/php/conf.d/memcached.ini \
+    && echo extension=vips.so > /usr/local/etc/php/conf.d/vips.ini \
+    && echo extension=yaml.so > /usr/local/etc/php/conf.d/yaml.ini \
+    && echo extension=xmlrpc.so > /usr/local/etc/php/conf.d/xmlrpc.ini \
     # Uninstall dev and header packages
-    && apk del -f --purge \
-        autoconf \
-        linux-headers \
-        g++ \
-        make \
-        libtool \
-        pcre-dev \
-        gettext-dev \
+    && apt-get purge -y -f --force-yes \
+        libc-client-dev \
+        libc-client2007e-dev \
+        libkrb5-dev \
+        libbz2-dev \
         libavif-dev \
-        freetype-dev \
-        gmp-dev \
-        libjpeg-turbo-dev \
-        libpng-dev \
-        vips-dev \
-        krb5-dev \
-        openssl-dev \
-        imap-dev \
-        rabbitmq-c-dev \
-        imagemagick-dev \
-        openldap-dev \
-        icu-dev \
-        postgresql-dev \
+        libicu-dev \
+        libldap2-dev \
+        libldb-dev \
+        libmcrypt-dev \
         libxml2-dev \
-        samba-dev \
-        pcre-dev \
-        libxslt-dev \
+        libxslt1-dev \
+        zlib1g-dev \
+        libpng-dev \
+        libwebp-dev \
+        libpq-dev \
         libzip-dev \
-        libmemcached-dev \
-        yaml-dev \
+        libvips-dev \
+        librabbitmq-dev \
+        libmagick++-dev \
+        libgmp-dev \
+        libyaml-dev \
+        libssl-dev \
     && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer2 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer1 --1 \
@@ -268,7 +261,8 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     # Enable php services
     && docker-service enable syslog \
     && docker-service enable cron \
-    && docker-run-bootstrap
+    && docker-run-bootstrap \
+    && docker-image-cleanup
 
 WORKDIR /
 EXPOSE 9000

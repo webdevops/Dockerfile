@@ -1,6 +1,6 @@
 # Starts the build as soon as the official PHP images have a new PHP release, instead of waiting for the nightly build.
-# Every hour it compares PHP_VERSION of each official base image (the FROM line of docker/php-official/<tag>/Dockerfile)
-# with PHP_VERSION of webdevops/php-official:<tag> and webdevops/php-nginx:<tag>. If one of them is older or does not
+# Every hour it compares PHP_VERSION of each official base image (the FROM line of docker/php/<tag>/Dockerfile)
+# with PHP_VERSION of webdevops/php:<tag> and webdevops/php-nginx:<tag>. If one of them is older or does not
 # exist yet, it starts build.yaml on master, unless a build of master is already running, or a build that this
 # workflow started in the last hours failed, or it already started several. An image that cannot be read is skipped.
 # A rebuild of the official images without a new PHP release (same PHP_VERSION) does not start a build; the nightly
@@ -63,7 +63,7 @@ jobs:
           }
 
           outdated=""
-          for dockerfile in docker/php-official/*/Dockerfile; do
+          for dockerfile in docker/php/*/Dockerfile; do
             tag=$(basename "$(dirname "$dockerfile")")
             upstream_image=$(sed -nE 's/^FROM[[:space:]]+([^[:space:]]+).*/\1/p' "$dockerfile" | head -n1)
             if ! upstream=$(php_version "$upstream_image"); then
@@ -73,7 +73,7 @@ jobs:
               echo "::warning::$upstream_image has no PHP_VERSION, skipping $tag"
               continue
             fi
-            for image in "webdevops/php-official:$tag" "webdevops/php-nginx:$tag"; do
+            for image in "webdevops/php:$tag" "webdevops/php-nginx:$tag"; do
               if ! ours=$(php_version "$image"); then
                 if grep -qi 'manifest unknown' "$skopeo_error"; then
                   # The tag does not exist yet, for example a new PHP version: build it

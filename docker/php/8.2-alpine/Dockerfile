@@ -1,10 +1,10 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/php-official:8.5-alpine
+# Dockerfile for webdevops/php:8.2-alpine
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
 
-FROM php:8.5-fpm-alpine
+FROM php:8.2-fpm-alpine
 
 LABEL maintainer=info@webdevops.io \
       vendor=WebDevOps.io \
@@ -155,7 +155,8 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     && git clone --branch latest --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
     && cd /usr/src/php/ext/amqp && git submodule update --init \
     && docker-php-ext-configure ldap \
-    && docker-php-ext-configure ftp --with-ftp-ssl \
+    && docker-php-ext-configure ftp --with-openssl-dir \
+    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install -j"$(nproc)" \
         bcmath \
         bz2 \
@@ -170,6 +171,7 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         gettext \
         ldap \
         mysqli \
+        imap \
         pcntl \
         pdo_mysql \
         pdo_pgsql \
@@ -183,6 +185,7 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         xsl \
         zip \
         gd \
+        opcache \
     && cd / \
     && PIE_WORKING_DIRECTORY=/tmp/pie pie install --no-interaction --no-cache \
         --skip-enable-extension --make-parallel-jobs="$(nproc)" \

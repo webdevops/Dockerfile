@@ -85,21 +85,11 @@ built:
       - { label: 'Customization: commands, scripts, services and hooks', path: 'docs/customization.md' }
       - { label: 'Known issues', path: 'docs/known-issues.md' }
   php-official:
-    short: 'The same image as webdevops/php, built from the same Dockerfiles'
-    intro: 'Built from the same Dockerfiles as [`webdevops/php`](https://hub.docker.com/r/webdevops/php), with the same tags: PHP-FPM on top of the official PHP image.'
-    example:
-      lang: 'yaml'
-      code: |
-        services:
-          php:
-            image: {image}
-            volumes:
-              - ./:/app
+    short: 'Deprecated name of webdevops/php without new tags; use webdevops/php instead'
+    intro: '**Deprecated.** The same image as [`webdevops/php`](https://hub.docker.com/r/webdevops/php) under a second name, published only for the tags `8.2` to `8.5` and `8.2-alpine` to `8.5-alpine`; newer PHP versions are only published as `webdevops/php`. Switch to `webdevops/php` now: change the image name and keep the tag.'
     docs:
+      - { label: 'Switching to webdevops/php', path: 'docs/discontinued-images.md#webdevopsphp-official' }
       - { label: 'webdevops/php and webdevops/php-dev', path: 'docs/images/php.md' }
-      - { label: 'Environment variables', path: 'docs/environment-variables.md' }
-      - { label: 'Customization: commands, scripts, services and hooks', path: 'docs/customization.md' }
-      - { label: 'Known issues', path: 'docs/known-issues.md' }
   php-dev:
     short: 'webdevops/php for local development: Xdebug, Blackfire extension, Postfix and SSH'
     intro: '[`webdevops/php`](https://hub.docker.com/r/webdevops/php) for local development. Xdebug is loaded by default; `PHP_DEBUGGER` switches to Blackfire or turns both off, but the Blackfire agent is missing, see [Known issues](docs/known-issues.md#blackfire-agent). Postfix and an SSH server are started, and `root` and `application` have the password `dev`.'

@@ -1,8 +1,8 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/php-official:8.5
+# Dockerfile for webdevops/php:8.4
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
-FROM php:8.5-fpm-trixie
+FROM php:8.4-fpm-bookworm
 
 COPY --from=webdevops/toolbox /baselayout/sbin/* /sbin/

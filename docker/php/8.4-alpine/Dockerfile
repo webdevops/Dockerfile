@@ -1,5 +1,5 @@
 #+++++++++++++++++++++++++++++++++++++++
-# Dockerfile for webdevops/php-official:8.4-alpine
+# Dockerfile for webdevops/php:8.4-alpine
 #    -- automatically generated  --
 #+++++++++++++++++++++++++++++++++++++++
 
