@@ -67,18 +67,28 @@ final readonly class PublishedTags
         ksort($grouped, SORT_STRING);
         $byRepository = [];
         foreach ($grouped as $repository => $bases) {
-            $rows = [];
-            foreach ($bases as $base => $tags) {
-                usort($tags, static fn (string $a, string $b): int => ($a === 'latest') <=> ($b === 'latest') ?: strnatcmp($b, $a));
-                $rows[] = ['base' => (string)$base, 'tags' => $tags];
-            }
-
-            usort($rows, static fn (array $a, array $b): int => self::isAlpine($a['base']) <=> self::isAlpine($b['base'])
-                ?: strnatcmp($b['base'], $a['base']));
-            $byRepository[(string)$repository] = $rows;
+            $byRepository[(string)$repository] = $this->rows($bases);
         }
 
         return $byRepository;
+    }
+
+    /**
+     * @param array<string, list<string>> $bases tags per base name
+     * @return list<array{base: string, tags: list<string>}>
+     */
+    private function rows(array $bases): array
+    {
+        $rows = [];
+        foreach ($bases as $base => $tags) {
+            usort($tags, static fn (string $a, string $b): int => ($a === 'latest') <=> ($b === 'latest') ?: strnatcmp($b, $a));
+            $rows[] = ['base' => (string)$base, 'tags' => $tags];
+        }
+
+        usort($rows, static fn (array $a, array $b): int => self::isAlpine($a['base']) <=> self::isAlpine($b['base'])
+            ?: strnatcmp($b['base'], $a['base']));
+
+        return $rows;
     }
 
     /**
@@ -137,28 +147,28 @@ final readonly class PublishedTags
         // a digest does not change the system
         $from = explode('@', $from, 2)[0];
         [$image, $tag] = str_contains($from, ':') ? explode(':', $from, 2) : [$from, 'latest'];
-        switch ($image) {
-            case 'php':
-                $position = strrpos($tag, '-');
-                $release = $position === false ? $tag : substr($tag, $position + 1);
-                if (preg_match('/^alpine(\d+(?:\.\d+)*)?$/', $release, $matches) === 1) {
-                    return isset($matches[1]) ? 'Alpine ' . $matches[1] : 'Alpine';
-                }
 
-                return $this->releases[$release] ?? null;
-            case 'alpine':
-                if ($tag === 'latest') {
-                    return 'Alpine';
-                }
+        return match ($image) {
+            'php' => $this->phpRelease($tag),
+            'alpine' => $tag === 'latest' ? 'Alpine' : (preg_match('/^\d+(?:\.\d+)*$/', $tag) === 1 ? 'Alpine ' . $tag : null),
+            'ubuntu' => preg_match('/^\d+\.\d+$/', $tag) === 1 ? 'Ubuntu ' . $tag : null,
+            'debian' => $this->releases[explode('-', $tag, 2)[0]] ?? null,
+            default => null,
+        };
+    }
 
-                return preg_match('/^\d+(?:\.\d+)*$/', $tag) === 1 ? 'Alpine ' . $tag : null;
-            case 'ubuntu':
-                return preg_match('/^\d+\.\d+$/', $tag) === 1 ? 'Ubuntu ' . $tag : null;
-            case 'debian':
-                return $this->releases[explode('-', $tag, 2)[0]] ?? null;
-            default:
-                return null;
+    /**
+     * The system of an official PHP image by the release at the end of its tag, e.g. bookworm in 8.5-fpm-bookworm.
+     */
+    private function phpRelease(string $tag): ?string
+    {
+        $position = strrpos($tag, '-');
+        $release = $position === false ? $tag : substr($tag, $position + 1);
+        if (preg_match('/^alpine(\d+(?:\.\d+)*)?$/', $release, $matches) === 1) {
+            return isset($matches[1]) ? 'Alpine ' . $matches[1] : 'Alpine';
         }
+
+        return $this->releases[$release] ?? null;
     }
 
     private static function isAlpine(string $base): bool

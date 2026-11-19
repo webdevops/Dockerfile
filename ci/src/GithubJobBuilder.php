@@ -31,6 +31,12 @@ class GithubJobBuilder
     public const string DOCKER_HUB_JOB = 'dockerhub-description';
 
     /**
+     * v5.0.0, pinned to its commit: a tag of an action from outside GitHub and Docker can be moved to other code, and
+     * this one gets the Docker Hub token. Dependabot does not update it, because build.yaml is generated.
+     */
+    private const string DOCKER_HUB_DESCRIPTION_ACTION = 'peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa';
+
+    /**
      * PIE resolves and downloads the PHP extensions through the GitHub API. Without a token, its requests count against
      * the limit for anonymous requests of the runner's IP address, and PIE fails with "Could not authenticate against
      * github.com". The build steps pass the token of the run as the secret COMPOSER_AUTH, which the RUN instructions
@@ -593,14 +599,15 @@ class GithubJobBuilder
             ],
         ];
         foreach ($repositories as $repository) {
+            $image = 'webdevops/' . $repository->name;
             $steps[] = [
-                'name' => 'webdevops/' . $repository->name,
+                'name' => $image,
                 'if' => '${{ !cancelled() }}',
-                'uses' => 'peter-evans/dockerhub-description@v5',
+                'uses' => self::DOCKER_HUB_DESCRIPTION_ACTION,
                 'with' => [
                     'username' => '${{ secrets.DOCKERHUB_USERNAME }}',
                     'password' => '${{ secrets.DOCKERHUB_TOKEN }}',
-                    'repository' => 'webdevops/' . $repository->name,
+                    'repository' => $image,
                     'readme-filepath' => './' . $repository->pagePath(),
                     'short-description' => $repository->shortDescription,
                 ],

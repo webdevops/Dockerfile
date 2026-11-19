@@ -66,17 +66,17 @@ final readonly class Config
         $settings = is_array($settings) ? $settings : [];
 
         $releases = [];
-        foreach ($this->map($settings, 'releases', 'conf/dockerhub.yml') as $codename => $name) {
+        foreach ($this->map($settings, 'releases', self::FILE) as $codename => $name) {
             $releases[(string)$codename] = $this->string($name, sprintf('"releases: %s" in conf/dockerhub.yml has to be a name, e.g. \'Debian 12\'.', $codename));
         }
 
         $built = [];
-        foreach ($this->map($settings, 'built', 'conf/dockerhub.yml') as $name => $entry) {
+        foreach ($this->map($settings, 'built', self::FILE) as $name => $entry) {
             $built[(string)$name] = $this->builtEntry((string)$name, $entry);
         }
 
         $discontinued = [];
-        foreach ($this->map($settings, 'discontinued', 'conf/dockerhub.yml') as $name => $entry) {
+        foreach ($this->map($settings, 'discontinued', self::FILE) as $name => $entry) {
             $discontinued[(string)$name] = $this->discontinuedEntry((string)$name, $entry);
         }
 
@@ -157,7 +157,7 @@ final readonly class Config
     {
         $entry = is_array($entry) ? $entry : [];
         $docs = [];
-        foreach ($this->map($entry, 'docs', 'webdevops/' . $name . ' in conf/dockerhub.yml') as $link) {
+        foreach ($this->map($entry, 'docs', 'webdevops/' . $name . ' in ' . self::FILE) as $link) {
             $link = is_array($link) ? $link : [];
             $docs[] = [
                 'label' => $this->required($link, 'label', $name, 'docs: label'),

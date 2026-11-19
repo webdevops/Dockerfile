@@ -323,7 +323,7 @@ final class GithubJobBuilderTest extends TestCase
         $upload = static fn (string $name, string $short): array => [
             'name' => 'webdevops/' . $name,
             'if' => '${{ !cancelled() }}',
-            'uses' => 'peter-evans/dockerhub-description@v5',
+            'uses' => 'peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa',
             'with' => [
                 'username' => '${{ secrets.DOCKERHUB_USERNAME }}',
                 'password' => '${{ secrets.DOCKERHUB_TOKEN }}',

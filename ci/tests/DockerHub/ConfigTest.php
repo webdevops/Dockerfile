@@ -72,7 +72,7 @@ final class ConfigTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The short description of webdevops/base has 101 bytes; Docker Hub takes at most 100.');
-        new Config($this->repository->path);
+        new Config($this->repository->path)->repositories();
     }
 
     public function testGeneratedShortDescriptionIsCheckedToo(): void
@@ -81,7 +81,7 @@ final class ConfigTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The short description of webdevops/nginx has 101 bytes; Docker Hub takes at most 100.');
-        new Config($this->repository->path);
+        new Config($this->repository->path)->repositories();
     }
 
     public function testRepositoryInBothListsIsAnError(): void
@@ -90,7 +90,7 @@ final class ConfigTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('webdevops/base is listed under both "built" and "discontinued" in conf/dockerhub.yml.');
-        new Config($this->repository->path);
+        new Config($this->repository->path)->repositories();
     }
 
     /**
@@ -111,7 +111,7 @@ final class ConfigTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("lastBuilt of webdevops/hhvm in conf/dockerhub.yml has to be a month in quotes, e.g. '2026-11'.");
-        new Config($this->repository->path);
+        new Config($this->repository->path)->repositories();
     }
 
     public function testMissingKeyIsAnError(): void
@@ -120,7 +120,7 @@ final class ConfigTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('webdevops/base in conf/dockerhub.yml needs "intro".');
-        new Config($this->repository->path);
+        new Config($this->repository->path)->repositories();
     }
 
     private function replace(string $search, string $replace): void

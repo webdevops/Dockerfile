@@ -65,20 +65,7 @@ final readonly class PageGenerator
         $config = new Config($this->rootPath);
         $tags = new PublishedTags(new FileReader($this->rootPath), $config->releases())->byRepository();
         $built = $config->built();
-        foreach ($tags as $name => $rows) {
-            if (!isset($built[$name])) {
-                throw new RuntimeException(sprintf('webdevops/%s is built but has no entry under "built" in conf/dockerhub.yml.', $name));
-            }
-        }
-
-        foreach ($built as $name => $entry) {
-            if (!isset($tags[$name])) {
-                throw new RuntimeException(sprintf(
-                    'webdevops/%s has an entry under "built" in conf/dockerhub.yml but is not built any more. Move it to "discontinued".',
-                    $name,
-                ));
-            }
-        }
+        $this->checkEntries(array_keys($tags), array_keys($built));
 
         $twig = new Environment(new FilesystemLoader(self::TEMPLATES), ['autoescape' => false, 'strict_variables' => true]);
         $links = new Links($this->rootPath);
@@ -99,6 +86,37 @@ final readonly class PageGenerator
             $pages[$repository->pagePath()] = $page;
         }
 
+        return ['written' => array_keys($pages), 'removed' => $this->write($pages)];
+    }
+
+    /**
+     * Every built image has an entry under "built", and every entry there an image that is built.
+     *
+     * @param list<string> $builtImages repositories with tags under docker/
+     * @param list<string> $entries repositories under "built" in conf/dockerhub.yml
+     */
+    private function checkEntries(array $builtImages, array $entries): void
+    {
+        foreach (array_diff($builtImages, $entries) as $name) {
+            throw new RuntimeException(sprintf('webdevops/%s is built but has no entry under "built" in conf/dockerhub.yml.', $name));
+        }
+
+        foreach (array_diff($entries, $builtImages) as $name) {
+            throw new RuntimeException(sprintf(
+                'webdevops/%s has an entry under "built" in conf/dockerhub.yml but is not built any more. Move it to "discontinued".',
+                $name,
+            ));
+        }
+    }
+
+    /**
+     * Writes the pages and removes the other pages in the directory.
+     *
+     * @param array<string, string> $pages content per path relative to the repository root
+     * @return list<string> the removed pages
+     */
+    private function write(array $pages): array
+    {
         $directory = $this->rootPath . '/' . self::DIRECTORY;
         if (!is_dir($directory) && !mkdir($directory, 0777, true)) {
             throw new RuntimeException(sprintf('Cannot create %s.', self::DIRECTORY));
@@ -116,7 +134,7 @@ final readonly class PageGenerator
             unlink($this->rootPath . '/' . $path);
         }
 
-        return ['written' => array_keys($pages), 'removed' => $removed];
+        return $removed;
     }
 
     /**
