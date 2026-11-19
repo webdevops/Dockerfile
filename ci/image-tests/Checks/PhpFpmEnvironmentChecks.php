@@ -39,14 +39,14 @@ trait PhpFpmEnvironmentChecks
 
     /**
      * FPM_REQUEST_TERMINATE_TIMEOUT=4: PHP-FPM ends a request that sleeps for 8 s after 4 s, without a response.
-     * PHP_MAX_EXECUTION_TIME does not stop it, because time in sleep() does not count.
+     * The request lifts PHP_MAX_EXECUTION_TIME, which counts the time in sleep() in thread-safe PHP.
      */
     public function testPhpFpmRequestTerminateTimeoutFromTheEnvironment(): void
     {
         $container = $this->environmentContainer();
         $this->phpFpmBody($container, 'test=sha1');
         $start = microtime(true);
-        $result = $this->phpFpmRequest($container, 'test=sleep&seconds=8');
+        $result = $this->phpFpmRequest($container, 'test=sleep&seconds=8&time_limit=0');
         $seconds = microtime(true) - $start;
         self::assertSame(2, $result->exitCode, 'PHP-FPM should close the connection before the request ends: ' . $result->describe());
         self::assertStringNotContainsString('slept', $result->stdout);
@@ -149,7 +149,7 @@ trait PhpFpmEnvironmentChecks
         $this->assertCommandSucceeds(sprintf(
             'for request in $(seq %d); do (%s < /dev/null > /dev/null 2>&1 &); done',
             $requests,
-            self::phpFpmCommand('test=sleep&seconds=' . $seconds),
+            self::phpFpmCommand('test=sleep&time_limit=0&seconds=' . $seconds),
         ), $container);
         $start = microtime(true);
         $workers = 0;

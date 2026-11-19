@@ -5,6 +5,14 @@ if [ $IMAGE_FAMILY == "Alpine" ]; then
     return
 fi
 
+# ionCube is only installed up to PHP 8.5, also if a later loader supports newer versions.
+# (The official PHP 8.6 images are thread safe and built without Zend signals, which the
+# ionCube loader for thread-safe PHP needs.)
+if php -n -r 'exit(PHP_VERSION_ID >= 80600 ? 0 : 1);'; then
+    echo "Skipping ionCube installation: ionCube is only installed up to PHP 8.5"
+    return
+fi
+
 echo "Installing ionCube loader"
 
 case "$(uname -m)" in

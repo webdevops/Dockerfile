@@ -13,6 +13,7 @@ use function in_array;
 use function is_string;
 use function preg_match;
 use function sprintf;
+use function version_compare;
 
 /**
  * The image the tests run against, with the settings that ci/console test:image passes in environment variables.
@@ -94,6 +95,32 @@ final readonly class ImageUnderTest
     public function hasImap(): bool
     {
         return (bool)preg_match('/^8\.[123]$/', $this->phpMinorVersion());
+    }
+
+    /**
+     * The images have the vips and xmlrpc extensions up to PHP 8.5; both are abandoned upstream and do not build
+     * against PHP 8.6.
+     */
+    public function hasVipsAndXmlrpc(): bool
+    {
+        return (bool)preg_match('/^8\.[2-5]$/', $this->phpMinorVersion());
+    }
+
+    /**
+     * The official PHP images, and so the images built on them, are thread safe (ZTS) from PHP 8.6 on.
+     */
+    public function isThreadSafe(): bool
+    {
+        return version_compare($this->phpMinorVersion(), '8.6', '>=');
+    }
+
+    /**
+     * The Debian images have the ionCube Loader up to PHP 8.5. The Alpine images have none, and the images do not
+     * install it from PHP 8.6 on, also once ionCube supports these versions.
+     */
+    public function hasIonCube(): bool
+    {
+        return !$this->isAlpine() && version_compare($this->phpMinorVersion(), '8.6', '<');
     }
 
     private static function environment(string $setting): string
