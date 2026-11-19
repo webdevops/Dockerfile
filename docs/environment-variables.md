@@ -142,7 +142,7 @@ Three timeouts end a long request:
 | --- | --- | --- | --- |
 | `WEB_PHP_TIMEOUT` | `600` | Seconds the web server waits for PHP-FPM | Nginx and Apache answer `504 Gateway Time-out`. |
 | `FPM_REQUEST_TERMINATE_TIMEOUT` | `0` (no limit) | Seconds PHP-FPM lets a request run (`request_terminate_timeout`) | PHP-FPM kills the process. Nginx answers `502 Bad Gateway`, Apache `503 Service Unavailable`. |
-| `PHP_MAX_EXECUTION_TIME` | `300` | Seconds a PHP script may run (`max_execution_time`) | PHP stops the script with a fatal error, status `500`. Only the time PHP itself runs counts: time spent waiting, for example in `sleep()`, does not. In the `8.6` tags, waiting counts as well, see [PHP 8.6](images/php.md#php-86-preview). The PHP CLI has no limit. |
+| `PHP_MAX_EXECUTION_TIME` | `300` | Seconds a PHP script may run (`max_execution_time`) | PHP stops the script with a fatal error, status `500`. Only the time PHP itself runs counts: time spent waiting, for example in `sleep()`, does not. In the `8.6` tags, waiting counts as well, see [PHP 8.6](images/php.md#php-86). The PHP CLI has no limit. |
 
 For long requests, raise `PHP_MAX_EXECUTION_TIME` if PHP itself runs longer than five minutes (in the `8.6` tags: if the request takes longer than five minutes), and `WEB_PHP_TIMEOUT` if the whole request takes longer than ten:
 
