@@ -5,7 +5,7 @@ How to use the images is described in the [README](README.md) and the [documenta
 
 ## File generation
 
-The files inside the `docker` directory, the GitHub Actions workflow (`.github/workflows/build.yaml`) and the banner at the top of the [README](README.md) are generated with PHP:
+The files inside the `docker` directory, the GitHub Actions workflow (`.github/workflows/build.yaml`), the banner at the top of the [README](README.md) and the pages of the images on Docker Hub (`docs/dockerhub/`) are generated with PHP:
 
 ```
 make generate
@@ -21,6 +21,7 @@ The container runs as your user, so the files it writes belong to you.
 | `ci/console generate:provision` | `docker/<image>/<tag>/conf/` from the `provisioning` directory, as configured in `conf/provision.yml` |
 | `ci/console generate:github-ci` | `.github/workflows/build.yaml`, a build and a publish job for every Dockerfile |
 | `ci/console generate:readme-banner` | `docs/assets/readme-banner-*.svg` |
+| `ci/console generate:dockerhub` | `docs/dockerhub/<repository>.md`, the Docker Hub page of every repository in `conf/dockerhub.yml`, with the tags of the Dockerfiles |
 
 **The generated files are never modified manually.**
 Edit the `Dockerfile.twig` templates, the shared templates in `template`, the files in `provisioning` or the settings in `conf` instead.
@@ -31,6 +32,7 @@ The commands that the images have in `/usr/local/bin`, such as `apt-install`, `a
 It checks all of `conf/provision.yml` before it changes a file and stops if a source directory or a tag does not exist, or if an image has another setting than `configuration`.
 `generate:dockerfile` stops if a directory `docker/<image>/<tag>` has files but no `Dockerfile.twig`; it first removes the `.DS_Store` files of the macOS Finder under `docker`.
 To stop building a tag, remove its directory and those of the tags that build on it; `generate:github-ci` names any it finds. `generate:dockerfile` adds and removes the links in `docker/php` along with the `php-official` tags.
+`generate:dockerhub` checks everything before it writes a page and stops if an image under `docker` has no entry under `built` in `conf/dockerhub.yml`, if an entry under `built` has no Dockerfile any more, if a link points to a file or heading that does not exist, or if a page or a short description is longer than Docker Hub takes (25,000 and 100 bytes). To stop building an image, also move its entry from `built` to `discontinued`; its page then warns that it gets no updates. It removes the pages of repositories that are no longer in `conf/dockerhub.yml`.
 
 ## Building in CI
 
@@ -54,6 +56,9 @@ It does not update the actions in `.github/workflows/build.yaml`, because that f
 GitHub Actions builds every image independently and runs the image tests and structure tests
 defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdevops/`, but only
 internally; pull the images from Docker Hub.
+
+The job "Update the Docker Hub pages" uploads `docs/dockerhub/<repository>.md` and the short description of each repository to Docker Hub when `build.yaml` runs on `master` after a push or is started by hand or by `php-upstream.yaml`. It does not run for pull requests, in the nightly run or in forks, and no other job waits for it.
+It logs in with the secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`. Docker Hub changes a description only for a user with admin rights on the repository, with a password or a personal access token with the scope Read/Write/Delete.
 
 Besides the nightly run, `.github/workflows/php-upstream.yaml` starts `build.yaml` on `master` when the official PHP images get a new PHP release.
 Every hour it reads `PHP_VERSION` of the image in the `FROM` line of each `docker/php-official/<tag>/Dockerfile` and of `webdevops/php-official:<tag>` and `webdevops/php-nginx:<tag>`.

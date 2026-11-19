@@ -1,0 +1,281 @@
+---
+# Pages of the webdevops images on Docker Hub. ci/console generate:dockerhub
+# writes them to docs/dockerhub/, the job dockerhub-description in
+# .github/workflows/build.yaml uploads them after every push to master.
+# Run `make generate` after a change.
+#
+# Links: a path in this repository, e.g. docs/images/php.md#mail, becomes a
+# link to the file on GitHub; the generator fails if the file or the heading
+# does not exist. Every statement has to be in the documentation.
+
+# Name of a Debian release in the "Based on" column, per codename in the FROM
+# line of an image, e.g. php:8.5-fpm-bookworm
+releases:
+  bookworm: 'Debian 12'
+  trixie: 'Debian 13'
+
+# Images that are built. Every image under docker/ needs an entry; an image
+# that is no longer built moves to "discontinued".
+#   short:       Docker Hub search result, at most 100 bytes
+#   intro:       first paragraph of the page
+#   development: true adds "Meant for local development. Do not use it in production."
+#   note:        paragraph after the intro
+#   example:     Quick start; {image} is the image with its newest tag
+#   docs:        links under "Documentation"
+built:
+  bootstrap:
+    short: 'Ubuntu 22.04 with the webdevops helper scripts, a base for your own images'
+    intro: 'The operating system plus the webdevops helper scripts, for example `docker-run-bootstrap`. A base for your own images and for [`webdevops/base`](https://hub.docker.com/r/webdevops/base).'
+    note: 'The `alpine` tag is no longer built, see [Replacing discontinued images](docs/discontinued-images.md#alpine-tags-of-bootstrap-base-and-base-app).'
+    example:
+      lang: 'dockerfile'
+      code: |
+        FROM {image}
+        COPY docker/bootstrap.d/ /bootstrap.d/
+        RUN docker-run-bootstrap
+    docs:
+      - { label: 'webdevops/bootstrap, webdevops/base and webdevops/base-app', path: 'docs/images/base.md' }
+      - { label: 'Scripts at image build', path: 'docs/customization.md#scripts-at-image-build' }
+      - { label: 'Known issues', path: 'docs/known-issues.md' }
+  base:
+    short: 'Ubuntu 22.04 with entrypoint, supervisord, service scripts and hooks, a base for your own images'
+    intro: '[`webdevops/bootstrap`](https://hub.docker.com/r/webdevops/bootstrap) plus the entrypoint, `supervisord`, service scripts and hooks. A base for your own images.'
+    note: 'The `alpine` tag is no longer built, see [Replacing discontinued images](docs/discontinued-images.md#alpine-tags-of-bootstrap-base-and-base-app).'
+    example:
+      lang: 'dockerfile'
+      code: |
+        FROM {image}
+        COPY docker/bootstrap.d/ /bootstrap.d/
+        RUN docker-run-bootstrap
+    docs:
+      - { label: 'webdevops/bootstrap, webdevops/base and webdevops/base-app', path: 'docs/images/base.md' }
+      - { label: 'Customization: commands, scripts, services and hooks', path: 'docs/customization.md' }
+      - { label: 'Environment variables', path: 'docs/environment-variables.md' }
+      - { label: 'Known issues', path: 'docs/known-issues.md' }
+  base-app:
+    short: 'webdevops/base with the user application, /app and tools such as git, rsync and the SSH client'
+    intro: '[`webdevops/base`](https://hub.docker.com/r/webdevops/base) plus the user and group `application` (UID/GID `1000`), `/app` and common tools: `zip`, `unzip`, `bzip2`, `git`, `patch`, `rsync`, the SSH client (`ssh`), a DNS lookup tool (`dig`) and `moreutils`. A base for your own images.'
+    note: 'The `alpine` tag is no longer built, see [Replacing discontinued images](docs/discontinued-images.md#alpine-tags-of-bootstrap-base-and-base-app).'
+    example:
+      lang: 'dockerfile'
+      code: |
+        FROM {image}
+        COPY docker/bootstrap.d/ /bootstrap.d/
+        RUN docker-run-bootstrap
+    docs:
+      - { label: 'webdevops/bootstrap, webdevops/base and webdevops/base-app', path: 'docs/images/base.md' }
+      - { label: 'Customization: commands, scripts, services and hooks', path: 'docs/customization.md' }
+      - { label: 'Environment variables', path: 'docs/environment-variables.md' }
+      - { label: 'Known issues', path: 'docs/known-issues.md' }
+  php:
+    short: 'PHP-FPM on the official PHP image, configured with environment variables; Debian and Alpine'
+    intro: 'PHP-FPM on top of the official PHP image, with the webdevops entrypoint, `supervisord`, cron, syslog-ng and the `application` user. PHP-FPM listens on port `9000`. For a web server in the same container, use [`webdevops/php-nginx`](https://hub.docker.com/r/webdevops/php-nginx) or [`webdevops/php-apache`](https://hub.docker.com/r/webdevops/php-apache).'
+    example:
+      lang: 'yaml'
+      code: |
+        services:
+          php:
+            image: {image}
+            volumes:
+              - ./:/app
+    docs:
+      - { label: 'webdevops/php and webdevops/php-dev', path: 'docs/images/php.md' }
+      - { label: 'Environment variables', path: 'docs/environment-variables.md' }
+      - { label: 'Customization: commands, scripts, services and hooks', path: 'docs/customization.md' }
+      - { label: 'Known issues', path: 'docs/known-issues.md' }
+  php-official:
+    short: 'The same image as webdevops/php, built from the same Dockerfiles'
+    intro: 'Built from the same Dockerfiles as [`webdevops/php`](https://hub.docker.com/r/webdevops/php), with the same tags: PHP-FPM on top of the official PHP image.'
+    example:
+      lang: 'yaml'
+      code: |
+        services:
+          php:
+            image: {image}
+            volumes:
+              - ./:/app
+    docs:
+      - { label: 'webdevops/php and webdevops/php-dev', path: 'docs/images/php.md' }
+      - { label: 'Environment variables', path: 'docs/environment-variables.md' }
+      - { label: 'Customization: commands, scripts, services and hooks', path: 'docs/customization.md' }
+      - { label: 'Known issues', path: 'docs/known-issues.md' }
+  php-dev:
+    short: 'webdevops/php for local development: Xdebug, Blackfire extension, Postfix and SSH'
+    intro: '[`webdevops/php`](https://hub.docker.com/r/webdevops/php) for local development. Xdebug is loaded by default; `PHP_DEBUGGER` switches to Blackfire or turns both off. Postfix and an SSH server are started, and `root` and `application` have the password `dev`.'
+    development: true
+    example:
+      lang: 'yaml'
+      code: |
+        services:
+          php:
+            image: {image}
+            volumes:
+              - ./:/app
+    docs:
+      - { label: 'Development variant', path: 'docs/images/php.md#development-variant-php-dev' }
+      - { label: 'Xdebug with an IDE', path: 'docs/images/php.md#xdebug-with-an-ide' }
+      - { label: 'Environment variables', path: 'docs/environment-variables.md' }
+      - { label: 'Known issues', path: 'docs/known-issues.md' }
+  php-nginx:
+    short: 'PHP-FPM and Nginx in one container on the official PHP image; Debian and Alpine'
+    intro: '[`webdevops/php`](https://hub.docker.com/r/webdevops/php) plus Nginx. Nginx serves `/app` and passes PHP requests to PHP-FPM in the same container. Ports: `80` (HTTP) and `443` (HTTPS with a self-signed certificate).'
+    example:
+      lang: 'yaml'
+      code: |
+        services:
+          app:
+            image: {image}
+            ports:
+              - "8080:80"
+            environment:
+              WEB_DOCUMENT_ROOT: /app/public
+            volumes:
+              - ./:/app
+    docs:
+      - { label: 'webdevops/php-nginx and webdevops/php-nginx-dev', path: 'docs/images/php-nginx.md' }
+      - { label: 'Environment variables', path: 'docs/environment-variables.md' }
+      - { label: 'Customization: commands, scripts, services and hooks', path: 'docs/customization.md' }
+      - { label: 'Known issues', path: 'docs/known-issues.md' }
+  php-nginx-dev:
+    short: 'webdevops/php-nginx for local development: Xdebug, Postfix and SSH'
+    intro: '[`webdevops/php-nginx`](https://hub.docker.com/r/webdevops/php-nginx) for local development. Xdebug is loaded by default, as in [`webdevops/php-dev`](https://hub.docker.com/r/webdevops/php-dev). Postfix and an SSH server are started, and `root` and `application` have the password `dev`.'
+    development: true
+    example:
+      lang: 'yaml'
+      code: |
+        services:
+          app:
+            image: {image}
+            ports:
+              - "8080:80"
+            environment:
+              WEB_DOCUMENT_ROOT: /app/public
+            volumes:
+              - ./:/app
+    docs:
+      - { label: 'Development variant', path: 'docs/images/php-nginx.md#development-variant-php-nginx-dev' }
+      - { label: 'Xdebug with an IDE', path: 'docs/images/php.md#xdebug-with-an-ide' }
+      - { label: 'Environment variables', path: 'docs/environment-variables.md' }
+      - { label: 'Known issues', path: 'docs/known-issues.md' }
+  php-apache:
+    short: 'PHP-FPM and Apache in one container on the official PHP image; Debian and Alpine'
+    intro: '[`webdevops/php`](https://hub.docker.com/r/webdevops/php) plus Apache. Apache serves `/app` and passes PHP requests to PHP-FPM in the same container. Ports: `80` (HTTP) and `443` (HTTPS with a self-signed certificate).'
+    example:
+      lang: 'yaml'
+      code: |
+        services:
+          app:
+            image: {image}
+            ports:
+              - "8080:80"
+            environment:
+              WEB_DOCUMENT_ROOT: /app/public
+            volumes:
+              - ./:/app
+    docs:
+      - { label: 'webdevops/php-apache and webdevops/php-apache-dev', path: 'docs/images/php-apache.md' }
+      - { label: 'Environment variables', path: 'docs/environment-variables.md' }
+      - { label: 'Customization: commands, scripts, services and hooks', path: 'docs/customization.md' }
+      - { label: 'Known issues', path: 'docs/known-issues.md' }
+  php-apache-dev:
+    short: 'webdevops/php-apache for local development: Xdebug, Postfix and SSH'
+    intro: '[`webdevops/php-apache`](https://hub.docker.com/r/webdevops/php-apache) for local development. Xdebug is loaded by default, as in [`webdevops/php-dev`](https://hub.docker.com/r/webdevops/php-dev). Postfix and an SSH server are started, and `root` and `application` have the password `dev`.'
+    development: true
+    example:
+      lang: 'yaml'
+      code: |
+        services:
+          app:
+            image: {image}
+            ports:
+              - "8080:80"
+            environment:
+              WEB_DOCUMENT_ROOT: /app/public
+            volumes:
+              - ./:/app
+    docs:
+      - { label: 'Development variant', path: 'docs/images/php-apache.md#development-variant-php-apache-dev' }
+      - { label: 'Xdebug with an IDE', path: 'docs/images/php.md#xdebug-with-an-ide' }
+      - { label: 'Environment variables', path: 'docs/environment-variables.md' }
+      - { label: 'Known issues', path: 'docs/known-issues.md' }
+  toolbox:
+    short: 'Build helper of the webdevops images: baselayout scripts, go-replace and gosu'
+    intro: 'Build helper, not meant to run. Stores the baselayout scripts (`apt-install`, `apk-install`, `docker-image-cleanup`, `docker-run-bootstrap`, `generate-locales` and more), `go-replace` and `gosu` under `/baselayout`. [`webdevops/bootstrap`](https://hub.docker.com/r/webdevops/bootstrap) and [`webdevops/php`](https://hub.docker.com/r/webdevops/php) copy them from there with `COPY --from=webdevops/toolbox`. In `toolbox` itself only `go-replace` is on the `PATH`.'
+    docs:
+      - { label: 'Images', path: 'docs/README.md#images' }
+      - { label: 'How the images build on each other', path: 'docs/README.md#how-the-images-build-on-each-other' }
+  dockerfile-build-env:
+    short: 'Build environment of github.com/webdevops/Dockerfile, in which its CI builds the images'
+    intro: 'Build environment for [github.com/webdevops/Dockerfile](https://github.com/webdevops/Dockerfile), based on [`webdevops/base-app`](https://hub.docker.com/r/webdevops/base-app). The CI builds and tests the images in it.'
+    docs:
+      - { label: 'Building in CI', path: 'CONTRIBUTING.md#building-in-ci' }
+
+# Images that are no longer built.
+#   lastBuilt:   month of the newest tag on Docker Hub
+#   replacement: the image that docs/discontinued-images.md recommends, with
+#                the section that shows how to switch
+discontinued:
+  ansible:
+    lastBuilt: '2020-04'
+  apache:
+    lastBuilt: '2026-11'
+    replacement:
+      image: 'httpd:alpine'
+      url: 'https://hub.docker.com/_/httpd'
+      docs: 'docs/discontinued-images.md#webdevopsapache'
+  apache-dev:
+    lastBuilt: '2022-12'
+  certbot:
+    lastBuilt: '2022-12'
+  hhvm:
+    lastBuilt: '2020-04'
+  hhvm-apache:
+    lastBuilt: '2020-04'
+  hhvm-nginx:
+    lastBuilt: '2020-04'
+  liquibase:
+    lastBuilt: '2021-05'
+  liquidsoap:
+    lastBuilt: '2021-03'
+  mail-sandbox:
+    lastBuilt: '2021-03'
+  nginx:
+    lastBuilt: '2026-11'
+    replacement:
+      image: 'nginx:alpine'
+      url: 'https://hub.docker.com/_/nginx'
+      docs: 'docs/discontinued-images.md#webdevopsnginx'
+  nginx-dev:
+    lastBuilt: '2022-12'
+  piwik:
+    lastBuilt: '2022-12'
+  postfix:
+    lastBuilt: '2022-12'
+  samson-deployment:
+    lastBuilt: '2018-08'
+  sphinx:
+    lastBuilt: '2018-07'
+  ssh:
+    lastBuilt: '2022-12'
+    replacement:
+      image: 'lscr.io/linuxserver/openssh-server'
+      url: 'https://hub.docker.com/r/linuxserver/openssh-server'
+      docs: 'docs/discontinued-images.md#webdevopsssh'
+  storage:
+    lastBuilt: '2026-11'
+    replacement:
+      image: 'alpine:latest'
+      url: 'https://hub.docker.com/_/alpine'
+      docs: 'docs/discontinued-images.md#webdevopsstorage'
+  typo3:
+    lastBuilt: '2020-04'
+  typo3-solr:
+    lastBuilt: '2021-05'
+  varnish:
+    lastBuilt: '2020-07'
+  vsftp:
+    lastBuilt: '2026-11'
+    replacement:
+      image: 'garethflowers/ftp-server'
+      url: 'https://hub.docker.com/r/garethflowers/ftp-server'
+      docs: 'docs/discontinued-images.md#webdevopsvsftp'
