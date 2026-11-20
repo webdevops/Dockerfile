@@ -44,6 +44,14 @@ A pull request that adds a package or a tool to an image also adds a test for it
 - Check with `make test-image` that the test fails on an image without the package and passes on one with it.
 - In the pull request description, say how much bigger the images get: absolute and in percent, on average over the images that get the package.
 
+### Bugfixes come with tests
+
+Every pull request that fixes a bug has a test that fails without the fix and passes with it:
+
+- If a test that already exists fails without the fix, for example in the CI run of master, it is enough. Name it in the pull request description.
+- Otherwise add one in the same pull request: an image test in a trait in `ci/image-tests/Checks/` for a bug in an image, a PHPUnit test in `ci/tests/` for a bug in `ci/`.
+- Check that the test fails without the fix and passes with it, for an image test with `make test-image` against the published image and against your build (`REFERENCE=`).
+
 ## Keep the documentation up to date
 
 The documentation is part of every change. A pull request that changes what users of the images see also updates the documentation **in the same pull request**. Never leave it for a follow-up.
