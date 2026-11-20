@@ -211,8 +211,8 @@ trait PhpEnvironmentChecks
     /**
      * Without php.error_log, PHP-FPM logs the errors of PHP scripts to /docker.stderr, which the container of the class,
      * without LOG_STDERR, links to the stderr of the container: the message of error_log() reaches the container log.
-     * With LOG_STDERR, it reaches that file where a worker of PHP-FPM may write to it, as in webdevops/php; the setting
-     * is checked too, because the container log alone would not tell /docker.stderr from the stderr of the worker.
+     * With LOG_STDERR, it reaches that file, see testPhpFpmLogsToTheFilesFromTheEnvironment(). The setting is checked
+     * too, because the container log alone would not tell /docker.stderr from the stderr of the worker.
      * The PHP CLI has no error log of its own: its messages go to the stderr of the command, e.g. of docker compose
      * exec, not to the container log.
      */

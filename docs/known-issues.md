@@ -10,12 +10,6 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** all images except `bootstrap` and `toolbox`.
 - **Instead:** Leave it unset. PHP-FPM runs its workers as `application` anyway.
 
-### `LOG_STDOUT` and `LOG_STDERR` for PHP-FPM
-
-- **Effect:** PHP-FPM writes its access log and its own messages to the stderr of the container, not to `/docker.stdout` and `/docker.stderr`, so `LOG_STDOUT` and `LOG_STDERR` do not apply to them. The `docker.conf` of the official PHP image sets `error_log` and `access.log` to `/proc/self/fd/2` after the configuration of the image. The errors of PHP scripts go to `/docker.stderr`, but the workers of PHP-FPM run as `application` and can only write to a file that they may open. In `php` and `php-dev`, they create the file of `LOG_STDERR` and write the errors there. In the images with Nginx or Apache, the web server creates that file as root first, so the errors go to the stderr of the container, as they do in every image without `LOG_STDERR`.
-- **Images:** `php`, `php-dev`, `php-nginx`, `php-nginx-dev`, `php-apache` and `php-apache-dev`, Debian and Alpine.
-- **Instead:** Read them with `docker compose logs`. To have PHP-FPM's messages and the PHP errors in the file of `LOG_STDERR` in every image, also set `fpm.global.error_log: /docker.stderr`. `php.error_log` gives the PHP errors of PHP-FPM and the CLI a file of their own, in a directory that `application` may write to, for example `/app`. For the access log, also set `fpm.pool.access.log: /docker.stdout`, see [`fpm.pool.<key>`](environment-variables.md#php-fpm).
-
 ### `latest` and `alpine` tags of the PHP images
 
 - **Effect:** The CI no longer builds these tags, but they are still on Docker Hub. An image used without a tag, for example `image: webdevops/php-nginx`, is the `latest` image from April 2020 and gets no updates. The `alpine` tags are from April 2020 as well, those of the development images from April 2019.

@@ -112,6 +112,17 @@ final readonly class Container
      */
     public function logs(): string
     {
+        [$stdout, $stderr] = $this->logStreams();
+        return $stdout . $stderr;
+    }
+
+    /**
+     * The container log, split into what the processes of the container wrote to its stdout and to its stderr.
+     *
+     * @return array{string, string}
+     */
+    public function logStreams(): array
+    {
         $process = new Process(['docker', 'logs', $this->id]);
         $process->setTimeout(self::COMMAND_TIMEOUT);
         $process->run();
@@ -119,7 +130,7 @@ final readonly class Container
             throw new RuntimeException(sprintf('docker logs %s failed: %s', $this->id, trim($process->getErrorOutput())));
         }
 
-        return $process->getOutput() . $process->getErrorOutput();
+        return [$process->getOutput(), $process->getErrorOutput()];
     }
 
     /**
