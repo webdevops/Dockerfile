@@ -188,8 +188,8 @@ Each service reads its options when it starts. A service only runs if it is enab
 | `SERVICE_DNSMASQ_USER` | User `dnsmasq` runs as. Default: `root`. |
 | `SERVICE_NGINX_OPTS` | Extra arguments for `nginx`, appended after `-g 'daemon off;'`. |
 | `SERVICE_APACHE_OPTS` | Extra arguments for Apache, for example `-DMYFLAG`. |
-| `SERVICE_POSTFIX_OPTS` | Options for the `postfix` command, given before `start`, for example `-v` for verbose messages; they reach the container log, on Debian and Ubuntu through syslog. |
+| `SERVICE_POSTFIX_OPTS` | Options for the `postfix` command, given before `start`, `stop` and `reload`, for example `-v`: the `postfix` command then logs in more detail while it starts and stops Postfix; the mail daemons keep their log level. The messages reach the container log, on Debian and Ubuntu through syslog. If Postfix does not start, for example because of an unknown option, supervisord gives up after four attempts and the container log shows `postfix <options> start failed`. |
 | `SERVICE_PHPFPM_OPTS` | Extra arguments for `php-fpm`, for example `-dmax_input_time=120`. |
 | `POSTFIX_RELAYHOST` | Postfix `relayhost`, for example `[mail.example.com]:25`. The relay host must accept mail from the container without a login; there is no variable for one. See [Mail](images/php.md#mail). |
-| `POSTFIX_MYNETWORKS` | Postfix `mynetworks`. |
+| `POSTFIX_MYNETWORKS` | Postfix `mynetworks`. Other Postfix settings have no variable; set them with `postconf -e`, for example `postconf -e "message_size_limit = 52428800"`, in a [service hook](customization.md#service-hooks) in `/opt/docker/bin/service.d/postfix.d/`. |
 | `VIRTUAL_HOST` | Comma-separated host names. When `dnsmasq` starts, each one is added to its configuration as `address=/<host>/127.0.0.1`; each `*.example.com` becomes `address=/.example.com/127.0.0.1`, a wildcard for all its subdomains. |

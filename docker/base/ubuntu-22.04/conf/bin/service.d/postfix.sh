@@ -1,35 +1,25 @@
 #!/usr/bin/env bash
-# postfix-wrapper.sh, version 0.1.0
-#
-# You cannot start postfix in some foreground mode and
-# it's more or less important that docker doesn't kill
-# postfix and its chilren if you stop the container.
-#
-# Use this script with supervisord and it will take
-# care about starting and stopping postfix correctly.
-#
-# supervisord config snippet for postfix-wrapper:
-#
-# [program:postfix]
-# process_name = postfix
-# command = /path/to/postfix-wrapper.sh
-# startsecs = 0
-# autorestart = false
-#
+# Runs Postfix for supervisord (etc/supervisor.d/postfix.conf). "postfix start" puts the master process of Postfix in
+# the background, so this script waits until it ends and passes the signals of supervisord on as "postfix stop" and
+# "postfix reload". SERVICE_POSTFIX_OPTS holds options of the postfix command, e.g. -v, given before each command.
 
 # Init vars
 if [[ -z "$SERVICE_POSTFIX_OPTS" ]]; then SERVICE_POSTFIX_OPTS=""; fi
 
 source /opt/docker/bin/config.sh
 
-trap "postfix stop" SIGINT
-trap "postfix stop" SIGTERM
-trap "postfix reload" SIGHUP
+trap "postfix $SERVICE_POSTFIX_OPTS stop" SIGINT
+trap "postfix $SERVICE_POSTFIX_OPTS stop" SIGTERM
+trap "postfix $SERVICE_POSTFIX_OPTS reload" SIGHUP
 
 includeScriptDir "/opt/docker/bin/service.d/postfix.d/"
 
-# start postfix
-postfix $SERVICE_POSTFIX_OPTS start
+# A failed start, e.g. because of an unknown option in SERVICE_POSTFIX_OPTS, ends the script with an error before the
+# startsecs of postfix.conf, so that supervisord gives up after a few attempts instead of restarting it over and over
+if ! postfix $SERVICE_POSTFIX_OPTS start; then
+    echo "postfix $SERVICE_POSTFIX_OPTS start failed" >&2
+    exit 1
+fi
 
 # lets give postfix some time to start
 sleep 3

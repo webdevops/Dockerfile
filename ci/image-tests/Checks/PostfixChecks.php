@@ -32,15 +32,23 @@ trait PostfixChecks
     }
 
     /**
-     * SERVICE_POSTFIX_OPTS, in a container of its own: options of the postfix command, given before "start"; -v makes it
-     * write verbose messages, which reach the container log, on Debian through syslog.
+     * SERVICE_POSTFIX_OPTS, in containers of their own: options of the postfix command, given before "start". A valid
+     * option such as -v keeps Postfix running; an unknown one makes "postfix start" fail, which shows that the options
+     * reach the command. supervisord then gives up after a few attempts instead of restarting Postfix over and over,
+     * and the container log names the failed command.
      */
     public function testPostfixOptionsFromTheEnvironment(): void
     {
-        $container = $this->startContainer('postfix-options', ['SERVICE_POSTFIX_OPTS' => '-v']);
-        $this->eventually(static function () use ($container): void {
-            self::assertMatchesRegularExpression('/postfix(\[\d+\])?: name_mask: /', $container->logs());
+        $valid = $this->startTestContainer('postfix-options', ['SERVICE_POSTFIX_OPTS' => '-v']);
+        $invalid = $this->startTestContainer('postfix-invalid-options', ['SERVICE_POSTFIX_OPTS' => '-Z']);
+
+        $this->eventually(function () use ($valid): void {
+            self::assertStringContainsString(' RUNNING ', $this->stdout('supervisorctl status postfix:postfixd || true', $valid));
         });
+        $this->eventually(function () use ($invalid): void {
+            self::assertStringContainsString(' FATAL ', $this->stdout('supervisorctl status postfix:postfixd || true', $invalid));
+        });
+        self::assertStringContainsString('postfix -Z start failed', $invalid->logs());
     }
 
     public function testMailFromThePhpCliReachesTheRelayHost(): void
