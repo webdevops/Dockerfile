@@ -14,6 +14,7 @@ use function explode;
 use function implode;
 use function sleep;
 use function sprintf;
+use function trim;
 
 /**
  * PHP_DEBUGGER, XDEBUG_* and BLACKFIRE_* in the development images, see
@@ -143,5 +144,55 @@ trait PhpDevelopmentEnvironmentChecks
         if ($debugger === 'blackfire') {
             self::assertSame(['image-test-id', 'image-test-token'], [$serverId, $serverToken], 'BLACKFIRE_SERVER_ID and BLACKFIRE_SERVER_TOKEN');
         }
+    }
+
+    /**
+     * PHP_DEBUGGER=blackfire with BLACKFIRE_SERVER_ID, BLACKFIRE_SERVER_TOKEN and SERVICE_BLACKFIRE_AGENT_OPTS, in a
+     * container of its own: supervisord runs the agent of the Blackfire CLI with them and keeps it running, although the
+     * Blackfire API rejects the credentials of the test.
+     */
+    public function testBlackfireAgentRunsWithTheServerCredentials(): void
+    {
+        $container = $this->startTestContainer('blackfire-agent', [
+            'PHP_DEBUGGER' => 'blackfire',
+            'BLACKFIRE_SERVER_ID' => 'image-test-id',
+            'BLACKFIRE_SERVER_TOKEN' => 'image-test-token',
+            'SERVICE_BLACKFIRE_AGENT_OPTS' => '--socket=unix:///var/run/blackfire/image-test.sock',
+        ]);
+        $this->eventually(function () use ($container): void {
+            self::assertMatchesRegularExpression('/^blackfire-agent:blackfire-agentd\s+RUNNING\s/m', $this->blackfireAgentStatus($container));
+        });
+        $pid = trim($this->stdout('supervisorctl pid blackfire-agent:blackfire-agentd', $container));
+        self::assertSame(
+            'blackfire agent:start --server-id=image-test-id --server-token=image-test-token --socket=unix:///var/run/blackfire/image-test.sock',
+            trim($this->stdout(sprintf("tr '\\0' ' ' < /proc/%d/cmdline", (int) $pid), $container)),
+            'the command line of the agent',
+        );
+        $this->assertCommandSucceeds('test -S /var/run/blackfire/image-test.sock', $container);
+
+        sleep(self::WAIT_SECONDS);
+        self::assertMatchesRegularExpression('/^blackfire-agent:blackfire-agentd\s+RUNNING\s/m', $this->blackfireAgentStatus($container), 'The agent should keep running.');
+        self::assertSame($pid, trim($this->stdout('supervisorctl pid blackfire-agent:blackfire-agentd', $container)), 'The agent should not have been restarted.');
+    }
+
+    /**
+     * PHP_DEBUGGER=blackfire without BLACKFIRE_SERVER_ID and BLACKFIRE_SERVER_TOKEN, in a container of its own: the agent
+     * would end at once, so supervisord does not start it, instead of restarting it over and over. The extension is
+     * loaded.
+     */
+    public function testBlackfireAgentIsNotStartedWithoutTheServerCredentials(): void
+    {
+        $container = $this->startTestContainer('blackfire-without-credentials', ['PHP_DEBUGGER' => 'blackfire']);
+        $this->eventually(function () use ($container): void {
+            self::assertMatchesRegularExpression('/^blackfire-agent:blackfire-agentd\s+STOPPED\s+Not started/m', $this->blackfireAgentStatus($container));
+        });
+        sleep(self::WAIT_SECONDS);
+        self::assertMatchesRegularExpression('/^blackfire-agent:blackfire-agentd\s+STOPPED\s+Not started/m', $this->blackfireAgentStatus($container), 'The agent should not have been started.');
+        self::assertContains('blackfire', $this->lines($this->stdout('php -m', $container)), 'the Blackfire extension');
+    }
+
+    private function blackfireAgentStatus(Container $container): string
+    {
+        return $this->execute('supervisorctl status blackfire-agent:blackfire-agentd', $container)->stdout;
     }
 }

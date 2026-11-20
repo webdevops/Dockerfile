@@ -161,7 +161,7 @@ Images: `php-dev`, `php-nginx-dev`, `php-apache-dev`.
 
 | Variable | Default | Effect |
 | --- | --- | --- |
-| `PHP_DEBUGGER` | not set (Xdebug) | Debugger extension to load: `xdebug`, `blackfire` or `none`. The image contains the Blackfire PHP extension, but not the Blackfire agent. With `blackfire`, supervisord still starts the `blackfire-agent` service; it exits because the agent is missing and is restarted over and over, which fills the container log, see [Known issues](known-issues.md#blackfire-agent). |
+| `PHP_DEBUGGER` | not set (Xdebug) | Debugger extension to load: `xdebug`, `blackfire` or `none`. With `blackfire` and both `BLACKFIRE_SERVER_ID` and `BLACKFIRE_SERVER_TOKEN` set, supervisord also runs the Blackfire agent of the Blackfire CLI (`blackfire agent:start`) as the service `blackfire-agent`, and the extension sends its profiles to it over `/var/run/blackfire/agent.sock`. Without the two, the agent is not started; to use an agent in a container of its own, point the extension at it with `php.blackfire.agent_socket`, for example `tcp://blackfire:8307`. |
 | `XDEBUG_MODE` | `debug` | `xdebug.mode` |
 | `XDEBUG_START_WITH_REQUEST` | `trigger` | `xdebug.start_with_request` |
 | `XDEBUG_CLIENT_HOST` | `localhost` | `xdebug.client_host` |
@@ -169,8 +169,8 @@ Images: `php-dev`, `php-nginx-dev`, `php-apache-dev`.
 | `XDEBUG_DISCOVER_CLIENT_HOST` | `1` | `xdebug.discover_client_host` |
 | `XDEBUG_TRIGGER_VALUE` | empty | `xdebug.trigger_value` |
 | `XDEBUG_OUTPUT_DIR` | `/tmp/debug` | `xdebug.output_dir` |
-| `BLACKFIRE_SERVER_ID` | not set | `blackfire.server_id`, used with `PHP_DEBUGGER=blackfire` |
-| `BLACKFIRE_SERVER_TOKEN` | not set | `blackfire.server_token`, used with `PHP_DEBUGGER=blackfire` |
+| `BLACKFIRE_SERVER_ID` | not set | `blackfire.server_id`, and the server ID of the Blackfire agent; used with `PHP_DEBUGGER=blackfire` |
+| `BLACKFIRE_SERVER_TOKEN` | not set | `blackfire.server_token`, and the server token of the Blackfire agent; used with `PHP_DEBUGGER=blackfire` |
 
 Each `XDEBUG_*` variable you set is written at start to `98-webdevops.ini`, after the image's Xdebug defaults and the `php.*` variables, so it wins over both. Your own `php.ini` is loaded after it and wins over the variables, see [Configuration files](customization.md#php).
 
@@ -190,6 +190,7 @@ Each service reads its options when it starts. A service only runs if it is enab
 | `SERVICE_APACHE_OPTS` | Extra arguments for Apache, for example `-DMYFLAG`. |
 | `SERVICE_POSTFIX_OPTS` | Options for the `postfix` command, given before `start`, `stop` and `reload`, for example `-v`: the `postfix` command then logs in more detail while it starts and stops Postfix; the mail daemons keep their log level. The messages reach the container log, on Debian and Ubuntu through syslog. If Postfix does not start, for example because of an unknown option, supervisord gives up after four attempts and the container log shows `postfix <options> start failed`. |
 | `SERVICE_PHPFPM_OPTS` | Extra arguments for `php-fpm`, for example `-dmax_input_time=120`. |
+| `SERVICE_BLACKFIRE_AGENT_OPTS` | Extra arguments for `blackfire agent:start`, for example `--socket=tcp://0.0.0.0:8307`. Only in the development images, where the agent runs with `PHP_DEBUGGER=blackfire` and the server credentials, see [Development images](#development-images). If the agent does not start, for example because of an unknown option, supervisord gives up after four attempts. |
 | `POSTFIX_RELAYHOST` | Postfix `relayhost`, for example `[mail.example.com]:25`. The relay host must accept mail from the container without a login; there is no variable for one. See [Mail](images/php.md#mail). |
 | `POSTFIX_MYNETWORKS` | Postfix `mynetworks`. Other Postfix settings have no variable; set them with `postconf -e`, for example `postconf -e "message_size_limit = 52428800"`, in a [service hook](customization.md#service-hooks) in `/opt/docker/bin/service.d/postfix.d/`. |
 | `VIRTUAL_HOST` | Comma-separated host names. When `dnsmasq` starts, each one is added to its configuration as `address=/<host>/127.0.0.1`; each `*.example.com` becomes `address=/.example.com/127.0.0.1`, a wildcard for all its subdomains. |

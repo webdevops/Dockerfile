@@ -16,13 +16,6 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php`, `php-dev`, `php-nginx`, `php-nginx-dev`, `php-apache` and `php-apache-dev`, Debian and Alpine.
 - **Instead:** Read them with `docker compose logs`. To have PHP-FPM's messages and the PHP errors in the file of `LOG_STDERR` in every image, also set `fpm.global.error_log: /docker.stderr`. `php.error_log` gives the PHP errors of PHP-FPM and the CLI a file of their own, in a directory that `application` may write to, for example `/app`. The access log needs a pool file that sorts after `docker.conf`, see [`fpm.pool.<key>`](#fpmpoolkey-for-the-directives-of-dockerconf).
 
-### Blackfire agent
-
-- **Effect:** With `PHP_DEBUGGER=blackfire`, supervisord starts the `blackfire-agent` service, but the agent is not installed. It exits with code 127 and is restarted over and over, which fills the container log. The Blackfire PHP extension itself is loaded.
-- **Images:** `php-dev`, `php-nginx-dev`, `php-apache-dev`.
-- **Instead:** Run the agent in its own container and point the extension at it with `php.blackfire.agent_socket`, for example `tcp://blackfire:8307`. The restart loop in the log remains.
-- **Issue:** [#529](https://github.com/webdevops/Dockerfile/issues/529) (closed, still reproducible).
-
 ### `cli` command without `APPLICATION_USER`
 
 - **Effect:** Fails with `APPLICATION_USER: unbound variable`.
@@ -67,7 +60,6 @@ These options and tools are part of the images but do not work, or work only in 
 ## Migration from older images
 
 - `XDEBUG_REMOTE_*`, `XDEBUG_IDE_KEY`, `XDEBUG_MAX_NESTING_LEVEL` and `XDEBUG_PROFILER_*` are ignored; they belong to Xdebug 2. Set the Xdebug 3 directive with `php.xdebug.<key>` instead, for example `php.xdebug.max_nesting_level: "500"` or `php.xdebug.idekey: PHPSTORM`. The variables listed under [Development images](environment-variables.md#development-images) still work.
-- `SERVICE_BLACKFIRE_AGENT_OPTS` has no effect, because the agent is not installed (see [Blackfire agent](#blackfire-agent)).
 - Tags that are no longer built stay on Docker Hub without updates: PHP 5.6 to 8.1 and all operating system tags such as `debian-9` or `ubuntu-18.04`. For `latest` and `alpine`, see [above](#latest-and-alpine-tags-of-the-php-images).
 - The images `webdevops/nginx` and `webdevops/apache` and the `alpine` tags of `webdevops/bootstrap`, `webdevops/base` and `webdevops/base-app` are no longer built. Their last images, on Alpine 3.24, stay on Docker Hub without updates, and so do the older tags of `nginx` and `apache`, among them `latest` (Ubuntu 18.04 from April 2020). For replacements, see [Replacing discontinued images](discontinued-images.md).
 - The images `webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built. Their last images stay on Docker Hub without updates (`ssh` since December 2022). For replacements, see [Replacing discontinued images](discontinued-images.md).
