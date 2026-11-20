@@ -75,6 +75,7 @@ These commands are installed in the images. Use them in `RUN` lines of your own 
 | `go-replace -s <search> -r <replace> -- <file>` | Replaces text in files; the same tool fills the [placeholders](#placeholders) | all |
 | `gosu <user> <command>` | Runs a command as another user, for example `application` | all except `toolbox` |
 | `docker-service enable <service>`, `docker-service disable <service>`, also `docker-service-enable` and `docker-service-disable` | Enables or disables a [service](#services); enabling installs it if needed | all except `bootstrap` and `toolbox` |
+| `docker-healthcheck` | Checks the services of supervisord and fails when one failed, see [Healthcheck](#healthcheck) | all except `bootstrap` and `toolbox` |
 | `docker-cronjob '<line>'` | Adds a [cron job](#cron-jobs) | Debian- and Ubuntu-based images except `bootstrap` |
 | `docker-run-bootstrap` | Runs the [build scripts](#scripts-at-image-build) once and deletes them | all except `toolbox` |
 
@@ -172,7 +173,27 @@ This works in all images, based on Debian, Ubuntu or Alpine.
 
 ## Healthcheck
 
-The images define no `HEALTHCHECK`. Add one in `compose.yaml`.
+`docker-healthcheck` checks the [services](#services) of supervisord. It fails when a service failed: supervisord gave up on it (`FATAL`), is restarting it after a failed start (`BACKOFF`) or does not know its state (`UNKNOWN`), or supervisord does not answer. It prints the lines of those services. Services that run, start, are not enabled or were stopped do not count. All images except `bootstrap` and `toolbox` have the command.
+
+Each failed check also writes its reason to the container log, so `docker compose logs` shows it, for example `docker-healthcheck: unhealthy: postfix:postfixd FATAL Exited too quickly (process log may have details)`. The first check that passes after it writes `docker-healthcheck: healthy again` there. Run it as root, as Docker does for the `HEALTHCHECK` of these images: supervisord answers only root, so as another user the check fails with `supervisord does not answer`.
+
+From PHP 8.6 on, the PHP images run it as their `HEALTHCHECK`: the tags `8.6` and `8.6-alpine` of `php`, `php-nginx`, `php-apache` and their `-dev` images, every 30 seconds after a start period of 30 seconds; a container is `unhealthy` after three failed checks. `docker inspect --format '{{json .State.Health}}' <container>` shows the output of the last checks. The older PHP tags and the base images define no `HEALTHCHECK`; add one in `compose.yaml`:
+
+```yaml
+services:
+  app:
+    image: webdevops/php-nginx:8.5
+    volumes:
+      - ./:/app
+    healthcheck:
+      test: ["CMD", "docker-healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+```
+
+`docker-healthcheck` does not check whether your application answers. To check that too, use one of the following checks instead, or add it in front of `docker-healthcheck`, for example `test: ["CMD-SHELL", "docker-healthcheck && curl -fsS -o /dev/null http://localhost/"]`.
 
 For `php-nginx` and `php-apache`, request a page through the web server. If the page is a PHP script, this also checks PHP-FPM:
 

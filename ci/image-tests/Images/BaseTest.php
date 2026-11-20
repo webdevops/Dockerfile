@@ -11,6 +11,7 @@ use Webdevops\Build\ImageTests\Checks\CliWithoutApplicationUserChecks;
 use Webdevops\Build\ImageTests\Checks\ContainerEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\DnsmasqEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\EntrypointChecks;
+use Webdevops\Build\ImageTests\Checks\HealthcheckChecks;
 use Webdevops\Build\ImageTests\Checks\ServiceChecks;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
@@ -24,6 +25,7 @@ final class BaseTest extends ImageTestCase
     use AdditionalServicesChecks;
     use EntrypointChecks;
     use ServiceChecks;
+    use HealthcheckChecks;
     use ContainerEnvironmentChecks;
     use CliWithoutApplicationUserChecks;
     use DnsmasqEnvironmentChecks;

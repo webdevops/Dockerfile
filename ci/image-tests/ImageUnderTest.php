@@ -115,6 +115,15 @@ final readonly class ImageUnderTest
     }
 
     /**
+     * The PHP images run docker-healthcheck as their HEALTHCHECK from PHP 8.6 on; the older ones and the base images
+     * only offer the command.
+     */
+    public function hasHealthcheck(): bool
+    {
+        return $this->phpOfficial && version_compare($this->phpMinorVersion(), '8.6', '>=');
+    }
+
+    /**
      * The Debian images have the ionCube Loader up to PHP 8.5. The Alpine images have none, and the images do not
      * install it from PHP 8.6 on, also once ionCube supports these versions.
      */

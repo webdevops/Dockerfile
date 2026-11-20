@@ -9,6 +9,7 @@ use Webdevops\Build\ImageTests\Checks\BaseChecks;
 use Webdevops\Build\ImageTests\Checks\BootstrapChecks;
 use Webdevops\Build\ImageTests\Checks\ContainerEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\EntrypointChecks;
+use Webdevops\Build\ImageTests\Checks\HealthcheckChecks;
 use Webdevops\Build\ImageTests\Checks\NginxChecks;
 use Webdevops\Build\ImageTests\Checks\NginxEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpDevelopmentChecks;
@@ -40,6 +41,7 @@ final class PhpNginxDevTest extends ImageTestCase
     use PhpWebDevelopmentChecks;
     use EntrypointChecks;
     use ServiceChecks;
+    use HealthcheckChecks;
     use SshChecks;
     use ContainerEnvironmentChecks;
     use PhpEnvironmentChecks;
