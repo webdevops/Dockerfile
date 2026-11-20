@@ -94,7 +94,7 @@ built:
       - { label: 'webdevops/php and webdevops/php-dev', path: 'docs/images/php.md' }
   php-dev:
     short: 'webdevops/php for local development: Xdebug, Blackfire extension, Postfix and SSH'
-    intro: '[`webdevops/php`](https://hub.docker.com/r/webdevops/php) for local development. Xdebug is loaded by default; `PHP_DEBUGGER` switches to Blackfire or turns both off, but the Blackfire agent is missing, see [Known issues](docs/known-issues.md#blackfire-agent). Postfix and an SSH server are started, and `root` and `application` have the password `dev`.'
+    intro: '[`webdevops/php`](https://hub.docker.com/r/webdevops/php) for local development. Xdebug is loaded by default; `PHP_DEBUGGER` switches to Blackfire, whose agent runs in the container with your server credentials, or turns both off. Postfix and an SSH server are started, and `root` and `application` have the password `dev`.'
     note: 'Always use one of the tags below: an image without a tag (`latest`) and the `alpine` tag are old builds from 2019 and 2020 that get no updates, see [Known issues](docs/known-issues.md#latest-and-alpine-tags-of-the-php-images).'
     development: true
     example:
