@@ -7,6 +7,7 @@ namespace Webdevops\Build\Tests;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Webdevops\Build\DockerHub\Repository;
 use Webdevops\Build\GithubJobBuilder;
 
 use function array_filter;
@@ -357,6 +358,55 @@ final class GithubJobBuilderTest extends TestCase
         self::assertArrayNotHasKey('needs', $job);
         self::assertSame(['actions/checkout@v7', 'Run GrumPHP'], array_keys($steps));
         self::assertSame('make check', $steps['Run GrumPHP']['run'], 'the command of the documentation');
+    }
+
+    public function testDockerHubDescriptionJob(): void
+    {
+        $job = new GithubJobBuilder()->getDockerHubDescriptionConfig([
+            new Repository('php', 'PHP-FPM', true),
+            new Repository('hhvm', 'No longer built or updated.', false),
+        ]);
+
+        self::assertSame('Update the Docker Hub pages', $job['name']);
+        self::assertSame('ubuntu-latest', $job['runs-on']);
+        self::assertArrayNotHasKey('needs', $job, 'the pages do not wait for the images, nor the images for the pages');
+        self::assertSame(
+            '${{ github.repository == \'webdevops/Dockerfile\' && github.ref == \'refs/heads/master\''
+            . " && (github.event_name == 'push'"
+            . " || (github.event_name == 'workflow_dispatch' && github.actor != 'github-actions[bot]')) }}",
+            $job['if'],
+        );
+        self::assertSame(['DOCKER_HUB_API' => 'https://hub.docker.com/v2'], $job['env']);
+
+        $steps = $job['steps'];
+        self::assertCount(4, $steps);
+        self::assertSame(['uses' => 'actions/checkout@v7', 'with' => ['persist-credentials' => false]], $steps[0]);
+
+        $login = $steps[1];
+        self::assertSame('Log in to Docker Hub', $login['name']);
+        self::assertSame('login', $login['id']);
+        self::assertSame('bash', $login['shell']);
+        self::assertSame(
+            ['DOCKERHUB_USERNAME' => '${{ secrets.DOCKERHUB_USERNAME }}', 'DOCKERHUB_TOKEN' => '${{ secrets.DOCKERHUB_TOKEN }}'],
+            $login['env'],
+        );
+        self::assertStringContainsString('"$DOCKER_HUB_API/auth/token"', $login['run']);
+        self::assertStringContainsString('::add-mask::', $login['run']);
+        self::assertStringContainsString('>> "$GITHUB_ENV"', $login['run']);
+
+        foreach (['php' => 'PHP-FPM', 'hhvm' => 'No longer built or updated.'] as $index => $short) {
+            $upload = $steps[$index === 'php' ? 2 : 3];
+            self::assertSame('webdevops/' . $index, $upload['name']);
+            self::assertSame('${{ !cancelled() && steps.login.outcome == \'success\' }}', $upload['if']);
+            self::assertSame('bash', $upload['shell']);
+            self::assertSame(
+                ['REPOSITORY' => 'webdevops/' . $index, 'PAGE' => 'docs/dockerhub/' . $index . '.md', 'SHORT_DESCRIPTION' => $short],
+                $upload['env'],
+            );
+            self::assertStringContainsString('-X PATCH', $upload['run']);
+            self::assertStringContainsString('"$DOCKER_HUB_API/repositories/$REPOSITORY"', $upload['run']);
+            self::assertArrayNotHasKey('uses', $upload, 'no action from outside GitHub gets the token');
+        }
     }
 
     /**

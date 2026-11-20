@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
+use Webdevops\Build\DockerHub\Config;
 use Webdevops\Build\FileReader;
 use Webdevops\Build\GithubJobBuilder;
 
@@ -83,6 +84,7 @@ class GenerateGithubCiCommand extends Command
         $this->jobs = [
             'validate-automation' => $this->jobBuilder->getValidationConfig(),
             'check-ci-code' => $this->jobBuilder->getCodeCheckConfig(),
+            GithubJobBuilder::DOCKER_HUB_JOB => $this->jobBuilder->getDockerHubDescriptionConfig(new Config($this->rootPath)->repositories()),
             GithubJobBuilder::IMAGE_TEST_RUNNER_JOB => $this->jobBuilder->getImageTestRunnerConfig(),
             ...$this->jobs,
         ];

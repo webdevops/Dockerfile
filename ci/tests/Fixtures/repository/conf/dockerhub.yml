@@ -1,0 +1,60 @@
+# Test copy of conf/dockerhub.yml for the images of the test repository
+
+releases:
+  bookworm: 'Debian 12'
+  trixie: 'Debian 13'
+
+built:
+  base:
+    short: 'Base image with entrypoint and supervisord'
+    intro: 'Entrypoint and supervisord, see [Services](docs/customization.md#services).'
+    docs:
+      - { label: 'base', path: 'docs/images/base.md' }
+  base-app:
+    short: 'Base image with the application user'
+    intro: 'base plus the user application.'
+    docs:
+      - { label: 'base', path: 'docs/images/base.md' }
+  php:
+    short: 'PHP-FPM on the official PHP image'
+    intro: 'PHP-FPM on top of the official PHP image.'
+    example:
+      lang: 'yaml'
+      code: |
+        services:
+          php:
+            image: {image}
+    docs:
+      - { label: 'php and php-dev', path: 'docs/images/php.md' }
+  php-official:
+    short: 'The same image as webdevops/php'
+    intro: 'The same image as webdevops/php.'
+    docs:
+      - { label: 'php and php-dev', path: 'docs/images/php.md' }
+  php-nginx:
+    short: 'PHP-FPM and Nginx'
+    intro: 'php plus Nginx.'
+    docs:
+      - { label: 'php', path: 'docs/images/php.md' }
+  php-nginx-dev:
+    short: 'PHP-FPM and Nginx for development'
+    intro: 'php-nginx with Xdebug.'
+    development: true
+    note: 'The `alpine` tag only.'
+    docs:
+      - { label: 'Development variant', path: 'docs/images/php.md#development-variant-php-dev' }
+  toolbox:
+    short: 'Build helper'
+    intro: 'Stores the helper scripts.'
+    docs:
+      - { label: 'Images', path: 'docs/images/base.md' }
+
+discontinued:
+  nginx:
+    lastBuilt: '2026-11'
+    replacement:
+      image: 'nginx:alpine'
+      url: 'https://hub.docker.com/_/nginx'
+      docs: 'docs/discontinued-images.md#webdevopsnginx'
+  hhvm:
+    lastBuilt: '2020-04'

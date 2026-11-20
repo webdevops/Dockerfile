@@ -15,6 +15,7 @@ use Webdevops\Build\Commands\GenerateGithubCiCommand;
 use Webdevops\Build\Tests\TemporaryRepository;
 
 use function array_column;
+use function array_filter;
 use function array_diff;
 use function array_keys;
 use function array_values;
@@ -31,6 +32,7 @@ final class GenerateGithubCiCommandTest extends TestCase
     private const array ALL_JOBS = [
         'validate-automation',
         'check-ci-code',
+        'dockerhub-description',
         'image-test-runner',
         'base-app_ubuntu-22-04',
         'base-app_ubuntu-22-04_publish',
@@ -310,6 +312,27 @@ final class GenerateGithubCiCommandTest extends TestCase
         $tester = new CommandTester(new GenerateGithubCiCommand($this->repository->path));
         self::assertSame(Command::SUCCESS, $tester->execute([]));
         return $this->workflow();
+    }
+
+    public function testUploadsEveryDockerHubPage(): void
+    {
+        $this->generate();
+
+        self::assertSame(
+            [
+                'Log in to Docker Hub',
+                'webdevops/base',
+                'webdevops/base-app',
+                'webdevops/hhvm',
+                'webdevops/nginx',
+                'webdevops/php',
+                'webdevops/php-nginx',
+                'webdevops/php-nginx-dev',
+                'webdevops/php-official',
+                'webdevops/toolbox',
+            ],
+            array_values(array_filter(array_column($this->workflow()['jobs']['dockerhub-description']['steps'], 'name'))),
+        );
     }
 
     /**

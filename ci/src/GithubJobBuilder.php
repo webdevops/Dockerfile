@@ -2,6 +2,8 @@
 
 namespace Webdevops\Build;
 
+use Webdevops\Build\DockerHub\Repository;
+
 use function array_filter;
 use function array_values;
 use function dirname;
@@ -37,6 +39,32 @@ class GithubJobBuilder
     private const string ARCH_SUFFIX = '-${{ matrix.arch }}';
 
     public const string IMAGE_TEST_RUNNER_JOB = 'image-test-runner';
+
+    public const string DOCKER_HUB_JOB = 'dockerhub-description';
+
+    /**
+     * Logs in to Docker Hub with DOCKERHUB_USERNAME and DOCKERHUB_TOKEN, masks the access token in the log and hands it
+     * to the next steps as DOCKERHUB_ACCESS_TOKEN.
+     */
+    private const string DOCKER_HUB_LOGIN = <<<'BASH'
+        token=$(jq -n --arg identifier "$DOCKERHUB_USERNAME" --arg secret "$DOCKERHUB_TOKEN" '{identifier: $identifier, secret: $secret}' \
+          | curl -sS --fail-with-body --retry 3 -H 'Content-Type: application/json' --data @- "$DOCKER_HUB_API/auth/token" \
+          | jq -r '.access_token // empty')
+        if [ -z "$token" ]; then echo "::error::Docker Hub returned no access token"; exit 1; fi
+        echo "::add-mask::$token"
+        echo "DOCKERHUB_ACCESS_TOKEN=$token" >> "$GITHUB_ENV"
+        BASH;
+
+    /**
+     * Sets the page (PAGE) and the short description (SHORT_DESCRIPTION) of a repository (REPOSITORY) on Docker Hub.
+     */
+    private const string DOCKER_HUB_UPLOAD = <<<'BASH'
+        jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          '{full_description: $full_description, description: $description}' \
+          | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
+            --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+        BASH;
 
     /**
      * The image test runner as an archive for docker load, relative to the checkout like getCiImagePath().
@@ -640,6 +668,68 @@ class GithubJobBuilder
                     'run' => 'make check',
                 ],
             ],
+        ];
+    }
+
+    /**
+     * Uploads the page and the short description of every Docker Hub repository (docs/dockerhub/, written by
+     * ci/console generate:dockerhub) after a push to master and on a manual run, only in webdevops/Dockerfile: pull
+     * requests get no secrets, the nightly run changes no page, and a fork must not overwrite the pages. The builds
+     * that .github/workflows/php-upstream.yaml starts (actor github-actions[bot]) skip it too: that workflow starts no
+     * further build for hours after one of them failed, and a failed upload must not hold back new PHP releases.
+     *
+     * The job waits for no image and no image waits for it: a failed build does not hold back the pages, a failed
+     * upload no image. Each repository is a step that runs even if an earlier one failed, so one rejected page does not
+     * keep the others from being updated; the job then fails.
+     *
+     * Docker Hub only changes the description for a user with admin rights on the repository, with a password or a
+     * personal access token with the scope Read/Write/Delete. The steps call the API of Docker Hub themselves, as
+     * peter-evans/dockerhub-description does, so that no action from outside GitHub gets the token.
+     *
+     * @param list<Repository> $repositories
+     * @return array<string, mixed>
+     */
+    public function getDockerHubDescriptionConfig(array $repositories): array
+    {
+        $steps = [
+            [
+                'uses' => 'actions/checkout@v7',
+                'with' => ['persist-credentials' => false],
+            ],
+            [
+                'name' => 'Log in to Docker Hub',
+                'id' => 'login',
+                'shell' => 'bash',
+                'env' => [
+                    'DOCKERHUB_USERNAME' => '${{ secrets.DOCKERHUB_USERNAME }}',
+                    'DOCKERHUB_TOKEN' => '${{ secrets.DOCKERHUB_TOKEN }}',
+                ],
+                'run' => self::DOCKER_HUB_LOGIN,
+            ],
+        ];
+        foreach ($repositories as $repository) {
+            $image = 'webdevops/' . $repository->name;
+            $steps[] = [
+                'name' => $image,
+                'if' => '${{ !cancelled() && steps.login.outcome == \'success\' }}',
+                'shell' => 'bash',
+                'env' => [
+                    'REPOSITORY' => $image,
+                    'PAGE' => $repository->pagePath(),
+                    'SHORT_DESCRIPTION' => $repository->shortDescription,
+                ],
+                'run' => self::DOCKER_HUB_UPLOAD,
+            ];
+        }
+
+        return [
+            'name' => 'Update the Docker Hub pages',
+            'if' => '${{ github.repository == \'webdevops/Dockerfile\' && github.ref == \'refs/heads/master\''
+                . " && (github.event_name == 'push'"
+                . " || (github.event_name == 'workflow_dispatch' && github.actor != 'github-actions[bot]')) }}",
+            'runs-on' => 'ubuntu-latest',
+            'env' => ['DOCKER_HUB_API' => 'https://hub.docker.com/v2'],
+            'steps' => $steps,
         ];
     }
 

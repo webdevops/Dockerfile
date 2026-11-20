@@ -1,0 +1,3 @@
+# webdevops/base
+
+Base images.
