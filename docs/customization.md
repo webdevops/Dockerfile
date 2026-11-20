@@ -175,6 +175,8 @@ This works in all images, based on Debian, Ubuntu or Alpine.
 
 `docker-healthcheck` checks the [services](#services) of supervisord. It fails when a service failed: supervisord gave up on it (`FATAL`), is restarting it after a failed start (`BACKOFF`) or does not know its state (`UNKNOWN`), or supervisord does not answer. It prints the lines of those services. Services that run, start, are not enabled or were stopped do not count. All images except `bootstrap` and `toolbox` have the command.
 
+Each failed check also writes its reason to the container log, so `docker compose logs` shows it, for example `docker-healthcheck: unhealthy: postfix:postfixd FATAL Exited too quickly (process log may have details)`. The first check that passes after it writes `docker-healthcheck: healthy again` there. Run it as root, as Docker does for the `HEALTHCHECK` of these images: supervisord answers only root, so as another user the check fails with `supervisord does not answer`.
+
 From PHP 8.6 on, the PHP images run it as their `HEALTHCHECK`: the tags `8.6` and `8.6-alpine` of `php`, `php-nginx`, `php-apache` and their `-dev` images, every 30 seconds after a start period of 30 seconds; a container is `unhealthy` after three failed checks. `docker inspect --format '{{json .State.Health}}' <container>` shows the output of the last checks. The older PHP tags and the base images define no `HEALTHCHECK`; add one in `compose.yaml`:
 
 ```yaml

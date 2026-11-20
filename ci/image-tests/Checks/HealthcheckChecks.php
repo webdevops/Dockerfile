@@ -42,6 +42,18 @@ trait HealthcheckChecks
             self::assertSame(1, $result->exitCode, $result->describe());
             self::assertMatchesRegularExpression('/^image-test-failing\s+FATAL\b/m', $result->stdout);
         });
+
+        // the reason is in the container log too, and the first check that passes again says so there
+        $this->eventually(function () use ($container): void {
+            self::assertMatchesRegularExpression('/^docker-healthcheck: unhealthy: image-test-failing\s+FATAL\b/m', $this->containerLog($container));
+        });
+        $this->addProgram($container, 'image-test-failing', "command=sleep 3600\nautostart=true");
+        $this->eventually(function () use ($container): void {
+            $this->assertCommandSucceeds('docker-healthcheck', $container);
+        });
+        $this->eventually(function () use ($container): void {
+            self::assertMatchesRegularExpression('/^docker-healthcheck: healthy again$/m', $this->containerLog($container));
+        });
     }
 
     /**
@@ -92,6 +104,16 @@ trait HealthcheckChecks
             str_replace("\n", '\\n', $settings),
             $name,
         ), $container);
+    }
+
+    /**
+     * What docker logs shows of $container: its stdout and stderr.
+     */
+    private function containerLog(Container $container): string
+    {
+        $process = new Process(['docker', 'logs', $container->id]);
+        $process->mustRun();
+        return $process->getOutput() . $process->getErrorOutput();
     }
 
     /**
