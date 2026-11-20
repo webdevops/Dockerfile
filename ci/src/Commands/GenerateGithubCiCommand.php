@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
+use Webdevops\Build\DockerHub\Config;
 use Webdevops\Build\FileReader;
 use Webdevops\Build\GithubJobBuilder;
 
@@ -83,6 +84,7 @@ class GenerateGithubCiCommand extends Command
         $this->jobs = [
             'validate-automation' => $this->jobBuilder->getValidationConfig(),
             'check-ci-code' => $this->jobBuilder->getCodeCheckConfig(),
+            GithubJobBuilder::DOCKER_HUB_JOB => $this->jobBuilder->getDockerHubDescriptionConfig(new Config($this->rootPath)->repositories()),
             GithubJobBuilder::IMAGE_TEST_RUNNER_JOB => $this->jobBuilder->getImageTestRunnerConfig(),
             ...$this->jobs,
         ];
@@ -113,6 +115,13 @@ class GenerateGithubCiCommand extends Command
             // themselves (GithubJobBuilder::PUSH_PERMISSIONS).
             'permissions' => [
                 'contents' => 'read',
+            ],
+            // A new push to a pull request cancels the run of its previous commit, which nobody needs any more. Runs
+            // of the other events get a group of their own, so a run on master, the nightly run and a manual run are
+            // never cancelled: they publish the images.
+            'concurrency' => [
+                'group' => 'build-${{ github.event.pull_request.number || github.run_id }}',
+                'cancel-in-progress' => true,
             ],
             'jobs' => $this->jobs,
         ];
@@ -176,7 +185,43 @@ class GenerateGithubCiCommand extends Command
         }
 
         $this->checkInternalImages($data);
+        $this->checkAliases($data);
         return new Tree($data);
+    }
+
+    /**
+     * Every tag that "docker: aliases" in conf/console.yml publishes under a deprecated name has to be built here, and a
+     * deprecated name must not be built as an image of its own: docker/<name>/<tag> would publish new tags under it.
+     *
+     * @param list<array<string, mixed>> $nodes
+     */
+    private function checkAliases(array $nodes): void
+    {
+        $built = array_column($nodes, 'id');
+        foreach ($this->fileReader->aliases() as $name => $alias) {
+            foreach ($nodes as $node) {
+                if ($node['image'] === $name) {
+                    throw new RuntimeException(sprintf(
+                        'webdevops/%1$s is a deprecated name in "docker: aliases" of conf/console.yml, but %2$s builds it as an image of its own. Build the tag in docker/%3$s instead.',
+                        $name,
+                        dirname((string)$node['file']),
+                        $alias['image'],
+                    ));
+                }
+            }
+
+            foreach ($alias['tags'] as $tag) {
+                $image = 'webdevops/' . $alias['image'] . ':' . $tag;
+                if (!in_array($image, $built, true)) {
+                    throw new RuntimeException(sprintf(
+                        '"docker: aliases" in conf/console.yml publishes %s as webdevops/%s:%s, which is not built. Remove the tag from the list.',
+                        $image,
+                        $name,
+                        $tag,
+                    ));
+                }
+            }
+        }
     }
 
     /**

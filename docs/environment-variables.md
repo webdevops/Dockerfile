@@ -30,7 +30,7 @@ Images: `base-app`, `php-*`.
 
 ## Container
 
-Images: `base`, `base-app`, `apache`, `nginx`, `php-*`.
+Images: `base`, `base-app`, `php-*`.
 
 | Variable | Default | Effect |
 | --- | --- | --- |
@@ -41,14 +41,14 @@ Images: `base`, `base-app`, `apache`, `nginx`, `php-*`.
 
 ## Web server
 
-Images: `php-nginx`, `php-nginx-dev`, `php-apache`, `php-apache-dev`, `nginx`, `apache`.
+Images: `php-nginx`, `php-nginx-dev`, `php-apache`, `php-apache-dev`.
 
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `WEB_DOCUMENT_ROOT` | `/app` | Document root of the default virtual host. |
 | `WEB_DOCUMENT_INDEX` | `index.php` | Directory index. Nginx uses only this file. Apache adds it after the distribution's own index files (Debian: `index.html`, `index.cgi`, `index.pl`, `index.php`, `index.xhtml`, `index.htm`; Alpine: `index.html`); if one of those exists, Apache serves it instead. |
 | `WEB_ALIAS_DOMAIN` | `*.vm` | Additional host names of the default virtual host (`server_name` in Nginx, `ServerAlias` in Apache). |
-| `WEB_PHP_SOCKET` | `127.0.0.1:9000` (empty in `nginx` and `apache`) | Address of PHP-FPM that PHP requests are passed to. |
+| `WEB_PHP_SOCKET` | `127.0.0.1:9000` | Address of PHP-FPM that PHP requests are passed to. |
 | `WEB_PHP_TIMEOUT` | `600` | Timeout in seconds for PHP requests (`fastcgi_read_timeout` in Nginx, proxy timeout in Apache). See [Long requests](#long-requests). |
 | `SERVICE_NGINX_CLIENT_MAX_BODY_SIZE` | `50m` | Nginx `client_max_body_size`. Nginx-based images only. See [Uploads](#uploads). |
 | `WEB_NO_CACHE_PATTERN` | `\.(css\|js\|gif\|png\|jpg\|svg\|json\|xml)$` | Development images only. Files matching this regular expression are served without caching (Nginx: `expires off`, Apache: no `ETag`). |
@@ -83,7 +83,7 @@ Two more variables control PHP itself:
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `PHP_DISMOD` | not set | Comma-separated list of extensions to disable, for example `redis,apcu`. Each entry matches part of an extension's ini file name, so `pgsql` also disables `pdo_pgsql`. Extensions compiled into PHP, such as `json`, cannot be disabled. |
-| `COMPOSER_VERSION` | `2` | Major version the `composer` command runs: `2` or `1`. Applied when a container starts; during `docker build`, `composer` is Composer 2, see [Composer](images/php.md#composer). Composer 1 prints deprecation notices on PHP 8.4 and newer. |
+| `COMPOSER_VERSION` | `2` | Major version the `composer` command runs: `2` or `1`. Applied when a container starts; during `docker build`, `composer` is Composer 2, see [Composer](images/php.md#composer). Composer 1 prints deprecation notices on PHP 8.4 and newer and cannot download packages from PHP 8.5 on, see [Known issues](known-issues.md#composer-1-on-php-84-to-86). |
 
 ## PHP-FPM
 
@@ -142,9 +142,9 @@ Three timeouts end a long request:
 | --- | --- | --- | --- |
 | `WEB_PHP_TIMEOUT` | `600` | Seconds the web server waits for PHP-FPM | Nginx and Apache answer `504 Gateway Time-out`. |
 | `FPM_REQUEST_TERMINATE_TIMEOUT` | `0` (no limit) | Seconds PHP-FPM lets a request run (`request_terminate_timeout`) | PHP-FPM kills the process. Nginx answers `502 Bad Gateway`, Apache `503 Service Unavailable`. |
-| `PHP_MAX_EXECUTION_TIME` | `300` | Seconds a PHP script may run (`max_execution_time`) | PHP stops the script with a fatal error, status `500`. Only the time PHP itself runs counts: time spent waiting, for example in `sleep()`, does not. The PHP CLI has no limit. |
+| `PHP_MAX_EXECUTION_TIME` | `300` | Seconds a PHP script may run (`max_execution_time`) | PHP stops the script with a fatal error, status `500`. Only the time PHP itself runs counts: time spent waiting, for example in `sleep()`, does not. In the `8.6` tags, waiting counts as well, see [PHP 8.6](images/php.md#php-86). The PHP CLI has no limit. |
 
-For long requests, raise `PHP_MAX_EXECUTION_TIME` if PHP itself runs longer than five minutes, and `WEB_PHP_TIMEOUT` if the whole request takes longer than ten:
+For long requests, raise `PHP_MAX_EXECUTION_TIME` if PHP itself runs longer than five minutes (in the `8.6` tags: if the request takes longer than five minutes), and `WEB_PHP_TIMEOUT` if the whole request takes longer than ten:
 
 ```yaml
 services:

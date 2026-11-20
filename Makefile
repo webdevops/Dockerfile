@@ -26,7 +26,7 @@ test:
 # Runs the image tests of IMAGE (webdevops/<image>:<tag>) against a container of REFERENCE, by default IMAGE itself,
 # e.g. make test-image IMAGE=webdevops/php-nginx:8.5 REFERENCE=my-build. The tests run in a container of
 # ci/image-tests/Dockerfile, which starts the container of the image through the Docker socket. test-image builds that
-# runner first; test-image-run uses the runner that is already built, as the CI does after building it with its cache.
+# runner first; test-image-run uses the runner that is already there, as the CI does after loading it with docker load.
 DOCKER_SOCKET ?= $(if $(ROOTLESS),$(patsubst unix://%,%,$(shell docker context inspect --format '{{.Endpoints.docker.Host}}' 2>/dev/null)),/var/run/docker.sock)
 ifneq ($(filter test-image test-image-run,$(MAKECMDGOALS)),)
 ifeq ($(IMAGE),)

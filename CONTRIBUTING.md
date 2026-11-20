@@ -5,7 +5,7 @@ How to use the images is described in the [README](README.md) and the [documenta
 
 ## File generation
 
-The files inside the `docker` directory, the GitHub Actions workflow (`.github/workflows/build.yaml`) and the banner at the top of the [README](README.md) are generated with PHP:
+The files inside the `docker` directory, the GitHub Actions workflow (`.github/workflows/build.yaml`), the banner at the top of the [README](README.md) and the pages of the images on Docker Hub (`docs/dockerhub/`) are generated with PHP:
 
 ```
 make generate
@@ -17,10 +17,11 @@ The container runs as your user, so the files it writes belong to you.
 
 | Command | Writes |
 | --- | --- |
-| `ci/console generate:dockerfile` | `docker/<image>/<tag>/Dockerfile` from the `Dockerfile.twig` next to it and the Twig templates in the `template` directory, and the links `docker/php/<version>` to `docker/php-official/<version>` |
+| `ci/console generate:dockerfile` | `docker/<image>/<tag>/Dockerfile` from the `Dockerfile.twig` next to it and the Twig templates in the `template` directory |
 | `ci/console generate:provision` | `docker/<image>/<tag>/conf/` from the `provisioning` directory, as configured in `conf/provision.yml` |
 | `ci/console generate:github-ci` | `.github/workflows/build.yaml`, a build and a publish job for every Dockerfile |
 | `ci/console generate:readme-banner` | `docs/assets/readme-banner-*.svg` |
+| `ci/console generate:dockerhub` | `docs/dockerhub/<repository>.md`, the Docker Hub page of every repository in `conf/dockerhub.yml`, with the tags of the Dockerfiles |
 
 **The generated files are never modified manually.**
 Edit the `Dockerfile.twig` templates, the shared templates in `template`, the files in `provisioning` or the settings in `conf` instead.
@@ -30,7 +31,10 @@ A `Dockerfile.twig` imports the macros it uses from `template/Dockerfile`, e.g. 
 The commands that the images have in `/usr/local/bin`, such as `apt-install`, `apk-install`, `docker-run-bootstrap` and `generate-locales`, are in `provisioning/baselayout/general/usr/local/bin`. They only handle Debian, Ubuntu and Alpine, the systems the images are built on. `generate:provision` copies them into `docker/toolbox/latest/conf/`, `toolbox` keeps them under `/baselayout`, and `bootstrap` and the PHP images copy them from there with `COPY --from=webdevops/toolbox`.
 It checks all of `conf/provision.yml` before it changes a file and stops if a source directory or a tag does not exist, or if an image has another setting than `configuration`.
 `generate:dockerfile` stops if a directory `docker/<image>/<tag>` has files but no `Dockerfile.twig`; it first removes the `.DS_Store` files of the macOS Finder under `docker`.
-To stop building a tag, remove its directory and those of the tags that build on it; `generate:github-ci` names any it finds. `generate:dockerfile` adds and removes the links in `docker/php` along with the `php-official` tags.
+To stop building a tag, remove its directory and those of the tags that build on it; `generate:github-ci` names any it finds.
+`generate:dockerhub` checks everything before it writes a page and stops if an image under `docker` has no entry under `built` in `conf/dockerhub.yml`, if an entry under `built` has no Dockerfile any more, if a link points to a file or heading that does not exist, or if a page or a short description is longer than Docker Hub takes (25,000 and 100 bytes). To stop building an image, also move its entry from `built` to `discontinued`; its page then warns that it gets no updates. It removes the pages of repositories that are no longer in `conf/dockerhub.yml`.
+
+`webdevops/php-official` is a deprecated name of `webdevops/php`. `generate:github-ci` publishes a `php` tag under that name too only if `docker: aliases` in `conf/console.yml` lists it; new PHP versions are not added there. When you stop building a `php` tag, remove it from that list as well: `generate:github-ci` stops while the list names a tag without a Dockerfile in `docker/php`, or while a tag directory in `docker/php-official` has a Dockerfile.
 
 ## Building in CI
 
@@ -51,9 +55,21 @@ The CI job "Check ci/" runs the same checks. No image build waits for it.
 Dependabot proposes updates of the PHP packages in `ci/` once a month: one pull request with all minor and patch updates, and one for each new major version.
 It does not update the actions in `.github/workflows/build.yaml`, because that file is generated; their versions are in `ci/src/GithubJobBuilder.php`.
 
+A new push to a pull request cancels the run of its previous commit. Runs on `master`, the nightly run and runs started by hand are never cancelled.
+
 GitHub Actions builds every image independently and runs the image tests and structure tests
 defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdevops/`, but only
 internally; pull the images from Docker Hub.
+
+The job "Update the Docker Hub pages" uploads `docs/dockerhub/<repository>.md` and the short description of each repository to Docker Hub when `build.yaml` runs on `master` after a push or is started by hand. It does not run for pull requests, in the nightly run, in the builds that `php-upstream.yaml` starts (a failed upload would keep it from starting the next one) or in forks, and no other job waits for it.
+It logs in with the secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`. Docker Hub changes a description only for a user with admin rights on the repository, with a password or a personal access token with the scope Read/Write/Delete.
+
+Besides the nightly run, `.github/workflows/php-upstream.yaml` starts `build.yaml` on `master` when the official PHP images get a new PHP release.
+Every hour it reads `PHP_VERSION` of the image in the `FROM` line of each `docker/php/<tag>/Dockerfile` and of `webdevops/php:<tag>` and `webdevops/php-nginx:<tag>`.
+If one of ours is different or does not exist yet, it starts the build, unless a build of `master` is running or queued (pull requests do not count).
+It also does not start one if a build it started in the last 8 hours did not succeed, or if it already started 3 builds in that time; builds started by hand do not count.
+An image that cannot be read is skipped with a warning; the next run tries again.
+It is written by hand, not generated. Run it by hand with "dry-run" to see which tags are behind without starting a build.
 
 The build steps pass the token of the run (`GITHUB_TOKEN`) to Docker as the build secret `COMPOSER_AUTH`, for PIE (see [PHP extension builds](#php-extension-builds)).
 The token may only read the repository; only the jobs that push images to ghcr.io may also write packages there.
@@ -108,14 +124,16 @@ A container counts as started once its entrypoint has run its scripts and starte
 | `ci/image-tests/Images/` | One test class per image, e.g. `PhpNginxTest.php` for `webdevops/php-nginx`. An image without a class is not tested. |
 | `ci/image-tests/Checks/` | The checks as traits, e.g. `PhpChecks` for every PHP image or `NginxChecks` for the images with Nginx. A test class uses the traits of its image. |
 | `ci/image-tests/ImageTestCase.php` | Starts and removes the containers, the variables of the environment container, and the helpers of the checks, e.g. `assertRootScript()`, `assertServiceRunning()`, `request()`, `phpFpmBody()` and `runContainer()` |
-| `ci/image-tests/Fixtures/` | Files for all containers except those started with `withFiles: false`, e.g. the one for the test without `/app`: the pages in `/app`, and in `/opt/image-tests` small programs that stand in for what a test talks to: `fastcgi-request.php` sends a request straight to PHP-FPM, `smtp-sink.php` takes the mail of Postfix in place of a mail catcher, `smtp-relay.php` asks Postfix to relay, `dbgp-listener.php` takes the connections of Xdebug in place of an IDE, `capture-mail.sh` stands in for sendmail, and `nginx.conf` is a configuration for `SERVICE_NGINX_OPTS` |
-| `ci/image-tests/Hooks/` | Files for the further containers, again except those with `withFiles: false`: the hooks, a command `image-test` of its own, a second virtual host for the test of `WEB_ALIAS_DOMAIN`, and an Apache configuration for the test of `SERVICE_APACHE_OPTS` |
+| `ci/image-tests/Fixtures/` | Files for all containers: the pages in `/app`, and in `/opt/image-tests` small programs that stand in for what a test talks to: `fastcgi-request.php` sends a request straight to PHP-FPM, `smtp-sink.php` takes the mail of Postfix in place of a mail catcher, `smtp-relay.php` asks Postfix to relay, `dbgp-listener.php` takes the connections of Xdebug in place of an IDE, `capture-mail.sh` stands in for sendmail, and `nginx.conf` is a configuration for `SERVICE_NGINX_OPTS` |
+| `ci/image-tests/Hooks/` | Files for the further containers: the hooks, a command `image-test` of its own, a second virtual host for the test of `WEB_ALIAS_DOMAIN`, and an Apache configuration for the test of `SERVICE_APACHE_OPTS` |
 
-`ci/console test:image webdevops/<image>:<tag>` runs the tests of an image; `webdevops/php-official` has the tests of `webdevops/php`. It takes the distribution and its version from `dockerTest` in `conf/console.yml`, and removes the containers of the image afterwards, also when the run is interrupted with Ctrl-C or `docker stop`.
+`ci/console test:image webdevops/<image>:<tag>` runs the tests of an image; `webdevops/php-official`, a deprecated name of `webdevops/php`, has the tests of `webdevops/php`. It takes the distribution and its version from `dockerTest` in `conf/console.yml`, and removes the containers of the image afterwards, also when the run is interrupted with Ctrl-C or `docker stop`.
 A runner killed with `SIGKILL` leaves its containers behind; they carry the label `webdevops.image-test`, so `docker rm --force $(docker ps --all --quiet --filter label=webdevops.image-test)` removes them.
 It runs in a container of `ci/image-tests/Dockerfile`, which has PHP and the `docker` command and gets the Docker socket: `make test-image` builds that image (`make test-image-runner`) and runs the tests in it (`make test-image-run`).
 The runner builds on the official PHP image, not on a webdevops image, so a broken `webdevops/php` cannot break the tests that find the defect.
-In the CI, the job `image-test-runner` builds it once per architecture into the cache of GitHub Actions; the image jobs wait for it, load it from the cache and run `make test-image-run`. If that job fails, the image jobs still run and build the runner themselves.
+In the CI, the job `image-test-runner` builds it once per architecture, with the cache of GitHub Actions, and passes it on as an artifact; the image jobs wait for it, load it with `docker load` and run `make test-image-run`.
+So only that job asks Docker Hub for the images that `ci/image-tests/Dockerfile` builds on, not every image job: a build, even from the cache, would ask once per job.
+If that job cannot build or upload the runner, the image jobs still run and build it themselves, from its cache; a failed write to the cache does not stop the upload. If its checkout or the setup of Buildx fails, the job fails, and the image jobs that need it are skipped.
 
 ## PHP extension builds
 
@@ -136,8 +154,9 @@ docker build --secret id=COMPOSER_AUTH,env=COMPOSER_AUTH -t webdevops/php:8.5 do
 `./build-local.sh` passes the secret on when `COMPOSER_AUTH` is set.
 
 Protobuf, Vips and XML-RPC are built directly from their official upstream sources.
-The existing XML-RPC **1.0.0RC3** pin is preserved on all supported PHP versions.
-Protobuf on PHP 8.2–8.5 uses the latest upstream release. If a future release raises its minimum PHP
+Vips and XML-RPC are only built for PHP 8.2–8.5 (see [PHP 8.6](docs/images/php.md#php-86)).
+The existing XML-RPC **1.0.0RC3** pin is preserved on those versions.
+Protobuf on PHP 8.2–8.6 uses the latest upstream release. If a future release raises its minimum PHP
 version, older PHP image builds can fail; there is no automatic fallback to an
 older release. The existing CI matrix checks compatibility across PHP versions.
 

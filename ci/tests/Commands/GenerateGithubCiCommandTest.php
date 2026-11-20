@@ -15,11 +15,16 @@ use Webdevops\Build\Commands\GenerateGithubCiCommand;
 use Webdevops\Build\Tests\TemporaryRepository;
 
 use function array_column;
+use function array_filter;
 use function array_diff;
 use function array_keys;
 use function array_values;
+use function preg_match_all;
+use function rmdir;
+use function str_replace;
 use function strpos;
 use function substr;
+use function unlink;
 
 #[CoversClass(GenerateGithubCiCommand::class)]
 final class GenerateGithubCiCommandTest extends TestCase
@@ -27,6 +32,7 @@ final class GenerateGithubCiCommandTest extends TestCase
     private const array ALL_JOBS = [
         'validate-automation',
         'check-ci-code',
+        'dockerhub-description',
         'image-test-runner',
         'base-app_ubuntu-22-04',
         'base-app_ubuntu-22-04_publish',
@@ -79,6 +85,17 @@ final class GenerateGithubCiCommandTest extends TestCase
         self::assertSame('Validate Automation', $workflow['jobs']['validate-automation']['name']);
     }
 
+    public function testANewPushToAPullRequestCancelsItsPreviousRun(): void
+    {
+        $workflow = $this->generate();
+
+        // Runs of other events get their own group, so master, the nightly run and manual runs are never cancelled
+        self::assertSame([
+            'group' => 'build-${{ github.event.pull_request.number || github.run_id }}',
+            'cancel-in-progress' => true,
+        ], $workflow['concurrency']);
+    }
+
     public function testJobsFollowTheImageTree(): void
     {
         $jobs = $this->generate()['jobs'];
@@ -107,6 +124,40 @@ final class GenerateGithubCiCommandTest extends TestCase
         self::assertArrayNotHasKey('Export image (OCI layout)', $steps('php_8-4'));
     }
 
+    public function testImageJobsLoadTheImageTestRunnerOfTheRunnerJob(): void
+    {
+        $jobs = $this->generate()['jobs'];
+        $upload = array_column($jobs['image-test-runner']['steps'], null, 'name')['Upload the image test runner']['with'];
+
+        foreach (['base_alpine', 'php_8-4'] as $job) {
+            $steps = array_column($jobs[$job]['steps'], null, 'name');
+            self::assertSame($upload['name'], $steps['Download the image test runner']['with']['name'], $job);
+            self::assertSame('docker load --input ' . $upload['path'] . ' && rm ' . $upload['path'], $steps['Load the image test runner']['run'], $job);
+        }
+    }
+
+    public function testStepConditionsReferToEarlierStepsOfTheirJob(): void
+    {
+        $references = 0;
+        foreach ($this->generate()['jobs'] as $jobId => $job) {
+            $ids = [];
+            foreach ($job['steps'] as $step) {
+                preg_match_all('/\bsteps\.([\w-]+)\./', $step['if'] ?? '', $matches);
+                foreach ($matches[1] as $id) {
+                    self::assertContains($id, $ids, $jobId . ': ' . ($step['name'] ?? $step['uses']));
+                    ++$references;
+                }
+
+                if (isset($step['id'])) {
+                    self::assertNotContains($step['id'], $ids, $jobId . ': step ids are unique');
+                    $ids[] = $step['id'];
+                }
+            }
+        }
+
+        self::assertGreaterThan(0, $references);
+    }
+
     public function testPublishesTheAliases(): void
     {
         $jobs = $this->generate()['jobs'];
@@ -114,6 +165,46 @@ final class GenerateGithubCiCommandTest extends TestCase
 
         self::assertStringContainsString('-t "webdevops/base:latest"', $manifest('base_ubuntu-22-04_publish'));
         self::assertStringContainsString('-t "webdevops/php-official:8.4"', $manifest('php_8-4_publish'));
+        self::assertStringContainsString('-t "ghcr.io/webdevops/php-official:8.4"', $manifest('php_8-4_publish'));
+        self::assertStringNotContainsString('php-official', $manifest('php-nginx_8-5-alpine_publish'));
+    }
+
+    public function testDeprecatedNameGetsNoNewTags(): void
+    {
+        $this->repository->write('conf/console.yml', str_replace("tags: ['8.4', '8.5-alpine', '8.5']", "tags: ['8.4']", $this->repository->read('conf/console.yml')));
+
+        $jobs = $this->generate()['jobs'];
+        $manifest = fn (string $job): string => array_column($jobs[$job]['steps'], 'run', 'name')['Create and push multi-arch manifest'];
+
+        self::assertStringContainsString('-t "webdevops/php-official:8.4"', $manifest('php_8-4_publish'));
+        self::assertStringContainsString('-t "webdevops/php:8.5"', $manifest('php_8-5_publish'));
+        self::assertStringNotContainsString('php-official', $manifest('php_8-5_publish'));
+    }
+
+    public function testAliasOfATagThatIsNotBuiltIsAnError(): void
+    {
+        // docker/php/8.4 was removed, but not its tag in the list
+        foreach (['Dockerfile', 'Dockerfile.twig'] as $file) {
+            unlink($this->repository->path . '/docker/php/8.4/' . $file);
+        }
+
+        rmdir($this->repository->path . '/docker/php/8.4');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('"docker: aliases" in conf/console.yml publishes webdevops/php:8.4 as webdevops/php-official:8.4, which is not built. Remove the tag from the list.');
+        new CommandTester(new GenerateGithubCiCommand($this->repository->path))->execute([]);
+    }
+
+    public function testDeprecatedNameBuiltAsAnImageIsAnError(): void
+    {
+        // e.g. a branch from before the deprecation adds docker/php-official/8.6
+        foreach (['Dockerfile', 'Dockerfile.twig'] as $file) {
+            $this->repository->write('docker/php-official/8.6/' . $file, str_replace('webdevops/php:8.5', 'webdevops/php-official:8.6', $this->repository->read('docker/php/8.5/' . $file)));
+        }
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('webdevops/php-official is a deprecated name in "docker: aliases" of conf/console.yml, but docker/php-official/8.6 builds it as an image of its own. Build the tag in docker/php instead.');
+        new CommandTester(new GenerateGithubCiCommand($this->repository->path))->execute([]);
     }
 
     public function testPrintsTheImageTree(): void
@@ -132,7 +223,7 @@ final class GenerateGithubCiCommandTest extends TestCase
      */
     public static function missingInternalImages(): iterable
     {
-        // e.g. php-official 8.5-alpine was removed, but not php-nginx 8.5-alpine
+        // e.g. php 8.5-alpine was removed, but not php-nginx 8.5-alpine
         yield 'base image' => [
             'docker/php-nginx/8.5-alpine/Dockerfile',
             "FROM webdevops/php:8.6-alpine\n",
@@ -232,6 +323,27 @@ final class GenerateGithubCiCommandTest extends TestCase
         $tester = new CommandTester(new GenerateGithubCiCommand($this->repository->path));
         self::assertSame(Command::SUCCESS, $tester->execute([]));
         return $this->workflow();
+    }
+
+    public function testUploadsEveryDockerHubPage(): void
+    {
+        $this->generate();
+
+        self::assertSame(
+            [
+                'Log in to Docker Hub',
+                'webdevops/base',
+                'webdevops/base-app',
+                'webdevops/hhvm',
+                'webdevops/nginx',
+                'webdevops/php',
+                'webdevops/php-nginx',
+                'webdevops/php-nginx-dev',
+                'webdevops/php-official',
+                'webdevops/toolbox',
+            ],
+            array_values(array_filter(array_column($this->workflow()['jobs']['dockerhub-description']['steps'], 'name'))),
+        );
     }
 
     /**

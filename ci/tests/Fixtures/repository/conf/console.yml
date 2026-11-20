@@ -3,6 +3,10 @@
 
 docker:
   autoLatestTag: 'ubuntu-22.04'
+  aliases:
+    php-official:
+      image: 'php'
+      tags: ['8.4', '8.5-alpine', '8.5']
 
 dockerTest:
   configuration:

@@ -7,6 +7,7 @@ namespace Webdevops\Build\Tests;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Webdevops\Build\DockerHub\Repository;
 use Webdevops\Build\GithubJobBuilder;
 
 use function array_filter;
@@ -56,21 +57,42 @@ final class GithubJobBuilderTest extends TestCase
         self::assertSame('toolbox_latest_publish', $this->jobs(['image' => 'php-nginx'])['base_alpine']['needs'], 'no image tests, no runner');
     }
 
-    public function testImageTestRunnerIsBuiltOncePerArchitectureIntoTheCache(): void
+    public function testImageTestRunnerIsBuiltOncePerArchitectureAndPassedOn(): void
     {
         $job = new GithubJobBuilder(self::ROOT)->getImageTestRunnerConfig();
+        $steps = $this->steps(['job' => $job], 'job');
 
         self::assertSame(['fail-fast' => false, 'matrix' => ['include' => GithubJobBuilder::PLATFORMS]], $job['strategy']);
         self::assertSame('${{ matrix.runner }}', $job['runs-on']);
+        self::assertSame(
+            ['actions/checkout@v7', 'docker/setup-buildx-action@v4', 'Build the image test runner', 'Upload the image test runner'],
+            array_keys($steps),
+        );
+        $build = $steps['Build the image test runner'];
         self::assertSame([
             'context' => '.',
             'file' => 'ci/image-tests/Dockerfile',
             'platforms' => '${{ matrix.platform }}',
-            'outputs' => 'type=cacheonly',
+            'tags' => 'webdevops-image-tests',
+            // an archive for docker load in the image jobs
+            'outputs' => 'type=docker,dest=.ci-image-test-runner/webdevops-image-tests.tar',
             'cache-from' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}',
-            'cache-to' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max',
-        ], $job['steps'][2]['with']);
-        self::assertTrue($job['steps'][2]['continue-on-error'], 'a failure must not skip the image jobs that need this job');
+            // a failed export to the cache must not keep the archive from being uploaded
+            'cache-to' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }},mode=max,ignore-error=true',
+        ], $build['with']);
+        $upload = $steps['Upload the image test runner'];
+        self::assertSame('${{ steps.' . $build['id'] . ".outcome == 'success' }}", $upload['if']);
+        self::assertSame([
+            'name' => 'webdevops-image-tests-${{ matrix.arch }}',
+            'path' => '.ci-image-test-runner/webdevops-image-tests.tar',
+            'retention-days' => 1,
+            'overwrite' => true,
+            'compression-level' => 0,
+            'if-no-files-found' => 'error',
+        ], $upload['with']);
+        foreach ([$build, $upload] as $step) {
+            self::assertTrue($step['continue-on-error'], $step['name'] . ': a failure must not skip the image jobs that need this job');
+        }
     }
 
     public function testEveryBuildGetsTheTokenOfTheRunForPie(): void
@@ -110,6 +132,8 @@ final class GithubJobBuilderTest extends TestCase
             'actions/checkout@v7',
             'docker/setup-buildx-action@v4',
             'Build (load locally)',
+            'Download the image test runner',
+            'Load the image test runner',
             'Build the image test runner',
             'run image tests',
             'run structure-test',
@@ -123,10 +147,33 @@ final class GithubJobBuilderTest extends TestCase
         );
     }
 
-    public function testImageTestsRunAgainstTheImageOfTheJob(): void
+    public function testImageJobLoadsTheImageTestRunnerOfTheRunnerJob(): void
+    {
+        $steps = $this->steps($this->jobs());
+        $runnerJob = $this->steps(['job' => new GithubJobBuilder(self::ROOT)->getImageTestRunnerConfig()], 'job');
+        $upload = $runnerJob['Upload the image test runner']['with'];
+
+        $download = $steps['Download the image test runner'];
+        self::assertSame('actions/download-artifact@v8', $download['uses']);
+        self::assertSame(['name' => $upload['name'], 'path' => '.ci-image-test-runner'], $download['with']);
+        self::assertTrue($download['continue-on-error'], 'without the artifact, the job builds the runner itself');
+
+        $load = $steps['Load the image test runner'];
+        self::assertSame('${{ steps.' . $download['id'] . ".outcome == 'success' }}", $load['if']);
+        // the file that the runner job uploads, in the directory that the download writes to, removed once loaded
+        self::assertSame('docker load --input ' . $upload['path'] . ' && rm ' . $upload['path'], $load['run']);
+        self::assertTrue($load['continue-on-error'], 'an archive that does not load is built instead');
+    }
+
+    public function testImageJobBuildsTheImageTestRunnerOnlyIfItDoesNotLoad(): void
     {
         $steps = $this->steps($this->jobs());
 
+        self::assertSame(
+            '${{ steps.' . $steps['Load the image test runner']['id'] . ".outcome != 'success' }}",
+            $steps['Build the image test runner']['if'],
+        );
+        self::assertArrayNotHasKey('continue-on-error', $steps['Build the image test runner']);
         self::assertSame([
             'context' => '.',
             'file' => 'ci/image-tests/Dockerfile',
@@ -135,6 +182,12 @@ final class GithubJobBuilderTest extends TestCase
             // the job image-test-runner writes the cache, the image jobs only read it
             'cache-from' => 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}',
         ], $steps['Build the image test runner']['with']);
+    }
+
+    public function testImageTestsRunAgainstTheImageOfTheJob(): void
+    {
+        $steps = $this->steps($this->jobs());
+
         self::assertSame(
             'make test-image-run IMAGE=webdevops/base:alpine REFERENCE=ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-alpine',
             $steps['run image tests']['run'],
@@ -175,6 +228,8 @@ final class GithubJobBuilderTest extends TestCase
     {
         $steps = $this->steps($this->jobs(['image' => 'php-nginx']));
 
+        self::assertArrayNotHasKey('Download the image test runner', $steps);
+        self::assertArrayNotHasKey('Load the image test runner', $steps);
         self::assertArrayNotHasKey('Build the image test runner', $steps);
         self::assertArrayNotHasKey('run image tests', $steps);
         self::assertArrayNotHasKey('run structure-test', $steps);
@@ -195,6 +250,8 @@ final class GithubJobBuilderTest extends TestCase
             'Download parent image (OCI layout): webdevops/toolbox:latest',
             'Build (load locally)',
             'Build (load locally, from parent artifact)',
+            'Download the image test runner',
+            'Load the image test runner',
             'Build the image test runner',
             'run image tests',
             'run structure-test',
@@ -230,7 +287,7 @@ final class GithubJobBuilderTest extends TestCase
             . 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image',
             $steps['Build (load locally, from parent artifact)']['with']['build-contexts'],
         );
-        self::assertCount(1, array_filter(array_keys($steps), fn (string $name): bool => str_starts_with($name, 'Download')));
+        self::assertCount(1, array_filter(array_keys($steps), fn (string $name): bool => str_starts_with($name, 'Download parent image')));
     }
 
     public function testImageWithChildrenPassesItselfOn(): void
@@ -301,6 +358,55 @@ final class GithubJobBuilderTest extends TestCase
         self::assertArrayNotHasKey('needs', $job);
         self::assertSame(['actions/checkout@v7', 'Run GrumPHP'], array_keys($steps));
         self::assertSame('make check', $steps['Run GrumPHP']['run'], 'the command of the documentation');
+    }
+
+    public function testDockerHubDescriptionJob(): void
+    {
+        $job = new GithubJobBuilder()->getDockerHubDescriptionConfig([
+            new Repository('php', 'PHP-FPM', true),
+            new Repository('hhvm', 'No longer built or updated.', false),
+        ]);
+
+        self::assertSame('Update the Docker Hub pages', $job['name']);
+        self::assertSame('ubuntu-latest', $job['runs-on']);
+        self::assertArrayNotHasKey('needs', $job, 'the pages do not wait for the images, nor the images for the pages');
+        self::assertSame(
+            '${{ github.repository == \'webdevops/Dockerfile\' && github.ref == \'refs/heads/master\''
+            . " && (github.event_name == 'push'"
+            . " || (github.event_name == 'workflow_dispatch' && github.actor != 'github-actions[bot]')) }}",
+            $job['if'],
+        );
+        self::assertSame(['DOCKER_HUB_API' => 'https://hub.docker.com/v2'], $job['env']);
+
+        $steps = $job['steps'];
+        self::assertCount(4, $steps);
+        self::assertSame(['uses' => 'actions/checkout@v7', 'with' => ['persist-credentials' => false]], $steps[0]);
+
+        $login = $steps[1];
+        self::assertSame('Log in to Docker Hub', $login['name']);
+        self::assertSame('login', $login['id']);
+        self::assertSame('bash', $login['shell']);
+        self::assertSame(
+            ['DOCKERHUB_USERNAME' => '${{ secrets.DOCKERHUB_USERNAME }}', 'DOCKERHUB_TOKEN' => '${{ secrets.DOCKERHUB_TOKEN }}'],
+            $login['env'],
+        );
+        self::assertStringContainsString('"$DOCKER_HUB_API/auth/token"', $login['run']);
+        self::assertStringContainsString('::add-mask::', $login['run']);
+        self::assertStringContainsString('>> "$GITHUB_ENV"', $login['run']);
+
+        foreach (['php' => 'PHP-FPM', 'hhvm' => 'No longer built or updated.'] as $index => $short) {
+            $upload = $steps[$index === 'php' ? 2 : 3];
+            self::assertSame('webdevops/' . $index, $upload['name']);
+            self::assertSame('${{ !cancelled() && steps.login.outcome == \'success\' }}', $upload['if']);
+            self::assertSame('bash', $upload['shell']);
+            self::assertSame(
+                ['REPOSITORY' => 'webdevops/' . $index, 'PAGE' => 'docs/dockerhub/' . $index . '.md', 'SHORT_DESCRIPTION' => $short],
+                $upload['env'],
+            );
+            self::assertStringContainsString('-X PATCH', $upload['run']);
+            self::assertStringContainsString('"$DOCKER_HUB_API/repositories/$REPOSITORY"', $upload['run']);
+            self::assertArrayNotHasKey('uses', $upload, 'no action from outside GitHub gets the token');
+        }
     }
 
     /**

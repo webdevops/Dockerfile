@@ -68,9 +68,9 @@ These commands are installed in the images. Use them in `RUN` lines of your own 
 | Command | What it does | Images |
 | --- | --- | --- |
 | `apt-install <packages>` | Runs `apt-get update`, installs the packages without recommended packages and removes the package lists again | Debian- and Ubuntu-based images, including `bootstrap:ubuntu-22.04` |
-| `apk-install <packages>` | Installs packages with `apk add --no-cache` | Alpine-based images, including `bootstrap:alpine` |
+| `apk-install <packages>` | Installs packages with `apk add --no-cache` | Alpine-based images, the `php-*` images with an `-alpine` tag |
 | `docker-php-setting [--raw] <setting> <value>` | Appends a PHP setting to `/opt/docker/etc/php/php.ini`, for example `docker-php-setting memory_limit 384M`. PHP and PHP-FPM read that file after the [PHP variables](environment-variables.md#php), so the setting wins over them. A value that is not a number is written in quotes; `--raw` writes it as it is, for example `docker-php-setting --raw error_reporting E_ERROR` | `php-*` |
-| `docker-image-cleanup` | Removes package lists and caches; use it at the end of a `RUN` that installed packages | all except `toolbox`; fails in the Alpine `php-*` images, see [Known issues](known-issues.md#docker-image-cleanup-in-the-alpine-php-images) |
+| `docker-image-cleanup` | Removes package lists and caches; use it at the end of a `RUN` that installed packages | all except `toolbox` |
 | `file <path>` | Shows the type of a file, for example `file --mime-type upload.bin`; tools such as GrumPHP's BOM check call it | `php`, `php-apache`, `php-nginx` and their `-dev` images |
 | `go-replace -s <search> -r <replace> -- <file>` | Replaces text in files; the same tool fills the [placeholders](#placeholders) | all |
 | `gosu <user> <command>` | Runs a command as another user, for example `application` | all except `toolbox` |
@@ -90,7 +90,7 @@ COPY docker/bootstrap.d/ /bootstrap.d/
 RUN docker-run-bootstrap
 ```
 
-On Alpine, use `apk-install`, and leave out `docker-cronjob` and, in the PHP images, `docker-image-cleanup`; `apk-install` keeps no package cache anyway:
+On Alpine, use `apk-install` and leave out `docker-cronjob`. `docker-image-cleanup` works, but `apk-install` keeps no package cache anyway:
 
 ```dockerfile
 FROM webdevops/php-nginx:8.5-alpine
@@ -112,7 +112,6 @@ go-replace -s '<API_URL>' -r "$API_URL" -- /app/config/app.ini
 | --- | --- | --- |
 | `php`, `php-nginx`, `php-apache` | `php-fpm`, `cron`, `syslog`, plus `nginx` or `apache` | `postfix`, `ssh`, `dnsmasq` |
 | `php-dev`, `php-nginx-dev`, `php-apache-dev` | as above, plus `postfix` and `ssh` | `dnsmasq` |
-| `nginx`, `apache` | `nginx` or `apache` | `cron`, `syslog`, `postfix`, `ssh`, `dnsmasq` |
 | `base`, `base-app` | none | `cron`, `syslog`, `postfix`, `ssh`, `dnsmasq` |
 
 Enable or disable a service with `docker-service` (or the shortcuts `docker-service-enable` and `docker-service-disable`). If the service's program is not installed yet, enabling it installs it. Do this in your Dockerfile:
@@ -227,7 +226,7 @@ services:
 
 ### Nginx
 
-Images: `php-nginx`, `php-nginx-dev`, `nginx`. The distribution's configuration loads `main.conf` through `/etc/nginx/conf.d/10-docker.conf`. Files in `/opt/docker/etc/nginx/`:
+Images: `php-nginx`, `php-nginx-dev`. The distribution's configuration loads `main.conf` through `/etc/nginx/conf.d/10-docker.conf`. Files in `/opt/docker/etc/nginx/`:
 
 | File | Content |
 | --- | --- |
@@ -247,7 +246,7 @@ Images: `php-nginx`, `php-nginx-dev`, `nginx`. The distribution's configuration 
 
 ### Apache
 
-Images: `php-apache`, `php-apache-dev`, `apache`. The distribution's configuration loads `main.conf` through `/etc/apache2/sites-enabled/10-docker.conf` (Debian) or `/etc/apache2/conf.d/zzz-docker.conf` (Alpine). Files in `/opt/docker/etc/httpd/`:
+Images: `php-apache`, `php-apache-dev`. The distribution's configuration loads `main.conf` through `/etc/apache2/sites-enabled/10-docker.conf` (Debian) or `/etc/apache2/conf.d/zzz-docker.conf` (Alpine). Files in `/opt/docker/etc/httpd/`:
 
 | File | Content |
 | --- | --- |

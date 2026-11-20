@@ -28,13 +28,14 @@ use const JSON_THROW_ON_ERROR;
 trait PhpChecks
 {
     /**
-     * The security releases of 2026-10-21, https://www.php.net/
+     * The security releases of 2026-11-19, https://www.php.net/
      */
     private const array MINIMUM_PHP_VERSIONS = [
-        '8.2' => '8.2.35',
-        '8.3' => '8.3.36',
-        '8.4' => '8.4.27',
-        '8.5' => '8.5.12',
+        '8.2' => '8.2.36',
+        '8.3' => '8.3.37',
+        '8.4' => '8.4.28',
+        '8.5' => '8.5.13',
+        '8.6' => '8.6.0',
     ];
 
     public function testPhpServiceDirectory(): void
@@ -68,10 +69,6 @@ trait PhpChecks
 
     public function testZicIsInstalled(): void
     {
-        if (self::image()->osFamily !== 'debian') {
-            self::markTestSkipped('zic is only checked in the Debian images.');
-        }
-
         $file = $this->file('/usr/sbin/zic');
         self::assertTrue($file->isFile, '/usr/sbin/zic should be a file');
         self::assertTrue($file->isExecutable, '/usr/sbin/zic should be executable');
@@ -192,6 +189,30 @@ trait PhpChecks
         }
 
         self::assertContains('imap', $this->lines($this->stdout('php -m')));
+    }
+
+    /**
+     * The official PHP images, and so the images built on them, are thread safe (ZTS) from PHP 8.6 on.
+     */
+    public function testPhpThreadSafety(): void
+    {
+        self::assertSame(self::image()->isThreadSafe() ? 'true' : 'false', $this->stdout("php -r 'var_export((bool) PHP_ZTS);'"));
+    }
+
+    /**
+     * The Debian images load the ionCube Loader up to PHP 8.5; the Alpine images and PHP 8.6 and later have none.
+     */
+    public function testIonCubeLoaderUpToPhp85OnDebian(): void
+    {
+        $result = $this->assertCommandSucceeds("php -r 'var_export(extension_loaded(\"ionCube Loader\"));'");
+        $this->assertNoPhpErrors($result->stdout . $result->stderr);
+        if (!self::image()->hasIonCube()) {
+            self::assertSame('false', $result->stdout);
+            return;
+        }
+
+        self::assertSame('true', $result->stdout);
+        self::assertStringContainsString('with the ionCube PHP Loader', $this->stdout('php -v'));
     }
 
     public function testPhpScansTheImageIniFiles(): void

@@ -1,21 +1,20 @@
 # webdevops/bootstrap, webdevops/base and webdevops/base-app
 
-The foundation for the non-PHP images. The PHP images do not build on these; they bring the same entrypoint and tools themselves.
+Base images for your own images and for `webdevops/dockerfile-build-env`. The PHP images do not build on these; they bring the same entrypoint and tools themselves.
 
 | Image | Adds |
 | --- | --- |
 | `webdevops/bootstrap` | The operating system plus the webdevops helper scripts, for example `docker-run-bootstrap`. |
 | `webdevops/base` | Entrypoint, `supervisord`, service scripts and hooks, see [Customization](../customization.md). |
-| `webdevops/base-app` | The user and group `application` (UID/GID `1000`), `/app` and common tools: `zip`, `unzip`, `bzip2`, `git`, `patch`, `rsync`, the SSH client (`ssh`) and a DNS lookup tool (`dig` on Ubuntu, `drill` on Alpine). On Ubuntu also `moreutils` (for example `sponge`). |
+| `webdevops/base-app` | The user and group `application` (UID/GID `1000`), `/app` and common tools: `zip`, `unzip`, `bzip2`, `git`, `patch`, `rsync`, the SSH client (`ssh`), a DNS lookup tool (`dig`) and `moreutils` (for example `sponge`). |
 
 ## Tags
 
 | Tag | Based on |
 | --- | --- |
 | `ubuntu-22.04`, `latest` | `ubuntu:22.04` |
-| `alpine` | `alpine:3.11` |
 
-Alpine 3.11 has had no security updates since November 2021, see [Known issues](../known-issues.md#alpine-311).
+The `alpine` tags are no longer built, see [Replacing discontinued images](../discontinued-images.md#alpine-tags-of-bootstrap-base-and-base-app).
 
 The same tags exist for `bootstrap`, `base` and `base-app`.
 

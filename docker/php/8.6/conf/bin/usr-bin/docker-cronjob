@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
+source /opt/docker/bin/config.sh
+
+rootCheck "$0"
+
+if [[ "$#" -eq 0 ]]; then
+    echo "Usage: $0 '<cronjob line>'"
+    exit 1
+fi
+
+# create crontab file
+touch /etc/cron.d/webdevops-docker
+chmod 0644 /etc/cron.d/webdevops-docker
+
+for CRONJOB_LINES in "$@"; do
+    echo "$CRONJOB_LINES" >> /etc/cron.d/webdevops-docker
+done
+
+# Add required newline at end
+echo >> /etc/cron.d/webdevops-docker
