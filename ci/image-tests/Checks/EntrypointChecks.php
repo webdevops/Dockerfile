@@ -40,6 +40,13 @@ trait EntrypointChecks
         self::assertSame([0, "root\n"], [$result->exitCode, $result->stdout], $result->describe());
     }
 
+    public function testCliWithoutCliScriptFailsWithItsError(): void
+    {
+        $result = $this->runContainer(['cli']);
+        self::assertSame(1, $result->exitCode, $result->describe());
+        self::assertStringContainsString('[ERROR] No CLI_SCRIPT in docker environment defined', $result->stderr, $result->describe());
+    }
+
     public function testCommandOfItsOwnFromEntrypointD(): void
     {
         $result = $this->runContainer(['image-test', 'first', 'second']);
