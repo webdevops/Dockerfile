@@ -7,6 +7,9 @@ namespace Webdevops\Build\ImageTests\Checks;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
+use function escapeshellarg;
+use function in_array;
+
 /**
  * Checks of the images based on webdevops/base: the layout under /opt/docker, supervisor and the tools.
  *
@@ -133,5 +136,27 @@ trait BaseChecks
     public function testBasePackageIsInstalled(string $package): void
     {
         $this->assertPackageInstalled($package);
+    }
+
+    /**
+     * docker-cronjob adds a job in the system crontab format, with its user, see docs/customization.md#cron-jobs, and
+     * cron runs it as that user, also in Alpine, whose BusyBox crond reads no /etc/cron.d. In a container of its own,
+     * whose cron starts after the job was added, as in an image built with the job; images that do not start cron
+     * install it first.
+     */
+    public function testDockerCronjobAddsAJobThatCronRunsAsItsUser(): void
+    {
+        $container = $this->startTestContainer('cronjob');
+        $job = 'docker-cronjob ' . escapeshellarg('* * * * * nobody id -un > /tmp/image-test-cronjob');
+        $this->assertCommandSucceeds(
+            in_array('cron', self::services(), true)
+                ? $job . ' && docker-service restart cron'
+                : 'docker-service enable cron && ' . $job . ' && docker-service start cron',
+            $container,
+        );
+        // cron runs the job at the start of the next minute
+        $this->waitFor(function () use ($container): void {
+            self::assertSame("nobody\n", $this->execute('cat /tmp/image-test-cronjob 2>&1', $container)->stdout);
+        }, 30, 3);
     }
 }
