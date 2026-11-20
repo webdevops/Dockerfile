@@ -11,7 +11,7 @@ The first argument of the container command selects what the entrypoint does:
 | `supervisord` | Default command. Starts `supervisord`, which runs all enabled [services](#services). |
 | `noop` | Keeps the container running without starting services (`tail -f /dev/null`). |
 | `root` | Runs the remaining arguments as `root`; without arguments it opens `bash`. |
-| `cli` | Runs `CLI_SCRIPT` as `APPLICATION_USER` (default `application`); the remaining arguments are passed on. Only in `base-app` and `php-*` images; elsewhere it fails because `APPLICATION_USER` is not set. |
+| `cli` | Runs `CLI_SCRIPT` as `APPLICATION_USER` (default `application`); the remaining arguments are passed on. In `base`, which has neither `APPLICATION_USER` nor the user `application`, it runs `CLI_SCRIPT` as `root`. Without `CLI_SCRIPT` it fails with an error. |
 | anything else (`default`) | Runs the command as given, as `root`. |
 
 ```yaml
