@@ -29,7 +29,13 @@ if [[ -n "${PHP_DEBUGGER+x}" ]]; then
         blackfire)
             echo "PHP-Debugger: Blackfire enabled"
             phpModuleRemove "xdebug"
-            docker-service-enable blackfire-agent
+            # the agent of the Blackfire CLI ends at once without the server credentials
+            if [[ -n "${BLACKFIRE_SERVER_ID:-}" && -n "${BLACKFIRE_SERVER_TOKEN:-}" ]]; then
+                docker-service-enable blackfire-agent
+            else
+                echo "PHP-Debugger: Blackfire agent not started, BLACKFIRE_SERVER_ID and BLACKFIRE_SERVER_TOKEN are not set;"
+                echo "              set them, or set php.blackfire.agent_socket to an agent of your own"
+            fi
             ;;
 
         none)

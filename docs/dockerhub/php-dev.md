@@ -1,6 +1,6 @@
 # webdevops/php-dev
 
-[`webdevops/php`](https://hub.docker.com/r/webdevops/php) for local development. Xdebug is loaded by default; `PHP_DEBUGGER` switches to Blackfire or turns both off, but the Blackfire agent is missing, see [Known issues](https://github.com/webdevops/Dockerfile/blob/master/docs/known-issues.md#blackfire-agent). Postfix and an SSH server are started, and `root` and `application` have the password `dev`.
+[`webdevops/php`](https://hub.docker.com/r/webdevops/php) for local development. Xdebug is loaded by default; `PHP_DEBUGGER` switches to Blackfire, whose agent runs in the container with your server credentials, or turns both off. Postfix and an SSH server are started, and `root` and `application` have the password `dev`.
 
 Meant for local development. Do not use it in production.
 

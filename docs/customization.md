@@ -111,7 +111,7 @@ go-replace -s '<API_URL>' -r "$API_URL" -- /app/config/app.ini
 | Image | Started by default | Available, not started |
 | --- | --- | --- |
 | `php`, `php-nginx`, `php-apache` | `php-fpm`, `cron`, `syslog`, plus `nginx` or `apache` | `postfix`, `ssh`, `dnsmasq` |
-| `php-dev`, `php-nginx-dev`, `php-apache-dev` | as above, plus `postfix` and `ssh` | `dnsmasq` |
+| `php-dev`, `php-nginx-dev`, `php-apache-dev` | as above, plus `postfix` and `ssh` | `dnsmasq`; `blackfire-agent`, which `PHP_DEBUGGER=blackfire` starts with the server credentials, see [Development images](environment-variables.md#development-images) |
 | `base`, `base-app` | none | `cron`, `syslog`, `postfix`, `ssh`, `dnsmasq` |
 
 Enable or disable a service with `docker-service` (or the shortcuts `docker-service-enable` and `docker-service-disable`). If the service's program is not installed yet, enabling it installs it. Do this in your Dockerfile:
@@ -138,6 +138,7 @@ Before a service starts, its start script sources every `*.sh` file in `/opt/doc
 | `postfix` | `/opt/docker/bin/service.d/postfix.d` |
 | `ssh` | `/opt/docker/bin/service.d/ssh.d` |
 | `dnsmasq` | `/opt/docker/bin/service.d/dnsmasq.d` |
+| `blackfire-agent` (development images) | `/opt/docker/bin/service.d/blackfire-agent.d` |
 | `supervisord` itself | `/opt/docker/bin/service.d/supervisor.d` |
 
 Options for each service are set with environment variables, see [Services](environment-variables.md#services).
