@@ -55,6 +55,8 @@ The CI job "Check ci/" runs the same checks. No image build waits for it.
 Dependabot proposes updates of the PHP packages in `ci/` once a month: one pull request with all minor and patch updates, and one for each new major version.
 It does not update the actions in `.github/workflows/build.yaml`, because that file is generated; their versions are in `ci/src/GithubJobBuilder.php`.
 
+A new push to a pull request cancels the run of its previous commit. Runs on `master`, the nightly run and runs started by hand are never cancelled.
+
 GitHub Actions builds every image independently and runs the image tests and structure tests
 defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdevops/`, but only
 internally; pull the images from Docker Hub.
