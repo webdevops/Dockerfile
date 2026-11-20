@@ -89,6 +89,27 @@ trait PhpFpmEnvironmentChecks
     }
 
     /**
+     * fpm.pool.clear_env=yes and fpm.pool.access.log, in a container of their own: two directives that docker.conf of
+     * the official PHP image sets too, and PHP-FPM reads docker.conf after application.conf. With clear_env, a worker
+     * no longer gets the variables of the container, e.g. APPLICATION_PATH, which it gets in the container of the
+     * class; the access log goes to the file instead of the container log. application.conf stays as the image has it.
+     */
+    public function testPhpFpmPoolDirectivesOfDockerConfFromTheEnvironment(): void
+    {
+        self::assertSame('/app', $this->phpFpmBody(self::container(), 'test=application_path'), 'without fpm.pool.clear_env');
+        $container = $this->startTestContainer('fpm-docker-conf', [
+            'fpm.pool.clear_env' => 'yes',
+            'fpm.pool.access.log' => '/app/image-test-fpm-access.log',
+        ]);
+        self::assertSame('not set', $this->phpFpmBody($container, 'test=application_path'), 'fpm.pool.clear_env=yes');
+        $this->waitFor(function () use ($container): void {
+            $log = $this->execute('cat /app/image-test-fpm-access.log', $container);
+            self::assertStringContainsString('php-test.php?test=application_path', $log->stdout, 'fpm.pool.access.log: ' . $log->describe());
+        });
+        self::assertStringNotContainsString('image-test-fpm-access.log', $this->stdout('cat /opt/docker/etc/php/fpm/pool.d/application.conf', $container));
+    }
+
+    /**
      * FPM_PM_START_SERVERS=3, FPM_PM_MIN_SPARE_SERVERS=3, FPM_PM_MAX_SPARE_SERVERS=4 and FPM_PM_MAX_CHILDREN=8, in a
      * container of their own: three workers at the start, three idle ones besides three busy ones, eight at most
      * under load, and four once the load is gone. The defaults would give 2, 4, 5 and 3.
