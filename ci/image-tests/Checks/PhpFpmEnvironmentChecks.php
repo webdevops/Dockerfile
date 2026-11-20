@@ -28,6 +28,11 @@ use function usleep;
 trait PhpFpmEnvironmentChecks
 {
     /**
+     * The message PHP-FPM logs when it has started.
+     */
+    private const string PHP_FPM_READY = 'ready to handle connections';
+
+    /**
      * The line of the access log of PHP-FPM for a request of test=error_log, see phpFpmCommand().
      */
     private const string PHP_FPM_ACCESS_LOG_LINE = '#"GET /php-test\.php\?test=error_log" 200 /app/php-test\.php #';
@@ -98,12 +103,12 @@ trait PhpFpmEnvironmentChecks
             self::assertMatchesRegularExpression(self::PHP_FPM_ACCESS_LOG_LINE, $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container));
             $errors = $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDERR'], $container);
             self::assertStringContainsString('PHP message: image-test-from-php-fpm', $errors);
-            self::assertStringContainsString('ready to handle connections', $errors);
+            self::assertStringContainsString(self::PHP_FPM_READY, $errors);
         });
         $log = $container->logs();
         self::assertDoesNotMatchRegularExpression(self::PHP_FPM_ACCESS_LOG_LINE, $log);
         self::assertStringNotContainsString('image-test-from-php-fpm', $log);
-        self::assertStringNotContainsString('ready to handle connections', $log);
+        self::assertStringNotContainsString(self::PHP_FPM_READY, $log);
     }
 
     /**
@@ -119,7 +124,7 @@ trait PhpFpmEnvironmentChecks
             [$stdout, $stderr] = $container->logStreams();
             self::assertMatchesRegularExpression(self::PHP_FPM_ACCESS_LOG_LINE, $stdout);
             self::assertStringContainsString('PHP message: image-test-from-php-fpm', $stderr);
-            self::assertStringContainsString('ready to handle connections', $stderr);
+            self::assertStringContainsString(self::PHP_FPM_READY, $stderr);
         });
     }
 
