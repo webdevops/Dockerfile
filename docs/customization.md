@@ -300,9 +300,12 @@ Images: `php-*`. Files in `/opt/docker/etc/php/`:
 | `php.webdevops.ini` | The image's PHP defaults, followed by the values of the `php.*` and `PHP_*` variables. Loaded as `98-webdevops.ini`. At every start it is reset to the image's version and the variables are written again, so do not replace or edit it. |
 | `php.ini` | For your settings, empty by default; [`docker-php-setting`](#tools-for-your-dockerfile) appends to it. Loaded as `99-docker.ini`, after `98-webdevops.ini`, so its values win over the environment variables. A `:ro` mount works. |
 | `fpm/php-fpm.conf` | PHP-FPM main configuration; `FPM_PROCESS_MAX` and `fpm.global.*` are appended at every start. |
-| `fpm/pool.d/application.conf` | The PHP-FPM pool `[www]`; the `FPM_*` and `fpm.pool.*` values are appended at every start. To replace it, use `COPY` in a Dockerfile: with a `:ro` mount the container exits at start, and a read-write mount gets the values appended in the file on the host. |
+| `fpm/pool.d/application.conf` | The PHP-FPM pool `[www]`. You can replace it, also with a `:ro` mount, unless `php.error_log` is set: its value is written into this file at start, and with `:ro` the container exits at start. |
+| `fpm/pool.d/zz-environment.conf` | Written at every start: the `fpm.pool.*` values, the `FPM_*` values except `FPM_PROCESS_MAX`, `PHP_SENDMAIL_PATH` and the user of the pool. Do not replace or edit it. |
 
 `PHP_SENDMAIL_PATH` is the exception to the order above. It is also written into the pool as `php_admin_value[sendmail_path]`, and it is always set (default `/usr/sbin/sendmail -t -i`). So for requests handled by PHP-FPM, `sendmail_path` in your `php.ini` has no effect; only the PHP CLI uses it. Set `PHP_SENDMAIL_PATH` instead.
+
+PHP-FPM reads the `*.conf` files in `fpm/pool.d/` in the order of their names: `application.conf`, then `docker.conf` of the official PHP image, then `zz-environment.conf`. For a directive set in more than one of them, the last one wins. So the variables win over `application.conf`, over `docker.conf` and over pool files of your own whose names sort before `zz-environment.conf`, such as `www.conf`. Name your pool file `zzz-pool.conf`, for example, if its directives should win over the variables. For `php_value[...]` and `php_admin_value[...]` it is the other way round: the first one wins.
 
 ### supervisord
 

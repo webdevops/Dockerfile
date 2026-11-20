@@ -128,6 +128,11 @@ switch ($_GET['test']) {
         echo session_name();
         break;
 
+    case 'application_path':
+        // a variable of the container, which PHP-FPM passes on to its workers unless clear_env is set
+        echo getenv('APPLICATION_PATH') === false ? 'not set' : getenv('APPLICATION_PATH');
+        break;
+
     default:
         header('HTTP/1.1 500 Internal Server Error');
         echo 'ERROR: Unknown test';
