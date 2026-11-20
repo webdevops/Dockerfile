@@ -4,10 +4,10 @@
 ## Run CLI_SCRIPT from environment variable
 #############################################
 
-if [ -n "${CLI_SCRIPT:-}" ]; then
+if [[ -n "${CLI_SCRIPT:-}" ]]; then
     # Pass on the arguments after "cli"
     shift
-    if [ -n "${APPLICATION_USER:-}" ]; then
+    if [[ -n "${APPLICATION_USER:-}" ]]; then
         exec gosu "${APPLICATION_USER}" ${CLI_SCRIPT} "$@"
     elif id -u application > /dev/null 2>&1; then
         # APPLICATION_USER not set or empty: its default
