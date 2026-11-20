@@ -9,6 +9,7 @@ use Webdevops\Build\ImageTests\Checks\BaseChecks;
 use Webdevops\Build\ImageTests\Checks\BootstrapChecks;
 use Webdevops\Build\ImageTests\Checks\ContainerEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\EntrypointChecks;
+use Webdevops\Build\ImageTests\Checks\HealthcheckChecks;
 use Webdevops\Build\ImageTests\Checks\PhpDevelopmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpDevelopmentEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpEnvironmentChecks;
@@ -34,6 +35,7 @@ final class PhpDevTest extends ImageTestCase
     use SshChecks;
     use EntrypointChecks;
     use ServiceChecks;
+    use HealthcheckChecks;
     use ContainerEnvironmentChecks;
     use PhpEnvironmentChecks;
     use PhpFpmEnvironmentChecks;

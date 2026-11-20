@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Checks the services of supervisord, for a HEALTHCHECK of Docker or a healthcheck in compose.yaml.
+#
+# Unhealthy (exit code 1): a service that supervisord gave up on (FATAL), that it is restarting after a failed start
+# (BACKOFF) or whose state it does not know (UNKNOWN), and a supervisord that does not answer. The lines of those
+# services are printed.
+# Healthy (exit code 0): services that run or start (RUNNING, STARTING), that are not enabled or were stopped (STOPPED)
+# and that ended (EXITED): supervisorctl status does not say whether a service ended as expected, and the services of
+# the images are restarted when they end. supervisorctl status itself ends with an error as soon as a service is
+# STOPPED, so only the states count.
+
+set -o pipefail
+
+status=$(supervisorctl status 2>&1)
+
+if ! grep -qE '^\S+\s+(RUNNING|STARTING|STOPPED|STOPPING|EXITED|BACKOFF|FATAL|UNKNOWN)\b' <<<"$status"; then
+    echo "supervisord does not answer:"
+    echo "$status"
+    exit 1
+fi
+
+failed=$(grep -E '^\S+\s+(FATAL|BACKOFF|UNKNOWN)\b' <<<"$status")
+if [[ -n "$failed" ]]; then
+    echo "$failed"
+    exit 1
+fi
+
+exit 0

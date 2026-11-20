@@ -44,3 +44,6 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
 {{ docker.expose('9000') }}
 {{ docker.entrypoint("/entrypoint") }}
 {{ docker.cmd("supervisord") }}
+
+{# Docker reports the container as unhealthy when a service of supervisord fails, see docs/customization.md#healthcheck #}
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 CMD ["docker-healthcheck"]

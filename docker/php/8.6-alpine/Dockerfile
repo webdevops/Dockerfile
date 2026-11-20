@@ -272,3 +272,5 @@ WORKDIR /
 EXPOSE 9000
 ENTRYPOINT ["/entrypoint"]
 CMD ["supervisord"]
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 CMD ["docker-healthcheck"]

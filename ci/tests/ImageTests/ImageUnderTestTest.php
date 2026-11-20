@@ -95,6 +95,20 @@ final class ImageUnderTestTest extends TestCase
         self::assertFalse($image->hasIonCube(), 'PHP 8.6 and later have no ionCube');
     }
 
+    public function testHealthcheckFromPhp86(): void
+    {
+        foreach (['8.6', '8.6-alpine', '8.7'] as $tag) {
+            $image = new ImageUnderTest('webdevops/php-nginx:' . $tag, 'webdevops/php-nginx:' . $tag, 'debian', '13', true);
+            self::assertTrue($image->hasHealthcheck(), $tag);
+        }
+
+        $image = new ImageUnderTest('webdevops/php:8.5', 'webdevops/php:8.5', 'debian', '12', true);
+        self::assertFalse($image->hasHealthcheck(), 'PHP 8.5 and older offer docker-healthcheck without HEALTHCHECK');
+
+        $image = new ImageUnderTest('webdevops/base:ubuntu-22.04', 'webdevops/base:ubuntu-22.04', 'ubuntu', '22.04', false);
+        self::assertFalse($image->hasHealthcheck(), 'the base images have no PHP version and no HEALTHCHECK');
+    }
+
     public function testNameIsRequired(): void
     {
         $this->expectException(RuntimeException::class);

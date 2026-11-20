@@ -11,6 +11,7 @@ use Webdevops\Build\ImageTests\Checks\BaseChecks;
 use Webdevops\Build\ImageTests\Checks\BootstrapChecks;
 use Webdevops\Build\ImageTests\Checks\ContainerEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\EntrypointChecks;
+use Webdevops\Build\ImageTests\Checks\HealthcheckChecks;
 use Webdevops\Build\ImageTests\Checks\PhpEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmEnvironmentChecks;
@@ -37,6 +38,7 @@ final class PhpApacheTest extends ImageTestCase
     use PhpWebProductionChecks;
     use EntrypointChecks;
     use ServiceChecks;
+    use HealthcheckChecks;
     use ContainerEnvironmentChecks;
     use PhpEnvironmentChecks;
     use PhpFpmEnvironmentChecks;
