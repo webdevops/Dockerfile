@@ -16,17 +16,6 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php`, `php-dev`, `php-nginx`, `php-nginx-dev`, `php-apache` and `php-apache-dev`, Debian and Alpine.
 - **Instead:** Read them with `docker compose logs`. To have PHP-FPM's messages and the PHP errors in the file of `LOG_STDERR` in every image, also set `fpm.global.error_log: /docker.stderr`. `php.error_log` gives the PHP errors of PHP-FPM and the CLI a file of their own, in a directory that `application` may write to, for example `/app`. The access log needs a pool file that sorts after `docker.conf`, see [`fpm.pool.<key>`](#fpmpoolkey-for-the-directives-of-dockerconf).
 
-### `docker-cronjob` on Alpine
-
-- **Effect:** Fails. `/etc/cron.d` does not exist, and BusyBox `crond` does not read it.
-- **Images:** all Alpine images.
-- **Instead:** Add the job to `/etc/crontabs/root`, without the user column. In images that do not start cron by default, also run `docker-service enable cron`.
-
-  ```dockerfile
-  RUN echo '*/5 * * * * /usr/local/bin/php /app/bin/console app:cleanup' >> /etc/crontabs/root
-  ```
-- **Issue:** related question [#280](https://github.com/webdevops/Dockerfile/issues/280).
-
 ### `fpm.pool.<key>` for the directives of `docker.conf`
 
 - **Effect:** No effect for `listen`, `access.log`, `clear_env`, `catch_workers_output` and `decorate_workers_output`. The official PHP image sets them in the pool file `docker.conf`, which PHP-FPM reads after `application.conf`, so its values win. Other directives work, for example `fpm.pool.pm.max_requests`.
