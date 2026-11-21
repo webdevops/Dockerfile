@@ -15,6 +15,8 @@ function usage() {
     echo "       $0 --environment [--enable-cron]"
     echo "         writes the jobs of the CRONJOB_* variables in place of those of its last run; with --enable-cron,"
     echo "         also enables cron for them where it is not enabled"
+    echo "       $0 --job-environment"
+    echo "         Debian and Ubuntu: writes the variables of the container anew for the jobs, see docker-cronjob-shell"
     exit 1
 }
 
@@ -29,8 +31,14 @@ ENVIRONMENT_CRONTAB=/etc/cron.d/webdevops-environment
 ENVIRONMENT_BEGIN='# webdevops environment begin'
 ENVIRONMENT_END='# webdevops environment end'
 
-# Debian and Ubuntu: the shell of the jobs, which sends their output to syslog-ng, see docker-cronjob-shell
+# Debian and Ubuntu: the crontab of the jobs of docker-cronjob, and the shell of the crontabs of docker-cronjob and of
+# the CRONJOB_* variables, docker-cronjob-shell: it adds the variables of the container from the file of the user of the
+# job in JOB_ENVIRONMENT_DIRECTORY, which the start script of cron writes with --job-environment, and sends the output of
+# the job to syslog-ng. BusyBox crond on Alpine passes its own variables on, which are those of the container, and the
+# output of the jobs.
+DOCKER_CRONTAB=/etc/cron.d/webdevops-docker
 CRON_SHELL=/usr/local/bin/docker-cronjob-shell
+JOB_ENVIRONMENT_DIRECTORY=/run/docker-cronjob
 
 # The five time fields: their names, lowest and highest values, and the names of their values. BusyBox crond on Alpine
 # takes 0 to 6 for the day of week, cron in Debian and Ubuntu also 7 for Sunday.
@@ -133,6 +141,60 @@ function parseJob() {
 }
 
 ###
+ # Prints the variables of the container for the jobs, NUL-separated, as supervisord passes them on to cron: all but
+ # those that cron sets for the user of a job (HOME, LOGNAME, USER, SHELL) and those of the shell that runs this script
+ # (PWD, OLDPWD, SHLVL, _)
+ ##
+function printJobEnvironment() {
+    local variable
+
+    while IFS= read -r -d '' variable; do
+        case "${variable%%=*}" in
+            HOME|LOGNAME|USER|SHELL|PWD|OLDPWD|SHLVL|_)
+                ;;
+            *)
+                printf '%s\0' "$variable"
+                ;;
+        esac
+    done < <(env -0)
+}
+
+###
+ # Debian and Ubuntu: writes the variables of the container anew into a file for each user of a job in a crontab in
+ # /etc/cron.d whose shell is CRON_SHELL, as those of docker-cronjob and of the CRONJOB_* variables. Only that user and
+ # root may read it; the jobs of the user get the variables anyway.
+ ##
+function writeJobEnvironment() {
+    local user crontab
+    local -a crontabs=()
+
+    mkdir -p "$JOB_ENVIRONMENT_DIRECTORY"
+    chmod 0711 "$JOB_ENVIRONMENT_DIRECTORY"
+    rm -f -- "$JOB_ENVIRONMENT_DIRECTORY"/*
+
+    for crontab in /etc/cron.d/*; do
+        if [[ -f "$crontab" ]] && grep -qxF "SHELL=${CRON_SHELL}" "$crontab"; then
+            crontabs+=("$crontab")
+        fi
+    done
+
+    if [[ "${#crontabs[@]}" -eq 0 ]]; then
+        return 0
+    fi
+
+    # the user of each job line: the sixth field, or the second after a keyword such as @daily; not of a comment or of
+    # a variable such as MAILTO=""
+    while IFS= read -r user; do
+        if id -u "$user" > /dev/null 2>&1; then
+            ( umask 0077 && printJobEnvironment > "${JOB_ENVIRONMENT_DIRECTORY}/${user}" )
+            chown "$user" "${JOB_ENVIRONMENT_DIRECTORY}/${user}"
+            chmod 0400 "${JOB_ENVIRONMENT_DIRECTORY}/${user}"
+        fi
+    done < <(awk '/^[[:space:]]*(#|$)/ || $1 ~ /=/ || $2 ~ /^=/ { next } { print ($1 ~ /^@/) ? $2 : $6 }' "${crontabs[@]}" \
+        | LC_ALL=C sort -u)
+}
+
+###
  # Writes the jobs of the CRONJOB_* variables, sorted by name, in place of those of the last run. Checks all of them
  # before it writes, so that an error changes nothing. A variable that is empty adds no job. $1 is 1 if cron is to be
  # enabled for the jobs.
@@ -193,18 +255,21 @@ function writeEnvironmentJobs() {
             } >> "$crontab"
             chmod 0600 "$crontab"
         done
-    elif [[ "${#names[@]}" -eq 0 ]]; then
-        rm -f -- "$ENVIRONMENT_CRONTAB"
     else
-        {
-            echo "# The jobs of the CRONJOB_* variables, written anew at every start of the container"
-            echo "SHELL=${CRON_SHELL}"
-            for index in "${!names[@]}"; do
-                echo "# ${names[index]}"
-                echo "${times[index]} ${users[index]} ${commands[index]}"
-            done
-        } > "$ENVIRONMENT_CRONTAB"
-        chmod 0644 "$ENVIRONMENT_CRONTAB"
+        if [[ "${#names[@]}" -eq 0 ]]; then
+            rm -f -- "$ENVIRONMENT_CRONTAB"
+        else
+            {
+                echo "# The jobs of the CRONJOB_* variables, written anew at every start of the container; their shell adds"
+                echo "# the variables of the container and sends their output to the container log"
+                echo "SHELL=${CRON_SHELL}"
+                for index in "${!names[@]}"; do
+                    echo "# ${names[index]}"
+                    echo "${times[index]} ${users[index]} ${commands[index]}"
+                done
+            } > "$ENVIRONMENT_CRONTAB"
+            chmod 0644 "$ENVIRONMENT_CRONTAB"
+        fi
     fi
 
     # supervisord starts cron only where it is enabled, e.g. not after docker-service disable cron
@@ -213,6 +278,18 @@ function writeEnvironmentJobs() {
         docker-service enable cron
     fi
 }
+
+if [[ "$1" == "--job-environment" ]]; then
+    if [[ "$#" -ne 1 ]]; then
+        usage
+    fi
+
+    if [[ "$IMAGE_FAMILY" != "Alpine" ]]; then
+        writeJobEnvironment
+    fi
+
+    exit 0
+fi
 
 if [[ "$1" == "--environment" ]]; then
     if [[ "$#" -eq 1 ]]; then
@@ -238,18 +315,19 @@ if [[ "$IMAGE_FAMILY" == "Alpine" ]]; then
 fi
 
 # create crontab file
-touch /etc/cron.d/webdevops-docker
-chmod 0644 /etc/cron.d/webdevops-docker
+touch "$DOCKER_CRONTAB"
+chmod 0644 "$DOCKER_CRONTAB"
 
-# Cron in Debian and Ubuntu mails the output of a job: the jobs of this file run with docker-cronjob-shell instead, which
-# sends their output to syslog-ng and with it to the container log, unless a MAILTO line asks for the mail
-if [[ ! -s /etc/cron.d/webdevops-docker ]]; then
-    echo 'SHELL=/usr/local/bin/docker-cronjob-shell' >> /etc/cron.d/webdevops-docker
+# Cron in Debian and Ubuntu mails the output of a job and passes none of the variables of the container on: the jobs of
+# this file run with docker-cronjob-shell instead, which adds the variables and sends the output to syslog-ng and with it
+# to the container log, unless a MAILTO line asks for the mail
+if [[ ! -s "$DOCKER_CRONTAB" ]]; then
+    echo "SHELL=${CRON_SHELL}" >> "$DOCKER_CRONTAB"
 fi
 
 for CRONJOB_LINES in "$@"; do
-    echo "$CRONJOB_LINES" >> /etc/cron.d/webdevops-docker
+    echo "$CRONJOB_LINES" >> "$DOCKER_CRONTAB"
 done
 
 # Add required newline at end
-echo >> /etc/cron.d/webdevops-docker
+echo >> "$DOCKER_CRONTAB"

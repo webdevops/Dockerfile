@@ -1,6 +1,6 @@
 # Environment variables
 
-The container entrypoint applies these variables every time a container starts. That includes the default `supervisord` command and one-off commands such as `docker compose run --rm app php -v`. Recreate the container after changing a value.
+The container entrypoint applies these variables every time a container starts. That includes the default `supervisord` command and one-off commands such as `docker compose run --rm app php -v`. Recreate the container after changing a value. [Cron jobs](customization.md#cron-jobs) get the variables of the container too.
 
 Each section names the images it applies to. Image names are given without tag; `php-*` means `php`, `php-dev`, `php-nginx`, `php-nginx-dev`, `php-apache` and `php-apache-dev`.
 

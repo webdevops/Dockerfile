@@ -22,11 +22,11 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php-*` with the Debian tag `8.6`.
 - **Instead:** Write the repository to a file in `/etc/apt/sources.list.d/`, for example `RUN echo "deb http://deb.debian.org/debian trixie-backports main" > /etc/apt/sources.list.d/backports.list`.
 
-### Output of cron jobs in crontab files of your own
+### Output and variables of cron jobs in crontab files of your own
 
-- **Effect:** Cron in Debian and Ubuntu mails the output of a job. Where no mail server runs, it discards it and logs `(CRON) info (No MTA installed, discarding output)`; where Postfix runs, as in the `-dev` images, the output lands in the mailbox of the user, for example `/var/mail/application`. Only the jobs that `docker-cronjob` adds send their output to the container log, see [Cron jobs](customization.md#cron-jobs).
+- **Effect:** Cron in Debian and Ubuntu mails the output of a job. Where no mail server runs, it discards it and logs `(CRON) info (No MTA installed, discarding output)`; where Postfix runs, as in the `-dev` images, the output lands in the mailbox of the user, for example `/var/mail/application`. It also passes none of the variables of the container on: a job gets only `HOME`, `LOGNAME`, `SHELL` and `PATH=/usr/bin:/bin`. Only the jobs of `docker-cronjob` and of the `CRONJOB_<NAME>` variables send their output to the container log and get the variables of the container, see [Cron jobs](customization.md#cron-jobs).
 - **Images:** the Debian and Ubuntu images: `php-*` without `-alpine`, `base`, `base-app`.
-- **Instead:** Add the jobs with `docker-cronjob`, or put `SHELL=/usr/local/bin/docker-cronjob-shell` at the top of your crontab file in `/etc/cron.d`.
+- **Instead:** Add the jobs with `CRONJOB_<NAME>` variables or `docker-cronjob`, or put `SHELL=/usr/local/bin/docker-cronjob-shell` at the top of your crontab file in `/etc/cron.d`. Its jobs then get the variables of the container from the next start of cron on, for example after `docker compose restart`.
 
 ### Composer 1 on PHP 8.4 to 8.6
 
