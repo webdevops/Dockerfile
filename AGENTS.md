@@ -64,7 +64,7 @@ Where the documentation lives:
 | `CONTRIBUTING.md` | Build process: the generated files and `make generate`, the CI and `make check`, building and testing locally, the image tests, PHP extension builds |
 | `docs/README.md` | Image overview, platforms and nightly updates, how the images build on each other (Mermaid diagram) |
 | `docs/environment-variables.md` | Every environment variable with its default and effect; uploads and long requests |
-| `docs/customization.md` | Commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs and their time zone, healthcheck, configuration files and placeholders, supervisord, locales, application user and changing its UID |
+| `docs/customization.md` | Commands, scripts at start and build time, tools for your Dockerfile, services and their logs, cron jobs, their output and their time zone, healthcheck, configuration files and placeholders, supervisord, locales, application user and changing its UID |
 | `docs/images/*.md` | One page per image family: tags, base image, services, settings, development variant. `php.md` also has Debian or Alpine, production, installing extensions, mail and Xdebug with an IDE |
 | `docs/known-issues.md` | Options and tools that do not work, with affected images and workaround; migration from older images |
 | `docs/discontinued-images.md` | Replacements for images and tags that are no longer built (`nginx`, `apache`, the `alpine` tags of `bootstrap`, `base` and `base-app`, `storage`, `vsftp`, `ssh`) or deprecated (`php-official`) |
