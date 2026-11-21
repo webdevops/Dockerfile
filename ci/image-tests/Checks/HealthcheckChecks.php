@@ -74,7 +74,7 @@ trait HealthcheckChecks
 
     /**
      * From PHP 8.6 on, the PHP images run docker-healthcheck as their HEALTHCHECK and Docker reports them as healthy;
-     * the older PHP images and the base images have no HEALTHCHECK.
+     * the older PHP images have no HEALTHCHECK.
      */
     public function testHealthcheckOfTheImage(): void
     {

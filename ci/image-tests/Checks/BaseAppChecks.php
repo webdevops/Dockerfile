@@ -14,7 +14,8 @@ use function explode;
 use function trim;
 
 /**
- * Checks of the images based on webdevops/base-app: the application user, locales and moreutils.
+ * Checks of the base-app layer of the images (template/Dockerfile/images/baseapp.twig and provisioning/base-app): the
+ * application user, locales and moreutils.
  *
  * @phpstan-require-extends ImageTestCase
  */

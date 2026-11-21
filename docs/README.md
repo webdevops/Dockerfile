@@ -9,11 +9,9 @@ Documentation for the `webdevops/*` Docker images. It describes the images as th
 | [`webdevops/php`, `webdevops/php-dev`](images/php.md) | PHP-FPM |
 | [`webdevops/php-nginx`, `webdevops/php-nginx-dev`](images/php-nginx.md) | PHP-FPM with Nginx |
 | [`webdevops/php-apache`, `webdevops/php-apache-dev`](images/php-apache.md) | PHP-FPM with Apache |
-| [`webdevops/bootstrap`, `webdevops/base`, `webdevops/base-app`](images/base.md) | Base images for your own images |
-| `webdevops/toolbox` | Build helper, not meant to run. Stores the baselayout scripts (`apt-install`, `apk-install`, `docker-image-cleanup`, `docker-run-bootstrap`, `generate-locales` and more), `go-replace` and `gosu` under `/baselayout`. `bootstrap` and `php` copy them from there with `COPY --from=webdevops/toolbox`. In `toolbox` itself only `go-replace` is on the `PATH`. |
-| `webdevops/dockerfile-build-env` | Build environment for this repository, based on `base-app:ubuntu-22.04`. The CI builds and tests the images in it, see [Building in CI](../CONTRIBUTING.md#building-in-ci). |
+| `webdevops/toolbox` | Build helper, not meant to run. Stores the baselayout scripts (`apt-install`, `apk-install`, `docker-image-cleanup`, `docker-run-bootstrap`, `generate-locales` and more), `go-replace` and `gosu` under `/baselayout`. `php` copies them from there with `COPY --from=webdevops/toolbox`. In `toolbox` itself only `go-replace` is on the `PATH`. |
 
-`webdevops/nginx`, `webdevops/apache`, the `alpine` tags of `webdevops/bootstrap`, `webdevops/base` and `webdevops/base-app`, as well as `webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built, and `webdevops/php-official` is deprecated. [Replacing discontinued images](discontinued-images.md) shows what to use instead.
+`webdevops/bootstrap`, `webdevops/base`, `webdevops/base-app`, `webdevops/dockerfile-build-env`, `webdevops/nginx`, `webdevops/apache`, `webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built, and `webdevops/php-official` is deprecated. [Replacing discontinued images](discontinued-images.md) shows what to use instead.
 
 ## Platforms and updates
 
@@ -36,15 +34,12 @@ Documentation for the `webdevops/*` Docker images. It describes the images as th
 - [Customization](customization.md): commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs, healthcheck, configuration files, locales, the application user
 - PHP images: [PHP extensions per tag](images/php.md#php-extensions), [Debian or Alpine](images/php.md#debian-or-alpine), [production](images/php.md#production), [installing more extensions](images/php.md#installing-more-extensions), [mail](images/php.md#mail), [Xdebug with an IDE](images/php.md#xdebug-with-an-ide)
 - [Known issues](known-issues.md): options that do not work, workarounds, migration from older images
-- [Replacing discontinued images](discontinued-images.md): what to use instead of `php-official`, `nginx`, `apache`, the `alpine` tags of the base images, `storage`, `vsftp` and `ssh`
+- [Replacing discontinued images](discontinued-images.md): what to use instead of `php-official`, `bootstrap`, `base`, `base-app`, `dockerfile-build-env`, `nginx`, `apache`, `storage`, `vsftp` and `ssh`
 
 ## How the images build on each other
 
 ```mermaid
 flowchart LR
-  ubuntu["ubuntu:22.04"] --> bootstrap["webdevops/bootstrap"]
-  bootstrap --> base["webdevops/base"]
-  base --> baseapp["webdevops/base-app"]
   officialphp["php:VERSION-fpm-bookworm / php:8.6-fpm-trixie / php:VERSION-fpm-alpine"] --> php["webdevops/php"]
   php --> phpdev["webdevops/php-dev"]
   php --> phpnginx["webdevops/php-nginx"]
@@ -52,7 +47,5 @@ flowchart LR
   phpnginx --> phpnginxdev["webdevops/php-nginx-dev"]
   phpapache --> phpapachedev["webdevops/php-apache-dev"]
   alpine["alpine:latest"] --> toolbox["webdevops/toolbox"]
-  baseapp --> buildenv["webdevops/dockerfile-build-env"]
-  toolbox -. "COPY --from" .-> bootstrap
   toolbox -. "COPY --from" .-> php
 ```
