@@ -38,15 +38,15 @@ jobs:
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
         shell: bash
         run: |-
-          payload=$(cut -d. -f2 <<<"$DOCKERHUB_ACCESS_TOKEN" | tr '_-' '/+')
-          while (( ${#payload} % 4 )); do payload+='='; done
-          base64 -d <<<"$payload" | jq '{
-            claims: keys,
-            hub_claims: ((.["https://hub.docker.com"] // {}) | keys),
-            source_type: .["https://hub.docker.com"].source.type?,
-            scope: (.scope // .scp // .["https://hub.docker.com"].scope // null),
-            roles: .["https://hub.docker.com"].roles?
-          }'
+          t=$DOCKERHUB_ACCESS_TOKEN
+          echo "token: ${#t} characters, $(awk -F. '{print NF}' <<<"$t") dot-separated parts, prefix ${t:0:5}"
+          dec() { local x; x=$(tr '_-' '/+' <<<"$1"); while (( ${#x} % 4 )); do x+='='; done; base64 -d <<<"$x" 2>/dev/null; }
+          IFS=. read -r h p _ <<<"$t"
+          echo "header: $(dec "$h" | jq -c '{alg, typ}' 2>&1 | head -c 300)"
+          echo "claims: $(dec "$p" | jq -c 'with_entries(.value |= type)' 2>&1 | head -c 600)"
+          echo "hub claims: $(dec "$p" | jq -c '.["https://hub.docker.com"] // {} | with_entries(.value |= type)' 2>&1 | head -c 600)"
+          echo "source type: $(dec "$p" | jq -c '.["https://hub.docker.com"].source.type? // null' 2>&1 | head -c 100)"
+          echo "scope: $(dec "$p" | jq -c '.scope // .scp // .["https://hub.docker.com"].scope // null' 2>&1 | head -c 600)"
       -
         name: webdevops/php
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
