@@ -33,7 +33,13 @@ claims() {
 
 echo "### ${CREDENTIALS:-credentials}" >> "$SUMMARY"
 if [[ -z "${HUB_USERNAME:-}" || -z "${HUB_TOKEN:-}" ]]; then
-    echo "not set, skipped" | tee -a "$SUMMARY"
+    state="username $([[ -n "${HUB_USERNAME:-}" ]] && echo set || echo 'NOT SET'), token $([[ -n "${HUB_TOKEN:-}" ]] && echo set || echo 'NOT SET')"
+    if [[ -n "${REQUIRED:-}" ]]; then
+        echo "::error::$CREDENTIALS: $state"
+        echo "$state" >> "$SUMMARY"
+        exit 1
+    fi
+    echo "$state, skipped" | tee -a "$SUMMARY"
     exit 0
 fi
 info="username: ${#HUB_USERNAME} characters, sha256 $(fingerprint "$HUB_USERNAME"); token: ${#HUB_TOKEN} characters, starts with ${HUB_TOKEN:0:9}, sha256 $(fingerprint "$HUB_TOKEN")"

@@ -34,4 +34,5 @@ jobs:
           HUB_USERNAME: "${{ secrets[format('DOCKERHUB_USERNAME{0}', matrix.suffix)] }}"
           HUB_TOKEN: "${{ secrets[format('DOCKERHUB_TOKEN{0}', matrix.suffix)] }}"
           REPOSITORY: webdevops/php
+          REQUIRED: "${{ matrix.suffix == '' && '1' || '' }}"
         run: bash .github/dockerhub-api-test.sh
