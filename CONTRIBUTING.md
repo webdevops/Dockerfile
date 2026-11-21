@@ -62,7 +62,10 @@ defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdev
 internally; pull the images from Docker Hub.
 
 The job "Update the Docker Hub pages" uploads `docs/dockerhub/<repository>.md` and the short description of each repository to Docker Hub when `build.yaml` runs on `master` after a push or is started by hand. It does not run for pull requests, in the nightly run, in the builds that `php-upstream.yaml` starts (a failed upload would keep it from starting the next one) or in forks, and no other job waits for it.
-It logs in with the secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`. Docker Hub changes a description only for a user with admin rights on the repository, with a password or a personal access token with the scope Read/Write/Delete.
+It logs in with the secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`, the same ones the image jobs push with, and changes each page through `/v2/namespaces/<namespace>/repositories/<repository>`. If Docker Hub refuses, the job shows its answer, for example `Docker Hub answered 403 for webdevops/php: …`. The secrets hold one of:
+
+- an organization access token of `webdevops`: `DOCKERHUB_USERNAME` is the organization name `webdevops`, and the token has the scope "Repository Edit" (the description) and the push and pull scopes for all repositories the CI publishes;
+- a personal access token with the permission "Read, Write, Delete" of a user who may manage these repositories (an owner of the organization, or a member of a team with admin rights on them); `DOCKERHUB_USERNAME` is that user's Docker ID.
 
 Besides the nightly run, `.github/workflows/php-upstream.yaml` starts `build.yaml` on `master` when the official PHP images get a new PHP release.
 Every hour it reads `PHP_VERSION` of the image in the `FROM` line of each `docker/php/<tag>/Dockerfile` and of `webdevops/php:<tag>` and `webdevops/php-nginx:<tag>`.
