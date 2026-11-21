@@ -35,8 +35,8 @@ Images: `base`, `base-app`, `php-*`.
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `CLI_SCRIPT` | not set | Command the `cli` entrypoint runs as `APPLICATION_USER`, in `base` as `root`. See [Customization](customization.md#commands). |
-| `LOG_STDOUT` | container stdout | File that `/docker.stdout` points to. Nginx, Apache and PHP-FPM write their access logs there, syslog-ng the messages of the services, for example of cron and Postfix. |
-| `LOG_STDERR` | container stderr | File that `/docker.stderr` points to. Nginx and Apache write their error logs there, PHP-FPM its own messages and the errors of the PHP scripts it runs. `php.error_log` gives the PHP errors of PHP-FPM and the PHP CLI a file of their own instead, in a directory that `application` may write to, for example `/app`. |
+| `LOG_STDOUT` | container stdout | File that `/docker.stdout` points to. Nginx, Apache and PHP-FPM write their access logs there, syslog-ng the messages that the services send to syslog, for example of cron and Postfix, and in Debian and Ubuntu the output of the cron jobs of `docker-cronjob`. supervisord writes there what the services print to their stdout, for example in Alpine the output of cron jobs. The messages of supervisord itself, for example `spawned: 'nginxd'`, stay in the container log. See [Logs](customization.md#logs). |
+| `LOG_STDERR` | container stderr | File that `/docker.stderr` points to. Nginx and Apache write their error logs there, PHP-FPM its own messages and the errors of the PHP scripts it runs, and supervisord what the services print to their stderr, for example the messages of sshd and of the Blackfire agent. `php.error_log` gives the PHP errors of PHP-FPM and the PHP CLI a file of their own instead, in a directory that `application` may write to, for example `/app`. |
 | `TZ` | not set (UTC) | Time zone of the container, for example `Europe/Berlin`. It applies to `date`, cron and the time stamps supervisord writes to the container log. PHP uses `PHP_DATE_TIMEZONE` instead, see [Time zone](customization.md#time-zone). |
 
 ## Web server
@@ -183,7 +183,7 @@ Each service reads its options when it starts. A service only runs if it is enab
 | `SERVICE_SUPERVISOR_OPTS` | Extra arguments for `supervisord`, for example `--loglevel=debug`. |
 | `SERVICE_SYSLOG_OPTS` | Extra arguments for `syslog-ng`. |
 | `SERVICE_CRON_OPTS` | Extra arguments for `cron -f` (Debian/Ubuntu) or `crond -f` (Alpine). |
-| `SERVICE_SSH_OPTS` | Extra arguments for `sshd -D`. |
+| `SERVICE_SSH_OPTS` | Extra arguments for `sshd -D -e`. With `-e`, sshd logs to its stderr, see [Logs](customization.md#logs). |
 | `SERVICE_DNSMASQ_OPTS` | Extra arguments for `dnsmasq`. |
 | `SERVICE_DNSMASQ_USER` | User `dnsmasq` runs as. Default: `root`. |
 | `SERVICE_NGINX_OPTS` | Extra arguments for `nginx`, appended after `-g 'daemon off;'`. |

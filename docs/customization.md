@@ -144,6 +144,23 @@ Before a service starts, its start script sources every `*.sh` file in `/opt/doc
 
 Options for each service are set with environment variables, see [Services](environment-variables.md#services).
 
+### Logs
+
+The services write their logs to the container log, which `docker compose logs` shows: access logs and the messages of syslog to its stdout, error logs to its stderr. They write to `/docker.stdout` and `/docker.stderr`, which point to the stdout and stderr of the container, or to the files of `LOG_STDOUT` and `LOG_STDERR`, see [Container](environment-variables.md#container).
+
+| Service | Log |
+| --- | --- |
+| `nginx`, `apache` | Access log to `/docker.stdout`, error log to `/docker.stderr`, also of the virtual host for port 443 |
+| `php-fpm` | Access log to `/docker.stdout`; its own messages, the errors of the PHP scripts and the [slow log](known-issues.md#slow-log-of-php-fpm) to `/docker.stderr` |
+| `cron` | Its own messages to syslog. For the output of the jobs, see [Cron jobs](#cron-jobs). |
+| `postfix`, `dnsmasq` | To syslog |
+| `syslog` | syslog-ng writes the messages of syslog to `/docker.stdout`, with `[SYSLOG]` in front. It drops those of the facilities `auth` and `authpriv`, for example of `su`. What a service sends before syslog-ng listens, in about the first second after the start, is lost, for example the start messages of cron. |
+| `ssh`, `blackfire-agent` | To their stderr |
+
+What the services print to their stdout and stderr, for example the output of their [hooks](#service-hooks) or of cron jobs in Alpine, supervisord writes to `/docker.stdout` and `/docker.stderr`. The messages of supervisord itself, for example `spawned: 'nginxd'`, always go to the container log; at the log level `debug` (`SERVICE_SUPERVISOR_OPTS=--loglevel=debug`) they also repeat what the services print.
+
+In `base` and `base-app`, enable `syslog` together with `cron`, `postfix` or `dnsmasq`, for example `RUN docker-service enable syslog cron`; without it, their messages are lost.
+
 ## Cron jobs
 
 `docker-cronjob` adds a cron job for each argument. Lines use the system crontab format, including the user, and cron runs the job as that user:
@@ -157,7 +174,12 @@ In the Debian- and Ubuntu-based images, `docker-cronjob` adds the lines to `/etc
 
 Cron in Debian and Ubuntu runs jobs with `PATH=/usr/bin:/bin`, which does not contain `/usr/local/bin`, so use absolute paths such as `/usr/local/bin/php`. Absolute paths work in Alpine too, whose `crond` passes on the `PATH` of the container.
 
-In `base` and `base-app`, cron does not run by default; also run `docker-service enable cron`, see [Services](#services).
+In `base` and `base-app`, cron does not run by default; also run `docker-service enable syslog cron`, see [Services](#services) and [Logs](#logs).
+
+The output of a job, stdout and stderr, goes to the container log, or to the files of `LOG_STDOUT` and `LOG_STDERR`:
+
+- In Alpine, BusyBox `crond` passes it on: stdout to the stdout of the container, stderr to its stderr.
+- Cron in Debian and Ubuntu would mail it, and discard it where no mail server is installed. So `docker-cronjob` begins `/etc/cron.d/webdevops-docker` with `SHELL=/usr/local/bin/docker-cronjob-shell`: cron runs each job with this script, which runs the command with `/bin/sh` and sends both outputs to syslog, a message per line and per 1 KiB of a longer line. They reach the stdout of the container as `[SYSLOG] cron-job[<process id>]: <line>`; the exit code stays that of the command. For a crontab file of your own, for example in `/etc/cron.d`, put the same `SHELL` line at its top; otherwise cron mails the output, see [Known issues](known-issues.md#output-of-cron-jobs-in-crontab-files-of-your-own).
 
 ### Time zone
 
@@ -337,7 +359,7 @@ All images except `bootstrap` and `toolbox`.
 | `/opt/docker/etc/supervisor.conf` | Main configuration; includes `supervisor.d/*.conf` |
 | `/opt/docker/etc/supervisor.d/<service>.conf` | One group per service with one program, for example the group `nginx` with the program `nginxd` |
 
-Add your own program as a new file in `supervisor.d/`. In a running container, `supervisorctl` controls the services. Address a program as `<group>:<program>`, or all programs of a group as `<group>:`; `supervisorctl restart nginx` fails with `no such process`.
+Add your own program as a new file in `supervisor.d/`. Like the services of the image, it should write its output with `stdout_logfile=/docker.stdout` and `stderr_logfile=/docker.stderr`, each with `stdout_logfile_maxbytes=0` and `stderr_logfile_maxbytes=0`, see [Logs](#logs). In a running container, `supervisorctl` controls the services. Address a program as `<group>:<program>`, or all programs of a group as `<group>:`; `supervisorctl restart nginx` fails with `no such process`.
 
 ```sh
 docker compose exec app supervisorctl status

@@ -52,4 +52,23 @@ trait NginxEnvironmentChecks
             self::assertMatchesRegularExpression('#\[error\] .*image-test-forbidden\.html" failed \(13: Permission denied\)#', $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDERR'], $container));
         });
     }
+
+    /**
+     * Nginx writes the messages that belong to no server, those of its main error log, to LOG_STDERR, not to LOG_STDOUT:
+     * the master process logs that a worker process ended on SIGKILL.
+     */
+    public function testNginxMainErrorLogToTheFileFromTheEnvironment(): void
+    {
+        $container = $this->environmentContainer();
+        $this->request('http://localhost/', container: $container);
+        $this->assertCommandSucceeds(
+            'for process in /proc/[0-9]*; do if tr "\\000" " " < $process/cmdline 2>/dev/null | grep -q "^nginx: worker process"; then kill -9 ${process#/proc/}; break; fi; done',
+            $container,
+        );
+        $exited = '#\[alert\] .*worker process \d+ exited on signal 9#';
+        $this->eventually(function () use ($container, $exited): void {
+            self::assertMatchesRegularExpression($exited, $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDERR'], $container));
+        });
+        self::assertDoesNotMatchRegularExpression($exited, $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container));
+    }
 }
