@@ -295,4 +295,43 @@ trait PhpChecks
 
         return array_combine($names, array_map(strval(...), $values));
     }
+
+    /**
+     * PIE is only mounted while the RUN instructions that install extensions run, and they remove its working
+     * directory.
+     */
+    public function testPieIsOnlyThereDuringTheBuild(): void
+    {
+        foreach (['/usr/local/bin/pie', '/tmp/pie'] as $path) {
+            $file = $this->file($path);
+            self::assertFalse($file->exists || $file->isSymlink, $path . ' should not exist');
+        }
+    }
+
+    /**
+     * The scripts of the entrypoint that write the PHP and PHP-FPM settings from the environment.
+     */
+    public function testEntrypointScriptsOfPhp(): void
+    {
+        foreach (['/opt/docker/provision/entrypoint.d/20-php.sh', '/opt/docker/provision/entrypoint.d/20-php-fpm.sh'] as $path) {
+            self::assertTrue($this->file($path)->isFile, $path . ' should be a file');
+        }
+    }
+
+    /**
+     * @return iterable<string, array{string, string}>
+     */
+    public static function phpCommands(): iterable
+    {
+        $commands = ['convert' => '/usr/bin/convert', 'gm' => '/usr/bin/gm', 'gs' => '/usr/bin/gs', 'composer' => '/usr/local/bin/composer'];
+        foreach ($commands as $command => $path) {
+            yield $command => [$command, $path];
+        }
+    }
+
+    #[DataProvider('phpCommands')]
+    public function testPhpCommandIsOnThePath(string $command, string $path): void
+    {
+        self::assertSame($path . "\n", $this->stdout('command -v ' . escapeshellarg($command)));
+    }
 }

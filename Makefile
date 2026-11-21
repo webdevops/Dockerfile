@@ -1,5 +1,5 @@
 MAKEFLAGS += --silent
-.PHONY: generate check test test-image test-image-runner test-image-run structure-test
+.PHONY: generate check test test-image test-image-runner test-image-run
 
 # The containers run as the user who calls make, so that the files they write belong to them. In rootless Docker,
 # root in the container already is that user. sh replaces the entrypoint of webdevops/php, which would switch to root.
@@ -42,6 +42,3 @@ test-image-runner:
 
 test-image-run:
 	docker run --rm --volume "$(DOCKER_SOCKET)":/var/run/docker.sock webdevops-image-tests $(IMAGE) $(if $(REFERENCE),--reference $(REFERENCE))
-
-structure-test:
-	cd tests/structure-test && ./run.sh

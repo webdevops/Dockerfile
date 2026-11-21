@@ -688,11 +688,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/base-app:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04 --config base-app/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -866,11 +861,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/base:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04 --config base/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -1043,11 +1033,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/bootstrap:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04 --config bootstrap/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4527,11 +4512,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.2 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2 --config php-dev/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -4640,11 +4620,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.2-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -4827,11 +4802,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.3 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3 --config php-dev/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -4940,11 +4910,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.3-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -5127,11 +5092,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.4 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4 --config php-dev/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -5240,11 +5200,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.4-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -5427,11 +5382,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.5 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5 --config php-dev/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -5540,11 +5490,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.5-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -5727,11 +5672,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.6 REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6 --config php-dev/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -5840,11 +5780,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-dev:8.6-alpine REFERENCE=ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-dev:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine --config php-dev/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -7477,11 +7412,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.2 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2 --config php-nginx/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -7616,11 +7546,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.2-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -7829,11 +7754,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.3 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3 --config php-nginx/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -7968,11 +7888,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.3-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -8181,11 +8096,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.4 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4 --config php-nginx/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -8320,11 +8230,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.4-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -8533,11 +8438,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.5 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5 --config php-nginx/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -8672,11 +8572,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.5-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -8885,11 +8780,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.6 REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6 --config php-nginx/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -9024,11 +8914,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php-nginx:8.6-alpine REFERENCE=ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php-nginx:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine --config php-nginx/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -9237,11 +9122,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.2 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2 --config php/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -9376,11 +9256,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.2-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.2-alpine --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -9593,11 +9468,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.3 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3 --config php/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -9732,11 +9602,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.3-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.3-alpine --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -9949,11 +9814,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.4 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4 --config php/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -10088,11 +9948,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.4-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.4-alpine --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -10305,11 +10160,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.5 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5 --config php/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -10444,11 +10294,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.5-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.5-alpine --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
@@ -10661,11 +10506,6 @@ jobs:
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.6 REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6'
       -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6 --config php/test.yaml
-      -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
         uses: docker/login-action@v4
@@ -10800,11 +10640,6 @@ jobs:
       -
         name: 'run image tests'
         run: 'make test-image-run IMAGE=webdevops/php:8.6-alpine REFERENCE=ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine'
-      -
-        name: 'run structure-test'
-        run: |-
-          cd tests/structure-test
-          /usr/local/bin/container-structure-test test --image ghcr.io/webdevops/php:sha-${{ github.sha }}-${{ matrix.arch }}-8.6-alpine --config php/test.yaml
       -
         if: "${{github.ref == 'refs/heads/master'}}"
         name: 'Login to ghcr.io'
