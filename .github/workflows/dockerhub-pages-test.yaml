@@ -37,7 +37,12 @@ jobs:
         name: 'Show the kind and scope of the token (no names, no e-mail)'
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
         shell: bash
+        env:
+          DOCKERHUB_USERNAME: '${{ secrets.DOCKERHUB_USERNAME }}'
+          DOCKERHUB_TOKEN: '${{ secrets.DOCKERHUB_TOKEN }}'
         run: |-
+          echo "secret DOCKERHUB_TOKEN: ${#DOCKERHUB_TOKEN} characters, starts with ${DOCKERHUB_TOKEN:0:9}, sha256 starts with $(printf %s "$DOCKERHUB_TOKEN" | sha256sum | cut -c1-8)"
+          echo "secret DOCKERHUB_USERNAME: ${#DOCKERHUB_USERNAME} characters, sha256 starts with $(printf %s "$DOCKERHUB_USERNAME" | sha256sum | cut -c1-8)"
           t=$DOCKERHUB_ACCESS_TOKEN
           echo "token: ${#t} characters, $(awk -F. '{print NF}' <<<"$t") dot-separated parts, prefix ${t:0:5}"
           dec() { local x; x=$(tr '_-' '/+' <<<"$1"); while (( ${#x} % 4 )); do x+='='; done; base64 -d <<<"$x" 2>/dev/null; }
