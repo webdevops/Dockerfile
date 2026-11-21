@@ -76,7 +76,7 @@ These commands are installed in the images. Use them in `RUN` lines of your own 
 | `gosu <user> <command>` | Runs a command as another user, for example `application` | all except `toolbox` |
 | `docker-service enable <service>`, `docker-service disable <service>`, also `docker-service-enable` and `docker-service-disable` | Enables or disables a [service](#services); enabling installs it if needed | all except `bootstrap` and `toolbox` |
 | `docker-healthcheck` | Checks the services of supervisord and fails when one failed, see [Healthcheck](#healthcheck) | all except `bootstrap` and `toolbox` |
-| `docker-cronjob '<line>'` | Adds a [cron job](#cron-jobs) | Debian- and Ubuntu-based images except `bootstrap` |
+| `docker-cronjob '<line>'` | Adds a [cron job](#cron-jobs) | all except `bootstrap` and `toolbox` |
 | `docker-run-bootstrap` | Runs the [build scripts](#scripts-at-image-build) once and deletes them | all except `toolbox` |
 
 `apt-install` and `apk-install` are both present in every image except `toolbox`, but each only works on its own distribution. `toolbox` only stores the commands for the other images, see [Images](README.md#images).
@@ -91,7 +91,7 @@ COPY docker/bootstrap.d/ /bootstrap.d/
 RUN docker-run-bootstrap
 ```
 
-On Alpine, use `apk-install` and leave out `docker-cronjob`. `docker-image-cleanup` works, but `apk-install` keeps no package cache anyway:
+On Alpine, use `apk-install`. `docker-image-cleanup` works, but `apk-install` keeps no package cache anyway:
 
 ```dockerfile
 FROM webdevops/php-nginx:8.5-alpine
@@ -146,16 +146,18 @@ Options for each service are set with environment variables, see [Services](envi
 
 ## Cron jobs
 
-`docker-cronjob` adds a line to `/etc/cron.d/webdevops-docker`. Lines use the system crontab format, including the user:
+`docker-cronjob` adds a cron job for each argument. Lines use the system crontab format, including the user, and cron runs the job as that user:
 
 ```dockerfile
 FROM webdevops/php:8.5
 RUN docker-cronjob '*/5 * * * * application /usr/local/bin/php /app/bin/console app:cleanup'
 ```
 
-Cron runs jobs with a minimal `PATH` that does not contain `/usr/local/bin`, so use absolute paths such as `/usr/local/bin/php`.
+In the Debian- and Ubuntu-based images, `docker-cronjob` adds the lines to `/etc/cron.d/webdevops-docker`. Alpine's BusyBox `crond` does not read `/etc/cron.d`, but one crontab per user in `/etc/crontabs`, without the user column, so in the Alpine images `docker-cronjob` adds each line without its user to the crontab of that user, for example `/etc/crontabs/application`. There it fails on a line that is not a job with time, user and command, for example a comment or a variable such as `MAILTO=`, and on a user that does not exist.
 
-This works in the Debian- and Ubuntu-based images only. Alpine's `crond` does not read `/etc/cron.d`; see [Known issues](known-issues.md#docker-cronjob-on-alpine) for the Alpine way.
+Cron in Debian and Ubuntu runs jobs with `PATH=/usr/bin:/bin`, which does not contain `/usr/local/bin`, so use absolute paths such as `/usr/local/bin/php`. Absolute paths work in Alpine too, whose `crond` passes on the `PATH` of the container.
+
+In `base` and `base-app`, cron does not run by default; also run `docker-service enable cron`, see [Services](#services).
 
 ### Time zone
 
