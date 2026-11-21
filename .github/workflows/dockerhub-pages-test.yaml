@@ -45,7 +45,11 @@ jobs:
           echo "header: $(dec "$h" | jq -c '{alg, typ}' 2>&1 | head -c 300)"
           echo "claims: $(dec "$p" | jq -c 'with_entries(.value |= type)' 2>&1 | head -c 600)"
           echo "hub claims: $(dec "$p" | jq -c '.["https://hub.docker.com"] // {} | with_entries(.value |= type)' 2>&1 | head -c 600)"
-          echo "source type: $(dec "$p" | jq -c '.["https://hub.docker.com"].source.type? // null' 2>&1 | head -c 100)"
+          echo "source type: $(dec "$p" | jq -c '{source_type: .source.type?, hub_source: .["https://hub.docker.com"].source, roles: .["https://hub.docker.com"].roles}' 2>&1 | head -c 300)"
+          for path in namespaces/webdevops/repositories/php repositories/webdevops/php; do
+            code=$(curl -sS -o "$RUNNER_TEMP/repo.json" -w '%{http_code}' -H "Authorization: Bearer $t" "$DOCKER_HUB_API/$path")
+            echo "GET $path: HTTP $code $(jq -c '{permissions, namespace, name}' "$RUNNER_TEMP/repo.json" 2>/dev/null || tr -d "\n" < "$RUNNER_TEMP/repo.json" | head -c 200)"
+          done
           echo "scope: $(dec "$p" | jq -c '.scope // .scp // .["https://hub.docker.com"].scope // null' 2>&1 | head -c 600)"
       -
         name: webdevops/php
