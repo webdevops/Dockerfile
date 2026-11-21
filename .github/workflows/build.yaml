@@ -6,6 +6,9 @@ name: build
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
   workflow_dispatch: null
 permissions:
   contents: read
