@@ -70,7 +70,7 @@ built:
       - { label: 'Known issues', path: 'docs/known-issues.md' }
   php:
     short: 'PHP-FPM on the official PHP image, configured with environment variables; Debian and Alpine'
-    intro: 'PHP-FPM on top of the official PHP image, with the webdevops entrypoint, `supervisord`, cron, syslog-ng and the `application` user. PHP-FPM listens on port `9000`. For a web server in the same container, use [`webdevops/php-nginx`](https://hub.docker.com/r/webdevops/php-nginx) or [`webdevops/php-apache`](https://hub.docker.com/r/webdevops/php-apache).'
+    intro: 'PHP-FPM on top of the official PHP image, with the webdevops entrypoint, `supervisord`, cron, syslog-ng and the `application` user. PHP-FPM listens on port `9000`. At every start, PHP-FPM sizes its pool of workers to the CPU and memory limits of the container, or to the host without limits, see [Size of the PHP-FPM pool](docs/environment-variables.md#size-of-the-php-fpm-pool). For a web server in the same container, use [`webdevops/php-nginx`](https://hub.docker.com/r/webdevops/php-nginx) or [`webdevops/php-apache`](https://hub.docker.com/r/webdevops/php-apache).'
     note: 'Always use one of the tags below: an image without a tag (`latest`) and the `alpine` tag are old builds from 2019 and 2020 that get no updates, see [Known issues](docs/known-issues.md#latest-and-alpine-tags-of-the-php-images).'
     example:
       lang: 'yaml'
@@ -113,7 +113,7 @@ built:
       - { label: 'Known issues', path: 'docs/known-issues.md' }
   php-nginx:
     short: 'PHP-FPM and Nginx in one container on the official PHP image; Debian and Alpine'
-    intro: '[`webdevops/php`](https://hub.docker.com/r/webdevops/php) plus Nginx. Nginx serves `/app` and passes PHP requests to PHP-FPM in the same container. Ports: `80` (HTTP) and `443` (HTTPS with a self-signed certificate).'
+    intro: '[`webdevops/php`](https://hub.docker.com/r/webdevops/php) plus Nginx. Nginx serves `/app` and passes PHP requests to PHP-FPM in the same container. Ports: `80` (HTTP) and `443` (HTTPS with a self-signed certificate). At every start, PHP-FPM sizes its pool of workers to the CPU and memory limits of the container, or to the host without limits, see [Size of the PHP-FPM pool](docs/environment-variables.md#size-of-the-php-fpm-pool).'
     note: 'Always use one of the tags below: an image without a tag (`latest`) and the `alpine` tag are old builds from 2019 and 2020 that get no updates, see [Known issues](docs/known-issues.md#latest-and-alpine-tags-of-the-php-images).'
     example:
       lang: 'yaml'
@@ -158,7 +158,7 @@ built:
       - { label: 'Known issues', path: 'docs/known-issues.md' }
   php-apache:
     short: 'PHP-FPM and Apache in one container on the official PHP image; Debian and Alpine'
-    intro: '[`webdevops/php`](https://hub.docker.com/r/webdevops/php) plus Apache. Apache serves `/app` and passes PHP requests to PHP-FPM in the same container. Ports: `80` (HTTP) and `443` (HTTPS with a self-signed certificate).'
+    intro: '[`webdevops/php`](https://hub.docker.com/r/webdevops/php) plus Apache. Apache serves `/app` and passes PHP requests to PHP-FPM in the same container. Ports: `80` (HTTP) and `443` (HTTPS with a self-signed certificate). At every start, PHP-FPM sizes its pool of workers to the CPU and memory limits of the container, or to the host without limits, see [Size of the PHP-FPM pool](docs/environment-variables.md#size-of-the-php-fpm-pool).'
     note: 'Always use one of the tags below: an image without a tag (`latest`) and the `alpine` tag are old builds from 2019 and 2020 that get no updates, see [Known issues](docs/known-issues.md#latest-and-alpine-tags-of-the-php-images).'
     example:
       lang: 'yaml'

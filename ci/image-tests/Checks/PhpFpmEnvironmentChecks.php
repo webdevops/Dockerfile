@@ -4,18 +4,28 @@ declare(strict_types=1);
 
 namespace Webdevops\Build\ImageTests\Checks;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Webdevops\Build\ImageTests\Docker\Container;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 use function array_map;
+use function ctype_digit;
+use function escapeshellarg;
+use function explode;
+use function implode;
+use function intdiv;
 use function json_decode;
 use function max;
 use function microtime;
+use function min;
 use function preg_match;
+use function preg_quote;
 use function range;
 use function sleep;
 use function sprintf;
+use function trim;
 use function usleep;
+use function vsprintf;
 
 /**
  * The PHP-FPM variables, see docs/environment-variables.md#php-fpm, and LOG_STDOUT and LOG_STDERR for PHP-FPM, see
@@ -67,7 +77,7 @@ trait PhpFpmEnvironmentChecks
 
     /**
      * FPM_PROCESS_MAX=2: with four slow requests at once, PHP-FPM runs no more than two workers, although the pool would
-     * allow five.
+     * allow more.
      */
     public function testPhpFpmProcessMaxFromTheEnvironment(): void
     {
@@ -160,7 +170,8 @@ trait PhpFpmEnvironmentChecks
     /**
      * FPM_PM_START_SERVERS=3, FPM_PM_MIN_SPARE_SERVERS=3, FPM_PM_MAX_SPARE_SERVERS=4 and FPM_PM_MAX_CHILDREN=8, in a
      * container of their own: three workers at the start, three idle ones besides three busy ones, eight at most
-     * under load, and four once the load is gone. The defaults would give 2, 4, 5 and 3.
+     * under load, and four once the load is gone. The values of the official image, with FPM_AUTO_SIZE=0, would give 2,
+     * 4, 5 and 3.
      */
     public function testPhpFpmProcessManagerFromTheEnvironment(): void
     {
@@ -210,6 +221,73 @@ trait PhpFpmEnvironmentChecks
     }
 
     /**
+     * In the container of the class, which has no CPU or memory limit, the process manager is sized to the CPUs and the
+     * memory of the runner: pm.max_children is the smaller of the workers of 128 MB that fit into the memory beside
+     * OPcache (256 MB) and 256 MB for the other processes, and of four per CPU, at least two; the spare servers follow
+     * the CPUs, and pm.start_servers lies in between. The container log names the CPUs, the memory and the values. A
+     * worker ends after 1000 requests.
+     */
+    public function testPhpFpmPoolIsSizedToTheContainer(): void
+    {
+        $container = self::container();
+        [$cpus, $memory] = $this->containerResources($container);
+        $children = max(2, min(intdiv($memory - 256 - 256, 128), 4 * $cpus));
+        $minSpare = max(1, min(intdiv($cpus, 2), $children));
+        $maxSpare = max($minSpare, min($children, 2 * $cpus));
+        $expected = [$children, $minSpare + intdiv($maxSpare - $minSpare, 2), $minSpare, $maxSpare];
+
+        $configuration = $this->assertCommandSucceeds('php-fpm -tt')->stderr;
+        self::assertSame($expected, self::phpFpmProcessManager($configuration), sprintf('%d CPUs, %d MB memory', $cpus, $memory));
+        self::assertMatchesRegularExpression('/NOTICE: \tpm\.max_requests = 1000$/m', $configuration);
+        self::assertMatchesRegularExpression(vsprintf(
+            '/^PHP-FPM: %d CPUs \([^)]+\), %d MB memory \([^)]+\) -> pm\.max_children=%d, pm\.start_servers=%d, pm\.min_spare_servers=%d, pm\.max_spare_servers=%d$/m',
+            [$cpus, $memory, ...$expected],
+        ), $container->logs());
+    }
+
+    /**
+     * Settings of the sizing, see testPhpFpmPoolIsSizedToTheLimitsOfTheContainer(): the environment, a pool file
+     * www.conf of your own if not empty, and pm.max_children, pm.start_servers, pm.min_spare_servers and
+     * pm.max_spare_servers.
+     *
+     * @return iterable<string, array{array<string, string>, string, list<int>}>
+     */
+    public static function phpFpmPoolSizes(): iterable
+    {
+        yield 'the limits' => [[], '', [4, 2, 1, 4]];
+        yield 'FPM_PM_MAX_CHILDREN' => [['FPM_PM_MAX_CHILDREN' => '7'], '', [7, 2, 1, 4]];
+        yield 'fpm.pool.pm.max_children' => [['fpm.pool.pm.max_children' => '3'], '', [3, 2, 1, 3]];
+        yield 'FPM_AUTO_CHILD_MEMORY and PHP_OPCACHE_MEMORY_CONSUMPTION' => [['FPM_AUTO_CHILD_MEMORY' => '64M', 'PHP_OPCACHE_MEMORY_CONSUMPTION' => '384'], '', [6, 2, 1, 4]];
+        yield 'FPM_AUTO_CHILDREN_PER_CPU' => [['FPM_AUTO_CHILDREN_PER_CPU' => '1'], '', [2, 1, 1, 2]];
+        yield 'FPM_AUTO_SIZE' => [['FPM_AUTO_SIZE' => '0'], '', [5, 2, 1, 3]];
+        yield 'a pool file of your own' => [[], "[www]\npm.max_children = 20\n", [20, 2, 1, 3]];
+    }
+
+    /**
+     * With --cpus 2 --memory 1g, in short runs of php-fpm -tt: (1024 MB - 256 MB of OPcache - 256 MB) / 128 MB give
+     * four workers, two CPUs eight, so pm.max_children is 4, pm.min_spare_servers 1 (half the CPUs),
+     * pm.max_spare_servers 4 (two per CPU, at most pm.max_children) and pm.start_servers 2. A value that is set stays,
+     * and the others fit it: with seven workers, still at most four spare ones; with three, three.
+     * FPM_AUTO_CHILD_MEMORY=64M and PHP_OPCACHE_MEMORY_CONSUMPTION=384 give (1024 - 384 - 256) / 64 = 6 workers,
+     * FPM_AUTO_CHILDREN_PER_CPU=1 two. FPM_AUTO_SIZE=0 and a pool file of your own keep the values of the pool files.
+     * The configuration test succeeds.
+     *
+     * @param array<string, string> $environment
+     * @param list<int> $expected
+     */
+    #[DataProvider('phpFpmPoolSizes')]
+    public function testPhpFpmPoolIsSizedToTheLimitsOfTheContainer(array $environment, string $poolFile, array $expected): void
+    {
+        // the pool file has to be there when the entrypoint sizes the pool, so the command runs the entrypoint again
+        $command = $poolFile === '' ? ['php-fpm', '-tt'] : [
+            'bash', '-c', 'printf %s ' . escapeshellarg($poolFile) . ' > /opt/docker/etc/php/fpm/pool.d/www.conf && exec /entrypoint php-fpm -tt',
+        ];
+        $result = $this->runContainer($command, $environment, ['--cpus', '2', '--memory', '1g']);
+        self::assertSame(0, $result->exitCode, $result->describe());
+        self::assertSame($expected, self::phpFpmProcessManager($result->stderr));
+    }
+
+    /**
      * Sends $requests requests that sleep for $seconds to PHP-FPM at once, and returns the largest number of workers
      * seen until $within seconds after they started. Waits until the requests ended.
      */
@@ -232,5 +310,50 @@ trait PhpFpmEnvironmentChecks
         }, 20, 1);
 
         return $workers;
+    }
+
+    /**
+     * The CPUs and the memory in MB of $container as the entrypoint sees them: the CPUs it may run on and the memory of
+     * the host, or the limits of cgroup v2 or v1 where they are lower. A CPU limit is rounded up.
+     *
+     * @return array{int, int}
+     */
+    private function containerResources(Container $container): array
+    {
+        $lines = explode("\n", trim($this->stdout(
+            "nproc; awk '/^MemTotal:/ { print \$2 }' /proc/meminfo;"
+            . ' cat /sys/fs/cgroup/cpu.max 2>/dev/null || echo "$(cat /sys/fs/cgroup/cpu/cpu.cfs_quota_us) $(cat /sys/fs/cgroup/cpu/cpu.cfs_period_us)";'
+            . ' cat /sys/fs/cgroup/memory.max 2>/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes',
+            $container,
+        )));
+        self::assertCount(4, $lines, implode("\n", $lines));
+        $cpus = (int) $lines[0];
+        $memory = intdiv((int) $lines[1], 1024);
+        [$quota, $period] = explode(' ', $lines[2]) + ['', ''];
+        if (ctype_digit($quota) && ctype_digit($period) && (int) $period > 0) {
+            $cpus = min($cpus, intdiv((int) $quota + (int) $period - 1, (int) $period));
+        }
+
+        if (ctype_digit($lines[3])) {
+            $memory = min($memory, intdiv((int) $lines[3], 1048576));
+        }
+
+        return [$cpus, $memory];
+    }
+
+    /**
+     * pm.max_children, pm.start_servers, pm.min_spare_servers and pm.max_spare_servers in the output of php-fpm -tt.
+     *
+     * @return list<int>
+     */
+    private static function phpFpmProcessManager(string $configuration): array
+    {
+        return array_map(static function (string $directive) use ($configuration): int {
+            if (preg_match('/NOTICE: \t' . preg_quote($directive, '/') . ' = (\d+)$/m', $configuration, $matches) !== 1) {
+                self::fail($directive . ' should be in the configuration: ' . $configuration);
+            }
+
+            return (int) $matches[1];
+        }, ['pm.max_children', 'pm.start_servers', 'pm.min_spare_servers', 'pm.max_spare_servers']);
     }
 }
