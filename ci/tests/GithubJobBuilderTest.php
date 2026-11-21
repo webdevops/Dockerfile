@@ -43,7 +43,7 @@ final class GithubJobBuilderTest extends TestCase
         self::assertSame('webdevops/base:alpine (${{ matrix.arch }})', $jobs['base_alpine']['name']);
         self::assertSame(['fail-fast' => false, 'matrix' => ['include' => GithubJobBuilder::PLATFORMS]], $jobs['base_alpine']['strategy']);
         self::assertSame('${{ matrix.runner }}', $jobs['base_alpine']['runs-on']);
-        self::assertSame('webdevops/dockerfile-build-env', $jobs['base_alpine']['container']);
+        self::assertArrayNotHasKey('container', $jobs['base_alpine'], 'the steps run on the runner itself');
         self::assertSame('base_alpine', $jobs['base_alpine_publish']['needs']);
         self::assertSame(['contents' => 'read', 'packages' => 'write'], $jobs['base_alpine']['permissions'], 'pushes to ghcr.io');
         self::assertSame(['packages' => 'write'], $jobs['base_alpine_publish']['permissions'], 'pushes to ghcr.io, needs no checkout');

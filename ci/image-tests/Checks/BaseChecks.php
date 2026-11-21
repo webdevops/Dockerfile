@@ -12,7 +12,8 @@ use function in_array;
 use function trim;
 
 /**
- * Checks of the images based on webdevops/base: the layout under /opt/docker, supervisor and the tools.
+ * Checks of the base layer of the images (template/Dockerfile/images/base.twig and provisioning/base): the layout
+ * under /opt/docker, supervisor and the tools.
  *
  * @phpstan-require-extends ImageTestCase
  */
@@ -162,7 +163,7 @@ trait BaseChecks
     }
 
     /**
-     * The commands of webdevops/base, where the distribution has them: netstat and sed are in /bin in Alpine.
+     * The commands of the base layer, where the distribution has them: netstat and sed are in /bin in Alpine.
      *
      * @return iterable<string, array{string, string}>
      */
@@ -188,7 +189,7 @@ trait BaseChecks
     }
 
     /**
-     * The scripts and the configuration of webdevops/base have exactly the modes 0755 and 0644: no setuid, setgid or
+     * The scripts and the configuration of the base layer have exactly the modes 0755 and 0644: no setuid, setgid or
      * sticky bit.
      *
      * @return iterable<string, array{string, string}>
