@@ -66,7 +66,7 @@ Where the documentation lives:
 | `docs/customization.md` | Commands, scripts at start and build time, tools for your Dockerfile, services and their logs, cron jobs, their output and their time zone, healthcheck, configuration files and placeholders, supervisord, locales, application user and changing its UID |
 | `docs/images/*.md` | One page per image family: tags, base image, services, settings, development variant. `php.md` also has Debian or Alpine, production, installing extensions, mail and Xdebug with an IDE |
 | `docs/known-issues.md` | Options and tools that do not work, with affected images and workaround; migration from older images |
-| `docs/discontinued-images.md` | Replacements for images and tags that are no longer built (`nginx`, `apache`, the `alpine` tags of `bootstrap`, `base` and `base-app`, `storage`, `vsftp`, `ssh`) or deprecated (`php-official`) |
+| `docs/discontinued-images.md` | Replacements for images and tags that are no longer built (`bootstrap`, `base`, `base-app`, `dockerfile-build-env`, `nginx`, `apache`, `storage`, `vsftp`, `ssh`) or deprecated (`php-official`) |
 | `docs/dockerhub/*.md` | The pages on Docker Hub: a start page per built image with its tags and links into `docs/`, a warning per image that is no longer built. Generated from `conf/dockerhub.yml`; change the texts there |
 
 ### When to update it
@@ -102,7 +102,7 @@ Update the documentation whenever a change touches any of these:
 
    Where you can, make the check an image test, so that the CI repeats it: a variable goes into `ENVIRONMENT` in `ci/image-tests/ImageTestCase.php`, the check of its effect into a trait in `ci/image-tests/Checks/`.
 
-   Check every image a statement names, not just one representative: images differ in what they inherit (for example `cli` runs `CLI_SCRIPT` as `application` in `base-app` and `php-*`, but as `root` in `base`, which has no user `application`). Check both the Debian and the Alpine variant whenever their implementation differs (separate files under `provisioning/*/alpine`, apk vs. apt, `httpd` vs. `apache2`, `crond` vs. `cron`). Test examples with the exact command you document, and make sure a check cannot pass on an error message.
+   Check every image a statement names, not just one representative: images differ in what they inherit (for example Postfix and the SSH server run only in the `-dev` images). Check both the Debian and the Alpine variant whenever their implementation differs (separate files under `provisioning/*/alpine`, apk vs. apt, `httpd` vs. `apache2`, `crond` vs. `cron`). Test examples with the exact command you document, and make sure a check cannot pass on an error message.
 
 4. **Document only what works.** Never describe an option that has no effect as working. Fix it, or leave it out and list it in `docs/known-issues.md`. If it works only in some images, say exactly which. Anything `docs/known-issues.md` lists as not working must never appear as working anywhere else. An `ENV` line or a script that reads a variable is no proof that it works: `SERVICE_POSTFIX_OPTS` used to be passed to `postfix` after `start`, which ignored it. When you fix a known issue, remove its entry in the same pull request.
 

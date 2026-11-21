@@ -28,7 +28,7 @@ Edit the `Dockerfile.twig` templates, the shared templates in `template`, the fi
 `template/Dockerfile/layout.twig` writes the header of every Dockerfile and includes its `Dockerfile.twig`.
 A `Dockerfile.twig` imports the macros it uses from `template/Dockerfile`, e.g. `{% import 'docker.twig' as docker %}`; a macro imports the macros it calls itself.
 `generate:provision` empties the `conf/` directories of an image first, so a file removed from `provisioning` disappears there too.
-The commands that the images have in `/usr/local/bin`, such as `apt-install`, `apk-install`, `docker-run-bootstrap` and `generate-locales`, are in `provisioning/baselayout/general/usr/local/bin`. They only handle Debian, Ubuntu and Alpine, the systems the images are built on. `generate:provision` copies them into `docker/toolbox/latest/conf/`, `toolbox` keeps them under `/baselayout`, and `bootstrap` and the PHP images copy them from there with `COPY --from=webdevops/toolbox`.
+The commands that the images have in `/usr/local/bin`, such as `apt-install`, `apk-install`, `docker-run-bootstrap` and `generate-locales`, are in `provisioning/baselayout/general/usr/local/bin`. They only handle Debian, Ubuntu and Alpine: the images are built on Debian and Alpine, and the scripts also serve your own images on Ubuntu, see [Replacing discontinued images](docs/discontinued-images.md#webdevopsbootstrap-webdevopsbase-and-webdevopsbase-app). `generate:provision` copies them into `docker/toolbox/latest/conf/`, `toolbox` keeps them under `/baselayout`, and the PHP images copy them from there with `COPY --from=webdevops/toolbox`.
 It checks all of `conf/provision.yml` before it changes a file and stops if a source directory or a tag does not exist, or if an image has another setting than `configuration`.
 `generate:dockerfile` stops if a directory `docker/<image>/<tag>` has files but no `Dockerfile.twig`; it first removes the `.DS_Store` files of the macOS Finder under `docker`.
 To stop building a tag, remove its directory and those of the tags that build on it; `generate:github-ci` names any it finds.
@@ -58,7 +58,9 @@ It does not update the actions in `.github/workflows/build.yaml`, because that f
 A new push to a pull request cancels the run of its previous commit. Runs on `master`, the nightly run and runs started by hand are never cancelled.
 
 GitHub Actions builds every image independently and runs the image tests
-defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdevops/`, but only
+defined for it before pushing it to Docker Hub. The jobs run directly on the GitHub-hosted runners, `ubuntu-24.04` for
+`linux/amd64` and `ubuntu-24.04-arm` for `linux/arm64`, which have Docker, Buildx, git and make; they need no
+container of their own. The CI also uses `ghcr.io/webdevops/`, but only
 internally; pull the images from Docker Hub.
 
 The job "Update the Docker Hub pages" uploads `docs/dockerhub/<repository>.md` and the short description of each repository to Docker Hub when `build.yaml` runs on `master` after a push or is started by hand. It does not run for pull requests, in the nightly run, in the builds that `php-upstream.yaml` starts (a failed upload would keep it from starting the next one) or in forks, and no other job waits for it.

@@ -44,7 +44,7 @@ trait ServiceChecks
     ];
 
     /**
-     * The services of webdevops/base that docker-service enable installs, see docs/customization.md#services.
+     * The services that docker-service enable installs, see docs/customization.md#services.
      */
     private const array INSTALLABLE_SERVICES = ['cron', 'dnsmasq', 'postfix', 'ssh', 'syslog'];
 
@@ -165,7 +165,7 @@ trait ServiceChecks
     }
 
     /**
-     * The services of the image and the services of webdevops/base, each with its configuration in
+     * The services of the image and the services that docker-service enable installs, each with its configuration in
      * /opt/docker/etc/supervisor.d.
      *
      * @return iterable<string, array{string}>
@@ -178,8 +178,8 @@ trait ServiceChecks
     }
 
     /**
-     * supervisord starts the services of the image by itself (autostart = true), the other services of webdevops/base
-     * only once docker-service enable sets it.
+     * supervisord starts the services of the image by itself (autostart = true), the other services only once
+     * docker-service enable sets it.
      */
     #[DataProvider('supervisorPrograms')]
     public function testServiceStartsAutomaticallyOnlyIfTheImageRunsIt(string $service): void
