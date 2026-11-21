@@ -56,14 +56,22 @@ class GithubJobBuilder
         BASH;
 
     /**
-     * Sets the page (PAGE) and the short description (SHORT_DESCRIPTION) of a repository (REPOSITORY) on Docker Hub.
+     * Sets the page (PAGE) and the short description (SHORT_DESCRIPTION) of a repository (REPOSITORY, namespace/name) on
+     * Docker Hub. It uses the route under /namespaces/, which takes personal and organization access tokens alike; the
+     * older /repositories/<namespace>/<name> rejects organization access tokens with 403. When Docker Hub refuses, the
+     * step shows Docker Hub's answer.
      */
     private const string DOCKER_HUB_UPLOAD = <<<'BASH'
-        jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+        status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
           '{full_description: $full_description, description: $description}' \
-          | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+          | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
             -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-            --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+            --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+        echo "Docker Hub answered $status"
+        if [[ "$status" != 2* ]]; then
+          echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+          exit 1
+        fi
         BASH;
 
     /**

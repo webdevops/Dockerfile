@@ -76,11 +76,16 @@ jobs:
           PAGE: docs/dockerhub/ansible.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/apache
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -90,11 +95,16 @@ jobs:
           PAGE: docs/dockerhub/apache.md
           SHORT_DESCRIPTION: 'No longer built or updated. Use httpd:alpine instead.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/apache-dev
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -104,11 +114,16 @@ jobs:
           PAGE: docs/dockerhub/apache-dev.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/base
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -118,11 +133,16 @@ jobs:
           PAGE: docs/dockerhub/base.md
           SHORT_DESCRIPTION: 'Ubuntu 22.04 with entrypoint, supervisord, service scripts and hooks, a base for your own images'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/base-app
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -132,11 +152,16 @@ jobs:
           PAGE: docs/dockerhub/base-app.md
           SHORT_DESCRIPTION: 'webdevops/base with the user application, /app and tools such as git, rsync and the SSH client'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/bootstrap
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -146,11 +171,16 @@ jobs:
           PAGE: docs/dockerhub/bootstrap.md
           SHORT_DESCRIPTION: 'Ubuntu 22.04 with the webdevops helper scripts, a base for your own images'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/certbot
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -160,11 +190,16 @@ jobs:
           PAGE: docs/dockerhub/certbot.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/dockerfile-build-env
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -174,11 +209,16 @@ jobs:
           PAGE: docs/dockerhub/dockerfile-build-env.md
           SHORT_DESCRIPTION: 'Build environment of github.com/webdevops/Dockerfile, in which its CI builds the images'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/hhvm
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -188,11 +228,16 @@ jobs:
           PAGE: docs/dockerhub/hhvm.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/hhvm-apache
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -202,11 +247,16 @@ jobs:
           PAGE: docs/dockerhub/hhvm-apache.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/hhvm-nginx
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -216,11 +266,16 @@ jobs:
           PAGE: docs/dockerhub/hhvm-nginx.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/liquibase
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -230,11 +285,16 @@ jobs:
           PAGE: docs/dockerhub/liquibase.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/liquidsoap
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -244,11 +304,16 @@ jobs:
           PAGE: docs/dockerhub/liquidsoap.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/mail-sandbox
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -258,11 +323,16 @@ jobs:
           PAGE: docs/dockerhub/mail-sandbox.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/nginx
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -272,11 +342,16 @@ jobs:
           PAGE: docs/dockerhub/nginx.md
           SHORT_DESCRIPTION: 'No longer built or updated. Use nginx:alpine instead.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/nginx-dev
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -286,11 +361,16 @@ jobs:
           PAGE: docs/dockerhub/nginx-dev.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/php
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -300,11 +380,16 @@ jobs:
           PAGE: docs/dockerhub/php.md
           SHORT_DESCRIPTION: 'PHP-FPM on the official PHP image, configured with environment variables; Debian and Alpine'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/php-apache
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -314,11 +399,16 @@ jobs:
           PAGE: docs/dockerhub/php-apache.md
           SHORT_DESCRIPTION: 'PHP-FPM and Apache in one container on the official PHP image; Debian and Alpine'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/php-apache-dev
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -328,11 +418,16 @@ jobs:
           PAGE: docs/dockerhub/php-apache-dev.md
           SHORT_DESCRIPTION: 'webdevops/php-apache for local development: Xdebug, Postfix and SSH'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/php-dev
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -342,11 +437,16 @@ jobs:
           PAGE: docs/dockerhub/php-dev.md
           SHORT_DESCRIPTION: 'webdevops/php for local development: Xdebug, Blackfire extension, Postfix and SSH'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/php-nginx
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -356,11 +456,16 @@ jobs:
           PAGE: docs/dockerhub/php-nginx.md
           SHORT_DESCRIPTION: 'PHP-FPM and Nginx in one container on the official PHP image; Debian and Alpine'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/php-nginx-dev
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -370,11 +475,16 @@ jobs:
           PAGE: docs/dockerhub/php-nginx-dev.md
           SHORT_DESCRIPTION: 'webdevops/php-nginx for local development: Xdebug, Postfix and SSH'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/php-official
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -384,11 +494,16 @@ jobs:
           PAGE: docs/dockerhub/php-official.md
           SHORT_DESCRIPTION: 'Deprecated name of webdevops/php without new tags; use webdevops/php instead'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/piwik
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -398,11 +513,16 @@ jobs:
           PAGE: docs/dockerhub/piwik.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/postfix
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -412,11 +532,16 @@ jobs:
           PAGE: docs/dockerhub/postfix.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/samson-deployment
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -426,11 +551,16 @@ jobs:
           PAGE: docs/dockerhub/samson-deployment.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/sphinx
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -440,11 +570,16 @@ jobs:
           PAGE: docs/dockerhub/sphinx.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/ssh
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -454,11 +589,16 @@ jobs:
           PAGE: docs/dockerhub/ssh.md
           SHORT_DESCRIPTION: 'No longer built or updated. Use lscr.io/linuxserver/openssh-server instead.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/storage
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -468,11 +608,16 @@ jobs:
           PAGE: docs/dockerhub/storage.md
           SHORT_DESCRIPTION: 'No longer built or updated. Use alpine:latest instead.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/toolbox
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -482,11 +627,16 @@ jobs:
           PAGE: docs/dockerhub/toolbox.md
           SHORT_DESCRIPTION: 'Build helper of the webdevops images: baselayout scripts, go-replace and gosu'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/typo3
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -496,11 +646,16 @@ jobs:
           PAGE: docs/dockerhub/typo3.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/typo3-solr
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -510,11 +665,16 @@ jobs:
           PAGE: docs/dockerhub/typo3-solr.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/varnish
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -524,11 +684,16 @@ jobs:
           PAGE: docs/dockerhub/varnish.md
           SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
       -
         name: webdevops/vsftp
         if: "${{ !cancelled() && steps.login.outcome == 'success' }}"
@@ -538,11 +703,16 @@ jobs:
           PAGE: docs/dockerhub/vsftp.md
           SHORT_DESCRIPTION: 'No longer built or updated. Use garethflowers/ftp-server instead.'
         run: |-
-          jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+          status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
-            | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+            | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
               -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-              --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+              --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+          echo "Docker Hub answered $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+            exit 1
+          fi
   image-test-runner:
     strategy:
       fail-fast: false
