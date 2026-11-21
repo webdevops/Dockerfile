@@ -24,7 +24,7 @@ Ports: `80` (HTTP) and `443` (HTTPS). HTTPS uses a self-signed certificate for `
 
 ## Services
 
-Started by default: `nginx`, `php-fpm`, `cron`, `syslog`. The `-dev` variant also starts `postfix` and `ssh`.
+Started by default: `nginx`, `php-fpm`, `cron`, `syslog`. The `-dev` variant also starts `postfix` and `ssh`. Add cron jobs with [`CRONJOB_<NAME>` variables](../customization.md#cron-jobs).
 
 ## Configuration
 

@@ -30,7 +30,7 @@ PHP-FPM listens on port `9000`. For a web server in the same container use [`php
 
 ## Services
 
-Started by default: `php-fpm`, `cron`, `syslog`. The `-dev` variant also starts `postfix` and `ssh`. See [Customization](../customization.md#services). PHP-FPM listens on port `9000` of all IPv6 and IPv4 addresses; if the container has no IPv6, of all IPv4 addresses.
+Started by default: `php-fpm`, `cron`, `syslog`. The `-dev` variant also starts `postfix` and `ssh`. See [Customization](../customization.md#services). Add cron jobs with [`CRONJOB_<NAME>` variables](../customization.md#cron-jobs). PHP-FPM listens on port `9000` of all IPv6 and IPv4 addresses; if the container has no IPv6, of all IPv4 addresses.
 
 ## PHP configuration
 
@@ -128,7 +128,7 @@ Every PHP version comes as a Debian tag (`8.5`) and an Alpine tag (`8.5-alpine`)
 | [Build tools for extensions](#installing-more-extensions) | included | installed by `docker-php-ext-install`; for PIE install `$PHPIZE_DEPS` |
 | [Locales](../customization.md#locales) | several hundred, for example `de_DE.utf8` | none |
 | [Installing packages](../customization.md#tools-for-your-dockerfile) | `apt-install`, from the Debian components `main`, `contrib` and `non-free` | `apk-install` |
-| [`docker-cronjob`](../customization.md#cron-jobs) | adds the lines to `/etc/cron.d/webdevops-docker`; jobs run with `PATH=/usr/bin:/bin`; their output goes through syslog to the stdout of the container | adds each line without its user to `/etc/crontabs/<user>`; jobs run with the `PATH` of the container; their output goes to the stdout and stderr of the container |
+| [Cron jobs](../customization.md#cron-jobs) | the `CRONJOB_<NAME>` variables go to `/etc/cron.d/webdevops-environment`, the lines of `docker-cronjob` to `/etc/cron.d/webdevops-docker`; day of week `0`-`7`; jobs run with `PATH=/usr/bin:/bin`; their output goes through syslog to the stdout of the container | both go without the user to `/etc/crontabs/<user>`; day of week `0`-`6`; jobs run with the `PATH` of the container; their output goes to the stdout and stderr of the container |
 | [`docker-image-cleanup`](../customization.md#tools-for-your-dockerfile) | works | works |
 | [Apache index files](../environment-variables.md#web-server) in `php-apache` | `index.html`, `index.cgi`, `index.pl`, `index.php`, `index.xhtml`, `index.htm` come before `WEB_DOCUMENT_INDEX` | `index.html` comes before `WEB_DOCUMENT_INDEX` |
 | [`mail()` without Postfix](#mail) | fails: there is no `sendmail` command | fails: BusyBox `sendmail` finds no mail server |

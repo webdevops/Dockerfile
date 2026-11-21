@@ -9,28 +9,229 @@ source /opt/docker/bin/config.sh
 
 rootCheck "$0"
 
-if [[ "$#" -eq 0 ]]; then
-    echo "Usage: $0 '<cronjob line>'"
+function usage() {
+    echo "Usage: $0 '<cronjob line>' ..."
+    echo "         adds the jobs, e.g. in a RUN line of a Dockerfile"
+    echo "       $0 --environment [--enable-cron]"
+    echo "         writes the jobs of the CRONJOB_* variables in place of those of its last run; with --enable-cron,"
+    echo "         also enables cron for them where it is not enabled"
     exit 1
+}
+
+if [[ "$#" -eq 0 ]]; then
+    usage
 fi
 
-if [[ "$(docker-image-info family)" == "Alpine" ]]; then
+IMAGE_FAMILY="$(docker-image-info family)"
+
+# The jobs of the CRONJOB_* variables: Debian and Ubuntu, a file of their own; Alpine, a block in the crontab of each user
+ENVIRONMENT_CRONTAB=/etc/cron.d/webdevops-environment
+ENVIRONMENT_BEGIN='# webdevops environment begin'
+ENVIRONMENT_END='# webdevops environment end'
+
+# Debian and Ubuntu: the shell of the jobs, which sends their output to syslog-ng, see docker-cronjob-shell
+CRON_SHELL=/usr/local/bin/docker-cronjob-shell
+
+# The five time fields: their names, lowest and highest values, and the names of their values. BusyBox crond on Alpine
+# takes 0 to 6 for the day of week, cron in Debian and Ubuntu also 7 for Sunday.
+TIME_FIELDS=('minute' 'hour' 'day of month' 'month' 'day of week')
+TIME_MIN=(0 0 1 1 0)
+TIME_MAX=(59 23 31 12 7)
+TIME_NAMES=('' '' '' 'jan feb mar apr may jun jul aug sep oct nov dec' 'sun mon tue wed thu fri sat')
+if [[ "$IMAGE_FAMILY" == "Alpine" ]]; then
+    TIME_MAX[4]=6
+fi
+
+###
+ # Whether $1 is a value of the time field with the index $2: a number in its range or, for the month and the day of
+ # week, a name of three letters
+ ##
+function isTimeValue() {
+    local value="${1,,}"
+
+    if [[ "$value" =~ ^[0-9]{1,2}$ ]]; then
+        (( 10#$value >= TIME_MIN[$2] && 10#$value <= TIME_MAX[$2] ))
+    else
+        [[ "$value" =~ ^[a-z]{3}$ && " ${TIME_NAMES[$2]} " == *" $value "* ]]
+    fi
+}
+
+###
+ # Whether $1 is the time field with the index $2: a list of items, each *, a value or a range of values; * and a range
+ # may have a step, e.g. */5 or 1-30/10
+ ##
+function isTimeField() {
+    local item first last step
+    local -a items
+
+    # read drops an empty last item
+    if [[ "$1" == *, ]]; then
+        return 1
+    fi
+
+    IFS=, read -r -a items <<< "$1"
+    for item in "${items[@]}"; do
+        if [[ ! "$item" =~ ^(\*|([[:alnum:]]+)(-([[:alnum:]]+))?)(/([0-9]{1,2}))?$ ]]; then
+            return 1
+        fi
+
+        first="${BASH_REMATCH[2]}"
+        last="${BASH_REMATCH[4]}"
+        step="${BASH_REMATCH[6]}"
+        if [[ -n "$first" ]] && ! isTimeValue "$first" "$2"; then
+            return 1
+        fi
+
+        if [[ -n "$last" ]] && ! isTimeValue "$last" "$2"; then
+            return 1
+        fi
+
+        # cron in Debian and Ubuntu takes no step of 0, nor one after a single value
+        if [[ -n "$step" ]] && [[ "$step" =~ ^0+$ || ( -n "$first" && -z "$last" ) ]]; then
+            return 1
+        fi
+    done
+}
+
+###
+ # Splits the cron job line $1 into JOB_TIME, JOB_USER and JOB_COMMAND. Fails with an error that starts with $2, e.g.
+ # the name of a variable, on a line that is not a job, with the time (five fields or a keyword such as @daily), the
+ # user and the command, on a time that cron would not take, and on a user that does not exist.
+ ##
+function parseJob() {
+    local line="$1" prefix="$2" index
+    local -a fields
+
+    if [[ "$line" == *$'\n'* ]] || [[ ! "$line" =~ ^[[:space:]]*(@[[:alpha:]]+|[^@#[:space:]]+([[:space:]]+[^[:space:]]+){4})[[:space:]]+([^[:space:]]+)[[:space:]]+([^[:space:]].*)$ ]]; then
+        echo "[ERROR] ${prefix}Not a cron job line with the time, the user and the command: $line" >&2
+        exit 1
+    fi
+
+    JOB_TIME="${BASH_REMATCH[1]}"
+    JOB_USER="${BASH_REMATCH[3]}"
+    JOB_COMMAND="${BASH_REMATCH[4]}"
+
+    if [[ "$JOB_TIME" == @* ]]; then
+        if [[ ! "$JOB_TIME" =~ ^@(reboot|yearly|annually|monthly|weekly|daily|midnight|hourly)$ ]]; then
+            echo "[ERROR] ${prefix}'${JOB_TIME}' is not one of @reboot, @yearly, @annually, @monthly, @weekly, @daily, @midnight, @hourly: $line" >&2
+            exit 1
+        fi
+    else
+        read -r -a fields <<< "$JOB_TIME"
+        for index in "${!fields[@]}"; do
+            if ! isTimeField "${fields[index]}" "$index"; then
+                echo "[ERROR] ${prefix}'${fields[index]}' is not a valid ${TIME_FIELDS[index]} (${TIME_MIN[index]}-${TIME_MAX[index]}): $line" >&2
+                exit 1
+            fi
+        done
+    fi
+
+    if ! id -u "$JOB_USER" > /dev/null 2>&1; then
+        echo "[ERROR] ${prefix}User '${JOB_USER}' does not exist: $line" >&2
+        exit 1
+    fi
+}
+
+###
+ # Writes the jobs of the CRONJOB_* variables, sorted by name, in place of those of the last run. Checks all of them
+ # before it writes, so that an error changes nothing. A variable that is empty adds no job. $1 is 1 if cron is to be
+ # enabled for the jobs.
+ ##
+function writeEnvironmentJobs() {
+    local enableCron="$1" name value index user crontab content
+    local -a names=() times=() users=() commands=()
+    local -A written=()
+
+    while IFS= read -r name; do
+        value="$(envGetValue "$name")"
+        if [[ -z "$value" ]]; then
+            continue
+        fi
+
+        parseJob "$value" "${name}: "
+        names+=("$name")
+        times+=("$JOB_TIME")
+        users+=("$JOB_USER")
+        commands+=("$JOB_COMMAND")
+    done < <(envListVars "CRONJOB_" | LC_ALL=C sort)
+
+    if [[ "$IMAGE_FAMILY" == "Alpine" ]]; then
+        # BusyBox crond: the block of the last run out of every crontab; a crontab with nothing else goes
+        for crontab in /etc/crontabs/*; do
+            if grep -qxF "$ENVIRONMENT_BEGIN" "$crontab"; then
+                content="$(awk -v begin="$ENVIRONMENT_BEGIN" -v end="$ENVIRONMENT_END" '$0 == begin { skip = 1 } !skip { print } $0 == end { skip = 0 }' "$crontab")"
+                if [[ -n "$content" ]]; then
+                    printf '%s\n' "$content" > "$crontab"
+                else
+                    rm -f -- "$crontab"
+                fi
+            fi
+        done
+
+        # a block at the end of the crontab of each user, with the jobs in the order of their variables
+        for user in "${users[@]}"; do
+            if [[ -n "${written[$user]:-}" ]]; then
+                continue
+            fi
+
+            written[$user]=1
+            crontab="/etc/crontabs/${user}"
+            # a last line without its newline would run into the block
+            if [[ -s "$crontab" && -n "$(tail -c 1 "$crontab")" ]]; then
+                echo >> "$crontab"
+            fi
+
+            {
+                echo "$ENVIRONMENT_BEGIN"
+                for index in "${!names[@]}"; do
+                    if [[ "${users[index]}" == "$user" ]]; then
+                        echo "# ${names[index]}"
+                        echo "${times[index]} ${commands[index]}"
+                    fi
+                done
+                echo "$ENVIRONMENT_END"
+            } >> "$crontab"
+            chmod 0600 "$crontab"
+        done
+    elif [[ "${#names[@]}" -eq 0 ]]; then
+        rm -f -- "$ENVIRONMENT_CRONTAB"
+    else
+        {
+            echo "# The jobs of the CRONJOB_* variables, written anew at every start of the container"
+            echo "SHELL=${CRON_SHELL}"
+            for index in "${!names[@]}"; do
+                echo "# ${names[index]}"
+                echo "${times[index]} ${users[index]} ${commands[index]}"
+            done
+        } > "$ENVIRONMENT_CRONTAB"
+        chmod 0644 "$ENVIRONMENT_CRONTAB"
+    fi
+
+    # supervisord starts cron only where it is enabled, e.g. not after docker-service disable cron
+    if [[ "$enableCron" == "1" && "${#names[@]}" -gt 0 ]] && ! grep -Eq '^[[:space:]]*autostart[[:space:]]*=[[:space:]]*true' /opt/docker/etc/supervisor.d/cron.conf; then
+        echo "Enabling cron for the jobs of the CRONJOB_* variables"
+        docker-service enable cron
+    fi
+}
+
+if [[ "$1" == "--environment" ]]; then
+    if [[ "$#" -eq 1 ]]; then
+        writeEnvironmentJobs 0
+    elif [[ "$#" -eq 2 && "$2" == "--enable-cron" ]]; then
+        writeEnvironmentJobs 1
+    else
+        usage
+    fi
+
+    exit 0
+fi
+
+if [[ "$IMAGE_FAMILY" == "Alpine" ]]; then
     # BusyBox crond reads no /etc/cron.d, but one crontab per user in /etc/crontabs, without the user column
-    for CRONJOB_LINE in "$@"; do
-        # time (five fields or one such as @daily), user, command
-        if [[ ! "$CRONJOB_LINE" =~ ^[[:space:]]*(@[[:alpha:]]+|[^@#[:space:]]+([[:space:]]+[^[:space:]]+){4})[[:space:]]+([^[:space:]]+)[[:space:]]+([^[:space:]].*)$ ]]; then
-            echo "[ERROR] Not a cron job line with the time, the user and the command: $CRONJOB_LINE"
-            exit 1
-        fi
-
-        CRONJOB_USER="${BASH_REMATCH[3]}"
-        if ! id -u "$CRONJOB_USER" > /dev/null 2>&1; then
-            echo "[ERROR] User '${CRONJOB_USER}' does not exist: $CRONJOB_LINE"
-            exit 1
-        fi
-
-        echo "${BASH_REMATCH[1]} ${BASH_REMATCH[4]}" >> "/etc/crontabs/${CRONJOB_USER}"
-        chmod 0600 "/etc/crontabs/${CRONJOB_USER}"
+    for JOB_LINE in "$@"; do
+        parseJob "$JOB_LINE" ""
+        echo "${JOB_TIME} ${JOB_COMMAND}" >> "/etc/crontabs/${JOB_USER}"
+        chmod 0600 "/etc/crontabs/${JOB_USER}"
     done
 
     exit 0
