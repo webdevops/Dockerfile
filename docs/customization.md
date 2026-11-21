@@ -76,7 +76,7 @@ These commands are installed in the images. Use them in `RUN` lines of your own 
 | `gosu <user> <command>` | Runs a command as another user, for example `application` | all except `toolbox` |
 | `docker-service enable <service>`, `docker-service disable <service>`, also `docker-service-enable` and `docker-service-disable` | Enables or disables a [service](#services); enabling installs it if needed | all except `bootstrap` and `toolbox` |
 | `docker-healthcheck` | Checks the services of supervisord and fails when one failed, see [Healthcheck](#healthcheck) | all except `bootstrap` and `toolbox` |
-| `docker-cronjob '<line>'` | Adds a [cron job](#cron-jobs) | all except `bootstrap` and `toolbox` |
+| `docker-cronjob '<line>'` | Adds a [cron job to the image](#cron-jobs-in-the-image); without a build, use the [`CRONJOB_<NAME>` variables](#cron-jobs) | all except `bootstrap` and `toolbox` |
 | `docker-run-bootstrap` | Runs the [build scripts](#scripts-at-image-build) once and deletes them | all except `toolbox` |
 
 `apt-install` and `apk-install` are both present in every image except `toolbox`, but each only works on its own distribution. `toolbox` only stores the commands for the other images, see [Images](README.md#images).
@@ -125,6 +125,8 @@ RUN docker-service disable cron
 
 When a service is enabled for the first time, `docker-service` sources `/opt/docker/provision/service.d/<service>.sh` once; these scripts install the service.
 
+A [`CRONJOB_<NAME>` variable](#cron-jobs) switches cron on again when the container starts `supervisord`.
+
 ### Service hooks
 
 Before a service starts, its start script sources every `*.sh` file in `/opt/docker/bin/service.d/<name>.d/`:
@@ -146,25 +148,51 @@ Options for each service are set with environment variables, see [Services](envi
 
 ## Cron jobs
 
-`docker-cronjob` adds a cron job for each argument. Lines use the system crontab format, including the user, and cron runs the job as that user:
+Add a cron job with an environment variable `CRONJOB_<NAME>`, without building an image: one variable per job, with any name after `CRONJOB_`. Its value is a line of the system crontab: the time, the user and the command. Cron runs the job as that user:
+
+```yaml
+services:
+  app:
+    image: webdevops/php-nginx:8.5
+    volumes:
+      - ./:/app
+    environment:
+      # every 5 minutes, as the user application
+      CRONJOB_CLEANUP: "*/5 * * * * application /usr/local/bin/php /app/bin/console app:cleanup"
+```
+
+This works in all PHP images, Debian and Alpine. At every start, the entrypoint writes the jobs of the `CRONJOB_*` variables, sorted by name, in place of those of the last start (`docker-cronjob --environment`), so a restart does not add them twice. A variable that is empty adds no job. Each job gets a comment line with the name of its variable. The jobs go:
+
+- in the Debian images to `/etc/cron.d/webdevops-environment`;
+- in the Alpine images, whose BusyBox `crond` reads no `/etc/cron.d` but one crontab per user, without the user column, to the end of the crontab of the user, for example `/etc/crontabs/application`, between the lines `# webdevops environment begin` and `# webdevops environment end`. The other lines of the crontab stay, for example those of [`docker-cronjob`](#cron-jobs-in-the-image).
+
+The time is five fields or one of `@reboot`, `@yearly`, `@annually`, `@monthly`, `@weekly`, `@daily`, `@midnight` and `@hourly`. A field is `*`, a value, a range such as `1-5` or a list such as `0,15,30`; `*` and a range can have a step, such as `*/10` or `8-18/2`. The values: minute `0`-`59`, hour `0`-`23`, day of month `1`-`31`, month `1`-`12` or `jan`-`dec`, day of week `0`-`7` or `sun`-`sat`, where `0` and `7` are Sunday; in the Alpine images, whose `crond` does not take `7`, `0`-`6`.
+
+If a variable holds no such job, or its user does not exist, the container exits at start with exit code `1` before its command runs, and the container log names the variable, for example `[ERROR] CRONJOB_CLEANUP: '24' is not a valid hour (0-23): 0 24 * * * application /usr/local/bin/php /app/bin/console app:cleanup`. Cron would not run such a job, and cron in the Debian images would not run the other jobs of the variables either: it ignores a file in `/etc/cron.d` with an error. The check also runs for one-off commands such as `docker compose run --rm app php -v`.
+
+Where `docker-service disable cron` switched cron off, a `CRONJOB_*` variable switches it on again when the container starts `supervisord`, its default command; the container log then says `Enabling cron for the jobs of the CRONJOB_* variables`.
+
+The output of a job of the variables or of [`docker-cronjob`](#cron-jobs-in-the-image), stdout and stderr, goes to the container log:
+
+- In Alpine, BusyBox `crond` passes it on: stdout to the stdout of the container, stderr to its stderr.
+- Cron in Debian and Ubuntu would mail it, and discard it where no mail server is installed. So `/etc/cron.d/webdevops-environment` and `/etc/cron.d/webdevops-docker` begin with `SHELL=/usr/local/bin/docker-cronjob-shell`: cron runs each job with this script, which runs the command with `/bin/sh` and sends both outputs to syslog, a message per line and per 1 KiB of a longer line. They reach the stdout of the container, or the file of `LOG_STDOUT`, as `[SYSLOG] cron-job[<process id>]: <line>`; the exit code stays that of the command. This needs syslog-ng, which `base` and `base-app` do not start by default (`docker-service enable syslog cron`); without it, the output stays with cron.
+- To get the mail of cron instead, as before, add a `MAILTO` line before the jobs; it applies to the jobs below it. In Debian and Ubuntu, for example `RUN docker-cronjob 'MAILTO=ops@example.com' '*/5 * * * * application /usr/local/bin/php /app/bin/console app:cleanup'`. `docker-cronjob-shell` then only runs the command, and cron mails its output. The mail needs a mail server, for example Postfix of the `-dev` images, see [Mail](images/php.md#mail). `MAILTO=""` turns the mail off, and the output goes to syslog.
+- For a crontab file of your own, for example in `/etc/cron.d`, put the same `SHELL` line at its top; otherwise cron mails the output, see [Known issues](known-issues.md#output-of-cron-jobs-in-crontab-files-of-your-own).
+
+Cron in Debian and Ubuntu runs jobs with `PATH=/usr/bin:/bin`, which does not contain `/usr/local/bin`, so use absolute paths such as `/usr/local/bin/php`. Absolute paths work in Alpine too, whose `crond` passes on the `PATH` of the container.
+
+### Cron jobs in the image
+
+For jobs that belong in the image, `docker-cronjob` adds a cron job for each argument at build time, in the same format:
 
 ```dockerfile
 FROM webdevops/php:8.5
 RUN docker-cronjob '*/5 * * * * application /usr/local/bin/php /app/bin/console app:cleanup'
 ```
 
-In the Debian- and Ubuntu-based images, `docker-cronjob` adds the lines to `/etc/cron.d/webdevops-docker`. Alpine's BusyBox `crond` does not read `/etc/cron.d`, but one crontab per user in `/etc/crontabs`, without the user column, so in the Alpine images `docker-cronjob` adds each line without its user to the crontab of that user, for example `/etc/crontabs/application`. There it fails on a line that is not a job with time, user and command, for example a comment or a variable such as `MAILTO=`, and on a user that does not exist.
-
-Cron in Debian and Ubuntu runs jobs with `PATH=/usr/bin:/bin`, which does not contain `/usr/local/bin`, so use absolute paths such as `/usr/local/bin/php`. Absolute paths work in Alpine too, whose `crond` passes on the `PATH` of the container.
+In the Debian- and Ubuntu-based images, `docker-cronjob` adds the lines as they are to `/etc/cron.d/webdevops-docker`, which it begins with the line `SHELL=/usr/local/bin/docker-cronjob-shell` for the [output](#cron-jobs). In the Alpine images, it adds each line without its user to the crontab of that user, for example `/etc/crontabs/application`. There it fails on a line that is not a job with time, user and command, for example a comment or a variable such as `MAILTO=`, on a time that cron does not take, as above, and on a user that does not exist.
 
 In `base` and `base-app`, cron does not run by default; also run `docker-service enable cron`, see [Services](#services).
-
-The output of a job, stdout and stderr, goes to the container log:
-
-- In Alpine, BusyBox `crond` passes it on: stdout to the stdout of the container, stderr to its stderr.
-- Cron in Debian and Ubuntu would mail it, and discard it where no mail server is installed. So `docker-cronjob` begins `/etc/cron.d/webdevops-docker` with `SHELL=/usr/local/bin/docker-cronjob-shell`: cron runs each job with this script, which runs the command with `/bin/sh` and sends both outputs to syslog, a message per line and per 1 KiB of a longer line. They reach the stdout of the container, or the file of `LOG_STDOUT`, as `[SYSLOG] cron-job[<process id>]: <line>`; the exit code stays that of the command. This needs syslog-ng, which `base` and `base-app` do not start by default (`docker-service enable syslog cron`); without it, the output stays with cron.
-- To get the mail of cron instead, as before, add a `MAILTO` line before the jobs; it applies to the jobs below it. In Debian and Ubuntu, for example `RUN docker-cronjob 'MAILTO=ops@example.com' '*/5 * * * * application /usr/local/bin/php /app/bin/console app:cleanup'`. `docker-cronjob-shell` then only runs the command, and cron mails its output. The mail needs a mail server, for example Postfix of the `-dev` images, see [Mail](images/php.md#mail). `MAILTO=""` turns the mail off, and the output goes to syslog.
-- For a crontab file of your own, for example in `/etc/cron.d`, put the same `SHELL` line at its top; otherwise cron mails the output, see [Known issues](known-issues.md#output-of-cron-jobs-in-crontab-files-of-your-own).
 
 ### Time zone
 
