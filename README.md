@@ -11,6 +11,8 @@ We add additional stuff like:
 * almost any PHP module preinstalled
 * configuration based on ENV variables
 * run multiple services (like php-fpm and nginx) with supervisord
+* PHP-FPM that sizes itself to the container: at every start, the number of PHP-FPM workers follows the CPU and memory limits of the container (`cpus`, `mem_limit`), or the host without limits ([details](docs/environment-variables.md#size-of-the-php-fpm-pool))
+* production defaults for larger applications: `opcache.max_accelerated_files` `32531`, and PHP-FPM replaces a worker after 1000 requests ([production](docs/images/php.md#production))
 
 [![GitHub issues](https://img.shields.io/github/issues/webdevops/Dockerfile.svg)](https://github.com/webdevops/Dockerfile/issues)[![GitHub forks](https://img.shields.io/github/forks/webdevops/Dockerfile.svg)](https://github.com/webdevops/Dockerfile/network)[![GitHub stars](https://img.shields.io/github/stars/webdevops/Dockerfile.svg)](https://github.com/webdevops/Dockerfile/stargazers)[![GitHub license](https://img.shields.io/github/license/webdevops/Dockerfile.svg)](https://github.com/webdevops/Dockerfile/blob/master/LICENSE)
 [![build](https://github.com/webdevops/Dockerfile/actions/workflows/build.yaml/badge.svg)](https://github.com/webdevops/Dockerfile/actions/workflows/build.yaml)

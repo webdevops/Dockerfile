@@ -345,14 +345,16 @@ abstract class ImageTestCase extends TestCase
 
     /**
      * Runs $command in a new container of the image, through its entrypoint, and returns the result once the command
-     * exits. The container gets the files of Fixtures/ too and is removed afterwards.
+     * exits. The container gets the files of Fixtures/ too and is removed afterwards. $options are further options of
+     * docker create, e.g. limits such as ['--cpus', '2'].
      *
      * @param list<string> $command
      * @param array<string, string> $environment
+     * @param list<string> $options
      */
-    protected function runContainer(array $command, array $environment = []): CommandResult
+    protected function runContainer(array $command, array $environment = [], array $options = []): CommandResult
     {
-        return Container::run(self::image()->reference, [self::FIXTURES, self::HOOKS], self::labels(), $environment, $command);
+        return Container::run(self::image()->reference, [self::FIXTURES, self::HOOKS], self::labels(), $environment, $command, $options);
     }
 
     /**

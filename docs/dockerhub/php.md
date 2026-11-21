@@ -1,6 +1,6 @@
 # webdevops/php
 
-PHP-FPM on top of the official PHP image, with the webdevops entrypoint, `supervisord`, cron, syslog-ng and the `application` user. PHP-FPM listens on port `9000`. For a web server in the same container, use [`webdevops/php-nginx`](https://hub.docker.com/r/webdevops/php-nginx) or [`webdevops/php-apache`](https://hub.docker.com/r/webdevops/php-apache).
+PHP-FPM on top of the official PHP image, with the webdevops entrypoint, `supervisord`, cron, syslog-ng and the `application` user. PHP-FPM listens on port `9000`. At every start, PHP-FPM sizes its pool of workers to the CPU and memory limits of the container, or to the host without limits, see [Size of the PHP-FPM pool](https://github.com/webdevops/Dockerfile/blob/master/docs/environment-variables.md#size-of-the-php-fpm-pool). For a web server in the same container, use [`webdevops/php-nginx`](https://hub.docker.com/r/webdevops/php-nginx) or [`webdevops/php-apache`](https://hub.docker.com/r/webdevops/php-apache).
 
 Always use one of the tags below: an image without a tag (`latest`) and the `alpine` tag are old builds from 2019 and 2020 that get no updates, see [Known issues](https://github.com/webdevops/Dockerfile/blob/master/docs/known-issues.md#latest-and-alpine-tags-of-the-php-images).
 
