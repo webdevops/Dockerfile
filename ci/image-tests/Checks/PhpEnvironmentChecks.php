@@ -8,6 +8,7 @@ use Webdevops\Build\ImageTests\Docker\Container;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 use function escapeshellarg;
+use function implode;
 use function json_decode;
 use function sleep;
 use function sprintf;
@@ -246,5 +247,18 @@ trait PhpEnvironmentChecks
     public function testComposerVersionFromTheEnvironment(): void
     {
         self::assertMatchesRegularExpression('/^Composer version 1\.\d+\.\d+ /m', $this->stdout('composer --version 2>/dev/null', $this->environmentContainer()));
+    }
+
+    /**
+     * php.session.upload_progress.enabled=On enables the upload progress, which the images disable, in the PHP CLI and
+     * in PHP-FPM.
+     */
+    public function testSessionUploadProgressFromTheEnvironment(): void
+    {
+        $result = $this->runContainer(['sh', '-c', implode(' && ', [
+            "php -r 'echo ini_get(\"session.upload_progress.enabled\") ? \"enabled\" : \"disabled\", PHP_EOL;'",
+            'php-fpm -i | grep "^session.upload_progress.enabled "',
+        ])], ['php.session.upload_progress.enabled' => 'On']);
+        self::assertSame([0, "enabled\nsession.upload_progress.enabled => On => On\n"], [$result->exitCode, $result->stdout], $result->describe());
     }
 }

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Webdevops\Build\Tests\ImageTests;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Webdevops\Build\ImageTests\Docker\CommandResult;
 use Webdevops\Build\ImageTests\Docker\FileArchive;
 use Webdevops\Build\ImageTests\Docker\FileInfo;
+use Webdevops\Build\ImageTests\Docker\ImageConfiguration;
 use Webdevops\Build\ImageTests\Docker\ListeningSockets;
 use Webdevops\Build\Tests\TemporaryRepository;
 
@@ -27,6 +29,7 @@ use function trim;
  * The parts of the image test harness that work without a container.
  */
 #[CoversClass(FileInfo::class)]
+#[CoversClass(ImageConfiguration::class)]
 #[CoversClass(ListeningSockets::class)]
 #[CoversClass(CommandResult::class)]
 #[CoversClass(FileArchive::class)]
@@ -76,6 +79,51 @@ final class DockerTest extends TestCase
         self::assertTrue($file->isSymlink);
         self::assertTrue($file->isDirectory);
         self::assertSame(0777, $file->mode);
+    }
+
+    /**
+     * @return iterable<string, array{string, string}>
+     */
+    public static function permissions(): iterable
+    {
+        yield 'program' => ["root|root|755\nefx\n", '-rwxr-xr-x'];
+        yield 'file' => ["root|root|644\nef\n", '-rw-r--r--'];
+        yield 'directory' => ["application|application|755\nedx\n", 'drwxr-xr-x'];
+        yield 'setuid and setgid' => ["root|root|6755\nefx\n", '-rwsr-sr-x'];
+        yield 'setgid without x' => ["root|root|2644\nef\n", '-rw-r-Sr--'];
+        yield 'sticky directory' => ["root|root|1777\nedx\n", 'drwxrwxrwt'];
+        yield 'symbolic link to a directory' => ["root|root|777\nedLx\n", 'lrwxrwxrwx'];
+        yield 'character device' => ["root|root|666\nec\n", 'crw-rw-rw-'];
+        yield 'missing' => ["\n\n", ''];
+    }
+
+    #[DataProvider('permissions')]
+    public function testFileInfoPermissionsAsLsShowsThem(string $output, string $expected): void
+    {
+        self::assertSame($expected, FileInfo::parse('/path', $output)->permissions());
+    }
+
+    public function testImageConfiguration(): void
+    {
+        $configuration = ImageConfiguration::parse(
+            '{"Env":["PATH=/usr/local/bin:/usr/bin","LOG_STDOUT=","WEB_PHP_SOCKET=127.0.0.1:9000","EQUALS=a=b"],'
+            . '"Entrypoint":["/entrypoint"],"Cmd":["supervisord"],"ExposedPorts":{"443/tcp":{},"80/tcp":{}},"WorkingDir":"/"}',
+        );
+
+        self::assertSame(['PATH' => '/usr/local/bin:/usr/bin', 'LOG_STDOUT' => '', 'WEB_PHP_SOCKET' => '127.0.0.1:9000', 'EQUALS' => 'a=b'], $configuration->environment);
+        self::assertSame(['/entrypoint'], $configuration->entrypoint);
+        self::assertSame(['supervisord'], $configuration->command);
+        self::assertSame(['443/tcp', '80/tcp'], $configuration->exposedPorts);
+        self::assertSame(['EQUALS' => 'a=b', 'TZ' => null], $configuration->variables(['EQUALS', 'TZ']), 'null for a variable the image does not set');
+    }
+
+    public function testImageConfigurationWithoutEntrypointAndPorts(): void
+    {
+        $configuration = ImageConfiguration::parse('{"Env":["TERM=xterm"],"Entrypoint":null,"Cmd":["/bin/bash"],"ExposedPorts":null}');
+
+        self::assertNull($configuration->entrypoint);
+        self::assertSame(['/bin/bash'], $configuration->command);
+        self::assertSame([], $configuration->exposedPorts);
     }
 
     public function testListeningSocketsFromTheKernelTables(): void

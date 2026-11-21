@@ -57,7 +57,7 @@ It does not update the actions in `.github/workflows/build.yaml`, because that f
 
 A new push to a pull request cancels the run of its previous commit. Runs on `master`, the nightly run and runs started by hand are never cancelled.
 
-GitHub Actions builds every image independently and runs the image tests and structure tests
+GitHub Actions builds every image independently and runs the image tests
 defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdevops/`, but only
 internally; pull the images from Docker Hub.
 
@@ -90,7 +90,7 @@ Build all PHP images of one version (default `8.5`), in the order they depend on
 
 Then try an image with the [quick start](README.md#quick-start).
 
-The CI runs the image tests for every image except `toolbox`, and the structure tests for `bootstrap`, `base`, `base-app`, `php`, `php-dev` and `php-nginx`.
+The CI runs the image tests for every image except `toolbox`.
 To run the image tests against an image you built locally:
 
 ```
@@ -100,18 +100,11 @@ make test-image IMAGE=webdevops/php-nginx:8.5
 `REFERENCE` tests another image with the tests and settings of `IMAGE`, e.g. `REFERENCE=my-php-nginx`.
 The tests use `/var/run/docker.sock`, in rootless Docker the socket of the current Docker context; set `DOCKER_SOCKET` for another one.
 
-To run the structure tests against the images you built locally:
-
-```
-docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/app -w /app webdevops/dockerfile-build-env make structure-test
-```
-
-It tests the local tags that the CI builds and fails if no such image exists.
-
 ## Image tests
 
 The image tests are PHPUnit tests in `ci/image-tests`. They start a container of the image with its own command, so supervisord starts the services as in production, and check it:
 files and their owner and mode, commands and their output, PHP extensions and settings, the running services and their ports, and requests through Nginx or Apache to PHP-FPM over http and https.
+What the image sets for every container, its environment variables with their defaults, entrypoint, command and exposed ports, they read with `docker image inspect`.
 Most tests of an image run against one container. Its root directory gets the files of `ci/image-tests/Fixtures` first, so `/app` holds the pages that the requests ask for.
 The tests of environment variables, commands and hooks start more containers of the image: the environment container, which starts with every variable of `ENVIRONMENT` in `ImageTestCase` set to a value other than its default, containers of their own for variables that would get in the way of other tests, e.g. the process manager of PHP-FPM, which `startTestContainer()` removes after their test, and short runs of one command through the entrypoint, e.g. `root id -un`.
 They check what a variable does, not only that its value ends up in a configuration file: a request that hits the memory limit, a cron job that runs at the hour of `TZ`, a connection of Xdebug to a listener.

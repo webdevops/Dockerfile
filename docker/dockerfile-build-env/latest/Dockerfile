@@ -17,9 +17,6 @@ RUN apt-install \
     && add-apt-repository "deb [arch=$TARGETARCH] https://download.docker.com/linux/ubuntu    $(lsb_release -cs)    stable" \
     && apt-install docker-ce \
     && usermod -aG docker application \
-    && curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-$TARGETARCH \
-    && chmod +x container-structure-test-linux-$TARGETARCH \
-    && mv container-structure-test-linux-$TARGETARCH /usr/local/bin/container-structure-test \
     && docker-image-cleanup
 
 WORKDIR /app

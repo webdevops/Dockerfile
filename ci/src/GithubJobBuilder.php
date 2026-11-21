@@ -136,7 +136,6 @@ class GithubJobBuilder
     public function getJobsDescription(array $node): array
     {
         $imageTests = $this->imageTests($node);
-        $structuredTests = $this->structuredTests($node);
 
         $jobId = GithubJobBuilder::toJobId($node['name']);
         $hasParent = (bool)($node['parent'] ?? null);
@@ -210,10 +209,6 @@ class GithubJobBuilder
                             $imageTests ? [
                                 'name' => 'run image tests',
                                 'run' => $imageTests,
-                            ] : null,
-                            $structuredTests ? [
-                                'name' => 'run structure-test',
-                                'run' => implode("\n", $structuredTests),
                             ] : null,
                             [
                                 'if' => '${{github.ref == \'refs/heads/master\'}}',
@@ -510,27 +505,6 @@ class GithubJobBuilder
 
         return 'make test-image-run IMAGE=' . $node['id']
             . ' REFERENCE=' . $this->archImage($node['image'], $node['tag']);
-    }
-
-    /**
-     * Shell lines of the container-structure-test step, none if the image has no suite.
-     *
-     * @param array<string, mixed> $node
-     * @return list<string>
-     */
-    private function structuredTests(array $node): array
-    {
-        $script = [];
-        if (file_exists($this->rootPath . '/tests/structure-test/' . $node['image'] . '/test.yaml')) {
-            $script[] = 'cd tests/structure-test';
-            if (file_exists($this->rootPath . '/tests/structure-test/' . $node['image'] . '/' . $node['tag'] . '/test.yaml')) {
-                $script[] = '/usr/local/bin/container-structure-test test --image ' . $this->archImage($node['image'], $node['tag']) . ' --config ' . $node['image'] . '/test.yaml --config ' . $node['image'] . '/' . $node['tag'] . '/test.yaml';
-            } else {
-                $script[] = '/usr/local/bin/container-structure-test test --image ' . $this->archImage($node['image'], $node['tag']) . ' --config ' . $node['image'] . '/test.yaml';
-            }
-        }
-
-        return $script;
     }
 
     /**
