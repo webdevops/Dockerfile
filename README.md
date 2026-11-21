@@ -35,7 +35,7 @@ The application is then available at http://localhost:8080. All images, settings
 
 The images run on `linux/amd64` and `linux/arm64` and are rebuilt every night, so a tag such as `8.5` gets new images daily. To pin an image, see [Platforms and updates](docs/README.md#platforms-and-updates).
 
-Cron jobs need no image build either: set one `CRONJOB_<NAME>` variable per job, with the time, the user and the command. This works on Debian and Alpine, see [Cron jobs](docs/customization.md#cron-jobs):
+Cron jobs need no image build either: set one `CRONJOB_<NAME>` variable per job, with the time, the user and the command. The jobs get the environment variables of the container. This works on Debian and Alpine, see [Cron jobs](docs/customization.md#cron-jobs):
 
 ```yaml
 services:

@@ -15,6 +15,7 @@ use function escapeshellarg;
 use function in_array;
 use function preg_match_all;
 use function sprintf;
+use function strtoupper;
 use function substr_count;
 use function time;
 use function trim;
@@ -36,6 +37,14 @@ trait ContainerEnvironmentChecks
     private const string CRONJOB_VARIABLE_COMMAND = 'echo image-test-variable';
 
     private const string CRONJOB_BUILD_COMMAND = 'echo image-test-build';
+
+    /**
+     * The value of IMAGE_TEST_VALUE in testCronJobsGetTheVariablesOfTheContainer(), with spaces, quotes and a dollar
+     * sign, and the start of the names of the files its jobs write.
+     */
+    private const string CRON_ENVIRONMENT_VALUE = 'a b "c" $d';
+
+    private const string CRON_ENVIRONMENT_FILE = '/tmp/image-test-cron-environment-';
 
     /**
      * TZ=Europe/Berlin: date shows the time zone, and supervisord writes local time to the container log.
@@ -224,6 +233,39 @@ trait ContainerEnvironmentChecks
         $jobs = $this->execute('cat ' . $crontabs . ' 2>/dev/null', $container)->stdout;
         self::assertSame(0, substr_count($jobs, self::CRONJOB_VARIABLE_COMMAND), $jobs);
         self::assertSame(1, substr_count($jobs, self::CRONJOB_BUILD_COMMAND), $jobs);
+    }
+
+    /**
+     * Cron jobs get the variables of the container, with their values as set, and its PATH: the jobs of CRONJOB_<NAME>
+     * as nobody and, where the image has the user, as application, and a job that docker-cronjob adds, as in an image
+     * built with it. Cron in Debian passes none of them on by itself.
+     */
+    public function testCronJobsGetTheVariablesOfTheContainer(): void
+    {
+        $users = $this->execute('id -u application')->exitCode === 0 ? ['nobody', 'application'] : ['nobody'];
+        $environment = ['IMAGE_TEST_VALUE' => self::CRON_ENVIRONMENT_VALUE];
+        foreach ($users as $user) {
+            $environment['CRONJOB_IMAGETEST_' . strtoupper($user)] = '* * * * * ' . $user . ' ' . self::cronEnvironmentCommand($user);
+        }
+
+        $container = $this->startTestContainer('cronjob-environment', $environment);
+        // cron starts again with the job, as in an image built with it
+        $this->assertCommandSucceeds('docker-cronjob ' . escapeshellarg('* * * * * nobody ' . self::cronEnvironmentCommand('docker-cronjob')) . ' && docker-service restart cron', $container);
+        $expected = self::CRON_ENVIRONMENT_VALUE . "\n" . $this->stdout('printenv PATH', $container);
+        foreach ([...$users, 'docker-cronjob'] as $name) {
+            // cron runs the jobs at the start of the next minute
+            $this->waitFor(function () use ($container, $name, $expected): void {
+                self::assertSame($expected, $this->execute('cat ' . self::CRON_ENVIRONMENT_FILE . $name . ' 2>&1', $container)->stdout, 'the job of ' . $name);
+            }, 30, 3);
+        }
+    }
+
+    /**
+     * The command of a job that writes the value of IMAGE_TEST_VALUE and its PATH into the file of $name.
+     */
+    private static function cronEnvironmentCommand(string $name): string
+    {
+        return sprintf('printenv IMAGE_TEST_VALUE > %1$s; echo "$PATH" >> %1$s', self::CRON_ENVIRONMENT_FILE . $name);
     }
 
     /**
