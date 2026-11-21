@@ -47,3 +47,9 @@ go-replace --mode=line --regex \
 go-replace --mode=lineinfile --regex \
     -s '^[\s;]*clear_env[\s]*='                        -r 'clear_env = no' \
     -- /opt/docker/etc/php/fpm/pool.d/application.conf
+
+# A worker ends after 1000 requests and a new one takes its place, so that memory that leaks in a PHP extension or in
+# the application does not add up
+go-replace --mode=lineinfile --regex \
+    -s '^[\s;]*pm.max_requests[\s]*=' -r 'pm.max_requests = 1000' \
+    -- /opt/docker/etc/php/fpm/pool.d/application.conf
