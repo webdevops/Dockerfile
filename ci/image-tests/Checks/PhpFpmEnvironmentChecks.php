@@ -18,14 +18,25 @@ use function sprintf;
 use function usleep;
 
 /**
- * The PHP-FPM variables, see docs/environment-variables.md#php-fpm. The tests request PHP-FPM over FastCGI without a
- * web server and watch its worker processes. The settings of the process manager get containers of their own, so that
- * the other tests do not change the number of processes.
+ * The PHP-FPM variables, see docs/environment-variables.md#php-fpm, and LOG_STDOUT and LOG_STDERR for PHP-FPM, see
+ * docs/environment-variables.md#container. The tests request PHP-FPM over FastCGI without a web server and watch its
+ * worker processes. The settings of the process manager get containers of their own, so that the other tests do not
+ * change the number of processes.
  *
  * @phpstan-require-extends ImageTestCase
  */
 trait PhpFpmEnvironmentChecks
 {
+    /**
+     * The message PHP-FPM logs when it has started.
+     */
+    private const string PHP_FPM_READY = 'ready to handle connections';
+
+    /**
+     * The line of the access log of PHP-FPM for a request of test=error_log, see phpFpmCommand().
+     */
+    private const string PHP_FPM_ACCESS_LOG_LINE = '#"GET /php-test\.php\?test=error_log" 200 /app/php-test\.php #';
+
     /**
      * FPM_RLIMIT_FILES=4321 and FPM_RLIMIT_CORE=1024: the limits of the worker that runs the request.
      */
@@ -67,16 +78,53 @@ trait PhpFpmEnvironmentChecks
     }
 
     /**
-     * fpm.global.log_level=debug: PHP-FPM writes debug messages to its error log, the container log or, where PHP-FPM
-     * logs to /docker.stderr, the file of LOG_STDERR.
+     * fpm.global.log_level=debug: PHP-FPM writes debug messages to its error log, the file of LOG_STDERR.
      */
     public function testPhpFpmGlobalDirectiveFromTheEnvironment(): void
     {
         $container = $this->environmentContainer();
         $this->phpFpmBody($container, 'test=sha1');
         $this->eventually(function () use ($container): void {
-            $log = $container->logs() . $this->execute('cat ' . static::ENVIRONMENT['LOG_STDERR'], $container)->stdout;
-            self::assertMatchesRegularExpression('/DEBUG: pid \d+, fpm_/', $log);
+            self::assertMatchesRegularExpression('/DEBUG: pid \d+, fpm_/', $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDERR'], $container));
+        });
+    }
+
+    /**
+     * LOG_STDOUT and LOG_STDERR for PHP-FPM: its access log goes to the file of LOG_STDOUT, its own messages and the
+     * errors of PHP scripts to the one of LOG_STDERR, and none of them to the container log. A worker may not open the
+     * file of LOG_STDERR, which belongs to root; the master process of PHP-FPM writes what the worker logs instead.
+     */
+    public function testPhpFpmLogsToTheFilesFromTheEnvironment(): void
+    {
+        $container = $this->environmentContainer();
+        self::assertSame('logged', $this->phpFpmBody($container, 'test=error_log'));
+        $this->eventually(function () use ($container): void {
+            // the development images log the requests in a format of their own
+            self::assertMatchesRegularExpression(self::PHP_FPM_ACCESS_LOG_LINE, $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container));
+            $errors = $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDERR'], $container);
+            self::assertStringContainsString('PHP message: image-test-from-php-fpm', $errors);
+            self::assertStringContainsString(self::PHP_FPM_READY, $errors);
+        });
+        $log = $container->logs();
+        self::assertDoesNotMatchRegularExpression(self::PHP_FPM_ACCESS_LOG_LINE, $log);
+        self::assertStringNotContainsString('image-test-from-php-fpm', $log);
+        self::assertStringNotContainsString(self::PHP_FPM_READY, $log);
+    }
+
+    /**
+     * Without LOG_STDOUT and LOG_STDERR, in the container of the class, /docker.stdout and /docker.stderr are the stdout
+     * and stderr of the container: PHP-FPM writes its access log to the stdout, its own messages and the errors of PHP
+     * scripts to the stderr.
+     */
+    public function testPhpFpmLogsToTheContainerLogByDefault(): void
+    {
+        $container = self::container();
+        self::assertSame('logged', $this->phpFpmBody($container, 'test=error_log'));
+        $this->eventually(function () use ($container): void {
+            [$stdout, $stderr] = $container->logStreams();
+            self::assertMatchesRegularExpression(self::PHP_FPM_ACCESS_LOG_LINE, $stdout);
+            self::assertStringContainsString('PHP message: image-test-from-php-fpm', $stderr);
+            self::assertStringContainsString(self::PHP_FPM_READY, $stderr);
         });
     }
 
