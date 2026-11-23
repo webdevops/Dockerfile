@@ -25,6 +25,8 @@ use function trim;
  */
 trait ContainerEnvironmentChecks
 {
+    private const string NO_CRON = 'The image does not start cron.';
+
     /**
      * TZ=Europe/Berlin: date shows the time zone, and supervisord writes local time to the container log.
      */
@@ -48,7 +50,7 @@ trait ContainerEnvironmentChecks
     public function testCronRunsJobsInTheTimeZoneFromTheEnvironment(): void
     {
         if (!in_array('cron', self::services(), true)) {
-            self::markTestSkipped('The image does not start cron.');
+            self::markTestSkipped(self::NO_CRON);
         }
 
         $container = $this->environmentContainer();
@@ -67,7 +69,7 @@ trait ContainerEnvironmentChecks
     public function testCronLogsAtTheLevelFromTheEnvironment(): void
     {
         if (!in_array('cron', self::services(), true)) {
-            self::markTestSkipped('The image does not start cron.');
+            self::markTestSkipped(self::NO_CRON);
         }
 
         $container = $this->environmentContainer();
@@ -107,7 +109,7 @@ trait ContainerEnvironmentChecks
     public function testCronJobOutputReachesTheFileFromTheEnvironment(): void
     {
         if (!in_array('cron', self::services(), true)) {
-            self::markTestSkipped('The image does not start cron.');
+            self::markTestSkipped(self::NO_CRON);
         }
         if (self::image()->isAlpine()) {
             self::markTestSkipped('BusyBox crond passes the output of a job on itself.');
