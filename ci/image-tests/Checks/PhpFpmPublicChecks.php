@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Webdevops\Build\ImageTests\Checks;
 
+use Webdevops\Build\ImageTests\Docker\ImageConfiguration;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 /**
@@ -18,5 +19,10 @@ trait PhpFpmPublicChecks
     public function testPhpFpmListensOnAllAddresses(): void
     {
         $this->assertListening(9000, '::', '0.0.0.0');
+    }
+
+    public function testImageExposesPhpFpm(): void
+    {
+        self::assertContains('9000/tcp', ImageConfiguration::inspect(self::image()->reference)->exposedPorts);
     }
 }

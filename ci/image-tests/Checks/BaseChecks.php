@@ -9,9 +9,11 @@ use Webdevops\Build\ImageTests\ImageTestCase;
 
 use function escapeshellarg;
 use function in_array;
+use function trim;
 
 /**
- * Checks of the images based on webdevops/base: the layout under /opt/docker, supervisor and the tools.
+ * Checks of the base layer of the images (template/Dockerfile/images/base.twig and provisioning/base): the layout
+ * under /opt/docker, supervisor and the tools.
  *
  * @phpstan-require-extends ImageTestCase
  */
@@ -158,5 +160,71 @@ trait BaseChecks
         $this->waitFor(function () use ($container): void {
             self::assertSame("nobody\n", $this->execute('cat /tmp/image-test-cronjob 2>&1', $container)->stdout);
         }, 30, 3);
+    }
+
+    /**
+     * The commands of the base layer, where the distribution has them: netstat and sed are in /bin in Alpine.
+     *
+     * @return iterable<string, array{string, string}>
+     */
+    public static function baseCommands(): iterable
+    {
+        $commands = [
+            'supervisord' => '#^/usr/bin/supervisord$#',
+            'wget' => '#^/usr/bin/wget$#',
+            'curl' => '#^/usr/bin/curl$#',
+            'zic' => '#^/usr/sbin/zic$#',
+            'netstat' => '#^/(usr/)?bin/netstat$#',
+            'sed' => '#^/(usr/)?bin/sed$#',
+        ];
+        foreach ($commands as $command => $path) {
+            yield $command => [$command, $path];
+        }
+    }
+
+    #[DataProvider('baseCommands')]
+    public function testBaseCommandIsOnThePath(string $command, string $path): void
+    {
+        self::assertMatchesRegularExpression($path, trim($this->stdout('command -v ' . escapeshellarg($command))));
+    }
+
+    /**
+     * The scripts and the configuration of the base layer have exactly the modes 0755 and 0644: no setuid, setgid or
+     * sticky bit.
+     *
+     * @return iterable<string, array{string, string}>
+     */
+    public static function basePermissions(): iterable
+    {
+        $scripts = [
+            '/opt/docker/bin/bootstrap.sh',
+            '/opt/docker/bin/config.sh',
+            '/opt/docker/bin/control.sh',
+            '/opt/docker/bin/entrypoint.sh',
+            '/opt/docker/bin/service.d/supervisor.sh',
+        ];
+        foreach ($scripts as $path) {
+            yield $path => [$path, '-rwxr-xr-x'];
+        }
+
+        $configuration = [
+            '/opt/docker/etc/supervisor.conf',
+            '/opt/docker/etc/supervisor.d/cron.conf',
+            '/opt/docker/etc/supervisor.d/dnsmasq.conf',
+            '/opt/docker/etc/supervisor.d/postfix.conf',
+            '/opt/docker/etc/supervisor.d/ssh.conf',
+            '/opt/docker/etc/supervisor.d/syslog.conf',
+            '/opt/docker/etc/logrotate.d/syslog-ng',
+            '/opt/docker/etc/syslog-ng/syslog-ng.conf',
+        ];
+        foreach ($configuration as $path) {
+            yield $path => [$path, '-rw-r--r--'];
+        }
+    }
+
+    #[DataProvider('basePermissions')]
+    public function testBasePermissions(string $path, string $permissions): void
+    {
+        self::assertSame($permissions, $this->file($path)->permissions(), $path);
     }
 }

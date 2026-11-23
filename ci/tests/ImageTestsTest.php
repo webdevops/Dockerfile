@@ -36,7 +36,7 @@ final class ImageTestsTest extends TestCase
         $imageTests = new ImageTests(__DIR__ . '/../..');
 
         self::assertSame('ci/image-tests/Images/PhpNginxDevTest.php', $imageTests->testFile('php-nginx-dev'));
-        self::assertSame('ci/image-tests/Images/BaseAppTest.php', $imageTests->testFile('base-app'));
+        self::assertSame('ci/image-tests/Images/PhpApacheTest.php', $imageTests->testFile('php-apache'));
         self::assertNull($imageTests->testFile('toolbox'));
     }
 

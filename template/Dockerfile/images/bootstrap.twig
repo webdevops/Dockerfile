@@ -31,17 +31,3 @@
         locales \
         gnupg
 {%- endmacro %}
-
-{% macro ubuntu() -%}
-    # Init bootstrap
-    && apt-update \
-    # System update
-    && /usr/local/bin/apt-upgrade \
-    # Install base stuff
-    && apt-install \
-        ca-certificates \
-        apt-transport-https \
-    && apt-add-repository multiverse \
-    && apt-update \
-    && /usr/local/bin/generate-dockerimage-info
-{%- endmacro %}

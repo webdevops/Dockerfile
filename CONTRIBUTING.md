@@ -28,7 +28,7 @@ Edit the `Dockerfile.twig` templates, the shared templates in `template`, the fi
 `template/Dockerfile/layout.twig` writes the header of every Dockerfile and includes its `Dockerfile.twig`.
 A `Dockerfile.twig` imports the macros it uses from `template/Dockerfile`, e.g. `{% import 'docker.twig' as docker %}`; a macro imports the macros it calls itself.
 `generate:provision` empties the `conf/` directories of an image first, so a file removed from `provisioning` disappears there too.
-The commands that the images have in `/usr/local/bin`, such as `apt-install`, `apk-install`, `docker-run-bootstrap` and `generate-locales`, are in `provisioning/baselayout/general/usr/local/bin`. They only handle Debian, Ubuntu and Alpine, the systems the images are built on. `generate:provision` copies them into `docker/toolbox/latest/conf/`, `toolbox` keeps them under `/baselayout`, and `bootstrap` and the PHP images copy them from there with `COPY --from=webdevops/toolbox`.
+The commands that the images have in `/usr/local/bin`, such as `apt-install`, `apk-install`, `docker-run-bootstrap` and `generate-locales`, are in `provisioning/baselayout/general/usr/local/bin`. They only handle Debian, Ubuntu and Alpine: the images are built on Debian and Alpine, and the scripts also serve your own images on Ubuntu, see [Replacing discontinued images](docs/discontinued-images.md#webdevopsbootstrap-webdevopsbase-and-webdevopsbase-app). `generate:provision` copies them into `docker/toolbox/latest/conf/`, `toolbox` keeps them under `/baselayout`, and the PHP images copy them from there with `COPY --from=webdevops/toolbox`.
 It checks all of `conf/provision.yml` before it changes a file and stops if a source directory or a tag does not exist, or if an image has another setting than `configuration`.
 `generate:dockerfile` stops if a directory `docker/<image>/<tag>` has files but no `Dockerfile.twig`; it first removes the `.DS_Store` files of the macOS Finder under `docker`.
 To stop building a tag, remove its directory and those of the tags that build on it; `generate:github-ci` names any it finds.
@@ -57,12 +57,17 @@ It does not update the actions in `.github/workflows/build.yaml`, because that f
 
 A new push to a pull request cancels the run of its previous commit. Runs on `master`, the nightly run and runs started by hand are never cancelled.
 
-GitHub Actions builds every image independently and runs the image tests and structure tests
-defined for it before pushing it to Docker Hub. The CI also uses `ghcr.io/webdevops/`, but only
+GitHub Actions builds every image independently and runs the image tests
+defined for it before pushing it to Docker Hub. The jobs run directly on the GitHub-hosted runners, `ubuntu-24.04` for
+`linux/amd64` and `ubuntu-24.04-arm` for `linux/arm64`, which have Docker, Buildx, git and make; they need no
+container of their own. The CI also uses `ghcr.io/webdevops/`, but only
 internally; pull the images from Docker Hub.
 
 The job "Update the Docker Hub pages" uploads `docs/dockerhub/<repository>.md` and the short description of each repository to Docker Hub when `build.yaml` runs on `master` after a push or is started by hand. It does not run for pull requests, in the nightly run, in the builds that `php-upstream.yaml` starts (a failed upload would keep it from starting the next one) or in forks, and no other job waits for it.
-It logs in with the secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`. Docker Hub changes a description only for a user with admin rights on the repository, with a password or a personal access token with the scope Read/Write/Delete.
+It logs in with the secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`, the same ones the image jobs push with, and changes each page through `/v2/namespaces/<namespace>/repositories/<repository>`. If Docker Hub refuses, the job shows its answer, for example `Docker Hub answered 403 for webdevops/php: …`. The secrets hold one of:
+
+- a personal access token with the permission "Read, Write, Delete" of a user who may manage these repositories (an owner of the organization, or a member of a team with admin rights on them); `DOCKERHUB_USERNAME` is that user's Docker ID. "Read & Write" is not enough: Docker Hub then answers `403 access denied: insufficient scope`;
+- an organization access token of `webdevops`: `DOCKERHUB_USERNAME` is the organization name `webdevops`, and the token has the scope "Repository Edit" (the description) and the push and pull scopes for all repositories the CI publishes.
 
 Besides the nightly run, `.github/workflows/php-upstream.yaml` starts `build.yaml` on `master` when the official PHP images get a new PHP release.
 Every hour it reads `PHP_VERSION` of the image in the `FROM` line of each `docker/php/<tag>/Dockerfile` and of `webdevops/php:<tag>` and `webdevops/php-nginx:<tag>`.
@@ -90,7 +95,7 @@ Build all PHP images of one version (default `8.5`), in the order they depend on
 
 Then try an image with the [quick start](README.md#quick-start).
 
-The CI runs the image tests for every image except `toolbox`, and the structure tests for `bootstrap`, `base`, `base-app`, `php`, `php-dev` and `php-nginx`.
+The CI runs the image tests for every image except `toolbox`.
 To run the image tests against an image you built locally:
 
 ```
@@ -100,18 +105,11 @@ make test-image IMAGE=webdevops/php-nginx:8.5
 `REFERENCE` tests another image with the tests and settings of `IMAGE`, e.g. `REFERENCE=my-php-nginx`.
 The tests use `/var/run/docker.sock`, in rootless Docker the socket of the current Docker context; set `DOCKER_SOCKET` for another one.
 
-To run the structure tests against the images you built locally:
-
-```
-docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/app -w /app webdevops/dockerfile-build-env make structure-test
-```
-
-It tests the local tags that the CI builds and fails if no such image exists.
-
 ## Image tests
 
 The image tests are PHPUnit tests in `ci/image-tests`. They start a container of the image with its own command, so supervisord starts the services as in production, and check it:
 files and their owner and mode, commands and their output, PHP extensions and settings, the running services and their ports, and requests through Nginx or Apache to PHP-FPM over http and https.
+What the image sets for every container, its environment variables with their defaults, entrypoint, command and exposed ports, they read with `docker image inspect`.
 Most tests of an image run against one container. Its root directory gets the files of `ci/image-tests/Fixtures` first, so `/app` holds the pages that the requests ask for.
 The tests of environment variables, commands and hooks start more containers of the image: the environment container, which starts with every variable of `ENVIRONMENT` in `ImageTestCase` set to a value other than its default, containers of their own for variables that would get in the way of other tests, e.g. the process manager of PHP-FPM, which `startTestContainer()` removes after their test, and short runs of one command through the entrypoint, e.g. `root id -un`.
 They check what a variable does, not only that its value ends up in a configuration file: a request that hits the memory limit, a cron job that runs at the hour of `TZ`, a connection of Xdebug to a listener.

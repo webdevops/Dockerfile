@@ -228,8 +228,23 @@ final class FileReaderTest extends TestCase
 
         try {
             $this->expectException(RuntimeException::class);
-            $this->expectExceptionMessage('"docker: autoLatestTag" in conf/console.yml has to be a tag in quotes, e.g. \'ubuntu-22.04\'.');
+            $this->expectExceptionMessage('"docker: autoLatestTag" in conf/console.yml has to be a tag in quotes, e.g. \'ubuntu-22.04\', or ~ for none.');
             new FileReader($repository->path)->getInfo('docker/base/ubuntu-22.04/Dockerfile');
+        } finally {
+            $repository->remove();
+        }
+    }
+
+    public function testNoTagIsPublishedAsLatestWithoutAutoLatestTag(): void
+    {
+        $repository = new TemporaryRepository();
+        $repository->write('conf/console.yml', str_replace("  autoLatestTag: 'ubuntu-22.04'", '  autoLatestTag: ~', $repository->read('conf/console.yml')));
+
+        try {
+            $fileReader = new FileReader($repository->path);
+            self::assertNull($fileReader->autoLatestTag());
+            self::assertSame([], $fileReader->getInfo('docker/base/ubuntu-22.04/Dockerfile')['aliases']);
+            self::assertSame('webdevops/base:latest', $fileReader->getInfo('docker/base-app/ubuntu-22.04/Dockerfile')['parent'], 'base has no latest any more');
         } finally {
             $repository->remove();
         }

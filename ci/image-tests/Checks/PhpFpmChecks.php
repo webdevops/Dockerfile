@@ -37,4 +37,17 @@ trait PhpFpmChecks
     {
         self::assertMatchesRegularExpression('/^session\.upload_progress\.enabled => Off => Off$/m', $this->stdout('php-fpm -i'));
     }
+
+    /**
+     * php-fpm -m lists the extensions of the CLI, see PhpModules.
+     */
+    public function testPhpFpmCommandListsTheModules(): void
+    {
+        $result = $this->assertCommandSucceeds('php-fpm -m');
+        self::assertSame('', $result->stderr);
+        $modules = $this->lines($result->stdout);
+        foreach (PhpModules::loaded(self::image()) as $module) {
+            self::assertContains($module, $modules, 'php-fpm -m should list ' . $module);
+        }
+    }
 }

@@ -1,6 +1,6 @@
 # webdevops/toolbox
 
-Build helper, not meant to run. Stores the baselayout scripts (`apt-install`, `apk-install`, `docker-image-cleanup`, `docker-run-bootstrap`, `generate-locales` and more), `go-replace` and `gosu` under `/baselayout`. [`webdevops/bootstrap`](https://hub.docker.com/r/webdevops/bootstrap) and [`webdevops/php`](https://hub.docker.com/r/webdevops/php) copy them from there with `COPY --from=webdevops/toolbox`. In `toolbox` itself only `go-replace` is on the `PATH`.
+Build helper, not meant to run. Stores the baselayout scripts (`apt-install`, `apk-install`, `docker-image-cleanup`, `docker-run-bootstrap`, `generate-locales` and more), `go-replace` and `gosu` under `/baselayout`. [`webdevops/php`](https://hub.docker.com/r/webdevops/php) copies them from there with `COPY --from=webdevops/toolbox`, and so can your own images, see [Replacing discontinued images](https://github.com/webdevops/Dockerfile/blob/master/docs/discontinued-images.md#webdevopsbootstrap-webdevopsbase-and-webdevopsbase-app). In `toolbox` itself only `go-replace` is on the `PATH`.
 
 Rebuilt every night for linux/amd64 and linux/arm64.
 

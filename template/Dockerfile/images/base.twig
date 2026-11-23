@@ -25,16 +25,3 @@
         tzdata \
     && chmod +s /sbin/gosu
 {%- endmacro %}
-
-{% macro ubuntu(role='') -%}
-    # Install services
-    && chmod +x /opt/docker/bin/* \
-    && apt-install \
-        supervisor \
-        wget \
-        curl \
-        vim \
-        net-tools \
-        tzdata \
-    && chmod +s /sbin/gosu
-{%- endmacro %}
