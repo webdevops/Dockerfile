@@ -2,8 +2,9 @@
 # Settings of ci/console generate:github-ci and generate:readme-banner
 
 docker:
-  # This tag is also published as latest
-  autoLatestTag: 'ubuntu-22.04'
+  # The tag that is also published as latest, e.g. 'ubuntu-22.04'; ~ for none. The images with such a tag,
+  # bootstrap, base and base-app, are no longer built; the PHP images have no latest tag.
+  autoLatestTag: ~
   # Deprecated image names that the CI also publishes an image under, only for the tags listed here.
   # webdevops/php-official is webdevops/php and gets no new tags, see docs/discontinued-images.md.
   aliases:

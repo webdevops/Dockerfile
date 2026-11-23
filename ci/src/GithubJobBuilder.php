@@ -56,14 +56,22 @@ class GithubJobBuilder
         BASH;
 
     /**
-     * Sets the page (PAGE) and the short description (SHORT_DESCRIPTION) of a repository (REPOSITORY) on Docker Hub.
+     * Sets the page (PAGE) and the short description (SHORT_DESCRIPTION) of a repository (REPOSITORY, namespace/name) on
+     * Docker Hub. It uses the route under /namespaces/, which takes personal and organization access tokens alike; the
+     * older /repositories/<namespace>/<name> rejects organization access tokens with 403. When Docker Hub refuses, the
+     * step shows Docker Hub's answer.
      */
     private const string DOCKER_HUB_UPLOAD = <<<'BASH'
-        jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
+        status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
           '{full_description: $full_description, description: $description}' \
-          | curl -sS --fail-with-body --retry 3 -o /dev/null -w '%{http_code}\n' -X PATCH \
+          | curl -sS --retry 3 -o "$RUNNER_TEMP/dockerhub-response.json" -w '%{http_code}' -X PATCH \
             -H 'Content-Type: application/json' -H "Authorization: Bearer $DOCKERHUB_ACCESS_TOKEN" \
-            --data @- "$DOCKER_HUB_API/repositories/$REPOSITORY"
+            --data @- "$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}")
+        echo "Docker Hub answered $status"
+        if [[ "$status" != 2* ]]; then
+          echo "::error::Docker Hub answered $status for $REPOSITORY: $(head -c 2000 "$RUNNER_TEMP/dockerhub-response.json")"
+          exit 1
+        fi
         BASH;
 
     /**
@@ -136,7 +144,6 @@ class GithubJobBuilder
     public function getJobsDescription(array $node): array
     {
         $imageTests = $this->imageTests($node);
-        $structuredTests = $this->structuredTests($node);
 
         $jobId = GithubJobBuilder::toJobId($node['name']);
         $hasParent = (bool)($node['parent'] ?? null);
@@ -176,10 +183,11 @@ class GithubJobBuilder
                 'needs' => $needs,
                 // even run if previous job skipped
                 'if' => '${{ !failure() && !cancelled() }}',
+                // The steps run on the runner itself, not in a container: the runner images for amd64 and arm64 have
+                // Docker, Buildx, git and make.
                 'runs-on' => '${{ matrix.runner }}',
                 // pushes its image to ghcr.io on master and takes the parent images from there
                 'permissions' => self::PUSH_PERMISSIONS,
-                'container' => 'webdevops/dockerfile-build-env',
                 'steps' => array_values(
                     array_filter(
                         [
@@ -210,10 +218,6 @@ class GithubJobBuilder
                             $imageTests ? [
                                 'name' => 'run image tests',
                                 'run' => $imageTests,
-                            ] : null,
-                            $structuredTests ? [
-                                'name' => 'run structure-test',
-                                'run' => implode("\n", $structuredTests),
                             ] : null,
                             [
                                 'if' => '${{github.ref == \'refs/heads/master\'}}',
@@ -459,14 +463,9 @@ class GithubJobBuilder
      * Predictable, collision-free extraction/export directory for the OCI
      * layout of the image identified by $imageId.
      *
-     * Intentionally a path relative to the job's working directory (the
-     * checked-out repository) rather than an absolute `${{ runner.temp }}`
-     * path: every job in this workflow runs inside a `container:`, and
-     * `${{ runner.temp }}` is evaluated by the Actions runner against the
-     * *host* filesystem, which is only bind-mounted into the container under
-     * `/__w/_temp`, not under the literal host path. A relative path is
-     * resolved consistently by every step (checkout, Buildx, up-/download-artifact)
-     * against the same container working directory, avoiding that mismatch.
+     * A path relative to the job's working directory (the checked-out
+     * repository), which every step (checkout, Buildx, up-/download-artifact)
+     * resolves the same way.
      */
     private function getCiImagePath(string $imageId): string
     {
@@ -510,27 +509,6 @@ class GithubJobBuilder
 
         return 'make test-image-run IMAGE=' . $node['id']
             . ' REFERENCE=' . $this->archImage($node['image'], $node['tag']);
-    }
-
-    /**
-     * Shell lines of the container-structure-test step, none if the image has no suite.
-     *
-     * @param array<string, mixed> $node
-     * @return list<string>
-     */
-    private function structuredTests(array $node): array
-    {
-        $script = [];
-        if (file_exists($this->rootPath . '/tests/structure-test/' . $node['image'] . '/test.yaml')) {
-            $script[] = 'cd tests/structure-test';
-            if (file_exists($this->rootPath . '/tests/structure-test/' . $node['image'] . '/' . $node['tag'] . '/test.yaml')) {
-                $script[] = '/usr/local/bin/container-structure-test test --image ' . $this->archImage($node['image'], $node['tag']) . ' --config ' . $node['image'] . '/test.yaml --config ' . $node['image'] . '/' . $node['tag'] . '/test.yaml';
-            } else {
-                $script[] = '/usr/local/bin/container-structure-test test --image ' . $this->archImage($node['image'], $node['tag']) . ' --config ' . $node['image'] . '/test.yaml';
-            }
-        }
-
-        return $script;
     }
 
     /**

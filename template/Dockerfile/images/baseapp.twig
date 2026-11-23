@@ -28,20 +28,3 @@
         patch \
     && /usr/local/bin/generate-locales
 {%- endmacro %}
-
-{% macro ubuntu(role='') -%}
-    # Install services
-    && apt-install \
-        # Install common tools
-        zip \
-        unzip \
-        bzip2 \
-        moreutils \
-        dnsutils \
-        openssh-client \
-        rsync \
-        git \
-        patch \
-    && mkdir -p /var/lib/syslog-ng/ \
-    && /usr/local/bin/generate-locales
-{%- endmacro %}

@@ -50,8 +50,8 @@ final readonly class Container
     /**
      * Creates a container of $image, copies the files under each of $directories into its root directory and starts
      * it. Only files are copied: directories of the image keep their owner and mode, see FileArchive. stdin stays
-     * open, so that an image whose command is a shell, such as webdevops/bootstrap, keeps running. $labels are added
-     * to the container, e.g. to find and remove it later.
+     * open, so that an image whose command is a shell keeps running. $labels are added to the container, e.g. to find
+     * and remove it later.
      *
      * Returns once the entrypoint of the image has run its scripts, which write the configuration from the
      * environment, and has replaced itself with the command, e.g. supervisord.
@@ -160,7 +160,7 @@ final readonly class Container
 
     /**
      * Waits while process 1 is still the entrypoint, /opt/docker/bin/entrypoint.sh started as /entrypoint. Images
-     * without it, such as webdevops/bootstrap, are ready at once.
+     * without it are ready at once.
      */
     private function waitForEntrypoint(): void
     {

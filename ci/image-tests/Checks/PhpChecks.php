@@ -27,6 +27,8 @@ use const JSON_THROW_ON_ERROR;
  */
 trait PhpChecks
 {
+    private const string COMPOSER = '/usr/local/bin/composer';
+
     /**
      * The security releases of 2026-11-19, https://www.php.net/
      */
@@ -229,13 +231,13 @@ trait PhpChecks
 
     public function testComposer(): void
     {
-        foreach (['/usr/local/bin/composer', '/usr/local/bin/composer1', '/usr/local/bin/composer2'] as $path) {
+        foreach ([self::COMPOSER, '/usr/local/bin/composer1', '/usr/local/bin/composer2'] as $path) {
             $file = $this->file($path);
             self::assertTrue($file->isFile, $path . ' should be a file');
             self::assertTrue($file->isExecutable, $path . ' should be executable');
         }
 
-        $this->assertCommandSucceeds('/usr/local/bin/composer');
+        $this->assertCommandSucceeds(self::COMPOSER);
     }
 
     /**
@@ -294,5 +296,44 @@ trait PhpChecks
         $values = json_decode($this->stdout('php -r ' . escapeshellarg($script)), true, 512, JSON_THROW_ON_ERROR);
 
         return array_combine($names, array_map(strval(...), $values));
+    }
+
+    /**
+     * PIE is only mounted while the RUN instructions that install extensions run, and they remove its working
+     * directory.
+     */
+    public function testPieIsOnlyThereDuringTheBuild(): void
+    {
+        foreach (['/usr/local/bin/pie', '/tmp/pie'] as $path) {
+            $file = $this->file($path);
+            self::assertFalse($file->exists || $file->isSymlink, $path . ' should not exist');
+        }
+    }
+
+    /**
+     * The scripts of the entrypoint that write the PHP and PHP-FPM settings from the environment.
+     */
+    public function testEntrypointScriptsOfPhp(): void
+    {
+        foreach (['/opt/docker/provision/entrypoint.d/20-php.sh', '/opt/docker/provision/entrypoint.d/20-php-fpm.sh'] as $path) {
+            self::assertTrue($this->file($path)->isFile, $path . ' should be a file');
+        }
+    }
+
+    /**
+     * @return iterable<string, array{string, string}>
+     */
+    public static function phpCommands(): iterable
+    {
+        $commands = ['convert' => '/usr/bin/convert', 'gm' => '/usr/bin/gm', 'gs' => '/usr/bin/gs', 'composer' => self::COMPOSER];
+        foreach ($commands as $command => $path) {
+            yield $command => [$command, $path];
+        }
+    }
+
+    #[DataProvider('phpCommands')]
+    public function testPhpCommandIsOnThePath(string $command, string $path): void
+    {
+        self::assertSame($path . "\n", $this->stdout('command -v ' . escapeshellarg($command)));
     }
 }

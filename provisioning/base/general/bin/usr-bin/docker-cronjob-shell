@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# The shell of the cron jobs that docker-cronjob and the CRONJOB_* variables add in Debian and Ubuntu: docker-cronjob
+# The shell of the cron jobs that docker-cronjob and the CRONJOB_* variables add in Debian: docker-cronjob
 # sets SHELL to this script in /etc/cron.d/webdevops-docker and /etc/cron.d/webdevops-environment, so cron runs each job
-# as "docker-cronjob-shell -c <command>", as the user of the job. Cron in Debian and Ubuntu passes none of the variables
+# as "docker-cronjob-shell -c <command>", as the user of the job. Cron in Debian passes none of the variables
 # of the container on to a job, and mails its output, or discards it where no mail server is installed. This script
 # adds the variables of the container, which docker-cronjob --environment wrote at the start into the file of the user,
 # runs the command with /bin/sh, as cron would, and sends its output, stdout and stderr, to syslog, from where syslog-ng

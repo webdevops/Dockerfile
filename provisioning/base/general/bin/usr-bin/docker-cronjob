@@ -16,7 +16,7 @@ function usage() {
     echo "         writes the jobs of the CRONJOB_* variables in place of those of its last run; with --enable-cron,"
     echo "         also enables cron for them where it is not enabled"
     echo "       $0 --job-environment"
-    echo "         Debian and Ubuntu: writes the variables of the container anew for the jobs, see docker-cronjob-shell"
+    echo "         Debian: writes the variables of the container anew for the jobs, see docker-cronjob-shell"
     exit 1
 }
 
@@ -26,12 +26,12 @@ fi
 
 IMAGE_FAMILY="$(docker-image-info family)"
 
-# The jobs of the CRONJOB_* variables: Debian and Ubuntu, a file of their own; Alpine, a block in the crontab of each user
+# The jobs of the CRONJOB_* variables: Debian, a file of their own; Alpine, a block in the crontab of each user
 ENVIRONMENT_CRONTAB=/etc/cron.d/webdevops-environment
 ENVIRONMENT_BEGIN='# webdevops environment begin'
 ENVIRONMENT_END='# webdevops environment end'
 
-# Debian and Ubuntu: the crontab of the jobs of docker-cronjob, and the shell of the crontabs of docker-cronjob and of
+# Debian: the crontab of the jobs of docker-cronjob, and the shell of the crontabs of docker-cronjob and of
 # the CRONJOB_* variables, docker-cronjob-shell: it adds the variables of the container from the file of the user of the
 # job in JOB_ENVIRONMENT_DIRECTORY, which the start script of cron writes with --job-environment, and sends the output of
 # the job to syslog-ng. BusyBox crond on Alpine passes its own variables on, which are those of the container, and the
@@ -41,7 +41,7 @@ CRON_SHELL=/usr/local/bin/docker-cronjob-shell
 JOB_ENVIRONMENT_DIRECTORY=/run/docker-cronjob
 
 # The five time fields: their names, lowest and highest values, and the names of their values. BusyBox crond on Alpine
-# takes 0 to 6 for the day of week, cron in Debian and Ubuntu also 7 for Sunday.
+# takes 0 to 6 for the day of week, cron in Debian also 7 for Sunday.
 TIME_FIELDS=('minute' 'hour' 'day of month' 'month' 'day of week')
 TIME_MIN=(0 0 1 1 0)
 TIME_MAX=(59 23 31 12 7)
@@ -94,7 +94,7 @@ function isTimeField() {
             return 1
         fi
 
-        # cron in Debian and Ubuntu takes no step of 0, nor one after a single value
+        # cron in Debian takes no step of 0, nor one after a single value
         if [[ -n "$step" ]] && [[ "$step" =~ ^0+$ || ( -n "$first" && -z "$last" ) ]]; then
             return 1
         fi
@@ -160,7 +160,7 @@ function printJobEnvironment() {
 }
 
 ###
- # Debian and Ubuntu: writes the variables of the container anew into a file for each user of a job in a crontab in
+ # Debian: writes the variables of the container anew into a file for each user of a job in a crontab in
  # /etc/cron.d whose shell is CRON_SHELL, as those of docker-cronjob and of the CRONJOB_* variables. Only that user and
  # root may read it; the jobs of the user get the variables anyway.
  ##
@@ -318,7 +318,7 @@ fi
 touch "$DOCKER_CRONTAB"
 chmod 0644 "$DOCKER_CRONTAB"
 
-# Cron in Debian and Ubuntu mails the output of a job and passes none of the variables of the container on: the jobs of
+# Cron in Debian mails the output of a job and passes none of the variables of the container on: the jobs of
 # this file run with docker-cronjob-shell instead, which adds the variables and sends the output to syslog-ng and with it
 # to the container log, unless a MAILTO line asks for the mail
 if [[ ! -s "$DOCKER_CRONTAB" ]]; then

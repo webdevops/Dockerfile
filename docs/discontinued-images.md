@@ -1,6 +1,6 @@
 # Replacing discontinued images
 
-`webdevops/nginx`, `webdevops/apache`, the `alpine` tags of `webdevops/bootstrap`, `webdevops/base` and `webdevops/base-app`, as well as `webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built. Their last images stay on Docker Hub, but they get no updates, including security fixes. `webdevops/php-official` is deprecated and gets no new tags. This page shows a replacement for each. The examples are a starting point, not a complete migration. They use the `latest` tag of other projects' images; for production, pin a version or digest, see [Platforms and updates](README.md#platforms-and-updates).
+`webdevops/nginx`, `webdevops/apache`, `webdevops/bootstrap`, `webdevops/base`, `webdevops/base-app`, `webdevops/dockerfile-build-env`, `webdevops/storage`, `webdevops/vsftp` and `webdevops/ssh` are no longer built. Their last images stay on Docker Hub, but they get no updates, including security fixes. `webdevops/php-official` is deprecated and gets no new tags. This page shows a replacement for each. The examples are a starting point, not a complete migration. They use the `latest` tag of other projects' images; for production, pin a version or digest, see [Platforms and updates](README.md#platforms-and-updates).
 
 ## webdevops/php-official
 
@@ -91,19 +91,39 @@ services:
 | hooks in `/opt/docker/bin/service.d/httpd.d/` | none; change the configuration in your Dockerfile or mount a configuration file |
 | `LOG_STDOUT`, `LOG_STDERR` | not needed; the access and error logs go to the stdout and stderr of the container |
 
-## Alpine tags of bootstrap, base and base-app
+## webdevops/bootstrap, webdevops/base and webdevops/base-app
 
-The `alpine` tags of `webdevops/bootstrap`, `webdevops/base` and `webdevops/base-app` were last built on Alpine 3.24. The `ubuntu-22.04` tags (also `latest`) are still built, see [webdevops/bootstrap, webdevops/base and webdevops/base-app](images/base.md).
+`webdevops/bootstrap`, `webdevops/base` and `webdevops/base-app` were last built on Ubuntu 22.04 (tags `ubuntu-22.04` and `latest`), their `alpine` tags on Alpine 3.24. The PHP images never built on them; they bring the same entrypoint and tools themselves.
 
-For an Alpine image with the same entrypoint, services and tools, build on the Alpine tag of a PHP image. `webdevops/php:8.5-alpine` has `/entrypoint`, `supervisord`, `docker-service`, `docker-run-bootstrap`, `docker-cronjob`, `apk-install`, `go-replace` and `gosu`, and the user `application` with `/app`:
+For an image with the entrypoint, the services and the tools of `base` and `base-app`, build on a PHP image. `webdevops/php:8.5` (Debian 12) and `webdevops/php:8.5-alpine` have `/entrypoint`, `supervisord`, `docker-service`, `docker-run-bootstrap`, `docker-cronjob`, `apt-install` (Debian) or `apk-install` (Alpine), `go-replace` and `gosu`, the user `application` with `/app`, and the tools of `base-app`, such as `git`, `rsync` and the SSH client. Unlike `base` and `base-app`, they start PHP-FPM, cron and syslog-ng; disable the services you do not need:
 
 ```dockerfile
-FROM webdevops/php:8.5-alpine
+FROM webdevops/php:8.5
+RUN docker-service disable php-fpm \
+    && docker-service disable cron \
+    && docker-service disable syslog
 COPY docker/bootstrap.d/ /bootstrap.d/
 RUN docker-run-bootstrap
 ```
 
-Without PHP, build on the official [`alpine`](https://hub.docker.com/_/alpine) image instead.
+The `cli` command runs `CLI_SCRIPT` as `application` there; `base`, which had no user `application`, ran it as `root`.
+
+For only the helper scripts of `bootstrap`, such as `apt-install` and `docker-run-bootstrap`, copy them from [`webdevops/toolbox`](https://hub.docker.com/r/webdevops/toolbox) into an official image, as `bootstrap` did:
+
+```dockerfile
+FROM ubuntu:22.04
+COPY --from=webdevops/toolbox /baselayout/sbin/* /sbin/
+COPY --from=webdevops/toolbox /baselayout/usr/local/bin/* /usr/local/bin/
+COPY docker/bootstrap.d/ /bootstrap.d/
+RUN apt-install rsync \
+    && docker-run-bootstrap
+```
+
+`bootstrap` also set `TERM=xterm`, `LANG=C.UTF-8` and `LC_ALL=C.UTF-8`; add them with `ENV` if you need them.
+
+## webdevops/dockerfile-build-env
+
+`webdevops/dockerfile-build-env` was the container in which the CI of this repository built and tested the images: `webdevops/base-app:ubuntu-22.04` with Docker, git and make. The CI no longer needs it: its jobs run directly on the GitHub-hosted runners `ubuntu-24.04` and `ubuntu-24.04-arm`, which have Docker, Buildx, git and make. To build and test the images on your own machine, you need Docker, git and make, see [Building and testing locally](../CONTRIBUTING.md#building-and-testing-locally).
 
 ## webdevops/storage
 

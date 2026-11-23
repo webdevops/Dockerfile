@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace Webdevops\Build\ImageTests\Checks;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use Webdevops\Build\ImageTests\Docker\ImageConfiguration;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
+use function array_keys;
+use function escapeshellarg;
 use function explode;
 use function trim;
 
 /**
- * Checks of the images based on webdevops/base-app: the application user, locales and moreutils.
+ * Checks of the base-app layer of the images (template/Dockerfile/images/baseapp.twig and provisioning/base-app): the
+ * application user, locales and moreutils.
  *
  * @phpstan-require-extends ImageTestCase
  */
@@ -77,5 +82,63 @@ trait BaseAppChecks
         }
 
         self::assertSame("/usr/bin/sponge\n", $this->stdout('command -v sponge'));
+    }
+
+    public function testApplicationVariablesOfTheImage(): void
+    {
+        [$name, $id] = ['application', '1000'];
+        $expected = [
+            'APPLICATION_USER' => $name,
+            'APPLICATION_GROUP' => $name,
+            'APPLICATION_PATH' => '/app',
+            'APPLICATION_UID' => $id,
+            'APPLICATION_GID' => $id,
+        ];
+        self::assertSame($expected, ImageConfiguration::inspect(self::image()->reference)->variables(array_keys($expected)));
+    }
+
+    /**
+     * The user application has the UID 1000, its primary group application the GID 1000.
+     */
+    public function testIdOfTheApplicationUser(): void
+    {
+        self::assertMatchesRegularExpression(
+            '/^uid=1000\(application\) gid=1000\(application\) groups=1000\(application\)/',
+            $this->stdout('id application'),
+        );
+    }
+
+    /**
+     * /app belongs to UID and GID 1000, with the mode 0755.
+     */
+    public function testApplicationPathPermissions(): void
+    {
+        $path = '/app';
+        self::assertSame('drwxr-xr-x', $this->file($path)->permissions());
+        self::assertSame("1000:1000\n", $this->stdout('stat -c %u:%g ' . $path));
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function applicationTools(): array
+    {
+        return self::cases(['zip', 'unzip', 'bzip2', 'nslookup', 'ssh', 'rsync', 'git', 'patch']);
+    }
+
+    #[DataProvider('applicationTools')]
+    public function testApplicationToolIsOnThePath(string $tool): void
+    {
+        self::assertSame('/usr/bin/' . $tool . "\n", $this->stdout('command -v ' . escapeshellarg($tool)));
+    }
+
+    /**
+     * docker-run-bootstrap ran the scripts in /opt/docker/provision/bootstrap.d at the build and deleted them, e.g.
+     * 10-user-application.sh and 20-app.sh, which create the user application and /app, and in the PHP images
+     * 10-php-init.sh and 11-php-conf.sh.
+     */
+    public function testBuildScriptsWereRunAndDeleted(): void
+    {
+        self::assertSame('', $this->stdout("find /opt/docker/provision/bootstrap.d -name '*.sh'"));
     }
 }
