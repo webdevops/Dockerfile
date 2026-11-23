@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# The shell of the cron jobs that docker-cronjob adds in Debian and Ubuntu: docker-cronjob sets SHELL to this script in
+# /etc/cron.d/webdevops-docker, so cron runs each job as "docker-cronjob-shell -c <command>". Cron in Debian and Ubuntu
+# mails the output of a job, and discards it where no mail server is installed. This script runs the command with
+# /bin/sh, as cron would, and sends its output, stdout and stderr, to syslog, from where syslog-ng writes it to the
+# container log. The exit code stays that of the command.
+# With MAILTO set in the crontab file, cron mails the output as before: the script then only runs the command.
+
+# the command runs with the shell that cron would use
+export SHELL=/bin/sh
+
+# MAILTO asks for the mail of cron; an empty MAILTO turns it off, so the output goes to syslog
+if [[ -n "${MAILTO:-}" ]]; then
+    exec /bin/sh "$@"
+fi
+
+# Cron runs @reboot jobs as soon as it starts, at the same time as syslog-ng: wait up to 10 seconds for the socket of
+# syslog-ng if supervisord starts it
+if [[ ! -S /dev/log ]] && grep -q '^autostart *= *true' /opt/docker/etc/supervisor.d/syslog.conf 2> /dev/null; then
+    for _ in {1..20}; do
+        [[ -S /dev/log ]] && break
+        sleep 0.5
+    done
+fi
+
+# without syslog-ng, the output goes to cron as before
+if [[ ! -S /dev/log ]]; then
+    exec /bin/sh "$@"
+fi
+
+# each line, and each KiB of a longer line, as a message of its own, tagged with the process id of the job; should
+# logger end early, cat reads the rest, so the command does not end on a broken pipe
+/bin/sh "$@" 2>&1 | { logger -t "cron-job[$$]" -p cron.info || cat > /dev/null; }
+exit "${PIPESTATUS[0]}"

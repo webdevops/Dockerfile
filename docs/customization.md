@@ -159,6 +159,13 @@ Cron in Debian and Ubuntu runs jobs with `PATH=/usr/bin:/bin`, which does not co
 
 In `base` and `base-app`, cron does not run by default; also run `docker-service enable cron`, see [Services](#services).
 
+The output of a job, stdout and stderr, goes to the container log:
+
+- In Alpine, BusyBox `crond` passes it on: stdout to the stdout of the container, stderr to its stderr.
+- Cron in Debian and Ubuntu would mail it, and discard it where no mail server is installed. So `docker-cronjob` begins `/etc/cron.d/webdevops-docker` with `SHELL=/usr/local/bin/docker-cronjob-shell`: cron runs each job with this script, which runs the command with `/bin/sh` and sends both outputs to syslog, a message per line and per 1 KiB of a longer line. They reach the stdout of the container, or the file of `LOG_STDOUT`, as `[SYSLOG] cron-job[<process id>]: <line>`; the exit code stays that of the command. This needs syslog-ng, which `base` and `base-app` do not start by default (`docker-service enable syslog cron`); without it, the output stays with cron.
+- To get the mail of cron instead, as before, add a `MAILTO` line before the jobs; it applies to the jobs below it. In Debian and Ubuntu, for example `RUN docker-cronjob 'MAILTO=ops@example.com' '*/5 * * * * application /usr/local/bin/php /app/bin/console app:cleanup'`. `docker-cronjob-shell` then only runs the command, and cron mails its output. The mail needs a mail server, for example Postfix of the `-dev` images, see [Mail](images/php.md#mail). `MAILTO=""` turns the mail off, and the output goes to syslog.
+- For a crontab file of your own, for example in `/etc/cron.d`, put the same `SHELL` line at its top; otherwise cron mails the output, see [Known issues](known-issues.md#output-of-cron-jobs-in-crontab-files-of-your-own).
+
 ### Time zone
 
 Cron uses the container's time zone, which is UTC. `PHP_DATE_TIMEZONE` only changes PHP's time zone, not when cron runs a job. To run jobs in local time, set `TZ`. It also changes the output of `date` and the time stamps supervisord writes to the container log. PHP keeps `PHP_DATE_TIMEZONE`, so set both:

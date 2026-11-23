@@ -99,6 +99,30 @@ trait ContainerEnvironmentChecks
     }
 
     /**
+     * The output of a cron job that docker-cronjob added, from Hooks/, reaches the file of LOG_STDOUT in Debian and
+     * Ubuntu. Cron there would mail it, or discard it without a mail server: docker-cronjob-shell passes both lines to
+     * syslog-ng, which writes them to the file of LOG_STDOUT. Only in the Debian and Ubuntu images that start cron;
+     * BusyBox crond on Alpine passes the output on itself.
+     */
+    public function testCronJobOutputReachesTheFileFromTheEnvironment(): void
+    {
+        if (!in_array('cron', self::services(), true)) {
+            self::markTestSkipped('The image does not start cron.');
+        }
+        if (self::image()->isAlpine()) {
+            self::markTestSkipped('BusyBox crond passes the output of a job on itself.');
+        }
+
+        $container = $this->environmentContainer();
+        // the job writes the lines in upper case, so they differ from its command, which cron logs
+        $this->waitFor(function () use ($container): void {
+            $stdout = $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container);
+            self::assertMatchesRegularExpression('/ cron-job\[\d+\]: IMAGE-TEST-CRON-OUTPUT$/m', $stdout);
+            self::assertMatchesRegularExpression('/ cron-job\[\d+\]: IMAGE-TEST-CRON-ERROR$/m', $stdout);
+        }, 25, 3);
+    }
+
+    /**
      * /docker.stdout and /docker.stderr, where the services of the image write their logs, point to the files of
      * LOG_STDOUT and LOG_STDERR.
      */

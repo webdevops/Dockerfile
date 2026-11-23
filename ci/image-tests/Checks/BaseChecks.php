@@ -17,6 +17,14 @@ use function in_array;
  */
 trait BaseChecks
 {
+    /** The environment of cron for a job, without MAILTO */
+    private const string CRONJOB_SHELL_ENV = 'env -i PATH=/usr/bin:/bin';
+
+    /** A command for docker-cronjob-shell, as cron runs it: it prints CRONJOB_SHELL_OUTPUT and ends with 3 */
+    private const string CRONJOB_SHELL_COMMAND = '/usr/local/bin/docker-cronjob-shell -c "echo image-test-cronjob-shell | tr a-z A-Z; exit 3"';
+
+    private const string CRONJOB_SHELL_OUTPUT = 'IMAGE-TEST-CRONJOB-SHELL';
+
     /**
      * @return array<string, array{string}>
      */
@@ -136,6 +144,35 @@ trait BaseChecks
     public function testBasePackageIsInstalled(string $package): void
     {
         $this->assertPackageInstalled($package);
+    }
+
+    /**
+     * With MAILTO, which a crontab file sets for its jobs, docker-cronjob-shell only runs the command: its output stays
+     * with cron, which mails it as before, see docs/customization.md#cron-jobs. The exit code stays that of the command.
+     */
+    public function testDockerCronjobShellLeavesTheOutputToCronWithMailto(): void
+    {
+        $result = $this->execute(self::CRONJOB_SHELL_ENV . ' MAILTO=root ' . self::CRONJOB_SHELL_COMMAND);
+        self::assertSame([3, self::CRONJOB_SHELL_OUTPUT . "\n"], [$result->exitCode, $result->stdout], $result->describe());
+    }
+
+    /**
+     * Without MAILTO, docker-cronjob-shell sends the output of the command to syslog, which syslog-ng writes to the
+     * container log; in the images without syslog-ng, the output stays with cron. The exit code stays that of the
+     * command.
+     */
+    public function testDockerCronjobShellSendsTheOutputToSyslog(): void
+    {
+        $result = $this->execute(self::CRONJOB_SHELL_ENV . ' ' . self::CRONJOB_SHELL_COMMAND);
+        if (!in_array('syslog', self::services(), true)) {
+            self::assertSame([3, self::CRONJOB_SHELL_OUTPUT . "\n"], [$result->exitCode, $result->stdout], $result->describe());
+            return;
+        }
+
+        self::assertSame([3, ''], [$result->exitCode, $result->stdout], $result->describe());
+        $this->eventually(function (): void {
+            self::assertMatchesRegularExpression('/ cron-job\[\d+\]: ' . self::CRONJOB_SHELL_OUTPUT . '$/m', self::container()->logs());
+        });
     }
 
     /**

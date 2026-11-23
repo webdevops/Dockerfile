@@ -128,7 +128,7 @@ Every PHP version comes as a Debian tag (`8.5`) and an Alpine tag (`8.5-alpine`)
 | [Build tools for extensions](#installing-more-extensions) | included | installed by `docker-php-ext-install`; for PIE install `$PHPIZE_DEPS` |
 | [Locales](../customization.md#locales) | several hundred, for example `de_DE.utf8` | none |
 | [Installing packages](../customization.md#tools-for-your-dockerfile) | `apt-install`, from the Debian components `main`, `contrib` and `non-free` | `apk-install` |
-| [`docker-cronjob`](../customization.md#cron-jobs) | adds the lines to `/etc/cron.d/webdevops-docker`; jobs run with `PATH=/usr/bin:/bin` | adds each line without its user to `/etc/crontabs/<user>`; jobs run with the `PATH` of the container |
+| [`docker-cronjob`](../customization.md#cron-jobs) | adds the lines to `/etc/cron.d/webdevops-docker`; jobs run with `PATH=/usr/bin:/bin`; their output goes through syslog to the stdout of the container, or with `MAILTO` by mail | adds each line without its user to `/etc/crontabs/<user>`; jobs run with the `PATH` of the container; their output goes to the stdout and stderr of the container |
 | [`docker-image-cleanup`](../customization.md#tools-for-your-dockerfile) | works | works |
 | [Apache index files](../environment-variables.md#web-server) in `php-apache` | `index.html`, `index.cgi`, `index.pl`, `index.php`, `index.xhtml`, `index.htm` come before `WEB_DOCUMENT_INDEX` | `index.html` comes before `WEB_DOCUMENT_INDEX` |
 | [`mail()` without Postfix](#mail) | fails: there is no `sendmail` command | fails: BusyBox `sendmail` finds no mail server |
