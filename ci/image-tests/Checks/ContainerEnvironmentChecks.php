@@ -25,6 +25,9 @@ use function trim;
  */
 trait ContainerEnvironmentChecks
 {
+    /** Starts syslog-ng in a container of an image that does not start it */
+    private const string START_SYSLOG = 'docker-service enable syslog && docker-service start syslog';
+
     /**
      * TZ=Europe/Berlin: date shows the time zone, and supervisord writes local time to the container log.
      */
@@ -89,7 +92,7 @@ trait ContainerEnvironmentChecks
     {
         $container = $this->environmentContainer();
         if (!in_array('syslog', self::services(), true)) {
-            $this->assertCommandSucceeds('docker-service enable syslog && docker-service start syslog', $container);
+            $this->assertCommandSucceeds(self::START_SYSLOG, $container);
         }
 
         $this->eventually(function () use ($container): void {
@@ -108,7 +111,7 @@ trait ContainerEnvironmentChecks
     {
         $container = $this->environmentContainer();
         if (!in_array('syslog', self::services(), true)) {
-            $this->assertCommandSucceeds('docker-service enable syslog && docker-service start syslog', $container);
+            $this->assertCommandSucceeds(self::START_SYSLOG, $container);
         }
 
         $this->eventually(function () use ($container): void {
@@ -126,7 +129,7 @@ trait ContainerEnvironmentChecks
     {
         $container = $this->startTestContainer('service-output');
         if (!in_array('syslog', self::services(), true)) {
-            $this->assertCommandSucceeds('docker-service enable syslog && docker-service start syslog', $container);
+            $this->assertCommandSucceeds(self::START_SYSLOG, $container);
         }
 
         $this->eventually(function () use ($container): void {
