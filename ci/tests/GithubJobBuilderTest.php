@@ -43,7 +43,7 @@ final class GithubJobBuilderTest extends TestCase
         self::assertSame('webdevops/base:alpine (${{ matrix.arch }})', $jobs['base_alpine']['name']);
         self::assertSame(['fail-fast' => false, 'matrix' => ['include' => GithubJobBuilder::PLATFORMS]], $jobs['base_alpine']['strategy']);
         self::assertSame('${{ matrix.runner }}', $jobs['base_alpine']['runs-on']);
-        self::assertSame('webdevops/dockerfile-build-env', $jobs['base_alpine']['container']);
+        self::assertArrayNotHasKey('container', $jobs['base_alpine'], 'the steps run on the runner itself');
         self::assertSame('base_alpine', $jobs['base_alpine_publish']['needs']);
         self::assertSame(['contents' => 'read', 'packages' => 'write'], $jobs['base_alpine']['permissions'], 'pushes to ghcr.io');
         self::assertSame(['packages' => 'write'], $jobs['base_alpine_publish']['permissions'], 'pushes to ghcr.io, needs no checkout');
@@ -136,7 +136,6 @@ final class GithubJobBuilderTest extends TestCase
             'Load the image test runner',
             'Build the image test runner',
             'run image tests',
-            'run structure-test',
             'Login to ghcr.io',
             'Push arch image',
         ], array_keys($steps));
@@ -210,20 +209,6 @@ final class GithubJobBuilderTest extends TestCase
         );
     }
 
-    public function testStructureTestUsesTheSuiteOfTheTagToo(): void
-    {
-        self::assertSame(
-            "cd tests/structure-test\n/usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base:sha-\${{ github.sha }}-\${{ matrix.arch }}-alpine"
-            . ' --config base/test.yaml --config base/alpine/test.yaml',
-            $this->step($this->jobs(), 'run structure-test')['run'],
-        );
-        self::assertSame(
-            "cd tests/structure-test\n/usr/local/bin/container-structure-test test --image ghcr.io/webdevops/base:sha-\${{ github.sha }}-\${{ matrix.arch }}-ubuntu-22.04"
-            . ' --config base/test.yaml',
-            $this->step($this->jobs(['tag' => 'ubuntu-22.04']), 'run structure-test')['run'],
-        );
-    }
-
     public function testImageWithoutTestsHasNoTestSteps(): void
     {
         $steps = $this->steps($this->jobs(['image' => 'php-nginx']));
@@ -232,7 +217,6 @@ final class GithubJobBuilderTest extends TestCase
         self::assertArrayNotHasKey('Load the image test runner', $steps);
         self::assertArrayNotHasKey('Build the image test runner', $steps);
         self::assertArrayNotHasKey('run image tests', $steps);
-        self::assertArrayNotHasKey('run structure-test', $steps);
     }
 
     public function testBranchBuildUsesTheParentImagesOfThisRun(): void
@@ -254,7 +238,6 @@ final class GithubJobBuilderTest extends TestCase
             'Load the image test runner',
             'Build the image test runner',
             'run image tests',
-            'run structure-test',
             'Login to ghcr.io',
             'Push arch image',
         ], array_keys($steps));
@@ -404,7 +387,8 @@ final class GithubJobBuilderTest extends TestCase
                 $upload['env'],
             );
             self::assertStringContainsString('-X PATCH', $upload['run']);
-            self::assertStringContainsString('"$DOCKER_HUB_API/repositories/$REPOSITORY"', $upload['run']);
+            self::assertStringContainsString('"$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}"', $upload['run']);
+            self::assertStringContainsString('::error::Docker Hub answered $status for $REPOSITORY', $upload['run'], 'the answer of Docker Hub is shown when it refuses');
             self::assertArrayNotHasKey('uses', $upload, 'no action from outside GitHub gets the token');
         }
     }

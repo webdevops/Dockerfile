@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace Webdevops\Build\ImageTests\Checks;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use Webdevops\Build\ImageTests\Docker\ImageConfiguration;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
+use function array_keys;
 use function dirname;
 use function implode;
 use function preg_quote;
 use function sprintf;
 
 /**
- * Checks of every image: the layout and tools of webdevops/bootstrap and the distribution.
+ * Checks of every image: the layout and the tools of the bootstrap layer (template/Dockerfile/images/bootstrap.twig and
+ * provisioning/baselayout) and the distribution.
  *
  * @phpstan-require-extends ImageTestCase
  */
@@ -141,5 +144,64 @@ trait BootstrapChecks
         $result = $this->assertCommandSucceeds('apk add --update-cache --no-network bash');
         self::assertStringNotContainsString('ERROR', $result->stdout);
         self::assertStringNotContainsString('unsatisfiable constraints', $result->stdout);
+    }
+
+    /**
+     * The variables of the locale and the terminal that the images set, and the PATH of the official PHP image.
+     */
+    public function testLocaleTerminalAndPathOfTheImage(): void
+    {
+        $expected = [
+            'LC_ALL' => 'C.UTF-8',
+            'LANG' => 'C.UTF-8',
+            'TERM' => 'xterm',
+            'PATH' => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        ];
+        self::assertSame($expected, ImageConfiguration::inspect(self::image()->reference)->variables(array_keys($expected)));
+    }
+
+    /**
+     * The commands from provisioning/baselayout, which every image copies from webdevops/toolbox.
+     *
+     * @return array<string, array{string}>
+     */
+    public static function bootstrapCommands(): array
+    {
+        return self::cases([
+            '/usr/local/bin/apk-install',
+            '/usr/local/bin/apk-upgrade',
+            '/usr/local/bin/apt-add-repository',
+            '/usr/local/bin/apt-install',
+            '/usr/local/bin/apt-update',
+            '/usr/local/bin/apt-upgrade',
+            '/usr/local/bin/docker-image-cleanup',
+            '/usr/local/bin/docker-image-info',
+            '/usr/local/bin/generate-locales',
+            '/usr/local/bin/generate-dockerimage-info',
+            '/usr/local/bin/docker-run-bootstrap',
+            '/usr/local/bin/go-replace',
+        ]);
+    }
+
+    /**
+     * Programs of root with exactly the mode 0755: no setuid, setgid or sticky bit.
+     */
+    #[DataProvider('bootstrapCommands')]
+    public function testBootstrapCommandPermissions(string $path): void
+    {
+        $this->assertRootScript($path);
+        self::assertSame('-rwxr-xr-x', $this->file($path)->permissions(), $path);
+    }
+
+    /**
+     * gosu, with which the entrypoint runs commands as another user, is a program of root with the mode 0755 in the
+     * running container. The images build it with the setuid and setgid bits, so that their entrypoint can switch to
+     * root when the container starts as another user, and the entrypoint removes them.
+     */
+    public function testGosuPermissions(): void
+    {
+        $gosu = $this->file('/sbin/gosu');
+        $this->assertOwnedByRoot($gosu);
+        self::assertSame('-rwxr-xr-x', $gosu->permissions());
     }
 }

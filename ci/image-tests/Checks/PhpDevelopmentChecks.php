@@ -49,4 +49,13 @@ trait PhpDevelopmentChecks
             'opcache.validate_timestamps', 'opcache.interned_strings_buffer', 'opcache.max_accelerated_files',
         ]));
     }
+
+    /**
+     * The Blackfire CLI, which also runs the Blackfire agent.
+     */
+    public function testBlackfireCli(): void
+    {
+        $this->assertRootScript('/usr/bin/blackfire');
+        self::assertSame("/usr/bin/blackfire\n", $this->stdout('command -v blackfire'));
+    }
 }

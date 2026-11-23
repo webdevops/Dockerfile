@@ -115,8 +115,8 @@ final readonly class ImageUnderTest
     }
 
     /**
-     * The PHP images run docker-healthcheck as their HEALTHCHECK from PHP 8.6 on; the older ones and the base images
-     * only offer the command.
+     * The PHP images run docker-healthcheck as their HEALTHCHECK from PHP 8.6 on; the older ones only offer the
+     * command.
      */
     public function hasHealthcheck(): bool
     {

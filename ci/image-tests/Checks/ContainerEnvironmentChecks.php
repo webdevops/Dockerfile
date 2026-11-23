@@ -103,7 +103,7 @@ trait ContainerEnvironmentChecks
     /**
      * The output of a cron job that docker-cronjob added, from Hooks/, reaches the file of LOG_STDOUT in Debian and
      * Ubuntu. Cron there would mail it, or discard it without a mail server: docker-cronjob-shell passes both lines to
-     * syslog-ng, which writes them to the file of LOG_STDOUT. Only in the Debian and Ubuntu images that start cron;
+     * syslog-ng, which writes them to the file of LOG_STDOUT. Only in the Debian images that start cron;
      * BusyBox crond on Alpine passes the output on itself.
      */
     public function testCronJobOutputReachesTheFileFromTheEnvironment(): void

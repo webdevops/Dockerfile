@@ -40,7 +40,7 @@ fi
 touch /etc/cron.d/webdevops-docker
 chmod 0644 /etc/cron.d/webdevops-docker
 
-# Cron in Debian and Ubuntu mails the output of a job: the jobs of this file run with docker-cronjob-shell instead, which
+# Cron in Debian mails the output of a job: the jobs of this file run with docker-cronjob-shell instead, which
 # sends their output to syslog-ng and with it to the container log, unless a MAILTO line asks for the mail
 if [[ ! -s /etc/cron.d/webdevops-docker ]]; then
     echo 'SHELL=/usr/local/bin/docker-cronjob-shell' >> /etc/cron.d/webdevops-docker

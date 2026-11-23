@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# The shell of the cron jobs that docker-cronjob adds in Debian and Ubuntu: docker-cronjob sets SHELL to this script in
-# /etc/cron.d/webdevops-docker, so cron runs each job as "docker-cronjob-shell -c <command>". Cron in Debian and Ubuntu
+# The shell of the cron jobs that docker-cronjob adds in Debian: docker-cronjob sets SHELL to this script in
+# /etc/cron.d/webdevops-docker, so cron runs each job as "docker-cronjob-shell -c <command>". Cron in Debian
 # mails the output of a job, and discards it where no mail server is installed. This script runs the command with
 # /bin/sh, as cron would, and sends its output, stdout and stderr, to syslog, from where syslog-ng writes it to the
 # container log. The exit code stays that of the command.
