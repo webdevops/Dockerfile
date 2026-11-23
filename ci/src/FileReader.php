@@ -26,14 +26,19 @@ class FileReader
     }
 
     /**
-     * The tag that is published as latest too, e.g. ubuntu-22.04.
+     * The tag that is published as latest too, e.g. ubuntu-22.04; null if conf/console.yml sets ~, so that no tag is.
      */
-    public function autoLatestTag(): string
+    public function autoLatestTag(): ?string
     {
-        $tag = $this->settings['docker']['autoLatestTag'] ?? null;
+        $docker = $this->settings['docker'] ?? null;
+        if (is_array($docker) && array_key_exists('autoLatestTag', $docker) && $docker['autoLatestTag'] === null) {
+            return null;
+        }
+
+        $tag = is_array($docker) ? $docker['autoLatestTag'] ?? null : null;
         if (!is_string($tag) || $tag === '') {
             // An unquoted value such as 22.10 is a number in YAML and would lose its trailing zero
-            throw new RuntimeException('"docker: autoLatestTag" in conf/console.yml has to be a tag in quotes, e.g. \'ubuntu-22.04\'.');
+            throw new RuntimeException('"docker: autoLatestTag" in conf/console.yml has to be a tag in quotes, e.g. \'ubuntu-22.04\', or ~ for none.');
         }
 
         return $tag;
@@ -213,7 +218,7 @@ class FileReader
      * published alias for whichever folder `autoLatestTag` points to, and a
      * reference like "webdevops/base:latest" must resolve to
      * "webdevops/base:ubuntu-22.04" to match the job that actually builds
-     * and exports it. A few images (e.g. toolbox, dockerfile-build-env) *do* have a
+     * and exports it. A few images (e.g. toolbox) *do* have a
      * literal "latest" subdirectory and must be left untouched. Checking the
      * filesystem directly, rather than assuming the "latest" alias
      * substitution always applies, keeps this correct for both cases.
@@ -233,8 +238,9 @@ class FileReader
         $dockerfileExists = fn (string $tag): bool => file_exists(
             $this->rootPath . '/docker/' . $image . '/' . $tag . '/Dockerfile',
         );
-        if ($tag === 'latest' && !$dockerfileExists($tag) && $dockerfileExists($this->autoLatestTag())) {
-            $tag = $this->autoLatestTag();
+        $latestTag = $this->autoLatestTag();
+        if ($tag === 'latest' && !$dockerfileExists($tag) && $latestTag !== null && $dockerfileExists($latestTag)) {
+            $tag = $latestTag;
         }
 
         return 'webdevops/' . $image . ':' . $tag;

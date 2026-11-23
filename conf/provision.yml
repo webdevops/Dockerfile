@@ -1,11 +1,5 @@
 ---
 provision:
-  base:
-    configuration:
-      base/general: '*'
-  base-app:
-    configuration:
-      base-app/general: '*'
   php-apache:
     configuration:
       apache/general    : '*'

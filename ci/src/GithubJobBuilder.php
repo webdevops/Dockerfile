@@ -183,10 +183,11 @@ class GithubJobBuilder
                 'needs' => $needs,
                 // even run if previous job skipped
                 'if' => '${{ !failure() && !cancelled() }}',
+                // The steps run on the runner itself, not in a container: the runner images for amd64 and arm64 have
+                // Docker, Buildx, git and make.
                 'runs-on' => '${{ matrix.runner }}',
                 // pushes its image to ghcr.io on master and takes the parent images from there
                 'permissions' => self::PUSH_PERMISSIONS,
-                'container' => 'webdevops/dockerfile-build-env',
                 'steps' => array_values(
                     array_filter(
                         [
@@ -462,14 +463,9 @@ class GithubJobBuilder
      * Predictable, collision-free extraction/export directory for the OCI
      * layout of the image identified by $imageId.
      *
-     * Intentionally a path relative to the job's working directory (the
-     * checked-out repository) rather than an absolute `${{ runner.temp }}`
-     * path: every job in this workflow runs inside a `container:`, and
-     * `${{ runner.temp }}` is evaluated by the Actions runner against the
-     * *host* filesystem, which is only bind-mounted into the container under
-     * `/__w/_temp`, not under the literal host path. A relative path is
-     * resolved consistently by every step (checkout, Buildx, up-/download-artifact)
-     * against the same container working directory, avoiding that mismatch.
+     * A path relative to the job's working directory (the checked-out
+     * repository), which every step (checkout, Buildx, up-/download-artifact)
+     * resolves the same way.
      */
     private function getCiImagePath(string $imageId): string
     {

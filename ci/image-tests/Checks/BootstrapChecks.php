@@ -15,7 +15,8 @@ use function preg_quote;
 use function sprintf;
 
 /**
- * Checks of every image: the layout and tools of webdevops/bootstrap and the distribution.
+ * Checks of every image: the layout and the tools of the bootstrap layer (template/Dockerfile/images/bootstrap.twig and
+ * provisioning/baselayout) and the distribution.
  *
  * @phpstan-require-extends ImageTestCase
  */
@@ -146,8 +147,7 @@ trait BootstrapChecks
     }
 
     /**
-     * The variables of the locale and the terminal that webdevops/bootstrap and the PHP images set, and the PATH of the
-     * distribution and of the official PHP image.
+     * The variables of the locale and the terminal that the images set, and the PATH of the official PHP image.
      */
     public function testLocaleTerminalAndPathOfTheImage(): void
     {
@@ -195,8 +195,8 @@ trait BootstrapChecks
 
     /**
      * gosu, with which the entrypoint runs commands as another user, is a program of root with the mode 0755 in the
-     * running container. webdevops/base and the PHP images build it with the setuid and setgid bits, so that their
-     * entrypoint can switch to root when the container starts as another user, and the entrypoint removes them.
+     * running container. The images build it with the setuid and setgid bits, so that their entrypoint can switch to
+     * root when the container starts as another user, and the entrypoint removes them.
      */
     public function testGosuPermissions(): void
     {

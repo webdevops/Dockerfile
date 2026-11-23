@@ -7,8 +7,11 @@ namespace Webdevops\Build\ImageTests\Checks;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
+use function array_diff;
+use function array_values;
+
 /**
- * docker-service installs, enables and starts the services that webdevops/base does not run by default. It does so in a
+ * docker-service installs, enables and starts the services that the image does not run by default. It does so in a
  * container of its own, so that the container of the class keeps the services of the image.
  *
  * @phpstan-require-extends ImageTestCase
@@ -20,13 +23,7 @@ trait AdditionalServicesChecks
      */
     public static function additionalServices(): array
     {
-        return self::cases([
-            'cron',
-            'dnsmasq',
-            'postfix',
-            'ssh',
-            'syslog',
-        ]);
+        return self::cases(array_values(array_diff(['cron', 'dnsmasq', 'postfix', 'ssh', 'syslog'], self::services())));
     }
 
     #[DataProvider('additionalServices')]

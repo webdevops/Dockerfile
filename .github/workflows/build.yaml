@@ -131,7 +131,7 @@ jobs:
         env:
           REPOSITORY: webdevops/base
           PAGE: docs/dockerhub/base.md
-          SHORT_DESCRIPTION: 'Ubuntu 22.04 with entrypoint, supervisord, service scripts and hooks, a base for your own images'
+          SHORT_DESCRIPTION: 'No longer built or updated. Use webdevops/php:8.5 instead.'
         run: |-
           status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
@@ -150,7 +150,7 @@ jobs:
         env:
           REPOSITORY: webdevops/base-app
           PAGE: docs/dockerhub/base-app.md
-          SHORT_DESCRIPTION: 'webdevops/base with the user application, /app and tools such as git, rsync and the SSH client'
+          SHORT_DESCRIPTION: 'No longer built or updated. Use webdevops/php:8.5 instead.'
         run: |-
           status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
@@ -169,7 +169,7 @@ jobs:
         env:
           REPOSITORY: webdevops/bootstrap
           PAGE: docs/dockerhub/bootstrap.md
-          SHORT_DESCRIPTION: 'Ubuntu 22.04 with the webdevops helper scripts, a base for your own images'
+          SHORT_DESCRIPTION: 'No longer built or updated. Use ubuntu:22.04 instead.'
         run: |-
           status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
@@ -207,7 +207,7 @@ jobs:
         env:
           REPOSITORY: webdevops/dockerfile-build-env
           PAGE: docs/dockerhub/dockerfile-build-env.md
-          SHORT_DESCRIPTION: 'Build environment of github.com/webdevops/Dockerfile, in which its CI builds the images'
+          SHORT_DESCRIPTION: 'No longer built or updated.'
         run: |-
           status=$(jq -n --rawfile full_description "$PAGE" --arg description "$SHORT_DESCRIPTION" \
             '{full_description: $full_description, description: $description}' \
@@ -760,670 +760,6 @@ jobs:
           overwrite: true
           compression-level: 0
           if-no-files-found: error
-  base-app_ubuntu-22-04:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          -
-            arch: amd64
-            runner: ubuntu-24.04
-            platform: linux/amd64
-          -
-            arch: arm64
-            runner: ubuntu-24.04-arm
-            platform: linux/arm64
-    name: 'webdevops/base-app:ubuntu-22.04 (${{ matrix.arch }})'
-    needs:
-      - base_ubuntu-22-04_publish
-      - image-test-runner
-    if: '${{ !failure() && !cancelled() }}'
-    runs-on: '${{ matrix.runner }}'
-    permissions:
-      contents: read
-      packages: write
-    container: webdevops/dockerfile-build-env
-    steps:
-      -
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      -
-        uses: docker/setup-buildx-action@v4
-      -
-        name: 'Download parent image (OCI layout): webdevops/base:ubuntu-22.04'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v8
-        with:
-          name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
-          path: .ci-oci-image/base_ubuntu-22-04
-      -
-        name: 'Build (load locally)'
-        if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v7
-        env:
-          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
-        with:
-          context: docker/base-app/ubuntu-22.04
-          platforms: '${{ matrix.platform }}'
-          load: true
-          tags: 'ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
-          cache-from: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }},mode=max'
-          build-args: 'TARGETARCH=${{ matrix.arch }}'
-          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-      -
-        name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v7
-        env:
-          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
-        with:
-          context: docker/base-app/ubuntu-22.04
-          platforms: '${{ matrix.platform }}'
-          load: true
-          tags: 'ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
-          cache-from: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }},mode=max'
-          build-args: 'TARGETARCH=${{ matrix.arch }}'
-          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/base:ubuntu-22.04=oci-layout://.ci-oci-image/base_ubuntu-22-04:ci-parent-image'
-      -
-        name: 'Download the image test runner'
-        id: download-image-test-runner
-        uses: actions/download-artifact@v8
-        continue-on-error: true
-        with:
-          name: 'webdevops-image-tests-${{ matrix.arch }}'
-          path: .ci-image-test-runner
-      -
-        name: 'Load the image test runner'
-        id: load-image-test-runner
-        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
-        continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
-      -
-        name: 'Build the image test runner'
-        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: ci/image-tests/Dockerfile
-          load: true
-          tags: webdevops-image-tests
-          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-      -
-        name: 'run image tests'
-        run: 'make test-image-run IMAGE=webdevops/base-app:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        name: 'Push arch image'
-        if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/base-app:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04"'
-      -
-        name: 'Export image (OCI layout)'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v7
-        env:
-          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
-        with:
-          context: docker/base-app/ubuntu-22.04
-          platforms: '${{ matrix.platform }}'
-          cache-from: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops/base-app:ubuntu-22.04-${{ matrix.arch }},mode=max'
-          build-args: 'TARGETARCH=${{ matrix.arch }}'
-          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/base:ubuntu-22.04=oci-layout://.ci-oci-image/base_ubuntu-22-04:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/base-app_ubuntu-22-04'
-      -
-        name: 'Upload image (OCI layout)'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v7
-        with:
-          name: 'docker-parent-base-app_ubuntu-22-04-${{ matrix.arch }}'
-          path: .ci-oci-image/base-app_ubuntu-22-04
-          retention-days: 1
-          overwrite: true
-          compression-level: 0
-          if-no-files-found: error
-  base-app_ubuntu-22-04_publish:
-    name: 'webdevops/base-app:ubuntu-22.04 - Publish'
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-    needs: base-app_ubuntu-22-04
-    if: "${{github.ref == 'refs/heads/master'}}"
-    steps:
-      -
-        uses: docker/setup-buildx-action@v4
-      -
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v4
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
-      -
-        name: 'Create and push multi-arch manifest'
-        run: |-
-          set -euo pipefail
-          for i in 1 2 3 4 5 6 7 8 9 10; do
-            docker buildx imagetools create \
-            -t "webdevops/base-app:ubuntu-22.04" \
-            -t "ghcr.io/webdevops/base-app:ubuntu-22.04" \
-            -t "webdevops/base-app:latest" \
-            -t "ghcr.io/webdevops/base-app:latest" \
-            "ghcr.io/webdevops/base-app:sha-${{ github.sha }}-amd64-ubuntu-22.04" \
-            "ghcr.io/webdevops/base-app:sha-${{ github.sha }}-arm64-ubuntu-22.04" && exit 0
-            sleep $((i*i))
-          done
-          exit 1
-  base_ubuntu-22-04:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          -
-            arch: amd64
-            runner: ubuntu-24.04
-            platform: linux/amd64
-          -
-            arch: arm64
-            runner: ubuntu-24.04-arm
-            platform: linux/arm64
-    name: 'webdevops/base:ubuntu-22.04 (${{ matrix.arch }})'
-    needs:
-      - bootstrap_ubuntu-22-04_publish
-      - image-test-runner
-    if: '${{ !failure() && !cancelled() }}'
-    runs-on: '${{ matrix.runner }}'
-    permissions:
-      contents: read
-      packages: write
-    container: webdevops/dockerfile-build-env
-    steps:
-      -
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      -
-        uses: docker/setup-buildx-action@v4
-      -
-        name: 'Download parent image (OCI layout): webdevops/bootstrap:ubuntu-22.04'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v8
-        with:
-          name: 'docker-parent-bootstrap_ubuntu-22-04-${{ matrix.arch }}'
-          path: .ci-oci-image/bootstrap_ubuntu-22-04
-      -
-        name: 'Build (load locally)'
-        if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v7
-        env:
-          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
-        with:
-          context: docker/base/ubuntu-22.04
-          platforms: '${{ matrix.platform }}'
-          load: true
-          tags: 'ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
-          cache-from: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }},mode=max'
-          build-args: 'TARGETARCH=${{ matrix.arch }}'
-          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-      -
-        name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v7
-        env:
-          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
-        with:
-          context: docker/base/ubuntu-22.04
-          platforms: '${{ matrix.platform }}'
-          load: true
-          tags: 'ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
-          cache-from: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }},mode=max'
-          build-args: 'TARGETARCH=${{ matrix.arch }}'
-          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/bootstrap:ubuntu-22.04=oci-layout://.ci-oci-image/bootstrap_ubuntu-22-04:ci-parent-image'
-      -
-        name: 'Download the image test runner'
-        id: download-image-test-runner
-        uses: actions/download-artifact@v8
-        continue-on-error: true
-        with:
-          name: 'webdevops-image-tests-${{ matrix.arch }}'
-          path: .ci-image-test-runner
-      -
-        name: 'Load the image test runner'
-        id: load-image-test-runner
-        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
-        continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
-      -
-        name: 'Build the image test runner'
-        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: ci/image-tests/Dockerfile
-          load: true
-          tags: webdevops-image-tests
-          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-      -
-        name: 'run image tests'
-        run: 'make test-image-run IMAGE=webdevops/base:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        name: 'Push arch image'
-        if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/base:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04"'
-      -
-        name: 'Export image (OCI layout)'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v7
-        env:
-          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
-        with:
-          context: docker/base/ubuntu-22.04
-          platforms: '${{ matrix.platform }}'
-          cache-from: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops/base:ubuntu-22.04-${{ matrix.arch }},mode=max'
-          build-args: 'TARGETARCH=${{ matrix.arch }}'
-          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/bootstrap:ubuntu-22.04=oci-layout://.ci-oci-image/bootstrap_ubuntu-22-04:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/base_ubuntu-22-04'
-      -
-        name: 'Upload image (OCI layout)'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v7
-        with:
-          name: 'docker-parent-base_ubuntu-22-04-${{ matrix.arch }}'
-          path: .ci-oci-image/base_ubuntu-22-04
-          retention-days: 1
-          overwrite: true
-          compression-level: 0
-          if-no-files-found: error
-  base_ubuntu-22-04_publish:
-    name: 'webdevops/base:ubuntu-22.04 - Publish'
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-    needs: base_ubuntu-22-04
-    if: "${{github.ref == 'refs/heads/master'}}"
-    steps:
-      -
-        uses: docker/setup-buildx-action@v4
-      -
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v4
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
-      -
-        name: 'Create and push multi-arch manifest'
-        run: |-
-          set -euo pipefail
-          for i in 1 2 3 4 5 6 7 8 9 10; do
-            docker buildx imagetools create \
-            -t "webdevops/base:ubuntu-22.04" \
-            -t "ghcr.io/webdevops/base:ubuntu-22.04" \
-            -t "webdevops/base:latest" \
-            -t "ghcr.io/webdevops/base:latest" \
-            "ghcr.io/webdevops/base:sha-${{ github.sha }}-amd64-ubuntu-22.04" \
-            "ghcr.io/webdevops/base:sha-${{ github.sha }}-arm64-ubuntu-22.04" && exit 0
-            sleep $((i*i))
-          done
-          exit 1
-  bootstrap_ubuntu-22-04:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          -
-            arch: amd64
-            runner: ubuntu-24.04
-            platform: linux/amd64
-          -
-            arch: arm64
-            runner: ubuntu-24.04-arm
-            platform: linux/arm64
-    name: 'webdevops/bootstrap:ubuntu-22.04 (${{ matrix.arch }})'
-    needs:
-      - toolbox_latest_publish
-      - image-test-runner
-    if: '${{ !failure() && !cancelled() }}'
-    runs-on: '${{ matrix.runner }}'
-    permissions:
-      contents: read
-      packages: write
-    container: webdevops/dockerfile-build-env
-    steps:
-      -
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      -
-        uses: docker/setup-buildx-action@v4
-      -
-        name: 'Download parent image (OCI layout): webdevops/toolbox:latest'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v8
-        with:
-          name: 'docker-parent-toolbox_latest-${{ matrix.arch }}'
-          path: .ci-oci-image/toolbox_latest
-      -
-        name: 'Build (load locally)'
-        if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v7
-        env:
-          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
-        with:
-          context: docker/bootstrap/ubuntu-22.04
-          platforms: '${{ matrix.platform }}'
-          load: true
-          tags: 'ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
-          cache-from: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }},mode=max'
-          build-args: 'TARGETARCH=${{ matrix.arch }}'
-          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-      -
-        name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v7
-        env:
-          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
-        with:
-          context: docker/bootstrap/ubuntu-22.04
-          platforms: '${{ matrix.platform }}'
-          load: true
-          tags: 'ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
-          cache-from: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }},mode=max'
-          build-args: 'TARGETARCH=${{ matrix.arch }}'
-          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
-      -
-        name: 'Download the image test runner'
-        id: download-image-test-runner
-        uses: actions/download-artifact@v8
-        continue-on-error: true
-        with:
-          name: 'webdevops-image-tests-${{ matrix.arch }}'
-          path: .ci-image-test-runner
-      -
-        name: 'Load the image test runner'
-        id: load-image-test-runner
-        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
-        continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
-      -
-        name: 'Build the image test runner'
-        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: ci/image-tests/Dockerfile
-          load: true
-          tags: webdevops-image-tests
-          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-      -
-        name: 'run image tests'
-        run: 'make test-image-run IMAGE=webdevops/bootstrap:ubuntu-22.04 REFERENCE=ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        name: 'Push arch image'
-        if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-${{ matrix.arch }}-ubuntu-22.04"'
-      -
-        name: 'Export image (OCI layout)'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v7
-        env:
-          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
-        with:
-          context: docker/bootstrap/ubuntu-22.04
-          platforms: '${{ matrix.platform }}'
-          cache-from: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops/bootstrap:ubuntu-22.04-${{ matrix.arch }},mode=max'
-          build-args: 'TARGETARCH=${{ matrix.arch }}'
-          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/toolbox=oci-layout://.ci-oci-image/toolbox_latest:ci-parent-image'
-          outputs: 'type=oci,tar=false,name=ci-parent-image,dest=.ci-oci-image/bootstrap_ubuntu-22-04'
-      -
-        name: 'Upload image (OCI layout)'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/upload-artifact@v7
-        with:
-          name: 'docker-parent-bootstrap_ubuntu-22-04-${{ matrix.arch }}'
-          path: .ci-oci-image/bootstrap_ubuntu-22-04
-          retention-days: 1
-          overwrite: true
-          compression-level: 0
-          if-no-files-found: error
-  bootstrap_ubuntu-22-04_publish:
-    name: 'webdevops/bootstrap:ubuntu-22.04 - Publish'
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-    needs: bootstrap_ubuntu-22-04
-    if: "${{github.ref == 'refs/heads/master'}}"
-    steps:
-      -
-        uses: docker/setup-buildx-action@v4
-      -
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v4
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
-      -
-        name: 'Create and push multi-arch manifest'
-        run: |-
-          set -euo pipefail
-          for i in 1 2 3 4 5 6 7 8 9 10; do
-            docker buildx imagetools create \
-            -t "webdevops/bootstrap:ubuntu-22.04" \
-            -t "ghcr.io/webdevops/bootstrap:ubuntu-22.04" \
-            -t "webdevops/bootstrap:latest" \
-            -t "ghcr.io/webdevops/bootstrap:latest" \
-            "ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-amd64-ubuntu-22.04" \
-            "ghcr.io/webdevops/bootstrap:sha-${{ github.sha }}-arm64-ubuntu-22.04" && exit 0
-            sleep $((i*i))
-          done
-          exit 1
-  dockerfile-build-env_latest:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          -
-            arch: amd64
-            runner: ubuntu-24.04
-            platform: linux/amd64
-          -
-            arch: arm64
-            runner: ubuntu-24.04-arm
-            platform: linux/arm64
-    name: 'webdevops/dockerfile-build-env:latest (${{ matrix.arch }})'
-    needs:
-      - base-app_ubuntu-22-04_publish
-      - image-test-runner
-    if: '${{ !failure() && !cancelled() }}'
-    runs-on: '${{ matrix.runner }}'
-    permissions:
-      contents: read
-      packages: write
-    container: webdevops/dockerfile-build-env
-    steps:
-      -
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      -
-        uses: docker/setup-buildx-action@v4
-      -
-        name: 'Download parent image (OCI layout): webdevops/base-app:ubuntu-22.04'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: actions/download-artifact@v8
-        with:
-          name: 'docker-parent-base-app_ubuntu-22-04-${{ matrix.arch }}'
-          path: .ci-oci-image/base-app_ubuntu-22-04
-      -
-        name: 'Build (load locally)'
-        if: "${{ github.ref == 'refs/heads/master' }}"
-        uses: docker/build-push-action@v7
-        env:
-          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
-        with:
-          context: docker/dockerfile-build-env/latest
-          platforms: '${{ matrix.platform }}'
-          load: true
-          tags: 'ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
-          cache-from: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }},mode=max'
-          build-args: 'TARGETARCH=${{ matrix.arch }}'
-          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-      -
-        name: 'Build (load locally, from parent artifact)'
-        if: "${{ github.ref != 'refs/heads/master' }}"
-        uses: docker/build-push-action@v7
-        env:
-          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
-        with:
-          context: docker/dockerfile-build-env/latest
-          platforms: '${{ matrix.platform }}'
-          load: true
-          tags: 'ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-          no-cache: "${{ github.event_name == 'schedule' || github.run_attempt > 1 }}"
-          cache-from: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }}'
-          cache-to: 'type=gha,scope=webdevops/dockerfile-build-env:latest-${{ matrix.arch }},mode=max'
-          build-args: 'TARGETARCH=${{ matrix.arch }}'
-          secret-envs: COMPOSER_AUTH=COMPOSER_AUTH
-          build-contexts: 'webdevops/base-app:ubuntu-22.04=oci-layout://.ci-oci-image/base-app_ubuntu-22-04:ci-parent-image'
-      -
-        name: 'Download the image test runner'
-        id: download-image-test-runner
-        uses: actions/download-artifact@v8
-        continue-on-error: true
-        with:
-          name: 'webdevops-image-tests-${{ matrix.arch }}'
-          path: .ci-image-test-runner
-      -
-        name: 'Load the image test runner'
-        id: load-image-test-runner
-        if: "${{ steps.download-image-test-runner.outcome == 'success' }}"
-        continue-on-error: true
-        run: 'docker load --input .ci-image-test-runner/webdevops-image-tests.tar && rm .ci-image-test-runner/webdevops-image-tests.tar'
-      -
-        name: 'Build the image test runner'
-        if: "${{ steps.load-image-test-runner.outcome != 'success' }}"
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: ci/image-tests/Dockerfile
-          load: true
-          tags: webdevops-image-tests
-          cache-from: 'type=gha,scope=webdevops-image-tests-${{ matrix.arch }}'
-      -
-        name: 'run image tests'
-        run: 'make test-image-run IMAGE=webdevops/dockerfile-build-env:latest REFERENCE=ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-${{ matrix.arch }}-latest'
-      -
-        if: "${{github.ref == 'refs/heads/master'}}"
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        name: 'Push arch image'
-        if: "${{github.ref == 'refs/heads/master'}}"
-        run: 'docker push "ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-${{ matrix.arch }}-latest"'
-  dockerfile-build-env_latest_publish:
-    name: 'webdevops/dockerfile-build-env:latest - Publish'
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-    needs: dockerfile-build-env_latest
-    if: "${{github.ref == 'refs/heads/master'}}"
-    steps:
-      -
-        uses: docker/setup-buildx-action@v4
-      -
-        name: 'Login to ghcr.io'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-      -
-        name: 'Login to hub.docker.com'
-        uses: docker/login-action@v4
-        with:
-          username: '${{ secrets.DOCKERHUB_USERNAME }}'
-          password: '${{ secrets.DOCKERHUB_TOKEN }}'
-      -
-        name: 'Create and push multi-arch manifest'
-        run: |-
-          set -euo pipefail
-          for i in 1 2 3 4 5 6 7 8 9 10; do
-            docker buildx imagetools create \
-            -t "webdevops/dockerfile-build-env:latest" \
-            -t "ghcr.io/webdevops/dockerfile-build-env:latest" \
-            "ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-amd64-latest" \
-            "ghcr.io/webdevops/dockerfile-build-env:sha-${{ github.sha }}-arm64-latest" && exit 0
-            sleep $((i*i))
-          done
-          exit 1
   php-apache-dev_8-2:
     strategy:
       fail-fast: false
@@ -1446,7 +782,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -1555,7 +890,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -1736,7 +1070,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -1845,7 +1178,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -2026,7 +1358,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -2135,7 +1466,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -2316,7 +1646,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -2425,7 +1754,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -2606,7 +1934,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -2715,7 +2042,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -2896,7 +2222,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -3031,7 +2356,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -3238,7 +2562,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -3373,7 +2696,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -3580,7 +2902,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -3715,7 +3036,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -3922,7 +3242,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -4057,7 +3376,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -4264,7 +3582,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -4399,7 +3716,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -4606,7 +3922,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -4715,7 +4030,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -4896,7 +4210,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -5005,7 +4318,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -5186,7 +4498,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -5295,7 +4606,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -5476,7 +4786,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -5585,7 +4894,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -5766,7 +5074,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -5875,7 +5182,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -6056,7 +5362,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -6165,7 +5470,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -6346,7 +5650,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -6455,7 +5758,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -6636,7 +5938,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -6745,7 +6046,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -6926,7 +6226,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -7035,7 +6334,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -7216,7 +6514,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -7325,7 +6622,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -7506,7 +6802,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -7641,7 +6936,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -7848,7 +7142,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -7983,7 +7276,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -8190,7 +7482,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -8325,7 +7616,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -8532,7 +7822,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -8667,7 +7956,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -8874,7 +8162,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -9009,7 +8296,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -9216,7 +8502,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -9351,7 +8636,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -9562,7 +8846,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -9697,7 +8980,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -9908,7 +9190,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -10043,7 +9324,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -10254,7 +9534,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -10389,7 +9668,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -10600,7 +9878,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -10735,7 +10012,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7
@@ -10940,7 +10216,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    container: webdevops/dockerfile-build-env
     steps:
       -
         uses: actions/checkout@v7

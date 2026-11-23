@@ -1,6 +1,6 @@
 # Customization
 
-All images except `bootstrap` and `toolbox` share the same entrypoint (`/entrypoint`), service handling and hooks. This page describes them.
+All images except `toolbox` share the same entrypoint (`/entrypoint`), service handling and hooks. This page describes them.
 
 ## Commands
 
@@ -11,7 +11,7 @@ The first argument of the container command selects what the entrypoint does:
 | `supervisord` | Default command. Starts `supervisord`, which runs all enabled [services](#services). |
 | `noop` | Keeps the container running without starting services (`tail -f /dev/null`). |
 | `root` | Runs the remaining arguments as `root`; without arguments it opens `bash`. |
-| `cli` | Runs `CLI_SCRIPT` as `APPLICATION_USER` (default `application`); the remaining arguments are passed on. In `base`, which has neither `APPLICATION_USER` nor the user `application`, it runs `CLI_SCRIPT` as `root`. Without `CLI_SCRIPT` it fails with an error. |
+| `cli` | Runs `CLI_SCRIPT` as `APPLICATION_USER` (default `application`); the remaining arguments are passed on. Without `CLI_SCRIPT` it fails with an error. |
 | anything else (`default`) | Runs the command as given, as `root`. |
 
 ```yaml
@@ -67,16 +67,16 @@ These commands are installed in the images. Use them in `RUN` lines of your own 
 
 | Command | What it does | Images |
 | --- | --- | --- |
-| `apt-install <packages>` | Runs `apt-get update`, installs the packages without recommended packages and removes the package lists again | Debian- and Ubuntu-based images, including `bootstrap:ubuntu-22.04` |
+| `apt-install <packages>` | Runs `apt-get update`, installs the packages without recommended packages and removes the package lists again | Debian-based images, the `php-*` images without `-alpine` |
 | `apk-install <packages>` | Installs packages with `apk add --no-cache` | Alpine-based images, the `php-*` images with an `-alpine` tag |
 | `docker-php-setting [--raw] <setting> <value>` | Appends a PHP setting to `/opt/docker/etc/php/php.ini`, for example `docker-php-setting memory_limit 384M`. PHP and PHP-FPM read that file after the [PHP variables](environment-variables.md#php), so the setting wins over them. A value that is not a number is written in quotes; `--raw` writes it as it is, for example `docker-php-setting --raw error_reporting E_ERROR` | `php-*` |
 | `docker-image-cleanup` | Removes package lists and caches; use it at the end of a `RUN` that installed packages | all except `toolbox` |
 | `file <path>` | Shows the type of a file, for example `file --mime-type upload.bin`; tools such as GrumPHP's BOM check call it | `php`, `php-apache`, `php-nginx` and their `-dev` images |
 | `go-replace -s <search> -r <replace> -- <file>` | Replaces text in files; the same tool fills the [placeholders](#placeholders) | all |
 | `gosu <user> <command>` | Runs a command as another user, for example `application` | all except `toolbox` |
-| `docker-service enable <service>`, `docker-service disable <service>`, also `docker-service-enable` and `docker-service-disable` | Enables or disables a [service](#services); enabling installs it if needed | all except `bootstrap` and `toolbox` |
-| `docker-healthcheck` | Checks the services of supervisord and fails when one failed, see [Healthcheck](#healthcheck) | all except `bootstrap` and `toolbox` |
-| `docker-cronjob '<line>'` | Adds a [cron job](#cron-jobs) | all except `bootstrap` and `toolbox` |
+| `docker-service enable <service>`, `docker-service disable <service>`, also `docker-service-enable` and `docker-service-disable` | Enables or disables a [service](#services); enabling installs it if needed | all except `toolbox` |
+| `docker-healthcheck` | Checks the services of supervisord and fails when one failed, see [Healthcheck](#healthcheck) | all except `toolbox` |
+| `docker-cronjob '<line>'` | Adds a [cron job](#cron-jobs) | all except `toolbox` |
 | `docker-run-bootstrap` | Runs the [build scripts](#scripts-at-image-build) once and deletes them | all except `toolbox` |
 
 `apt-install` and `apk-install` are both present in every image except `toolbox`, but each only works on its own distribution. `toolbox` only stores the commands for the other images, see [Images](README.md#images).
@@ -113,7 +113,6 @@ go-replace -s '<API_URL>' -r "$API_URL" -- /app/config/app.ini
 | --- | --- | --- |
 | `php`, `php-nginx`, `php-apache` | `php-fpm`, `cron`, `syslog`, plus `nginx` or `apache` | `postfix`, `ssh`, `dnsmasq` |
 | `php-dev`, `php-nginx-dev`, `php-apache-dev` | as above, plus `postfix` and `ssh` | `dnsmasq`; `blackfire-agent`, which `PHP_DEBUGGER=blackfire` starts with the server credentials, see [Development images](environment-variables.md#development-images) |
-| `base`, `base-app` | none | `cron`, `syslog`, `postfix`, `ssh`, `dnsmasq` |
 
 Enable or disable a service with `docker-service` (or the shortcuts `docker-service-enable` and `docker-service-disable`). If the service's program is not installed yet, enabling it installs it. Do this in your Dockerfile:
 
@@ -153,11 +152,9 @@ FROM webdevops/php:8.5
 RUN docker-cronjob '*/5 * * * * application /usr/local/bin/php /app/bin/console app:cleanup'
 ```
 
-In the Debian- and Ubuntu-based images, `docker-cronjob` adds the lines to `/etc/cron.d/webdevops-docker`. Alpine's BusyBox `crond` does not read `/etc/cron.d`, but one crontab per user in `/etc/crontabs`, without the user column, so in the Alpine images `docker-cronjob` adds each line without its user to the crontab of that user, for example `/etc/crontabs/application`. There it fails on a line that is not a job with time, user and command, for example a comment or a variable such as `MAILTO=`, and on a user that does not exist.
+In the Debian-based images, `docker-cronjob` adds the lines to `/etc/cron.d/webdevops-docker`. Alpine's BusyBox `crond` does not read `/etc/cron.d`, but one crontab per user in `/etc/crontabs`, without the user column, so in the Alpine images `docker-cronjob` adds each line without its user to the crontab of that user, for example `/etc/crontabs/application`. There it fails on a line that is not a job with time, user and command, for example a comment or a variable such as `MAILTO=`, and on a user that does not exist.
 
-Cron in Debian and Ubuntu runs jobs with `PATH=/usr/bin:/bin`, which does not contain `/usr/local/bin`, so use absolute paths such as `/usr/local/bin/php`. Absolute paths work in Alpine too, whose `crond` passes on the `PATH` of the container.
-
-In `base` and `base-app`, cron does not run by default; also run `docker-service enable cron`, see [Services](#services).
+Cron in Debian runs jobs with `PATH=/usr/bin:/bin`, which does not contain `/usr/local/bin`, so use absolute paths such as `/usr/local/bin/php`. Absolute paths work in Alpine too, whose `crond` passes on the `PATH` of the container.
 
 ### Time zone
 
@@ -172,11 +169,11 @@ services:
       PHP_DATE_TIMEZONE: Europe/Berlin
 ```
 
-This works in all images, based on Debian, Ubuntu or Alpine.
+This works in all images, based on Debian or Alpine.
 
 ## Healthcheck
 
-`docker-healthcheck` checks the [services](#services) of supervisord. It fails when a service failed: supervisord gave up on it (`FATAL`), is restarting it after a failed start (`BACKOFF`) or does not know its state (`UNKNOWN`), or supervisord does not answer. It prints the lines of those services. Services that run, start, are not enabled or were stopped do not count. All images except `bootstrap` and `toolbox` have the command.
+`docker-healthcheck` checks the [services](#services) of supervisord. It fails when a service failed: supervisord gave up on it (`FATAL`), is restarting it after a failed start (`BACKOFF`) or does not know its state (`UNKNOWN`), or supervisord does not answer. It prints the lines of those services. Services that run, start, are not enabled or were stopped do not count. All images except `toolbox` have the command.
 
 Each failed check also writes its reason to the container log, so `docker compose logs` shows it, for example `docker-healthcheck: unhealthy: postfix:postfixd FATAL Exited too quickly (process log may have details)`. The first check that passes after it writes `docker-healthcheck: healthy again` there. Run it as root, as Docker does for the `HEALTHCHECK` of these images: supervisord answers only root, so as another user the check fails with `supervisord does not answer`.
 
@@ -330,7 +327,7 @@ PHP-FPM reads the `*.conf` files in `fpm/pool.d/` in the order of their names: `
 
 ### supervisord
 
-All images except `bootstrap` and `toolbox`.
+All images except `toolbox`.
 
 | File | Content |
 | --- | --- |
@@ -348,15 +345,14 @@ docker compose exec app supervisorctl restart nginx:nginxd
 
 | Image | Locales |
 | --- | --- |
-| `base-app:ubuntu-22.04` and the Debian-based `php-*` images | several hundred locales, for example `de_DE.utf8` and `en_US.utf8` |
-| `base:ubuntu-22.04` | only `C`, `C.utf8` and `POSIX` |
+| Debian-based `php-*` images | several hundred locales, for example `de_DE.utf8` and `en_US.utf8` |
 | Alpine-based images | none; they have no `locale` command |
 
 List them with `docker compose exec app locale -a`.
 
 ## Application user
 
-Images based on `base-app`, and all `php-*` images, contain the user and group `application` (UID and GID `1000`) and the directory `/app`, owned by that user. PHP-FPM runs as `application`.
+All `php-*` images contain the user and group `application` (UID and GID `1000`) and the directory `/app`, owned by that user. PHP-FPM runs as `application`.
 
 `docker compose exec` runs commands as `root`. Files they create belong to `root`, on the host too when `/app` is mounted from there. Run commands that write files as `application`:
 
