@@ -32,6 +32,9 @@ trait ContainerEnvironmentChecks
 {
     private const string NO_CRON = 'The image does not start cron.';
 
+    /** The time and user of a cron job that runs every minute as nobody */
+    private const string EVERY_MINUTE_AS_NOBODY = '* * * * * nobody ';
+
     /**
      * The command of the job of CRONJOB_IMAGETEST in testCronjobVariablesAreWrittenAnewAtEveryStart(), and that of a
      * job that docker-cronjob adds there, as in an image built with it.
@@ -186,9 +189,9 @@ trait ContainerEnvironmentChecks
     public function testCronjobVariablesAreWrittenAnewAtEveryStart(): void
     {
         $container = $this->startTestContainer('cronjob-restart', [
-            'CRONJOB_IMAGETEST' => '* * * * * nobody ' . self::CRONJOB_VARIABLE_COMMAND,
+            'CRONJOB_IMAGETEST' => self::EVERY_MINUTE_AS_NOBODY . self::CRONJOB_VARIABLE_COMMAND,
         ]);
-        $this->assertCommandSucceeds('docker-cronjob ' . escapeshellarg('* * * * * nobody ' . self::CRONJOB_BUILD_COMMAND), $container);
+        $this->assertCommandSucceeds('docker-cronjob ' . escapeshellarg(self::EVERY_MINUTE_AS_NOBODY . self::CRONJOB_BUILD_COMMAND), $container);
         $this->assertCommandSucceeds('docker-service disable cron', $container);
         // Debian: a file for the variables, one for docker-cronjob; Alpine: the crontab of the user
         $crontabs = self::image()->isAlpine()
@@ -229,7 +232,7 @@ trait ContainerEnvironmentChecks
 
         $container = $this->startTestContainer('cronjob-environment', $environment);
         // cron starts again with the job, as in an image built with it
-        $this->assertCommandSucceeds('docker-cronjob ' . escapeshellarg('* * * * * nobody ' . self::cronEnvironmentCommand('docker-cronjob')) . ' && docker-service restart cron', $container);
+        $this->assertCommandSucceeds('docker-cronjob ' . escapeshellarg(self::EVERY_MINUTE_AS_NOBODY . self::cronEnvironmentCommand('docker-cronjob')) . ' && docker-service restart cron', $container);
         $expected = self::CRON_ENVIRONMENT_VALUE . "\n" . $this->stdout('printenv PATH', $container);
         foreach ([...$users, 'docker-cronjob'] as $name) {
             // cron runs the jobs at the start of the next minute
