@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Webdevops\Build\ImageTests\Checks;
 
+use Webdevops\Build\ImageTests\Docker\ImageConfiguration;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
+use function array_keys;
 use function escapeshellarg;
 
 /**
@@ -51,5 +53,17 @@ trait WebEnvironmentChecks
             self::assertContains($this->statusCode('http://localhost/php-test.php?test=sha1', container: $container), ['502', '503']);
             self::assertStringContainsString('127.0.0.1:9999', $container->logs());
         });
+    }
+
+    public function testWebServerVariablesOfTheImage(): void
+    {
+        $expected = [
+            'WEB_DOCUMENT_ROOT' => '/app',
+            'WEB_DOCUMENT_INDEX' => 'index.php',
+            'WEB_ALIAS_DOMAIN' => '*.vm',
+            'WEB_PHP_TIMEOUT' => '600',
+            'WEB_PHP_SOCKET' => '127.0.0.1:9000',
+        ];
+        self::assertSame($expected, ImageConfiguration::inspect(self::image()->reference)->variables(array_keys($expected)));
     }
 }

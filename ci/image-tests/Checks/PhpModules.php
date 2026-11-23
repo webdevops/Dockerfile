@@ -16,7 +16,7 @@ final class PhpModules
         'amqp', 'bcmath', 'bz2', 'calendar', 'Core', 'ctype', 'curl', 'date', 'dom', 'exif', 'excimer', 'FFI',
         'fileinfo', 'filter', 'ftp', 'gettext', 'gmp', 'hash', 'iconv', 'imagick', 'intl', 'json', 'ldap', 'libxml',
         'mbstring', 'memcached', 'mongodb', 'mysqli', 'mysqlnd', 'openssl', 'opentelemetry', 'pcntl', 'pcre', 'PDO',
-        'pdo_mysql', 'pdo_pgsql', 'pdo_sqlite', 'pgsql', 'Phar', 'posix', 'protobuf', 'Reflection', 'session',
+        'pdo_mysql', 'pdo_pgsql', 'pdo_sqlite', 'pgsql', 'Phar', 'posix', 'protobuf', 'readline', 'Reflection', 'session',
         'SimpleXML', 'soap', 'sockets', 'SPL', 'sqlite3', 'standard', 'sysvmsg', 'sysvsem', 'sysvshm', 'tokenizer',
         'xml', 'xmlreader', 'xmlwriter', 'xsl', 'yaml', 'zip', 'zlib', 'gd', 'apcu', 'shmop', 'Zend OPcache', 'redis',
     ];

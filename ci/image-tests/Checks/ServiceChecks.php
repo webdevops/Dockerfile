@@ -12,6 +12,7 @@ use Webdevops\Build\ImageTests\ImageTestCase;
 
 use function array_combine;
 use function array_keys;
+use function array_unique;
 use function in_array;
 use function ksort;
 use function preg_match_all;
@@ -41,6 +42,11 @@ trait ServiceChecks
         'ssh' => 'ssh.d',
         'syslog' => 'syslog-ng.d',
     ];
+
+    /**
+     * The services of webdevops/base that docker-service enable installs, see docs/customization.md#services.
+     */
+    private const array INSTALLABLE_SERVICES = ['cron', 'dnsmasq', 'postfix', 'ssh', 'syslog'];
 
     /**
      * The services run and keep their processes: supervisord restarts a crashed service at once and shows it as RUNNING
@@ -156,5 +162,59 @@ trait ServiceChecks
         $services = array_combine($matches[1], $matches[2]);
         ksort($services);
         return $services;
+    }
+
+    /**
+     * The services of the image and the services of webdevops/base, each with its configuration in
+     * /opt/docker/etc/supervisor.d.
+     *
+     * @return iterable<string, array{string}>
+     */
+    public static function supervisorPrograms(): iterable
+    {
+        foreach (array_unique([...self::INSTALLABLE_SERVICES, ...self::services()]) as $service) {
+            yield $service => [$service];
+        }
+    }
+
+    /**
+     * supervisord starts the services of the image by itself (autostart = true), the other services of webdevops/base
+     * only once docker-service enable sets it.
+     */
+    #[DataProvider('supervisorPrograms')]
+    public function testServiceStartsAutomaticallyOnlyIfTheImageRunsIt(string $service): void
+    {
+        $autostart = in_array($service, self::services(), true) ? 'true' : 'false';
+        self::assertMatchesRegularExpression(
+            '/^autostart\\s*=\\s*' . $autostart . '\\s*$/m',
+            $this->stdout('cat /opt/docker/etc/supervisor.d/' . $service . '.conf'),
+        );
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function installableServices(): array
+    {
+        return self::cases(self::INSTALLABLE_SERVICES);
+    }
+
+    /**
+     * The installer of a service in /opt/docker/provision/service.d, a file of root with the mode 0644, stays for
+     * docker-service enable; the images delete the installers of the services they run when they enable them at their
+     * build.
+     */
+    #[DataProvider('installableServices')]
+    public function testInstallerIsKeptOnlyForTheServicesTheImageDoesNotRun(string $service): void
+    {
+        $path = '/opt/docker/provision/service.d/' . $service . '.sh';
+        $file = $this->file($path);
+        if (in_array($service, self::services(), true)) {
+            self::assertFalse($file->exists, $path . ' should be deleted, the image runs ' . $service);
+            return;
+        }
+
+        $this->assertOwnedByRoot($file);
+        self::assertSame('-rw-r--r--', $file->permissions(), $path);
     }
 }

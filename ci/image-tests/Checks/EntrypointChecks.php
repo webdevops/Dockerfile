@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Webdevops\Build\ImageTests\Checks;
 
 use Webdevops\Build\ImageTests\Docker\Container;
+use Webdevops\Build\ImageTests\Docker\ImageConfiguration;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 use function array_filter;
+use function array_keys;
 use function array_values;
 use function str_contains;
 use function trim;
@@ -70,5 +72,18 @@ trait EntrypointChecks
     private function commandLineOfProcess1(Container $container): string
     {
         return trim($this->stdout('tr "\\000" " " < /proc/1/cmdline', $container));
+    }
+
+    /**
+     * The image runs supervisord through the entrypoint, and sets the variables that the entrypoint reads:
+     * DOCKER_CONF_HOME, and LOG_STDOUT and LOG_STDERR, empty by default.
+     */
+    public function testEntrypointCommandAndLogVariablesOfTheImage(): void
+    {
+        $configuration = ImageConfiguration::inspect(self::image()->reference);
+        self::assertSame(['/entrypoint'], $configuration->entrypoint);
+        self::assertSame(['supervisord'], $configuration->command);
+        $expected = ['DOCKER_CONF_HOME' => '/opt/docker/', 'LOG_STDOUT' => '', 'LOG_STDERR' => ''];
+        self::assertSame($expected, $configuration->variables(array_keys($expected)));
     }
 }

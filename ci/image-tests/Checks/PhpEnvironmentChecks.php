@@ -247,4 +247,21 @@ trait PhpEnvironmentChecks
     {
         self::assertMatchesRegularExpression('/^Composer version 1\.\d+\.\d+ /m', $this->stdout('composer --version 2>/dev/null', $this->environmentContainer()));
     }
+
+    /**
+     * php.session.upload_progress.enabled=On enables the upload progress, which the images disable, in the PHP CLI and
+     * in PHP-FPM: a running worker of PHP-FPM, asked over FastCGI, has it on, so no setting of its pool turns it off
+     * again.
+     */
+    public function testSessionUploadProgressFromTheEnvironment(): void
+    {
+        $container = $this->startTestContainer('session-upload-progress', ['php.session.upload_progress.enabled' => 'On']);
+        self::assertSame(
+            "enabled\n",
+            $this->stdout("php -r 'echo ini_get(\"session.upload_progress.enabled\") ? \"enabled\" : \"disabled\", PHP_EOL;'", $container),
+        );
+        $worker = json_decode($this->phpFpmBody($container, 'test=session_upload_progress'), true);
+        self::assertIsArray($worker);
+        self::assertTrue($worker['upload_progress_enabled'] ?? null, 'the worker of PHP-FPM should have the upload progress on');
+    }
 }

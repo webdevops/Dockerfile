@@ -24,7 +24,6 @@ trait BuildEnvChecks
     {
         yield 'make' => ['make --version', '/\AGNU Make \d+\.\d+/'];
         yield 'docker' => ['docker --version', '/\ADocker version \d+\.\d+\.\d+/'];
-        yield 'container-structure-test' => ['container-structure-test version', '/\Av\d+\.\d+\.\d+$/m'];
         yield 'git' => ['git --version', '/\Agit version \d+\.\d+/'];
     }
 
