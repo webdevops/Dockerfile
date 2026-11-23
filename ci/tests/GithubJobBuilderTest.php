@@ -404,7 +404,8 @@ final class GithubJobBuilderTest extends TestCase
                 $upload['env'],
             );
             self::assertStringContainsString('-X PATCH', $upload['run']);
-            self::assertStringContainsString('"$DOCKER_HUB_API/repositories/$REPOSITORY"', $upload['run']);
+            self::assertStringContainsString('"$DOCKER_HUB_API/namespaces/${REPOSITORY%%/*}/repositories/${REPOSITORY#*/}"', $upload['run']);
+            self::assertStringContainsString('::error::Docker Hub answered $status for $REPOSITORY', $upload['run'], 'the answer of Docker Hub is shown when it refuses');
             self::assertArrayNotHasKey('uses', $upload, 'no action from outside GitHub gets the token');
         }
     }
