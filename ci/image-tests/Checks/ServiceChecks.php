@@ -186,7 +186,7 @@ trait ServiceChecks
     {
         $autostart = in_array($service, self::services(), true) ? 'true' : 'false';
         self::assertMatchesRegularExpression(
-            '/^autostart = ' . $autostart . '$/m',
+            '/^autostart\\s*=\\s*' . $autostart . '\\s*$/m',
             $this->stdout('cat /opt/docker/etc/supervisor.d/' . $service . '.conf'),
         );
     }

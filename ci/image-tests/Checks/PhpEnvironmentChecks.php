@@ -8,7 +8,6 @@ use Webdevops\Build\ImageTests\Docker\Container;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 use function escapeshellarg;
-use function implode;
 use function json_decode;
 use function sleep;
 use function sprintf;
@@ -251,14 +250,18 @@ trait PhpEnvironmentChecks
 
     /**
      * php.session.upload_progress.enabled=On enables the upload progress, which the images disable, in the PHP CLI and
-     * in PHP-FPM.
+     * in PHP-FPM: a running worker of PHP-FPM, asked over FastCGI, has it on, so no setting of its pool turns it off
+     * again.
      */
     public function testSessionUploadProgressFromTheEnvironment(): void
     {
-        $result = $this->runContainer(['sh', '-c', implode(' && ', [
-            "php -r 'echo ini_get(\"session.upload_progress.enabled\") ? \"enabled\" : \"disabled\", PHP_EOL;'",
-            'php-fpm -i | grep "^session.upload_progress.enabled "',
-        ])], ['php.session.upload_progress.enabled' => 'On']);
-        self::assertSame([0, "enabled\nsession.upload_progress.enabled => On => On\n"], [$result->exitCode, $result->stdout], $result->describe());
+        $container = $this->startTestContainer('session-upload-progress', ['php.session.upload_progress.enabled' => 'On']);
+        self::assertSame(
+            "enabled\n",
+            $this->stdout("php -r 'echo ini_get(\"session.upload_progress.enabled\") ? \"enabled\" : \"disabled\", PHP_EOL;'", $container),
+        );
+        $worker = json_decode($this->phpFpmBody($container, 'test=session_upload_progress'), true);
+        self::assertIsArray($worker);
+        self::assertTrue($worker['upload_progress_enabled'] ?? null, 'the worker of PHP-FPM should have the upload progress on');
     }
 }
