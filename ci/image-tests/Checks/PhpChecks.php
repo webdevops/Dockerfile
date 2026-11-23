@@ -27,6 +27,8 @@ use const JSON_THROW_ON_ERROR;
  */
 trait PhpChecks
 {
+    private const string COMPOSER = '/usr/local/bin/composer';
+
     /**
      * The security releases of 2026-11-19, https://www.php.net/
      */
@@ -229,13 +231,13 @@ trait PhpChecks
 
     public function testComposer(): void
     {
-        foreach (['/usr/local/bin/composer', '/usr/local/bin/composer1', '/usr/local/bin/composer2'] as $path) {
+        foreach ([self::COMPOSER, '/usr/local/bin/composer1', '/usr/local/bin/composer2'] as $path) {
             $file = $this->file($path);
             self::assertTrue($file->isFile, $path . ' should be a file');
             self::assertTrue($file->isExecutable, $path . ' should be executable');
         }
 
-        $this->assertCommandSucceeds('/usr/local/bin/composer');
+        $this->assertCommandSucceeds(self::COMPOSER);
     }
 
     /**
@@ -323,7 +325,7 @@ trait PhpChecks
      */
     public static function phpCommands(): iterable
     {
-        $commands = ['convert' => '/usr/bin/convert', 'gm' => '/usr/bin/gm', 'gs' => '/usr/bin/gs', 'composer' => '/usr/local/bin/composer'];
+        $commands = ['convert' => '/usr/bin/convert', 'gm' => '/usr/bin/gm', 'gs' => '/usr/bin/gs', 'composer' => self::COMPOSER];
         foreach ($commands as $command => $path) {
             yield $command => [$command, $path];
         }
