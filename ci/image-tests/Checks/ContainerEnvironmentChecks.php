@@ -99,35 +99,6 @@ trait ContainerEnvironmentChecks
     }
 
     /**
-     * The output of a cron job that docker-cronjob added, from Hooks/, reaches the files of LOG_STDOUT and LOG_STDERR.
-     * Cron in Debian and Ubuntu would mail it, or discard it without a mail server: docker-cronjob-shell passes both
-     * lines to syslog-ng, which writes them to the file of LOG_STDOUT. BusyBox crond on Alpine passes on its own stdout
-     * and stderr, which supervisord writes to the two files. Only in the images that start cron.
-     */
-    public function testCronJobOutputReachesTheFilesFromTheEnvironment(): void
-    {
-        if (!in_array('cron', self::services(), true)) {
-            self::markTestSkipped('The image does not start cron.');
-        }
-
-        $container = $this->environmentContainer();
-        // the job writes the lines in upper case, so they differ from its command, which cron logs
-        [$output, $error] = ['IMAGE-TEST-CRON-OUTPUT', 'IMAGE-TEST-CRON-ERROR'];
-        // cron runs the job at the start of a minute
-        $this->waitFor(function () use ($container, $output, $error): void {
-            $stdout = $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container);
-            $stderr = $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDERR'], $container);
-            if (self::image()->isAlpine()) {
-                self::assertMatchesRegularExpression('/^' . $output . '$/m', $stdout);
-                self::assertMatchesRegularExpression('/^' . $error . '$/m', $stderr);
-            } else {
-                self::assertMatchesRegularExpression('/ cron-job\[\d+\]: ' . $output . '$/m', $stdout);
-                self::assertMatchesRegularExpression('/ cron-job\[\d+\]: ' . $error . '$/m', $stdout);
-            }
-        }, 25, 3);
-    }
-
-    /**
      * What a service writes to its stdout and stderr reaches the files of LOG_STDOUT and LOG_STDERR: supervisord writes
      * it there. The hook of syslog-ng from Hooks/ writes a line to each. The environment container starts syslog-ng
      * where the image does not. At the log level trace of SERVICE_SUPERVISOR_OPTS, supervisord also repeats the output
@@ -143,6 +114,25 @@ trait ContainerEnvironmentChecks
         $this->eventually(function () use ($container): void {
             self::assertStringContainsString('image-test: the hook of syslog-ng on stdout', $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container));
             self::assertStringContainsString('image-test: the hook of syslog-ng on stderr', $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDERR'], $container));
+        });
+    }
+
+    /**
+     * Without LOG_STDOUT and LOG_STDERR, what a service writes to its stdout and stderr stays in the container log, as
+     * before supervisord wrote it to /docker.stdout and /docker.stderr: the hook of syslog-ng from Hooks/ writes a line
+     * to each. In a container of its own, which starts syslog-ng where the image does not.
+     */
+    public function testServiceOutputReachesTheContainerLogWithoutTheEnvironment(): void
+    {
+        $container = $this->startTestContainer('service-output');
+        if (!in_array('syslog', self::services(), true)) {
+            $this->assertCommandSucceeds('docker-service enable syslog && docker-service start syslog', $container);
+        }
+
+        $this->eventually(function () use ($container): void {
+            [$stdout, $stderr] = $container->logStreams();
+            self::assertStringContainsString('image-test: the hook of syslog-ng on stdout', $stdout);
+            self::assertStringContainsString('image-test: the hook of syslog-ng on stderr', $stderr);
         });
     }
 

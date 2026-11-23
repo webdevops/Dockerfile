@@ -152,7 +152,7 @@ The services write their logs to the container log, which `docker compose logs` 
 | --- | --- |
 | `nginx`, `apache` | Access log to `/docker.stdout`, error log to `/docker.stderr`, also of the virtual host for port 443 |
 | `php-fpm` | Access log to `/docker.stdout`; its own messages, the errors of the PHP scripts and the [slow log](known-issues.md#slow-log-of-php-fpm) to `/docker.stderr` |
-| `cron` | Its own messages to syslog. For the output of the jobs, see [Cron jobs](#cron-jobs). |
+| `cron` | Its own messages to syslog |
 | `postfix`, `dnsmasq` | To syslog |
 | `syslog` | syslog-ng writes the messages of syslog to `/docker.stdout`, with `[SYSLOG]` in front. It drops those of the facilities `auth` and `authpriv`, for example of `su`. What a service sends before syslog-ng listens, in about the first second after the start, is lost, for example the start messages of cron. |
 | `ssh`, `blackfire-agent` | To their stderr |
@@ -175,11 +175,6 @@ In the Debian- and Ubuntu-based images, `docker-cronjob` adds the lines to `/etc
 Cron in Debian and Ubuntu runs jobs with `PATH=/usr/bin:/bin`, which does not contain `/usr/local/bin`, so use absolute paths such as `/usr/local/bin/php`. Absolute paths work in Alpine too, whose `crond` passes on the `PATH` of the container.
 
 In `base` and `base-app`, cron does not run by default; also run `docker-service enable syslog cron`, see [Services](#services) and [Logs](#logs).
-
-The output of a job, stdout and stderr, goes to the container log, or to the files of `LOG_STDOUT` and `LOG_STDERR`:
-
-- In Alpine, BusyBox `crond` passes it on: stdout to the stdout of the container, stderr to its stderr.
-- Cron in Debian and Ubuntu would mail it, and discard it where no mail server is installed. So `docker-cronjob` begins `/etc/cron.d/webdevops-docker` with `SHELL=/usr/local/bin/docker-cronjob-shell`: cron runs each job with this script, which runs the command with `/bin/sh` and sends both outputs to syslog, a message per line and per 1 KiB of a longer line. They reach the stdout of the container as `[SYSLOG] cron-job[<process id>]: <line>`; the exit code stays that of the command. For a crontab file of your own, for example in `/etc/cron.d`, put the same `SHELL` line at its top; otherwise cron mails the output, see [Known issues](known-issues.md#output-of-cron-jobs-in-crontab-files-of-your-own).
 
 ### Time zone
 
