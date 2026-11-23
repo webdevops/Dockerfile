@@ -111,6 +111,7 @@ trait ContainerEnvironmentChecks
         if (!in_array('cron', self::services(), true)) {
             self::markTestSkipped(self::NO_CRON);
         }
+
         if (self::image()->isAlpine()) {
             self::markTestSkipped('BusyBox crond passes the output of a job on itself.');
         }
