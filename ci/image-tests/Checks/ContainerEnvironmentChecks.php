@@ -99,6 +99,31 @@ trait ContainerEnvironmentChecks
     }
 
     /**
+     * Without LOG_STDOUT, in the container of the class, /docker.stdout is the stdout of the container, a pipe of the
+     * container runtime like /docker.stderr. syslog-ng writes to it but keeps its owner and mode: on gVisor before
+     * release-20261005.0, as on DigitalOcean App Platform, fchmod() on it drops its file type, and no service can open
+     * it afterwards (google/gvisor@3cf8bfde6). Only in the images that start syslog-ng.
+     */
+    public function testSyslogKeepsTheOwnerAndModeOfTheContainerStdout(): void
+    {
+        if (!in_array('syslog', self::services(), true)) {
+            self::markTestSkipped('The image does not start syslog-ng.');
+        }
+
+        $container = self::container();
+        // once its message is in the container log, syslog-ng has opened /docker.stdout
+        $this->eventually(function () use ($container): void {
+            $this->assertCommandSucceeds('logger -t image-test stdout-marker', $container);
+            self::assertStringContainsString('image-test: stdout-marker', $container->logStreams()[0]);
+        });
+        self::assertSame(
+            $this->stdout("stat -L -c '%f %U:%G' /docker.stderr", $container),
+            $this->stdout("stat -L -c '%f %U:%G' /docker.stdout", $container),
+            'The stdout of the container should keep the type, mode and owner that it has like its stderr.',
+        );
+    }
+
+    /**
      * /docker.stdout and /docker.stderr, where the services of the image write their logs, point to the files of
      * LOG_STDOUT and LOG_STDERR.
      */
