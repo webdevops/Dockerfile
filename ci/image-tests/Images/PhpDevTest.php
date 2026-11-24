@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Webdevops\Build\ImageTests\Images;
 
+use Webdevops\Build\ImageTests\Checks\AdditionalServicesChecks;
 use Webdevops\Build\ImageTests\Checks\BaseAppChecks;
 use Webdevops\Build\ImageTests\Checks\BaseChecks;
 use Webdevops\Build\ImageTests\Checks\BootstrapChecks;
@@ -41,6 +42,7 @@ final class PhpDevTest extends ImageTestCase
     use PhpFpmEnvironmentChecks;
     use PhpDevelopmentEnvironmentChecks;
     use PostfixChecks;
+    use AdditionalServicesChecks;
 
     protected const array SERVICES = ['cron', 'php-fpm', 'postfix', 'ssh', 'syslog'];
 }

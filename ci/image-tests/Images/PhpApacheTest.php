@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Webdevops\Build\ImageTests\Images;
 
+use Webdevops\Build\ImageTests\Checks\AdditionalServicesChecks;
 use Webdevops\Build\ImageTests\Checks\ApacheChecks;
 use Webdevops\Build\ImageTests\Checks\ApacheEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\BaseAppChecks;
@@ -45,6 +46,7 @@ final class PhpApacheTest extends ImageTestCase
     use WebEnvironmentChecks;
     use ApacheEnvironmentChecks;
     use PhpWebEnvironmentChecks;
+    use AdditionalServicesChecks;
 
     protected const array SERVICES = ['apache', 'cron', 'php-fpm', 'syslog'];
 }

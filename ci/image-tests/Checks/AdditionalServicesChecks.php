@@ -11,8 +11,9 @@ use function array_diff;
 use function array_values;
 
 /**
- * docker-service installs, enables and starts the services that the image does not run by default. It does so in a
- * container of its own, so that the container of the class keeps the services of the image.
+ * docker-service installs, enables and starts the services that the image does not run by default, in every image, so
+ * that a Dockerfile with e.g. docker-service enable ssh builds on each of them (webdevops/Dockerfile#671). It does so in
+ * a container of its own, so that the container of the class keeps the services of the image.
  *
  * @phpstan-require-extends ImageTestCase
  */
