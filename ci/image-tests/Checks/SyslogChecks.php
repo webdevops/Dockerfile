@@ -39,9 +39,9 @@ trait SyslogChecks
 
     /**
      * The files of LOG_STDOUT and LOG_STDERR, which do not exist when the environment container starts, are created as
-     * root:adm 0640 before the services start, whichever service writes to them first.
+     * root:root 0644 before the services start, whichever service writes to them first.
      */
-    public function testLogFilesFromTheEnvironmentAreCreatedAsRootAdm0640(): void
+    public function testLogFilesFromTheEnvironmentAreCreatedAsRootRoot0644(): void
     {
         $container = $this->environmentContainer();
         // once syslog-ng wrote to it, every service that writes there has opened the file
@@ -49,7 +49,24 @@ trait SyslogChecks
             $this->assertCommandSucceeds('logger -t image-test log-file-marker', $container);
             self::assertStringContainsString('image-test: log-file-marker', $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container));
         });
-        self::assertSame("640 root:adm\n", $this->stdout(self::OWNER_AND_MODE . static::ENVIRONMENT['LOG_STDOUT'], $container));
-        self::assertSame("640 root:adm\n", $this->stdout(self::OWNER_AND_MODE . static::ENVIRONMENT['LOG_STDERR'], $container));
+        self::assertSame("644 root:root\n", $this->stdout(self::OWNER_AND_MODE . static::ENVIRONMENT['LOG_STDOUT'], $container));
+        self::assertSame("644 root:root\n", $this->stdout(self::OWNER_AND_MODE . static::ENVIRONMENT['LOG_STDERR'], $container));
+    }
+
+    /**
+     * When the file of LOG_STDOUT cannot be created, here in /proc, the container starts all the same and the log names
+     * the file; the entrypoint, which stops at an error, must not stop at it.
+     */
+    public function testContainerStartsWhenTheFileOfLogStdoutCannotBeCreated(): void
+    {
+        $file = '/proc/image-test-stdout.log';
+        $container = $this->startTestContainer('log-file-not-created', ['LOG_STDOUT' => $file]);
+        $this->eventually(function () use ($container, $file): void {
+            self::assertStringContainsString('Cannot create ' . $file . ' for LOG_STDOUT or LOG_STDERR', $container->logs());
+        });
+        // cron, which does not write to LOG_STDOUT when it starts, runs
+        $this->eventually(function () use ($container): void {
+            self::assertStringContainsString('RUNNING', $this->stdout('supervisorctl status cron:crond', $container));
+        });
     }
 }
