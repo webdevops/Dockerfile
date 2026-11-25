@@ -35,8 +35,8 @@ Images: `php-*`.
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `CLI_SCRIPT` | not set | Command the `cli` entrypoint runs as `APPLICATION_USER`. See [Customization](customization.md#commands). |
-| `LOG_STDOUT` | container stdout | File that `/docker.stdout` points to. Nginx, Apache and PHP-FPM write their access logs there, syslog-ng the messages of the services, for example of cron and Postfix. |
-| `LOG_STDERR` | container stderr | File that `/docker.stderr` points to. Nginx and Apache write their error logs there, PHP-FPM its own messages and the errors of the PHP scripts it runs. `php.error_log` gives the PHP errors of PHP-FPM and the PHP CLI a file of their own instead, in a directory that `application` may write to, for example `/app`. |
+| `LOG_STDOUT` | container stdout | File that `/docker.stdout` points to. Nginx, Apache and PHP-FPM write their access logs there, syslog-ng the messages of the services, for example of cron and Postfix. A file that does not exist yet is created as `root:root` with mode `0644` at the start of the container; a file that exists keeps its owner and mode. If it cannot be created, for example in a read-only directory, the container starts all the same, and the log says so. |
+| `LOG_STDERR` | container stderr | File that `/docker.stderr` points to. Nginx and Apache write their error logs there, PHP-FPM its own messages and the errors of the PHP scripts it runs. `php.error_log` gives the PHP errors of PHP-FPM and the PHP CLI a file of their own instead, in a directory that `application` may write to, for example `/app`. A new file is created as for `LOG_STDOUT`. |
 | `TZ` | not set (UTC) | Time zone of the container, for example `Europe/Berlin`. It applies to `date`, cron and the time stamps supervisord writes to the container log. PHP uses `PHP_DATE_TIMEZONE` instead, see [Time zone](customization.md#time-zone). |
 
 ## Web server

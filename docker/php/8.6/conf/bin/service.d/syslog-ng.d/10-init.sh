@@ -6,5 +6,5 @@ if [ ! -S /var/lib/syslog-ng/syslog-ng.ctl ]; then rm -f /var/lib/syslog-ng/sysl
 
 if [[ ! -p /docker.stdout ]]; then
     # Switch to file (tty docker mode)
-    go-replace -s 'pipe("/docker.stdout")' -r 'file("/docker.stdout")' -- /opt/docker/etc/syslog-ng/syslog-ng.conf
+    go-replace -s 'pipe("/docker.stdout"' -r 'file("/docker.stdout"' -- /opt/docker/etc/syslog-ng/syslog-ng.conf
 fi
