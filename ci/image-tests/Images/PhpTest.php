@@ -18,6 +18,7 @@ use Webdevops\Build\ImageTests\Checks\PhpFpmEnvironmentChecks;
 use Webdevops\Build\ImageTests\Checks\PhpFpmPublicChecks;
 use Webdevops\Build\ImageTests\Checks\PhpProductionChecks;
 use Webdevops\Build\ImageTests\Checks\ServiceChecks;
+use Webdevops\Build\ImageTests\Checks\SyslogChecks;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 /**
@@ -38,6 +39,7 @@ final class PhpTest extends ImageTestCase
     use PhpEnvironmentChecks;
     use PhpFpmEnvironmentChecks;
     use AdditionalServicesChecks;
+    use SyslogChecks;
     use DnsmasqEnvironmentChecks;
 
     protected const array SERVICES = ['cron', 'php-fpm', 'syslog'];
