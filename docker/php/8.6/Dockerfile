@@ -200,7 +200,9 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
         open-telemetry/ext-opentelemetry \
         "php-memcached/php-memcached:dev-master" \
         "pecl/yaml:dev-php7" \
-        "phpredis/phpredis:dev-develop" \
+        # TODO PHP 8.6: phpredis 6.4.0RC1 is the first release with the PHP 8.6 fixes; switch
+        # to phpredis/phpredis once a stable 6.4 is out
+        "phpredis/phpredis:6.4.0RC1" \
         mongodb/mongodb-extension \
     && rm -rf /tmp/pie \
     && PROTOBUF_RELEASE_URL="$(curl -fsSLI --proto '=https' --proto-redir '=https' --retry 3 -o /dev/null -w '%{url_effective}' https://github.com/protocolbuffers/protobuf/releases/latest)" \

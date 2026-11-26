@@ -147,7 +147,7 @@ The `8.6` and `8.6-alpine` tags are built on PHP 8.6. Compared with PHP 8.5:
 - **No ionCube Loader:** The PHP 8.6 images and later do not contain the ionCube Loader, also once ionCube supports these PHP versions. Its loader for thread-safe PHP does not load in the official images, which are built without Zend signals; applications that need ionCube stay on PHP 8.5.
 - **Healthcheck:** The `8.6` tags run `docker-healthcheck` as their `HEALTHCHECK`, so Docker reports a container as `unhealthy` when a service such as PHP-FPM or Postfix failed, see [Healthcheck](../customization.md#healthcheck).
 - **Development images:** Xdebug is a 3.6 pre-release.
-- **Unreleased extension versions:** `apcu`, `excimer`, `memcached`, `redis` and `yaml` have no release that supports PHP 8.6 yet and are built from their development branches; `amqp` and `protobuf` are built with fixes that are not released yet.
+- **Unreleased extension versions:** `apcu`, `excimer`, `memcached` and `yaml` have no release that supports PHP 8.6 yet and are built from their development branches; `redis` is the release candidate 6.4.0RC1, its first release that supports PHP 8.6; `amqp` and `protobuf` are built with fixes that are not released yet.
 
 ```yaml
 services:
