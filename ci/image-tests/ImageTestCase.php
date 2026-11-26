@@ -677,6 +677,28 @@ abstract class ImageTestCase extends TestCase
     }
 
     /**
+     * Without LOG_STDOUT and LOG_STDERR, a web server writes its access log to the stdout of the container and its
+     * errors to the stderr: a file of /app that it may not read gets 403, the request line on stdout only and the
+     * error, matched by $errorPattern with the name of the file, on stderr only.
+     */
+    protected function assertForbiddenRequestLogsToTheContainerLog(string $errorPattern): void
+    {
+        $container = self::container();
+        $file = '/app/image-test-forbidden-' . bin2hex(random_bytes(4)) . '.html';
+        $this->assertCommandSucceeds('touch ' . $file . ' && chmod 000 ' . $file, $container);
+        self::assertSame('403', $this->statusCode('http://localhost' . substr($file, 4), container: $container));
+        $request = '#"GET ' . preg_quote(substr($file, 4), '#') . ' HTTP/1\.1" 403 #';
+        $error = sprintf($errorPattern, preg_quote(basename($file), '#'));
+        $this->eventually(function () use ($container, $request, $error): void {
+            [$stdout, $stderr] = $container->logStreams();
+            self::assertMatchesRegularExpression($request, $stdout);
+            self::assertMatchesRegularExpression($error, $stderr);
+            self::assertDoesNotMatchRegularExpression($request, $stderr);
+            self::assertDoesNotMatchRegularExpression($error, $stdout);
+        });
+    }
+
+    /**
      * The HTTP status code of a request for $url with curl in the container of the class, or in $container, e.g. "404".
      * The request is not retried. $bodyCommand is a shell command whose output goes to the stdin of curl, e.g. for
      * --data-binary @- in $curlOptions.
