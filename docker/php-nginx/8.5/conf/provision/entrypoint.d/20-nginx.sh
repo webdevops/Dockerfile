@@ -28,3 +28,22 @@ fi
 if [[ ! -e /proc/net/if_inet6 ]]; then
     rm -f -- /opt/docker/etc/nginx/vhost.ipv6/*.conf || true
 fi
+
+# SERVICE_NGINX_ACCESS_LOG and SERVICE_NGINX_ERROR_LOG: the access log and the error log of Nginx, which the image sends
+# to /docker.stdout and /docker.stderr, go to these files instead, for example /dev/null to turn a log off. Only the
+# lines that still point to /docker.stdout or /docker.stderr change, so a log of your own stays where you put it.
+if [[ -n "${SERVICE_NGINX_ACCESS_LOG:-}" ]]; then
+    for NGINX_CONF_PATH in /opt/docker/etc/nginx/ /etc/nginx/; do
+        go-replace --mode=line --regex --regex-backrefs \
+            -s '^([ \t]*access_log[ \t]+)/docker\.stdout([ \t;].*)$' -r "\${1}${SERVICE_NGINX_ACCESS_LOG}\${2}" \
+            --path="$NGINX_CONF_PATH" --path-pattern='*.conf'
+    done
+fi
+
+if [[ -n "${SERVICE_NGINX_ERROR_LOG:-}" ]]; then
+    for NGINX_CONF_PATH in /opt/docker/etc/nginx/ /etc/nginx/; do
+        go-replace --mode=line --regex --regex-backrefs \
+            -s '^([ \t]*error_log[ \t]+)/docker\.stderr([ \t;].*)$' -r "\${1}${SERVICE_NGINX_ERROR_LOG}\${2}" \
+            --path="$NGINX_CONF_PATH" --path-pattern='*.conf'
+    done
+fi

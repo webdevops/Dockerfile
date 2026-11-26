@@ -76,6 +76,24 @@ if [[ -n "${FPM_RLIMIT_CORE+x}" ]]; then
     echo "rlimit_core = ${FPM_RLIMIT_CORE}" >> "$FPM_POOL_ENVIRONMENT_CONF"
 fi
 
+# SERVICE_PHPFPM_ACCESS_LOG and SERVICE_PHPFPM_ERROR_LOG: the access log of PHP-FPM, and its own messages, its slow log
+# and the errors of the PHP scripts it runs, which the image sends to /docker.stdout and /docker.stderr, go to these
+# files instead, for example /dev/null to turn a log off. zz-environment.conf comes after docker.conf of the official
+# image, so its error_log in [global] wins; php_admin_value[error_log] takes the first line, the one of
+# application.conf, so that changes there, where it still points to /docker.stderr. php.error_log below wins over it.
+if [[ -n "${SERVICE_PHPFPM_ACCESS_LOG:-}" ]]; then
+    echo "access.log = ${SERVICE_PHPFPM_ACCESS_LOG}" >> "$FPM_POOL_ENVIRONMENT_CONF"
+fi
+
+if [[ -n "${SERVICE_PHPFPM_ERROR_LOG:-}" ]]; then
+    echo "slowlog = ${SERVICE_PHPFPM_ERROR_LOG}" >> "$FPM_POOL_ENVIRONMENT_CONF"
+    printf '[global]\nerror_log = %s\n' "$SERVICE_PHPFPM_ERROR_LOG" >> "$FPM_POOL_ENVIRONMENT_CONF"
+    echo '[www]' >> "$FPM_POOL_ENVIRONMENT_CONF"
+    go-replace --mode=line --regex --regex-backrefs \
+        -s '^([\s]*php_admin_value\[error_log\][\s]*=[\s]*)/docker\.stderr[\s]*$' -r "\${1}${SERVICE_PHPFPM_ERROR_LOG}" \
+        -- /opt/docker/etc/php/fpm/pool.d/application.conf
+fi
+
 # The pool logs the errors of PHP scripts to /docker.stderr with php_admin_value, which a php.ini value cannot override,
 # so php.error_log replaces it here. PHP-FPM takes the first of two php_admin_value lines, so a line in
 # zz-environment.conf would not take effect.

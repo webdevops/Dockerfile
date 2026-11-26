@@ -71,4 +71,55 @@ trait NginxEnvironmentChecks
         });
         self::assertDoesNotMatchRegularExpression($exited, $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container));
     }
+
+    /**
+     * SERVICE_NGINX_ACCESS_LOG and SERVICE_NGINX_ERROR_LOG, in a container of its own: Nginx writes its access log and
+     * its errors, also those of its main error log, to these files, created as root:root 0644, and no longer to the
+     * container log. A file it may not read gets 403 and an error; a worker process ended on SIGKILL an alert.
+     */
+    public function testNginxLogsToTheFilesOfItsLogVariables(): void
+    {
+        $access = '/tmp/image-test-nginx-access.log';
+        $error = '/tmp/image-test-nginx-error.log';
+        $container = $this->startTestContainer('nginx-log-files', ['SERVICE_NGINX_ACCESS_LOG' => $access, 'SERVICE_NGINX_ERROR_LOG' => $error]);
+        // wait for the web server: / of the empty /app may answer 403
+        $this->eventually(function () use ($container): void {
+            self::assertNotSame('000', $this->statusCode('http://localhost/', container: $container));
+        });
+        $this->assertCommandSucceeds('touch /app/image-test-forbidden.html && chmod 000 /app/image-test-forbidden.html', $container);
+        self::assertSame('403', $this->statusCode('http://localhost/image-test-forbidden.html', container: $container));
+        $this->assertCommandSucceeds(
+            'for process in /proc/[0-9]*; do if tr "\\000" " " < $process/cmdline 2>/dev/null | grep -q "^nginx: worker process"; then kill -9 ${process#/proc/}; break; fi; done',
+            $container,
+        );
+        $this->eventually(function () use ($container, $access, $error): void {
+            self::assertMatchesRegularExpression('#"GET /image-test-forbidden\.html HTTP/1\.1" 403 #', $this->stdout('cat ' . $access, $container));
+            $errors = $this->stdout('cat ' . $error, $container);
+            self::assertMatchesRegularExpression('#\[error\] .*image-test-forbidden\.html" failed \(13: Permission denied\)#', $errors);
+            self::assertMatchesRegularExpression('#\[alert\] .*worker process \d+ exited on signal 9#', $errors);
+        });
+        self::assertSame("644 root:root\n644 root:root\n", $this->stdout("stat -c '%a %U:%G' " . $access . ' ' . $error, $container));
+        $log = $container->logs();
+        self::assertStringNotContainsString('image-test-forbidden.html', $log);
+        self::assertStringNotContainsString('exited on signal 9', $log);
+    }
+
+    /**
+     * SERVICE_NGINX_ACCESS_LOG=/dev/null turns the access log of Nginx off; its errors stay in the container log.
+     */
+    public function testNginxAccessLogGoesNowhereWithDevNull(): void
+    {
+        $container = $this->startTestContainer('nginx-log-dev-null', ['SERVICE_NGINX_ACCESS_LOG' => '/dev/null']);
+        // wait for the web server: / of the empty /app may answer 403
+        $this->eventually(function () use ($container): void {
+            self::assertNotSame('000', $this->statusCode('http://localhost/', container: $container));
+        });
+        $this->assertCommandSucceeds('touch /app/image-test-forbidden.html && chmod 000 /app/image-test-forbidden.html', $container);
+        self::assertSame('403', $this->statusCode('http://localhost/image-test-forbidden.html', container: $container));
+        $this->eventually(function () use ($container): void {
+            self::assertMatchesRegularExpression('#\[error\] .*image-test-forbidden\.html" failed#', $container->logStreams()[1]);
+        });
+        // the error line names the request too, so look for the line of the access log with its status
+        self::assertStringNotContainsString('"GET /image-test-forbidden.html HTTP/1.1" 403', $container->logs());
+    }
 }
