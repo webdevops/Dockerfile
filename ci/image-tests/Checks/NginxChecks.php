@@ -181,7 +181,10 @@ trait NginxChecks
     public function testNginxMainErrorLogToTheContainerStderrByDefault(): void
     {
         $container = self::container();
-        $this->request('http://localhost/', container: $container);
+        // wait for Nginx: / of the empty /app answers 403
+        $this->eventually(function () use ($container): void {
+            self::assertNotSame('000', $this->statusCode('http://localhost/', container: $container));
+        });
         $this->assertCommandSucceeds(
             'for process in /proc/[0-9]*; do if tr "\\000" " " < $process/cmdline 2>/dev/null | grep -q "^nginx: worker process"; then kill -9 ${process#/proc/}; break; fi; done',
             $container,
