@@ -119,6 +119,7 @@ trait NginxEnvironmentChecks
         $this->eventually(function () use ($container): void {
             self::assertMatchesRegularExpression('#\[error\] .*image-test-forbidden\.html" failed#', $container->logStreams()[1]);
         });
-        self::assertStringNotContainsString('"GET /image-test-forbidden.html', $container->logs());
+        // the error line names the request too, so look for the line of the access log with its status
+        self::assertStringNotContainsString('"GET /image-test-forbidden.html HTTP/1.1" 403', $container->logs());
     }
 }
