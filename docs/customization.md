@@ -171,6 +171,8 @@ The lines carry no name of the service; they tell by their format where they com
 
 Without `syslog`, for example after `docker-service disable syslog`, the messages of `cron`, `postfix` and `dnsmasq` are lost.
 
+To send one log of one service to a file instead, or to turn it off with `/dev/null`, for example the access log of Nginx, use the [log variables of the services](environment-variables.md#logs-of-the-services), such as `SERVICE_NGINX_ACCESS_LOG`; the image does not rotate these files either.
+
 `LOG_STDOUT` and `LOG_STDERR` point `/docker.stdout` and `/docker.stderr` to files instead, see [Container](environment-variables.md#container). Avoid them: each moves a whole stream of all services into one file, which `docker compose logs` does not show, and which grows until something outside the container rotates it; the image does not rotate it.
 
 ## Cron jobs

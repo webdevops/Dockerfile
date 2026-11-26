@@ -35,9 +35,37 @@ Images: `php-*`.
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `CLI_SCRIPT` | not set | Command the `cli` entrypoint runs as `APPLICATION_USER`. See [Customization](customization.md#commands). |
-| `LOG_STDOUT` | container stdout | Not recommended: file that `/docker.stdout` points to, instead of the stdout of the container. All services write there what goes to stdout: Nginx, Apache and PHP-FPM their access logs, syslog-ng the messages of the services up to the level `warning`, for example of cron and Postfix, and supervisord what the services print to their stdout, for example in Alpine the output of cron jobs. `docker compose logs` no longer shows it, and the image does not rotate the file. The messages of supervisord itself, for example `spawned: 'nginxd'`, stay in the container log. A file that does not exist yet is created as `root:root` with mode `0644` at the start of the container; a file that exists keeps its owner and mode. If it cannot be created, for example in a read-only directory, the container starts all the same, and the log says so. See [Logs](customization.md#logs). |
+| `LOG_STDOUT` | container stdout | Not recommended, use the [log variables of the services](#logs-of-the-services) instead: file that `/docker.stdout` points to, instead of the stdout of the container. All services write there what goes to stdout: Nginx, Apache and PHP-FPM their access logs, syslog-ng the messages of the services up to the level `warning`, for example of cron and Postfix, and supervisord what the services print to their stdout, for example in Alpine the output of cron jobs. `docker compose logs` no longer shows it, and the image does not rotate the file. The messages of supervisord itself, for example `spawned: 'nginxd'`, stay in the container log. A file that does not exist yet is created as `root:root` with mode `0644` at the start of the container; a file that exists keeps its owner and mode. If it cannot be created, for example in a read-only directory, the container starts all the same, and the log says so. See [Logs](customization.md#logs). |
 | `LOG_STDERR` | container stderr | Not recommended, as `LOG_STDOUT`: file that `/docker.stderr` points to. Nginx and Apache write their error logs there, PHP-FPM its own messages and the errors of the PHP scripts it runs, syslog-ng the messages of the services from the level `err`, and supervisord what the services print to their stderr, for example the messages of sshd and of the Blackfire agent. `php.error_log` gives the PHP errors of PHP-FPM and the PHP CLI a file of their own instead, in a directory that `application` may write to, for example `/app`. A new file is created as for `LOG_STDOUT`. |
 | `TZ` | not set (UTC) | Time zone of the container, for example `Europe/Berlin`. It applies to `date`, cron and the time stamps supervisord writes to the container log. PHP uses `PHP_DATE_TIMEZONE` instead, see [Time zone](customization.md#time-zone). |
+
+## Logs of the services
+
+Images: `php-*`; the variables of Nginx and Apache only in the images with that web server.
+
+Each variable sends one log of one service to a file instead of the container log, for example `/var/log/app/nginx-access.log`; `/dev/null` turns the log off. Not set, the log stays in the container log, see [Logs](customization.md#logs). The container log is the way the images are meant to be used: `docker compose logs` does not show these files, and the image does not rotate them, so they grow until something outside the container rotates them. Do not turn off the error logs, or errors go unnoticed.
+
+A file that does not exist yet is created as `root:root` with mode `0644` at the start of the container, if its directory exists; a file that exists, such as `/dev/null`, keeps its owner and mode. If it cannot be created, for example in a read-only directory, the container starts all the same, and the log says so. A variable wins over `LOG_STDOUT` and `LOG_STDERR` for its log.
+
+| Variable | Default | Log |
+| --- | --- | --- |
+| `SERVICE_NGINX_ACCESS_LOG` | not set (`/docker.stdout`) | Access log of Nginx (`access_log`) |
+| `SERVICE_NGINX_ERROR_LOG` | not set (`/docker.stderr`) | Error log of Nginx (`error_log`), of the virtual hosts and of Nginx itself |
+| `SERVICE_APACHE_ACCESS_LOG` | not set (`/docker.stdout`) | Access log of Apache (`CustomLog`, `TransferLog`) |
+| `SERVICE_APACHE_ERROR_LOG` | not set (`/docker.stderr`) | Error log of Apache (`ErrorLog`) |
+| `SERVICE_PHPFPM_ACCESS_LOG` | not set (`/docker.stdout`) | Access log of PHP-FPM (`access.log`) |
+| `SERVICE_PHPFPM_ERROR_LOG` | not set (`/docker.stderr`) | Messages of PHP-FPM itself (`error_log`), its [slow log](known-issues.md#slow-log-of-php-fpm) (`slowlog`) and the errors of the PHP scripts it runs (`php_admin_value[error_log]`); `php.error_log` wins over it for the errors of the PHP scripts |
+| `SERVICE_SYSLOG_LOG` | not set (`/docker.stdout`) | Messages of syslog up to the level `warning`, for example of cron, Postfix and dnsmasq |
+| `SERVICE_SYSLOG_ERROR_LOG` | not set (`/docker.stderr`) | Messages of syslog from the level `err` |
+
+```yaml
+services:
+  app:
+    image: webdevops/php-nginx:8.5
+    environment:
+      SERVICE_NGINX_ACCESS_LOG: /dev/null
+      SERVICE_PHPFPM_ACCESS_LOG: /dev/null
+```
 
 ## Web server
 

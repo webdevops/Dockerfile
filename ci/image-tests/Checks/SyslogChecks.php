@@ -71,7 +71,7 @@ trait SyslogChecks
         $file = '/proc/image-test-stdout.log';
         $container = $this->startTestContainer('log-file-not-created', ['LOG_STDOUT' => $file]);
         $this->eventually(function () use ($container, $file): void {
-            self::assertStringContainsString('Cannot create ' . $file . ' for LOG_STDOUT or LOG_STDERR', $container->logs());
+            self::assertStringContainsString('Cannot create ' . $file . ' for LOG_STDOUT', $container->logs());
         });
         // cron, which does not write to LOG_STDOUT when it starts, runs
         $this->eventually(function () use ($container): void {
