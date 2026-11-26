@@ -24,9 +24,25 @@ These options and tools are part of the images but do not work, or work only in 
 
 ### Output and variables of cron jobs in crontab files of your own
 
-- **Effect:** Cron in Debian mails the output of a job. Where no mail server runs, it discards it and logs `(CRON) info (No MTA installed, discarding output)`; where Postfix runs, as in the `-dev` images, the output lands in the mailbox of the user, for example `/var/mail/application`. It also passes none of the variables of the container on: a job gets only `HOME`, `LOGNAME`, `SHELL` and `PATH=/usr/bin:/bin`. Only the jobs of `docker-cronjob` and of the `CRONJOB_<NAME>` variables send their output to the container log and get the variables of the container, see [Cron jobs](customization.md#cron-jobs).
+- **Effect:** Cron in Debian mails the output of a job. Where no mail server runs, it discards it and logs `(CRON) info (No MTA installed, discarding output)`; where Postfix runs, as in the `-dev` images, the output lands in the mailbox of the user, for example `/var/mail/application`. It also passes none of the variables of the container on: a job gets only `HOME`, `LOGNAME`, `SHELL` and `PATH=/usr/bin:/bin`. Only the jobs of `docker-cronjob` and of the `CRONJOB_<NAME>` variables send their output to the container log and get the variables of the container, see [Cron jobs](customization.md#cron-jobs). In Alpine, BusyBox `crond` passes the output of the jobs of your own crontab files on, untagged.
 - **Images:** the Debian images: `php-*` without `-alpine`.
 - **Instead:** Add the jobs with `CRONJOB_<NAME>` variables or `docker-cronjob`, or put `SHELL=/usr/local/bin/docker-cronjob-shell` at the top of your crontab file in `/etc/cron.d`. Its jobs then get the variables of the container from the next start of cron on, for example after `docker compose restart`.
+
+### Slow log of PHP-FPM
+
+- **Effect:** With `fpm.pool.request_slowlog_timeout`, for example `5s`, PHP-FPM logs that a request is slow, but not where it is: Docker does not give a container the capability `SYS_PTRACE`, which PHP-FPM needs for the backtrace. The log shows `ERROR: failed to ptrace(ATTACH) child …: Operation not permitted (1)` instead.
+- **Images:** `php-*`.
+- **Instead:** Add the capability to the container:
+
+  ```yaml
+  services:
+    app:
+      image: webdevops/php-nginx:8.5
+      cap_add:
+        - SYS_PTRACE
+      environment:
+        fpm.pool.request_slowlog_timeout: 5s
+  ```
 
 ### Composer 1 on PHP 8.4 to 8.6
 

@@ -34,8 +34,8 @@ ENVIRONMENT_END='# webdevops environment end'
 # Debian: the crontab of the jobs of docker-cronjob, and the shell of the crontabs of docker-cronjob and of
 # the CRONJOB_* variables, docker-cronjob-shell: it adds the variables of the container from the file of the user of the
 # job in JOB_ENVIRONMENT_DIRECTORY, which the start script of cron writes with --job-environment, and sends the output of
-# the job to syslog-ng. BusyBox crond on Alpine passes its own variables on, which are those of the container, and the
-# output of the jobs.
+# the job to syslog-ng. BusyBox crond on Alpine passes its own variables on, which are those of the container; its jobs
+# of docker-cronjob and of the CRONJOB_* variables run with docker-cronjob-shell as well, for their output.
 DOCKER_CRONTAB=/etc/cron.d/webdevops-docker
 CRON_SHELL=/usr/local/bin/docker-cronjob-shell
 JOB_ENVIRONMENT_DIRECTORY=/run/docker-cronjob
@@ -245,6 +245,8 @@ function writeEnvironmentJobs() {
 
             {
                 echo "$ENVIRONMENT_BEGIN"
+                # their shell sends their output to the container log, as for the jobs of docker-cronjob
+                echo "SHELL=${CRON_SHELL}"
                 for index in "${!names[@]}"; do
                     if [[ "${users[index]}" == "$user" ]]; then
                         echo "# ${names[index]}"
@@ -307,8 +309,15 @@ if [[ "$IMAGE_FAMILY" == "Alpine" ]]; then
     # BusyBox crond reads no /etc/cron.d, but one crontab per user in /etc/crontabs, without the user column
     for JOB_LINE in "$@"; do
         parseJob "$JOB_LINE" ""
-        echo "${JOB_TIME} ${JOB_COMMAND}" >> "/etc/crontabs/${JOB_USER}"
-        chmod 0600 "/etc/crontabs/${JOB_USER}"
+        crontab="/etc/crontabs/${JOB_USER}"
+        # BusyBox crond passes the output of a job on untagged: the jobs below a SHELL line of docker-cronjob-shell run
+        # with it instead, as in Debian; the lines above it, such as those of Alpine in the crontab of root, keep
+        # /bin/sh. The SHELL line in the block of the CRONJOB_* variables does not count, it goes with the block.
+        if [[ "$(awk -v begin="$ENVIRONMENT_BEGIN" -v end="$ENVIRONMENT_END" '$0 == begin { skip = 1 } !skip && /^SHELL=/ { shell = $0 } $0 == end { skip = 0 } END { print shell }' "$crontab" 2> /dev/null)" != "SHELL=${CRON_SHELL}" ]]; then
+            echo "SHELL=${CRON_SHELL}" >> "$crontab"
+        fi
+        echo "${JOB_TIME} ${JOB_COMMAND}" >> "$crontab"
+        chmod 0600 "$crontab"
     done
 
     exit 0

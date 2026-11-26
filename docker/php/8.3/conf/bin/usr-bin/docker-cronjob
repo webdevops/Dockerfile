@@ -305,10 +305,34 @@ fi
 
 if [[ "$IMAGE_FAMILY" == "Alpine" ]]; then
     # BusyBox crond reads no /etc/cron.d, but one crontab per user in /etc/crontabs, without the user column
+<<<<<<< HEAD
     for JOB_LINE in "$@"; do
         parseJob "$JOB_LINE" ""
         echo "${JOB_TIME} ${JOB_COMMAND}" >> "/etc/crontabs/${JOB_USER}"
         chmod 0600 "/etc/crontabs/${JOB_USER}"
+=======
+    for CRONJOB_LINE in "$@"; do
+        # time (five fields or one such as @daily), user, command
+        if [[ ! "$CRONJOB_LINE" =~ ^[[:space:]]*(@[[:alpha:]]+|[^@#[:space:]]+([[:space:]]+[^[:space:]]+){4})[[:space:]]+([^[:space:]]+)[[:space:]]+([^[:space:]].*)$ ]]; then
+            echo "[ERROR] Not a cron job line with the time, the user and the command: $CRONJOB_LINE"
+            exit 1
+        fi
+
+        CRONJOB_USER="${BASH_REMATCH[3]}"
+        if ! id -u "$CRONJOB_USER" > /dev/null 2>&1; then
+            echo "[ERROR] User '${CRONJOB_USER}' does not exist: $CRONJOB_LINE"
+            exit 1
+        fi
+
+        # BusyBox crond passes the output of a job on untagged: the jobs below this SHELL line run with
+        # docker-cronjob-shell instead, as in Debian; the lines above it, such as those of Alpine in the crontab of
+        # root, keep /bin/sh
+        if ! grep -qx 'SHELL=/usr/local/bin/docker-cronjob-shell' "/etc/crontabs/${CRONJOB_USER}" 2> /dev/null; then
+            echo 'SHELL=/usr/local/bin/docker-cronjob-shell' >> "/etc/crontabs/${CRONJOB_USER}"
+        fi
+        echo "${BASH_REMATCH[1]} ${BASH_REMATCH[4]}" >> "/etc/crontabs/${CRONJOB_USER}"
+        chmod 0600 "/etc/crontabs/${CRONJOB_USER}"
+>>>>>>> origin/bugfix/cron-job-output
     done
 
     exit 0

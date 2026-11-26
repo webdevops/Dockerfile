@@ -145,6 +145,36 @@ Before a service starts, its start script sources every `*.sh` file in `/opt/doc
 
 Options for each service are set with environment variables, see [Services](environment-variables.md#services).
 
+### Logs
+
+All services write their logs to the container log, which `docker compose logs` shows, mixed in two streams: access logs and other messages to its stdout, errors to its stderr. A log collector that reads the container log, for example of Kubernetes or of a cloud provider, gets them all there, and one that sets the severity by the stream marks the errors as errors. The services write to `/docker.stdout` and `/docker.stderr`, which point to the stdout and stderr of the container.
+
+| Service | Log |
+| --- | --- |
+| `nginx`, `apache` | Access log to `/docker.stdout`, error log to `/docker.stderr`, also of the virtual host for port 443 |
+| `php-fpm` | Access log to `/docker.stdout`; its own messages, the errors of the PHP scripts and the [slow log](known-issues.md#slow-log-of-php-fpm) to `/docker.stderr` |
+| `cron` | Its own messages to syslog |
+| `postfix`, `dnsmasq` | To syslog |
+| `syslog` | syslog-ng writes the messages of syslog with `[SYSLOG]` in front: up to the level `warning` to `/docker.stdout`, from the level `err` to `/docker.stderr`. It drops those of the facilities `auth` and `authpriv`, for example of `su`. What a service sends before syslog-ng listens, in about the first second after the start, is lost, for example the start messages of cron. |
+| `ssh`, `blackfire-agent` | To their stderr |
+
+What the services print to their stdout and stderr, for example the output of their [hooks](#service-hooks), supervisord writes to `/docker.stdout` and `/docker.stderr`. The messages of supervisord itself, for example `spawned: 'nginxd'`, always go to the container log; at the log level `debug` (`SERVICE_SUPERVISOR_OPTS=--loglevel=debug`) they also repeat what the services print.
+
+The lines carry no name of the service; they tell by their format where they come from:
+
+| Line | From |
+| --- | --- |
+| `[SYSLOG] CRON[85]: …`, `[SYSLOG] postfix/smtp[…]: …` | syslog, with the name of the program |
+| `[php-fpm:access] …` | access log of PHP-FPM |
+| `[26-Nov-2026 05:47:30] NOTICE: …`, `NOTICE: PHP message: …` | PHP-FPM, and the errors of the PHP scripts it runs |
+| `127.0.0.1 - - [26/Nov/2026:05:47:30 +0000] "GET / HTTP/1.1" 200 …` | access log of Nginx or Apache |
+| `2026/11/26 05:47:20 [error] 70#70: …` | error log of Nginx |
+| `2026-11-26 05:47:13,244 INFO spawned: 'nginxd' …` | supervisord |
+
+Without `syslog`, for example after `docker-service disable syslog`, the messages of `cron`, `postfix` and `dnsmasq` are lost.
+
+`LOG_STDOUT` and `LOG_STDERR` point `/docker.stdout` and `/docker.stderr` to files instead, see [Container](environment-variables.md#container). Avoid them: each moves a whole stream of all services into one file, which `docker compose logs` does not show, and which grows until something outside the container rotates it; the image does not rotate it.
+
 ## Cron jobs
 
 Add a cron job with an environment variable `CRONJOB_<NAME>`, without building an image: one variable per job, with any name after `CRONJOB_`. Its value is a line of the system crontab: the time, the user and the command. Cron runs the job as that user:
@@ -173,9 +203,10 @@ Where `docker-service disable cron` switched cron off, a `CRONJOB_*` variable sw
 
 The jobs of the variables and of [`docker-cronjob`](#cron-jobs-in-the-image) get the environment variables of the container, as its services get them: those of `environment` in `compose.yaml` and of `docker run -e`, and the `ENV` of the image, including its `PATH`, so `php` works without `/usr/local/bin/`. A value arrives exactly as set, also with spaces, quotes, `$`, `=` or a line break. Cron sets `HOME` and `LOGNAME` for the user of the job and `SHELL` to `/bin/sh`; `PWD`, `OLDPWD`, `SHLVL` and `_` are those of the shell of the job, not of the container. supervisord adds its own, such as `SUPERVISOR_ENABLED`. The output of the jobs, stdout and stderr, goes to the container log:
 
-- In the Debian images, cron itself passes no variable of the container on, and would mail the output of a job, and discard it where no mail server is installed. So `/etc/cron.d/webdevops-environment` and `/etc/cron.d/webdevops-docker` begin with `SHELL=/usr/local/bin/docker-cronjob-shell`, and cron runs each job with this script, as the user of the job. It adds the variables of the container, which the start script of cron writes each time cron starts into `/run/docker-cronjob/<user>` for each user of a job in a crontab in `/etc/cron.d` with this `SHELL` line, a file that only this user and `root` can read. It runs the command with `/bin/sh` and sends both outputs to syslog, a message per line and per 1 KiB of a longer line; they reach the stdout of the container, or the file of `LOG_STDOUT`, as `[SYSLOG] cron-job[<process id>]: <line>`, and the exit code stays that of the command. Without syslog-ng, the output stays with cron. A variable whose name is not valid in the shell, such as `php.memory_limit`, does not reach the command: `/bin/sh` drops it.
-- In the Alpine images, BusyBox `crond` passes on its own variables, which are those of the container, also `php.memory_limit`, and adds `USER`. It passes the output on: stdout to the stdout of the container, stderr to its stderr.
-- To get the mail of cron instead, as before, add a `MAILTO` line before the jobs; it applies to the jobs below it. In Debian, for example `RUN docker-cronjob 'MAILTO=ops@example.com' '*/5 * * * * application /usr/local/bin/php /app/bin/console app:cleanup'`. `docker-cronjob-shell` then only runs the command, and cron mails its output. The mail needs a mail server, for example Postfix of the `-dev` images, see [Mail](images/php.md#mail). `MAILTO=""` turns the mail off, and the output goes to syslog.
+- In the Debian images, cron itself passes no variable of the container on, and would mail the output of a job, and discard it where no mail server is installed. So `/etc/cron.d/webdevops-environment` and `/etc/cron.d/webdevops-docker` begin with `SHELL=/usr/local/bin/docker-cronjob-shell`, and cron runs each job with this script, as the user of the job. It adds the variables of the container, which the start script of cron writes each time cron starts into `/run/docker-cronjob/<user>` for each user of a job in a crontab in `/etc/cron.d` with this `SHELL` line, a file that only this user and `root` can read. It runs the command with `/bin/sh` and sends its output to syslog, see below. A variable whose name is not valid in the shell, such as `php.memory_limit`, does not reach the command: `/bin/sh` drops it.
+- In the Alpine images, BusyBox `crond` passes on its own variables, which are those of the container, also `php.memory_limit`, and adds `USER`. It would pass the output on without saying which job it comes from, so the jobs of the variables and of `docker-cronjob` run with `docker-cronjob-shell` too: the block of the variables and the jobs of `docker-cronjob` in `/etc/crontabs/<user>` come below a line `SHELL=/usr/local/bin/docker-cronjob-shell`, and lines above it, such as those of Alpine in the crontab of `root`, keep `/bin/sh`.
+- The output of the jobs, in Debian as in Alpine: `docker-cronjob-shell` sends it to syslog, a message per line and per 1 KiB of a longer line, stdout at the level `info` and stderr at the level `err`. syslog-ng writes them as `[SYSLOG] cron-job[<process id>]: <line>` to the stdout and the stderr of the container, or to the files of `LOG_STDOUT` and `LOG_STDERR`, see [Logs](#logs). The process id tells the lines of one run apart from those of another, not the job; the exit code stays that of the command. Without syslog-ng, the output stays with cron.
+- In Debian, to get the mail of cron instead, as before, add a `MAILTO` line before the jobs; it applies to the jobs below it, for example `RUN docker-cronjob 'MAILTO=ops@example.com' '*/5 * * * * application /usr/local/bin/php /app/bin/console app:cleanup'`. `docker-cronjob-shell` then only runs the command, and cron mails its output. The mail needs a mail server, for example Postfix of the `-dev` images, see [Mail](images/php.md#mail). `MAILTO=""` turns the mail off, and the output goes to syslog.
 
 For a crontab file of your own in `/etc/cron.d`, put the same `SHELL` line at its top; otherwise cron mails the output of its jobs, and they get only the variables of cron, with `PATH=/usr/bin:/bin`, see [Known issues](known-issues.md#output-and-variables-of-cron-jobs-in-crontab-files-of-your-own).
 
@@ -188,7 +219,7 @@ FROM webdevops/php:8.5
 RUN docker-cronjob '*/5 * * * * application /usr/local/bin/php /app/bin/console app:cleanup'
 ```
 
-In the Debian-based images, `docker-cronjob` adds the lines as they are to `/etc/cron.d/webdevops-docker`, which it begins with the line `SHELL=/usr/local/bin/docker-cronjob-shell` for the [variables of the container and the output](#cron-jobs). In the Alpine images, it adds each line without its user to the crontab of that user, for example `/etc/crontabs/application`. There it fails on a line that is not a job with time, user and command, for example a comment or a variable such as `MAILTO=`, on a time that cron does not take, as above, and on a user that does not exist.
+In the Debian-based images, `docker-cronjob` adds the lines as they are to `/etc/cron.d/webdevops-docker`, which it begins with the line `SHELL=/usr/local/bin/docker-cronjob-shell` for the [variables of the container and the output](#cron-jobs). In the Alpine images, it adds each line without its user to the crontab of that user, for example `/etc/crontabs/application`, below a line `SHELL=/usr/local/bin/docker-cronjob-shell` for the [output](#cron-jobs). There it fails on a line that is not a job with time, user and command, for example a comment or a variable such as `MAILTO=`, on a time that cron does not take, as above, and on a user that does not exist.
 
 ### Time zone
 
@@ -368,7 +399,7 @@ All images except `toolbox`.
 | `/opt/docker/etc/supervisor.conf` | Main configuration; includes `supervisor.d/*.conf` |
 | `/opt/docker/etc/supervisor.d/<service>.conf` | One group per service with one program, for example the group `nginx` with the program `nginxd` |
 
-Add your own program as a new file in `supervisor.d/`. In a running container, `supervisorctl` controls the services. Address a program as `<group>:<program>`, or all programs of a group as `<group>:`; `supervisorctl restart nginx` fails with `no such process`.
+Add your own program as a new file in `supervisor.d/`. Like the services of the image, it should write its output with `stdout_logfile=/docker.stdout` and `stderr_logfile=/docker.stderr`, each with `stdout_logfile_maxbytes=0` and `stderr_logfile_maxbytes=0`, see [Logs](#logs). In a running container, `supervisorctl` controls the services. Address a program as `<group>:<program>`, or all programs of a group as `<group>:`; `supervisorctl restart nginx` fails with `no such process`.
 
 ```sh
 docker compose exec app supervisorctl status

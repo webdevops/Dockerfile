@@ -51,6 +51,13 @@ Every pull request that fixes a bug has a test that fails without the fix and pa
 - Otherwise add one in the same pull request: an image test in a trait in `ci/image-tests/Checks/` for a bug in an image, a PHPUnit test in `ci/tests/` for a bug in `ci/`.
 - Check that the test fails without the fix and passes with it, for an image test with `make test-image` against the published image and against your build (`REFERENCE=`).
 
+### Test each behaviour in one image
+
+The CI runs every image test on every image, tag and platform, so each test method costs many runs. Keep the pipeline short:
+
+- Test a behaviour in the image that brings it, not again in the images built on it. `php-nginx`, `php-apache` and the `-dev` images start `FROM webdevops/php` and share its packages, scripts and package sources: a check of `webdevops/php`, for example `AdditionalServicesChecks` (installing the services an image does not run), covers them too. Add a trait to another image only for what that image changes.
+- Do not add tests for failures of things outside the repository that appear after the build, such as a broken package in the Alpine or Debian repository: an image test runs at build time and cannot see them. #671, a broken `python3-ndbm` in Alpine that appeared after the nightly build in which the same check passed, is such a case.
+
 ## Keep the documentation up to date
 
 The documentation is part of every change. A pull request that changes what users of the images see also updates the documentation **in the same pull request**. Never leave it for a follow-up.
@@ -63,7 +70,7 @@ Where the documentation lives:
 | `CONTRIBUTING.md` | Build process: the generated files and `make generate`, the CI and `make check`, building and testing locally, the image tests, PHP extension builds |
 | `docs/README.md` | Image overview, platforms and nightly updates, how the images build on each other (Mermaid diagram) |
 | `docs/environment-variables.md` | Every environment variable with its default and effect; uploads and long requests |
-| `docs/customization.md` | Commands, scripts at start and build time, tools for your Dockerfile, services, cron jobs and their time zone, healthcheck, configuration files and placeholders, supervisord, locales, application user and changing its UID |
+| `docs/customization.md` | Commands, scripts at start and build time, tools for your Dockerfile, services and their logs, cron jobs, their output and their time zone, healthcheck, configuration files and placeholders, supervisord, locales, application user and changing its UID |
 | `docs/images/*.md` | One page per image family: tags, base image, services, settings, development variant. `php.md` also has Debian or Alpine, production, installing extensions, mail and Xdebug with an IDE |
 | `docs/known-issues.md` | Options and tools that do not work, with affected images and workaround; migration from older images |
 | `docs/discontinued-images.md` | Replacements for images and tags that are no longer built (`bootstrap`, `base`, `base-app`, `dockerfile-build-env`, `nginx`, `apache`, `storage`, `vsftp`, `ssh`) or deprecated (`php-official`) |
