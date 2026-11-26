@@ -159,19 +159,7 @@ trait NginxChecks
      */
     public function testNginxLogsToTheContainerLogByDefault(): void
     {
-        $container = self::container();
-        $file = '/app/image-test-forbidden-' . bin2hex(random_bytes(4)) . '.html';
-        $this->assertCommandSucceeds('touch ' . $file . ' && chmod 000 ' . $file, $container);
-        self::assertSame('403', $this->statusCode('http://localhost' . substr($file, 4), container: $container));
-        $request = '#"GET ' . preg_quote(substr($file, 4), '#') . ' HTTP/1\.1" 403 #';
-        $error = '#\[error\] .*' . preg_quote(basename($file), '#') . '" failed \(13: Permission denied\)#';
-        $this->eventually(function () use ($container, $request, $error): void {
-            [$stdout, $stderr] = $container->logStreams();
-            self::assertMatchesRegularExpression($request, $stdout);
-            self::assertMatchesRegularExpression($error, $stderr);
-            self::assertDoesNotMatchRegularExpression($request, $stderr);
-            self::assertDoesNotMatchRegularExpression($error, $stdout);
-        });
+        $this->assertForbiddenRequestLogsToTheContainerLog('#\\[error\\] .*%s" failed \\(13: Permission denied\\)#');
     }
 
     /**
