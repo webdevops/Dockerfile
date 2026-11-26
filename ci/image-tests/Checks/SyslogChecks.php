@@ -63,19 +63,22 @@ trait SyslogChecks
     }
 
     /**
-     * When the file of LOG_STDOUT cannot be created, here in /proc, the container starts all the same and the log names
-     * the file; the entrypoint, which stops at an error, must not stop at it.
+     * When the file of LOG_STDOUT cannot be created, here in /proc, the container starts all the same, the log names the
+     * file, and the logs that would go there stay in the container log. supervisord, which starts every service with
+     * its output in /docker.stdout, could not start them otherwise; and the entrypoint, which stops at an error, must
+     * not stop at it.
      */
     public function testContainerStartsWhenTheFileOfLogStdoutCannotBeCreated(): void
     {
         $file = '/proc/image-test-stdout.log';
         $container = $this->startTestContainer('log-file-not-created', ['LOG_STDOUT' => $file]);
         $this->eventually(function () use ($container, $file): void {
-            self::assertStringContainsString('Cannot create ' . $file . ' for LOG_STDOUT or LOG_STDERR', $container->logs());
+            self::assertStringContainsString('Cannot write to ' . $file . ' of LOG_STDOUT: its logs stay in the container log', $container->logStreams()[1]);
         });
-        // cron, which does not write to LOG_STDOUT when it starts, runs
         $this->eventually(function () use ($container): void {
             self::assertStringContainsString('RUNNING', $this->stdout('supervisorctl status cron:crond', $container));
+            $this->assertCommandSucceeds('logger -t image-test fallback-marker', $container);
+            self::assertStringContainsString('image-test: fallback-marker', $container->logStreams()[0]);
         });
     }
 
