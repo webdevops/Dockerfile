@@ -82,7 +82,10 @@ trait NginxEnvironmentChecks
         $access = '/tmp/image-test-nginx-access.log';
         $error = '/tmp/image-test-nginx-error.log';
         $container = $this->startTestContainer('nginx-log-files', ['SERVICE_NGINX_ACCESS_LOG' => $access, 'SERVICE_NGINX_ERROR_LOG' => $error]);
-        $this->request('http://localhost/', container: $container);
+        // wait for the web server: / of the empty /app may answer 403
+        $this->eventually(function () use ($container): void {
+            self::assertNotSame('000', $this->statusCode('http://localhost/', container: $container));
+        });
         $this->assertCommandSucceeds('touch /app/image-test-forbidden.html && chmod 000 /app/image-test-forbidden.html', $container);
         self::assertSame('403', $this->statusCode('http://localhost/image-test-forbidden.html', container: $container));
         $this->assertCommandSucceeds(
@@ -107,7 +110,10 @@ trait NginxEnvironmentChecks
     public function testNginxAccessLogGoesNowhereWithDevNull(): void
     {
         $container = $this->startTestContainer('nginx-log-dev-null', ['SERVICE_NGINX_ACCESS_LOG' => '/dev/null']);
-        $this->request('http://localhost/', container: $container);
+        // wait for the web server: / of the empty /app may answer 403
+        $this->eventually(function () use ($container): void {
+            self::assertNotSame('000', $this->statusCode('http://localhost/', container: $container));
+        });
         $this->assertCommandSucceeds('touch /app/image-test-forbidden.html && chmod 000 /app/image-test-forbidden.html', $container);
         self::assertSame('403', $this->statusCode('http://localhost/image-test-forbidden.html', container: $container));
         $this->eventually(function () use ($container): void {

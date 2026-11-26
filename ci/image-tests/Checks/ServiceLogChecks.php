@@ -82,4 +82,20 @@ trait ServiceLogChecks
         self::assertStringNotContainsString('dev-null-info-marker', $log);
         self::assertSame("character special file 666 root:root\n", $this->stdout("stat -c '%F %a %U:%G' /dev/null", $container));
     }
+
+    /**
+     * A file that cannot be written, here in /proc, leaves its log in the container log, and the log says so: PHP-FPM
+     * starts and writes its access log to the stdout of the container.
+     */
+    public function testServiceLogStaysInTheContainerLogWhenItsFileCannotBeWritten(): void
+    {
+        $file = '/proc/image-test-phpfpm-access.log';
+        $container = $this->startTestContainer('service-log-not-writable', ['SERVICE_PHPFPM_ACCESS_LOG' => $file]);
+        self::assertSame('logged', $this->phpFpmBody($container, 'test=error_log'));
+        $this->eventually(function () use ($container, $file): void {
+            [$stdout, $stderr] = $container->logStreams();
+            self::assertStringContainsString('Cannot write to ' . $file . ' of SERVICE_PHPFPM_ACCESS_LOG: its logs stay in the container log', $stderr);
+            self::assertMatchesRegularExpression('#"GET /php-test\.php\?test=error_log" 200 #', $stdout);
+        });
+    }
 }

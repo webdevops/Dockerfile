@@ -38,7 +38,10 @@ trait ApacheEnvironmentChecks
         $access = '/tmp/image-test-apache-access.log';
         $error = '/tmp/image-test-apache-error.log';
         $container = $this->startTestContainer('apache-log-files', ['SERVICE_APACHE_ACCESS_LOG' => $access, 'SERVICE_APACHE_ERROR_LOG' => $error]);
-        $this->request('http://localhost/', container: $container);
+        // wait for the web server: / of the empty /app may answer 403
+        $this->eventually(function () use ($container): void {
+            self::assertNotSame('000', $this->statusCode('http://localhost/', container: $container));
+        });
         $this->assertCommandSucceeds('touch /app/image-test-forbidden.html && chmod 000 /app/image-test-forbidden.html', $container);
         self::assertSame('403', $this->statusCode('http://localhost/image-test-forbidden.html', container: $container));
         $this->eventually(function () use ($container, $access, $error): void {
@@ -49,7 +52,10 @@ trait ApacheEnvironmentChecks
         self::assertStringNotContainsString('image-test-forbidden.html', $container->logs());
 
         $silent = $this->startTestContainer('apache-log-dev-null', ['SERVICE_APACHE_ACCESS_LOG' => '/dev/null']);
-        $this->request('http://localhost/', container: $silent);
+        // wait for the web server: / of the empty /app may answer 403
+        $this->eventually(function () use ($silent): void {
+            self::assertNotSame('000', $this->statusCode('http://localhost/', container: $silent));
+        });
         $this->assertCommandSucceeds('touch /app/image-test-forbidden.html && chmod 000 /app/image-test-forbidden.html', $silent);
         self::assertSame('403', $this->statusCode('http://localhost/image-test-forbidden.html', container: $silent));
         $this->eventually(function () use ($silent): void {
