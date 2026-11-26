@@ -152,4 +152,44 @@ trait NginxChecks
     {
         $this->assertServiceRunning('nginx');
     }
+
+    /**
+     * Without LOG_STDOUT and LOG_STDERR, in the container of the class, Nginx writes its access log to the stdout of the
+     * container and its errors to the stderr: a file it may not read gets 403 and an error.
+     */
+    public function testNginxLogsToTheContainerLogByDefault(): void
+    {
+        $container = self::container();
+        $file = '/app/image-test-forbidden-' . bin2hex(random_bytes(4)) . '.html';
+        $this->assertCommandSucceeds('touch ' . $file . ' && chmod 000 ' . $file, $container);
+        self::assertSame('403', $this->statusCode('http://localhost' . substr($file, 4), container: $container));
+        $request = '#"GET ' . preg_quote(substr($file, 4), '#') . ' HTTP/1\.1" 403 #';
+        $error = '#\[error\] .*' . preg_quote(basename($file), '#') . '" failed \(13: Permission denied\)#';
+        $this->eventually(function () use ($container, $request, $error): void {
+            [$stdout, $stderr] = $container->logStreams();
+            self::assertMatchesRegularExpression($request, $stdout);
+            self::assertMatchesRegularExpression($error, $stderr);
+            self::assertDoesNotMatchRegularExpression($request, $stderr);
+            self::assertDoesNotMatchRegularExpression($error, $stdout);
+        });
+    }
+
+    /**
+     * Without LOG_STDERR, Nginx writes the messages that belong to no server, those of its main error log, to the stderr
+     * of the container, in Debian as in Alpine: the master process logs that a worker process ended on SIGKILL.
+     */
+    public function testNginxMainErrorLogToTheContainerStderrByDefault(): void
+    {
+        $container = self::container();
+        $this->request('http://localhost/', container: $container);
+        $this->assertCommandSucceeds(
+            'for process in /proc/[0-9]*; do if tr "\\000" " " < $process/cmdline 2>/dev/null | grep -q "^nginx: worker process"; then kill -9 ${process#/proc/}; break; fi; done',
+            $container,
+        );
+        $exited = '#\[alert\] .*worker process \d+ exited on signal 9#';
+        $this->eventually(function () use ($container, $exited): void {
+            self::assertMatchesRegularExpression($exited, $container->logStreams()[1]);
+        });
+        self::assertDoesNotMatchRegularExpression($exited, $container->logStreams()[0]);
+    }
 }

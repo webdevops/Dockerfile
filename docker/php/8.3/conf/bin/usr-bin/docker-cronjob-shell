@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# The shell of the cron jobs that docker-cronjob adds in Debian: docker-cronjob sets SHELL to this script in
-# /etc/cron.d/webdevops-docker, so cron runs each job as "docker-cronjob-shell -c <command>". Cron in Debian
-# mails the output of a job, and discards it where no mail server is installed. This script runs the command with
-# /bin/sh, as cron would, and sends its output, stdout and stderr, to syslog, from where syslog-ng writes it to the
-# container log. The exit code stays that of the command.
+# The shell of the cron jobs that docker-cronjob adds: docker-cronjob sets SHELL to this script in
+# /etc/cron.d/webdevops-docker in Debian and in /etc/crontabs/<user> in Alpine, so cron runs each job as
+# "docker-cronjob-shell -c <command>". Cron in Debian mails the output of a job, and discards it where no mail server is
+# installed; BusyBox crond in Alpine passes it on untagged. This script runs the command with /bin/sh, as cron would,
+# and sends its output to syslog: stdout at the level info, stderr at the level err, from where syslog-ng writes them
+# to the stdout and the stderr of the container. The exit code stays that of the command.
 # With MAILTO set in the crontab file, cron mails the output as before: the script then only runs the command.
 
 # the command runs with the shell that cron would use
@@ -28,7 +29,11 @@ if [[ ! -S /dev/log ]]; then
     exec /bin/sh "$@"
 fi
 
-# each line, and each KiB of a longer line, as a message of its own, tagged with the process id of the job; should
-# logger end early, cat reads the rest, so the command does not end on a broken pipe
-/bin/sh "$@" 2>&1 | { logger -t "cron-job[$$]" -p cron.info || cat > /dev/null; }
+# each line, and each KiB of a longer line, as a message of its own, tagged with the process id of the job: stdout at
+# the level info, stderr at the level err. Should logger end early, cat reads the rest, so the command does not end on
+# a broken pipe.
+{
+    /bin/sh "$@" 2>&1 1>&3 3>&- | { logger -t "cron-job[$$]" -p cron.err || cat > /dev/null; }
+    exit "${PIPESTATUS[0]}"
+} 3>&1 | { logger -t "cron-job[$$]" -p cron.info || cat > /dev/null; }
 exit "${PIPESTATUS[0]}"

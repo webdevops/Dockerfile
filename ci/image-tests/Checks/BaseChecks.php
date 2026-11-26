@@ -22,10 +22,15 @@ trait BaseChecks
     /** The environment of cron for a job, without MAILTO */
     private const string CRONJOB_SHELL_ENV = 'env -i PATH=/usr/bin:/bin';
 
-    /** A command for docker-cronjob-shell, as cron runs it: it prints CRONJOB_SHELL_OUTPUT and ends with 3 */
-    private const string CRONJOB_SHELL_COMMAND = '/usr/local/bin/docker-cronjob-shell -c "echo image-test-cronjob-shell | tr a-z A-Z; exit 3"';
+    /**
+     * A command for docker-cronjob-shell, as cron runs it: it prints CRONJOB_SHELL_OUTPUT to stdout and
+     * CRONJOB_SHELL_ERROR to stderr, and ends with 3
+     */
+    private const string CRONJOB_SHELL_COMMAND = '/usr/local/bin/docker-cronjob-shell -c "echo image-test-cronjob-shell | tr a-z A-Z; echo image-test-cronjob-shell-error | tr a-z A-Z >&2; exit 3"';
 
     private const string CRONJOB_SHELL_OUTPUT = 'IMAGE-TEST-CRONJOB-SHELL';
+
+    private const string CRONJOB_SHELL_ERROR = 'IMAGE-TEST-CRONJOB-SHELL-ERROR';
 
     /**
      * @return array<string, array{string}>
@@ -155,25 +160,28 @@ trait BaseChecks
     public function testDockerCronjobShellLeavesTheOutputToCronWithMailto(): void
     {
         $result = $this->execute(self::CRONJOB_SHELL_ENV . ' MAILTO=root ' . self::CRONJOB_SHELL_COMMAND);
-        self::assertSame([3, self::CRONJOB_SHELL_OUTPUT . "\n"], [$result->exitCode, $result->stdout], $result->describe());
+        self::assertSame(
+            [3, self::CRONJOB_SHELL_OUTPUT . "\n", self::CRONJOB_SHELL_ERROR . "\n"],
+            [$result->exitCode, $result->stdout, $result->stderr],
+            $result->describe(),
+        );
     }
 
     /**
-     * Without MAILTO, docker-cronjob-shell sends the output of the command to syslog, which syslog-ng writes to the
-     * container log; in the images without syslog-ng, the output stays with cron. The exit code stays that of the
-     * command.
+     * Without MAILTO, docker-cronjob-shell sends the output of the command to syslog, stdout at the level info and
+     * stderr at the level err, which syslog-ng writes to the stdout and the stderr of the container. The exit code stays
+     * that of the command.
      */
     public function testDockerCronjobShellSendsTheOutputToSyslog(): void
     {
         $result = $this->execute(self::CRONJOB_SHELL_ENV . ' ' . self::CRONJOB_SHELL_COMMAND);
-        if (!in_array('syslog', self::services(), true)) {
-            self::assertSame([3, self::CRONJOB_SHELL_OUTPUT . "\n"], [$result->exitCode, $result->stdout], $result->describe());
-            return;
-        }
-
-        self::assertSame([3, ''], [$result->exitCode, $result->stdout], $result->describe());
+        self::assertSame([3, '', ''], [$result->exitCode, $result->stdout, $result->stderr], $result->describe());
         $this->eventually(function (): void {
-            self::assertMatchesRegularExpression('/ cron-job\[\d+\]: ' . self::CRONJOB_SHELL_OUTPUT . '$/m', self::container()->logs());
+            [$stdout, $stderr] = self::container()->logStreams();
+            self::assertMatchesRegularExpression('/ cron-job\[\d+\]: ' . self::CRONJOB_SHELL_OUTPUT . '$/m', $stdout);
+            self::assertMatchesRegularExpression('/ cron-job\[\d+\]: ' . self::CRONJOB_SHELL_ERROR . '$/m', $stderr);
+            self::assertDoesNotMatchRegularExpression('/: ' . self::CRONJOB_SHELL_ERROR . '$/m', $stdout);
+            self::assertDoesNotMatchRegularExpression('/: ' . self::CRONJOB_SHELL_OUTPUT . '$/m', $stderr);
         });
     }
 

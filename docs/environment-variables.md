@@ -35,8 +35,8 @@ Images: `php-*`.
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `CLI_SCRIPT` | not set | Command the `cli` entrypoint runs as `APPLICATION_USER`. See [Customization](customization.md#commands). |
-| `LOG_STDOUT` | container stdout | File that `/docker.stdout` points to. Nginx, Apache and PHP-FPM write their access logs there, syslog-ng the messages of the services, for example of cron and Postfix, and in Debian the output of the cron jobs of `docker-cronjob`, see [Cron jobs](customization.md#cron-jobs). |
-| `LOG_STDERR` | container stderr | File that `/docker.stderr` points to. Nginx and Apache write their error logs there, PHP-FPM its own messages and the errors of the PHP scripts it runs. `php.error_log` gives the PHP errors of PHP-FPM and the PHP CLI a file of their own instead, in a directory that `application` may write to, for example `/app`. |
+| `LOG_STDOUT` | container stdout | Not recommended: file that `/docker.stdout` points to, instead of the stdout of the container. All services write there what goes to stdout: Nginx, Apache and PHP-FPM their access logs, syslog-ng the messages of the services up to the level `warning`, for example of cron and Postfix, and the stdout of the cron jobs of `docker-cronjob`, see [Cron jobs](customization.md#cron-jobs), and supervisord what the services print to their stdout. `docker compose logs` no longer shows it, and the image does not rotate the file. The messages of supervisord itself, for example `spawned: 'nginxd'`, stay in the container log. A file that does not exist yet is created as `root:root` with mode `0644` at the start of the container; a file that exists keeps its owner and mode. If it cannot be created, for example in a read-only directory, the container starts all the same, and the log says so. See [Logs](customization.md#logs). |
+| `LOG_STDERR` | container stderr | Not recommended, as `LOG_STDOUT`: file that `/docker.stderr` points to. Nginx and Apache write their error logs there, PHP-FPM its own messages and the errors of the PHP scripts it runs, syslog-ng the messages of the services from the level `err` and the stderr of the cron jobs of `docker-cronjob`, and supervisord what the services print to their stderr, for example the messages of sshd and of the Blackfire agent. `php.error_log` gives the PHP errors of PHP-FPM and the PHP CLI a file of their own instead, in a directory that `application` may write to, for example `/app`. A new file is created as for `LOG_STDOUT`. |
 | `TZ` | not set (UTC) | Time zone of the container, for example `Europe/Berlin`. It applies to `date`, cron and the time stamps supervisord writes to the container log. PHP uses `PHP_DATE_TIMEZONE` instead, see [Time zone](customization.md#time-zone). |
 
 ## Web server
@@ -183,7 +183,7 @@ Each service reads its options when it starts. A service only runs if it is enab
 | `SERVICE_SUPERVISOR_OPTS` | Extra arguments for `supervisord`, for example `--loglevel=debug`. |
 | `SERVICE_SYSLOG_OPTS` | Extra arguments for `syslog-ng`. |
 | `SERVICE_CRON_OPTS` | Extra arguments for `cron -f` (Debian) or `crond -f` (Alpine). |
-| `SERVICE_SSH_OPTS` | Extra arguments for `sshd -D`. |
+| `SERVICE_SSH_OPTS` | Extra arguments for `sshd -D -e`. With `-e`, sshd logs to its stderr, see [Logs](customization.md#logs). |
 | `SERVICE_DNSMASQ_OPTS` | Extra arguments for `dnsmasq`. |
 | `SERVICE_DNSMASQ_USER` | User `dnsmasq` runs as. Default: `root`. |
 | `SERVICE_NGINX_OPTS` | Extra arguments for `nginx`, appended after `-g 'daemon off;'`. |
