@@ -152,4 +152,35 @@ trait NginxChecks
     {
         $this->assertServiceRunning('nginx');
     }
+
+    /**
+     * Without LOG_STDOUT and LOG_STDERR, in the container of the class, Nginx writes its access log to the stdout of the
+     * container and its errors to the stderr: a file it may not read gets 403 and an error.
+     */
+    public function testNginxLogsToTheContainerLogByDefault(): void
+    {
+        $this->assertForbiddenRequestLogsToTheContainerLog('#\\[error\\] .*%s" failed \\(13: Permission denied\\)#');
+    }
+
+    /**
+     * Without LOG_STDERR, Nginx writes the messages that belong to no server, those of its main error log, to the stderr
+     * of the container, in Debian as in Alpine: the master process logs that a worker process ended on SIGKILL.
+     */
+    public function testNginxMainErrorLogToTheContainerStderrByDefault(): void
+    {
+        $container = self::container();
+        // wait for Nginx: / of the empty /app answers 403
+        $this->eventually(function () use ($container): void {
+            self::assertNotSame('000', $this->statusCode('http://localhost/', container: $container));
+        });
+        $this->assertCommandSucceeds(
+            'for process in /proc/[0-9]*; do if tr "\\000" " " < $process/cmdline 2>/dev/null | grep -q "^nginx: worker process"; then kill -9 ${process#/proc/}; break; fi; done',
+            $container,
+        );
+        $exited = '#\[alert\] .*worker process \d+ exited on signal 9#';
+        $this->eventually(function () use ($container, $exited): void {
+            self::assertMatchesRegularExpression($exited, $container->logStreams()[1]);
+        });
+        self::assertDoesNotMatchRegularExpression($exited, $container->logStreams()[0]);
+    }
 }

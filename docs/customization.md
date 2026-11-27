@@ -143,6 +143,36 @@ Before a service starts, its start script sources every `*.sh` file in `/opt/doc
 
 Options for each service are set with environment variables, see [Services](environment-variables.md#services).
 
+### Logs
+
+All services write their logs to the container log, which `docker compose logs` shows, mixed in two streams: access logs and other messages to its stdout, errors to its stderr. A log collector that reads the container log, for example of Kubernetes or of a cloud provider, gets them all there, and one that sets the severity by the stream marks the errors as errors. The services write to `/docker.stdout` and `/docker.stderr`, which point to the stdout and stderr of the container.
+
+| Service | Log |
+| --- | --- |
+| `nginx`, `apache` | Access log to `/docker.stdout`, error log to `/docker.stderr`, also of the virtual host for port 443 |
+| `php-fpm` | Access log to `/docker.stdout`; its own messages, the errors of the PHP scripts and the [slow log](known-issues.md#slow-log-of-php-fpm) to `/docker.stderr` |
+| `cron` | Its own messages to syslog |
+| `postfix`, `dnsmasq` | To syslog |
+| `syslog` | syslog-ng writes the messages of syslog with `[SYSLOG]` in front: up to the level `warning` to `/docker.stdout`, from the level `err` to `/docker.stderr`. It drops those of the facilities `auth` and `authpriv`, for example of `su`. What a service sends before syslog-ng listens, in about the first second after the start, is lost, for example the start messages of cron. |
+| `ssh`, `blackfire-agent` | To their stderr |
+
+What the services print to their stdout and stderr, for example the output of their [hooks](#service-hooks) or of cron jobs in Alpine, supervisord writes to `/docker.stdout` and `/docker.stderr`. The messages of supervisord itself, for example `spawned: 'nginxd'`, always go to the container log; at the log level `debug` (`SERVICE_SUPERVISOR_OPTS=--loglevel=debug`) they also repeat what the services print.
+
+The lines carry no name of the service; they tell by their format where they come from:
+
+| Line | From |
+| --- | --- |
+| `[SYSLOG] CRON[85]: …`, `[SYSLOG] postfix/smtp[…]: …` | syslog, with the name of the program |
+| `[php-fpm:access] …` | access log of PHP-FPM |
+| `[26-Nov-2026 05:47:30] NOTICE: …`, `NOTICE: PHP message: …` | PHP-FPM, and the errors of the PHP scripts it runs |
+| `127.0.0.1 - - [26/Nov/2026:05:47:30 +0000] "GET / HTTP/1.1" 200 …` | access log of Nginx or Apache |
+| `2026/11/26 05:47:20 [error] 70#70: …` | error log of Nginx |
+| `2026-11-26 05:47:13,244 INFO spawned: 'nginxd' …` | supervisord |
+
+Without `syslog`, for example after `docker-service disable syslog`, the messages of `cron`, `postfix` and `dnsmasq` are lost.
+
+`LOG_STDOUT` and `LOG_STDERR` point `/docker.stdout` and `/docker.stderr` to files instead, see [Container](environment-variables.md#container). Avoid them: each moves a whole stream of all services into one file, which `docker compose logs` does not show, and which grows until something outside the container rotates it; the image does not rotate it.
+
 ## Cron jobs
 
 `docker-cronjob` adds a cron job for each argument. Lines use the system crontab format, including the user, and cron runs the job as that user:
@@ -334,7 +364,7 @@ All images except `toolbox`.
 | `/opt/docker/etc/supervisor.conf` | Main configuration; includes `supervisor.d/*.conf` |
 | `/opt/docker/etc/supervisor.d/<service>.conf` | One group per service with one program, for example the group `nginx` with the program `nginxd` |
 
-Add your own program as a new file in `supervisor.d/`. In a running container, `supervisorctl` controls the services. Address a program as `<group>:<program>`, or all programs of a group as `<group>:`; `supervisorctl restart nginx` fails with `no such process`.
+Add your own program as a new file in `supervisor.d/`. Like the services of the image, it should write its output with `stdout_logfile=/docker.stdout` and `stderr_logfile=/docker.stderr`, each with `stdout_logfile_maxbytes=0` and `stderr_logfile_maxbytes=0`, see [Logs](#logs). In a running container, `supervisorctl` controls the services. Address a program as `<group>:<program>`, or all programs of a group as `<group>:`; `supervisorctl restart nginx` fails with `no such process`.
 
 ```sh
 docker compose exec app supervisorctl status

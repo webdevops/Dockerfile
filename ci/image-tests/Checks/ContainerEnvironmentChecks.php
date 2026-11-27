@@ -82,19 +82,46 @@ trait ContainerEnvironmentChecks
     }
 
     /**
-     * syslog-ng writes the messages of the programs in the container into the file of LOG_STDOUT. The environment
-     * container starts it where the image does not.
+     * syslog-ng writes the messages of the programs in the container into the file of LOG_STDOUT.
      */
     public function testSyslogMessagesReachTheFileFromTheEnvironment(): void
     {
         $container = $this->environmentContainer();
-        if (!in_array('syslog', self::services(), true)) {
-            $this->assertCommandSucceeds('docker-service enable syslog && docker-service start syslog', $container);
-        }
 
         $this->eventually(function () use ($container): void {
             $this->assertCommandSucceeds('logger -t image-test syslog-marker', $container);
             self::assertStringContainsString('image-test: syslog-marker', $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container));
+        });
+    }
+
+    /**
+     * What a service writes to its stdout and stderr reaches the files of LOG_STDOUT and LOG_STDERR: supervisord writes
+     * it there. The hook of syslog-ng from Hooks/ writes a line to each. At the log level trace of SERVICE_SUPERVISOR_OPTS, supervisord also repeats the output
+     * of the services in its own messages in the container log, so the container log is not checked here.
+     */
+    public function testServiceOutputReachesTheFilesFromTheEnvironment(): void
+    {
+        $container = $this->environmentContainer();
+
+        $this->eventually(function () use ($container): void {
+            self::assertStringContainsString('image-test: the hook of syslog-ng on stdout', $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container));
+            self::assertStringContainsString('image-test: the hook of syslog-ng on stderr', $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDERR'], $container));
+        });
+    }
+
+    /**
+     * Without LOG_STDOUT and LOG_STDERR, what a service writes to its stdout and stderr stays in the container log, as
+     * before supervisord wrote it to /docker.stdout and /docker.stderr: the hook of syslog-ng from Hooks/ writes a line
+     * to each. In a container of its own.
+     */
+    public function testServiceOutputReachesTheContainerLogWithoutTheEnvironment(): void
+    {
+        $container = $this->startTestContainer('service-output');
+
+        $this->eventually(function () use ($container): void {
+            [$stdout, $stderr] = $container->logStreams();
+            self::assertStringContainsString('image-test: the hook of syslog-ng on stdout', $stdout);
+            self::assertStringContainsString('image-test: the hook of syslog-ng on stderr', $stderr);
         });
     }
 

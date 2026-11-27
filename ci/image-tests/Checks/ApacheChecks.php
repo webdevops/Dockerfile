@@ -160,4 +160,13 @@ trait ApacheChecks
         sleep(self::WAIT_SECONDS * 2);
         self::assertSame($processId, $this->stdout('supervisorctl pid apache:apached', $container), 'Apache should keep running, not be restarted over and over.');
     }
+
+    /**
+     * Without LOG_STDOUT and LOG_STDERR, in the container of the class, Apache writes its access log to the stdout of
+     * the container and its errors to the stderr: a file it may not read gets 403 and an error.
+     */
+    public function testApacheLogsToTheContainerLogByDefault(): void
+    {
+        $this->assertForbiddenRequestLogsToTheContainerLog('#AH00132: .*%s#');
+    }
 }

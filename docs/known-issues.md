@@ -22,6 +22,22 @@ These options and tools are part of the images but do not work, or work only in 
 - **Images:** `php-*` with the Debian tag `8.6`.
 - **Instead:** Write the repository to a file in `/etc/apt/sources.list.d/`, for example `RUN echo "deb http://deb.debian.org/debian trixie-backports main" > /etc/apt/sources.list.d/backports.list`.
 
+### Slow log of PHP-FPM
+
+- **Effect:** With `fpm.pool.request_slowlog_timeout`, for example `5s`, PHP-FPM logs that a request is slow, but not where it is: Docker does not give a container the capability `SYS_PTRACE`, which PHP-FPM needs for the backtrace. The log shows `ERROR: failed to ptrace(ATTACH) child …: Operation not permitted (1)` instead.
+- **Images:** `php-*`.
+- **Instead:** Add the capability to the container:
+
+  ```yaml
+  services:
+    app:
+      image: webdevops/php-nginx:8.5
+      cap_add:
+        - SYS_PTRACE
+      environment:
+        fpm.pool.request_slowlog_timeout: 5s
+  ```
+
 ### Composer 1 on PHP 8.4 to 8.6
 
 - **Effect:** With `COMPOSER_VERSION=1`, every Composer run prints deprecation notices. From PHP 8.5 on, Composer 1 also cannot download packages: commands such as `composer require` stop with `Uncaught TypeError: stream_context_create(): Argument #1 ($options) must be an array with valid callbacks as values`.
