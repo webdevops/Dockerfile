@@ -43,7 +43,7 @@ trait PhpDevelopmentChecks
             'opcache.revalidate_freq' => '0',
             'opcache.validate_timestamps' => '1',
             'opcache.interned_strings_buffer' => '16',
-            'opcache.max_accelerated_files' => '7963',
+            'opcache.max_accelerated_files' => '32531',
         ], $this->phpSettings([
             'xdebug.mode', 'xdebug.start_with_request', 'opcache.memory_consumption', 'opcache.revalidate_freq',
             'opcache.validate_timestamps', 'opcache.interned_strings_buffer', 'opcache.max_accelerated_files',

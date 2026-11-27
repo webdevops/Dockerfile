@@ -72,7 +72,7 @@ The following shortcuts set a single directive:
 | `PHP_POST_MAX_SIZE` | `post_max_size` | `50M` |
 | `PHP_UPLOAD_MAX_FILESIZE` | `upload_max_filesize` | `50M` |
 | `PHP_OPCACHE_MEMORY_CONSUMPTION` | `opcache.memory_consumption` | `256` |
-| `PHP_OPCACHE_MAX_ACCELERATED_FILES` | `opcache.max_accelerated_files` | `7963` |
+| `PHP_OPCACHE_MAX_ACCELERATED_FILES` | `opcache.max_accelerated_files` | `32531` |
 | `PHP_OPCACHE_VALIDATE_TIMESTAMPS` | `opcache.validate_timestamps` | `1` |
 | `PHP_OPCACHE_REVALIDATE_FREQ` | `opcache.revalidate_freq` | `2` (`0` in development images) |
 | `PHP_OPCACHE_INTERNED_STRINGS_BUFFER` | `opcache.interned_strings_buffer` | `16` |
@@ -96,17 +96,51 @@ The following shortcuts set a single directive:
 | Variable | PHP-FPM directive | Default |
 | --- | --- | --- |
 | `FPM_PROCESS_MAX` | `process.max` | `0` |
-| `FPM_PM_MAX_CHILDREN` | `pm.max_children` | `5` |
-| `FPM_PM_START_SERVERS` | `pm.start_servers` | `2` |
-| `FPM_PM_MIN_SPARE_SERVERS` | `pm.min_spare_servers` | `1` |
-| `FPM_PM_MAX_SPARE_SERVERS` | `pm.max_spare_servers` | `3` |
+| `FPM_PM_MAX_CHILDREN` | `pm.max_children` | computed, see [Size of the PHP-FPM pool](#size-of-the-php-fpm-pool) |
+| `FPM_PM_START_SERVERS` | `pm.start_servers` | computed |
+| `FPM_PM_MIN_SPARE_SERVERS` | `pm.min_spare_servers` | computed |
+| `FPM_PM_MAX_SPARE_SERVERS` | `pm.max_spare_servers` | computed |
 | `FPM_PROCESS_IDLE_TIMEOUT` | `pm.process_idle_timeout` | `10s` |
-| `FPM_MAX_REQUESTS` | `pm.max_requests` | `0` |
+| `FPM_MAX_REQUESTS` | `pm.max_requests` | `1000`: a worker ends after 1000 requests and a new one takes its place, so that memory that leaks in an extension or the application does not add up. `0` keeps the workers. |
 | `FPM_REQUEST_TERMINATE_TIMEOUT` | `request_terminate_timeout` | `0` |
 | `FPM_RLIMIT_FILES` | `rlimit_files` | `0` |
 | `FPM_RLIMIT_CORE` | `rlimit_core` | `0` |
 
 The pool uses `pm = dynamic` and runs as `application`. `FPM_PROCESS_IDLE_TIMEOUT` applies only with `fpm.pool.pm: ondemand`; with `dynamic`, PHP-FPM keeps between `FPM_PM_MIN_SPARE_SERVERS` and `FPM_PM_MAX_SPARE_SERVERS` idle workers instead.
+
+### Size of the PHP-FPM pool
+
+At every start, the entrypoint sizes the pool to the CPUs and the memory of the container:
+
+| Directive | Value |
+| --- | --- |
+| `pm.max_children` | The smaller of two numbers, at least `2`: the workers of `FPM_AUTO_CHILD_MEMORY` that fit into the memory, less `PHP_OPCACHE_MEMORY_CONSUMPTION` for OPcache and 256 MB for the web server, cron and the other processes; and `FPM_AUTO_CHILDREN_PER_CPU` workers per CPU. |
+| `pm.min_spare_servers` | Half the CPUs, at least `1` |
+| `pm.max_spare_servers` | Two per CPU, at most `pm.max_children` |
+| `pm.start_servers` | Halfway between the two, as PHP-FPM computes it by default |
+
+The CPUs are the CPU limit of the container (`cpus`), rounded up, and at most the CPUs it may run on (`cpuset`); without a limit, the CPUs of the host. The memory is the memory limit of the container (`mem_limit`); without one, the memory of the host. Both cgroup v2 and cgroup v1 limits count. For example:
+
+| Container | `pm.max_children` | `pm.start_servers` | `pm.min_spare_servers` | `pm.max_spare_servers` |
+| --- | --- | --- | --- | --- |
+| `cpus: 1`, `mem_limit: 512m` | `2` | `1` | `1` | `2` |
+| `cpus: 2`, `mem_limit: 1g` | `4` | `2` | `1` | `4` |
+| `cpus: 2`, `mem_limit: 2g` | `8` | `2` | `1` | `4` |
+| no limits, on a host with 4 CPUs and 16 GB | `16` | `5` | `2` | `8` |
+
+The container log shows the result at start, for example `PHP-FPM: 2 CPUs (cgroup v2 limit), 1024 MB memory (cgroup v2 limit) -> pm.max_children=4, pm.start_servers=2, pm.min_spare_servers=1, pm.max_spare_servers=4`.
+
+| Variable | Default | Effect |
+| --- | --- | --- |
+| `FPM_AUTO_SIZE` | `1` | `0` switches the sizing off. The pool then keeps the values of the official PHP image: `pm.max_children` `5`, `pm.start_servers` `2`, `pm.min_spare_servers` `1`, `pm.max_spare_servers` `3`. |
+| `FPM_AUTO_CHILD_MEMORY` | `128M` | Memory of one worker, in megabytes (`M`) or gigabytes (`G`). OPcache is shared by all workers and counted once, see above. `memory_limit` (`512M`) is the most a single request may use, not what a worker usually needs. |
+| `FPM_AUTO_CHILDREN_PER_CPU` | `4` | Workers per CPU. A PHP request usually spends most of its time waiting for the database or other services; lower it for requests that mostly compute. |
+
+A value set with `FPM_PM_*` or `fpm.pool.pm.*` stays as set, and the others are computed to fit it: with `cpus: 2` and `mem_limit: 1g`, `FPM_PM_MAX_CHILDREN: "7"` keeps `pm.max_spare_servers` at `4`, `FPM_PM_MAX_CHILDREN: "3"` lowers it to `3`. If one of your pool files sets `pm`, `pm.max_children`, `pm.start_servers`, `pm.min_spare_servers` or `pm.max_spare_servers` to another value than the image, for example an `application.conf` or a `www.conf` of your own, nothing is computed and the values of your pool files apply; the container log then says `PHP-FPM: a pool file sets pm.* to other values than the image, so the pool is not sized to the container`.
+
+The sizing does not change `pm`. With `fpm.pool.pm: static`, PHP-FPM starts all `pm.max_children` workers at once.
+
+Without limits, every container sizes itself to the whole host. With `pm = dynamic`, PHP-FPM starts more workers only under load, but several busy containers on one host can then use more memory than the host has. In production, set `cpus` and `mem_limit` for each container, see [Production](images/php.md#production).
 
 ## Uploads and long requests
 

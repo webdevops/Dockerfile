@@ -43,7 +43,8 @@ Started by default: `php-fpm`, `cron`, `syslog`. The `-dev` variant also starts 
 | `date.timezone` | `UTC` |
 | `display_errors` | `0` |
 | `session.upload_progress.enabled` | `0` |
-| OPcache | enabled, `opcache.memory_consumption` `256`, `opcache.revalidate_freq` `2` |
+| OPcache | enabled, `opcache.memory_consumption` `256`, `opcache.max_accelerated_files` `32531`, `opcache.revalidate_freq` `2` |
+| PHP-FPM workers | sized to the CPUs and the memory of the container at every start, see [Size of the PHP-FPM pool](../environment-variables.md#size-of-the-php-fpm-pool); a worker ends after `1000` requests |
 
 All of these can be changed with environment variables, see [PHP](../environment-variables.md#php). For larger uploads and long requests, see [Uploads and long requests](../environment-variables.md#uploads-and-long-requests); for production, see [Production](#production).
 
@@ -163,7 +164,8 @@ Use the images without `-dev` in production. The `-dev` images load Xdebug and s
 
 Check these defaults for your application:
 
-- **PHP-FPM processes:** `pm.max_children` is `5` (`FPM_PM_MAX_CHILDREN`). PHP-FPM handles at most five requests at the same time; further requests wait. When that happens, PHP-FPM logs `server reached pm.max_children setting (5), consider raising it` to the container log, or to the file of [`LOG_STDERR`](../environment-variables.md#container). Raise the value if the container has memory to spare; each process can use up to `memory_limit` (`512M`). If the log shows `seems busy (you may need to increase pm.start_servers, or pm.min/max_spare_servers)`, PHP-FPM starts processes too slowly for the load; raise `FPM_PM_START_SERVERS` and the spare server settings, see [PHP-FPM](../environment-variables.md#php-fpm).
+- **CPU and memory limits:** set `cpus` and `mem_limit` for the container. PHP-FPM sizes its pool to them at every start: with `cpus: 2` and `mem_limit: 2g`, it handles up to eight requests at the same time, see [Size of the PHP-FPM pool](../environment-variables.md#size-of-the-php-fpm-pool). Without limits, every container sizes itself to the whole host, and several busy containers on one host can use more memory than it has.
+- **PHP-FPM processes:** the container log shows the size of the pool at start. When all workers are busy, further requests wait, and PHP-FPM logs `server reached pm.max_children setting (8), consider raising it` to the container log, or to the file of [`LOG_STDERR`](../environment-variables.md#container). Give the container more CPUs or memory, or raise `FPM_AUTO_CHILDREN_PER_CPU` or `FPM_PM_MAX_CHILDREN` if it has memory to spare; each process can use up to `memory_limit` (`512M`). If the log shows `seems busy (you may need to increase pm.start_servers, or pm.min/max_spare_servers)`, PHP-FPM starts processes too slowly for the load; raise `FPM_PM_START_SERVERS` and the spare server settings, see [PHP-FPM](../environment-variables.md#php-fpm).
 - **Code in the image:** if your Dockerfile copies the application code into the image, set `PHP_OPCACHE_VALIDATE_TIMESTAMPS: "0"`. PHP then no longer checks the files for changes; a changed file takes effect only after PHP-FPM restarts. Do not use it with code mounted from the host.
 - **Errors:** `display_errors` is `0` (`PHP_DISPLAY_ERRORS`), so error messages are not shown to visitors. Keep it that way.
 - **Uploads and long requests:** the limits are in [Uploads and long requests](../environment-variables.md#uploads-and-long-requests).
@@ -174,8 +176,9 @@ services:
     build: .
     ports:
       - "8080:80"
+    cpus: 2
+    mem_limit: 2g
     environment:
-      FPM_PM_MAX_CHILDREN: "20"
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: "0"
 ```
 

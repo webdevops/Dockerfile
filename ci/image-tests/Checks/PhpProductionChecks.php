@@ -37,7 +37,7 @@ trait PhpProductionChecks
         self::assertSame([
             'opcache.memory_consumption' => '256',
             'opcache.interned_strings_buffer' => '16',
-            'opcache.max_accelerated_files' => '7963',
+            'opcache.max_accelerated_files' => '32531',
         ], $this->phpSettings(['opcache.memory_consumption', 'opcache.interned_strings_buffer', 'opcache.max_accelerated_files']));
     }
 }

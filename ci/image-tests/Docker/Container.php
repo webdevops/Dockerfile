@@ -77,16 +77,18 @@ final readonly class Container
 
     /**
      * Creates a container like start(), runs it until its command exits and removes it. Returns the output and the
-     * exit code of the command, e.g. of ['root', 'id', '-un'] through the entrypoint of the image.
+     * exit code of the command, e.g. of ['root', 'id', '-un'] through the entrypoint of the image. $options are further
+     * options of docker create, e.g. ['--cpus', '2'].
      *
      * @param list<string> $directories
      * @param array<string, string> $labels
      * @param array<string, string> $environment
      * @param list<string> $command
+     * @param list<string> $options
      */
-    public static function run(string $image, array $directories, array $labels, array $environment, array $command): CommandResult
+    public static function run(string $image, array $directories, array $labels, array $environment, array $command, array $options = []): CommandResult
     {
-        $container = self::create([], $image, $directories, $labels, $environment, $command);
+        $container = self::create($options, $image, $directories, $labels, $environment, $command);
         try {
             $process = new Process(['docker', 'start', '--attach', $container->id]);
             $process->setTimeout(self::COMMAND_TIMEOUT);

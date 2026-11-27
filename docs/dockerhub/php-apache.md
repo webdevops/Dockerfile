@@ -1,6 +1,6 @@
 # webdevops/php-apache
 
-[`webdevops/php`](https://hub.docker.com/r/webdevops/php) plus Apache. Apache serves `/app` and passes PHP requests to PHP-FPM in the same container. Ports: `80` (HTTP) and `443` (HTTPS with a self-signed certificate).
+[`webdevops/php`](https://hub.docker.com/r/webdevops/php) plus Apache. Apache serves `/app` and passes PHP requests to PHP-FPM in the same container. Ports: `80` (HTTP) and `443` (HTTPS with a self-signed certificate). At every start, PHP-FPM sizes its pool of workers to the CPU and memory limits of the container, or to the host without limits, see [Size of the PHP-FPM pool](https://github.com/webdevops/Dockerfile/blob/master/docs/environment-variables.md#size-of-the-php-fpm-pool).
 
 Always use one of the tags below: an image without a tag (`latest`) and the `alpine` tag are old builds from 2019 and 2020 that get no updates, see [Known issues](https://github.com/webdevops/Dockerfile/blob/master/docs/known-issues.md#latest-and-alpine-tags-of-the-php-images).
 
