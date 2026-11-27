@@ -11,7 +11,9 @@
         open-telemetry/ext-opentelemetry \
         "php-memcached/php-memcached:dev-master" \
         "pecl/yaml:dev-php7" \
-        "phpredis/phpredis:dev-develop" \
+        # TODO PHP 8.6: phpredis 6.4.0RC1 is the first release with the PHP 8.6 fixes; switch
+        # to phpredis/phpredis once a stable 6.4 is out
+        "phpredis/phpredis:6.4.0RC1" \
 {% else %}
         apcu/apcu \
         wikimedia/excimer \
