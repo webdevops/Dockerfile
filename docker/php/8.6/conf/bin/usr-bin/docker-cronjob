@@ -29,6 +29,12 @@ if [[ "$(docker-image-info family)" == "Alpine" ]]; then
             exit 1
         fi
 
+        # BusyBox crond passes the output of a job on untagged: the jobs below this SHELL line run with
+        # docker-cronjob-shell instead, as in Debian; the lines above it, such as those of Alpine in the crontab of
+        # root, keep /bin/sh
+        if ! grep -qx 'SHELL=/usr/local/bin/docker-cronjob-shell' "/etc/crontabs/${CRONJOB_USER}" 2> /dev/null; then
+            echo 'SHELL=/usr/local/bin/docker-cronjob-shell' >> "/etc/crontabs/${CRONJOB_USER}"
+        fi
         echo "${BASH_REMATCH[1]} ${BASH_REMATCH[4]}" >> "/etc/crontabs/${CRONJOB_USER}"
         chmod 0600 "/etc/crontabs/${CRONJOB_USER}"
     done
@@ -39,6 +45,12 @@ fi
 # create crontab file
 touch /etc/cron.d/webdevops-docker
 chmod 0644 /etc/cron.d/webdevops-docker
+
+# Cron in Debian mails the output of a job: the jobs of this file run with docker-cronjob-shell instead, which
+# sends their output to syslog-ng and with it to the container log, unless a MAILTO line asks for the mail
+if [[ ! -s /etc/cron.d/webdevops-docker ]]; then
+    echo 'SHELL=/usr/local/bin/docker-cronjob-shell' >> /etc/cron.d/webdevops-docker
+fi
 
 for CRONJOB_LINES in "$@"; do
     echo "$CRONJOB_LINES" >> /etc/cron.d/webdevops-docker

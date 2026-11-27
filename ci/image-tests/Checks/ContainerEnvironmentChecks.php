@@ -25,6 +25,8 @@ use function trim;
  */
 trait ContainerEnvironmentChecks
 {
+    private const string NO_CRON = 'The image does not start cron.';
+
     /**
      * TZ=Europe/Berlin: date shows the time zone, and supervisord writes local time to the container log.
      */
@@ -48,7 +50,7 @@ trait ContainerEnvironmentChecks
     public function testCronRunsJobsInTheTimeZoneFromTheEnvironment(): void
     {
         if (!in_array('cron', self::services(), true)) {
-            self::markTestSkipped('The image does not start cron.');
+            self::markTestSkipped(self::NO_CRON);
         }
 
         $container = $this->environmentContainer();
@@ -67,7 +69,7 @@ trait ContainerEnvironmentChecks
     public function testCronLogsAtTheLevelFromTheEnvironment(): void
     {
         if (!in_array('cron', self::services(), true)) {
-            self::markTestSkipped('The image does not start cron.');
+            self::markTestSkipped(self::NO_CRON);
         }
 
         $container = $this->environmentContainer();
@@ -95,9 +97,34 @@ trait ContainerEnvironmentChecks
     }
 
     /**
+     * The output of a cron job that docker-cronjob added, from Hooks/, reaches the files of LOG_STDOUT and LOG_STDERR,
+     * in Debian as in Alpine. Cron in Debian would mail it, or discard it without a mail server, and BusyBox crond in
+     * Alpine would pass it on untagged: docker-cronjob-shell sends stdout at the level info and stderr at the level err
+     * to syslog-ng, which writes them to the file of LOG_STDOUT and of LOG_STDERR. Only in the images that start cron.
+     */
+    public function testCronJobOutputReachesTheFilesFromTheEnvironment(): void
+    {
+        if (!in_array('cron', self::services(), true)) {
+            self::markTestSkipped(self::NO_CRON);
+        }
+
+        $container = $this->environmentContainer();
+        // the job writes the lines in upper case, so they differ from its command, which cron logs
+        $this->waitFor(function () use ($container): void {
+            $stdout = $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDOUT'], $container);
+            $stderr = $this->stdout('cat ' . static::ENVIRONMENT['LOG_STDERR'], $container);
+            self::assertMatchesRegularExpression('/ cron-job\[\d+\]: IMAGE-TEST-CRON-OUTPUT$/m', $stdout);
+            self::assertMatchesRegularExpression('/ cron-job\[\d+\]: IMAGE-TEST-CRON-ERROR$/m', $stderr);
+            self::assertStringNotContainsString('IMAGE-TEST-CRON-ERROR', $stdout);
+            self::assertStringNotContainsString('IMAGE-TEST-CRON-OUTPUT', $stderr);
+        }, 25, 3);
+    }
+
+    /**
      * What a service writes to its stdout and stderr reaches the files of LOG_STDOUT and LOG_STDERR: supervisord writes
-     * it there. The hook of syslog-ng from Hooks/ writes a line to each. At the log level trace of SERVICE_SUPERVISOR_OPTS, supervisord also repeats the output
-     * of the services in its own messages in the container log, so the container log is not checked here.
+     * it there. The hook of syslog-ng from Hooks/ writes a line to each. At the log level trace of
+     * SERVICE_SUPERVISOR_OPTS, supervisord also repeats the output of the services in its own messages in the container
+     * log, so the container log is not checked here.
      */
     public function testServiceOutputReachesTheFilesFromTheEnvironment(): void
     {

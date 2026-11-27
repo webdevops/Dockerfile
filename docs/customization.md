@@ -156,7 +156,7 @@ All services write their logs to the container log, which `docker compose logs` 
 | `syslog` | syslog-ng writes the messages of syslog with `[SYSLOG]` in front: up to the level `warning` to `/docker.stdout`, from the level `err` to `/docker.stderr`. It drops those of the facilities `auth` and `authpriv`, for example of `su`. What a service sends before syslog-ng listens, in about the first second after the start, is lost, for example the start messages of cron. |
 | `ssh`, `blackfire-agent` | To their stderr |
 
-What the services print to their stdout and stderr, for example the output of their [hooks](#service-hooks) or of cron jobs in Alpine, supervisord writes to `/docker.stdout` and `/docker.stderr`. The messages of supervisord itself, for example `spawned: 'nginxd'`, always go to the container log; at the log level `debug` (`SERVICE_SUPERVISOR_OPTS=--loglevel=debug`) they also repeat what the services print.
+What the services print to their stdout and stderr, for example the output of their [hooks](#service-hooks), supervisord writes to `/docker.stdout` and `/docker.stderr`. The messages of supervisord itself, for example `spawned: 'nginxd'`, always go to the container log; at the log level `debug` (`SERVICE_SUPERVISOR_OPTS=--loglevel=debug`) they also repeat what the services print.
 
 The lines carry no name of the service; they tell by their format where they come from:
 
@@ -185,6 +185,12 @@ RUN docker-cronjob '*/5 * * * * application /usr/local/bin/php /app/bin/console 
 In the Debian-based images, `docker-cronjob` adds the lines to `/etc/cron.d/webdevops-docker`. Alpine's BusyBox `crond` does not read `/etc/cron.d`, but one crontab per user in `/etc/crontabs`, without the user column, so in the Alpine images `docker-cronjob` adds each line without its user to the crontab of that user, for example `/etc/crontabs/application`. There it fails on a line that is not a job with time, user and command, for example a comment or a variable such as `MAILTO=`, and on a user that does not exist.
 
 Cron in Debian runs jobs with `PATH=/usr/bin:/bin`, which does not contain `/usr/local/bin`, so use absolute paths such as `/usr/local/bin/php`. Absolute paths work in Alpine too, whose `crond` passes on the `PATH` of the container.
+
+The output of a job goes to the container log, in Debian as in Alpine: stdout to the stdout of the container, stderr to its stderr. Cron in Debian would mail it, and discard it where no mail server is installed; BusyBox `crond` in Alpine would pass it on without saying which job it comes from. So `docker-cronjob` puts `SHELL=/usr/local/bin/docker-cronjob-shell` before the jobs it adds: at the top of `/etc/cron.d/webdevops-docker` in Debian, and in Alpine in `/etc/crontabs/<user>` before its first job there, so that lines above it, such as those of Alpine in the crontab of `root`, keep `/bin/sh`. Cron runs each of these jobs with this script, which runs the command with `/bin/sh` and sends its output to syslog, a message per line and per 1 KiB of a longer line: stdout at the level `info`, stderr at the level `err`. syslog-ng writes them as `[SYSLOG] cron-job[<process id>]: <line>` to the stdout and the stderr of the container, or to the files of `LOG_STDOUT` and `LOG_STDERR`, see [Logs](#logs). The process id tells the lines of one run apart from those of another, not the job; the exit code stays that of the command. Without syslog-ng, for example after `docker-service disable syslog`, the output stays with cron.
+
+In Debian, to get the mail of cron instead, as before, add a `MAILTO` line before the jobs; it applies to the jobs below it, for example `RUN docker-cronjob 'MAILTO=ops@example.com' '*/5 * * * * application /usr/local/bin/php /app/bin/console app:cleanup'`. `docker-cronjob-shell` then only runs the command, and cron mails its output. The mail needs a mail server, for example Postfix of the `-dev` images, see [Mail](images/php.md#mail). `MAILTO=""` turns the mail off, and the output goes to syslog. In Alpine, `docker-cronjob` takes only jobs, no `MAILTO` line.
+
+For a crontab file of your own, for example in `/etc/cron.d`, put the same `SHELL` line at its top; otherwise cron mails the output, see [Known issues](known-issues.md#output-of-cron-jobs-in-crontab-files-of-your-own).
 
 ### Time zone
 
