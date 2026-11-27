@@ -6,26 +6,50 @@ namespace Webdevops\Build\ImageTests\Checks;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Webdevops\Build\ImageTests\ImageTestCase;
 
 use function abs;
 use function end;
+use function escapeshellarg;
 use function in_array;
 use function preg_match_all;
 use function sprintf;
+use function strtoupper;
+use function substr_count;
 use function time;
 use function trim;
 
 /**
  * TZ, LOG_STDOUT and LOG_STDERR in the environment container, see docs/environment-variables.md#container and
  * docs/customization.md#time-zone. What the web servers write to the log files is checked by NginxEnvironmentChecks
- * and ApacheEnvironmentChecks.
+ * and ApacheEnvironmentChecks. The CRONJOB_<NAME> variables in containers of their own, see
+ * docs/customization.md#cron-jobs.
  *
  * @phpstan-require-extends ImageTestCase
  */
 trait ContainerEnvironmentChecks
 {
     private const string NO_CRON = 'The image does not start cron.';
+
+    /** The time and user of a cron job that runs every minute as nobody */
+    private const string EVERY_MINUTE_AS_NOBODY = '* * * * * nobody ';
+
+    /**
+     * The command of the job of CRONJOB_IMAGETEST in testCronjobVariablesAreWrittenAnewAtEveryStart(), and that of a
+     * job that docker-cronjob adds there, as in an image built with it.
+     */
+    private const string CRONJOB_VARIABLE_COMMAND = 'echo image-test-variable';
+
+    private const string CRONJOB_BUILD_COMMAND = 'echo image-test-build';
+
+    /**
+     * The value of IMAGE_TEST_VALUE in testCronJobsGetTheVariablesOfTheContainer(), with spaces, quotes and a dollar
+     * sign, and the start of the names of the files its jobs write.
+     */
+    private const string CRON_ENVIRONMENT_VALUE = 'a b "c" $d';
+
+    private const string CRON_ENVIRONMENT_FILE = '/tmp/image-test-cron-environment-';
 
     /**
      * TZ=Europe/Berlin: date shows the time zone, and supervisord writes local time to the container log.
@@ -161,5 +185,125 @@ trait ContainerEnvironmentChecks
         $container = $this->environmentContainer();
         self::assertSame(static::ENVIRONMENT['LOG_STDOUT'] . "\n", $this->stdout('readlink /docker.stdout', $container));
         self::assertSame(static::ENVIRONMENT['LOG_STDERR'] . "\n", $this->stdout('readlink /docker.stderr', $container));
+    }
+
+    /**
+     * CRONJOB_<NAME>: cron runs the job of the variable as its user, and its output reaches the container log: on
+     * Alpine from crond through supervisord, on Debian through docker-cronjob-shell and syslog-ng, where it runs. The
+     * job writes the line in upper case, so it differs from its command, which cron logs.
+     */
+    public function testCronRunsTheJobOfACronjobVariableAsItsUser(): void
+    {
+        $container = $this->startTestContainer('cronjob-variable', [
+            'CRONJOB_IMAGETEST' => '* * * * * nobody id -un > /tmp/image-test-cronjob-variable; echo image-test-cronjob-output | tr a-z A-Z',
+        ]);
+        // cron runs the job at the start of the next minute
+        $this->waitFor(function () use ($container): void {
+            self::assertSame("nobody\n", $this->execute('cat /tmp/image-test-cronjob-variable 2>&1', $container)->stdout);
+        }, 30, 3);
+        if (self::image()->isAlpine() || in_array('syslog', self::services(), true)) {
+            $this->waitFor(function () use ($container): void {
+                self::assertMatchesRegularExpression('/IMAGE-TEST-CRONJOB-OUTPUT$/m', $container->logs());
+            }, 5);
+        }
+    }
+
+    /**
+     * CRONJOB_<NAME>: the entrypoint writes the jobs of the variables anew at every start. After a restart the job is
+     * there once, next to a job that docker-cronjob added; without the variable it is gone, the other job stays. Cron
+     * switched off with docker-service disable cron is switched on again at the start, for the job.
+     */
+    public function testCronjobVariablesAreWrittenAnewAtEveryStart(): void
+    {
+        $container = $this->startTestContainer('cronjob-restart', [
+            'CRONJOB_IMAGETEST' => self::EVERY_MINUTE_AS_NOBODY . self::CRONJOB_VARIABLE_COMMAND,
+        ]);
+        $this->assertCommandSucceeds('docker-cronjob ' . escapeshellarg(self::EVERY_MINUTE_AS_NOBODY . self::CRONJOB_BUILD_COMMAND), $container);
+        $this->assertCommandSucceeds('docker-service disable cron', $container);
+        // Debian: a file for the variables, one for docker-cronjob; Alpine: the crontab of the user
+        $crontabs = self::image()->isAlpine()
+            ? '/etc/crontabs/nobody'
+            : '/etc/cron.d/webdevops-environment /etc/cron.d/webdevops-docker';
+
+        $container->restart();
+        self::assertStringContainsString('Enabling cron for the jobs of the CRONJOB_* variables', $container->logs());
+        $this->waitFor(function () use ($container): void {
+            $result = $this->execute('docker-service check cron', $container);
+            self::assertStringContainsString('ok', $result->stdout, $result->describe());
+            self::assertSame(0, $result->exitCode, $result->describe());
+        }, 5);
+
+        $jobs = $this->stdout('cat ' . $crontabs, $container);
+        self::assertSame(1, substr_count($jobs, self::CRONJOB_VARIABLE_COMMAND), $jobs);
+        self::assertSame(1, substr_count($jobs, self::CRONJOB_BUILD_COMMAND), $jobs);
+
+        // as at a start without the variable
+        $this->assertCommandSucceeds('env -u CRONJOB_IMAGETEST docker-cronjob --environment', $container);
+        $jobs = $this->execute('cat ' . $crontabs . ' 2>/dev/null', $container)->stdout;
+        self::assertSame(0, substr_count($jobs, self::CRONJOB_VARIABLE_COMMAND), $jobs);
+        self::assertSame(1, substr_count($jobs, self::CRONJOB_BUILD_COMMAND), $jobs);
+    }
+
+    /**
+     * Cron jobs get the variables of the container, with their values as set, and its PATH: the jobs of CRONJOB_<NAME>
+     * as nobody and, where the image has the user, as application, and a job that docker-cronjob adds, as in an image
+     * built with it. Cron in Debian passes none of them on by itself.
+     */
+    public function testCronJobsGetTheVariablesOfTheContainer(): void
+    {
+        $users = $this->execute('id -u application')->exitCode === 0 ? ['nobody', 'application'] : ['nobody'];
+        $environment = ['IMAGE_TEST_VALUE' => self::CRON_ENVIRONMENT_VALUE];
+        foreach ($users as $user) {
+            $environment['CRONJOB_IMAGETEST_' . strtoupper($user)] = '* * * * * ' . $user . ' ' . self::cronEnvironmentCommand($user);
+        }
+
+        $container = $this->startTestContainer('cronjob-environment', $environment);
+        // cron starts again with the job, as in an image built with it
+        $this->assertCommandSucceeds('docker-cronjob ' . escapeshellarg(self::EVERY_MINUTE_AS_NOBODY . self::cronEnvironmentCommand('docker-cronjob')) . ' && docker-service restart cron', $container);
+        $expected = self::CRON_ENVIRONMENT_VALUE . "\n" . $this->stdout('printenv PATH', $container);
+        foreach ([...$users, 'docker-cronjob'] as $name) {
+            // cron runs the jobs at the start of the next minute
+            $this->waitFor(function () use ($container, $name, $expected): void {
+                self::assertSame($expected, $this->execute('cat ' . self::CRON_ENVIRONMENT_FILE . $name . ' 2>&1', $container)->stdout, 'the job of ' . $name);
+            }, 30, 3);
+        }
+    }
+
+    /**
+     * The command of a job that writes the value of IMAGE_TEST_VALUE and its PATH into the file of $name.
+     */
+    private static function cronEnvironmentCommand(string $name): string
+    {
+        return sprintf('printenv IMAGE_TEST_VALUE > %1$s; echo "$PATH" >> %1$s', self::CRON_ENVIRONMENT_FILE . $name);
+    }
+
+    /**
+     * Values of CRONJOB_<NAME> that are not a job cron would run: not a job at all, a user that does not exist, a time
+     * out of range, an unknown keyword.
+     *
+     * @return array<string, array{string}>
+     */
+    public static function invalidCronjobVariables(): array
+    {
+        return self::cases([
+            'not a job',
+            '* * * * * image-test-nobody true',
+            '0 24 * * * nobody true',
+            '@dayly nobody true',
+        ]);
+    }
+
+    /**
+     * CRONJOB_<NAME> with a value that is not a job: the entrypoint fails with an error that names the variable, and
+     * the command does not run. With a command that exits, so that the test does not wait for supervisord where the
+     * variable has no effect.
+     */
+    #[DataProvider('invalidCronjobVariables')]
+    public function testInvalidCronjobVariableStopsTheContainer(string $value): void
+    {
+        $result = $this->runContainer(['root', 'echo', 'image-test-started'], ['CRONJOB_BROKEN' => $value]);
+        self::assertSame(1, $result->exitCode, $result->describe());
+        self::assertStringContainsString('[ERROR] CRONJOB_BROKEN: ', $result->stderr, $result->describe());
+        self::assertStringNotContainsString('image-test-started', $result->stdout, $result->describe());
     }
 }

@@ -100,6 +100,16 @@ final readonly class Container
     }
 
     /**
+     * Restarts the container with docker restart, as Docker does after a restart of the daemon, and returns once the
+     * entrypoint has run its scripts again and has started the command.
+     */
+    public function restart(): void
+    {
+        self::docker(['restart', $this->id]);
+        $this->waitForEntrypoint();
+    }
+
+    /**
      * Whether the container still runs, i.e. its command has not exited.
      */
     public function isRunning(): bool

@@ -1,18 +1,29 @@
 #!/usr/bin/env bash
-# The shell of the cron jobs that docker-cronjob adds: docker-cronjob sets SHELL to this script in
-# /etc/cron.d/webdevops-docker in Debian and in /etc/crontabs/<user> in Alpine, so cron runs each job as
-# "docker-cronjob-shell -c <command>". Cron in Debian mails the output of a job, and discards it where no mail server is
-# installed; BusyBox crond in Alpine passes it on untagged. This script runs the command with /bin/sh, as cron would,
-# and sends its output to syslog: stdout at the level info, stderr at the level err, from where syslog-ng writes them
-# to the stdout and the stderr of the container. The exit code stays that of the command.
+# The shell of the cron jobs that docker-cronjob and the CRONJOB_* variables add: docker-cronjob sets SHELL to this
+# script in /etc/cron.d/webdevops-docker and /etc/cron.d/webdevops-environment in Debian, and in /etc/crontabs/<user>
+# in Alpine, so cron runs each job as "docker-cronjob-shell -c <command>", as the user of the job. Cron in Debian passes
+# none of the variables of the container on to a job, and mails its output, or discards it where no mail server is
+# installed; BusyBox crond in Alpine passes the output on untagged. This script adds the variables of the container,
+# which docker-cronjob --job-environment wrote in Debian into the file of the user, runs the command with /bin/sh, as
+# cron would, and sends its output to syslog: stdout at the level info, stderr at the level err, from where syslog-ng
+# writes them to the stdout and the stderr of the container. The exit code stays that of the command.
 # With MAILTO set in the crontab file, cron mails the output as before: the script then only runs the command.
+
+# the variables of the container, NUL-separated; without the file of the user, the job gets those of cron only
+ENVIRONMENT_FILE="/run/docker-cronjob/$(id -un)"
+VARIABLES=()
+if [[ -r "$ENVIRONMENT_FILE" ]]; then
+    while IFS= read -r -d '' VARIABLE; do
+        VARIABLES+=("$VARIABLE")
+    done < "$ENVIRONMENT_FILE"
+fi
 
 # the command runs with the shell that cron would use
 export SHELL=/bin/sh
 
 # MAILTO asks for the mail of cron; an empty MAILTO turns it off, so the output goes to syslog
 if [[ -n "${MAILTO:-}" ]]; then
-    exec /bin/sh "$@"
+    exec env -- "${VARIABLES[@]}" /bin/sh "$@"
 fi
 
 # Cron runs @reboot jobs as soon as it starts, at the same time as syslog-ng: wait up to 10 seconds for the socket of
@@ -26,14 +37,14 @@ fi
 
 # without syslog-ng, the output goes to cron as before
 if [[ ! -S /dev/log ]]; then
-    exec /bin/sh "$@"
+    exec env -- "${VARIABLES[@]}" /bin/sh "$@"
 fi
 
 # each line, and each KiB of a longer line, as a message of its own, tagged with the process id of the job: stdout at
 # the level info, stderr at the level err. Should logger end early, cat reads the rest, so the command does not end on
 # a broken pipe.
 {
-    /bin/sh "$@" 2>&1 1>&3 3>&- | { logger -t "cron-job[$$]" -p cron.err || cat > /dev/null; }
+    env -- "${VARIABLES[@]}" /bin/sh "$@" 2>&1 1>&3 3>&- | { logger -t "cron-job[$$]" -p cron.err || cat > /dev/null; }
     exit "${PIPESTATUS[0]}"
 } 3>&1 | { logger -t "cron-job[$$]" -p cron.info || cat > /dev/null; }
 exit "${PIPESTATUS[0]}"
